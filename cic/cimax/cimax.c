@@ -56,7 +56,6 @@
 #else
 #include <linux/semaphore.h>
 #endif
-#include <linux/mutex.h>
 #include <linux/dvb/dmx.h>
 
 #include "dvb_frontend.h"
@@ -200,9 +199,10 @@ unsigned long reg_bank4 = 0;
 
 static struct cimax_core ci_core;
 static struct cimax_state ci_state;
-static struct mutex cimax_mutex;
 
 /* EMI Banks End ************************************ */
+
+static int cimax_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address);
 
 /* ************************** */
 /* konfetti ->cimax control   */
@@ -446,75 +446,64 @@ void setDestination(struct cimax_state *state, int slot)
 
 static int cimax_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
 {
-	struct cimax_state *state = ca->data;
-	int    slot_status = 0;
-	int ctrlReg[2] = {0x00, 0x09};
+   struct cimax_state *state = ca->data;
+   int    slot_status = 0;
+   int ctrlReg[2] = {0x00, 0x09};
 
-	dprintk("%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
+   dprintk("%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
 
-	if ((slot < 0) || (slot > 1))
-		return 0;
+   if ((slot < 0) || (slot > 1))
+	   return 0;
 
-	mutex_lock(&cimax_mutex);
+   slot_status = cimax_readreg(state, ctrlReg[slot]) & 0x01;
 
-	slot_status = cimax_readreg(state, ctrlReg[slot]) & 0x01;
+   if (slot_status)
+   {
+      if (state->module_status[slot] & SLOTSTATUS_RESET)
+      {
+          unsigned int result = cimax_read_attribute_mem(ca, slot, 0); 
 
-	/* Phantomias: an insertion should not be reported immediately
-      because the module needs time to power up. Therefore the
-      detection is reported after the module has been present for
-      the specified period of time (to be confirmed in tests). */
-	if(slot_status == 1)
-	{
-	  if(state->cimax_module_present[slot] == 0)
-	  {
+          dprintk("result = 0x%02x\n", result);
+
+          if (result == 0x1d)
+               state->module_status[slot] = SLOTSTATUS_READY;
+      }
+      else
+      if (state->module_status[slot] & SLOTSTATUS_NONE)
+      {
 #if defined(FORTIS_HDBOX) || defined(OCTAGON1008)
-	    stpio_set_pin (module_pin[slot], 1);
+  	       stpio_set_pin (module_pin[slot], 1);
 #endif
 
-	    if(state->detection_timeout[slot] == 0)
-	    {
-	      /* detected module insertion, set the detection
-		 timeout (500 ms) */
-	      state->detection_timeout[slot] = jiffies + HZ/2;
-	    }
-	    else
-	    {
-	      /* timeout in progress */
-	      if(time_after(jiffies, state->detection_timeout[slot]))
-	      {
-            /* timeout expired, report module present */
-            state->cimax_module_present[slot] = 1;
-	      }
-	    }
-	  }
-	  /* else: state->cimax_module_present[slot] == 1 */
-	}
-	else
-	{
+           dprintk("Modul now present\n");
+	       state->module_status[slot] = SLOTSTATUS_PRESENT;
+      }
+   } else
+   {
+      if (!(state->module_status[slot] & SLOTSTATUS_NONE))
+      {
 #if defined(FORTIS_HDBOX) || defined(OCTAGON1008)
-	  if(state->cimax_module_present[slot] == 1)
-	      stpio_set_pin (module_pin[slot], 0);
+	       stpio_set_pin (module_pin[slot], 0);
 #endif
 
-	  /* module not present, reset everything */
-	  state->cimax_module_present[slot] = 0;
-	  state->detection_timeout[slot] = 0;
-	}
+           dprintk("Modul now not present\n");
+	       state->module_status[slot] = SLOTSTATUS_NONE;
+      }
+   }
 
-	slot_status = slot_status ? DVB_CA_EN50221_POLL_CAM_PRESENT : 0;
+   if (state->module_status[slot] != SLOTSTATUS_NONE)
+      slot_status = DVB_CA_EN50221_POLL_CAM_PRESENT;
+   else
+      slot_status = 0;
+   
+   if (state->module_status[slot] & SLOTSTATUS_READY)
+      slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
 
-	if(state->cimax_module_present[slot])
-	   slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
+   dprintk("Module %c (%d): result = %d, status = %d\n",
+			  slot ? 'B' : 'A', slot, slot_status,
+			  state->module_status[slot]);
 
-	dprintk(KERN_ERR "Module %c: present = %d, ready = %d\n",
-				slot ? 'B' : 'A', slot_status,
-				state->cimax_module_present[slot]);
-
-   mutex_unlock(&cimax_mutex);
-
-	dprintk("%s 2<\n", __FUNCTION__);
-
-	return slot_status;
+   return slot_status;
 }
 
 static int cimax_slot_reset(struct dvb_ca_en50221 *ca, int slot)
@@ -523,7 +512,7 @@ static int cimax_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 
 	dprintk("%s >\n", __FUNCTION__);
 
-	mutex_lock(&cimax_mutex);
+    state->module_status[slot] = SLOTSTATUS_RESET;
 
 	if (slot == 0)
 	{
@@ -547,8 +536,6 @@ static int cimax_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 
 			dprintk(KERN_ERR "Reset Module A\n");
 		}
-		state->cimax_module_present[0] = 0;
-		state->detection_timeout[0] = 0;
 	}
 	else
 	{
@@ -572,13 +559,10 @@ static int cimax_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 
 			dprintk(KERN_ERR "Reset Module B\n");
 		}
-		state->cimax_module_present[1] = 0;
-		state->detection_timeout[1] = 0;
 	}
 
 	dprintk("%s <\n", __FUNCTION__);
 
-	mutex_unlock(&cimax_mutex);
 	return 0;
 }
 
@@ -589,8 +573,6 @@ static int cimax_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int add
 	int result;
 
 	dprintk("%s > slot = %d, address = %d\n", __FUNCTION__, slot, address);
-
-	mutex_lock(&cimax_mutex);
 
 	if (slot == 0)
 	{
@@ -641,7 +623,6 @@ static int cimax_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int add
 		dprintk(".");
 	}
 
-	mutex_unlock(&cimax_mutex);
 	return res;
 }
 
@@ -651,8 +632,6 @@ static int cimax_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int ad
 	int result;
 	
 	dprintk("%s > slot = %d, address = %d, value = %d\n", __FUNCTION__, slot, address, value);
-
-	mutex_lock(&cimax_mutex);
 
 	if (slot == 0)
 	{
@@ -692,7 +671,6 @@ static int cimax_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int ad
 #endif
 	}
 
-	mutex_unlock(&cimax_mutex);
 	return 0;
 }
 
@@ -703,8 +681,6 @@ static int cimax_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addres
 	int result;
 	
 	dprintk("%s > slot = %d, address = %d\n", __FUNCTION__, slot, address);
-
-	mutex_lock(&cimax_mutex);
 
 	if (slot == 0)
 	{
@@ -766,7 +742,6 @@ static int cimax_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addres
 		dprintk(".");
 	}
 
-	mutex_unlock(&cimax_mutex);
 	return res;
 }
 
@@ -786,8 +761,6 @@ static int cimax_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addre
 #else
 		dprintk ("address = 0x%.8lx: value = 0x%x\n", reg_bank4 + (address << 1), value);
 #endif
-
-	mutex_lock(&cimax_mutex);
 
 	if (slot == 0)
 	{
@@ -828,7 +801,6 @@ static int cimax_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addre
 #endif
 	}
 
-	mutex_unlock(&cimax_mutex);
 	return 0;
 }
 
@@ -836,10 +808,8 @@ static int cimax_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 {
 	//struct cimax_state *state = ca->data;
 	dprintk("%s > slot = %d\n", __FUNCTION__, slot);
-	mutex_lock(&cimax_mutex);
 
 	/*Power control : (@18h); quatsch slot shutdown ->0x17*/
-	mutex_unlock(&cimax_mutex);
 	return 0;
 }
 
@@ -849,13 +819,6 @@ static int cimax_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 
 	dprintk("%s > slot = %d\n", __FUNCTION__, slot);
 
-	mutex_lock(&cimax_mutex);
-
-#warning octagon box problems
-/* octagon box:
- * ->in my case setting ts enable leads to a stopped stream1+2 
- *
- */
 	if (slot == 0)
 	{
 	   /* das read back der register ist gleichzeitig unser sleep! */	
@@ -907,7 +870,6 @@ static int cimax_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 			printk("Error setting ts enable on slot 1\n");
 	}
 
-	mutex_unlock(&cimax_mutex);
 	return 0;
 }
 
@@ -918,8 +880,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 	int result;
 
 	dprintk("init_cimax >\n");
-
-	mutex_init (&cimax_mutex);
 
 	core->dvb_adap = dvb_adap;
 #if defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2)
@@ -954,11 +914,8 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 	state->core 			= core;
 	core->ca.data 			= state;
 
-	state->cimax_module_present[0] = 0;
-	state->cimax_module_present[1] = 0;
-
-	state->detection_timeout[0] = 0;
-	state->detection_timeout[1] = 0;
+    state->module_status[0] = SLOTSTATUS_NONE;
+    state->module_status[1] = SLOTSTATUS_NONE;
 
 	reg_config = (unsigned long) ioremap(EMIConfigBaseAddress, 0x7ff);
 	reg_buffer = (unsigned long) ioremap(EMIBufferBaseAddress, 0x40);

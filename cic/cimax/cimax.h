@@ -4,20 +4,27 @@
 #include "dvb_ca_en50221.h"
 #include "dvb_frontend.h"
 
+#define SLOTSTATUS_NONE		1
+#define SLOTSTATUS_PRESENT	2
+#define SLOTSTATUS_RESET	4
+#define SLOTSTATUS_READY	8
+
+#define cNumberSlots 2
+
 struct cimax_core {
-        struct dvb_adapter		*dvb_adap;
-        struct dvb_ca_en50221           ca; /* cimax */
-        struct dvb_ca_en50221           ca1; /* for camd access */
+        struct dvb_adapter		    *dvb_adap;
+        struct dvb_ca_en50221       ca; /* cimax */
+        struct dvb_ca_en50221       ca1; /* for camd access */
 };
 
 struct cimax_state {
-        struct dvb_frontend_ops                 ops;
-	struct cimax_core			*core;
+        struct dvb_frontend_ops     ops;
+	    struct cimax_core			*core;
 
-        struct i2c_adapter      		*i2c;
-        int					i2c_addr;
-        int                                     cimax_module_present[2];
-        unsigned long                           detection_timeout[2];
+        struct i2c_adapter      	*i2c;
+        int					        i2c_addr;
+
+        int                         module_status[cNumberSlots];
 };
 
 int init_cimax(struct dvb_adapter *dvb_adap);
