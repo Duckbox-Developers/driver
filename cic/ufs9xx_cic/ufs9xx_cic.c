@@ -281,12 +281,11 @@ static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
       if (state->module_status[slot] & SLOTSTATUS_RESET)
       {
           /* the sequence from dvbapi is to reset the cam after a detection change,
-           * so we save the state and check here if the module is ready. on ufs913
-           * we have a special ready pin, on all other we read from attribute memory.
+           * so we save the state and check here if the module is ready. on ufs913/ufs922
+           * we have a special ready pin, on ufs912 we read from attribute memory.
            */
 
-//#if !defined(UFS913)
-#if 0
+#if defined(UFS912)
 
 #ifdef use_additional_waiting_period
       	  /* timeout in progress */
@@ -699,19 +698,19 @@ int cic_init_hw(void)
 {
 	struct ufs9xx_cic_state *state = &ci_state;
 	
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMI_LCK, 0x00);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMI_GEN_CFG, 0x18);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x00);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_GEN_CFG, 0x18);
 
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x04f446d9);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xfd44ffff);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xfd88ffff);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x04f446d9);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xfd44ffff);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xfd88ffff);
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x04f446d9);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xfd44ffff);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xfd88ffff);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x04f446d9);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xfd44ffff);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xfd88ffff);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
 
-    ufs9xx_write_register_u32(EMIConfigBaseAddress + EMI_LCK, 0x1f);
+    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1f);
 
     state->module_status[0] = SLOTSTATUS_NONE;
     state->module_status[1] = SLOTSTATUS_NONE;
@@ -953,6 +952,8 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
     state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x04020000, 0x200);
     state->slot_control_write[1]     = (volatile unsigned long) ioremap_nocache(0x04000000, 0x200);
 #endif
+
+??? compile error damit er nicht weiterübersetzt
 
 	memset(&core->ca, 0, sizeof(struct dvb_ca_en50221));
 
