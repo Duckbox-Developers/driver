@@ -953,8 +953,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
     state->slot_control_write[1]     = (volatile unsigned long) ioremap_nocache(0x04000000, 0x200);
 #endif
 
-??? compile error damit er nicht weiterübersetzt
-
 	memset(&core->ca, 0, sizeof(struct dvb_ca_en50221));
 
 	/* register CI interface */
