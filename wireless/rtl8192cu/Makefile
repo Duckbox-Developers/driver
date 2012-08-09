@@ -78,12 +78,6 @@ endif
 
 
 ifeq ($(CONFIG_USB_HCI), y)
- 
-ifeq ($(CONFIG_BUILT_IN), y)
-$(shell cp $(src)/autoconf_$(RTL871X)_usb_linux.h $(src)/include/autoconf.h)
-else
-$(shell cp $(PWD)/autoconf_$(RTL871X)_usb_linux.h $(PWD)/include/autoconf.h)
-endif
 
 
 PWD := $(shell pwd)
