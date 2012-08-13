@@ -1146,7 +1146,7 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 	val = ctrl_inl(reg_address);
 	val|=0x1B0;
 
-#ifdef CUBEBOX
+#ifdef CUBEBOX || IPBOX
 	/* configure SC0_nSETVCC: derived from SC0_DETECT input */
 	val |= (1 << 7);
 #else

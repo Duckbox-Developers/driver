@@ -240,15 +240,18 @@ ifdef IPBOX9900
 obj-y    += siinfo/
 obj-y    += rmu/
 obj-y	 += ipbox99xx_fan/
+obj-y	 += smartcard/
 endif
 
 ifdef IPBOX99
 obj-y    += siinfo/
 obj-y	 += ipbox99xx_fan/
+obj-y	 += smartcard/
 endif
 
 ifdef IPBOX55
 obj-y    += siinfo/
+obj-y	 += smartcard/
 endif
 
 ifdef CUBEREVO
