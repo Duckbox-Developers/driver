@@ -51,6 +51,10 @@
 
 #include "cuberevo_platform.h"
 
+#elif defined(UFS913)
+
+#include "ufs913_platform.h"
+
 #else
 
 #error unsupported arch

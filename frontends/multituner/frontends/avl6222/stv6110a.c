@@ -31,7 +31,7 @@
 #include <linux/version.h>
 
 #include "equipment.h"
-#include "avl2108.h"
+#include "avl6222.h"
 
 #define RSTV6110_CTRL1		0
 #define RSTV6110_CTRL2		1
@@ -87,25 +87,32 @@ u32 stv6110_commit(struct dvb_frontend* fe)
     u8    ucTemp[2];
     u8    i;
 
+    dprintk(10, "%s (%p %p)\n", __func__, fe->tuner_priv, fe->demodulator_priv);
+
     TunerReg[0] = RSTV6110_CTRL1; /* address of the start register */
     for( i = 0; i < 8 ; i++)
     {
         TunerReg[i+1] = state->regs[i];
     }
 
+    dprintk(100, "%s 1. send\n", __func__);
+
     res = state->equipment.demod_i2c_repeater_send(fe->demodulator_priv, TunerReg, 9);
 
-    if( AVL2108_OK != res )
+    if( AVL6222_OK != res )
     {
         return(res);
     }
 
     ucTemp[0] = RSTV6110_STAT1;
-    ucTemp[1] = 0x04; /* start VCO Auto Calibration */
+/*    ucTemp[1] = 0x04;  start VCO Auto Calibration */
+    ucTemp[1] = 0x07;  /* ufs913 */
+
+    dprintk(100, "%s 2. send\n", __func__);
 
     res = state->equipment.demod_i2c_repeater_send(fe->demodulator_priv, ucTemp, 2);
 
-    if( AVL2108_OK != res )
+    if( AVL6222_OK != res )
     {
         return(res);
     }
@@ -115,9 +122,11 @@ u32 stv6110_commit(struct dvb_frontend* fe)
     ucTemp[0] = RSTV6110_STAT1;
     ucTemp[1] = 0x02; /* Start LPF auto calibration*/
 
+    dprintk(100, "%s 3. send\n", __func__);
+
     res = state->equipment.demod_i2c_repeater_send(fe->demodulator_priv, ucTemp, 2);
 
-    if( AVL2108_OK != res )
+    if( AVL6222_OK != res )
     {
         return(res);
     }
@@ -127,7 +136,11 @@ u32 stv6110_commit(struct dvb_frontend* fe)
     ucTemp[0] = RSTV6110_CTRL3;
     ucTemp[1] = state->regs[RSTV6110_CTRL3] | 0x40;   /* calibration done, desactivate the calibration Clock */
 
+    dprintk(100, "%s 4. send\n", __func__);
+
     res = state->equipment.demod_i2c_repeater_send(fe->demodulator_priv, ucTemp, 2);
+
+    dprintk(10, "%s() < res %d\n", __func__, res);
 
     return(res);
 }
@@ -140,11 +153,11 @@ u16 stv6110_tuner_lock(struct dvb_frontend* fe, u32 frequency, u32 srate, u32 _l
     u32                  ret;
     u32                  lpf;
 
-    dprintk(10, "%s, freq=%d kHz, mclk=%d MHz, srate = %d\n", __func__, frequency, state->mclk, srate);
+    dprintk(0, "%s, freq=%d kHz, mclk=%d MHz, srate = %d\n", __func__, frequency, state->mclk, srate);
 
     /* set_frequency */
     state->regs[RSTV6110_CTRL1]
-    = (state->regs[RSTV6110_CTRL1] & 0x07) + ((state->mclk - 16) <<3);
+    	= (state->regs[RSTV6110_CTRL1] & 0x07) + ((state->mclk - 16) << 3);
 
     if (frequency <= 10230) {
         P = 1;
@@ -163,6 +176,7 @@ u16 stv6110_tuner_lock(struct dvb_frontend* fe, u32 frequency, u32 srate, u32 _l
     pVal = (int) PowOf2( P + 1) * 10;
     pCalcOpt = 1000;
     rDivOpt = 0;
+
     for(rDiv = 0; rDiv <= 3; rDiv++)
     {
         pCalc = (state->mclk * 10) / ( PowOf2( rDiv + 1));
@@ -172,8 +186,11 @@ u16 stv6110_tuner_lock(struct dvb_frontend* fe, u32 frequency, u32 srate, u32 _l
 
         pCalcOpt = (state->mclk*10) / (PowOf2(rDivOpt+1));
     }
+
     r = PowOf2(rDivOpt+1);
+
     divider = (frequency * 100 * r * PowOf2(P+1)*10)/(state->mclk*1000);
+
     divider = (divider+5)/10;
 
     state->regs[RSTV6110_TUNING1] = divider & 0xff;
@@ -182,9 +199,9 @@ u16 stv6110_tuner_lock(struct dvb_frontend* fe, u32 frequency, u32 srate, u32 _l
     /* end set_frequency */
 
     /* setlpf */
-    lpf = (state->max_lpf * 10) / 100;
+    lpf = (state->max_lpf * 10) / 100; 
 
-    if( lpf < 5 )
+    if( lpf < 5 ) 
     {
         lpf = 5;
     }
@@ -212,27 +229,29 @@ u16 stv6110_tuner_lock_status(struct dvb_frontend* fe)
     u16    res;
     u8     ucTemp;
 
+    dprintk(10, "%s()\n", __func__);
+
     ucTemp = RSTV6110_STAT1;
 
     res = state->equipment.demod_i2c_repeater_send(fe->demodulator_priv, &ucTemp, 1);
 
-    if( AVL2108_OK != res )
+    if( AVL6222_OK != res )
     {
         return(res);
     }
 
     res = state->equipment.demod_i2c_repeater_recv(fe->demodulator_priv, &ucTemp, 1);
 
-    if ( AVL2108_OK == res )
+    if ( AVL6222_OK == res )
     {
         if ( 1 == (ucTemp & 0x01) )
         {
-            res = AVL2108_OK;
+            res = AVL6222_OK;
         } else
-            res = AVL2108_ERROR_GENERIC;
+            res = AVL6222_ERROR_GENERIC;
     }
 
-    dprintk(50, "%s(): lock status: %u, buf: 0x%X\n", __func__, res, ucTemp);
+    dprintk(0, "%s(): lock status: %u, buf: 0x%X\n", __func__, res, ucTemp);
     return res;
 }
 

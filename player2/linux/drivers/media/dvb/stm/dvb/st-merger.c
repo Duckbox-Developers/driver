@@ -694,8 +694,13 @@ void stm_tsm_init (int use_cimax)
 #elif defined(FORTIS_HDBOX)
       /* ->TSIN0 routes to TSIN2 */
       ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
-#elif defined(UFS912) || defined(UFS913) || defined(SPARK)
+#elif defined(UFS912) || defined(SPARK)
       ctrl_outl(0x3, reg_sys_config + SYS_CFG0);
+#elif defined(UFS913)
+      //UFS913
+      //0x0100  SYS_CFG0        Transport configuration                         R/W
+      //  0x00000010 - 000000000 00000000 00000000 00010000
+      ctrl_outl(0x0, reg_sys_config + SYS_CFG0);
 #elif defined(ATEVIO7500)
       /* pio12 */
       ctrl_outl(0x0, 0xfe015020);
@@ -724,7 +729,10 @@ void stm_tsm_init (int use_cimax)
       ctrl_outl(0x0, reg_sys_config + SYS_CFG0);
 #endif
 
-#if !defined(ATEVIO7500) && !defined(UFS912) && !defined(UFS913) && !defined(HS7810A) && !defined(HS7110) && !defined(WHITEBOX)
+      //UFS913
+      //0x0104  SYS_CFG1        HDMI configuration                              R/W
+      //  0x00000000 - 000000000 00000000 00000000 00000000
+#if !defined(ATEVIO7500) && !defined(UFS912) && !defined(HS7810A) && !defined(HS7110) && !defined(WHITEBOX)
       ctrl_outl(0x0, reg_sys_config + SYS_CFG1);
 #endif
       if (reinit) {
@@ -794,7 +802,7 @@ void stm_tsm_init (int use_cimax)
       ctrl_outl(0x1300, tsm_io + TSM_STREAM4_CFG);  	//256kb (4*64)
       ctrl_outl(0x1700, tsm_io + TSM_STREAM5_CFG);  	//192kb (3*64)
       ctrl_outl(0x1a00, tsm_io + TSM_STREAM6_CFG);  	//384kb (5*64)
-#elif defined (UFS912) || defined (UFS913) || defined(HS7810A)
+#elif defined (UFS912) || defined(HS7810A)
       /* RAM partitioning of streams */
       ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
       ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
@@ -842,7 +850,7 @@ void stm_tsm_init (int use_cimax)
       ctrl_outl(0x0, tsm_io + TSM_STREAM6_CFG2);
       ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
 
-#elif defined(ATEVIO7500)
+#elif defined(ATEVIO7500) || defined (UFS913)
       /* RAM partitioning of streams */
       ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);
       ctrl_outl(0x400,  tsm_io + TSM_STREAM1_CFG);
@@ -885,6 +893,10 @@ void stm_tsm_init (int use_cimax)
       ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM0_CFG);
 #else
+      //UFS913
+      //0x0000  TSM_STREAM0_CFG     Input stream TSIN0 configuration                 R/W
+      //  0x000200a0 - 000000000 00000010 00000000 10100000
+
       /* configure streams: */
       /* add tag bytes to stream + stream priority */
       ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
@@ -900,6 +912,9 @@ void stm_tsm_init (int use_cimax)
       ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM1_CFG);
 #else
+      //UFS913
+      //0x0020  TSM_STREAM1_CFG     Input stream TSIN1 configuration                 R/W
+      //  0x000205a5 - 000000000 00000010 00000101 10100101
       ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
       ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM1_CFG);
 #endif
@@ -912,6 +927,9 @@ void stm_tsm_init (int use_cimax)
       ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM2_CFG);
 #elif defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(ATEVIO7500) || defined(HS7810A)
+      //UFS913
+      //0x0040  TSM_STREAM2_CFG     Input stream TSIN2 configuration                 R/W
+      //  0x00020aa0 - 000000000 00000010 00001010 10100000
       ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
       ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM2_CFG);
 #else
@@ -927,9 +945,15 @@ void stm_tsm_init (int use_cimax)
       ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM3_CFG);
 #elif defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(ATEVIO7500) || defined(HS7810A)
+      //UFS913
+      //0x0060  TSM_STREAM3_CFG     Software transport stream 0 configuration        R/W
+      //  0x00020fa0 - 000000000 00000010 00001111 10100000
       ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
       ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM3_CFG);
 
+      //UFS913
+      //0x0080  TSM_STREAM4_CFG     PTI alternate output stream configuration        R/W
+      //  0x000213a0 - 000000000 00000010 00010011 10100000
       ret = ctrl_inl(tsm_io + TSM_STREAM4_CFG);
       ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM4_CFG);
 
@@ -952,6 +976,14 @@ void stm_tsm_init (int use_cimax)
       /* swts_req_trigger + pace cycles (1101) */
       ctrl_outl(0x800000d, tsm_io + SWTS_CFG(0));
 #elif defined (UFS912) || defined (UFS913) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX)
+      //UFS913
+      //0x0600  TSM_SWTS0_CFG       SWTS configuration                               R/W
+      //  0x88000014 - 010001000 00000000 00000000 00010100
+      //0x0610  TSM_SWTS1_CFG       SWTS configuration                               R/W
+      //  0x88000026 - 010001000 00000000 00000000 00100110
+      //0x0620  TSM_SWTS2_CFG       SWTS configuration                               R/W
+      //  0x80000000 - 010000000 00000000 00000000 00000000
+
       ctrl_outl(0x8f0000e, tsm_io + SWTS_CFG(0));
       ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
       ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
@@ -1000,7 +1032,7 @@ void stm_tsm_init (int use_cimax)
       /* connect TSIN0 to TS1394 for routing tuner TS through the CIMAX */
       ret = ctrl_inl(tsm_io + TSM_1394_DEST);
       ctrl_outl(ret | 0x1 , tsm_io + TSM_1394_DEST);
-#elif defined(UFS912) || defined(UFS913) || defined(HS7810A)
+#elif defined(UFS912) || defined(HS7810A)
 
       ctrl_outl(0x15 ,tsm_io + TSM_PTI_SEL);
 
@@ -1126,7 +1158,7 @@ void stm_tsm_init (int use_cimax)
 
       ret = ctrl_inl(tsm_io + TSM_1394_DEST);
       ctrl_outl(ret | 0x38 , tsm_io + TSM_1394_DEST);
-#elif defined(ATEVIO7500)
+#elif defined(ATEVIO7500) || defined(UFS913)
 
       /* set stream 1 on */
       ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);

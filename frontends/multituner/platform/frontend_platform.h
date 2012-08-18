@@ -36,4 +36,9 @@ struct platform_frontend_config_s {
     void* private;
 };
 
+struct platform_frontend_s {
+	int numConfigs;
+	struct platform_frontend_config_s* config;
+};
+
 #endif

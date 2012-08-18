@@ -221,7 +221,7 @@ stv090x-objs +=	stv090x/ix7306.o
 stv090x-objs +=	stv090x/core.o
 obj-m += stv090x.o
 else ifdef UFS913
-obj-y += lnb/
+obj-y	+= multituner/
 else ifdef HS7110
 stv090x-objs +=	stv090x/stv090x.o
 stv090x-objs +=	stv090x/stv6110x.o
