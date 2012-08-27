@@ -5,7 +5,7 @@ typedef unsigned int YWI2CSoft_Handle_t;
 
 typedef struct  YWI2cSoft_InitParam_s
 {
-	bool IsSlaveDevice;
+	int IsSlaveDevice;
 	unsigned int SCLPioIndex;
 	unsigned int SDAPioIndex;
 	unsigned int Speed;
@@ -18,8 +18,8 @@ typedef struct YWI2cSoft_OpenParams_s
 
 int  softi2c_init(void);
 void softi2c_cleanup(void);
-bool softi2c_online(void);
-bool isofti2c_write(unsigned char *Buffer_p, u32 MaxLen);
-bool isofti2c_read(unsigned char *Buffer_p, u32 MaxLen);
+int softi2c_online(void);
+int isofti2c_write(unsigned char *Buffer_p, u32 MaxLen);
+int isofti2c_read(unsigned char *Buffer_p, u32 MaxLen);
 
 #endif /* __AOTOM_I2CSOFT_H__ */
