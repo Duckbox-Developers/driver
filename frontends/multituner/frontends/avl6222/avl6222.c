@@ -2015,8 +2015,8 @@ static int avl6222_demod_detect(struct socket_s *socket, struct frontend_s *fron
 
 	struct i2c_msg msg[] = 
 	{
-		{.addr = frontend_cfg->demod_i2c,.flags = 0,.buf = b0,.len = 1},
-		{.addr = frontend_cfg->demod_i2c,.flags = I2C_M_RD,.buf = b1,.len = 1}
+		{.addr = frontend_cfg[numSockets].demod_i2c,.flags = 0,.buf = b0,.len = 1},
+		{.addr = frontend_cfg[numSockets].demod_i2c,.flags = I2C_M_RD,.buf = b1,.len = 1}
 	};
 
 	pin = stpio_request_pin (socket->tuner_enable[0], socket->tuner_enable[1], 

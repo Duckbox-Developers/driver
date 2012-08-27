@@ -37,7 +37,6 @@
 
 #include <asm/system.h>
 #include <asm/io.h>
-#include <linux/mutex.h>
 
 #include "dvb_ca_en50221.h"
 
@@ -269,7 +268,8 @@ static unsigned short *slot_membase[2];
 #define EMIB_BANK_EN 	0x0060
 
 static struct dvb_ca_state ca_state;
-static struct mutex starci_mutex;
+
+static int starci_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address);
 
 /* EMI Banks End ************************************ */
 
@@ -475,94 +475,76 @@ void setDestination(struct dvb_ca_state *state, int slot)
 
 static int starci_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
 {
-  struct dvb_ca_state *state = ca->data;
-  int    slot_status = 0;
-  int ctrlReg[2] = {MODA_CTRL_REG, MODB_CTRL_REG};
+   struct dvb_ca_state *state = ca->data;
+   int    slot_status = 0;
+   int    ctrlReg[2] = {MODA_CTRL_REG, MODB_CTRL_REG};
 
-  dprintk("%s (%d; open = %d) >\n", __func__, slot, open);
+   dprintk("%s (%d; open = %d) >\n", __func__, slot, open);
 
-  if ((slot < 0) || (slot > 1))
+   if ((slot < 0) || (slot > 1))
 	  return 0;
 
-  mutex_lock(&starci_mutex);
+   slot_status = starci_readreg(state, ctrlReg[slot]) & 0x01;
 
-  slot_status = starci_readreg(state, ctrlReg[slot]) & 0x01;
+   if (slot_status)
+   {
+      if (state->module_status[slot] & SLOTSTATUS_RESET)
+      {
+          unsigned int result = starci_read_attribute_mem(ca, slot, 0); 
 
+          dprintk("result = 0x%02x\n", result);
+
+          if (result == 0x1d)
+               state->module_status[slot] = SLOTSTATUS_READY;
+      }
+      else
+      if (state->module_status[slot] & SLOTSTATUS_NONE)
+      {
 #if defined(ATEVIO7500) || defined(FORTIS_HDBOX)
-  if (slot_status != state->module_present[slot])
-  {
-	  if (slot_status)
-	  {
-         if (slot == 0)
-         {
+          if (slot == 0)
+          {
         	 stpio_set_pin(module_A_pin, 1);
-             dprintk("Modul A now present\n");
 	      }
           else
           {
         	  stpio_set_pin(module_B_pin, 1);
-              dprintk("Modul B now present\n");
           }
-	      state->module_present[slot] = 1;
-          msleep(200);
-	  }
-	  else
-	  {
-          if (slot == 0)
-        	  stpio_set_pin(module_A_pin, 0);
-	      else
-	    	  stpio_set_pin(module_B_pin, 0);
-
-    	  dprintk("Modul now not present\n");
-	      state->module_present[slot] = 0;
-	  }
-   }
 #endif
 
-  /* Phantomias: an insertion should not be reported immediately
-    because the module needs time to power up. Therefore the
-    detection is reported after the module has been present for
-    the specified period of time (to be confirmed in tests). */
-  if(slot_status == 1)
-  {
-    if(state->module_ready[slot] == 0)
-    {
-      if(state->detection_timeout[slot] == 0)
-      {
-	/* detected module insertion, set the detection
-	   timeout (500 ms) */
-	state->detection_timeout[slot] = jiffies + HZ/2;
+           dprintk("Modul now present\n");
+	       state->module_status[slot] = SLOTSTATUS_PRESENT;
       }
-      else
+   } else
+   {
+      if (!(state->module_status[slot] & SLOTSTATUS_NONE))
       {
-	/* timeout in progress */
-	if(time_after(jiffies, state->detection_timeout[slot]))
-	{
-	  /* timeout expired, report module present */
-	  state->module_ready[slot] = 1;
-	}
+#if defined(ATEVIO7500) || defined(FORTIS_HDBOX)
+          if (slot == 0)
+          {
+        	 stpio_set_pin(module_A_pin, 0);
+	      }
+          else
+          {
+        	  stpio_set_pin(module_B_pin, 0);
+          }
+#endif
+
+           dprintk("Modul now not present\n");
+	       state->module_status[slot] = SLOTSTATUS_NONE;
       }
-    }
-    /* else: state->module_ready[slot] == 1 */
-  }
-  else
-  {
-    /* module not present, reset everything */
-    state->module_ready[slot] = 0;
-    state->detection_timeout[slot] = 0;
-  }
+   }
 
-  slot_status = slot_status ? DVB_CA_EN50221_POLL_CAM_PRESENT : 0;
+   if (state->module_status[slot] != SLOTSTATUS_NONE)
+      slot_status = DVB_CA_EN50221_POLL_CAM_PRESENT;
+   else
+      slot_status = 0;
+   
+   if (state->module_status[slot] & SLOTSTATUS_READY)
+      slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
 
-  if(state->module_ready[slot])
-     slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
-
-
-  dprintk(KERN_INFO "Module %c: present = %d, ready = %d\n",
-			  slot ? 'B' : 'A', slot_status,
-			  state->module_ready[slot]);
-
-  mutex_unlock(&starci_mutex);
+   dprintk("Module %c (%d): result = %d, status = %d\n",
+			  slot ? 'B' : 'A', slot, slot_status,
+			  state->module_status[slot]);
 
   dprintk("%s 2<\n", __func__);
 
@@ -580,7 +562,7 @@ static int starci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
   if((slot < 0) || (slot > 1))
     return -1;
 
-  mutex_lock(&starci_mutex);
+  state->module_status[slot] = SLOTSTATUS_RESET;
 
   result = starci_readreg(state, reg[slot]);
 
@@ -619,15 +601,6 @@ static int starci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 #endif
   }
 
-  /* reset status variables because module detection has to
-     be reported after a delay */
-  state->module_ready[slot] = 0;
-#if defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(HS7810A) || defined(HS7110)
-  state->module_present[slot] = 0;
-#endif
-  state->detection_timeout[slot] = 0;
-
-  mutex_unlock(&starci_mutex);
   dprintk("%s <\n", __func__);
 
   return 0;
@@ -644,8 +617,6 @@ static int starci_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int ad
 
   if((slot < 0) || (slot > 1))
     return -1;
-
-  mutex_lock(&starci_mutex);
 
   result = starci_readreg(state, reg[slot]);
 
@@ -666,7 +637,6 @@ static int starci_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int ad
 	  dprintk(".\n");
   }
 
-  mutex_unlock(&starci_mutex);
   return res;
 }
 
@@ -681,8 +651,6 @@ static int starci_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int a
   if((slot < 0) || (slot > 1))
     return -1;
 
-  mutex_lock(&starci_mutex);
-
   result = starci_readreg(state, reg[slot]);
 
   /* delete bit 3/4 ->access to attribute mem */
@@ -693,7 +661,6 @@ static int starci_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int a
 
   slot_membase[slot][address] = value;
 
-  mutex_unlock(&starci_mutex);
   return 0;
 }
 
@@ -708,8 +675,6 @@ static int starci_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addre
 
   if((slot < 0) || (slot > 1))
     return -1;
-
-  mutex_lock(&starci_mutex);
 
   result = starci_readreg(state, reg[slot]);
 
@@ -731,7 +696,6 @@ static int starci_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addre
 	  dprintk(".");
   }
 
-  mutex_unlock(&starci_mutex);
   return res;
 }
 
@@ -746,8 +710,6 @@ static int starci_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addr
   if((slot < 0) || (slot > 1))
     return -1;
 
-  mutex_lock(&starci_mutex);
-
   result = starci_readreg(state, reg[slot]);
 
   /* FIXME: handle "result" ->is the module really present */
@@ -760,7 +722,6 @@ static int starci_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addr
 
   slot_membase[slot][address] = value;
 
-  mutex_unlock(&starci_mutex);
   return 0;
 }
 
@@ -784,8 +745,6 @@ static int starci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
   if((slot < 0) || (slot > 1))
     return -1;
 
-  mutex_lock(&starci_mutex);
-
   result = starci_readreg(state, reg[slot]);
 
 #if !defined(ATEVIO7500) && !defined(FORTIS_HDBOX) && !defined(HS7810A) && !defined(HS7110) && !defined(CUBEBOX) 
@@ -806,7 +765,6 @@ static int starci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
   if (!(result & 0x40))
       printk("Error setting ts enable on slot 0\n");
 
-  mutex_unlock(&starci_mutex);
   return 0;
 }
 
@@ -816,8 +774,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   int result = 0;
 
   dprintk("%s >\n", __func__);
-
-  mutex_init (&starci_mutex);
 
   state->dvb_adap = dvb_adap;
   state->i2c_addr = 0x40;
@@ -837,26 +793,19 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   state->ca.owner = THIS_MODULE;
 
   state->ca.read_attribute_mem 	= starci_read_attribute_mem;
-  state->ca.write_attribute_mem 	= starci_write_attribute_mem;
+  state->ca.write_attribute_mem = starci_write_attribute_mem;
   state->ca.read_cam_control 	= starci_read_cam_control;
   state->ca.write_cam_control 	= starci_write_cam_control;
-  state->ca.slot_shutdown 	= starci_slot_shutdown;
-  state->ca.slot_ts_enable 	= starci_slot_ts_enable;
+  state->ca.slot_shutdown 	    = starci_slot_shutdown;
+  state->ca.slot_ts_enable 	    = starci_slot_ts_enable;
 
-  state->ca.slot_reset 		= starci_slot_reset;
+  state->ca.slot_reset 		    = starci_slot_reset;
   state->ca.poll_slot_status 	= starci_poll_slot_status;
 
-  state->ca.data 		= state;
+  state->ca.data 		        = state;
 
-#if defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(HS7810A) || defined(HS7110)
-  state->module_present[0] = 0;
-  state->module_present[1] = 0;
-#endif
-  state->module_ready[0] = 0;
-  state->module_ready[1] = 0;
-
-  state->detection_timeout[0] = 0;
-  state->detection_timeout[1] = 0;
+  state->module_status[0] = SLOTSTATUS_NONE;
+  state->module_status[1] = SLOTSTATUS_NONE;
 
   reg_config = (unsigned long)ioremap(EMIConfigBaseAddress, 0x7ff);
 
