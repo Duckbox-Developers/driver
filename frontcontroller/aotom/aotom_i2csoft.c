@@ -1060,7 +1060,7 @@ int softi2c_init(void)
     return ret;
 }
 
-bool isofti2c_write(U8 *Buffer_p, U32 MaxLen)
+int isofti2c_write(U8 *Buffer_p, U32 MaxLen)
 {
 	U32 ActLen = 0;
 	YW_ErrorType_T	errType = YW_NO_ERROR;
@@ -1078,7 +1078,7 @@ bool isofti2c_write(U8 *Buffer_p, U32 MaxLen)
 	return TRUE;
 }
 
-bool isofti2c_read(U8 *Buffer_p, U32 MaxLen)
+int isofti2c_read(U8 *Buffer_p, U32 MaxLen)
 {
 	U32 ActLen = 0;
 
@@ -1087,9 +1087,9 @@ bool isofti2c_read(U8 *Buffer_p, U32 MaxLen)
 	return TRUE;
 }
 
-bool softi2c_online(void)
+int softi2c_online(void)
 {
-	bool bRet = FALSE;
+	int bRet = FALSE;
 	U8 aBuffer[2] = { 0xff, 0xff};
 
 	bRet = isofti2c_write(aBuffer, 2);
