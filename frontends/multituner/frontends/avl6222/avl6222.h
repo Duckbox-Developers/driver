@@ -10,6 +10,9 @@
  * 	Copyright (C) 2009-2010 Duolabs Spa
  *                2011 adapted by konfetti for use with ufs922, octagon1008 and atevio7500
  *
+ * based on avl6222 code from:
+ * @author Ramon-Tomislav Rebersak <ramon.rebersak@gmail.com>
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
