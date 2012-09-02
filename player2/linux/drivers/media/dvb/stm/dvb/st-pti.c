@@ -106,7 +106,7 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
      unnecessarily waste a buffer (might lead to loss of a second
      recording). */
   if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-         (pSession->source < DMX_SOURCE_FRONT2)) ||
+         (pSession->source <= DMX_SOURCE_FRONT2)) ||
          ((pSession->source == DMX_SOURCE_DVR0) && swts)))
     return -1;
 
@@ -285,7 +285,7 @@ int stpti_stop_feed ( struct dvb_demux_feed *dvbdmxfeed,
   /* PTI was only started if the source is one of two frontends or
      if playback via SWTS was activated. */
   if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-         (pSession->source < DMX_SOURCE_FRONT2)) ||
+         (pSession->source <= DMX_SOURCE_FRONT2)) ||
          ((pSession->source == DMX_SOURCE_DVR0) && swts)))
     return -1;
 
