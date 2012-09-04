@@ -112,7 +112,11 @@ static unsigned char expectEventId = 1;
 #define cGetTimeSize         9
 #define cGetWakeupReasonSize 5
 
+#ifdef ATEVIO7500
+#define cMinimumSize         4
+#else
 #define cMinimumSize         5
+#endif
 
 #define BUFFERSIZE   256     //must be 2 ^ n
 static unsigned char RCVBuffer [BUFFERSIZE];
