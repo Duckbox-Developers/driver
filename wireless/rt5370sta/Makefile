@@ -4,14 +4,18 @@ else
 CFLAGS += $(CCFLAGSY)
 endif
 
-RT28xx_MODE               = STA
-CHIPSET                   = 5370
-OSABL                     = NO
+RT28xx_MODE                       = STA
+CHIPSET                           = 5370
+OSABL                             = NO
 
-HAS_ATE                   = y
-HAS_QA_SUPPORT            = y
-HAS_DOT11_N_SUPPORT       = y
-HAS_LED_CONTROL_SUPPORT   = y
+HAS_ATE                           = y
+HAS_QA_SUPPORT                    = y
+HAS_DOT11_N_SUPPORT               = y
+HAS_DOT11N_DRAFT3_SUPPORT         = y
+HAS_LED_CONTROL_SUPPORT           = y
+HAS_WPA_SUPPLICANT                = y
+HAS_NATIVE_WPA_SUPPLICANT_SUPPORT = y
+HAS_KTHREAD_SUPPORT               = y
 
 EXTRA_CFLAGS += -I$(src)/include
 EXTRA_CFLAGS += -Wall -O2 -Wundef -Wstrict-prototypes
@@ -36,10 +40,24 @@ endif
 
 ifeq ($(HAS_DOT11_N_SUPPORT),y)
 WFLAGS += -DDOT11_N_SUPPORT
+ifeq ($(HAS_DOT11N_DRAFT3_SUPPORT),y)
+WFLAGS += -DDOT11N_DRAFT3
+endif
 endif
 
 ifeq ($(HAS_LED_CONTROL_SUPPORT),y)
 WFLAGS += -DLED_CONTROL_SUPPORT
+endif
+
+ifeq ($(HAS_KTHREAD_SUPPORT),y)
+WFLAGS += -DKTHREAD_SUPPORT
+endif
+
+ifeq ($(HAS_WPA_SUPPLICANT),y)
+WFLAGS += -DWPA_SUPPLICANT_SUPPORT
+ifeq ($(HAS_NATIVE_WPA_SUPPLICANT_SUPPORT),y)
+WFLAGS += -DNATIVE_WPA_SUPPLICANT_SUPPORT
+endif
 endif
 
 ifeq ($(CHIPSET),2860)
@@ -246,8 +264,6 @@ endif
 endif
 #endif // RT5350 //
 
-
-
 #ifdef RT3070
 ifeq ($(CHIPSET),2070)
 rt$(CHIPSET)sta-objs += \
@@ -296,9 +312,6 @@ endif
 endif
 #endif // RT3070 //
 
-
-
-
 #ifdef RT3370
 ifeq ($(CHIPSET),3370)
 rt$(CHIPSET)sta-objs += \
@@ -326,32 +339,31 @@ endif
 endif
 #endif // RT3370 //
 
-
 #ifdef RT5370
 ifeq ($(CHIPSET),5370)
 rt$(CHIPSET)sta-objs += \
-        common/cmm_mac_usb.o\
-        common/rtusb_io.o\
-        common/rtusb_data.o\
-        common/cmm_data_usb.o\
-        common/rtusb_bulk.o\
-        common/ee_prom.o\
-        common/ee_efuse.o\
-        common/rtmp_mcu.o\
-        common/rt_rf.o\
+		common/cmm_mac_usb.o\
+		common/rtusb_io.o\
+		common/rtusb_data.o\
+		common/cmm_data_usb.o\
+		common/rtusb_bulk.o\
+		common/ee_prom.o\
+		common/ee_efuse.o\
+		common/rtmp_mcu.o\
+		common/rt_rf.o\
 		os/linux/rt_usb.o\
 		common/frq_cal.o\
-        chips/rt3070.o\
-        chips/rt30xx.o\
-        chips/rt33xx.o\
-        chips/rt3370.o\
+		chips/rt3070.o\
+		chips/rt30xx.o\
+		chips/rt33xx.o\
+		chips/rt3370.o\
 		chips/rt5390.o
 
 ifeq ($(OSABL),NO)
 rt$(CHIPSET)sta-objs += \
-        common/rtusb_dev_id.o\
-        os/linux/rt_usb_util.o\
-        os/linux/usb_main_dev.o
+		common/rtusb_dev_id.o\
+		os/linux/rt_usb_util.o\
+		os/linux/usb_main_dev.o
 endif
 endif
 #endif // RT5370 //
@@ -414,7 +426,3 @@ rt$(CHIPSET)sta-objs += common/rt_ate.o
 endif
 
 obj-m := $(MOD_NAME).o
-
-
-
-
