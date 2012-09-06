@@ -1404,7 +1404,7 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	struct cx24116_cmd cmd;
 	fe_status_t tunerstat;
-	int i, status, ret, retune = 1;
+	int i, status, ret, retune = 2;
 
 	dprintk("%s()\n", __func__);
 
@@ -1580,8 +1580,7 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 	 */
 	do {
 		/* Reset status register */
-		status = cx24116_readreg(state, CX24116_REG_SSTATUS)
-			& CX24116_SIGNAL_MASK;
+		status = cx24116_readreg(state, CX24116_REG_SSTATUS) & CX24116_SIGNAL_MASK;
 		cx24116_writereg(state, CX24116_REG_SSTATUS, status);
 
 		/* Tune */
@@ -1608,8 +1607,12 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 		dprintk("%s: Not tuned\n", __func__);
 
 		/* Toggle pilot bit when in auto-pilot */
-		if (state->dcur.pilot == PILOT_AUTO)
-			cmd.args[0x07] ^= CX24116_PILOT_ON;
+		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
+			if (state->dcur.pilot == CX24116_PILOT_OFF)
+				cmd.args[0x07] ^= CX24116_PILOT_ON;
+			else
+				cmd.args[0x07] ^= CX24116_PILOT_OFF;
+		}
 	} while (--retune);
 
 tuned:  /* Set/Reset B/W */
