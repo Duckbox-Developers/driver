@@ -908,6 +908,7 @@ static void __exit aotom_cleanup_module(void)
 	button_dev_exit();
 
 	unregister_chrdev(VFD_MAJOR,"VFD");
+	YWPANEL_VFD_Term();
 	printk("Fulan front panel module unloading\n");
 }
 
