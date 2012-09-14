@@ -1101,12 +1101,12 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
         // on occasion this has effected our AV sync calculations on startup.
       
         report(severity_info,"Incoming Source %dx%d @ %d,%d\n",
-             VideoParameters->Width, VideoParameters->Height,
-             SourceX, SourceY);
+            VideoParameters->Width, VideoParameters->Height,
+            SourceX, SourceY);
 
         report(severity_info,"Display Size %dx%d @ %d,%d\n",
-             DestWidth, DestHeight,
-             DestX, DestY);
+            DestWidth, DestHeight,
+            DestX, DestY);
 
         report(severity_info,"%s Content, FrameRate %d.%02d, PixelAspectRatio %d.%02d\n",
             VideoParameters->Progressive ? "Progressive" : "Interlaced",
@@ -1169,9 +1169,10 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                     Rational_t   NewHeight       = (DestHeight * WindowAspectRatio) / PictureAspectRatio;
 #ifdef __TDT__
                     //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
-                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+//                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+                    if (VideoParameters->Width != 704)
                     {
-                        DestHeight                   = NewHeight.IntegerPart();
+                        DestHeight               = NewHeight.IntegerPart();
                     }
                     else
                     {
@@ -1188,9 +1189,10 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                     Rational_t   NewWidth        = (DestWidth * PictureAspectRatio) / WindowAspectRatio;
 #ifdef __TDT__
                     //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
-                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+//                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+                    if (VideoParameters->Width != 704)
                     {
-                        DestWidth                    = NewWidth.IntegerPart();
+                        DestWidth                = NewWidth.IntegerPart();
                     }
                     else
                     {
@@ -1204,46 +1206,48 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
             }
             else
             {
-               if (PictureAspectRatio > WindowAspectRatio)
-               {
-                   // Picture is wider than display surface so must chop off edges
-                   int          OldWidth        = SourceWidth;
-                   Rational_t   NewWidth        = (SourceWidth * WindowAspectRatio) / PictureAspectRatio;
+                if (PictureAspectRatio > WindowAspectRatio)
+                {
+                    // Picture is wider than display surface so must chop off edges
+                    int          OldWidth        = SourceWidth;
+                    Rational_t   NewWidth        = (SourceWidth * WindowAspectRatio) / PictureAspectRatio;
 #ifdef __TDT__
-                   //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
-                   if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
-                   {
-                       SourceWidth                  = NewWidth.IntegerPart();
-                   }
-                   else
-                   {
-                       SourceWidth -= ((SourceWidth * 3 / 4) * 16 / 9) - SourceWidth;
-                   }
+                    //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
+//                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+                    if (VideoParameters->Width != 704)
+                    {
+                        SourceWidth              = NewWidth.IntegerPart();
+                    }
+                    else
+                    {
+                        SourceWidth -= ((SourceWidth * 3 / 4) * 16 / 9) - SourceWidth;
+                    }
 #else
-                   SourceWidth                  = NewWidth.IntegerPart();
+                    SourceWidth                  = NewWidth.IntegerPart();
 #endif
-                   SourceX                      = SourceX + ((OldWidth - SourceWidth) >> 1);
-               }
-               else
-               {
-                   // Picture is taller than display surface so must chop off top and bottom
-                   int          OldHeight       = SourceHeight;
-                   Rational_t   NewHeight       = (SourceHeight * PictureAspectRatio) / WindowAspectRatio;
+                    SourceX                      = SourceX + ((OldWidth - SourceWidth) >> 1);
+                }
+                else
+                {
+                    // Picture is taller than display surface so must chop off top and bottom
+                    int          OldHeight       = SourceHeight;
+                    Rational_t   NewHeight       = (SourceHeight * PictureAspectRatio) / WindowAspectRatio;
 #ifdef __TDT__
-                   //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
-                   if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
-                   {
-                       SourceHeight                 = NewHeight.IntegerPart();
-                   }
-                   else
-                   {
-                       SourceHeight -= ((SourceHeight * 3 / 4) * 16 / 9) - SourceHeight;
-                   }
+                    //player crash if incoming source width/height not standard (Kernel panic - not syncing: Need true 64-bit/64-bit division)
+//                    if( (VideoParameters->Width == 720 && VideoParameters->Height == 576) || (VideoParameters->Width == 1280 && (VideoParameters->Height == 720 || VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1440 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1920 && (VideoParameters->Height == 1080 || VideoParameters->Height == 1088)) || (VideoParameters->Width == 1366 && VideoParameters->Height == 768) )
+                    if (VideoParameters->Width != 704)
+                    {
+                        SourceHeight             = NewHeight.IntegerPart();
+                    }
+                    else
+                    {
+                        SourceHeight -= ((SourceHeight * 3 / 4) * 16 / 9) - SourceHeight;
+                    }
 #else
-                   SourceHeight                 = NewHeight.IntegerPart();
+                    SourceHeight                 = NewHeight.IntegerPart();
 #endif
-                   SourceY                      = SourceY + ((OldHeight - SourceHeight) >> 1);
-               }
+                    SourceY                      = SourceY + ((OldHeight - SourceHeight) >> 1);
+                }
             }
         }
     }
