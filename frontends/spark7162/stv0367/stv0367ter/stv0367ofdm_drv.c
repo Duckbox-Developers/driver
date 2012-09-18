@@ -1773,7 +1773,7 @@ int	FE_STV0367TER_GetPower(TUNER_IOREG_DeviceMap_t *DeviceMap,
     {
         power = 0;
     }
-	return power;
+	return power * 255 * 255 /100;
 }
 
 int	FE_STV0367TER_GetSnr(TUNER_IOREG_DeviceMap_t *DeviceMap,
@@ -1793,7 +1793,7 @@ int	FE_STV0367TER_GetSnr(TUNER_IOREG_DeviceMap_t *DeviceMap,
     {
         snr = 100;
     }
-	return snr;
+	return snr * 255 * 255 /100;
 }
 
 #if 1
