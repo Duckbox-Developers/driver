@@ -124,27 +124,18 @@ void* lnb_a8293_attach(u32* lnb, struct equipment_s* equipment)
 
 //TODO: make it configurable
 
+//#ifndef UFS913
     /* this read is necessarily needed, otherwise
      * lnb power is not supplied!
      */	
     reg = a8293_read(state);
+//#endif
 
     dprintk(1, "%s -> 0x%02X\n", __func__, reg);
 
     res = a8293_write(state, 0x83);
 
-/*
-[I2C] Read  i2c-2 @ 0x08 [01]
-[I2C]	00 
-[I2C] Read  i2c-2 @ 0x08 [01]
-[I2C]	11 
-[I2C] Write i2c-2 @ 0x08 [01]
-[I2C]	34 
-[I2C] Read  i2c-2 @ 0x08 [01]
-[I2C]	11 
-[I2C] Write i2c-2 @ 0x08 [01]
-[I2C]	34  
-*/   
+#ifndef UFS913
     if (res == 0)
     {
        /* setup pio6 */
@@ -168,6 +159,7 @@ void* lnb_a8293_attach(u32* lnb, struct equipment_s* equipment)
 
        ctrl_outl(reg, 0xfd026000);
     }
+#endif
 
     return state;
 }

@@ -166,7 +166,7 @@ int proc_tsmux_ci0_input_write(struct file *file, const char __user *buf,
 		page[count] = 0;
 		printk("%s\n", page);
 		ret = count;
-#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(UFS913)
 		if(strcmp(page, "A") == 0)
 			setCiSource(0, 0);
 		else if(strcmp(page, "B") == 0)
@@ -188,7 +188,7 @@ int proc_tsmux_ci0_input_read (char *page, char **start, off_t off, int count,
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
 
-#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(UFS913)
 	{
 		int source = 0;
 		getCiSource(0, &source);
@@ -220,7 +220,7 @@ int proc_tsmux_ci1_input_write(struct file *file, const char __user *buf,
 		page[count] = 0;
 		printk("%s\n", page);
 		ret = count;
-#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(UFS913)
 		if(strcmp(page, "A") == 0)
 			setCiSource(1, 0);
 		else if(strcmp(page, "B") == 0)
@@ -242,7 +242,7 @@ int proc_tsmux_ci1_input_read (char *page, char **start, off_t off, int count,
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
 
-#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#if defined(TF7700) || defined(UFS922) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)|| defined(UFS913)
 	{
 		int source = 0;
 		getCiSource(1, &source);

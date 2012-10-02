@@ -383,6 +383,8 @@ static int convert_source ( const dmx_source_t source)
   case DMX_SOURCE_FRONT1:
 #if defined(ADB_BOX)
     tag = TSIN0;
+#elif defined(UFS913)
+    tag = 3;//TSIN2; //TSIN3
 #else
     tag = TSIN1;
 #endif
