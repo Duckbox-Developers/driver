@@ -1794,10 +1794,8 @@ static int avl6222_set_frontend(struct dvb_frontend* fe, struct dvb_frontend_par
 	{
 		lockError |= cError1;
 		eprintk("%s(): Time out (tuner %d, 0x%02x) !\n", __func__, state->config->tuner_no, state->config->demod_address);
-#if 0
 		mutex_unlock ( &state->lock );
 		return -ETIMEDOUT;
-#endif
 	}
 	dprintk(1, "%s(): Service locked!!! (tuner %d)\n", __func__, state->config->tuner_no);
 

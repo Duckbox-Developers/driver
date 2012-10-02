@@ -44,7 +44,7 @@ Date        Modification                                    Name
     defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(IPBOX9900) || defined(IPBOX99) || \
     defined(IPBOX55) || defined(ADB_BOX) || defined(CUBEREVO) || \
     defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) 
+    defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(UFS913)
 #define AUDIO_BUFFER_MEMORY                     0x00180000
 #else
 #define AUDIO_BUFFER_MEMORY                     0x00100000       // 1 mb

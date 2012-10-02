@@ -65,6 +65,9 @@ endif
 ifdef ATEVIO7500
  PART2=1
 endif
+ifdef UFS913
+ PART2=1
+endif
 ifdef HS7810A
  PART2=1
 endif
