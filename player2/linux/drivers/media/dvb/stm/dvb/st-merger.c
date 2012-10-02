@@ -1314,7 +1314,7 @@ void stm_tsm_init (int use_cimax)
 #elif defined(UFS910)
       //ufs910 use dma request id 30 for swts, do'nt know what other boxes use
       tsm_handle.fdma_reqline = 28;
-#elif defined(UFS913)
+#else
       tsm_handle.fdma_reqline = 30;
 #endif
       tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
