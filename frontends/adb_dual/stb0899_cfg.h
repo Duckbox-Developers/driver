@@ -22,9 +22,6 @@
 #ifndef __STB0899_CFG_H
 #define __STB0899_CFG_H
 
-
-
-
 static const struct stb0899_s2_reg  stb0899_s2_init_2[] = {
 
 	{ STB0899_OFF0_DMD_STATUS	, STB0899_BASE_DMD_STATUS	, 0x00000103 },	/* DMDSTATUS	*/

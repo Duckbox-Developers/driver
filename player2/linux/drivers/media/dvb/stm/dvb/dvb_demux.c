@@ -206,6 +206,19 @@ int StartFeed (struct dvb_demux_feed* Feed)
 extern void stm_tsm_init ( int cfg );
 extern int reset_tsm;
 
+#if defined(ADB_BOX)
+int	(*StartFeed_)(struct dvb_demux_feed* Feed);
+int	(*StopFeed_)(struct dvb_demux_feed* Feed);
+
+void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed* Feed),int(*StopFeed)(struct dvb_demux_feed* Feed))
+{
+StartFeed_=StartFeed;
+StopFeed_=StopFeed;
+};
+
+EXPORT_SYMBOL(extern_startfeed_init);
+#endif
+
 static const unsigned int AudioId[DVB_MAX_DEVICES_PER_ADAPTER]  = {DMX_TS_PES_AUDIO0, DMX_TS_PES_AUDIO1, DMX_TS_PES_AUDIO2, DMX_TS_PES_AUDIO3};
 static const unsigned int VideoId[DVB_MAX_DEVICES_PER_ADAPTER]  = {DMX_TS_PES_VIDEO0, DMX_TS_PES_VIDEO1, DMX_TS_PES_VIDEO2, DMX_TS_PES_VIDEO3};
 int StartFeed (struct dvb_demux_feed* Feed)
@@ -232,6 +245,9 @@ int StartFeed (struct dvb_demux_feed* Feed)
         stm_tsm_init(1);
     }
 
+#if defined(ADB_BOX)
+if ((Context->pPtiSession->source==DMX_SOURCE_FRONT2)&&(StartFeed_!=NULL)) StartFeed_(Feed);
+#endif
 
 #ifdef __TDT__
 #ifdef no_subtitles
@@ -441,7 +457,11 @@ int StopFeed (struct dvb_demux_feed* Feed)
     int i                                       = 0;
 #endif
 
-    switch (Feed->type)
+#if defined(ADB_BOX)
+	if ((Context->pPtiSession->source==DMX_SOURCE_FRONT2)&&(StopFeed_!=NULL)) StopFeed_(Feed);
+#endif
+
+	switch (Feed->type)
     {
         case DMX_TYPE_TS:
 #ifdef __TDT__

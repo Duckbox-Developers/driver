@@ -105,11 +105,18 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
      if playback via SWTS is activated. Otherwise playback would
      unnecessarily waste a buffer (might lead to loss of a second
      recording). */
+#if !defined(ADB_BOX)
   if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
          (pSession->source <= DMX_SOURCE_FRONT2)) ||
          ((pSession->source == DMX_SOURCE_DVR0) && swts)))
     return -1;
-
+#endif
+#if defined(ADB_BOX)
+  if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
+         (pSession->source < DMX_SOURCE_FRONT3)) ||
+         ((pSession->source == DMX_SOURCE_DVR0) && swts)))
+    return -1;
+#endif
 
   printk("start dmx %p, sh %d, pid %d, t %d, pt %d\n", demux,
                pSession->session, dvbdmxfeed->pid, dvbdmxfeed->type,
@@ -284,10 +291,18 @@ int stpti_stop_feed ( struct dvb_demux_feed *dvbdmxfeed,
 
   /* PTI was only started if the source is one of two frontends or
      if playback via SWTS was activated. */
+#if !defined(ADB_BOX)
   if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
          (pSession->source <= DMX_SOURCE_FRONT2)) ||
          ((pSession->source == DMX_SOURCE_DVR0) && swts)))
     return -1;
+#endif
+#if defined(ADB_BOX)
+  if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
+         (pSession->source < DMX_SOURCE_FRONT3)) ||
+         ((pSession->source == DMX_SOURCE_DVR0) && swts)))
+    return -1;
+#endif
 
   printk ( "stop sh %d, pid %d, pt %d\n", pSession->session, dvbdmxfeed->pid, dvbdmxfeed->pes_type);
   //printk ( "%s(): demux = %p, context = %p, sesison = %p, pid = %d, type = %d, pes_type = %d>", __FUNCTION__, dvbdmxfeed->demux, pContext, pSession, dvbdmxfeed->pid, dvbdmxfeed->type, dvbdmxfeed->pes_type );
@@ -392,12 +407,23 @@ static int convert_source ( const dmx_source_t source)
   case DMX_SOURCE_FRONT2:
     tag = TSIN0;
     break;
-
   case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
 #endif
+
+#if !defined(ADB_BOX)
   case DMX_SOURCE_DVR0:
     tag = SWTS0;
     break;
+#endif
+
+#if defined(ADB_BOX)
+  case DMX_SOURCE_FRONT2:
+	tag = SWTS0;	//dvbt
+    break;
+  case DMX_SOURCE_DVR0:
+    tag = TSIN1;	//fake tsin dla DVR, nie moze byc swts bo jest uzywane w dvbt
+    break;
+#endif
 
   default:
     printk ( "%s(): invalid frontend source (%d)\n", __func__, source );

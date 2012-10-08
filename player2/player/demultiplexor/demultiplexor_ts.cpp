@@ -283,6 +283,20 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	if( Context->PidTable[Pid] == 0 )
 	    continue;
 
+#if defined(ADB_BOX)
+	// Discard Encrypted Packet
+
+	if ( Context->Base.BufferData[NewPacketStart+3] & 0x80 )
+	    {
+	    #if 0
+	    report( severity_error, "Demultiplexor_Ts_c::Demux - DISCARD Encrypted Packet (%02x %02x %02x %02x)\n",
+	    Context->Base.BufferData[NewPacketStart], Context->Base.BufferData[NewPacketStart+1],
+	    Context->Base.BufferData[NewPacketStart+2], Context->Base.BufferData[NewPacketStart+3] )
+	    #endif
+	    continue;
+	    }
+#endif
+
 	Entry           = Context->PidTable[Pid] - 1;
 	BaseStream      = &Context->Base.Streams[Entry];
 	Stream          = &Context->Streams[Entry];
@@ -317,6 +331,8 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	// Perform continuity check
 	//
 
+#if defined(ADB_BOX)
+#if 0 //test 18.02.2012	//==0 nie zawiesza sie przy trybie SCART na kanalach HD
 	/*if( Stream->ValidExpectedContinuityCount &&
 	    (DVB_CONTINUITY_COUNT(Header) != Stream->ExpectedContinuityCount) )
 	{
@@ -330,6 +346,22 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	    report( severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch.\n" );
 	    Player->InputGlitch( PlayerAllPlaybacks, BaseStream->Stream );
 	}*/
+#else
+	if( Stream->ValidExpectedContinuityCount &&
+	    (DVB_CONTINUITY_COUNT(Header) != Stream->ExpectedContinuityCount) )
+	{
+	    // 
+	    // Check for repeat packet - if so skip whole packet
+	    //
+
+	    if( ((DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f) == Stream->ExpectedContinuityCount )
+		continue;
+
+	    report( severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch.\n" );
+	    Player->InputGlitch( PlayerAllPlaybacks, BaseStream->Stream );
+	}
+#endif
+#endif
 
 	Stream->ExpectedContinuityCount       = (DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f;
 	Stream->ValidExpectedContinuityCount  = DeferredValidExpectedContinuityCount;

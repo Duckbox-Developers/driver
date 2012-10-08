@@ -27,11 +27,6 @@
 #include <linux/string.h>
 
 #include <linux/interrupt.h>                                                        
-//#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
-#include <linux/stm/pio.h>
-//#else
-//#include <linux/stpio.h>
-//#endif 
 
 #include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
@@ -60,21 +55,16 @@
 #define ISL6405_ENT2	0x20
 #define ISL6405_ISEL2	0x40
 
-extern int BoxType;
-enum{
-	BIALY,
-	CZARNY,
-	};
-
 static struct stpio_pin *pin_tx_diseq;
+static struct stpio_pin *pin_rx_diseq;
 
 static unsigned int verbose = 0;
-
-static unsigned char isl6423 = 0;
 
 static unsigned char isl6405_init_sr1 = 0;//0
 static unsigned char isl6405_vol_sr1 = 0;    //0
 static unsigned char isl6405_tone_sr1 = 0;     //0
+
+static unsigned char bska_init = 0;
 
 /* C/N in dB/10, NIRM/NIRL */
 static const struct stb0899_tab stb0899_cn_tab[] = {
@@ -259,14 +249,248 @@ static struct stb0899_tab stb0899_est_tab[] = {
 	{ 5721,	526017 },
 };
 
+/*
+* diseqc pwm by plfreebox@gmail.com
+*/
+#define DEBUG_DISEQC_PWM
 
+#ifdef DEBUG_DISEQC_PWM
+#define debug_diseqc_pwm(args...) printk(args)
+#else
+#define debug_diseqc_pwm(args...)
+#endif
 
+unsigned long pwm_registers;
 
+#define PWM0_VAL ( pwm_registers + 0x00 )
+#define PWM1_VAL ( pwm_registers + 0x04 )
+#define PWM0_CPT_VAL ( pwm_registers + 0x10 )
+#define PWM1_CPT_VAL ( pwm_registers + 0x14 )
+#define PWM0_CMP_VAL ( pwm_registers + 0x20 )
+#define PWM1_CMP_VAL ( pwm_registers + 0x24 )
+#define PWM0_CPT_EDGE ( pwm_registers + 0x30 )
+#define PWM1_CPT_EDGE ( pwm_registers + 0x34 )
+#define PWM0_CMP_OUT_VAL ( pwm_registers + 0x40 )
+#define PWM1_CMP_OUT_VAL ( pwm_registers + 0x44 )
+#define PWM_CTRL ( pwm_registers + 0x50 )
+#define PWM_INT_EN ( pwm_registers + 0x54 )
+#define PWM_INT_STA ( pwm_registers + 0x58 )
+#define PWM_INT_ACK ( pwm_registers + 0x5C )
+#define PWM_CNT PWM ( pwm_registers + 0x60 )
+#define PWM_CPT_CMP_CNT ( pwm_registers + 0x64 )
 
+struct stpio_pin*	pin_tx_diseqc1;
+struct stpio_pin*	pin_tx_diseqc2;
 
+static volatile unsigned char pwm_diseqc_buf1[200];
+static volatile unsigned char pwm_diseqc_buf1_len=0;
+static volatile unsigned char pwm_diseqc_buf1_pos=0;
 
+static volatile unsigned char pwm_diseqc_buf2[200];
+static volatile unsigned char pwm_diseqc_buf2_len=0;
+static volatile unsigned char pwm_diseqc_buf2_pos=0;
 
+static irqreturn_t pwm_diseqc_irq(int irq, void *dev_id)
+{
+	writel(0x001,PWM_INT_ACK);
 
+	if (pwm_diseqc_buf1_len==0) stpio_set_pin (pin_tx_diseqc1, 0);
+	if (pwm_diseqc_buf2_len==0) stpio_set_pin (pin_tx_diseqc2, 0);
+
+	if ((pwm_diseqc_buf1_len==0)&&(pwm_diseqc_buf2_len==0))
+	{
+		writel(0x000,PWM_INT_EN);
+		return IRQ_HANDLED;
+	}
+
+	if (pwm_diseqc_buf1_len>0)
+	{
+		if (pwm_diseqc_buf1[pwm_diseqc_buf1_pos]==1) 
+			stpio_set_pin (pin_tx_diseqc1, 1);
+		else
+			stpio_set_pin (pin_tx_diseqc1, 0);
+		pwm_diseqc_buf1_pos=pwm_diseqc_buf1_pos+1;pwm_diseqc_buf1_len=pwm_diseqc_buf1_len-1;
+	}
+	
+	if (pwm_diseqc_buf2_len>0)
+	{
+		if (pwm_diseqc_buf2[pwm_diseqc_buf2_pos]==1) 
+			stpio_set_pin (pin_tx_diseqc2, 1);
+		else
+			stpio_set_pin (pin_tx_diseqc2, 0);
+		pwm_diseqc_buf2_pos=pwm_diseqc_buf2_pos+1;pwm_diseqc_buf2_len=pwm_diseqc_buf2_len-1;
+	}
+	
+	return IRQ_HANDLED;
+}
+
+static int pwm_wait_diseqc1_idle ( int timeout )
+{
+    unsigned long start = jiffies;
+    int status;
+
+	while(1)
+	{
+		if (pwm_diseqc_buf1_len==0) break;
+        if (jiffies - start > timeout) {
+            debug_diseqc_pwm ("%s: timeout!!\n", __FUNCTION__);
+            return -ETIMEDOUT;
+        }
+        msleep(10);
+    };
+
+    return 0;
+}
+
+static int pwm_send_diseqc1_burst (struct dvb_frontend* fe, fe_sec_mini_cmd_t burst)
+{
+    int i,j;
+
+	if (pwm_wait_diseqc1_idle ( 100) < 0)
+        return -ETIMEDOUT;
+
+	pwm_diseqc_buf1_pos=1;
+	pwm_diseqc_buf1_len=0;
+
+	//dodanie pustego przrwania dla wyrownia czasu przepelnienia licznika
+	pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+
+	switch(burst)
+	{
+        case SEC_MINI_A:
+			debug_diseqc_pwm("%s Tone=A\n",__FUNCTION__);
+            for (i=0;i<8;i++)
+            {
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+			}
+			pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+			break;
+        case SEC_MINI_B:
+			debug_diseqc_pwm("%s Tone=B\n",__FUNCTION__);
+            for (i=0;i<8;i++)
+            {	
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+			}
+			pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+            break;
+	}
+	pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+	writel(0x001,PWM_INT_EN);
+
+	if (pwm_wait_diseqc1_idle ( 100) < 0)
+        return -ETIMEDOUT;
+
+	return 0;
+}
+
+static int pwm_diseqc1_send_msg ( struct dvb_frontend* fe,
+        struct dvb_diseqc_master_cmd *m)
+{
+    int i,j;
+
+    debug_diseqc_pwm("%s: msg len %x\n",__FUNCTION__,m->msg_len);
+
+	if (pwm_wait_diseqc1_idle ( 100) < 0)
+    return -ETIMEDOUT;
+	
+	pwm_diseqc_buf1_pos=1;
+	pwm_diseqc_buf1_len=0;
+
+	//dodanie pustego przrwania dla wyrownia czasu przepelnienia licznika
+	pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+	
+        for (j=0;j<m->msg_len;j++)
+        {
+            unsigned char byte = m->msg[j];
+            unsigned char parity = 0;
+            for (i=0;i<8;i++)
+        	{
+				if((byte&128)==128) 
+				{	//diseq 1
+					parity=parity+1;
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+				}
+				else
+				{	//diseq 0
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+					pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+				}
+				byte=byte<<1;
+		}
+			if((parity&1)==1)
+			{	//diseq 0
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+			}
+			else
+			{	//diseq 1
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=1;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+				pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+			}
+        }
+	pwm_diseqc_buf1_len=pwm_diseqc_buf1_len+1;pwm_diseqc_buf1[pwm_diseqc_buf1_len]=0;
+	writel(0x001,PWM_INT_EN);
+
+	if (pwm_wait_diseqc1_idle ( 100) < 0)
+        return -ETIMEDOUT;
+	
+	return 0;
+}
+
+int pwm_diseqc_init(void)
+{
+	debug_diseqc_pwm("PWM Diseqc Init\n");
+	pwm_registers = (unsigned long) ioremap(0x18010000, 0x100);
+
+	pin_tx_diseqc1 = stpio_request_pin (5, 5, "pin_tx_diseqc1", STPIO_OUT);
+	if (pin_tx_diseqc1==NULL) {debug_diseqc_pwm("FAIL : request pin 5 5\n");goto err;}
+	stpio_set_pin (pin_tx_diseqc1, 0);
+
+	pin_tx_diseqc2 = stpio_request_pin (2, 5, "pin_tx_diseqc2", STPIO_OUT);
+	if (pin_tx_diseqc2==NULL) {debug_diseqc_pwm("FAIL : request pin 2 5\n");goto err;}
+	stpio_set_pin (pin_tx_diseqc2, 0);
+
+	if (request_irq(126, pwm_diseqc_irq ,IRQF_DISABLED , "timer_pwm", NULL)) 
+		{debug_diseqc_pwm("FAIL : request irq pwm\n");goto err;}
+
+	//500us=2000hz
+	//27000000/2000=/256=52
+	//100us=10000hz
+	//27000000/10000=2700=10
+	//reg=52;//500us
+	//reg=10;//100us
+	//reg=52;
+	//reg=(reg&0x0f)+((reg&0xf0)<<(11-4))+PWM_CTRL_PWM_EN;
+	//debug("reg div = 0x%x\n", reg);
+	writel(0x1a04,PWM_CTRL);//generowanie przerwania co 500us
+	writel(0x000,PWM0_VAL);
+	writel(0x000,PWM_INT_EN);
+
+	pwm_diseqc_buf1_pos=1;
+	pwm_diseqc_buf1_len=0;
+
+	pwm_diseqc_buf2_pos=1;
+	pwm_diseqc_buf2_len=0;
+
+	debug_diseqc_pwm("PWM Diseqc Init : OK\n");
+	return 0;
+	err:
+	iounmap( pwm_registers );
+	return -ENODEV;
+}
+
+/*
+* diseqc sti7100
+*/
 
 static unsigned long diseqc_registers;
 static volatile int diseqc_int_flag;
@@ -294,7 +518,7 @@ static int stm_wait_diseqc_idle ( int timeout )
     unsigned long start = jiffies;
     int status;
 
-    printk ("%s\n", __FUNCTION__);
+    ////printk ("%s\n", __FUNCTION__);
 
     while ((status = readl(DSQ_TX_STA)) & 0x8 ) {
         if (jiffies - start > timeout) {
@@ -315,7 +539,7 @@ static int stm_wait_diseqc_idle ( int timeout )
 static int stm_send_diseqc_burst (struct dvb_frontend* fe, fe_sec_mini_cmd_t burst)
 {
     printk ("%s\n", __FUNCTION__);
-	return 0;
+//	return 0;
 	
     //fe->ops->set_voltage(fe, SEC_VOLTAGE_OFF);
 
@@ -332,13 +556,12 @@ static int stm_send_diseqc_burst (struct dvb_frontend* fe, fe_sec_mini_cmd_t bur
         case SEC_MINI_A:
 			printk("!!!!!!! A !!!!!!\n");
             writel ( 0x01, DSQ_TX_MSG_CFG );
-            writel ( 0x01 | (0x7f << 9), DSQ_TX_MSG_CFG );
-//            writel ( 0x01 | (0x09 << 9), DSQ_TX_MSG_CFG );
+            writel ( 0x01 | (0x09 << 9), DSQ_TX_MSG_CFG );
             break;
         case SEC_MINI_B:
 			printk("!!!!!!! B !!!!!!\n");
-            writel ( 0x01, DSQ_TX_MSG_CFG );
-            writel ( 0x01 | (0x09 << 9), DSQ_TX_MSG_CFG );
+            writel ( 0x03, DSQ_TX_MSG_CFG );
+            writel ( 0x03 | (0x09 << 9), DSQ_TX_MSG_CFG );
             break;
     }
 
@@ -420,19 +643,42 @@ static irqreturn_t stm_diseqc_irq(int irq, void *dev_id, struct pt_regs *regs)
 
     return IRQ_HANDLED;
 }
-//#defined IRQF_INTERRUPT SA_INTERRUPT 
+ 
+#define CLOCKGEN_PLL1_CFG	(0xb9213000 + 0x24)
+#define CONFIG_SH_EXTERNAL_CLOCK 27000000
+
+static int get_pll_freq(unsigned long addr)
+{
+	unsigned long freq, data, ndiv, pdiv, mdiv;
+
+	data = readl(addr);
+	mdiv = (data >>  0) & 0xff;
+	ndiv = (data >>  8) & 0xff;
+	pdiv = (data >> 16) & 0x7;
+	freq = (((2 * (CONFIG_SH_EXTERNAL_CLOCK / 1000) * ndiv) / mdiv) /
+		(1 << pdiv)) * 1000;
+
+	return freq;
+}
+
 /* 0x18068000 */
 int stm_diseqc_init(void)
 {
+	int f;
     diseqc_registers = ioremap(0x18068000,0x100);	
 
     if (request_irq(0x81, stm_diseqc_irq , IRQF_DISABLED , "Diseqc", NULL)) goto err1;
 	
     stpio_request_pin(5,5,"DiseqC", STPIO_ALT_OUT); 
 
-    writel(    2, DSQ_TX_PRESCALER );
+	f=get_pll_freq(CLOCKGEN_PLL1_CFG);
+	f = ((f / 4) / 44000) / 2;
+
+	writel(    2, DSQ_TX_PRESCALER );
+    writel(f, DSQ_TX_SUBCARR_DIV );
 //  writel( 1511, DSQ_TX_SUBCARR_DIV );	//dla 133mhz
-    writel( 1136, DSQ_TX_SUBCARR_DIV );	//dla 100mhz
+//  writel( 1136, DSQ_TX_SUBCARR_DIV );	//dla 100mhz
+//  writel( 1090, DSQ_TX_SUBCARR_DIV );	//dla 96mhz
 
     writel(   33, DSQ_TX_SYMBOL_PER );
     writel(   22, DSQ_TX_SYMBOL0_ONTIME );
@@ -893,13 +1139,13 @@ static void stb0899_init_calc(struct stb0899_state *state)
 	/* DVBS2 Initial calculations	*/
 	/* Set AGC value to the middle	*/
 	internal->agc_gain		= 8154;
-	//reg = STB0899_READ_S2REG(STB0899_S2DEMOD, IF_AGC_CNTRL);
-	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000000,0xf320);
+	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, IF_AGC_CNTRL);
+//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000000,0xf320);
 	STB0899_SETFIELD_VAL(IF_GAIN_INIT, reg, internal->agc_gain);
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_IF_AGC_CNTRL, STB0899_OFF0_IF_AGC_CNTRL, reg);
 
-	//reg = STB0899_READ_S2REG(STB0899_S2DEMOD, RRC_ALPHA);
-	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000020,0xf35c);
+	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, RRC_ALPHA);
+//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000020,0xf35c);
 	internal->rrc_alpha		= STB0899_GETFIELD(RRC_ALPHA, reg);
 
 	internal->center_freq		= 0;
@@ -1145,20 +1391,15 @@ static int stb0899_init(struct dvb_frontend *fe)
 	dprintk(state->verbose, FE_DEBUG, 1, "Initializing STB0899 ... ");
 
 	//--------------------------------------------------------------------------
+
+	if(bska_init==0)
+	{
+		bska_init=1;
+
+		pin_rx_diseq = stpio_request_pin (5, 4, "pin_rx_diseq", STPIO_IN);
+
 	stm_diseqc_init();
 	
-	if(BoxType == CZARNY)
-	{
-		b=ISL6405_EN1+ISL6405_DCL;	//dynamic limit
-		isl6405_init_sr1=b;
-		ret=i2c_transfer(state->i2c, &msg, 1);
-		if (ret=!1) printk("Error: ISL6405\n");
-	}
-
-	if((isl6423==0)&&(BoxType == BIALY))
-	{
-		printk("ISL6423 Config\n");
-
 		b=0x10;
 		ret=i2c_transfer(state->i2c, &msg, 1);
 		if (ret=!1) printk("Error:ISL6423 SR1\n");
@@ -1170,11 +1411,11 @@ static int stb0899_init(struct dvb_frontend *fe)
 		if (ret=!1) printk("Error:ISL6423 SR2\n");
 
 		b=0x5b;//0x49;//4a-635mA 4b-800mA 5b-dynamic_limit
+		//0x59 - 515mA + dynamic limit
 		ret=i2c_transfer(state->i2c, &msg, 1);
-		if (ret=!1) printk("Error:ISL6423 SR3\n");
-	
-		isl6423=1;
+		if (ret=!1) printk("Error:ISL6423 SR3\n");	
 	}
+
 	//--------------------------------------------------------------------------
 	
 //	mutex_init(&state->search_lock);
@@ -1342,12 +1583,12 @@ static int stb0899_read_snr(struct dvb_frontend *fe, u16 *snr)
 	case SYS_DVBS2:
 		if (internal->lock) {
 			
-			//reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_CNTRL1);
-			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf320);
+			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_CNTRL1);
+//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf320);
 			quant = STB0899_GETFIELD(UWP_ESN0_QUANT, reg);
 
-			//reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_STAT2);
-			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf32c);
+			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_STAT2);
+//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf32c);
 			est = STB0899_GETFIELD(ESN0_EST, reg);
 
 			if (est == 1)
@@ -1417,8 +1658,8 @@ static int stb0899_read_status(struct dvb_frontend *fe, enum fe_status *status)
 	case SYS_DVBS2:
 		dprintk(state->verbose, FE_DEBUG, 1, "Delivery system DVB-S2");
 		if (internal->lock) {
-			//reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_STAT2);
-			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf340);
+			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_STAT2);
+//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf340);
 			if (STB0899_GETFIELD(UWP_LOCK, reg) && STB0899_GETFIELD(CSM_LOCK, reg)) {
 				*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
 				dprintk(state->verbose, FE_DEBUG, 1,
@@ -1507,6 +1748,9 @@ static int stb0899_read_ber(struct dvb_frontend *fe, u32 *ber)
 	return 0;
 }
 
+enum { VOLTAGE_13 = 1, VOLTAGE_18  = 0 };
+enum { VOLTAGE_ON = 1, VOLTAGE_OFF = 0 };
+
 static int stb0899_set_voltage(struct dvb_frontend *fe, fe_sec_voltage_t voltage)
 {
 	struct stb0899_state *state = fe->demodulator_priv;
@@ -1517,11 +1761,6 @@ static int stb0899_set_voltage(struct dvb_frontend *fe, fe_sec_voltage_t voltage
 				.buf = &b,
 				.len = 1 };
 
-    printk ("%s\n", __FUNCTION__);
-	
-
-if(BoxType==BIALY)
-{
 	switch (voltage) {
 	case SEC_VOLTAGE_13:
     	printk("BSKA SEC_VOLTAGE_13 POL:V\n");
@@ -1544,38 +1783,6 @@ if(BoxType==BIALY)
 	default:
 		return -EINVAL;
 	}
-}
-
-if(BoxType==CZARNY)
-{
-	
-	switch (voltage) {
-	case SEC_VOLTAGE_13:
-		printk("BSLA SEC_VOLTAGE_13 POL:V\n");
-		isl6405_vol_sr1=0;
-		b=isl6405_init_sr1+isl6405_vol_sr1+isl6405_tone_sr1;//+ISL6405_EN1+ISL6405_ISEL1;
-		ret=i2c_transfer(state->i2c, &msg, 1);
-		if (ret=!1) printk("stb0899_set_voltage:SEC_VOLTAGE_13 Error ISL6405\n");
-		break;
-	case SEC_VOLTAGE_18:
-		printk("BSLA SEC_VOLTAGE_18 POL:H\n");
-		isl6405_vol_sr1=ISL6405_VSEL1;
-		b=isl6405_init_sr1+isl6405_vol_sr1+isl6405_tone_sr1;//;ISL6405_EN1+ISL6405_VSEL1+ISL6405_ISEL1;
-		ret=i2c_transfer(state->i2c, &msg, 1);
-		if (ret=!1) printk("stb0899_set_voltage:SEC_VOLTAGE_18 Error ISL6405\n");
-		break;
-	case SEC_VOLTAGE_OFF:
-		printk("BSLA SEC_VOLTAGE_OFF\n");
-		isl6405_vol_sr1=0;
-		isl6405_tone_sr1=0;
-		b=0;
-		ret=i2c_transfer(state->i2c, &msg, 1);
-		if (ret=!1) printk("stb0899_set_voltage:SEC_VOLTAGE_OFF Error ISL6405\n");
-		break;
-	default:
-		return -EINVAL;
-	}
-}
 	return 0;
 }
 
@@ -1591,49 +1798,22 @@ static int stb0899_set_tone(struct dvb_frontend *fe, fe_sec_tone_mode_t tone)
 				.buf = &b,
 				.len = 1 };
 
-printk ("%s\n", __FUNCTION__);
-
-if (BoxType == CZARNY)
-	{
 		switch (tone) {
 		case SEC_TONE_ON:
-			//printk("SEC_TONE_ON BSLA\n");
-			isl6405_tone_sr1=ISL6405_ENT1;	//22khz internal
-			b=isl6405_init_sr1+isl6405_vol_sr1+isl6405_tone_sr1;
-			ret=i2c_transfer(state->i2c, &msg, 1);
-			if (ret=!1) printk("Error:ISL6405\n");
-			break;
-		case SEC_TONE_OFF:
-			//printk("SEC_TONE_OFF BSLA\n");
-			isl6405_tone_sr1=0;	//22khz external
-			b=isl6405_init_sr1+isl6405_vol_sr1+isl6405_tone_sr1;
-			ret=i2c_transfer(state->i2c, &msg, 1);
-			if (ret=!1) printk("Error:ISL6405\n");
-			break;
-		default:
-			return -EINVAL;
-		}
-	}
-
-if (BoxType == BIALY)
-	{
-		switch (tone) {
-		case SEC_TONE_ON:
-			//printk("SEC_TONE_ON BSKA_DISEQ_STI7100\n");
-			b=0x34;
+			printk("SEC_TONE_ON BSKA_DISEQ_STI7100\n");
+			b=0x34;//int 22khz enable
 			ret=i2c_transfer(state->i2c, &msg, 1);
 			if (ret=!1) printk("Error:ISL6423 SR2\n");
 			break;
 		case SEC_TONE_OFF:
-			//printk("SEC_TONE_OFF BSKA_DISEQ_STI7100\n");
-			b=0x2c;
+			printk("SEC_TONE_OFF BSKA_DISEQ_STI7100\n");
+			b=0x2c;//2c-ext22khz 24-int22khz extmod
 			ret=i2c_transfer(state->i2c, &msg, 1);
 			if (ret=!1) printk("Error:ISL6423 SR2\n");
 			break;
 		default:
 			return -EINVAL;
 		}
-	}
 	
 	return 0;
 }
@@ -1643,21 +1823,12 @@ int stb0899_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 	int i2c_stat;
 	struct stb0899_state *state = fe->demodulator_priv;
 
-	i2c_stat = stb0899_read_reg(state, STB0899_I2CRPT);
-	if (i2c_stat < 0)
-		goto err;
+// poprawka dla niedzialjacych glowic z komunikatem strojenie nieudane
+	i2c_stat =  0x48|0x80;
+		
+	if (stb0899_write_reg(state, STB0899_I2CRPT, i2c_stat) < 0)
+			goto err;
 
-	if (enable) {
-		dprintk(state->verbose, FE_DEBUG, 1, "Enabling I2C Repeater ...");
-		i2c_stat |=  STB0899_I2CTON;
-		if (stb0899_write_reg(state, STB0899_I2CRPT, i2c_stat) < 0)
-			goto err;
-	} else {
-		dprintk(state->verbose, FE_DEBUG, 1, "Disabling I2C Repeater ...");
-		i2c_stat &= ~STB0899_I2CTON;
-		if (stb0899_write_reg(state, STB0899_I2CRPT, i2c_stat) < 0)
-			goto err;
-	}
 	return 0;
 err:
 	dprintk(state->verbose, FE_ERROR, 1, "I2C Repeater control failed");
@@ -1690,18 +1861,18 @@ int stb0899_get_dev_id(struct stb0899_state *state)
 	dprintk(state->verbose, FE_ERROR, 1, "Device ID=[%d], Release=[%d]",
 		chip_id, release);
 
-	//CONVERT32(STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CORE_ID), (char *)&demod_str);
-	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf334),(char *)&demod_str);
+	CONVERT32(STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CORE_ID), (char *)&demod_str);
+//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf334),(char *)&demod_str);
 	
-	//demod_ver = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_VERSION_ID);
-	demod_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf33c);
+	demod_ver = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_VERSION_ID);
+//	demod_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf33c);
 	
 	dprintk(state->verbose, FE_ERROR, 1, "Demodulator Core ID=[%s], Version=[%d]", (char *) &demod_str, demod_ver);
-	//CONVERT32(STB0899_READ_S2REG(STB0899_S2FEC, FEC_CORE_ID_REG), (char *)&fec_str);
-	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c), (char *)&fec_str);
+	CONVERT32(STB0899_READ_S2REG(STB0899_S2FEC, FEC_CORE_ID_REG), (char *)&fec_str);
+//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c), (char *)&fec_str);
 	
-	//fec_ver = STB0899_READ_S2REG(STB0899_S2FEC, FEC_VER_ID_REG);
-	fec_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c);
+	fec_ver = STB0899_READ_S2REG(STB0899_S2FEC, FEC_VER_ID_REG);
+//	fec_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c);
 	
 	if (! (chip_id > 0)) {
 		dprintk(state->verbose, FE_ERROR, 1, "couldn't find a STB 0899");
@@ -1839,6 +2010,10 @@ static void stb0899_set_iterations(struct stb0899_state *state)
 //	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, reg);
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
+
+//	bug SR30000 - patch tBox Team
+//	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_MAX_ITER, STB0899_OFF0_MAX_ITER, iter_scale);
+//	stb0899_write_s2reg(state, STB0899_S2FEC, STB0899_BASE_ITER_SCALE, STB0899_OFF0_ITER_SCALE, iter_scale);
 }
 
 static int stb0899_set_property(struct dvb_frontend *fe, struct dtv_property* tvp)
@@ -2295,9 +2470,9 @@ static struct dvb_frontend_ops stb0899_ops = {
 
 	.info = {
 		.name				= "STB0899 Multistandard",
-		//.type				= FE_QPSK, /* with old API */
-		//.frequency_min		= 950000,
-		//.frequency_max 		= 2150000,
+		.type				= FE_QPSK, /* with old API */
+		.frequency_min		= 950000,
+		.frequency_max 		= 2150000,
 		.frequency_stepsize	= 0,
 		.frequency_tolerance= 0,
 		.symbol_rate_min 	=  1000000,

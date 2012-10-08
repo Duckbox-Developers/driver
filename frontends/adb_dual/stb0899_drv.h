@@ -39,12 +39,6 @@
 #define STB0899_SYNC_FORCED		4
 #define STB0899_FECMODE_DSS		5
 
-
-enum stb0899_demod {
-        TUNER1 = 1,
-	TUNER2 
-                };
-
 struct stb0899_s1_reg {
 	u16	address;
 	u8	data;
@@ -112,7 +106,8 @@ struct stb0899_config {
 
 	const struct stb0899_postproc	*postproc;
 
-	
+	struct stpio_pin	*lnb_enable;
+	struct stpio_pin	*lnb_vsel;	// 13/18V select pin
 
 	enum stb0899_inversion		inversion;
 
@@ -149,61 +144,6 @@ struct stb0899_config {
 	u32	crl_nco_bits;
 	u32	ldpc_max_iter;
 
-;
-	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
-	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
-	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
-	int (*tuner_get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
-	int (*tuner_set_rfsiggain)(struct dvb_frontend *fe, u32 rf_gain);
-};
-
-struct stb0899_config_1 {
-	const struct stb0899_s1_reg	*init_dev;
-	const struct stb0899_s2_reg	*init_s2_demod;
-	const struct stb0899_s1_reg	*init_s1_demod;
-	const struct stb0899_s2_reg	*init_s2_fec;
-	const struct stb0899_s1_reg	*init_tst;
-
-	const struct stb0899_postproc	*postproc;
-
-	
-
-	enum stb0899_inversion		inversion;
-
-	u32	xtal_freq;
-
-	u8	demod_address;
-	u8	ts_output_mode;
-	u8	block_sync_mode;
-	u8	ts_pfbit_toggle;
-
-	u8	clock_polarity;
-	u8	data_clk_parity;
-	u8	fec_mode;
-	u8	data_output_ctl;
-	u8	data_fifo_mode;
-	u8	out_rate_comp;
-	u8	i2c_repeater;
-//	int	inversion;
-	int	lo_clk;
-	int	hi_clk;
-
-	u32	esno_ave;
-	u32	esno_quant;
-	u32	avframes_coarse;
-	u32	avframes_fine;
-	u32	miss_threshold;
-	u32	uwp_threshold_acq;
-	u32	uwp_threshold_track;
-	u32	uwp_threshold_sof;
-	u32	sof_search_timeout;
-
-	u32	btr_nco_bits;
-	u32	btr_gain_shift_offset;
-	u32	crl_nco_bits;
-	u32	ldpc_max_iter;
-
-;
 	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
 	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
 	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
@@ -212,9 +152,6 @@ struct stb0899_config_1 {
 };
 
 extern struct dvb_frontend *stb0899_attach(struct stb0899_config *config,
-					   struct i2c_adapter *i2c,
-					  enum stb0899_demod demod );
-
-
+					   struct i2c_adapter *i2c);
 
 #endif

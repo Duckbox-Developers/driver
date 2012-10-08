@@ -29,9 +29,10 @@ unsigned char t_vol;
 /* hold old values for standby */
 unsigned char ft_stnby=0;
 
+#if !defined(ADB_BOX)
 struct stpio_pin*	wss_pin;
 struct stpio_pin*	vid_pin;
-
+#endif
 /* ---------------------------------------------------------------------- */
  
 int fake_avs_src_sel( struct i2c_client *client, int src )
@@ -54,7 +55,9 @@ inline int fake_avs_standby( struct i2c_client *client, int type )
 	{
 		if (ft_stnby == 0)
 		{
+#if !defined(ADB_BOX)
 			stpio_set_pin (vid_pin, ft_stnby);
+#endif
 			ft_stnby = 1;
 		}
 		else
@@ -64,7 +67,9 @@ inline int fake_avs_standby( struct i2c_client *client, int type )
 	{
 		if (ft_stnby == 1)
 		{
+#if !defined(ADB_BOX)
 			stpio_set_pin (vid_pin, ft_stnby);
+#endif
 			ft_stnby = 0;
 		}
 		else
@@ -158,15 +163,21 @@ int fake_avs_set_wss( struct i2c_client *client, int vol )
 {
 	if (vol == SAA_WSS_43F)
 	{
+#if !defined(ADB_BOX)
 		stpio_set_pin (wss_pin, 0);
+#endif
 	}
 	else if (vol == SAA_WSS_169F)
 	{
+#if !defined(ADB_BOX)
 		stpio_set_pin (wss_pin, 0);
+#endif
 	}
 	else if (vol == SAA_WSS_OFF)
 	{
+#if !defined(ADB_BOX)
 		stpio_set_pin (wss_pin, 1);
+#endif
 	}
 	else
 	{
@@ -320,6 +331,7 @@ int fake_avs_command_kernel(struct i2c_client *client, unsigned int cmd, void *a
 
 int fake_avs_init(struct i2c_client *client)
 {
+#if !defined(ADB_BOX)
   wss_pin = stpio_request_pin (3, 4, "WSS enable", STPIO_OUT);
   vid_pin = stpio_request_pin (3, 3, "Video enab", STPIO_OUT);
 
@@ -334,6 +346,7 @@ int fake_avs_init(struct i2c_client *client)
 
   stpio_set_pin (wss_pin, 1);
   stpio_set_pin (vid_pin, 1);
+#endif
 
   return 0;
 }

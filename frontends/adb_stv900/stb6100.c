@@ -53,7 +53,7 @@ static unsigned int verbose = 0;
 			printk(format, ##arg);						\
 	}										\
 } while(0)
-extern tuner1;
+
 struct stb6100_lkup {
 	u32 val_low;
 	u32 val_high;
@@ -129,18 +129,14 @@ static void stb6100_normalise_regs(u8 regs[])
 static int stb6100_read_regs(struct stb6100_state *state, u8 regs[])
 {
 	int rc;
-
 	struct i2c_msg msg = {
 		.addr	= state->config->tuner_address,
 		.flags	= I2C_M_RD,
 		.buf	= regs,
 		.len	= STB6100_NUMREGS
 	};
-	
 
-	printk("ADRES = %x\n\t",msg.addr);
-	rc = i2c_transfer(state->i2c, &msg,1);
-       
+	rc = i2c_transfer(state->i2c, &msg, 1);
 	if (unlikely(rc != 1)) {
 		dprintk(verbose, FE_ERROR, 1, "Read (0x%x) err, rc=[%d]",
 			state->config->tuner_address, rc);
@@ -153,7 +149,7 @@ static int stb6100_read_regs(struct stb6100_state *state, u8 regs[])
 		dprintk(verbose, FE_DEBUG, 1, "    Read from 0x%02x", state->config->tuner_address);
 		for (i = 0; i < STB6100_NUMREGS; i++)
 			dprintk(verbose, FE_DEBUG, 1, "        %s: 0x%02x", stb6100_regnames[i], regs[i]);
-	} 
+	}
 	return 0;
 }
 
@@ -175,17 +171,14 @@ static int stb6100_write_reg_range(struct stb6100_state *state, u8 buf[], int st
 {
 	int rc;
 	u8 cmdbuf[len + 1];
-
 	struct i2c_msg msg = {
 		.addr	= state->config->tuner_address,
 		.flags	= 0,
 		.buf	= cmdbuf,
 		.len	= len + 1
 	};
-	
 
-
-if (unlikely(start < 1 || start + len > STB6100_NUMREGS)) {
+	if (unlikely(start < 1 || start + len > STB6100_NUMREGS)) {
 		dprintk(verbose, FE_ERROR, 1, "Invalid register range %d:%d",
 			start, len);
 		return -EINVAL;
@@ -200,16 +193,12 @@ if (unlikely(start < 1 || start + len > STB6100_NUMREGS)) {
 		for (i = 0; i < len; i++)
 			dprintk(verbose, FE_DEBUG, 1, "        %s: 0x%02x", stb6100_regnames[start + i], buf[i]);
 	}
-	
-printk("ADRES = %x\n\t",msg.addr);
-	rc = i2c_transfer(state->i2c, &msg, 1);	
-	
-
+	rc = i2c_transfer(state->i2c, &msg, 1);
 	if (unlikely(rc != 1)) {
 		dprintk(verbose, FE_ERROR, 1, "(0x%x) write err [%d:%d], rc=[%d]",
 			(unsigned int)state->config->tuner_address, start, len,	rc);
 		return -EREMOTEIO;
-	} 
+	}
 	return 0;
 }
 
@@ -231,17 +220,21 @@ static int stb6100_write_regs(struct stb6100_state *state, u8 regs[])
 
 static int stb6100_get_status(struct dvb_frontend *fe, u32 *status)
 {
-	int rc;
+	int rc,i;
 	struct stb6100_state *state = fe->tuner_priv;
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 1);
 
 	if ((rc = stb6100_read_reg(state, STB6100_LD)) < 0)
 		return rc;
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)	//fe->ops.i2c_gate_ctrl(fe, 0);
 
-	return (rc & STB6100_LD_LOCK) ? TUNER_STATUS_LOCKED : 0;
+	i=(rc & STB6100_LD_LOCK) ? TUNER_STATUS_LOCKED : 0;
+	dprintk(verbose, FE_DEBUG,1, "!!! stb6100_get_status LOCK:%d ",i);
+	printk("!!! stb6100_get_status LOCK:%d !!!\n",i);
+
+	return i;
 }
 
 
@@ -250,8 +243,11 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 	int rc;
 	u8 f;
 	struct stb6100_state *state = fe->tuner_priv;
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+
+	dprintk(verbose, FE_DEBUG,1, "!!! stb6100_get_bandwidth");	
+	
+	//if (fe->ops.i2c_gate_ctrl)
+                       // fe->ops.i2c_gate_ctrl(fe, 1);
 
 	if ((rc = stb6100_read_reg(state, STB6100_F)) < 0)
 		return rc;
@@ -261,8 +257,8 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 
 	*bandwidth = state->bandwidth = state->status.bandwidth * 1000;
 	dprintk(verbose, FE_DEBUG, 1, "bandwidth = %u Hz", state->bandwidth);
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 0);
 
 	return 0;
 }
@@ -272,8 +268,13 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 	u32 tmp;
 	int rc;
 	struct stb6100_state *state = fe->tuner_priv;
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+
+	//printk("!!!!!!!!!!!!!! stb6100_set_bandwidth !!!!!!!!!!!!!!!\n");
+	dprintk(verbose, FE_DEBUG,1,"!!! stb6100_set_bandwidth");
+
+	
+	//if (fe->ops.i2c_gate_ctrl)
+                        //e->ops.i2c_gate_ctrl(fe, 1);
 
 	dprintk(verbose, FE_DEBUG, 1, "set bandwidth to %u Hz", bandwidth);
 
@@ -296,8 +297,8 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 	msleep(1);
 	if ((rc = stb6100_write_reg(state, STB6100_FCCK, 0x0d)) < 0)
 		return rc;
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 0);
 
 	return 0;
 }
@@ -309,8 +310,11 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 	int psd2, odiv;
 	struct stb6100_state *state = fe->tuner_priv;
 	u8 regs[STB6100_NUMREGS];
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+
+	dprintk(verbose, FE_DEBUG,1, "!!! stb6100_get_frequency");
+	
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 1);
 
 	if ((rc = stb6100_read_regs(state, regs)) < 0)
 		return rc;
@@ -325,8 +329,8 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 	dprintk(verbose, FE_DEBUG, 1,
 		"frequency = %u kHz, odiv = %u, psd2 = %u, fxtal = %u kHz, fvco = %u kHz, N(I) = %u, N(F) = %u",
 		state->frequency, odiv, psd2, state->reference,	fvco, nint, nfrac);
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 0);
 
 	return 0;
 }
@@ -350,8 +354,11 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 	u8 regs[STB6100_NUMREGS];
 	u8 g, psd2, odiv;
 
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+	//printk("!!!!!!!!!!!!!! stb6100_set_frequency !!!!!!!!!!!!!!!\n");
+	dprintk(verbose, FE_DEBUG,1, "!!! stb6100_set_frequency");
+	
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 1);
 
 
 	if ((rc = stb6100_read_regs(state, regs)) < 0)
@@ -452,8 +459,8 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 		return rc;
 
 	msleep(30);
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 0);
 
 	return 0;
 }
@@ -466,8 +473,12 @@ static int stb6100_sleep(struct dvb_frontend *fe)
 
 static int stb6100_init(struct dvb_frontend *fe)
 {
+
 	struct stb6100_state *state = fe->tuner_priv;
 	struct tuner_state *status = &state->status;
+	int i;
+	printk(">> !!!!!!!!!!!!!!!!!!!! stb6100_init !!!!!!!!!!!!!!!!!!!\n");
+	
 
 	status->tunerstep	= 125000;
 	status->ifreq		= 0;
@@ -478,7 +489,14 @@ static int stb6100_init(struct dvb_frontend *fe)
 	state->reference	= status->refclock / 1000;	/* kHz	*/
 
 	/* Set default bandwidth.	*/
-	return stb6100_set_bandwidth(fe, state->bandwidth);
+//if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 1);	
+	i=stb6100_set_bandwidth(fe, state->bandwidth);
+//if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);	
+
+	printk("<< !!!!!!!!!!!!!!!!!!!! stb6100_init !!!!!!!!!!!!!!!!!!!\n");
+	
+return i;
+	
 }
 #if 0
 static int stb6100_get_state(struct dvb_frontend *fe,
@@ -538,8 +556,8 @@ static int stb6100_set_params(struct dvb_frontend *fe, struct dvb_frontend_param
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	u32 srate, frequency;
 
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 1);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 1);
 
 	if (fe->ops.set_property && fe->ops.get_property) {
 		dprintk(verbose, FE_DEBUG, 1, "Get Frontend parameters");
@@ -555,8 +573,8 @@ static int stb6100_set_params(struct dvb_frontend *fe, struct dvb_frontend_param
 	stb6100_set_frequency(fe, frequency);
 	stb6100_set_bandwidth(fe, srate);/* or srate * 2 ? */
 
-	if (fe->ops.i2c_gate_ctrl)
-                        fe->ops.i2c_gate_ctrl(fe, 0);
+	//if (fe->ops.i2c_gate_ctrl)
+                        //fe->ops.i2c_gate_ctrl(fe, 0);
 
 	return 0;
 }
@@ -584,12 +602,9 @@ static struct dvb_tuner_ops stb6100_ops = {
 	.release	= stb6100_release
 };
 
-
-
 struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 				    struct stb6100_config *config,
-				    struct i2c_adapter *i2c,
-				    enum stb6100_tuner tuner)
+				    struct i2c_adapter *i2c)
 {
 	struct stb6100_state *state = NULL;
 
@@ -598,29 +613,19 @@ struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 		goto error;
 
 	state->config		= config;
-	
-	state->i2c		= i2c;
+	state->i2c			= i2c;
 	state->frontend		= fe;
 	state->reference	= config->refclock / 1000; /* kHz */
-	state->tuner		= tuner;
 	fe->tuner_priv		= state;
-	
 	fe->ops.tuner_ops	= stb6100_ops;
-	
-	
 
 	printk("%s: Attaching STB6100 \n", __func__);
-        printk("I2C STB6100 : %x\n\t",state->config);
-	
-return fe;
+	return fe;
 
 error:
 	kfree(state);
 	return NULL;
 }
-
-
-
 
 static int stb6100_release(struct dvb_frontend *fe)
 {
@@ -633,4 +638,3 @@ static int stb6100_release(struct dvb_frontend *fe)
 }
 
 EXPORT_SYMBOL(stb6100_attach);
-

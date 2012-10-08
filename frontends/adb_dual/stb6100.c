@@ -53,7 +53,7 @@ static unsigned int verbose = 0;
 			printk(format, ##arg);						\
 	}										\
 } while(0)
-extern tuner1;
+
 struct stb6100_lkup {
 	u32 val_low;
 	u32 val_high;
@@ -137,8 +137,6 @@ static int stb6100_read_regs(struct stb6100_state *state, u8 regs[])
 		.len	= STB6100_NUMREGS
 	};
 	
-
-	//printk("ADRES = %x\n\t",msg.addr);
 	rc = i2c_transfer(state->i2c, &msg,1);
        
 	if (unlikely(rc != 1)) {
@@ -183,8 +181,6 @@ static int stb6100_write_reg_range(struct stb6100_state *state, u8 buf[], int st
 		.len	= len + 1
 	};
 	
-
-
 if (unlikely(start < 1 || start + len > STB6100_NUMREGS)) {
 		dprintk(verbose, FE_ERROR, 1, "Invalid register range %d:%d",
 			start, len);
@@ -201,10 +197,8 @@ if (unlikely(start < 1 || start + len > STB6100_NUMREGS)) {
 			dprintk(verbose, FE_DEBUG, 1, "        %s: 0x%02x", stb6100_regnames[start + i], buf[i]);
 	}
 	
-//printk("ADRES = %x\n\t",msg.addr);
 	rc = i2c_transfer(state->i2c, &msg, 1);	
 	
-
 	if (unlikely(rc != 1)) {
 		dprintk(verbose, FE_ERROR, 1, "(0x%x) write err [%d:%d], rc=[%d]",
 			(unsigned int)state->config->tuner_address, start, len,	rc);
@@ -586,8 +580,7 @@ static struct dvb_tuner_ops stb6100_ops = {
 
 struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 				    struct stb6100_config *config,
-				    struct i2c_adapter *i2c,
-				    enum stb6100_tuner tuner)
+				    struct i2c_adapter *i2c)
 {
 	struct stb6100_state *state = NULL;
 
@@ -600,15 +593,11 @@ struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 	state->i2c		= i2c;
 	state->frontend		= fe;
 	state->reference	= config->refclock / 1000; /* kHz */
-	state->tuner		= tuner;
 	fe->tuner_priv		= state;
 	
 	fe->ops.tuner_ops	= stb6100_ops;
 	
-	
-
 	printk("%s: Attaching STB6100 \n", __func__);
-        printk("I2C STB6100 : %x\n\t",state->config);
 	
 return fe;
 
@@ -616,9 +605,6 @@ error:
 	kfree(state);
 	return NULL;
 }
-
-
-
 
 static int stb6100_release(struct dvb_frontend *fe)
 {

@@ -396,18 +396,19 @@ obj-m += fe-core.o
 
 # stb0899
 
-#fe-core-objs +=        adb_dual/stb0899_algo.o
-#fe-core-objs +=        adb_dual/stb0899_drv.o
-#fe-core-objs +=        adb_dual/stb6100.o
-#fe-core-objs +=        adb_dual/core.o
-#obj-m += fe-core.o 
+
+fe-core-twin1-objs +=        adb_dual/stb0899_algo.o
+fe-core-twin1-objs +=        adb_dual/stb0899_drv.o
+fe-core-twin1-objs +=        adb_dual/stb6100.o
+fe-core-twin1-objs +=        adb_dual/core.o
+obj-m += fe-core-twin1.o 
 
 # stv0900
 
-#fe-core-objs +=	adb_stv900/stv090x.o
-#fe-core-objs +=	adb_stv900/stb6100.o
-#fe-core-objs +=	adb_stv900/core.o
-#obj-m += fe-core.o
+fe-core-twin2-objs +=	adb_stv900/stv090x.o
+fe-core-twin2-objs +=	adb_stv900/stb6100.o
+fe-core-twin2-objs +=	adb_stv900/core.o
+obj-m += fe-core-twin2.o
 
 #------------------------------------------------- 
 
