@@ -4842,6 +4842,20 @@ report( severity_info, "MMCO(%d %d %d) - %d - %3d %3d %3d %3d\n", Field, Top, Fr
 	    ReleaseReference( true, i, ReferenceFrames[CurrentEntry].Usage );
 	}*/
 
+#if defined(ADB_BOX)
+#if 0 //test 18.02.0212 //==1 SCART kanal HBO HD Comedy czkawka i zawieszenie po czasie ==0 tylko czkawka
+	if( (NumShortTerm + NumLongTerm) > NumReferenceFrames )
+	{
+	    report( severity_error, "FrameParser_VideoH264_c::MarkReferencePictures - After MMCO operations, \n\t\tthere are more than the allowed number of reference frames.\n\t\tThe oldest will be discarded." );
+	    for( i=0,j=1; j<(NumReferenceFrames+1); j++ )
+		if( ReferenceFrames[i].DecodeFrameIndex > ReferenceFrames[j].DecodeFrameIndex )
+		    i = j;
+
+	    ReleaseReference( true, i, ReferenceFrames[CurrentEntry].Usage );
+	}
+#endif
+#endif
+
 #ifdef DUMP_REFLISTS
     report( severity_info, "\n    List of reference frames After MMCO (%d %d):-\n", NumShortTerm, NumLongTerm );
     for( i=0; i<(NumReferenceFrames+1); i++ )

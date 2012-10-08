@@ -1333,9 +1333,11 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
     }
 #endif
 #if defined(ADB_BOX)
+#if 0	//1== bardzo zly obraz na SD 0== obraz ok
 	int decimate = Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput);
     if (decimate == PolicyValueDecimateDecoderOutputDisabled) DecimateIfAvailable = false;
     else DecimateIfAvailable = true;
+#endif
 #endif
 
 #if defined (CROP_INPUT_WHEN_DECIMATION_NEEDED_BUT_NOT_AVAILABLE)

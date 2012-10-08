@@ -717,6 +717,12 @@ static inline unsigned int      __getlw( unsigned long long a )
 
 // -----------------------------------------------------------------------------------------------
 
+#if defined(ADB_BOX)
+static inline int   OSDEV_ClaimSemaphore_trylock(    OSDEV_Semaphore_t       *Semaphore )
+{
+    return down_trylock( *Semaphore );
+    }
+#endif
 
 static inline OSDEV_Status_t   OSDEV_InitializeSemaphore( OSDEV_Semaphore_t     *Semaphore,
 							  unsigned int           InitialCount )
