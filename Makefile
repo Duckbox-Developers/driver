@@ -150,10 +150,12 @@ endif
 ifdef  HL101
 obj-y	+= smartcard/
 endif
+
 ifdef  ADB_BOX
 obj-y	+= smartcard/
-#obj-y	+= stsci/
 obj-y	+= adb_box_fan/
+obj-y	+= cec_adb_box/
+obj-y	+= dvbt/as102/
 endif
 
 ifndef VIP2_V1
