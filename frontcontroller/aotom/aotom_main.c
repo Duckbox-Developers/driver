@@ -185,14 +185,27 @@ void clear_display(void)
 	YWPANEL_VFD_ShowString("        ");
 }
 
-static void VFD_clr(void)
+static void VFD_set_all_icons(void)
 {
 	int i;
 
+	for(i=1; i <= 45; i++)
+		aotomSetIcon(i, 1);
+}
+
+static void VFD_clear_all_icons(void)
+{
+	int i;
+
+	for(i=1; i <= 45; i++)
+		aotomSetIcon(i, 0);
+}
+
+static void VFD_clr(void)
+{
 	YWPANEL_VFD_ShowTimeOff();
 	clear_display();
-	for(i=1; i < 45; i++)
-		aotomSetIcon(i, 0);
+	VFD_clear_all_icons();
 }
 
 static int draw_thread(void *arg)
@@ -516,6 +529,7 @@ static struct vfd_ioctl_data vfd_data;
 
 static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int cmd, unsigned long arg)
 {
+	int icon_nr = 0;
 	static int mode = 0;
 	int res = -EINVAL;
 	dprintk(5, "%s > 0x%.8x\n", __func__, cmd);
@@ -561,7 +575,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 		break;
 	case VFDICONDISPLAYONOFF:
 	{
-#if defined(SPARK) || defined(SPARK7162)
+#if defined(SPARK)
 		switch (aotom_data.u.icon.icon_nr) {
 		case 0:
 			res = YWPANEL_VFD_SetLed(LED_RED, aotom_data.u.icon.on);
@@ -575,6 +589,25 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 			break;
 		}
 #endif
+#if defined(SPARK7162)
+		icon_nr = aotom_data.u.icon.icon_nr;
+		if (icon_nr > 0 && icon_nr <= 45 )
+			res = aotomSetIcon(icon_nr, aotom_data.u.icon.on);
+		if (icon_nr == 46){
+			switch (aotom_data.u.icon.on){
+			case 1:
+				VFD_set_all_icons();
+				res = 0;
+				break;
+			case 0:
+				VFD_clear_all_icons();
+				res = 0;
+				break;
+			default:
+				break;
+			}
+		}
+#endif		
 		mode = 0;
 		break;
 	}
@@ -850,6 +883,7 @@ static int __init aotom_init_module(void)
 	}
 
 	VFD_clr();
+	
 	if(button_dev_init() != 0)
 		return -1;
 

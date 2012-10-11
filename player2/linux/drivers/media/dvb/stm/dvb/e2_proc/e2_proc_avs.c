@@ -60,6 +60,15 @@ struct stmfbio_output_configuration
   __u8  hue;
 };
 
+#if defined(ADB_BOX)
+#define SAAIOSWSS       10 /* set wide screen signaling data */
+#define SAA_WSS_OFF     8
+#define SAA_WSS_43F     0
+
+#define STMFBIO_OUTPUT_HDMI_ENABLED           (0)
+#define STMFBIO_OUTPUT_HDMI_DISABLED          (1L<<0)
+#endif
+
 #define STMFBIO_OUTPUT_CAPS_HDMI_CONFIG      (1L<<3)
 #define STMFBIO_OUTPUT_CAPS_ANALOGUE_CONFIG  (1L<<1)
 #define STMFBIO_OUTPUT_HDMI_RGB               (0)
@@ -251,6 +260,20 @@ int proc_avs_0_input_write(struct file *file, const char __user *buf,
 	ssize_t 	ret = -ENOMEM;
 	/* int		result; */
 
+#if defined(ADB_BOX)
+	struct stmfbio_output_configuration outputConfig;
+	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
+	int err;
+
+	outputConfig.outputid = 1;
+	stmfb_get_output_configuration(&outputConfig,info);
+
+	outputConfig.caps = 0;
+	outputConfig.activate = 0;//STMFBIO_ACTIVATE_IMMEDIATE;
+	outputConfig.analogue_config = 0;
+	outputConfig.caps |= STMFBIO_OUTPUT_CAPS_HDMI_CONFIG;
+#endif
+
 	printk("%s %ld - ", __FUNCTION__, count);
 
 	page = (char *)__get_free_page(GFP_KERNEL);
@@ -272,10 +295,14 @@ int proc_avs_0_input_write(struct file *file, const char __user *buf,
 
 			// Note: Volumne is not changed directly but by using the MIXER instead of the AVS. 
 			// So this should always be set to the maximum
-			#ifdef UFS910
+			#if defined(UFS910) || defined(ADB_BOX)
 			avs_command_kernel(AVSIOSVOL, (void*) 31);
 			#else
 			avs_command_kernel(AVSIOSVOL, (void*) 0);
+			#endif
+			#if defined(ADB_BOX)
+			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_43F);
+			outputConfig.hdmi_config &= ~STMFBIO_OUTPUT_HDMI_DISABLED;
 			#endif
 			current_input = ENCODER;
 		}
@@ -285,8 +312,19 @@ int proc_avs_0_input_write(struct file *file, const char __user *buf,
 	      		avs_command_kernel(SAAIOSSRCSEL, (void*) SAA_SRC_SCART);
 
 	      		avs_command_kernel(AVSIOSVOL, (void*) current_volume);
+			#if defined(ADB_BOX)
+				avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_OFF);
+				outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
+			#endif
 	      		current_input = SCART;
 	    	}
+
+			#if defined(ADB_BOX)
+			err = stmfb_set_output_configuration(&outputConfig, info);
+			if (err != 0) {
+				printk("HDMI Config Disabled - Failed !!!!!!!!!!");
+			}
+			#endif
 
 		kfree(myString);
 		//result = sscanf(page, "%3s %3s %3s %3s %3s", s1, s2, s3, s4, s5);

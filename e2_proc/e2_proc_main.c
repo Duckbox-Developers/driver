@@ -648,6 +648,9 @@ struct ProcStructure_s e2Proc[] =
 	{cProcDir  , "stb/fan"   	                    , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                         , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fan/fan_ctrl"   	           , NULL, NULL, NULL, NULL, ""}, 
+	{cProcEntry, "stb/video/switch_type"                                            , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/video/switch"                                                 , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/video/switch_choices"                                         , NULL, NULL, NULL, NULL, ""},
 #endif
 };
 

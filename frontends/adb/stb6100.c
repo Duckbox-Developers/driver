@@ -261,6 +261,7 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 	u32 tmp;
 	int rc;
 	struct stb6100_state *state = fe->tuner_priv;
+	
 	if (fe->ops.i2c_gate_ctrl)
                         fe->ops.i2c_gate_ctrl(fe, 1);
 
@@ -285,9 +286,9 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 	msleep(1);
 	if ((rc = stb6100_write_reg(state, STB6100_FCCK, 0x0d)) < 0)
 		return rc;
+
 	if (fe->ops.i2c_gate_ctrl)
                         fe->ops.i2c_gate_ctrl(fe, 0);
-
 	return 0;
 }
 

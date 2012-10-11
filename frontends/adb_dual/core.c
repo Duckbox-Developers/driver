@@ -14,23 +14,19 @@
 #include <linux/dvb/dmx.h>
 #include <linux/proc_fs.h>
 #include <pvr_config.h>
-
-int BoxType;
-static char *tuner = "czarny";
-struct stpio_pin*	pin_rx_diseq = NULL;
-struct stpio_pin*	pin_rx_diseq1 = NULL;
-module_param(tuner,charp,0);
-MODULE_PARM_DESC(tuner, "tuner type: bialy, czarny (default czarny");
                  
-#define I2C_ADDR_STB0899 	(0xd0 >> 1)	//d0=0x68 
-#define I2C_ADDR_STB6100 	(0xc0 >> 1)	//c0 0x60
-#define I2C_ADDR_STB0899_1 	(0xd2 >> 1)// d2=69
-#define I2C_ADDR_STB6100_1 	(0xc6 >> 1)//c6 0x63
+#define I2C_ADDR_STB0899 	(0xd0 >> 1)	//d0=0x68 d2=69
+#define I2C_ADDR_STB6100 	(0xc0 >> 1)	//0x60
+#define I2C_ADDR_STV090X	(0xd0 >> 1)
+#define I2C_ADDR_STV6110X	(0xc0 >> 1)
+#define I2C_ADDR_CX24116	(0x0a >> 1)
+#define I2C_ADDR_IX7306		(0xc0 >> 1)
 
-enum{
-	BIALY,
-	CZARNY,
-	};
+#define I2C_ADDR_STB0899_1 	(0xd0 >> 1)	//d0=0x68 d2=69
+#define I2C_ADDR_STB6100_1 	(0xc0 >> 1)	//0x60
+
+#define I2C_ADDR_STB0899_2 	(0xd2 >> 1)	//d0=0x68 d2=69
+#define I2C_ADDR_STB6100_2 	(0xc6 >> 1)	//0x60
                  
 static struct core *core[MAX_DVB_ADAPTERS];
 
@@ -58,7 +54,7 @@ static const struct stb0899_s1_reg stb0899_init_dev [] = {
 	 	{ STB0899_IRQMSK_1	, 0xff },
 	 	{ STB0899_IRQMSK_0	, 0xff },
 		{ STB0899_I2CCFG	, 0x88 },
-		{ STB0899_I2CRPT	, 0x58 },
+		{ STB0899_I2CRPT	, 0x48 },//58=ok
 		{ STB0899_GPIO00CFG	, 0x82 },
 		{ STB0899_GPIO01CFG	, 0x82 }, /* 0x02 -> LED green 0x82 -> LED orange */
 		{ STB0899_GPIO02CFG	, 0x82 },
@@ -505,56 +501,15 @@ static const struct stb0899_s1_reg stb0899_init_tst[] = {
 #define CORE_STB0899_DVBS2_LDPC_MAX_ITER         70
 
 
-static struct stb0899_config stb0899_config = {
-	.init_dev        = stb0899_init_dev,
-	.init_s2_demod   = stb0899_init_s2_demod,
-	.init_s1_demod   = stb0899_init_s1_demod,
-	.init_s2_fec     = stb0899_init_s2_fec,
-	.init_tst        = stb0899_init_tst,
-
-	.demod_address   = I2C_ADDR_STB0899, /* I2C Address */
-	
-	.block_sync_mode = STB0899_SYNC_FORCED, /* ? */
-
-	.xtal_freq       = 27000000,         /* Assume Hz ? */
-	.inversion       = IQ_SWAP_ON,       /* ? */
-
-	.lo_clk          = 76500000,
-	.hi_clk          = 99000000,
-
-	.ts_output_mode  = 0,                /* Use parallel mode */
-	.clock_polarity  = 0,                /*  */
-	.data_clk_parity = 0,                /*  */
-	.fec_mode        = 0,                /*  */
-
-	.esno_ave            = CORE_STB0899_DVBS2_ESNO_AVE,
-	.esno_quant          = CORE_STB0899_DVBS2_ESNO_QUANT,
-	.avframes_coarse     = CORE_STB0899_DVBS2_AVFRAMES_COARSE,
-	.avframes_fine       = CORE_STB0899_DVBS2_AVFRAMES_FINE,
-	.miss_threshold      = CORE_STB0899_DVBS2_MISS_THRESHOLD,
-	.uwp_threshold_acq   = CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
-	.uwp_threshold_track = CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
-	.uwp_threshold_sof   = CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
-	.sof_search_timeout  = CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
-
-	.btr_nco_bits          = CORE_STB0899_DVBS2_BTR_NCO_BITS,
-	.btr_gain_shift_offset = CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
-	.crl_nco_bits          = CORE_STB0899_DVBS2_CRL_NCO_BITS,
-	.ldpc_max_iter         = CORE_STB0899_DVBS2_LDPC_MAX_ITER,
-
-	.tuner_get_frequency	= stb6100_get_frequency,
-	.tuner_set_frequency	= stb6100_set_frequency,
-	.tuner_set_bandwidth	= stb6100_set_bandwidth,
-	.tuner_get_bandwidth	= stb6100_get_bandwidth,
-	.tuner_set_rfsiggain	= NULL,
-};
-
 static struct stb0899_config stb0899_config_1 = {
 	.init_dev        = stb0899_init_dev,
 	.init_s2_demod   = stb0899_init_s2_demod,
 	.init_s1_demod   = stb0899_init_s1_demod,
 	.init_s2_fec     = stb0899_init_s2_fec,
 	.init_tst        = stb0899_init_tst,
+
+	.lnb_enable 		= NULL,
+	.lnb_vsel	 		= NULL,
 
 	.demod_address   = I2C_ADDR_STB0899_1, /* I2C Address */
 	
@@ -593,16 +548,63 @@ static struct stb0899_config stb0899_config_1 = {
 	.tuner_set_rfsiggain	= NULL,
 };
 
+static struct stb0899_config stb0899_config_2 = {
+	.init_dev        = stb0899_init_dev,
+	.init_s2_demod   = stb0899_init_s2_demod,
+	.init_s1_demod   = stb0899_init_s1_demod,
+	.init_s2_fec     = stb0899_init_s2_fec,
+	.init_tst        = stb0899_init_tst,
 
+	.lnb_enable 		= NULL,
+	.lnb_vsel	 		= NULL,
 
-static struct stb6100_config stb6100_config = {
+	.demod_address   = I2C_ADDR_STB0899_2, /* I2C Address */
 	
-	.tuner_address = I2C_ADDR_STB6100,
+	.block_sync_mode = STB0899_SYNC_FORCED, /* ? */
+
+	.xtal_freq       = 27000000,         /* Assume Hz ? */
+	.inversion       = IQ_SWAP_ON,       /* ? */
+
+	.lo_clk          = 76500000,
+	.hi_clk          = 99000000,
+
+	.ts_output_mode  = 0,                /* Use parallel mode */
+	.clock_polarity  = 0,                /*  */
+	.data_clk_parity = 0,                /*  */
+	.fec_mode        = 0,                /*  */
+
+	.esno_ave            = CORE_STB0899_DVBS2_ESNO_AVE,
+	.esno_quant          = CORE_STB0899_DVBS2_ESNO_QUANT,
+	.avframes_coarse     = CORE_STB0899_DVBS2_AVFRAMES_COARSE,
+	.avframes_fine       = CORE_STB0899_DVBS2_AVFRAMES_FINE,
+	.miss_threshold      = CORE_STB0899_DVBS2_MISS_THRESHOLD,
+	.uwp_threshold_acq   = CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
+	.uwp_threshold_track = CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
+	.uwp_threshold_sof   = CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
+	.sof_search_timeout  = CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
+
+	.btr_nco_bits          = CORE_STB0899_DVBS2_BTR_NCO_BITS,
+	.btr_gain_shift_offset = CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
+	.crl_nco_bits          = CORE_STB0899_DVBS2_CRL_NCO_BITS,
+	.ldpc_max_iter         = CORE_STB0899_DVBS2_LDPC_MAX_ITER,
+
+	.tuner_get_frequency	= stb6100_get_frequency,
+	.tuner_set_frequency	= stb6100_set_frequency,
+	.tuner_set_bandwidth	= stb6100_set_bandwidth,
+	.tuner_get_bandwidth	= stb6100_get_bandwidth,
+	.tuner_set_rfsiggain	= NULL,
+};
+
+
+
+static struct stb6100_config stb6100_config_1 = {
+	
+	.tuner_address = I2C_ADDR_STB6100_1,
 	.refclock      = 27000000
 };
 
-static struct stb6100_config_1 stb6100_config_1 = {
-	.tuner_address = I2C_ADDR_STB6100_1,
+static struct stb6100_config stb6100_config_2 = {
+	.tuner_address = I2C_ADDR_STB6100_2,
 	.refclock      = 27000000
 };
 
@@ -610,36 +612,33 @@ static struct stb6100_config_1 stb6100_config_1 = {
 static struct dvb_frontend * frontend_init(struct core_config *cfg, int i)
 {
 	struct dvb_frontend *frontend = NULL;
+	int ad;
 
 	printk (KERN_INFO "%s frontend_init >\n", __FUNCTION__);
                        
 			if (i== 0)
-			{
-			printk("TUNER1 \n\t"); 
-			frontend = dvb_attach(stb0899_attach, &stb0899_config, cfg->i2c_adap, TUNER1);
-			}
+			frontend = dvb_attach(stb0899_attach, &stb0899_config_1, cfg->i2c_adap);
 			else
-                        {
-			 printk("TUNER2 \n\t");
-			 frontend = dvb_attach(stb0899_attach, &stb0899_config_1, cfg->i2c_adap, TUNER2);
-			 }
-		if (frontend) {
+			frontend = dvb_attach(stb0899_attach, &stb0899_config_2, cfg->i2c_adap);
+
+		if (frontend) 
+			{
 				printk("fe_core : stb0899 attached OK \n");
                                 
-                                
-                                if (i == 0){
-				if (dvb_attach(stb6100_attach, frontend, &stb6100_config, cfg->i2c_adap,STB1) == 0) {
+                    if (i == 0)
+					{
+					if (dvb_attach(stb6100_attach, frontend, &stb6100_config_1, cfg->i2c_adap) == 0) {
 					printk (KERN_INFO "error attaching stb6100\n");
 					goto error_out;
 					}
-				}else{
-			
-				if (dvb_attach(stb6100_attach,frontend, &stb6100_config_1, cfg->i2c_adap,STB2) == 0) {
+				}
+				else
+				{
+					if (dvb_attach(stb6100_attach,frontend, &stb6100_config_2, cfg->i2c_adap) == 0) {
 					printk(KERN_INFO " error attaching stb6100\n");
 					goto error_out;
 				}
-				 }
-				
+			}
 				
 					printk("fe_core : stb6100 attached OK \n");
 			} else {
@@ -677,10 +676,9 @@ init_fe_device (struct dvb_adapter *adapter,
   /* initialize the config data */
   cfg->i2c_adap = i2c_get_adapter (tuner_cfg->i2c_bus);
 
-  printk("i2c adapter = 0x%0x\n", cfg->i2c_adap);
+  printk("%s i2c adapter = 0x%0x\n",__FUNCTION__, cfg->i2c_adap);
 
   cfg->i2c_addr = tuner_cfg->i2c_addr;
-  printk("i2c addr = %02x\n", cfg->i2c_addr);
   
 if (cfg->i2c_adap == NULL) {
 
@@ -692,13 +690,16 @@ if (cfg->i2c_adap == NULL) {
 
 frontend = frontend_init(cfg, i);
 
+	printk ("%s: frontend_init (frontend = 0x%x)\n",
+           __FUNCTION__, (unsigned int) frontend);
+
   if (frontend == NULL)
   {
 	printk("No frontend found !\n");
     return NULL;
   }
 
-  printk (KERN_INFO "%s: Call dvb_register_frontend (adapter = 0x%x)\n",
+  printk ("%s: Call dvb_register_frontend (adapter = 0x%x)\n",
            __FUNCTION__, (unsigned int) adapter);
 
   if (dvb_register_frontend (adapter, frontend))
@@ -719,18 +720,15 @@ struct plat_tuner_config tuner_resources[] = {
         [0] = {
                 .adapter 	= 0,
                 .i2c_bus 	= 0,
-                .i2c_addr 	= I2C_ADDR_STB0899,
+                .i2c_addr 	= I2C_ADDR_STB0899_1,
               
         },
         [1] = {
               .adapter		= 0,
               .i2c_bus 		= 0,
-              .i2c_addr 	= I2C_ADDR_STB0899_1,
+              .i2c_addr 	= I2C_ADDR_STB0899_2,
               
         },
-
-
-
 };
 
 void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
@@ -738,40 +736,7 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	int i = 0;
 	int vLoop = 0;
 
-	printk (KERN_INFO "%s: Multi-Nbox frontend core\n", __FUNCTION__);
-
-	if (BoxType==CZARNY)
-	{
-		
-                /*TUNER A*/
-		if(pin_rx_diseq==NULL) 
-		pin_rx_diseq = stpio_request_pin (5, 4, "pin_rx_diseq", STPIO_OUT);//5,4
-		if(pin_rx_diseq==NULL) 
-		{
-		printk("Error DiseqC PIO\n");
-		return;
-		}
-		/* TUNER B*/
-		if(pin_rx_diseq1==NULL) 
-		pin_rx_diseq1 = stpio_request_pin (2, 5, "pin_rx_diseq1", STPIO_OUT);//2,4
-		if(pin_rx_diseq1==NULL) 
-		{
-		printk("1Error DiseqC PIO\n");
-		return;
-		}
-		
-	printk("DiseqC OK\n");
-		
-		stpio_set_pin (pin_rx_diseq, 1);
-		stpio_set_pin (pin_rx_diseq1, 0);
-	}
-
-	if (BoxType==BIALY)
-	{
-		if(pin_rx_diseq==NULL) pin_rx_diseq = stpio_request_pin (5, 4, "RX_DISEQ", STPIO_IN);
-		if(pin_rx_diseq==NULL) {printk("Error DiseqC PIO\n");return;}
-		printk("DiseqC OK\n");
-	}
+	printk ("%s: Adb_Bbox frontend core\n", __FUNCTION__);
 	
 	core[i] = (struct core*) kmalloc(sizeof(struct core),GFP_KERNEL);
 	if (!core[i])
@@ -788,13 +753,13 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	{
 	  if (core[i]->frontend[vLoop] == NULL)
 	  {
-      	     printk("%s: init tuner %d\n", __FUNCTION__, vLoop);
+      	 printk("%s: init tuner %d i2c_addr:0x%.2x\n", __FUNCTION__, vLoop,tuner_resources[vLoop].i2c_addr);
 	     core[i]->frontend[vLoop] =
 				   init_fe_device (core[i]->dvb_adapter, &tuner_resources[vLoop], vLoop);
 	  }
 	}
 
-	printk (KERN_INFO "%s: <\n", __FUNCTION__);
+	printk ("%s: <\n", __FUNCTION__);
 
 	return;
 }
@@ -803,20 +768,8 @@ EXPORT_SYMBOL(fe_core_register_frontend);
 
 int __init fe_core_init(void)
 {
-printk(">>fe_core_init\n");
+printk("%s Frontend core loaded\n",__FUNCTION__);
 	
-if((tuner[0] == 0) || (strcmp("bialy", tuner) == 0))
-	{
-		//printk("Box BSKA\n");
-		BoxType = BIALY;
-	}
-	else if(strcmp("czarny", tuner) == 0)
-	{
-		//printk("Box BSLA\n");
-		BoxType = CZARNY;
-	}
-
-printk("<<fe_core_init\n");
     return 0;
 }
 
@@ -829,5 +782,5 @@ module_init             (fe_core_init);
 module_exit             (fe_core_exit);
 
 MODULE_DESCRIPTION      ("STB0899_Frontend_core");
-MODULE_AUTHOR           ("B4Team");
+MODULE_AUTHOR           ("B4Team & freebox");
 MODULE_LICENSE          ("GPL");

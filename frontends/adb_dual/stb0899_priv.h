@@ -210,7 +210,6 @@ struct stb0899_state {
 	struct i2c_adapter		*i2c;
 	struct stb0899_config		*config;
 	struct dvb_frontend		frontend;
-        enum stb0899_demod		demod;
 	u32				*verbose;	/* Cached module verbosity level	*/
 
 	struct stb0899_internal		internal;	/* Device internal parameters		*/

@@ -226,6 +226,12 @@ extern int proc_video_pal_v_end_read(char *page, char **start, off_t off, int co
 extern int proc_video_pal_v_end_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_video_alpha_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_video_alpha_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+#if defined(ADB_BOX)
+extern int proc_video_switch_choices_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
+extern int proc_video_switch_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
+extern int proc_video_switch_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_video_switch_type_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+#endif
 extern int proc_avs_0_colorformat_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_avs_0_colorformat_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_avs_0_colorformat_choices_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
@@ -377,6 +383,12 @@ struct e2_procs
   {"stb/video/pal_v_end",     		proc_video_pal_v_end_read,    		proc_video_pal_v_end_write, 0},
   {"stb/video/pal_h_start",     	proc_video_pal_h_start_read,    	proc_video_pal_h_start_write, 0},
   {"stb/video/pal_h_end",     		proc_video_pal_h_end_read,    		proc_video_pal_h_end_write, 0},
+
+  #if defined(ADB_BOX)
+  {"stb/video/switch_type",    		NULL			,    		proc_video_switch_type_write, 0},
+  {"stb/video/switch",       		proc_video_switch_read,    		proc_video_switch_write, 0},
+  {"stb/video/switch_choices", 		proc_video_switch_choices_read, 	NULL, 0},
+#endif
 
   {"stb/avs/0/colorformat",             proc_avs_0_colorformat_read,            proc_avs_0_colorformat_write, 0},
   {"stb/avs/0/colorformat_choices",     proc_avs_0_colorformat_choices_read,    NULL, 0},

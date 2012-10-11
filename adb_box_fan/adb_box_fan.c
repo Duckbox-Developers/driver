@@ -81,7 +81,12 @@ int proc_fan_write(struct file *file, const char __user *buf,
 
 		//maruapp: 0xff = 1500, 0xaa = 1000, 0x73 = 500 U/min
 		//we are a little bit more nervy ;)
+#if !defined(ADB_BOX)
 		if (value >= 50 && value <= 255)
+#endif
+#if defined(ADB_BOX)
+		if (value <= 255)
+#endif
 		{
 		    ctrl_outl(value, fan_registers + 0x4);
 		}
@@ -131,7 +136,9 @@ static int __init init_fan_module(void)
 
   fan_pin = stpio_request_pin (4, 7, "fan ctrl", STPIO_ALT_OUT);
   
+#if !defined(ADB_BOX)
   stpio_set_pin(fan_pin, 1);
+#endif
   printk("fan pin %p\n", fan_pin);
 
 
@@ -159,7 +166,7 @@ static void __exit cleanup_fan_module(void)
 module_init(init_fan_module);
 module_exit(cleanup_fan_module);
 
-MODULE_DESCRIPTION("ufs922 fan controlling");
+MODULE_DESCRIPTION("Adb_Box fan controlling");
 MODULE_AUTHOR("Team Ducktales");
 MODULE_LICENSE("GPL");
 

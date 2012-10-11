@@ -106,6 +106,10 @@ USB_DEVICE_ID rtusb_dev_id[] = {
 	{USB_DEVICE(0x07FA,0x7712)}, /* Edimax */
 	{USB_DEVICE(0x0789,0x0166)}, /* Edimax */
 	{USB_DEVICE(0x148F,0x2070)}, /* Edimax */
+	{USB_DEVICE(0x1b75,0xa200)}, /* WN-200USB */
+	{USB_DEVICE(0x1b75,0x3070)}, /* WN-300USB */
+	{USB_DEVICE(0x177f,0x0153)}, /* Sweex LW153 */
+	{USB_DEVICE(0x1737,0x0078)}, /* Linksys WUSB100 v2 */
 #endif // RT3070 //
 	{ }/* Terminating entry */
 };

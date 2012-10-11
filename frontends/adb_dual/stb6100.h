@@ -88,39 +88,20 @@ struct stb6100_config {
 	u32	refclock;
 };
 
-struct stb6100_config_1 {
-	u8	tuner_address;
-	u32	refclock;
-};
-
-enum stb6100_tuner {
-        STB1 = 1,
-	STB2
-                };
-
 struct stb6100_state {
 	struct i2c_adapter *i2c;
-        const struct stb6100_config_1	*config_1;
 	const struct stb6100_config	*config;
 	struct dvb_tuner_ops		ops;
 	struct dvb_frontend		*frontend;
 	struct tuner_state		status;
-	enum stb6100_tuner		tuner;
 	u32 frequency;
 	u32 srate;
 	u32 bandwidth;
 	u32 reference;
 };
 
-
-
-
 extern struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 					struct stb6100_config *config,
-					struct i2c_adapter *i2c,
-					enum stb6100_tuner tuner);
-
-
-
+					struct i2c_adapter *i2c);
 
 #endif

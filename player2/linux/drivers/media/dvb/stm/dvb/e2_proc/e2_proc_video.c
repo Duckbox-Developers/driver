@@ -16,6 +16,22 @@
 
 #define STMFBIO_VAR_CAPS_OPACITY        (1L<<4)
 
+#if defined(ADB_BOX)
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,23)
+#include <linux/stpio.h>
+#else
+#include <linux/stm/pio.h>
+#endif
+
+struct stpio_pin*	fms6403_fsel0_pin;
+struct stpio_pin*	fms6403_fsel1_pin;
+struct stpio_pin*	fms6403_in2_sel_pin;
+
+struct stpio_pin*	pin02;
+struct stpio_pin*	pin06;
+struct stpio_pin*	pin24;
+#endif
+
 struct stmfbio_var_screeninfo_ex
 {
   /*
@@ -59,6 +75,9 @@ extern int isDisplayCreated (char*           Media,
                       unsigned int    SurfaceId);
 extern struct stmfb_info* stmfb_get_fbinfo_ptr(void);
 extern int avs_command_kernel(unsigned int cmd, void *arg);
+#if defined(ADB_BOX)
+extern void switch_video_command_kernel(char *kbuf);
+#endif
 
 #include "../backend.h"
 #include "../dvb_module.h"
@@ -214,6 +233,11 @@ static int aspect_ply = (video_format_t) VIDEO_FORMAT_16_9;
 static int policy_e2  = VIDEO_POL_LETTER_BOX;
 static int policy_ply = (video_displayformat_t) VIDEO_LETTER_BOX;
 
+#if defined(ADB_BOX)
+static int video_switch = 0;
+static int video_switch_type = 0;	//default 0 / 0-bska/bsla 1-bxzb
+#endif
+
 int proc_video_policy_get(void) {
 
 /* Dagobert: You cannot use this semaphore here because this will be called from
@@ -288,7 +312,207 @@ int proc_video_aspect_get(void) {
 	return aspect_ply;
 }
 
+#if defined(ADB_BOX)
+int proc_video_switch_type_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+	char 		*page;
+	char		*myString;
+	ssize_t 	ret = -ENOMEM;
+	unsigned long		mlen;
+	
+	printk("%s %ld - ", __FUNCTION__, count);
 
+	mutex_lock (&(ProcDeviceContext->DvbContext->Lock));
+
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (page) 
+	{
+		ret = -EFAULT;
+		if (copy_from_user(page, buf, count))
+			goto out;
+
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
+		strncpy(myString, page, count);
+
+		myString[count] = '\0';
+
+		mlen=count;
+		
+		if ((count>0)&&(myString[count-1]=='\n'))
+		{
+			myString[count-1] = '\0';
+			count--;
+		}
+
+		printk("proc_video_switch_type_write >> %s\n", myString);
+
+		if ((strncmp("bska", myString, count) == 0)||(strncmp("bsla", myString, count) == 0))
+		{
+		video_switch_type=0;
+		printk("!!!! video_switch_type=0 !!!!\n");
+		}
+		else if (strncmp("bxzb", myString, count) == 0)
+		{
+		video_switch_type=1;
+		printk("!!!! video_switch_type=1 !!!!\n");
+		}
+		ret = mlen;
+		kfree(myString);	
+	}
+	
+out:
+	free_page((unsigned long)page);
+   	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
+	return ret;
+}
+
+int proc_video_switch_write(struct file *file, const char __user *buf,
+                           unsigned long count, void *data)
+{
+	char 		*page;
+	char		*myString;
+	ssize_t 	ret = -ENOMEM;
+	unsigned long		mlen;
+	
+	printk("%s %ld - ", __FUNCTION__, count);
+
+	mutex_lock (&(ProcDeviceContext->DvbContext->Lock));
+
+	page = (char *)__get_free_page(GFP_KERNEL);
+	if (page) 
+	{
+		ret = -EFAULT;
+		if (copy_from_user(page, buf, count))
+			goto out;
+
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
+		strncpy(myString, page, count);
+
+		myString[count] = '\0';
+
+		mlen=count;
+		
+		if ((count>0)&&(myString[count-1]=='\n'))
+		{
+			myString[count-1] = '\0';
+			count--;
+		}
+
+		printk("proc_video_switch_write >> %s\n", myString);
+	    if(video_switch_type==0)
+	    {
+
+		if(fms6403_in2_sel_pin==NULL) fms6403_in2_sel_pin = stpio_request_pin (5, 3, "fms6403_in2_sel_pin", STPIO_OUT);
+		if(fms6403_fsel0_pin==NULL) fms6403_fsel0_pin = stpio_request_pin (4, 6, "fms6403_fsel0_pin", STPIO_OUT);
+		if(fms6403_fsel1_pin==NULL)	fms6403_fsel1_pin = stpio_request_pin (3, 5, "fms6403_fsel1_pin", STPIO_OUT);
+
+		if (strncmp("scart", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,0);//0=rgb 1=yvu
+		printk("!!!!!!!!!!!!! SET PAL !!!!!!!!!!!!!!\n");
+		video_switch=0;
+		}
+		else if (strncmp("component1080p", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,1);//0=rgb 1=yvu
+		stpio_set_pin(fms6403_fsel0_pin,1);//1080p50
+		stpio_set_pin(fms6403_fsel1_pin,1);
+		printk("!!!!!!!!!!!!! SET Filter Bypass !!!!!!!!!!!!!!\n");
+		video_switch=1;
+		}
+		else if (strncmp("component1080i", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,1);//0=rgb 1=yvu
+		stpio_set_pin(fms6403_fsel0_pin,0);//720p/1080i
+		stpio_set_pin(fms6403_fsel1_pin,1);
+		printk("!!!!!!!!!!!!! SET Filter FMS6403 32Mhz !!!!!!!!!!!!!!\n");
+		video_switch=2;
+		}
+		else if (strncmp("component720p", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,1);//0=rgb 1=yvu
+		stpio_set_pin(fms6403_fsel0_pin,0);//720p/1080i
+		stpio_set_pin(fms6403_fsel1_pin,1);
+		printk("!!!!!!!!!!!!! SET Filter FMS6403 32Mhz !!!!!!!!!!!!!!\n");
+		video_switch=3;
+		}
+		else if (strncmp("component576p", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,1);//0=rgb 1=yvu
+		stpio_set_pin(fms6403_fsel0_pin,1);//576p
+		stpio_set_pin(fms6403_fsel1_pin,0);
+		printk("!!!!!!!!!!!!! SET Filter FMS6403 15Mhz !!!!!!!!!!!!!!\n");
+		video_switch=4;
+		}
+		else if (strncmp("component576i", myString, count) == 0)
+		{
+		stpio_set_pin(fms6403_in2_sel_pin,1);//0=rgb 1=yvu
+		stpio_set_pin(fms6403_fsel0_pin,1);//576p
+		stpio_set_pin(fms6403_fsel1_pin,0);
+		printk("!!!!!!!!!!!!! SET Filter FMS6403 15Mhz !!!!!!!!!!!!!!\n");
+		video_switch=5;
+		}
+	    }//switch type
+	    if(video_switch_type==1)	//bxzb
+	    {
+		if(pin02==NULL) pin02 = stpio_request_pin (0, 2, "pin02", STPIO_OUT);
+		if(pin06==NULL) pin06 = stpio_request_pin (0, 6, "pin06", STPIO_OUT);
+		if(pin24==NULL) pin24 = stpio_request_pin (2, 4, "pin23", STPIO_OUT);
+
+		//0 0 1 - jest rgb
+		//0 0 0 - jest rgb
+		stpio_set_pin (pin02, 0);//pin6 - E
+		stpio_set_pin (pin06, 0);
+		stpio_set_pin (pin24, 1);//1-rgb
+	    }
+		
+		/* always return count to avoid endless loop */
+		//ret = count;
+		ret = mlen;
+		kfree(myString);	
+	}
+	
+out:
+	free_page((unsigned long)page);
+   	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
+	return ret;
+}
+
+
+int proc_video_switch_read (char *page, char **start, off_t off, int count,
+			  int *eof, void *data_unused)
+{
+	int len = 0;
+	printk("%s\n", __FUNCTION__);
+
+	if (video_switch == 0) 
+		len = sprintf(page, "scart\n");
+	else if (video_switch == 1) 
+		len = sprintf(page, "component1080p\n");
+	else if (video_switch == 2) 
+		len = sprintf(page, "component1080i\n");
+	else if (video_switch == 3) 
+		len = sprintf(page, "component720p\n");
+	else if (video_switch == 4) 
+		len = sprintf(page, "component576p\n");
+	else if (video_switch == 5) 
+		len = sprintf(page, "component576i\n");
+
+        return len;
+}
+
+int proc_video_switch_choices_read (char *page, char **start, off_t off, int count,
+			  int *eof, void *data_unused)
+{
+	int len = 0;
+	printk("%s\n", __FUNCTION__);
+
+	len = sprintf(page, "scart component1080p component1080i component720p component576p component576i\n");
+
+        return len;
+}
+#endif
 
 //TODO: say avs to send the widescreenflag if needed
 int proc_video_aspect_write(struct file *file, const char __user *buf,
@@ -1328,19 +1552,22 @@ out:
 	return ret;
 }
 
-
 int proc_video_alpha_read (char *page, char **start, off_t off, int count,
 			  int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
 
+#if !defined(ADB_BOX)
 	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_var_screeninfo_ex varEx;
 	stmfb_get_var_ex(&varEx, info);
 	
 	len = sprintf(page, "%d\n", varEx.opacity);
+#endif
+#if defined(ADB_BOX)
+	len = sprintf(page, "0\n");
+#endif
 
 	return len;
 }
-

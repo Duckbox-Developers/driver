@@ -36,7 +36,7 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 			return err;
 		}
 		freq = *frequency;
-		printk("%s: STB6100 get Frequency=%d\n", __func__, freq);
+		printk("%s: Frequency=%d\n", __func__, freq);
 
 	}
 	return 0;
@@ -57,7 +57,7 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
-	printk("%s: STB6100 set Frequency=%d\n", __func__, frequency);
+	printk("%s: Frequency=%d\n", __func__, frequency);
 	}
 	return 0;
 }
@@ -80,7 +80,7 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 		}
 		band = *bandwidth;
 	}
-	printk("%s: STB6100 get Bandwidth=%d\n", __func__, band);
+	printk("%s: Bandwidth=%d\n", __func__, band);
 	return 0;
 }
 
@@ -99,7 +99,7 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
-	printk("%s: STB6100 set Bandwidth=%d\n", __func__, bandwidth);
+	printk("%s: Bandwidth=%d\n", __func__, bandwidth);
 	}
 	return 0;
 }
