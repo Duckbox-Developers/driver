@@ -228,6 +228,8 @@ endif
 ifdef SPARK7162
 obj-y	+= smartcard/
 obj-y	+= i2c_spi/
+obj-y	+= cpu_frequ/
+obj-y	+= cec/
 endif
 
 ifdef OCTAGON1008
