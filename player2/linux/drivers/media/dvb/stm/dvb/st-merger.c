@@ -134,7 +134,7 @@ extern int TsinMode;
 enum{
     SERIAL,
 	PARALLEL,
-	    }; 
+	    };
 #endif
 
 extern int highSR;
@@ -647,7 +647,7 @@ void stm_tsm_init (int use_cimax)
    int reinit = 0;
    if (tsm_io)
       reinit = 1;
- 
+
    if (reinit) {
       printk("[TSM] reinit stream routing...\n");
    } else {
@@ -662,7 +662,7 @@ void stm_tsm_init (int use_cimax)
       if (!reinit) {
          struct stpio* stream1_pin = stpio_request_pin (5, 0, "TSinterface1", STPIO_IN);
          struct stpio* stream2_pin = stpio_request_pin (5, 3, "TSinterface2", STPIO_IN);
-      } else 
+      } else
          printk("[TSM] skip stpio stuff in reinit\n");
 #elif defined(ATEVIO7500)
       if (!reinit) {
@@ -674,14 +674,14 @@ void stm_tsm_init (int use_cimax)
          stpio_set_pin(pin, 0);
          pin = stpio_request_pin (5, 4, "tuner2_mux", STPIO_OUT);
          stpio_set_pin(pin, 0);
-      } else 
+      } else
          printk("[TSM] skip stpio stuff in reinit\n");
 #elif defined(OCTAGON1008)
       if (!reinit) {
          struct stpio* stream2_pin = stpio_request_pin (1, 3, "STREAM2", STPIO_OUT);
          /* disbaled on 1 */
          stpio_set_pin(stream2_pin, 0);
-      } else 
+      } else
          printk("[TSM] skip stpio stuff in reinit\n");
 #elif defined(UFS913)
       if (!reinit) {
@@ -694,7 +694,7 @@ void stm_tsm_init (int use_cimax)
          pin = stpio_request_pin (12, 5, "ts", STPIO_ALT_OUT);
          pin = stpio_request_pin (12, 6, "ts", STPIO_ALT_OUT);
          pin = stpio_request_pin (12, 7, "ts", STPIO_ALT_OUT);
-         
+
          pin = stpio_request_pin (13, 0, "ts", STPIO_ALT_OUT);
          pin = stpio_request_pin (13, 1, "ts", STPIO_ALT_OUT);
          pin = stpio_request_pin (13, 2, "ts", STPIO_ALT_OUT);
@@ -894,7 +894,7 @@ void stm_tsm_init (int use_cimax)
       ctrl_outl(0x0, tsm_io + TSM_STREAM5_CFG2);
       ctrl_outl(0x0, tsm_io + TSM_STREAM6_CFG2);
       ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
-      
+
 #elif defined(HS7110) || defined(WHITEBOX)
       /* RAM partitioning of streams */
       ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
@@ -980,6 +980,11 @@ void stm_tsm_init (int use_cimax)
       /* add tag bytes to stream + stream priority */
       ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM0_CFG);
+#elif !defined(UFS913)
+      /* configure streams: */
+      /* add tag bytes to stream + stream priority */
+      ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
+      ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM0_CFG);
 #endif
 
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM0_SYNC);
@@ -991,6 +996,9 @@ void stm_tsm_init (int use_cimax)
 
       ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
       ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM1_CFG);
+#elif !defined(UFS913)
+      ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
+      ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM1_CFG);
 #endif
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM1_SYNC);
       ctrl_outl(0x0, tsm_io + 0x38 /* reserved ??? */);
@@ -1255,7 +1263,7 @@ void stm_tsm_init (int use_cimax)
 
       ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
       ctrl_outl(ret | 0x80,tsm_io + TSM_STREAM1_CFG);
-    
+
       ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
       ctrl_outl(ret | 0x80,tsm_io + TSM_STREAM2_CFG);
 
@@ -1434,7 +1442,7 @@ Dies sind die Options (also wohl auch view channel):
       ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
       ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
       ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
-      ctrl_outl(0x1f00, tsm_io + TSM_STREAM7_CFG);  
+      ctrl_outl(0x1f00, tsm_io + TSM_STREAM7_CFG);
 #else // !defined(SPARK) && !defined(HS7110) && !defined(WHITEBOX)
       for (n=0;n<5;n++) {
          writel( TSM_RAM_ALLOC_START( 0x3 *n ), tsm_io + TSM_STREAM_CONF(n));
@@ -1452,7 +1460,7 @@ Dies sind die Options (also wohl auch view channel):
          writel( readl(tsm_io + TSM_DESTINATION(0)) | (1 << chan), tsm_io + TSM_DESTINATION(0));
 
 #if defined(ADB_BOX)
-         if (TsinMode == SERIAL) { 
+         if (TsinMode == SERIAL) {
             printk("BZZB TsinMode = SERIAL*st-merger*\n\t");
 
             writel( (readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
@@ -1508,4 +1516,3 @@ void stm_tsm_release(void)
 {
   iounmap( tsm_io );
 }
-
