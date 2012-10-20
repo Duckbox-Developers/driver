@@ -260,6 +260,7 @@ endif
 
 ifdef CUBEREVO
 obj-y    += smartcard/
+obj-y	 += cpu_frequ/
 endif
 ifdef CUBEREVO_MINI2
 obj-y    += smartcard/

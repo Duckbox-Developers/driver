@@ -284,6 +284,7 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	    continue;
 
 #if defined(ADB_BOX)
+#if 0
 	// Discard Encrypted Packet
 
 	if ( Context->Base.BufferData[NewPacketStart+3] & 0x80 )
@@ -295,6 +296,7 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	    #endif
 	    continue;
 	    }
+#endif
 #endif
 
 	Entry           = Context->PidTable[Pid] - 1;
