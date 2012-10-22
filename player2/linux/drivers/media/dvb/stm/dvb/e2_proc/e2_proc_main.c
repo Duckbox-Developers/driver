@@ -384,7 +384,7 @@ struct e2_procs
   {"stb/video/pal_h_start",     	proc_video_pal_h_start_read,    	proc_video_pal_h_start_write, 0},
   {"stb/video/pal_h_end",     		proc_video_pal_h_end_read,    		proc_video_pal_h_end_write, 0},
 
-  #if defined(ADB_BOX)
+#if defined(ADB_BOX)
   {"stb/video/switch_type",    		NULL			,    		proc_video_switch_type_write, 0},
   {"stb/video/switch",       		proc_video_switch_read,    		proc_video_switch_write, 0},
   {"stb/video/switch_choices", 		proc_video_switch_choices_read, 	NULL, 0},
