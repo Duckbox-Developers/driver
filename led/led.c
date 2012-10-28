@@ -89,19 +89,19 @@ static void ufs910led_red_set(struct led_classdev *led_cdev,
 static struct led_classdev ufs910_green_led = {
 	.name			= "ufs910:green",
 	.default_trigger	= "",
-	.brightness_set	= ufs910led_green_set,
+	.brightness_set	= ufs910led_green_set
 };
 
 static struct led_classdev ufs910_orange_led = {
 	.name			= "ufs910:orange",
 	.default_trigger	= "",
-	.brightness_set	= ufs910led_orange_set,
+	.brightness_set	= ufs910led_orange_set
 };
 
 static struct led_classdev ufs910_red_led = {
 	.name			= "ufs910:red",
 	.default_trigger	= "",
-	.brightness_set	= ufs910led_red_set,
+	.brightness_set	= ufs910led_red_set
 };
 
 #define ufs910led_suspend NULL
