@@ -595,19 +595,6 @@ void spark_stm_tsm_init ( void )
     tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
     tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel,tsm_handle.fdma_reqline,&fdma_req_config);
 
-#if defined(ADB_BOX)
-	  //DVB-T dla ADB_BOX
-      tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
-	  tsm_handle.swts_channel = 3;
-      tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
-	  ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
-
-      tsm_handle.fdma_reqline = 30;
-      tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
-      tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel,tsm_handle.fdma_reqline,&fdma_req_config);
-#endif
-
-#if !defined(ADB_BOX)
     /* Initilise the parameters for the FDMA SWTS data injection */
     for (n=0;n<MAX_SWTS_PAGES;n++) {
        dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
@@ -617,7 +604,7 @@ void spark_stm_tsm_init ( void )
 }
 #endif
 #endif
-#endif
+
 
 void stm_tsm_init (int use_cimax)
 {
@@ -1398,7 +1385,17 @@ void stm_tsm_init (int use_cimax)
          tsm_io = ioremap (/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
       }
+#if defined(ADB_BOX)
+	  //DVB-T dla ADB_BOX
+      tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
+	  tsm_handle.swts_channel = 3;
+      tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
+	  ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
 
+      tsm_handle.fdma_reqline = 30;
+      tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
+      tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel,tsm_handle.fdma_reqline,&fdma_req_config);
+#endif
 
 #ifdef LOAD_TSM_DATA
       TSM_NUM_PTI_ALT_OUT  = 1/* config->tsm_num_pti_alt_out*/;

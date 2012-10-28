@@ -231,7 +231,7 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	int i = 0;
 	int vLoop = 0;
 
-	printk (KERN_INFO "%s: Nbox frontend core\n", __FUNCTION__);
+	printk (KERN_INFO "%s: Adb_Box frontend core\n", __FUNCTION__);
 
 	core[i] = (struct core*) kmalloc(sizeof(struct core),GFP_KERNEL);
 	if (!core[i])
