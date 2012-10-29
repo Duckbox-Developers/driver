@@ -337,30 +337,10 @@ static struct vfd_driver vfd;
 #define VFDSETLED            0xc0425afe
 #define VFDSETMODE           0xc0425aff
 
-#define VFD_LED_IR	     0x23
-#define VFD_LED_POW	     0x24
+#define VFD_LED_IR	     0x00000023
+#define VFD_LED_POW	     0x00000024
+#define VFD_LED_REC	     0x0000001e
 
-
-typedef enum
-{
-  /* common icons */	//enigma2		neutrino
-  VFD_ICON_USB = 0x00,	//usb
-  VFD_ICON_HD, 		//hd video		hdd
-  VFD_ICON_HDD,		//hdd
-  VFD_ICON_LOCK,	//crypted
-  VFD_ICON_BT,
-  VFD_ICON_MP3,		
-  VFD_ICON_MUSIC,
-  VFD_ICON_DD, 		//dolby digital
-  VFD_ICON_MAIL,
-  VFD_ICON_MUTE,
-  VFD_ICON_PLAY,	//not pauseable
-  VFD_ICON_PAUSE,
-  VFD_ICON_FF,
-  VFD_ICON_FR,
-  VFD_ICON_REC,
-  VFD_ICON_CLOCK,
-} VFD_ICON;
 
 static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg ) {
   struct vfd_ioctl_data vfddata;
@@ -391,7 +371,7 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 	  //   phase, map them to the CD segments to indicate progress 
 
 	  case VFD_LED_IR: 
-		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED1, led_POW|0x01); //pauza
+		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED1, led_POW|0x01); 
 			else pt6958_led_control(PT6958_CMD_ADDR_LED1, led_POW); 
             break; 
 
@@ -401,59 +381,28 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 		pt6958_led_control(PT6958_CMD_ADDR_LED1, led_POW); 
             break; 
 
-
-	  case VFD_ICON_HDD:
-            break;
-
-	  case VFD_ICON_MP3:
-            break;
-
-	  case VFD_ICON_MUSIC:
-            break;
-
-	  case VFD_ICON_DD:
-            break;
-
-	  case VFD_ICON_MUTE:
-            break;
-
-	  case VFD_ICON_PLAY:
-            break;
-
-	  case VFD_ICON_PAUSE:
-	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED1, 3); //pauza
-	//		else pt6958_led_control(PT6958_CMD_ADDR_LED1, 2); 
-            break;
-
-	  case VFD_ICON_FF:
-            break;
-
-	  case VFD_ICON_FR:
-            break;
-
-	  case VFD_ICON_REC:
+	  case VFD_LED_REC:
 		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED2, 1); //nagrywanie
 			else pt6958_led_control(PT6958_CMD_ADDR_LED2, 0); 
             break;
 
-	  case VFD_ICON_CLOCK:
-            break;
 
-	  case VFD_ICON_HD:
-		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED4, 1); //kanal HD
-			else pt6958_led_control(PT6958_CMD_ADDR_LED4, 0); 
-            break;
+	//  case VFD_ICON_PAUSE:
+	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED1, 3); //pauza
+	//		else pt6958_led_control(PT6958_CMD_ADDR_LED1, 2); 
+        //    break;
 
-	  case VFD_ICON_LOCK:
-		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED3, 1); //nagrywanie
-			else pt6958_led_control(PT6958_CMD_ADDR_LED3, 0); 
-            break;
 
-	  case VFD_ICON_MAIL:
-            break;
+	//  case VFD_ICON_HD:
+	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED4, 1); //kanal HD
+	//		else pt6958_led_control(PT6958_CMD_ADDR_LED4, 0); 
+        //    break;
 
-	  case VFD_ICON_BT:
-            break;
+	//  case VFD_ICON_LOCK:
+	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED3, 1); //nagrywanie
+	//		else pt6958_led_control(PT6958_CMD_ADDR_LED3, 0); 
+        //    break;
+
 
           default:
             return 0;

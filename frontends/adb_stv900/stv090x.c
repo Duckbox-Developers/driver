@@ -6429,7 +6429,7 @@ err:
 static struct dvb_frontend_ops stv090x_ops_1 = {
 
 	.info = {
-		.name				= "STV090x Multistandard ID1",
+		.name				= "STV090x Multistandard A",
 		.type				= FE_QPSK,
 		.frequency_min		= 950000,
 		.frequency_max 		= 2150000,
@@ -6469,7 +6469,7 @@ static struct dvb_frontend_ops stv090x_ops_1 = {
 static struct dvb_frontend_ops stv090x_ops_2 = {
 
 	.info = {
-		.name				= "STV090x Multistandard ID2",
+		.name				= "STV090x Multistandard B",
 		.type				= FE_QPSK,
 		.frequency_min		= 950000,
 		.frequency_max 		= 2150000,
