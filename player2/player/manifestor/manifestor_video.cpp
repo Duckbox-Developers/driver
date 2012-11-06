@@ -1167,14 +1167,36 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                 {
                     // Picture is wider than display surface so must shrink height
                     Rational_t   NewHeight       = (DestHeight * WindowAspectRatio) / PictureAspectRatio;
+#ifdef __TDT__
+                    if (VideoParameters->Width != 704)
+                    {
+                        DestHeight               = NewHeight.IntegerPart();
+                    }
+                    else
+                    {
+                        DestHeight = (DestHeight * 3) / 4;
+                    }
+#else
                     DestHeight                   = NewHeight.IntegerPart();
+#endif
                     DestY                        = DestY + ((SurfaceWindow.Height - DestHeight) >> 1);
                 }
                 else
                 {
                     // Picture is taller than display surface so must shrink width
                     Rational_t   NewWidth        = (DestWidth * PictureAspectRatio) / WindowAspectRatio;
+#ifdef __TDT__
+                    if (VideoParameters->Width != 704)
+                    {
+                        DestWidth                = NewWidth.IntegerPart();
+                    }
+                    else
+                    {
+                        DestWidth = (DestWidth  * 3) / 4;
+                    }
+#else
                     DestWidth                    = NewWidth.IntegerPart();
+#endif
                     DestX                        = DestX + ((SurfaceWindow.Width - DestWidth) >> 1);
                 }
             }
@@ -1185,7 +1207,18 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                     // Picture is wider than display surface so must chop off edges
                     int          OldWidth        = SourceWidth;
                     Rational_t   NewWidth        = (SourceWidth * WindowAspectRatio) / PictureAspectRatio;
+#ifdef __TDT__
+                    if (VideoParameters->Width != 704)
+                    {
+                        SourceWidth              = NewWidth.IntegerPart();
+                    }
+                    else
+                    {
+                        SourceWidth = (SourceWidth * 4) / 3;
+                    }
+#else
                     SourceWidth                  = NewWidth.IntegerPart();
+#endif
                     SourceX                      = SourceX + ((OldWidth - SourceWidth) >> 1);
                 }
                 else
@@ -1193,7 +1226,18 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                     // Picture is taller than display surface so must chop off top and bottom
                     int          OldHeight       = SourceHeight;
                     Rational_t   NewHeight       = (SourceHeight * PictureAspectRatio) / WindowAspectRatio;
+#ifdef __TDT__
+                    if (VideoParameters->Width != 704)
+                    {
+                        SourceHeight             = NewHeight.IntegerPart();
+                    }
+                    else
+                    {
+                        SourceHeight = (SourceHeight * 4) / 3;
+                    }
+#else
                     SourceHeight                 = NewHeight.IntegerPart();
+#endif
                     SourceY                      = SourceY + ((OldHeight - SourceHeight) >> 1);
                 }
             }
@@ -1274,16 +1318,11 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
 
     // Hm why is here not the decimate value used from havana_stream ?
     // Lets set it depending on the value from havana_stream
-#if !defined(ADB_BOX)
-    if (OutputWindow.Height > 576 || OutputWindow.Height < 425)
-    {
-        int decimate = Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput);
-        if (decimate == PolicyValueDecimateDecoderOutputDisabled)
-            DecimateIfAvailable = false;
-        else
-            DecimateIfAvailable = true;
-    }
-#endif
+    int decimate = Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput);
+    if (decimate == PolicyValueDecimateDecoderOutputDisabled)
+        DecimateIfAvailable = false;
+    else
+        DecimateIfAvailable = true;
 
 #if defined (CROP_INPUT_WHEN_DECIMATION_NEEDED_BUT_NOT_AVAILABLE)
     if ((Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput) != PolicyValueDecimateDecoderOutputDisabled) &&
