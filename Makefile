@@ -132,7 +132,7 @@ obj-y	+= frontends/
 obj-y	+= frontcontroller/
 obj-y	+= wireless/
 
-ifneq (,$(findstring pti_np,*))
+ifneq (,$(findstring pti_np,$(shell ls $(DRIVER_TOPDIR))))
 obj-y	+= pti_np/
 else
 obj-y	+= pti/
