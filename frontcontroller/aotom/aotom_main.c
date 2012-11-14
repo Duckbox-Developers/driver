@@ -214,8 +214,12 @@ static int draw_thread(void *arg)
 	char buf[sizeof(data->data) + 2 * DISPLAYWIDTH_MAX];
 	int len = data->length;
 	int off = 0;
+	int doton3 = 0;
+	
+	if (YWPANEL_width == 4 && len == 5 && data->data[2] == '.')
+		doton3 = 1;
 
-	if (len > YWPANEL_width) {
+	if (len > YWPANEL_width + doton3) {
  		memset(buf, ' ', sizeof(buf));
 		off = YWPANEL_width - 1;
 		memcpy(buf + off, data->data, len);
@@ -228,7 +232,7 @@ static int draw_thread(void *arg)
 
 	draw_thread_stop = 0;
 
-	if(len > YWPANEL_width) {
+	if(len > YWPANEL_width + doton3) {
 		int pos;
 		for(pos = 0; pos < len; pos++) {
 			int i;
