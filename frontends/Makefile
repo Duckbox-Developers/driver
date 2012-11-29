@@ -198,9 +198,6 @@ obj-y	+= multituner/
 else ifdef UFS910
 cx24116-objs += cx24116/cx24116.o
 obj-m += cx24116.o
-else ifdef FLASH_UFS910
-cx24116-objs +=	cx24116/cx24116.o
-obj-m += cx24116.o
 else ifdef TF7700
 cx24116-objs += cx24116/cx24116.o
 obj-m += cx24116.o
@@ -318,9 +315,6 @@ avl2108_platform-objs += avl2108/avl2108_platform.o
 obj-m += avl2108_platform.o
 else ifdef UFS910
 cx24116-objs += cx24116_dvbapi5/cx24116.o
-obj-m += cx24116.o
-else ifdef FLASH_UFS910
-cx24116-objs +=	cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
 else ifdef TF7700
 cx24116-objs += cx24116_dvbapi5/cx24116.o
