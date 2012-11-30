@@ -13,15 +13,11 @@ ifeq ($(KERNELRELEASE),)
 DRIVER_TOPDIR:=$(shell pwd)
 include $(DRIVER_TOPDIR)/kernel.make
 else
-CCFLAGSY    += -D__TDT__ -D__LINUX__ -D__SH4__ -D__KERNEL__ -DMODULE -DEXPORT_SYMTAB
+CCFLAGSY += -D__TDT__ -D__LINUX__ -D__SH4__ -D__KERNEL__ -DMODULE -DEXPORT_SYMTAB
 
 CONFIGFILE := $(DRIVER_TOPDIR)/.config
 
 include $(CONFIGFILE)
-
-ifdef HAVANA_P0207_5
-CCFLAGSY+=-DHAVANA_P0207_5
-endif
 
 ifdef OCTAGON1008
 CCFLAGSY+=-DOCTAGON1008
@@ -117,153 +113,147 @@ endif
 
 export CCFLAGSY
 
-obj-y	:= avs/
-obj-y	+= multicom/
-obj-y	+= stgfb/
-obj-y	+= player2/
-obj-y	+= boxtype/
-obj-y	+= simu_button/
-obj-y	+= e2_proc/
-obj-y	+= frontends/
-obj-y	+= frontcontroller/
-obj-y	+= wireless/
+obj-y := avs/
+obj-y += multicom/
+obj-y += stgfb/
+obj-y += player2/
+obj-y += boxtype/
+obj-y += simu_button/
+obj-y += e2_proc/
+obj-y += frontends/
+obj-y += frontcontroller/
+obj-y += wireless/
 
 ifneq (,$(findstring pti_np,$(shell ls $(DRIVER_TOPDIR))))
-obj-y	+= pti_np/
+obj-y += pti_np/
 else
-obj-y	+= pti/
+obj-y += pti/
 endif
 
-obj-y	+= compcache/
-obj-y	+= bpamem/
+obj-y += compcache/
+obj-y += bpamem/
 
-ifdef STM22
-obj-y	+= logfs/
+ifdef HL101
+obj-y += smartcard/
 endif
 
-#obj-y	+= proc_register/
-
-ifdef  HL101
-obj-y	+= smartcard/
-endif
-
-ifdef  ADB_BOX
-obj-y	+= smartcard/
-obj-y	+= adb_box_fan/
-obj-y	+= cec_adb_box/
-obj-y	+= dvbt/as102/
+ifdef ADB_BOX
+obj-y += smartcard/
+obj-y += adb_box_fan/
+obj-y += cec_adb_box/
+obj-y += dvbt/as102/
 endif
 
 ifndef VIP2_V1
 ifndef SPARK
 ifndef SPARK7162
-obj-y	+= cic/
+obj-y += cic/
 endif
 endif
 endif
 
 # Button and Led Driver only needed for old 14W Kathrein Ufs 910 boxes
 ifdef UFS910
-obj-y	+= button/
-obj-y	+= led/
+obj-y += button/
+obj-y += led/
 endif
 
 ifdef UFS922
-obj-y	+= ufs922_fan/
+obj-y += ufs922_fan/
 endif
 
 ifdef HOMECAST5101
-obj-y	+= button_hs5101/
-obj-y	+= player2/linux/drivers/media/dvb/stm/dvb
+obj-y += button_hs5101/
+obj-y += player2/linux/drivers/media/dvb/stm/dvb
 endif
 
 ifdef UFS912
-obj-y	+= cec/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += cpu_frequ/
 endif
 
 ifdef UFS913
-obj-y	+= cec/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += cpu_frequ/
 endif
 
 ifdef ATEVIO7500
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef HS7810A
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef HS7110
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef WHITEBOX
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef SPARK
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef SPARK7162
-obj-y	+= smartcard/
-obj-y	+= i2c_spi/
-obj-y	+= cpu_frequ/
-obj-y	+= cec/
+obj-y += smartcard/
+obj-y += i2c_spi/
+obj-y += cpu_frequ/
+obj-y += cec/
 endif
 
 ifdef OCTAGON1008
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 
 ifdef FORTIS_HDBOX
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 
 ifdef IPBOX9900
-obj-y    += siinfo/
-obj-y    += rmu/
-obj-y	 += ipbox99xx_fan/
-obj-y	 += smartcard/
+obj-y += siinfo/
+obj-y += rmu/
+obj-y += ipbox99xx_fan/
+obj-y += smartcard/
 endif
 
 ifdef IPBOX99
-obj-y    += siinfo/
-obj-y	 += ipbox99xx_fan/
-obj-y	 += smartcard/
+obj-y += siinfo/
+obj-y += ipbox99xx_fan/
+obj-y += smartcard/
 endif
 
 ifdef IPBOX55
-obj-y    += siinfo/
-obj-y	 += smartcard/
+obj-y += siinfo/
+obj-y += smartcard/
 endif
 
 ifdef CUBEREVO
-obj-y    += smartcard/
-obj-y	 += cpu_frequ/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 ifdef CUBEREVO_MINI2
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 ifdef CUBEREVO_250HD
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 ifdef CUBEREVO_2000HD
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 ifdef CUBEREVO_9500HD
-obj-y    += smartcard/
+obj-y += smartcard/
 endif
 
 endif

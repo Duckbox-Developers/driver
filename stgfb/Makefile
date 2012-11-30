@@ -1,1 +1,1 @@
-obj-y	+= stmfb/
+obj-y += stmfb/
