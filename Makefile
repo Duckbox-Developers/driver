@@ -124,10 +124,17 @@ obj-y += frontends/
 obj-y += frontcontroller/
 obj-y += wireless/
 
+<<<<<<< HEAD
 ifneq (,$(findstring pti_np,$(shell ls $(DRIVER_TOPDIR))))
 obj-y += pti_np/
 else
 obj-y += pti/
+=======
+ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
+obj-y += pti/
+else
+obj-y += pti_np/
+>>>>>>> tdt/master
 endif
 
 obj-y += compcache/
