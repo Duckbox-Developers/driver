@@ -275,9 +275,7 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
                              DVB_DEVICE_VIDEO);                             
 
         DeviceContext->Id                       = i;
-#if !defined(ADB_BOX)
         DeviceContext->numRunningFeeds          = 0;
-#endif
         DeviceContext->DemuxContext             = DeviceContext;        /* wire directly to own demux by default */
         DeviceContext->SyncContext              = DeviceContext;        /* we are our own sync group by default */
         DeviceContext->Playback                 = NULL;

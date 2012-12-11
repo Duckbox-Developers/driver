@@ -54,10 +54,20 @@ static char *TSIS_mode  = "parallel";
 module_param(TSIS_mode,charp,0);
 MODULE_PARM_DESC(TSIS_mode, "TSIS_mode type: serial, parallel (default parallel"); 
 
-    enum{
+int glowica; 
+static char *NIMS  = "single";
+module_param(NIMS,charp,0);
+MODULE_PARM_DESC(NIMS, "NIMS type: single,twin (default single");
+
+enum {
 	SERIAL,
 	PARALLEL,
 	}; 
+
+enum { 
+	SINGLE,
+	TWIN,
+	};
 #endif
 
 #ifdef UFS922
@@ -114,7 +124,7 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
 #if defined(ADB_BOX)
   if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
          (pSession->source < DMX_SOURCE_FRONT3)) ||
-         ((pSession->source == DMX_SOURCE_DVR0) && swts)))
+        ((pSession->source == DMX_SOURCE_DVR0) && swts)))
     return -1;
 #endif
 
@@ -395,7 +405,16 @@ static int convert_source ( const dmx_source_t source)
 
   case DMX_SOURCE_FRONT1:
 #if defined(ADB_BOX)
-    tag = TSIN0;
+         if (glowica == SINGLE) {
+            
+ tag = SWTS0;
+           
+         }
+         else if (glowica == TWIN) {
+ tag = TSIN0;
+           
+         }
+
 #elif defined(UFS913)
     tag = 3;//TSIN2; //TSIN3
 #else
@@ -418,7 +437,16 @@ static int convert_source ( const dmx_source_t source)
 
 #if defined(ADB_BOX)
   case DMX_SOURCE_FRONT2:
-	tag = SWTS0;	//dvbt
+	 if (glowica == SINGLE) {
+            
+ tag = TSIN0;
+           
+         }
+         else if (glowica == TWIN) {
+ tag = SWTS0;
+           
+         }
+
     break;
   case DMX_SOURCE_DVR0:
     tag = TSIN1;	//fake tsin dla DVR, nie moze byc swts bo jest uzywane w dvbt
@@ -461,6 +489,17 @@ void ptiInit ( struct DeviceContext_s *pContext )
 		{
 		printk("TsinMode = PARALLEL\n");
 		TsinMode = PARALLEL;
+		} 
+	
+	if((TSIS_mode[0] == 0) || (strcmp("single", NIMS) == 0))
+		{
+		printk("NIMS = SINGLE\n");
+		glowica = SINGLE;
+		}
+		else if(strcmp("twin", NIMS) == 0)
+		{
+		printk("NIMS = TWIN\n");
+		glowica = TWIN;
 		} 
 #endif
 

@@ -129,7 +129,6 @@ static void stb6100_normalise_regs(u8 regs[])
 static int stb6100_read_regs(struct stb6100_state *state, u8 regs[])
 {
 	int rc;
-
 	struct i2c_msg msg = {
 		.addr	= state->config->tuner_address,
 		.flags	= I2C_M_RD,
@@ -173,7 +172,6 @@ static int stb6100_write_reg_range(struct stb6100_state *state, u8 buf[], int st
 {
 	int rc;
 	u8 cmdbuf[len + 1];
-
 	struct i2c_msg msg = {
 		.addr	= state->config->tuner_address,
 		.flags	= 0,
@@ -588,13 +586,11 @@ struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
 	if (state == NULL)
 		goto error;
 
-	state->config		= config;
-	
-	state->i2c		= i2c;
+	state->config		= config;	
+	state->i2c			= i2c;
 	state->frontend		= fe;
 	state->reference	= config->refclock / 1000; /* kHz */
 	fe->tuner_priv		= state;
-	
 	fe->ops.tuner_ops	= stb6100_ops;
 	
 	printk("%s: Attaching STB6100 \n", __func__);

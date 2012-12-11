@@ -83,7 +83,6 @@
 )
 
 struct stb6100_config {
-	
 	u8	tuner_address;
 	u32	refclock;
 };

@@ -17,10 +17,6 @@
 
 #define I2C_ADDR_STB0899 	(0xd0 >> 1)	//d0=0x68 d2=69
 #define I2C_ADDR_STB6100 	(0xc0 >> 1)	//c0  c6
-#define I2C_ADDR_STV090X	(0xd0 >> 1)
-#define I2C_ADDR_STV6110X	(0xc0 >> 1)
-#define I2C_ADDR_CX24116	(0x0a >> 1)
-#define I2C_ADDR_IX7306		(0xc0 >> 1)
 
 static struct core *core[MAX_DVB_ADAPTERS];
 
@@ -51,7 +47,7 @@ static const struct stb0899_s1_reg stb0899_init_dev [] = {
 	 	{ STB0899_IRQMSK_1	, 0xff },
 	 	{ STB0899_IRQMSK_0	, 0xff },
 		{ STB0899_I2CCFG	, 0x88 },
-		{ STB0899_I2CRPT	, 0x58 },
+		{ STB0899_I2CRPT	, 0x48 },//58=ok
 		{ STB0899_GPIO00CFG	, 0x82 },
 		{ STB0899_GPIO01CFG	, 0x82 }, /* 0x02 -> LED green 0x82 -> LED orange */
 		{ STB0899_GPIO02CFG	, 0x82 },
@@ -481,8 +477,8 @@ static const struct stb0899_s1_reg stb0899_init_tst[] = {
 		{ STB0899_GHOSTREG	, 0x81 },
 		{ 0xffff		, 0xff },
 };
-
 #else        //oldconfig
+
 static const struct stb0899_s1_reg stb0899_init_dev [] = {
 	{0xF000, 0x30},
 	{0xF0A0, 0x32},
@@ -575,8 +571,6 @@ static const struct stb0899_s1_reg stb0899_init_dev [] = {
 	{0xF201, 0x0A},
 	{0xffff, 0xff},
 };
-
-
 
 static const struct stb0899_s2_reg stb0899_init_s2_demod[]  = {
 		//offset 00
@@ -912,6 +906,7 @@ static const struct stb0899_s2_reg stb0899_init_s2_fec[] = {
 	{0xFA20,0x00000000,0x000001E0},
 	{0xFA24,0x00000000,0x0000A8C0},
 	{0xFA28,0x00000000,0x0000000C},
+
 	//offset 800
 	{0xFA00,0x00000800,0x00000001},
 	{0xFA04,0x00000800,0x00000545},
@@ -966,7 +961,6 @@ static const struct stb0899_s1_reg stb0899_init_tst[] = {
 	{0xFF5E, 0x00},
 	{0xffff, 0xff},
 };
-
 #endif	//oldconfig
 
 
@@ -984,7 +978,6 @@ static const struct stb0899_s1_reg stb0899_init_tst[] = {
 #define CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET 15
 #define CORE_STB0899_DVBS2_CRL_NCO_BITS          30
 #define CORE_STB0899_DVBS2_LDPC_MAX_ITER         70
-
 
 static struct stb0899_config stb0899_config = {
 	.init_dev        = stb0899_init_dev,
@@ -1176,7 +1169,7 @@ EXPORT_SYMBOL(fe_core_register_frontend);
 
 int __init fe_core_init(void)
 {
-printk(">>fe_core_init\n");
+	printk("fe_core_init\n");
 	
     return 0;
 }
