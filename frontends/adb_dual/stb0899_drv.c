@@ -701,8 +701,7 @@ u32 _stb0899_read_s2reg(struct stb0899_state *state,
 		.len	= 6
 	};
 
-    struct i2c_msg msg_1 = {
-			
+    struct i2c_msg msg_1 = {			
 		.addr	= state->config->demod_address,
 		.flags	= 0,
 		.buf	= buf_1,
@@ -909,7 +908,6 @@ int stb0899_write_regs(struct stb0899_state *state, unsigned int reg, u8 *data, 
 {
 	int ret;
 	u8 buf[2 + count];
-	
 	struct i2c_msg i2c_msg = {
 		.addr	= state->config->demod_address,
 		.flags	= 0,
@@ -1070,12 +1068,10 @@ static void stb0899_init_calc(struct stb0899_state *state)
 	/* Set AGC value to the middle	*/
 	internal->agc_gain		= 8154;
 	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, IF_AGC_CNTRL);
-//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000000,0xf320);
 	STB0899_SETFIELD_VAL(IF_GAIN_INIT, reg, internal->agc_gain);
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_IF_AGC_CNTRL, STB0899_OFF0_IF_AGC_CNTRL, reg);
 
 	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, RRC_ALPHA);
-//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000020,0xf35c);
 	internal->rrc_alpha		= STB0899_GETFIELD(RRC_ALPHA, reg);
 
 	internal->center_freq		= 0;
@@ -1511,11 +1507,9 @@ static int stb0899_read_snr(struct dvb_frontend *fe, u16 *snr)
 		if (internal->lock) {
 			
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_CNTRL1);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf320);
 			quant = STB0899_GETFIELD(UWP_ESN0_QUANT, reg);
 
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_STAT2);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf32c);
 			est = STB0899_GETFIELD(ESN0_EST, reg);
 
 			if (est == 1)
@@ -1586,7 +1580,6 @@ static int stb0899_read_status(struct dvb_frontend *fe, enum fe_status *status)
 		dprintk(state->verbose, FE_DEBUG, 1, "Delivery system DVB-S2");
 		if (internal->lock) {
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_STAT2);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf340);
 			if (STB0899_GETFIELD(UWP_LOCK, reg) && STB0899_GETFIELD(CSM_LOCK, reg)) {
 				*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
 				dprintk(state->verbose, FE_DEBUG, 1,
@@ -1683,8 +1676,7 @@ static int stb0899_set_voltage(struct dvb_frontend *fe, fe_sec_voltage_t voltage
 	struct stb0899_state *state = fe->demodulator_priv;
 
 	int ret;
-	u8 b;
-	
+	u8 b;	
 	struct i2c_msg msg = {.addr = 0x08, .flags = 0,
 				.buf = &b,
 				.len = 1 };
@@ -1897,17 +1889,13 @@ int stb0899_get_dev_id(struct stb0899_state *state)
 		chip_id, release);
 
 	CONVERT32(STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CORE_ID), (char *)&demod_str);
-//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf334),(char *)&demod_str);
 	
 	demod_ver = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_VERSION_ID);
-//	demod_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf33c);
 	
 	dprintk(state->verbose, FE_ERROR, 1, "Demodulator Core ID=[%s], Version=[%d]", (char *) &demod_str, demod_ver);
 	CONVERT32(STB0899_READ_S2REG(STB0899_S2FEC, FEC_CORE_ID_REG), (char *)&fec_str);
-//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c), (char *)&fec_str);
 	
 	fec_ver = STB0899_READ_S2REG(STB0899_S2FEC, FEC_VER_ID_REG);
-//	fec_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c);
 	
 	if (! (chip_id > 0)) {
 		dprintk(state->verbose, FE_ERROR, 1, "couldn't find a STB 0899");
@@ -2503,11 +2491,11 @@ static struct dvb_frontend_ops stb0899_ops_1 = {
 		.name				= "STB0899 Multistandard A",
 		.type				= FE_QPSK, /* with old API */
 		.frequency_min		= 950000,
-		.frequency_max 		= 2150000,
+		.frequency_max		= 2150000,
 		.frequency_stepsize	= 0,
 		.frequency_tolerance= 0,
-		.symbol_rate_min 	=  1000000,
-		.symbol_rate_max 	= 45000000,
+		.symbol_rate_min	=  1000000,
+		.symbol_rate_max	= 45000000,
 
 		.caps 			= FE_CAN_INVERSION_AUTO	|
 						  FE_CAN_FEC_AUTO		|
@@ -2547,11 +2535,11 @@ static struct dvb_frontend_ops stb0899_ops_2 = {
 		.name				= "STB0899 Multistandard B",
 		.type				= FE_QPSK, /* with old API */
 		.frequency_min		= 950000,
-		.frequency_max 		= 2150000,
+		.frequency_max		= 2150000,
 		.frequency_stepsize	= 0,
 		.frequency_tolerance= 0,
-		.symbol_rate_min 	=  1000000,
-		.symbol_rate_max 	= 45000000,
+		.symbol_rate_min	=  1000000,
+		.symbol_rate_max	= 45000000,
 
 		.caps 			= FE_CAN_INVERSION_AUTO	|
 						  FE_CAN_FEC_AUTO		|
@@ -2626,7 +2614,6 @@ error:
 	kfree(state);
 	return NULL;
 }
-
 
 EXPORT_SYMBOL(stb0899_attach);
 

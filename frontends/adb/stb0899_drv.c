@@ -17,9 +17,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program; if not, write to the Free Software
 	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-*/
-#include <asm/io.h>  
-   
+*/   
 
 #include <linux/init.h>
 #include <linux/kernel.h>
@@ -27,6 +25,8 @@
 #include <linux/string.h>
 
 #include <linux/interrupt.h>                                                        
+
+#include <asm/io.h>  
 
 #include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"
@@ -539,10 +539,7 @@ static int stm_wait_diseqc_idle ( int timeout )
 static int stm_send_diseqc_burst (struct dvb_frontend* fe, fe_sec_mini_cmd_t burst)
 {
     printk ("%s\n", __FUNCTION__);
-//	return 0;
 	
-    //fe->ops->set_voltage(fe, SEC_VOLTAGE_OFF);
-
     if (stm_wait_diseqc_idle ( 100) < 0)
         return -ETIMEDOUT;
 
@@ -676,15 +673,10 @@ int stm_diseqc_init(void)
 
 	writel(    2, DSQ_TX_PRESCALER );
     writel(f, DSQ_TX_SUBCARR_DIV );
-//  writel( 1511, DSQ_TX_SUBCARR_DIV );	//dla 133mhz
-//  writel( 1136, DSQ_TX_SUBCARR_DIV );	//dla 100mhz
-//  writel( 1090, DSQ_TX_SUBCARR_DIV );	//dla 96mhz
 
-    writel(   33, DSQ_TX_SYMBOL_PER );
+	writel(   33, DSQ_TX_SYMBOL_PER );
     writel(   22, DSQ_TX_SYMBOL0_ONTIME );
     writel(   11, DSQ_TX_SYMBOL1_ONTIME );
-
-    //writel(   22, DSQ_TX_SILENCE_PER );
 
     writel( 0   , DSQ_TX_SW_RST );
     writel( 0   , DSQ_TX_EN );
@@ -696,8 +688,6 @@ err1:
     iounmap( diseqc_registers );
     return -ENODEV;
 }
-
-
 
 static int _stb0899_read_reg(struct stb0899_state *state, unsigned int reg)
 {
@@ -1140,12 +1130,10 @@ static void stb0899_init_calc(struct stb0899_state *state)
 	/* Set AGC value to the middle	*/
 	internal->agc_gain		= 8154;
 	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, IF_AGC_CNTRL);
-//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000000,0xf320);
 	STB0899_SETFIELD_VAL(IF_GAIN_INIT, reg, internal->agc_gain);
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_IF_AGC_CNTRL, STB0899_OFF0_IF_AGC_CNTRL, reg);
 
 	reg = STB0899_READ_S2REG(STB0899_S2DEMOD, RRC_ALPHA);
-//	reg = _stb0899_read_s2reg(state,0xf3fc,0x00000020,0xf35c);
 	internal->rrc_alpha		= STB0899_GETFIELD(RRC_ALPHA, reg);
 
 	internal->center_freq		= 0;
@@ -1398,7 +1386,7 @@ static int stb0899_init(struct dvb_frontend *fe)
 
 		pin_rx_diseq = stpio_request_pin (5, 4, "pin_rx_diseq", STPIO_IN);
 
-	stm_diseqc_init();
+		stm_diseqc_init();
 	
 		b=0x10;
 		ret=i2c_transfer(state->i2c, &msg, 1);
@@ -1584,11 +1572,9 @@ static int stb0899_read_snr(struct dvb_frontend *fe, u16 *snr)
 		if (internal->lock) {
 			
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_CNTRL1);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf320);
 			quant = STB0899_GETFIELD(UWP_ESN0_QUANT, reg);
 
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_STAT2);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf32c);
 			est = STB0899_GETFIELD(ESN0_EST, reg);
 
 			if (est == 1)
@@ -1659,7 +1645,6 @@ static int stb0899_read_status(struct dvb_frontend *fe, enum fe_status *status)
 		dprintk(state->verbose, FE_DEBUG, 1, "Delivery system DVB-S2");
 		if (internal->lock) {
 			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_STAT2);
-//			reg = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf340);
 			if (STB0899_GETFIELD(UWP_LOCK, reg) && STB0899_GETFIELD(CSM_LOCK, reg)) {
 				*status |= FE_HAS_SIGNAL | FE_HAS_CARRIER;
 				dprintk(state->verbose, FE_DEBUG, 1,
@@ -1862,17 +1847,13 @@ int stb0899_get_dev_id(struct stb0899_state *state)
 		chip_id, release);
 
 	CONVERT32(STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CORE_ID), (char *)&demod_str);
-//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf334),(char *)&demod_str);
 	
 	demod_ver = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_VERSION_ID);
-//	demod_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000400,0xf33c);
 	
 	dprintk(state->verbose, FE_ERROR, 1, "Demodulator Core ID=[%s], Version=[%d]", (char *) &demod_str, demod_ver);
 	CONVERT32(STB0899_READ_S2REG(STB0899_S2FEC, FEC_CORE_ID_REG), (char *)&fec_str);
-//	CONVERT32(_stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c), (char *)&fec_str);
 	
 	fec_ver = STB0899_READ_S2REG(STB0899_S2FEC, FEC_VER_ID_REG);
-//	fec_ver = _stb0899_read_s2reg(state,0xf3fc,0x00000800,0xfa2c);
 	
 	if (! (chip_id > 0)) {
 		dprintk(state->verbose, FE_ERROR, 1, "couldn't find a STB 0899");

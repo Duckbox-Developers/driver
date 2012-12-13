@@ -595,10 +595,7 @@ static struct stb0899_config stb0899_config_2 = {
 	.tuner_set_rfsiggain	= NULL,
 };
 
-
-
 static struct stb6100_config stb6100_config_1 = {
-	
 	.tuner_address = I2C_ADDR_STB6100_1,
 	.refclock      = 27000000
 };
@@ -625,28 +622,28 @@ static struct dvb_frontend * frontend_init(struct core_config *cfg, int i)
 			{
 				printk("fe_core : stb0899 attached OK \n");
                                 
-                    if (i == 0)
+				if (i == 0)
 					{
 					if (dvb_attach(stb6100_attach, frontend, &stb6100_config_1, cfg->i2c_adap) == 0) {
-					printk (KERN_INFO "error attaching stb6100\n");
-					goto error_out;
+						printk (KERN_INFO "error attaching stb6100\n");
+						goto error_out;
 					}
 				}
 				else
 				{
 					if (dvb_attach(stb6100_attach,frontend, &stb6100_config_2, cfg->i2c_adap) == 0) {
-					printk(KERN_INFO " error attaching stb6100\n");
-					goto error_out;
+						printk(KERN_INFO " error attaching stb6100\n");
+						goto error_out;
 				}
 			}
-				
 					printk("fe_core : stb6100 attached OK \n");
-			} else {
-				printk (KERN_INFO "%s: error attaching stb0899\n", __FUNCTION__);
-				goto error_out;
+			} 
+			else 
+			{
+					printk (KERN_INFO "%s: error attaching stb0899\n", __FUNCTION__);
+					goto error_out;
 			}
-
-			 
+		 
 	return frontend;
 
 error_out:
@@ -726,8 +723,7 @@ struct plat_tuner_config tuner_resources[] = {
         [1] = {
               .adapter		= 0,
               .i2c_bus 		= 0,
-              .i2c_addr 	= I2C_ADDR_STB0899_2,
-              
+              .i2c_addr 	= I2C_ADDR_STB0899_2,             
         },
 };
 

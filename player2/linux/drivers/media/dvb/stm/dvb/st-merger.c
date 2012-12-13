@@ -1300,8 +1300,8 @@ void stm_tsm_init (int use_cimax)
       /* set stream 2 on */
       ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
       ctrl_outl(ret | 0x80,tsm_io + TSM_STREAM2_CFG);
-#elif defined(ADB_BOX)
 
+#elif defined(ADB_BOX)
       /* route stream 1 to PTI */
       ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
       ctrl_outl(ret | 0x2, tsm_io + TSM_PTI_SEL);
@@ -1321,6 +1321,7 @@ void stm_tsm_init (int use_cimax)
       /* route stream 0 to PTI */
       ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
       ctrl_outl(ret | 0x1, tsm_io + TSM_PTI_SEL);
+
 #elif defined(HS7110) || defined(WHITEBOX)
       /* route stream 0 to PTI */
       ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
@@ -1386,15 +1387,25 @@ void stm_tsm_init (int use_cimax)
 #endif
       }
 #if defined(ADB_BOX)
-	  //DVB-T dla ADB_BOX
+    //dvbt dla NBOX
       tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
-	  tsm_handle.swts_channel = 3;
+      tsm_handle.swts_channel = 3;
       tsm_handle.tsm_swts = (unsigned long)ioremap (0x1A300000, 0x1000);
-	  ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
+//	  ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 8, tsm_io + TSM_SWTS_CFG(0));
+      ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 12, tsm_io + TSM_SWTS_CFG(0));
 
       tsm_handle.fdma_reqline = 30;
       tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
       tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel,tsm_handle.fdma_reqline,&fdma_req_config);
+/*
+      // Initilise the parameters for the FDMA SWTS data injection 
+      for (n=0;n<3;n++) {
+//      for (n=0;n<MAX_SWTS_PAGES;n++) {
+         dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
+         dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
+         dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
+      }
+	 */
 #endif
 
 #ifdef LOAD_TSM_DATA
