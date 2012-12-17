@@ -595,6 +595,44 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 #endif
 #if defined(SPARK7162)
 		icon_nr = aotom_data.u.icon.icon_nr;
+		//e2 icons workarround
+		//printk("icon_nr = %d\n", icon_nr);
+		if (icon_nr >= 256) {
+			icon_nr = icon_nr / 256;
+			switch (icon_nr) {
+			case 0x11:
+				icon_nr = 0x0E; //widescreen
+				break;
+			case 0x13:
+				icon_nr = 0x0B; //CA
+				break;
+			case 0x15:
+				icon_nr = 0x19; //mp3
+				break;
+			case 0x17:
+				icon_nr = 0x1A; //ac3
+				break;
+			case 0x1A:
+				icon_nr = 0x03; //play
+				break;
+			case 0x1e:
+				icon_nr = 0x07; //record
+				break;
+			case 38:
+				break; //cd part1
+			case 39:
+				break; //cd part2
+			case 40:
+				break; //cd part3
+			case 41:
+				break; //cd part4
+			default:
+				icon_nr = 0; //no additional symbols at the moment
+				break;
+			}
+		}	  
+		if (aotom_data.u.icon.on != 0)
+			aotom_data.u.icon.on = 1;
 		if (icon_nr > 0 && icon_nr <= 45 )
 			res = aotomSetIcon(icon_nr, aotom_data.u.icon.on);
 		if (icon_nr == 46){
