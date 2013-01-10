@@ -122,7 +122,7 @@ obj-y += simu_button/
 obj-y += e2_proc/
 obj-y += frontends/
 obj-y += frontcontroller/
-obj-y += wireless/
+#obj-y += wireless/
 
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
 obj-y += pti/
