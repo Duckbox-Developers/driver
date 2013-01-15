@@ -212,6 +212,7 @@ obj-y	+= cpu_frequ/
 endif
 
 ifdef SPARK
+obj-y	+= cec/
 obj-y	+= smartcard/
 obj-y	+= cpu_frequ/
 endif
