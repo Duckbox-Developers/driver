@@ -6,7 +6,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ *	
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -279,6 +279,14 @@ void parseMessage(unsigned char src, unsigned char dst, unsigned int len, unsign
         case USER_CONTROL_CODE_FUNCTION_POWER_TOGGLE:       strcat(name, "POWER_TOGGLE");        break;
         case USER_CONTROL_CODE_FUNCTION_POWER_OFF:          strcat(name, "POWER_OFF");           break;
         case USER_CONTROL_CODE_FUNCTION_POWER_ON:           strcat(name, "POWER_ON");            break;
+		case USER_CONTROL_CODE_ROOT_MENU:                   strcat(name, "ROOT_MENU");	         break;
+		case USER_CONTROL_CODE_CONTENTS_MENU:               strcat(name, "CONTENTS_MENU");       break;
+        case USER_CONTROL_CODE_SETUP_MENU:                  strcat(name, "SETUP_MENU");	         break;
+        case USER_CONTROL_CODE_PAGEUP:                      strcat(name, "PAGEUP");              break;
+        case USER_CONTROL_CODE_PAGEDOWN:                    strcat(name, "PAGEDOWN");            break;
+        case USER_CONTROL_CODE_INFO:                        strcat(name, "INFO");                break;
+        case USER_CONTROL_CODE_NEXT:                        strcat(name, "NEXT");                break;
+        case USER_CONTROL_CODE_LAST:                        strcat(name, "LAST");                break;
         default: break;
       }
 
