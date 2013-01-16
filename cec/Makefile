@@ -23,6 +23,10 @@ ifdef HS7110
 EXTRA_CFLAGS	+= -DSTx7111
 endif
 
+ifdef SPARK
+EXTRA_CFLAGS	+= -DSTx7111
+endif
+
 ifdef SPARK7162
 EXTRA_CFLAGS	+= -DSTx7105
 endif
