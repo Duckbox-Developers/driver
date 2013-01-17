@@ -35,6 +35,7 @@
 /* module table */
 USB_DEVICE_ID rtusb_dev_id[] = {
 #ifdef RT3070
+	{USB_DEVICE(0x148F,0x2070)}, /* Ralink 2070 */
 	{USB_DEVICE(0x148F,0x3070)}, /* Ralink 3070 */
 	{USB_DEVICE(0x148F,0x3071)}, /* Ralink 3071 */
 	{USB_DEVICE(0x148F,0x3072)}, /* Ralink 3072 */
@@ -121,6 +122,8 @@ USB_DEVICE_ID rtusb_dev_id[] = {
 	{USB_DEVICE(0x13D3,0x3329)}, /* Azurewave */
 	{USB_DEVICE(0x2001,0x3C15)}, /* Alpha */
 	{USB_DEVICE(0x2001,0x3C19)}, /* Alpha */
+	{USB_DEVICE(0x2001,0x3C1C)}, /* DLink */
+	{USB_DEVICE(0x2001,0x3C1D)}, /* DLink */
 	{USB_DEVICE(0x043E,0x7A12)}, /* Arcadyan */
 	{USB_DEVICE(0x043E,0x7A22)}, /* LG innotek */
 #endif // RT5370 //
@@ -131,6 +134,7 @@ USB_DEVICE_ID rtusb_dev_id[] = {
 #ifdef RT5572
 	{USB_DEVICE(0x148F,0x5572)}, /* Ralink 5572 */
 	{USB_DEVICE(0x043E,0x7A32)}, /* Arcadyan */
+	{USB_DEVICE(0x2001,0x3C1A)}, /* DLink */
 #endif /* RT5572 */
 	{ }/* Terminating entry */
 };
