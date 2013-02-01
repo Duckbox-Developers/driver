@@ -340,7 +340,8 @@ static struct vfd_driver vfd;
 #define VFD_LED_IR	     0x00000023
 #define VFD_LED_POW	     0x00000024
 #define VFD_LED_REC	     0x0000001e
-
+#define VFD_LED_HD	     0x00000011
+#define VFD_LED_LOCK	     0x00000013
 
 static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg ) {
   struct vfd_ioctl_data vfddata;
@@ -364,7 +365,10 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
      //pt_6958_set_icon( data ); // ikonki i inne pierdoly
 
 // ---------------------------------------------------------------------------------------------------------
-     DBG("[fp_led] VFDICONDISPLAYONOFF %x:%x", vfddata.data[0], vfddata.data[4]);
+     //DBG("[fp_led] VFDICONDISPLAYONOFF %x:%x", vfddata.data[0], vfddata.data[4]);
+
+	if (vfddata.data[0] != 0x00000023) printk("\n[fp_led] VFDICONDISPLAYONOFF %x:%x\n", vfddata.data[0], vfddata.data[4]);
+
         switch(vfddata.data[0])
         {
 	  // VFD driver of enigma2 issues codes during the start
@@ -382,6 +386,7 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
             break; 
 
 	  case VFD_LED_REC:
+		printk("\n[fp_led] HDLED:%x\n", vfddata.data[4]);
 		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED2, 1); //nagrywanie
 			else pt6958_led_control(PT6958_CMD_ADDR_LED2, 0); 
             break;
@@ -393,15 +398,15 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
         //    break;
 
 
-	//  case VFD_ICON_HD:
-	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED4, 1); //kanal HD
-	//		else pt6958_led_control(PT6958_CMD_ADDR_LED4, 0); 
-        //    break;
+	  case VFD_LED_LOCK:
+		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED3, 1); //kanal kodowany
+			else pt6958_led_control(PT6958_CMD_ADDR_LED3, 0); 
+            break;
 
-	//  case VFD_ICON_LOCK:
-	//	if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED3, 1); //nagrywanie
-	//		else pt6958_led_control(PT6958_CMD_ADDR_LED3, 0); 
-        //    break;
+	  case VFD_LED_HD:
+		if (vfddata.data[4]) pt6958_led_control(PT6958_CMD_ADDR_LED4, 1); //kanal HD
+			else pt6958_led_control(PT6958_CMD_ADDR_LED4, 0); 
+            break;
 
 
           default:
