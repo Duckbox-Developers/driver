@@ -588,15 +588,13 @@ static u16 avl6222_setup_pll(struct avl6222_state* state, const struct avl6222_p
     
     	dprintk(5, "%s()\n", __func__);
 	
-	ret = avl6222_i2c_write32(state, REG_CORE_RESET_B, 0);
-	ret |= avl6222_i2c_write32(state, PLL_R1, pll_ptr->m_r1);
+	ret = avl6222_i2c_write32(state, PLL_R1, pll_ptr->m_r1);
 	ret |= avl6222_i2c_write32(state, PLL_R6, pll_ptr->m_r1);
 	ret |= avl6222_i2c_write32(state, PLL_R2, pll_ptr->m_r2);
 	ret |= avl6222_i2c_write32(state, PLL_R3, pll_ptr->m_r3);
 	ret |= avl6222_i2c_write32(state, PLL_R4, pll_ptr->m_r4);
 	ret |= avl6222_i2c_write32(state, PLL_R5, pll_ptr->m_r5);
-	ret |= avl6222_i2c_write32(state, PLL_SOFTVALUE_EN,   1);
-	ret |= avl6222_i2c_write32(state, REG_CORE_RESET_B, 1);
+	//ret |= avl6222_i2c_write32(state, PLL_SOFTVALUE_EN,   1);
 	ret |= avl6222_i2c_write32(state, REG_RESET, 0);
 
     	/* Reset */
@@ -604,7 +602,28 @@ static u16 avl6222_setup_pll(struct avl6222_state* state, const struct avl6222_p
 	
 	return ret;
 }
+//---------------------------------------------------------------------
 
+static u16 avl6222_setup_pll_2(struct avl6222_state* state, const struct avl6222_pllconf * pll_ptr)
+{
+	u16 ret = 0;
+    
+    	dprintk(5, "%s()\n", __func__);
+	
+	ret = avl6222_i2c_write32(state, PLL_R1, pll_ptr->m_r1);
+	ret |= avl6222_i2c_write32(state, PLL_R6, pll_ptr->m_r1);
+	ret |= avl6222_i2c_write32(state, PLL_R2, pll_ptr->m_r2);
+	ret |= avl6222_i2c_write32(state, PLL_R3, pll_ptr->m_r3);
+	ret |= avl6222_i2c_write32(state, PLL_R4, pll_ptr->m_r4);
+	ret |= avl6222_i2c_write32(state, PLL_R5, pll_ptr->m_r5);
+	ret |= avl6222_i2c_write32(state, PLL_SOFTVALUE_EN,   1);
+	ret |= avl6222_i2c_write32(state, REG_RESET, 0);
+
+    	/* Reset */
+	ret |= avl6222_i2c_write32(state, REG_RESET, 1);
+	
+	return ret;
+}
 //---------------------------------------------------------------------
 
 static int avl6222_load_firmware(struct dvb_frontend* fe)
@@ -1465,7 +1484,7 @@ static int avl6222_initfe(struct dvb_frontend* fe)
 		return 0;
 	}
 
-	ret = avl6222_setup_pll(state, (const struct avl6222_pllconf * )(pll_conf + state->config->pll_config));
+	ret = avl6222_setup_pll_2(state, (const struct avl6222_pllconf * )(pll_conf + state->config->pll_config));
 
 	if (ret != AVL6222_OK) 
 	{
