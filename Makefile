@@ -178,9 +178,10 @@ obj-y += cpu_frequ/
 endif
 
 ifdef ATEVIO7500
-obj-y += cec/
-obj-y += smartcard/
-obj-y += cpu_frequ/
+obj-y	+= cec/
+obj-y	+= smartcard/
+obj-y	+= cpu_frequ/
+obj-y	+= sata_switch/
 endif
 
 ifdef HS7810A
