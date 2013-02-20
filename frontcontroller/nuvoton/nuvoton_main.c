@@ -114,6 +114,10 @@ static unsigned char expectEventId = 1;
 
 #ifdef ATEVIO7500
 #define cMinimumSize         4
+#elseif FORTIS_HDBOX
+#define cMinimumSize         4
+#elseif OCTAGON1008
+#define cMinimumSize         4
 #else
 #define cMinimumSize         5
 #endif
