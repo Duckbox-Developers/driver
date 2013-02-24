@@ -247,16 +247,16 @@ int StartFeed (struct dvb_demux_feed* Feed)
     /* either numRunningFeeds == 0 and reset_tsm == 1 or reset_tsm > 1 */
 
 #ifdef __TDT__
-	// fix recoding freezer on tuner0 and demux1/2 or tuner1 and demux0/2 or tuner3 and demux1/2
+	// fix recoding freezer on tuner0 and demux1/2 or tuner1 and demux0/2 or tuner2 and demux0/1
 	int tsm_reset = 1;
 	
 	for (i = 0; i < DVB_MAX_DEVICES_PER_ADAPTER; i++)
 	{
 	    struct DeviceContext_s* DeviceContext = &DvbContext->DeviceContext[i];
-	    if((DeviceContext->numRunningFeeds) != 0)
+	    if(DeviceContext->numRunningFeeds != 0)
 	    	tsm_reset = 0;
 	}
-	
+
 	if (tsm_reset && reset_tsm)
 	{
 	    printk(KERN_WARNING "reset_tsm: %d numRunningFeeds: %d => calling stm_tsm_init(1)\n", reset_tsm, Context->numRunningFeeds);
