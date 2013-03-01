@@ -910,7 +910,7 @@ int nuvotonWriteString(unsigned char* aBuf, int len)
 }
 #endif
 
-#ifndef ATEVIO7500
+#if !defined(ATEVIO7500)
 int nuvoton_init_func(void)
 {
     char standby_disable[] = {SOP, cCommandPowerOffReplay, 0x02, EOP};
@@ -977,7 +977,6 @@ int nuvoton_init_func(void)
     char init3[] = {SOP, cCommandSetTimeFormat, 0x81, EOP};
     char init4[] = {SOP, cCommandSetWakeupTime, 0xff, 0xff, EOP}; /* delete/invalidate wakeup time ? */
 
-    int  vLoop;
     int  res = 0;
 
     dprintk(100, "%s >\n", __func__);
