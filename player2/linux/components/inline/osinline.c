@@ -165,7 +165,7 @@ int   OS_LockMutex_trylock( OS_Mutex_t  *Mutex )
 {
     return OSDEV_ClaimSemaphore_trylock( (OSDEV_Semaphore_t*)Mutex );
     }
-#endif.
+#endif
 
 OS_Status_t   OS_UnLockMutex( OS_Mutex_t  *Mutex )
 {
