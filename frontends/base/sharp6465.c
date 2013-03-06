@@ -84,6 +84,29 @@ exit:
 	return err;
 }
 
+static int sharp6465_get_identify(struct dvb_frontend *fe)
+{
+	struct sharp6465_state *state = fe->tuner_priv;
+	u8 result[2] = {0, 0};
+	int err = 0;
+
+	err = sharp6465_read(state, result);
+	printk("result[0] = %x\n", result[0]);
+	printk("result[1] = %x\n", result[1]);
+	if (err < 0)
+		goto exit;
+
+	if((result[0] & 0x70) != 0x70)
+	{
+	    return -1;
+	}
+
+	return err;
+exit:
+	printk(KERN_ERR "%s: I/O Error\n", __func__);
+	return err;
+}
+
 #if 1
 static long calculate_mop_xtal()
 {
@@ -333,10 +356,54 @@ static struct dvb_tuner_ops sharp6465_ops =
 	.release = sharp6465_release,
 };
 
+static int sharp6465_check_identify(struct dvb_frontend *fe)
+{
+	int err = 0;
+	u32 status = 0;
+	unsigned char ucIOBuffer[10];
+	struct sharp6465_state *state = fe->tuner_priv;
+
+	fe->ops.init(fe);
+
+	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
+		goto exit;
+
+	tuner_SHARP6465_CalWrBuffer(474000, 8, ucIOBuffer);
+
+	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
+		goto exit;
+	err = sharp6465_write(state, ucIOBuffer, 4);
+	if (fe->ops.i2c_gate_ctrl(fe, 0) < 0)
+		goto exit;
+
+	msleep(500);
+	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
+		goto exit;
+	ucIOBuffer[2] = ucIOBuffer[4];
+	err = sharp6465_write(state, ucIOBuffer, 4);
+	if (fe->ops.i2c_gate_ctrl(fe, 0) < 0)
+		goto exit;
+
+	msleep(500);
+	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
+		goto exit;
+	err = sharp6465_get_identify(fe);
+	printk("status = %d\n", status);
+	if (err < 0)
+		goto exit;
+	if (fe->ops.i2c_gate_ctrl(fe, 0) < 0)
+		goto exit;
+
+	return err;
+exit:
+	return -1;
+}
+
 struct dvb_frontend *sharp6465_attach(struct dvb_frontend *fe,
 				    const struct sharp6465_config *config,
 				    struct i2c_adapter *i2c)
 {
+	int err = 0;
 	struct sharp6465_state *state = NULL;
 	struct dvb_tuner_info *info;
 
@@ -353,11 +420,16 @@ struct dvb_frontend *sharp6465_attach(struct dvb_frontend *fe,
 
 	memcpy(info->name, config->name, sizeof(config->name));
 
+	err = sharp6465_check_identify(fe);
+	if (err < 0)
+		goto exit;
+
 	printk("%s: Attaching sharp6465 (%s) tuner\n", __func__, info->name);
 
 	return fe;
 
 exit:
+	memset(&fe->ops.tuner_ops, 0, sizeof(struct dvb_tuner_ops));
 	kfree(state);
 	return NULL;
 }
