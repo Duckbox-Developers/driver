@@ -17,18 +17,17 @@
 
 extern struct DeviceContext_s* DeviceContext;
 
-int proc_denc_0_wss_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_denc_0_wss_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	char		*myString;
-	ssize_t 	ret = -ENOMEM;
-	/* int		result; */
-	
+	char *page;
+	char *myString;
+	ssize_t ret = -ENOMEM;
+	/* int result; */
+
 	printk("%s %ld - ", __FUNCTION__, count);
 
 	page = (char *)__get_free_page(GFP_KERNEL);
-	if (page) 
+	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
@@ -42,22 +41,19 @@ int proc_denc_0_wss_write(struct file *file, const char __user *buf,
 
 		//result = sscanf(page, "%3s %3s %3s %3s %3s", s1, s2, s3, s4, s5);
 	}
-	
+
 	ret = count;
 out:
 	free_page((unsigned long)page);
 	return ret;
 }
 
-
-int proc_denc_0_wss_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_denc_0_wss_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
 
 	len = sprintf(page, "auto(4:3_off)\n");
 
-        return len;
+	return len;
 }
-

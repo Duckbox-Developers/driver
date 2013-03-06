@@ -6,8 +6,7 @@
 #include <asm/uaccess.h>    	/* copy_from_user */
 
 
-int proc_info_model_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_info_model_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -45,11 +44,10 @@ int proc_info_model_read (char *page, char **start, off_t off, int count,
 #elif defined(IPBOX55)
 	len = sprintf(page, "ipbox55\n");
 #elif defined(ADB_BOX)
-    len = sprintf(page, "adb_box\n"); 
+	len = sprintf(page, "adb_box\n"); 
 #else
 	len = sprintf(page, "ufs910\n");
 #endif
-
-        return len;
+	return len;
 }
 
