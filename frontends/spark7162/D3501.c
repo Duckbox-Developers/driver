@@ -5672,6 +5672,18 @@ struct dvb_frontend* dvb_d3501_fe_qpsk_attach(
     }
     #endif  /* 0 */
 
+	{
+		INT32 ret = ERR_FAILED;
+		ret = nim_s3501_hw_check(&state->spark_nimdev);
+		if (ret != SUCCESS)
+		{
+			d3501_term(&state->spark_nimdev);
+			kfree(state);
+
+			return NULL;
+		}
+	}
+
 	return &state->frontend;
 
 error:
