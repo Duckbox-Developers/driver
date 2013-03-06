@@ -393,7 +393,7 @@ static SCI_ERROR sci_set_para_ETU_table(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *
 			else /* no datasheet case -> calculate the new baud rate*/
 			{
 				req_baud=sci->WWT;
-				dprintk(4, " ETU=%d,  WWT: %d\n",sci->sci_parameters.ETU, req_baud);
+				dprintk(4, " ETU=%lu,  WWT: %d\n",sci->sci_parameters.ETU, req_baud);
 
 				if( (sci->sci_parameters.ETU>=360) && (sci->sci_parameters.ETU<=384) )
 				{
@@ -588,7 +588,7 @@ SCI_ERROR sci_set_para_WWT(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_paramet
 {
     SCI_ERROR rc = SCI_ERROR_OK;
 
-	dprintk(8, "Setting WWT: %d\n",p_sci_parameters->WWT);
+	dprintk(8, "Setting WWT: %lu\n",p_sci_parameters->WWT);
 
     if((p_sci_parameters->WWT >= SCI_MIN_WWT) && (p_sci_parameters->WWT <= SCI_MAX_WWT))
     {
@@ -806,7 +806,7 @@ SCI_ERROR sci_set_para_class(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_param
 			PDEBUG("WARNING: Set 3 V\n");
 		}
 		else
-			PDEBUG("Card %ld is set 5 V\n",sci);
+			PDEBUG("Card %d is set 5 V\n",sci);
 	}
 	else if(p_sci_parameters->U == SCI_CLASS_B)
     {
@@ -823,7 +823,7 @@ SCI_ERROR sci_set_para_class(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_param
 			PDEBUG("WARNING: Set 3 V\n");
 		}
 		else
-			PDEBUG("Card %ld is set 3 V\n",sci->id);
+			PDEBUG("Card %d is set 3 V\n",sci->id);
 	}
 	else if(p_sci_parameters->U == SCI_CLASS_AB)
     {
@@ -840,7 +840,7 @@ SCI_ERROR sci_set_para_class(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_param
 			PDEBUG("WARNING: Set 3 V\n");
 		}
 		else
-			PDEBUG("Card %ld is set 3 V\n",sci->id);
+			PDEBUG("Card %d is set 3 V\n",sci->id);
 	}
 	else if(p_sci_parameters->U == SCI_UNKNOWN_CLASS)
     {

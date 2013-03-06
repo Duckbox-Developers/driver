@@ -410,7 +410,7 @@ void smartcard_reset(SCI_CONTROL_BLOCK *sci, unsigned char wait)
 #endif	
       } else
 	{
-		PERROR("Invalid SC ID controller '%ld'", sci->id);
+		PERROR("Invalid SC ID controller '%d'", sci->id);
 		return;
 	}
 
@@ -527,7 +527,7 @@ INT smartcard_voltage_config(SCI_CONTROL_BLOCK *sci, UINT vcc)
     }
     else
     {
-        PERROR("Invalid SC ID controller '%ld'", sci->id);
+        PERROR("Invalid SC ID controller '%d'", sci->id);
         return SCI_ERROR_SCI_INVALID;
     }
 
@@ -1277,7 +1277,7 @@ static int SCI_ClockDisable(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_Set_Clock(SCI_CONTROL_BLOCK *sci)
 {
-	dprintk(1, "Setting clock to: %lu.%02luMhz\n",
+	dprintk(1, "Setting clock to: %u.%02uMhz\n",
 		       sci->clk/100, sci->clk % 100);
 
 	U32 val;
@@ -1901,7 +1901,7 @@ static int sci_open(struct inode *inode, struct file *filp)
     ULONG sci_id = MINOR(inode->i_rdev);
     int rc = 0;
 
-    dprintk(1, "Opening device sci%d!\n",sci_id);
+    dprintk(1, "Opening device sci%ld!\n",sci_id);
 
     if (sci_id < SCI_NUMBER_OF_CONTROLLERS)
     {
@@ -1920,7 +1920,7 @@ static int sci_open(struct inode *inode, struct file *filp)
     }
     else
     {
-        dprintk(1, "Couldn't open device for sc[%d]\n", sci_id);
+        dprintk(1, "Couldn't open device for sc[%ld]\n", sci_id);
         rc = -ENODEV;
     }
 
@@ -1939,7 +1939,7 @@ static int sci_close(struct inode *inode, struct file *filp)
     ULONG sci_id = MINOR(inode->i_rdev);
     int rc = 0;
 
-    dprintk(1, "Closing device sci%d!\n", sci_id);
+    dprintk(1, "Closing device sci%ld!\n", sci_id);
 
     if (sci_id < SCI_NUMBER_OF_CONTROLLERS)
     {
@@ -1962,7 +1962,7 @@ static int sci_close(struct inode *inode, struct file *filp)
     }
     else
     {
-        dprintk(1,"Couldn't close sc[%d]\n", sci_id);
+        dprintk(1,"Couldn't close sc[%ld]\n", sci_id);
         rc = -ENODEV;
     }
 
@@ -2115,7 +2115,7 @@ void parse_atr(SCI_CONTROL_BLOCK *sci)
 	sci->WWT   =(sci->CLOCK*(sci->DI/1000000)/sci->FI);
 	sci->ETU   = sci->CLOCK/sci->WWT;
 
-	dprintk(4, "FI=%d  DI=%lu.%02lu  ETU=%d  WWT=%d  Clock=%dHz\n",	sci->FI,
+	dprintk(4, "FI=%ld  DI=%lu.%02lu  ETU=%ld  WWT=%ld  Clock=%ldHz\n",	sci->FI,
 			(sci->DI/1000000),(sci->DI/10000)%100,
 			sci->ETU,sci->WWT,sci->CLOCK);
 }
@@ -2315,7 +2315,7 @@ int sci_ioctl(struct inode *inode,
 
             if (sci_set_parameters(sci, &sci_param) == SCI_ERROR_OK){
                 rc = 0;
-		dprintk(1, "f is set to %d\n", sci_param.f);
+		dprintk(1, "f is set to %lu\n", sci_param.f);
 		switch(sci_param.f){
 			case 3:
 				smartcard_clock_config(sci,357);
