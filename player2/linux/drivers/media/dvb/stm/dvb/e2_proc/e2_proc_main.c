@@ -172,7 +172,7 @@
 
 #ifdef m
 Offen:
-	    			proc = open("/sys/class/stmcoredisplay/display0/hdmi0.0/modes", "r")
+	proc = open("/sys/class/stmcoredisplay/display0/hdmi0.0/modes", "r")
 #endif
 
 #include <linux/proc_fs.h>  	/* proc fs */ 
@@ -281,6 +281,7 @@ extern int proc_fp_wakeup_time_read(char *page, char **start, off_t off, int cou
 extern int proc_fp_wakeup_time_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 #endif
 
+
 extern int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
@@ -291,6 +292,7 @@ extern int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int
 extern int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_vmpeg_0_dst_all_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+
 
 extern int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
@@ -379,15 +381,15 @@ struct e2_procs
   {"stb/video/videomode_60hz",          proc_video_videomode_read,              proc_video_videomode_write, 0},
   {"stb/video/videomode_choices",       proc_video_videomode_choices_read,      NULL, 0},
   {"stb/video/videomode_preferred",     proc_video_videomode_preferred_read,    proc_video_videomode_preferred_write, 0},
-  {"stb/video/pal_v_start",     	proc_video_pal_v_start_read,    	proc_video_pal_v_start_write, 0},
-  {"stb/video/pal_v_end",     		proc_video_pal_v_end_read,    		proc_video_pal_v_end_write, 0},
-  {"stb/video/pal_h_start",     	proc_video_pal_h_start_read,    	proc_video_pal_h_start_write, 0},
-  {"stb/video/pal_h_end",     		proc_video_pal_h_end_read,    		proc_video_pal_h_end_write, 0},
+  {"stb/video/pal_v_start",             proc_video_pal_v_start_read,            proc_video_pal_v_start_write, 0},
+  {"stb/video/pal_v_end",               proc_video_pal_v_end_read,              proc_video_pal_v_end_write, 0},
+  {"stb/video/pal_h_start",             proc_video_pal_h_start_read,            proc_video_pal_h_start_write, 0},
+  {"stb/video/pal_h_end",               proc_video_pal_h_end_read,              proc_video_pal_h_end_write, 0},
 
 #if defined(ADB_BOX)
-  {"stb/video/switch_type",    		NULL			,    		proc_video_switch_type_write, 0},
-  {"stb/video/switch",       		proc_video_switch_read,    		proc_video_switch_write, 0},
-  {"stb/video/switch_choices", 		proc_video_switch_choices_read, 	NULL, 0},
+  {"stb/video/switch_type",             NULL,                                   proc_video_switch_type_write, 0},
+  {"stb/video/switch",                  proc_video_switch_read,                 proc_video_switch_write, 0},
+  {"stb/video/switch_choices",          proc_video_switch_choices_read,         NULL, 0},
 #endif
 
   {"stb/avs/0/colorformat",             proc_avs_0_colorformat_read,            proc_avs_0_colorformat_write, 0},
@@ -478,38 +480,37 @@ extern struct stpio_pin *output_pin;
 
 void setup_stpio_pin()
 {
-  output_pin= stpio_request_pin (3, 5, "12V_output", STPIO_OUT);
-  return;
+	output_pin= stpio_request_pin (3, 5, "12V_output", STPIO_OUT);
+	return;
 }
 #endif
 
 void init_e2_proc(struct DeviceContext_s* DC)
 {
 #if defined(IPBOX9900)
-  setup_stpio_pin();
+	setup_stpio_pin();
 #endif
 
-  int i;
+	int i;
 
-  for(i = 0; i < sizeof(e2_procs)/sizeof(e2_procs[0]); i++)
-  {
-    install_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
-                        e2_procs[i].write_proc,
+	for(i = 0; i < sizeof(e2_procs)/sizeof(e2_procs[0]); i++)
+	{
+		install_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
+			e2_procs[i].write_proc,
 			&DC->DvbContext->DeviceContext[e2_procs[i].context]);
-  }
+	}
 
-  /* save players device context */
-  ProcDeviceContext = DC;
+	/* save players device context */
+	ProcDeviceContext = DC;
 }
 
 void cleanup_e2_proc(void)
 {
-  int i;
+	int i;
 
-  for(i = sizeof(e2_procs)/sizeof(e2_procs[0]) - 1; i >= 0; i--)
-  {
-    remove_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
-                        e2_procs[i].write_proc);
-  }
+	for(i = sizeof(e2_procs)/sizeof(e2_procs[0]) - 1; i >= 0; i--)
+	{
+		remove_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
+			e2_procs[i].write_proc);
+	}
 }
-

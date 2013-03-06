@@ -29,12 +29,11 @@ extern struct DeviceContext_s* DeviceContext;
 static int output_stat = 0;
 struct stpio_pin *output_pin;
 
-int proc_misc_12V_output_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_misc_12V_output_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
-	char		*myString;
+	char *page;
+	ssize_t ret = -ENOMEM;
+	char *myString;
 
 //	printk("%s %d\n", __FUNCTION__, count);
 	page = (char *)__get_free_page(GFP_KERNEL);
@@ -49,15 +48,18 @@ int proc_misc_12V_output_write(struct file *file, const char __user *buf,
 		myString[count] = '\0';
 		printk("12V %s\n", myString);
 
-		if (strncmp("on", myString, count - 1) == 0){  //12V ON
-                     output_stat = 1;
-                }else{
-                     output_stat = 0;
-                }
-                if(output_pin)
-		     stpio_set_pin(output_pin, output_stat);
+		if (strncmp("on", myString, count - 1) == 0)
+		{ //12V ON
+			output_stat = 1;
+		}
+		else
+		{
+			output_stat = 0;
+		}
+		if(output_pin)
+			stpio_set_pin(output_pin, output_stat);
 	
-	         kfree(myString);
+		kfree(myString);
 	}
 
 	ret = count;
@@ -66,19 +68,17 @@ out:
 	return ret;
 }
 
-
-int proc_misc_12V_output_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_misc_12V_output_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 //	printk("%s %d %d\n", __FUNCTION__, count, current_input);
 
-	if ( output_stat == 1  )
+	if ( output_stat == 1 )
 		len = sprintf(page, "on\n");
-        else
+	else
 		len = sprintf(page, "off\n");
 
-        return len;
+	return len;
 }
 
 #endif

@@ -23,11 +23,10 @@ extern int setMuxSource(int source);
 int setCiSource(int slot, int source);
 void getCiSource(int slot, int* source);
 
-int proc_tsmux_input0_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_tsmux_input0_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
+	char *page;
+	ssize_t ret = -ENOMEM;
 
 	printk("%s %ld ", __FUNCTION__, count);
 
@@ -49,7 +48,7 @@ int proc_tsmux_input0_write(struct file *file, const char __user *buf,
 #if defined(HS7110) || defined(WHITEBOX)
 		if(strcmp(page, "A") == 0)
 			setMuxSource(0);
-        else
+	else
 		if(strcmp(page, "CI0") == 0)
 			setMuxSource(1);
 #endif
@@ -60,21 +59,18 @@ out:
 	return ret;
 }
 
-
-int proc_tsmux_input0_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_tsmux_input0_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
 
-        return len;
+	return len;
 }
 
-int proc_tsmux_input1_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_tsmux_input1_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
+	char *page;
+	ssize_t ret = -ENOMEM;
 
 	printk("%s %ld ", __FUNCTION__, count);
 
@@ -107,21 +103,18 @@ out:
 }
 
 
-int proc_tsmux_input1_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_tsmux_input1_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
 
-        return len;
+	return len;
 }
 
-
-int proc_tsmux_lnb_b_input_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_tsmux_lnb_b_input_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
+	char *page;
+	ssize_t ret = -ENOMEM;
 
 	printk("%s %ld\n", __FUNCTION__, count);
 
@@ -139,21 +132,18 @@ out:
 	return ret;
 }
 
-
-int proc_tsmux_lnb_b_input_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_tsmux_lnb_b_input_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
 
-        return len;
+	return len;
 }
 
-int proc_tsmux_ci0_input_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_tsmux_ci0_input_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
+	char *page;
+	ssize_t ret = -ENOMEM;
 
 	printk("%s %ld ", __FUNCTION__, count);
 
@@ -181,9 +171,7 @@ out:
 	return ret;
 }
 
-
-int proc_tsmux_ci0_input_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_tsmux_ci0_input_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -200,14 +188,13 @@ int proc_tsmux_ci0_input_read (char *page, char **start, off_t off, int count,
 	}
 #endif
 
-        return len;
+	return len;
 }
 
-int proc_tsmux_ci1_input_write(struct file *file, const char __user *buf,
-                           unsigned long count, void *data)
+int proc_tsmux_ci1_input_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char 		*page;
-	ssize_t 	ret = -ENOMEM;
+	char *page;
+	ssize_t ret = -ENOMEM;
 
 	printk("%s %ld ", __FUNCTION__, count);
 
@@ -235,9 +222,7 @@ out:
 	return ret;
 }
 
-
-int proc_tsmux_ci1_input_read (char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+int proc_tsmux_ci1_input_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -254,6 +239,5 @@ int proc_tsmux_ci1_input_read (char *page, char **start, off_t off, int count,
 	}
 #endif
 
-        return len;
+	return len;
 }
-
