@@ -722,6 +722,11 @@ static int starci_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addr
 
   slot_membase[slot][address] = value;
 
+	//without this some modules not working (unicam evo, unicam twin, zetaCam)
+	//i have tested with 9 modules an all working with this code
+  if(value == 8)
+    slot_membase[slot][address] = 0;
+
   return 0;
 }
 
