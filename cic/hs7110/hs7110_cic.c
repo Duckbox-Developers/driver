@@ -89,7 +89,7 @@ volatile unsigned long slot_ctrl_mem[cNumberSlots];
 static struct hs7110_cic_core ci_core;
 static struct hs7110_cic_state ci_state;
 
-static int waitMS = 200;
+static int waitMS = 800;
 
 static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address);
 
@@ -203,6 +203,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 	       stpio_set_pin(state->slot_reset[slot], 0);
                    
            mdelay(waitMS);
+					 mdelay(waitMS);
 
 		   dprintk(1, "Modul now present\n");
 	       state->module_present[slot] = 1;
@@ -249,7 +250,10 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
   }
 
   slot_status = slot_status ? DVB_CA_EN50221_POLL_CAM_PRESENT : 0;
-  slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
+
+	//if(state->module_ready[slot] == 1)
+  if(slot_status == DVB_CA_EN50221_POLL_CAM_PRESENT)
+     slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
 
   dprintk(1, "Module %c (%d): present = %d, ready = %d\n",
 			  slot ? 'B' : 'A', slot, slot_status,
@@ -268,7 +272,7 @@ static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
      * be reported after a delay 
 	 */
     state->module_ready[slot] = 0;
-    state->module_present[slot] = 0;
+    //state->module_present[slot] = 0;
     state->detection_timeout[slot] = 0;
 
     stpio_set_pin(state->slot_reset[slot], 1);
@@ -333,6 +337,11 @@ static int hs7110_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 
 {
     dprintk(100, "%s > slot = %d, address = 0x%.8lx, value = 0x%.x\n", __FUNCTION__, slot, (unsigned long) slot_ctrl_mem[slot] + address, value);
     hs7110_write_register_u8(slot_ctrl_mem[slot] + address, value);
+
+		//without this some modules not working (unicam evo, unicam twin, zetaCam)
+    //i have tested with 9 modules an all working with this code
+    if(address == 1 && value == 8)
+		   hs7110_write_register_u8(slot_ctrl_mem[slot] + address, 0);
 
 	return 0;
 }
@@ -481,12 +490,13 @@ int cic_init_hw(void)
         state->module_present[i] = 0;
         state->detection_timeout[i] = 0;
     }
-    
+
 	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
 	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
 	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
 
 	stpio_set_pin(state->ci_enable, 0);
+	stpio_set_pin(state->slot_reset[0], 0);
 
 #if 0
     if (stpio_flagged_request_irq(state->slot_reset[0], 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
@@ -586,4 +596,4 @@ module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(debug, "Debug Output 0=disabled >0=enabled(debuglevel)");
 
 module_param(waitMS, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-MODULE_PARM_DESC(waitMS, "waiting time between pio settings for reset/enable purpos in milliseconds (default=200)");
+MODULE_PARM_DESC(waitMS, "waiting time between pio settings for reset/enable purpos in milliseconds (default=800)");
