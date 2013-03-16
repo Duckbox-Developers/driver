@@ -89,7 +89,7 @@ volatile unsigned long slot_ctrl_mem[cNumberSlots];
 static struct hs7110_cic_core ci_core;
 static struct hs7110_cic_state ci_state;
 
-static int waitMS = 800;
+static int waitMS = 200;
 
 static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address);
 
@@ -596,4 +596,4 @@ module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(debug, "Debug Output 0=disabled >0=enabled(debuglevel)");
 
 module_param(waitMS, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-MODULE_PARM_DESC(waitMS, "waiting time between pio settings for reset/enable purpos in milliseconds (default=800)");
+MODULE_PARM_DESC(waitMS, "waiting time between pio settings for reset/enable purpos in milliseconds (default=200)");
