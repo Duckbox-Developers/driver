@@ -452,6 +452,13 @@ int cic_init_hw(void)
 {
 	struct hs7110_cic_state *state = &ci_state;
 	int i;
+
+	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
+	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
+	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
+
+	stpio_set_pin(state->ci_enable, 0);
+	stpio_set_pin(state->slot_reset[0], 0);
     
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0xc447f9);
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xff86a8a8);
@@ -490,13 +497,6 @@ int cic_init_hw(void)
         state->module_present[i] = 0;
         state->detection_timeout[i] = 0;
     }
-
-	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
-	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
-	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
-
-	stpio_set_pin(state->ci_enable, 0);
-	stpio_set_pin(state->slot_reset[0], 0);
 
 #if 0
     if (stpio_flagged_request_irq(state->slot_reset[0], 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
