@@ -202,8 +202,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 
 	       stpio_set_pin(state->slot_reset[slot], 0);
                    
-           mdelay(waitMS);
-					 mdelay(waitMS);
+           mdelay(waitMS * 2);
 
 		   dprintk(1, "Modul now present\n");
 	       state->module_present[slot] = 1;
@@ -251,8 +250,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 
   slot_status = slot_status ? DVB_CA_EN50221_POLL_CAM_PRESENT : 0;
 
-	//if(state->module_ready[slot] == 1)
-  if(slot_status == DVB_CA_EN50221_POLL_CAM_PRESENT)
+	if(slot_status == DVB_CA_EN50221_POLL_CAM_PRESENT)
      slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
 
   dprintk(1, "Module %c (%d): present = %d, ready = %d\n",
@@ -271,13 +269,13 @@ static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
     /* reset status variables because module detection has to
      * be reported after a delay 
 	 */
-    state->module_ready[slot] = 0;
-    //state->module_present[slot] = 0;
+	  state->module_ready[slot] = 0;
+    state->module_present[slot] = 0;
     state->detection_timeout[slot] = 0;
 
     stpio_set_pin(state->slot_reset[slot], 1);
     mdelay(waitMS);
-	stpio_set_pin(state->slot_reset[slot], 0);
+	  stpio_set_pin(state->slot_reset[slot], 0);
     mdelay(waitMS);
 
 	dprintk(1, "%s <\n", __FUNCTION__);
@@ -452,6 +450,13 @@ int cic_init_hw(void)
 {
 	struct hs7110_cic_state *state = &ci_state;
 	int i;
+
+	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
+	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
+	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
+
+	stpio_set_pin(state->ci_enable, 0);
+  stpio_set_pin(state->slot_reset[0], 0);
     
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0xc447f9);
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xff86a8a8);
@@ -491,12 +496,7 @@ int cic_init_hw(void)
         state->detection_timeout[i] = 0;
     }
 
-	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
-	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
-	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
-
-	stpio_set_pin(state->ci_enable, 0);
-	stpio_set_pin(state->slot_reset[0], 0);
+		stpio_set_pin(state->ci_enable, 1);
 
 #if 0
     if (stpio_flagged_request_irq(state->slot_reset[0], 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
