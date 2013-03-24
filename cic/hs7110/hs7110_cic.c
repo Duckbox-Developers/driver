@@ -51,6 +51,7 @@
 #include "hs7110_cic.h"
 
 static int debug=0;
+static int extmoduldetect = 0;
 
 #define TAGDEBUG "[hs7110_cic] "
 
@@ -338,7 +339,7 @@ static int hs7110_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 
 
 		//without this some modules not working (unicam evo, unicam twin, zetaCam)
     //i have tested with 9 modules an all working with this code
-    if(address == 1 && value == 8)
+    if(extmoduldetect == 1 && value == 8 && address == 1)
 		   hs7110_write_register_u8(slot_ctrl_mem[slot] + address, 0);
 
 	return 0;
@@ -594,6 +595,9 @@ MODULE_LICENSE          ("GPL");
 
 module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(debug, "Debug Output 0=disabled >0=enabled(debuglevel)");
+
+module_param(extmoduldetect, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(extmoduldetect, "Ext. Modul detect 0=disabled 1=enabled");
 
 module_param(waitMS, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(waitMS, "waiting time between pio settings for reset/enable purpos in milliseconds (default=200)");
