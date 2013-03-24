@@ -195,15 +195,15 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 	   {
            stpio_set_pin(state->ci_enable, 1);
 
-           mdelay(waitMS);
+           msleep(waitMS);
 
            stpio_set_pin(state->slot_reset[slot], 1);
 
-           mdelay(waitMS);
+           msleep(waitMS);
 
 	       stpio_set_pin(state->slot_reset[slot], 0);
                    
-           mdelay(waitMS * 2);
+           msleep(waitMS * 2);
 
 		   dprintk(1, "Modul now present\n");
 	       state->module_present[slot] = 1;
@@ -275,9 +275,9 @@ static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
     state->detection_timeout[slot] = 0;
 
     stpio_set_pin(state->slot_reset[slot], 1);
-    mdelay(waitMS);
+    msleep(waitMS);
 	  stpio_set_pin(state->slot_reset[slot], 0);
-    mdelay(waitMS);
+    msleep(waitMS);
 
 	dprintk(1, "%s <\n", __FUNCTION__);
 	return 0;
