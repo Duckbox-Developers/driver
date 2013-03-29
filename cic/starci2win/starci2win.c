@@ -43,6 +43,7 @@
 #include "dvb_ca_core.h"
 
 static int debug;
+static int extmoduldetect = 0;
 #define dprintk(args...) \
 	do { \
 		if (debug) printk (args); \
@@ -722,12 +723,10 @@ static int starci_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 addr
 
   slot_membase[slot][address] = value;
 
-#if defined(ATEVIO7500)
-  //without this some modules not working (unicam evo, unicam twin, zetaCam)
-  //i have tested with 9 modules an all working with this code
-  if(value == 8)
+	//without this some modules not working (unicam evo, unicam twin, zetaCam)
+	//i have tested with 9 modules an all working with this code
+  if(extmoduldetect == 1 && value == 8 && address == 1)
     slot_membase[slot][address] = 0;
-#endif
 
   return 0;
 }
@@ -1051,3 +1050,6 @@ module_exit             (starci2win_exit);
 MODULE_DESCRIPTION      ("CI Controller");
 MODULE_AUTHOR           ("");
 MODULE_LICENSE          ("GPL");
+
+module_param(extmoduldetect, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(extmoduldetect, "Ext. Modul detect 0=disabled 1=enabled");
