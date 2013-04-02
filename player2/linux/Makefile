@@ -4,6 +4,9 @@ CONFIG_STGFB_PATH?=$(DRIVER_TOPDIR)/stgfb/stmfb
 ifdef UFS922
  PART1=1
 endif
+ifdef UFC960
+ PART1=1
+endif
 ifdef TF7700
  PART1=1
 endif

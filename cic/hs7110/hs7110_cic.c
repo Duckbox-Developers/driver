@@ -20,7 +20,7 @@
 #include <linux/platform_device.h>
 
 #include <linux/interrupt.h>
-#include <linux/i2c.h> 
+#include <linux/i2c.h>
 #include <linux/i2c-algo-bit.h>
 #include <linux/firmware.h>
 
@@ -112,11 +112,11 @@ unsigned char hs7110_read_register_u8(unsigned long address)
     dprintk(200, "%s > address = 0x%.8lx, mapped = 0x%.8lx\n", __FUNCTION__, (unsigned long) address, mapped_register);
 
     result = readb(mapped_register);
-     
+
 #ifdef address_not_mapped
     iounmap((void*) mapped_register);
 #endif
-    
+
     return result;
 }
 
@@ -129,7 +129,7 @@ void hs7110_write_register_u8(unsigned long address, unsigned char value)
 #endif
 
     writeb(value, mapped_register);
-     
+
 #ifdef address_not_mapped
     iounmap((void*) mapped_register);
 #endif
@@ -144,7 +144,7 @@ void hs7110_write_register_u32(unsigned long address, unsigned int value)
 #endif
 
     writel(value, mapped_register);
-     
+
 #ifdef address_not_mapped
     iounmap((void*) mapped_register);
 #endif
@@ -160,7 +160,7 @@ u32 hs7110_read_register_u32(unsigned long address)
 #endif
 
     res = readl(mapped_register);
-     
+
 #ifdef address_not_mapped
     iounmap((void*) mapped_register);
 #endif
@@ -172,7 +172,7 @@ void  hs7110_irq(struct stpio_pin *pin, void* dev_id)
 {
    printk("%s\n", __func__);
 }
-#endif 
+#endif
 
 static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
 {
@@ -183,7 +183,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
    dprintk(100, "%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
 
    result = stpio_get_pin(state->module_detect);
-   
+
    dprintk(100, "Slot %d Status = 0x%x\n", slot, result);
 
    if (result == 0x00)
@@ -226,7 +226,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
       if(state->detection_timeout[slot] == 0)
       {
 	     /* detected module insertion, set the detection
-	      *  timeout (500 ms) 
+	      *  timeout (500 ms)
 	      */
 	     state->detection_timeout[slot] = jiffies + HZ / 2;
       }
@@ -268,7 +268,7 @@ static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 	dprintk(1, "%s >\n", __FUNCTION__);
 
     /* reset status variables because module detection has to
-     * be reported after a delay 
+     * be reported after a delay
 	 */
 	  state->module_ready[slot] = 0;
     state->module_present[slot] = 0;
@@ -315,7 +315,7 @@ static int hs7110_cic_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, i
 static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address)
 {
 	unsigned char res = 0;
-	
+
     dprintk(100, "%s > slot = %d, address = 0x%.8lx\n", __FUNCTION__, slot, (unsigned long) slot_ctrl_mem[slot] + address);
     res = hs7110_read_register_u8(slot_ctrl_mem[slot] + address);
 
@@ -348,7 +348,7 @@ static int hs7110_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 
 static int hs7110_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 {
 	struct hs7110_cic_state *state = ca->data;
-	
+
     dprintk(20, "%s > slot = %d\n", __FUNCTION__, slot);
 
 	return 0;
@@ -452,13 +452,19 @@ int cic_init_hw(void)
 	struct hs7110_cic_state *state = &ci_state;
 	int i;
 
+#if defined(WHITEBOX)
 	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
 	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
 	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
+#else
+	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
+	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
+	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
+#endif
 
 	stpio_set_pin(state->ci_enable, 0);
   stpio_set_pin(state->slot_reset[0], 0);
-    
+
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0xc447f9);
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xff86a8a8);
     hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xff86a8a8);
@@ -486,7 +492,7 @@ int cic_init_hw(void)
     hs7110_write_register_u32(0xfe001134, 0x600000); /* lmi */
     hs7110_write_register_u32(0xfe0011a8, 0x66f379b); /* lmi */
     hs7110_write_register_u32(0xfe0011ac, 0x1800019b); /* lmi */
-    
+
     slot_attr_mem[0] = 0x6008000;
     slot_ctrl_mem[0] = 0x6000000;
 
@@ -502,11 +508,11 @@ int cic_init_hw(void)
 #if 0
     if (stpio_flagged_request_irq(state->slot_reset[0], 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
        printk("%s: failed to init irq\n", __func__);
-        
+
     if (stpio_flagged_request_irq(state->ci_enable, 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
        printk("%s: failed to init irq\n", __func__);
 #endif
-	
+
 	return 0;
 }
 
@@ -548,7 +554,7 @@ printk("core->dvb_adap %p\n", core->dvb_adap);
 
 	cic_init_hw();
 printk("core->dvb_adap %p\n", core->dvb_adap);
-	
+
 	dprintk(1, "init_hs7110_cic: call dvb_ca_en50221_init\n");
 
 printk("%p %d\n", core->dvb_adap, cNumberSlots);
@@ -582,7 +588,7 @@ int __init hs7110_cic_init(void)
 }
 
 static void __exit hs7110_cic_exit(void)
-{  
+{
    printk("hs7110_cic unloaded\n");
 }
 

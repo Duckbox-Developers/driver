@@ -1,11 +1,11 @@
-#ifndef _123_micom
-#define _123_micom
+#ifndef _123_cn_micom
+#define _123_cn_micom
 /*
  */
 
 extern short paramDebug;
 
-#define TAGDEBUG "[micom] "
+#define TAGDEBUG "[cn_micom] "
 
 #ifndef dprintk
 #define dprintk(level, x...) do { \
@@ -13,7 +13,7 @@ extern short paramDebug;
     } while (0)
 #endif
 
-extern int micom_init_func(void);
+extern int mcom_init_func(void);
 extern void copyData(unsigned char* data, int len);
 extern void getRCData(unsigned char* data, int* len);
 void dumpValues(void);
@@ -37,25 +37,30 @@ extern tFrontPanelOpen FrontPanelOpen[LASTMINOR];
 
 #define VFD_MAJOR           147
 
+#define SOP              0x02
+#define EOP              0x03
+
 /* ioctl numbers ->hacky */
-#define VFDBRIGHTNESS        0xc0425a03
-#define VFDDRIVERINIT        0xc0425a08
-#define VFDICONDISPLAYONOFF  0xc0425a0a
-#define VFDDISPLAYWRITEONOFF 0xc0425a05
-#define VFDDISPLAYCHARS      0xc0425a00
+#define VFDBRIGHTNESS         0xc0425a03
+#define VFDPWRLED             0xc0425a04 /* added by zeroone, also used in fp_control/global.h ; set PowerLed Brightness on HDBOX*/
+#define VFDDRIVERINIT         0xc0425a08
+#define VFDICONDISPLAYONOFF   0xc0425a0a
+#define VFDDISPLAYWRITEONOFF  0xc0425a05
+#define VFDDISPLAYCHARS       0xc0425a00
 
-#define VFDGETVERSION        0xc0425af7
-#define VFDLEDBRIGHTNESS     0xc0425af8
-#define VFDGETWAKEUPMODE     0xc0425af9
-#define VFDGETTIME           0xc0425afa
-#define VFDSETTIME           0xc0425afb
-#define VFDSTANDBY           0xc0425afc
-#define VFDREBOOT            0xc0425afd
+#define VFDGETWAKEUPMODE      0xc0425af9
+#define VFDGETTIME            0xc0425afa
+#define VFDSETTIME            0xc0425afb
+#define VFDSTANDBY            0xc0425afc
 
-#define VFDSETLED            0xc0425afe
-#define VFDSETMODE           0xc0425aff
+#define VFDSETLED             0xc0425afe
+#define VFDSETMODE            0xc0425aff
 
 struct set_brightness_s {
+    int level;
+};
+
+struct set_pwrled_s {
     int level;
 };
 
@@ -88,15 +93,16 @@ struct set_time_s {
  * is the compatible vfd mode
  */
 struct set_mode_s {
-    int compat; /* 0 = compatibility mode to vfd driver; 1 = micom mode */
+    int compat; /* 0 = compatibility mode to vfd driver; 1 = nuvoton mode */
 };
 
-struct micom_ioctl_data {
+struct cn_micom_ioctl_data {
     union
     {
         struct set_icon_s icon;
         struct set_led_s led;
         struct set_brightness_s brightness;
+        struct set_pwrled_s pwrled;
         struct set_mode_s mode;
         struct set_standby_s standby;
         struct set_time_s time;
@@ -109,44 +115,11 @@ struct vfd_ioctl_data {
     unsigned char length;
 };
 
-#if defined(UFS922) || defined(UFC960)
-enum {
-		LED_AUX = 0x1,
-		LED_LIST,
-		LED_POWER,
-		LED_TV_R,
-		LED_VOL,
-		LED_WHEEL
+#ifdef OCTAGON1008
+struct vfd_buffer {
+    u8 buf1;
+    u8 buf2;
 };
-
-enum {
-		ICON_MIN = 0x0,
-		ICON_USB = 0x1,
-		ICON_HD,
-		ICON_HDD,
-		ICON_SCRAMBLED,
-		ICON_BLUETOOTH,
-		ICON_MP3,
-		ICON_RADIO,
-		ICON_DOLBY,
-		ICON_EMAIL,
-		ICON_MUTE,
-		ICON_PLAY,
-		ICON_PAUSE,
-		ICON_FF,
-		ICON_REW,
-		ICON_REC,
-		ICON_TIMER,
-		ICON_MAX
-};
-#endif
-
-#if defined(UFS922) || defined(UFS912) || defined(UFC969) || defined(UFH969)
-#define VFD_LENGTH 16
-#elif defined(UFI510) || defined(UFC960)
-#define VFD_LENGTH 12
-#else
-#define VFD_LENGTH 16
 #endif
 
 #endif

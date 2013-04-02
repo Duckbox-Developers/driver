@@ -1,5 +1,5 @@
 /*
- * micom_asc.c
+ * cn_micom_asc.c
  *
  * (c) 2009 Dagobert@teamducktales
  * (c) 2010 Schischu & konfetti: Add irq handling
@@ -38,69 +38,46 @@
 #include <linux/time.h>
 #include <linux/poll.h>
 
-#include "micom.h"
-#include "micom_asc.h"
+#include "cn_micom.h"
+#include "cn_micom_asc.h"
 
 //-------------------------------------
-#if defined(UFS922) || defined(UFC960)
-unsigned int InterruptLine = 120;
-unsigned int ASCXBaseAddress = ASC3BaseAddress;
-#else
-#ifdef UFS912
-unsigned int InterruptLine = 121;
-unsigned int ASCXBaseAddress = ASC2BaseAddress;
-#else
-#ifdef UFS913
-unsigned int InterruptLine = 120;
-unsigned int ASCXBaseAddress = ASC3BaseAddress;
-#else
-#error Not supported!
-#endif
-#endif
-#endif
+
+unsigned int InterruptLine = 122;
+unsigned int ASCXBaseAddress = ASC1BaseAddress;
 
 //-------------------------------------
 
 void serial_init (void)
 {
-#if defined(UFS922) || defined(UFC960)
-    // Configure the PIO pins
-    stpio_request_pin(5, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
-    stpio_request_pin(5, 1,  "ASC_RX", STPIO_IN);      /* Rx */
-
-    *(unsigned int*)(PIO5BaseAddress + PIO_CLR_PnC0) = 0x07;
-    *(unsigned int*)(PIO5BaseAddress + PIO_CLR_PnC1) = 0x06;
-    *(unsigned int*)(PIO5BaseAddress + PIO_SET_PnC1) = 0x01;
-    *(unsigned int*)(PIO5BaseAddress + PIO_SET_PnC2) = 0x07;
-#endif
+    /* Configure the PIO pins */
+    stpio_request_pin(1, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
+    stpio_request_pin(1, 1,  "ASC_RX", STPIO_IN);      /* Rx */
 
     // Configure the asc input/output settings
     *(unsigned int*)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
-    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00001589;
+    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00000589;		// mode 0
     *(unsigned int*)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
-    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000000c9;
+    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x0000028b;		// 9600
     *(unsigned int*)(ASCXBaseAddress + ASC_TX_RST)   = 0;
     *(unsigned int*)(ASCXBaseAddress + ASC_RX_RST)   = 0;
 }
 
 int serial_putc (char Data)
 {
-    char                  *ASC_3_TX_BUFF = (char*)(ASCXBaseAddress + ASC_TX_BUFF);
-    unsigned int          *ASC_3_INT_STA = (unsigned int*)(ASCXBaseAddress + ASC_INT_STA);
+    char                  *ASCn_TX_BUFF = (char*)(ASCXBaseAddress + ASC_TX_BUFF);
+    unsigned int          *ASCn_INT_STA = (unsigned int*)(ASCXBaseAddress + ASC_INT_STA);
     unsigned long         Counter = 200000;
 
-    while (((*ASC_3_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
-    {
-        // We are to fast, lets make a break
-        udelay(0);
-    }
+    while (((*ASCn_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
+         mdelay(1);
 
     if (Counter == 0)
     {
-        dprintk(1, "Error writing char (%c) \n", Data);
+        dprintk(1, "Error writing char\n");
     }
 
-    *ASC_3_TX_BUFF = Data;
+    *ASCn_TX_BUFF = Data;
     return 1;
 }
 

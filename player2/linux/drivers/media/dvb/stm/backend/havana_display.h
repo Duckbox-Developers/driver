@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 #if defined(__TDT__)
 
-#if defined(FORTIS_HDBOX) || defined(TF7700) || defined(UFS922) || defined(HL101) || \
+#if defined(FORTIS_HDBOX) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
     defined(VIP1_V2) || defined(VIP2_V1) || defined(UFS912) || defined(SPARK) || \
     defined(SPARK7162) || defined(OCTAGON1008) || \
     defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(IPBOX9900) || defined(IPBOX99) || \

@@ -99,6 +99,24 @@ int lnb_pio_init(void)
 
 		return -EIO;
 	}
+#elif defined(WHITEBOX)
+	lnb_power	= stpio_request_pin (6, 2, "lnb_power", 	STPIO_OUT);
+	lnb_13_18	= stpio_request_pin (6, 3, "lnb_13/18", 	STPIO_OUT);
+
+	if ((lnb_power == NULL) || (lnb_13_18 == NULL))
+	{
+		if(lnb_power != NULL)
+			stpio_free_pin(lnb_power);
+		else
+			dprintk("[LNB:WHITEBOX] error requesting lnb power pin\n");
+
+		if(lnb_13_18 != NULL)
+			stpio_free_pin (lnb_13_18);
+		else
+			dprintk("[LNB:WHITEBOX] error requesting lnb 13/18 pin\n");
+
+		return -EIO;
+	}
 #endif
 
 	stpio_set_pin(lnb_power, 0); // set power off

@@ -29,6 +29,10 @@ ifdef UFS922
 obj-y	+= micom/
 endif
 
+ifdef UFC960
+obj-y	+= micom/
+endif
+
 ifdef TF7700
 obj-y	+= tffp/
 endif
@@ -82,7 +86,7 @@ obj-y	+= nuvoton/
 endif
 
 ifdef WHITEBOX
-obj-y	+= nuvoton/
+obj-y	+= cn_micom/
 endif
 
 ifdef IPBOX9900

@@ -4,19 +4,11 @@
 /* ************************************************** */
 /* Access ASC3; from u-boot; copied from TF7700 ;-)   */
 /* ************************************************** */
-#if defined(UFS912) || defined(UFS913) //7111 & 7105
+
 #define ASC0BaseAddress 0xfd030000
 #define ASC1BaseAddress 0xfd031000
 #define ASC2BaseAddress 0xfd032000
-#define ASC3BaseAddress 0xfd033000
-#else
-#if defined(UFS922) || defined(UFC960)
-#define ASC0BaseAddress 0xb8030000
-#define ASC1BaseAddress 0xb8031000
-#define ASC2BaseAddress 0xb8032000
-#define ASC3BaseAddress 0xb8033000
-#endif
-#endif
+#define ASC3BaseAddress 0xfd034000
 
 #define ASC_BAUDRATE    0x000
 #define ASC_TX_BUFF     0x004
