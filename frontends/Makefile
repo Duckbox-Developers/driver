@@ -47,6 +47,13 @@ obj-m += avl2108.o
 
 avl2108_platform-objs += avl2108/avl2108_platform.o
 obj-m += avl2108_platform.o
+else ifdef UFC960
+#tda10023-objs +=        ufc960/stv090x.o
+#tda10023-objs +=        ufc960/stv6110x.o
+tda10023-objs +=        ufc960/tda10023.o
+#tda10023-objs +=        ufc960/dvb-pll.o
+tda10023-objs +=        ufc960/core.o
+obj-m += tda10023.o
 else ifdef UFS912
 stv090x-objs +=	stv090x/stv090x.o
 stv090x-objs +=	stv090x/stv6110x.o
@@ -352,6 +359,13 @@ obj-m += avl2108.o
 
 avl2108_platform-objs += avl2108/avl2108_platform.o
 obj-m += avl2108_platform.o
+else ifdef UFC960
+#tda10023-objs +=        ufc960/stv090x.o
+#tda10023-objs +=        ufc960/stv6110x.o
+tda10023-objs +=        ufc960/tda10023.o
+#tda10023-objs +=        ufc960/dvb-pll.o
+tda10023-objs +=        ufc960/core.o
+obj-m += tda10023.o
 else ifdef UFS910
 cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o

@@ -42,7 +42,7 @@
 #include "micom_asc.h"
 
 //-------------------------------------
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 unsigned int InterruptLine = 120;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
 #else
@@ -63,7 +63,7 @@ unsigned int ASCXBaseAddress = ASC3BaseAddress;
 
 void serial_init (void)
 {
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
     // Configure the PIO pins
     stpio_request_pin(5, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
     stpio_request_pin(5, 1,  "ASC_RX", STPIO_IN);      /* Rx */

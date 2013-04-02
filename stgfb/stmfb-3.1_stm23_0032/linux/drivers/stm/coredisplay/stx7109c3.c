@@ -123,7 +123,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
     .vtg_irq                  = 154,
     .blitter_irq              = 156,
     .hdmi_irq                 = 158,
-#if defined(UFS922)
+#if defined(UFS922) || defined(UFC960)
 /* Dagobert: for stlinux23 this is mb422 but i2c is on bus 2 instead! */
     .hdmi_i2c_adapter_id      = 2,
 #elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1)
@@ -261,7 +261,7 @@ int __init stmcore_probe_device(struct stmcore_display_pipeline_data **pd, int *
       *pd = platform_data;
       *nr_platform_devices = N_ELEMENTS (platform_data);
 
-#if defined(UFS922)
+#if defined(UFS922) || defined(UFC960)
       hotplug_pio = stpio_request_pin(2,3,"HDMI Hotplug",STPIO_IN); 
 #elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(FORTIS_HDBOX) || defined(OCTAGON1008)
       hotplug_pio = stpio_request_pin(4,7,"HDMI Hotplug",STPIO_IN);

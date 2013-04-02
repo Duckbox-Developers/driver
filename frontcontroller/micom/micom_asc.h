@@ -10,7 +10,7 @@
 #define ASC2BaseAddress 0xfd032000
 #define ASC3BaseAddress 0xfd033000
 #else
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 #define ASC0BaseAddress 0xb8030000
 #define ASC1BaseAddress 0xb8031000
 #define ASC2BaseAddress 0xb8032000

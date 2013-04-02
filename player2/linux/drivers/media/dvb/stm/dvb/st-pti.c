@@ -70,9 +70,11 @@ enum {
 	};
 #endif
 
-#ifdef UFS922
+#if defined(UFS922)
 extern void cx24116_register_frontend(struct dvb_adapter *dvb_adap);
 extern void avl2108_register_frontend(struct dvb_adapter *dvb_adap);
+#elif defined(UFC960)
+extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(FORTIS_HDBOX) || defined(UFS912) || defined(SPARK) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX)
 extern void stv090x_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX)
@@ -427,6 +429,10 @@ static int convert_source ( const dmx_source_t source)
     tag = TSIN0;
     break;
   case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
+#elif defined(UFC960)
+  case DMX_SOURCE_FRONT2:
+    tag = TSIN2;
+    break;
 #endif
 
 #if !defined(ADB_BOX)
@@ -527,7 +533,7 @@ void ptiInit ( struct DeviceContext_s *pContext )
      */
     stm_tsm_init (  /*config */ 1 );
 
-#if defined(TF7700) || defined(UFS922) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913)
+#if defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913)
     pti_hal_init ( &pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)	
     pti_hal_init ( &pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
@@ -547,6 +553,8 @@ void ptiInit ( struct DeviceContext_s *pContext )
     socket_register_adapter(&pContext->DvbContext->DvbAdapter);
 #elif defined(SPARK7162)
     spark7162_register_frontend( &pContext->DvbContext->DvbAdapter);
+#elif defined(UFC960)
+    fe_core_register_frontend( &pContext->DvbContext->DvbAdapter);
 #elif defined(UFS922)
     cx24116_register_frontend( &pContext->DvbContext->DvbAdapter);
     avl2108_register_frontend( &pContext->DvbContext->DvbAdapter);

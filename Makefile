@@ -67,6 +67,9 @@ endif
 ifdef UFS922
 CCFLAGSY+=-DUFS922
 endif
+ifdef UFC960
+CCFLAGSY+=-DUFC960
+endif
 ifdef UFS912
 CCFLAGSY+=-DUFS912
 endif

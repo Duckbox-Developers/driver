@@ -28,7 +28,7 @@
 extern void ufs912_setup_clks(void);
 #elif defined(SPARK)
 extern void spark_setup_clks(void);
-#elif defined(UFS922)
+#elif defined(UFS922) || defined(UFC960)
 extern void ufs922_setup_clks(void);
 #elif defined(HS7810A)
 extern void hs7810a_setup_clks(void);
@@ -50,7 +50,7 @@ int my_init_module(void)
    hs7110_setup_clks();
 #elif defined(WHITEBOX)
    whitebox_setup_clks();
-#elif defined(UFS922)
+#elif defined(UFS922) || defined(UFC960)
    ufs922_setup_clks();
 #else
 #warning unsupported receiver

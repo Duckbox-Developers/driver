@@ -109,7 +109,7 @@ struct vfd_ioctl_data {
     unsigned char length;
 };
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 enum {
 		LED_AUX = 0x1,
 		LED_LIST,
@@ -139,6 +139,14 @@ enum {
 		ICON_TIMER,
 		ICON_MAX
 };
+#endif
+
+#if defined(UFS922) || defined(UFS912) || defined(UFC969) || defined(UFH969)
+#define VFD_LENGTH 16
+#elif defined(UFI510) || defined(UFC960)
+#define VFD_LENGTH 12
+#else
+#define VFD_LENGTH 16
 #endif
 
 #endif

@@ -71,7 +71,7 @@ if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
 /* ***** emi for 7111&7105 */
 #if defined(UFS912) || defined(UFS913)
 #define EMIConfigBaseAddress 0xfe700000
-#elif defined(UFS922)
+#elif defined(UFS922) || defined(UFC960)
 #define EMIConfigBaseAddress 0x1A100000
 #endif
 
@@ -118,7 +118,7 @@ if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
 static struct ufs9xx_cic_core ci_core;
 static struct ufs9xx_cic_state ci_state;
 
-#if defined(UFS922) || defined(UFS913)
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
 void set_ts_path(int route);
 void set_cam_path(int route);
 #endif
@@ -139,87 +139,87 @@ static int ufs9xx_cic_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, in
 
 unsigned char ufs9xx_read_register_u8(unsigned long address)
 {
-    unsigned char result;
+	unsigned char result;
 
-    volatile unsigned long mapped_register = address;
+	volatile unsigned long mapped_register = address;
 
-    //dprintk(200, "%s > address = 0x%.8lx, mapped = 0x%.8lx\n", __FUNCTION__, (unsigned long) address, mapped_register);
+	//dprintk(200, "%s > address = 0x%.8lx, mapped = 0x%.8lx\n", __FUNCTION__, (unsigned long) address, mapped_register);
 
-    result = readb(mapped_register);
+	result = readb(mapped_register);
      
-    return result;
+	return result;
 }
 
 void ufs9xx_write_register_u8(unsigned long address, unsigned char value)
 {
-    volatile unsigned long mapped_register = address;
+	volatile unsigned long mapped_register = address;
 
-    writeb(value, mapped_register);
+	writeb(value, mapped_register);
      
 }
 
 unsigned int ufs9xx_read_register_u32(unsigned long address)
 {
-    unsigned int result;
+	unsigned int result;
 
-    volatile unsigned long mapped_register = address;
+	volatile unsigned long mapped_register = address;
 
-    //dprintk(200, "%s > address = 0x%.8lx, mapped = 0x%.8lx\n", __FUNCTION__, (unsigned long) address, mapped_register);
+	//dprintk(200, "%s > address = 0x%.8lx, mapped = 0x%.8lx\n", __FUNCTION__, (unsigned long) address, mapped_register);
 
-    result = readl(mapped_register);
+	result = readl(mapped_register);
      
-    return result;
+	return result;
 }
 
 void ufs9xx_write_register_u32(unsigned long address, unsigned int value)
 {
-    volatile unsigned long mapped_register = address;
+	volatile unsigned long mapped_register = address;
 
-    writel(value, mapped_register);
+	writel(value, mapped_register);
      
 }
 
 unsigned int ufs9xx_read_register_u32_map(unsigned long address)
 {
-    unsigned int result;
+	unsigned int result;
 
-    volatile unsigned long mapped_register = (unsigned long) ioremap_nocache(address, 4);
+	volatile unsigned long mapped_register = (unsigned long) ioremap_nocache(address, 4);
 
-    result = readl(mapped_register);
+	result = readl(mapped_register);
      
-    iounmap((void*) mapped_register);
+	iounmap((void*) mapped_register);
     
-    return result;
+	return result;
 }
 
 void ufs9xx_write_register_u32_map(unsigned long address, unsigned int value)
 {
-    volatile unsigned long mapped_register = (unsigned long) ioremap_nocache(address, 4);
+	volatile unsigned long mapped_register = (unsigned long) ioremap_nocache(address, 4);
 
-    writel(value, mapped_register);
+	writel(value, mapped_register);
      
-    iounmap((void*) mapped_register);
+	iounmap((void*) mapped_register);
 }
 
-#if defined(UFS922) || defined(UFS913)
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
 static int ufs9xx_cic_readN (struct ufs9xx_cic_state *state, u8 * buf, u16 len)
 {
-  int ret = -EREMOTEIO;
-  struct i2c_msg msg;
+	int ret = -EREMOTEIO;
+	struct i2c_msg msg;
 
-  msg.addr = state->i2c_addr;
-  msg.flags = I2C_M_RD;
-  msg.buf = buf;
-  msg.len = len;
+	msg.addr = state->i2c_addr;
+	msg.flags = I2C_M_RD;
+	msg.buf = buf;
+	msg.len = len;
 
-  if ((ret = i2c_transfer (state->i2c, &msg, 1)) != 1)
-  {
-    printk ("%s: writereg error(err == %i)\n",
-            __FUNCTION__, ret);
-    ret = -EREMOTEIO;
-  }
+	if ((ret = i2c_transfer (state->i2c, &msg, 1)) != 1)
+	{
+		printk ("%s: writereg error(err == %i)\n",
+			__FUNCTION__, ret);
+		ret = -EREMOTEIO;
+	}
 
-  return ret;
+	return ret;
 }
 
 static int ufs9xx_cic_writereg(struct ufs9xx_cic_state* state, int reg, int data)
@@ -241,16 +241,16 @@ static int ufs9xx_cic_writereg(struct ufs9xx_cic_state* state, int reg, int data
 
 static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
 {
-   struct ufs9xx_cic_state *state = ca->data;
-   int                     slot_status = 0;
-   unsigned int            result;
-#ifdef UFS922
-   u8                      buf[2];
+	struct ufs9xx_cic_state *state = ca->data;
+	int                     slot_status = 0;
+	unsigned int            result;
+#if defined(UFS922) || defined(UFC960)
+	u8                      buf[2];
 #endif
 
-   dprintk(150, "%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
+	dprintk(150, "%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 /* hacky workaround for stmfb problem (yes I really mean stmfb ;-) ):
  * switching the hdmi output of my lcd to the ufs922 while running or
  * switching the resolution leads to a modification of register
@@ -269,88 +269,88 @@ static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 	}	
 #endif
 
-   result = stpio_get_pin(state->slot_status[slot]);
+	result = stpio_get_pin(state->slot_status[slot]);
 
-   dprintk(120, "Slot %d Status = 0x%x\n", slot, result);
+	dprintk(120, "Slot %d Status = 0x%x\n", slot, result);
 
-   if (result == 0x01)
-      slot_status = 1;
+	if (result == 0x01)
+		slot_status = 1;
 
-   if (slot_status)
-   {
-      if (state->module_status[slot] & SLOTSTATUS_RESET)
-      {
-          /* the sequence from dvbapi is to reset the cam after a detection change,
-           * so we save the state and check here if the module is ready. on ufs913/ufs922
-           * we have a special ready pin, on ufs912 we read from attribute memory.
-           */
+	if (slot_status)
+	{
+		if (state->module_status[slot] & SLOTSTATUS_RESET)
+		{
+	/* the sequence from dvbapi is to reset the cam after a detection change,
+	* so we save the state and check here if the module is ready. on ufs913/ufs922
+	* we have a special ready pin, on ufs912 we read from attribute memory.
+	*/
 
 #if defined(UFS912)
 
 #ifdef use_additional_waiting_period
-      	  /* timeout in progress */
-	      if(time_after(jiffies, state->detection_timeout[slot]))
+	/* timeout in progress */
+		if(time_after(jiffies, state->detection_timeout[slot]))
 #endif
-	      {
-             result = ufs9xx_cic_read_attribute_mem(ca, slot, 0); 
+		{
+			result = ufs9xx_cic_read_attribute_mem(ca, slot, 0); 
 
-             dprintk(200, "result = 0x%02x\n", result);
+			dprintk(200, "result = 0x%02x\n", result);
 
-             if (result == 0x1d)
-                   state->module_status[slot] = SLOTSTATUS_READY;
-	      }
+			if (result == 0x1d)
+				state->module_status[slot] = SLOTSTATUS_READY;
+		}
 
 #else
 
-          result = stpio_get_pin(state->module_ready_pin[slot]);
+		result = stpio_get_pin(state->module_ready_pin[slot]);
          
-          dprintk(200, "readyPin = %d\n", result);
-          if (result)
-     	        state->module_status[slot] = SLOTSTATUS_READY;
-#endif       
-      }
-      else
-      if (state->module_status[slot] & SLOTSTATUS_NONE)
-      {
+		dprintk(200, "readyPin = %d\n", result);
+		if (result)
+			state->module_status[slot] = SLOTSTATUS_READY;
+#endif
+		}
+	else
+		if (state->module_status[slot] & SLOTSTATUS_NONE)
+		{
 #if !defined(UFS913)
 
-	       stpio_set_pin(state->slot_enable[slot], 0);
-           mdelay(waitMS);
+			stpio_set_pin(state->slot_enable[slot], 0);
+			mdelay(waitMS);
 #else
-	       stpio_set_pin(state->slot_enable[slot], 1);
-           mdelay(waitMS);
+			stpio_set_pin(state->slot_enable[slot], 1);
+			mdelay(waitMS);
 #endif
 
-           dprintk(1, "Modul now present\n");
-	       state->module_status[slot] = SLOTSTATUS_PRESENT;
-      }
-   } else
-   {
-      if (!(state->module_status[slot] & SLOTSTATUS_NONE))
-      {
+			dprintk(1, "Modul now present\n");
+			state->module_status[slot] = SLOTSTATUS_PRESENT;
+		}
+	} else
+	{
+		if (!(state->module_status[slot] & SLOTSTATUS_NONE))
+		{
 #ifdef UFS913
-		   stpio_set_pin(state->slot_enable[slot], 0);
+			stpio_set_pin(state->slot_enable[slot], 0);
 #else
-		   stpio_set_pin(state->slot_enable[slot], 1);
+			stpio_set_pin(state->slot_enable[slot], 1);
 #endif
-           dprintk(1, "Modul now not present\n");
-	       state->module_status[slot] = SLOTSTATUS_NONE;
-      }
-   }
+			dprintk(1, "Modul now not present\n");
+			state->module_status[slot] = SLOTSTATUS_NONE;
+		}
+	}
 
-   if (state->module_status[slot] != SLOTSTATUS_NONE)
-      slot_status = DVB_CA_EN50221_POLL_CAM_PRESENT;
-   else
-      slot_status = 0;
+	if (state->module_status[slot] != SLOTSTATUS_NONE)
+		slot_status = DVB_CA_EN50221_POLL_CAM_PRESENT;
+	else
+		slot_status = 0;
    
-   if (state->module_status[slot] & SLOTSTATUS_READY)
-      slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
+	if (state->module_status[slot] & SLOTSTATUS_READY)
+		slot_status |= DVB_CA_EN50221_POLL_CAM_READY;
 
-   dprintk(120, "Module %c (%d): result = %d, status = %d\n",
-			  slot ? 'B' : 'A', slot, slot_status,
-			  state->module_status[slot]);
+	dprintk(120, "Module %c (%d): result = %d, status = %d\n",
+				slot ? 'B' : 'A', slot, slot_status,
+				state->module_status[slot]);
 
-   return slot_status;
+	return slot_status;
 }
 
 static int ufs9xx_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
@@ -361,38 +361,38 @@ static int ufs9xx_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 	dprintk(1, "%s >\n", __FUNCTION__);
 
 
-    state->module_status[slot] = SLOTSTATUS_RESET;
+	state->module_status[slot] = SLOTSTATUS_RESET;
 
-#if defined(UFS922) || defined(UFS913)
-    aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
-    bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
+	aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
+	bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
 
-    if ((aPresent) && (!bPresent))
+	if ((aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_VIEW);
+		set_cam_path(TUNER_1_CAM_A_VIEW);
+		set_ts_path(TUNER_1_CAM_A_VIEW);
 	} else
-    if ((!aPresent) && (bPresent))
+	if ((!aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_B_VIEW);
 	} else
-    if ((aPresent) && (bPresent))
+	if ((aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
 	} else
-    if ((!aPresent) && (!bPresent))
+	if ((!aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_VIEW);
-	   set_ts_path(TUNER_1_VIEW);
+		set_cam_path(TUNER_1_VIEW);
+		set_ts_path(TUNER_1_VIEW);
 	}
 #endif
 
-    stpio_set_pin(state->slot_reset[slot], 1);
-    mdelay(waitMS);
+	stpio_set_pin(state->slot_reset[slot], 1);
+	mdelay(waitMS);
 	stpio_set_pin(state->slot_reset[slot], 0);
-    mdelay(waitMS);
+	mdelay(waitMS);
 
 	state->detection_timeout[slot] = jiffies + HZ / 2;
 
@@ -410,13 +410,13 @@ static int ufs9xx_cic_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, in
 	res = ufs9xx_read_register_u8(state->slot_attribute_read[slot] + address);
 
 	if (address <= 2)
-	   dprintk (100, "address = %d: res = 0x%.x\n", address, res);
+		dprintk (100, "address = %d: res = 0x%.x\n", address, res);
 	else
 	{
-	   if ((res > 31) && (res < 127))
-		dprintk(100, "%c", res);
-	   else
-		dprintk(150, ".");
+		if ((res > 31) && (res < 127))
+			dprintk(100, "%c", res);
+		else
+			dprintk(150, ".");
 	}
 
 	return (int) res;
@@ -427,7 +427,7 @@ static int ufs9xx_cic_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, i
 	struct ufs9xx_cic_state *state = ca->data;
 
 	dprintk(100, "%s > slot = %d, address = 0x%.8lx, value = 0x%.x\n", __FUNCTION__, slot, (unsigned long) state->slot_attribute_write[slot] + address, value);
-    ufs9xx_write_register_u8(state->slot_attribute_write[slot] + address, value);
+	ufs9xx_write_register_u8(state->slot_attribute_write[slot] + address, value);
 
 	return 0;
 }
@@ -457,40 +457,40 @@ static int ufs9xx_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 
 
 static int ufs9xx_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 {
-    struct ufs9xx_cic_state *state = ca->data;
-    int aPresent, bPresent;
+	struct ufs9xx_cic_state *state = ca->data;
+	int aPresent, bPresent;
 
-    dprintk(1, "%s > slot = %d\n", __FUNCTION__, slot);
+	dprintk(1, "%s > slot = %d\n", __FUNCTION__, slot);
     
 #if defined(UFS913)
-    stpio_set_pin(state->slot_enable[slot], 0);
+	stpio_set_pin(state->slot_enable[slot], 0);
 #else
-    stpio_set_pin(state->slot_enable[slot], 1);
+	stpio_set_pin(state->slot_enable[slot], 1);
 #endif
 
-#if defined(UFS922) || defined(UFS913)
-    aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
-    bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
+	aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
+	bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
 
-    if ((aPresent) && (!bPresent))
+	if ((aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_VIEW);
+		set_cam_path(TUNER_1_CAM_A_VIEW);
+		set_ts_path(TUNER_1_CAM_A_VIEW);
 	} else
-    if ((!aPresent) && (bPresent))
+	if ((!aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_B_VIEW);
 	} else
-    if ((aPresent) && (bPresent))
+	if ((aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
 	} else
-    if ((!aPresent) && (!bPresent))
+	if ((!aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_VIEW);
-	   set_ts_path(TUNER_1_VIEW);
+		set_cam_path(TUNER_1_VIEW);
+		set_ts_path(TUNER_1_VIEW);
 	}
 #endif
 	return 0;
@@ -499,33 +499,33 @@ static int ufs9xx_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 static int ufs9xx_cic_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 {
 	struct ufs9xx_cic_state *state = ca->data;
- 	int aPresent, bPresent;
+	int aPresent, bPresent;
 
 	dprintk(20, "%s > slot = %d\n", __FUNCTION__, slot);
 
-#if defined(UFS922) || defined(UFS913)
-        aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
-        bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
+	aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
+	bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
 
-        if ((aPresent) && (!bPresent))
+	if ((aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_VIEW);
+		set_cam_path(TUNER_1_CAM_A_VIEW);
+		set_ts_path(TUNER_1_CAM_A_VIEW);
 	} else
-        if ((!aPresent) && (bPresent))
+	if ((!aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_B_VIEW);
 	} else
-        if ((aPresent) && (bPresent))
+	if ((aPresent) && (bPresent))
 	{
-	   set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
-	   set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
 	} else
-        if ((!aPresent) && (!bPresent))
+	if ((!aPresent) && (!bPresent))
 	{
-	   set_cam_path(TUNER_1_VIEW);
-	   set_ts_path(TUNER_1_VIEW);
+		set_cam_path(TUNER_1_VIEW);
+		set_ts_path(TUNER_1_VIEW);
 	}
 #endif
 
@@ -534,78 +534,78 @@ static int ufs9xx_cic_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 
 int setCiSource(int slot, int source)
 {
-#if defined(UFS922) || defined(UFS913)
-   int aPresent, bPresent;
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
+	int aPresent, bPresent;
 
-   dprintk(1, "%s slot %d source %d\n", __FUNCTION__, slot, source);
+	dprintk(1, "%s slot %d source %d\n", __FUNCTION__, slot, source);
   
-   ci_state.module_source[slot] = source;
+	ci_state.module_source[slot] = source;
 
-   aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
-   bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
+	aPresent = ((ci_state.module_status[0] & SLOTSTATUS_READY) || (ci_state.module_status[0] & SLOTSTATUS_PRESENT));
+	bPresent = ((ci_state.module_status[1] & SLOTSTATUS_READY) || (ci_state.module_status[1] & SLOTSTATUS_PRESENT));
 
-   if (source == 0)
-   {
-      if ((aPresent) && (!(bPresent)))
-      {
-         set_cam_path(TUNER_1_CAM_A_VIEW);
-         set_ts_path(TUNER_1_CAM_A_VIEW);
-      } else
-      if ((!(aPresent)) && (bPresent))
-      {
-         set_cam_path(TUNER_1_CAM_B_VIEW);
-         set_ts_path(TUNER_1_CAM_B_VIEW);
-      } else
-      if ((aPresent) && (bPresent))
-      {
-         set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
-         set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
-      } else
-      if ((!(aPresent)) && (!(bPresent)))
-      {
-         set_cam_path(TUNER_1_VIEW);
-         set_ts_path(TUNER_1_VIEW);
-      }
-   } else
-   {
-      if ((aPresent) && (!bPresent))
-      {
-         set_cam_path(TUNER_2_CAM_A);
-         set_ts_path(TUNER_2_CAM_A);
-      } else
-      if ((!aPresent) && (bPresent))
-      {
-         set_cam_path(TUNER_2_CAM_B);
-         set_ts_path(TUNER_2_CAM_B);
-      } else
-      if ((aPresent) && (bPresent))
-      {
-         set_cam_path(TUNER_2_CAM_A_B);
-         if (slot == 0) 
-	        set_ts_path(TUNER_2_CAM_A);
-         else
-	        set_ts_path(TUNER_2_CAM_B);
-      } else
-      if ((!aPresent) && (!bPresent))
-      {
+	if (source == 0)
+	{
+		if ((aPresent) && (!(bPresent)))
+		{
+			set_cam_path(TUNER_1_CAM_A_VIEW);
+			set_ts_path(TUNER_1_CAM_A_VIEW);
+		} else
+		if ((!(aPresent)) && (bPresent))
+		{
+			set_cam_path(TUNER_1_CAM_B_VIEW);
+			set_ts_path(TUNER_1_CAM_B_VIEW);
+		} else
+		if ((aPresent) && (bPresent))
+		{
+			set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
+			set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
+		} else
+		if ((!(aPresent)) && (!(bPresent)))
+		{
+			set_cam_path(TUNER_1_VIEW);
+			set_ts_path(TUNER_1_VIEW);
+		}
+	} else
+	{
+		if ((aPresent) && (!bPresent))
+		{
+			set_cam_path(TUNER_2_CAM_A);
+			set_ts_path(TUNER_2_CAM_A);
+		} else
+		if ((!aPresent) && (bPresent))
+		{
+			set_cam_path(TUNER_2_CAM_B);
+			set_ts_path(TUNER_2_CAM_B);
+		} else
+		if ((aPresent) && (bPresent))
+		{
+			set_cam_path(TUNER_2_CAM_A_B);
+			if (slot == 0) 
+				set_ts_path(TUNER_2_CAM_A);
+			else
+				set_ts_path(TUNER_2_CAM_B);
+		} else
+		if ((!aPresent) && (!bPresent))
+		{
 /* ??? */
-         set_ts_path(TUNER_2_VIEW);
-      }
-   }
+			set_ts_path(TUNER_2_VIEW);
+		}
+	}
 #endif
-   return 0;
+	return 0;
 }
 
 void getCiSource(int slot, int* source)
 {
-#if defined(UFS922) || defined(UFS913)
-   *source = ci_state.module_source[slot];
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
+	*source = ci_state.module_source[slot];
 #else
-   *source = 0;
+	*source = 0;
 #endif
 }
 
-#if defined(UFS922) || defined(UFS913)
+#if defined(UFS922) || defined(UFS913) || defined(UFC960)
 void set_cam_path(int route)
 {
 	struct ufs9xx_cic_state *state = &ci_state;
@@ -613,38 +613,38 @@ void set_cam_path(int route)
 	switch (route)
 	{
 		case TUNER_1_VIEW:
-		   dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x00);
+			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x00);
 		break;
 		case TUNER_1_CAM_A_VIEW:
-		   dprintk(1,"%s: TUNER_1_CAM_A_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x01);
+			dprintk(1,"%s: TUNER_1_CAM_A_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x01);
 		break;
 		case TUNER_1_CAM_B_VIEW:
-		   dprintk(1,"%s: TUNER_1_CAM_B_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x10);
+			dprintk(1,"%s: TUNER_1_CAM_B_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x10);
 		break;
 		case TUNER_1_CAM_A_CAM_B_VIEW:
-		   dprintk(1,"%s: TUNER_1_CAM_A_CAM_B_VIEW\n", __func__);
+			dprintk(1,"%s: TUNER_1_CAM_A_CAM_B_VIEW\n", __func__);
 //FIXME: maruapp sets first 0x11 and then 0x14 ???
-		   ufs9xx_cic_writereg(state, 0x02, 0x14);
+			ufs9xx_cic_writereg(state, 0x02, 0x14);
 		break;
 		case TUNER_2_CAM_A:
-		   dprintk(1, "%s: TUNER_2_CAM_A\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x12);
+			dprintk(1, "%s: TUNER_2_CAM_A\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x12);
 		break;
 		case TUNER_2_CAM_B:
-		   dprintk(1,"%s: TUNER_2_CAM_B\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x20);
+			dprintk(1,"%s: TUNER_2_CAM_B\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x20);
 		break;
 		case TUNER_2_CAM_A_B:
 /* fixme maurapp sets first 0x22 */
-		   dprintk(1,"%s: TUNER_2_CAM_A_B\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x24);
+			dprintk(1,"%s: TUNER_2_CAM_A_B\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x24);
 		break;
 		default:
-		   dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x02, 0x00);
+			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x00);
 		break;
 	}
 }
@@ -657,37 +657,37 @@ void set_ts_path(int route)
 	switch (route)
 	{
 		case TUNER_1_VIEW:
-		   dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x01, 0x21);
+			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x21);
 		break;
 		case TUNER_1_CAM_A_VIEW:
-		   dprintk(1,"%s: TUNER_1_CAM_A_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x01, 0x23);
+			dprintk(1,"%s: TUNER_1_CAM_A_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x23);
 		break;
 		case TUNER_1_CAM_B_VIEW:
-		   dprintk(1,"%s: TUNER_1_CAM_B_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x01, 0x24);
+			dprintk(1,"%s: TUNER_1_CAM_B_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x24);
 		break;
 		case TUNER_1_CAM_A_CAM_B_VIEW:
-		   ufs9xx_cic_writereg(state, 0x01, 0x23);
-		   dprintk(1,"%s: TUNER_1_CAM_A_CAM_B_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x23);
+			dprintk(1,"%s: TUNER_1_CAM_A_CAM_B_VIEW\n", __func__);
 		break;
 		case TUNER_2_VIEW:
 /* fixme: maruapp sets sometimes 0x11 before */
-		   ufs9xx_cic_writereg(state, 0x01, 0x12);
-		   dprintk(1,"%s: TUNER_2_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x12);
+			dprintk(1,"%s: TUNER_2_VIEW\n", __func__);
 		break;
 		case TUNER_2_CAM_A:
-		   ufs9xx_cic_writereg(state, 0x01, 0x31);
-		   dprintk(1,"%s: TUNER_2_CAM_A\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x31);
+			dprintk(1,"%s: TUNER_2_CAM_A\n", __func__);
 		break;
 		case TUNER_2_CAM_B:
-		   ufs9xx_cic_writereg(state, 0x01, 0x41);
-		   dprintk(1, "%s: TUNER_2_CAM_B\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x41);
+			dprintk(1, "%s: TUNER_2_CAM_B\n", __func__);
 		break;
 		default:
-		   dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
-		   ufs9xx_cic_writereg(state, 0x01, 0x21);
+			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
+			ufs9xx_cic_writereg(state, 0x01, 0x21);
 		break;
 	}
 }
@@ -698,22 +698,22 @@ int cic_init_hw(void)
 {
 	struct ufs9xx_cic_state *state = &ci_state;
 	
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x00);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_GEN_CFG, 0x18);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x00);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_GEN_CFG, 0x18);
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x04f446d9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xfd44ffff);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xfd88ffff);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x04f446d9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xfd44ffff);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xfd88ffff);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x04f446d9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xfd44ffff);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xfd88ffff);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x04f446d9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xfd44ffff);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xfd88ffff);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1f);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1f);
 
-    state->module_status[0] = SLOTSTATUS_NONE;
-    state->module_status[1] = SLOTSTATUS_NONE;
+	state->module_status[0] = SLOTSTATUS_NONE;
+	state->module_status[1] = SLOTSTATUS_NONE;
 
 	/* will be set to one if a module is present in slot a/b.
 	 */
@@ -750,35 +750,35 @@ int cic_init_hw(void)
 {
 	struct ufs9xx_cic_state *state = &ci_state;
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x00);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x00);
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x048637f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xbc66f9f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xbc66f9f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0x048637f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xbc66f9f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xbc66f9f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0x00000000);
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x048637f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xbc66f9f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xbc66f9f9);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA0, 0x048637f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA1, 0xbc66f9f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA2, 0xbc66f9f9);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMIBank3 + EMI_CFG_DATA3, 0x00000000);
 
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1f);
-    ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_GEN_CFG, 0x00000019);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1f);
+	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_GEN_CFG, 0x00000019);
 
-    state->module_status[0] = SLOTSTATUS_NONE;
-    state->module_status[1] = SLOTSTATUS_NONE;
+	state->module_status[0] = SLOTSTATUS_NONE;
+	state->module_status[1] = SLOTSTATUS_NONE;
 
-    state->ci_reset = stpio_request_pin (1, 6, "CI_RESET", STPIO_OUT);
+	state->ci_reset = stpio_request_pin (1, 6, "CI_RESET", STPIO_OUT);
 
-    /* necessary for accessing i2c-1 */
-    ufs9xx_write_register_u32_map(0xfe000010, 0x0000c0de);
-    ufs9xx_write_register_u32_map(0xfe0000b4, 0x00000008);
-    ufs9xx_write_register_u32_map(0xfe000010, 0x0000c1a0);
+	/* necessary for accessing i2c-1 */
+	ufs9xx_write_register_u32_map(0xfe000010, 0x0000c0de);
+	ufs9xx_write_register_u32_map(0xfe0000b4, 0x00000008);
+	ufs9xx_write_register_u32_map(0xfe000010, 0x0000c1a0);
 
-    ufs9xx_write_register_u32_map(0xfe001160, 0x0000001c);
+	ufs9xx_write_register_u32_map(0xfe001160, 0x0000001c);
 
-    stpio_set_pin(state->ci_reset, 0);
-    msleep(250);
+	stpio_set_pin(state->ci_reset, 0);
+	msleep(250);
 	stpio_set_pin(state->ci_reset, 1);
 	
 	ufs9xx_cic_writereg(state, 0x00, 0x23);
@@ -810,10 +810,10 @@ int cic_init_hw(void)
 
 	return 0;
 }
-#elif defined(UFS922)
+#elif defined(UFS922) || defined(UFC960)
 int cic_init_hw(void)
 {
-    struct stpio_pin* enable_pin;
+	struct stpio_pin* enable_pin;
 	struct ufs9xx_cic_state *state = &ci_state;
 
 	ufs9xx_write_register_u32_map(0x19213000, 0x0000c0de);
@@ -843,8 +843,8 @@ int cic_init_hw(void)
 
 	ufs9xx_write_register_u32_map(EMIConfigBaseAddress + EMI_LCK, 0x1F);
 
-    state->module_status[0] = SLOTSTATUS_NONE;
-    state->module_status[1] = SLOTSTATUS_NONE;
+	state->module_status[0] = SLOTSTATUS_NONE;
+	state->module_status[1] = SLOTSTATUS_NONE;
 
 	/* enables the ci controller itself */	
 	state->ci_reset = enable_pin = stpio_request_pin (3, 4, "CI_enable", STPIO_OUT);
@@ -897,30 +897,30 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 
 	core->dvb_adap = dvb_adap;
 
-#if defined(UFS922)
+#if defined(UFS922) || defined(UFC960)
 	state->i2c = i2c_get_adapter(2);
 	state->i2c_addr = 0x23;
 
-    state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x02828000, 0x200);
-    state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x02808000, 0x200);
-    state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x02820000, 0x200);
-    state->slot_control_write[0]    = (volatile unsigned long) ioremap_nocache(0x02800000, 0x200);
+	state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x02828000, 0x200);
+	state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x02808000, 0x200);
+	state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x02820000, 0x200);
+	state->slot_control_write[0]    = (volatile unsigned long) ioremap_nocache(0x02800000, 0x200);
 
-    state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x02028000, 0x200);
-    state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x02008000, 0x200);
-    state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x02020000, 0x200);
-    state->slot_control_write[1]    = (volatile unsigned long) ioremap_nocache(0x02000000, 0x200);
+	state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x02028000, 0x200);
+	state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x02008000, 0x200);
+	state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x02020000, 0x200);
+	state->slot_control_write[1]    = (volatile unsigned long) ioremap_nocache(0x02000000, 0x200);
 
 #elif defined(UFS913)
-    state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x04828000, 0x200);
-    state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x04808000, 0x200);
-    state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x04820000, 0x200);
-    state->slot_control_write[0]    = (volatile unsigned long) ioremap_nocache(0x04800000, 0x200);
+	state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x04828000, 0x200);
+	state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x04808000, 0x200);
+	state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x04820000, 0x200);
+	state->slot_control_write[0]    = (volatile unsigned long) ioremap_nocache(0x04800000, 0x200);
 
-    state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x05028000, 0x200);
-    state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x05008000, 0x200);
-    state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x05020000, 0x200);
-    state->slot_control_write[1]    = (volatile unsigned long) ioremap_nocache(0x05000000, 0x200);
+	state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x05028000, 0x200);
+	state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x05008000, 0x200);
+	state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x05020000, 0x200);
+	state->slot_control_write[1]    = (volatile unsigned long) ioremap_nocache(0x05000000, 0x200);
 
 	ufs9xx_write_register_u32_map(0xfe000010, 0x0000c0de);
 	ufs9xx_write_register_u32_map(0xfe000088, 0x00000000);
@@ -942,15 +942,15 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 	state->i2c = i2c_get_adapter(1);
 	state->i2c_addr = 0x23;
 #elif defined(UFS912)
-    state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x03028000, 0x200);
-    state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x03008000, 0x200);
-    state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x03020000, 0x200);
-    state->slot_control_write[0]     = (volatile unsigned long) ioremap_nocache(0x03000000, 0x200);
+	state->slot_attribute_read[0]   = (volatile unsigned long) ioremap_nocache(0x03028000, 0x200);
+	state->slot_attribute_write[0]  = (volatile unsigned long) ioremap_nocache(0x03008000, 0x200);
+	state->slot_control_read[0]     = (volatile unsigned long) ioremap_nocache(0x03020000, 0x200);
+	state->slot_control_write[0]     = (volatile unsigned long) ioremap_nocache(0x03000000, 0x200);
 
-    state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x04028000, 0x200);
-    state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x04008000, 0x200);
-    state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x04020000, 0x200);
-    state->slot_control_write[1]     = (volatile unsigned long) ioremap_nocache(0x04000000, 0x200);
+	state->slot_attribute_read[1]   = (volatile unsigned long) ioremap_nocache(0x04028000, 0x200);
+	state->slot_attribute_write[1]  = (volatile unsigned long) ioremap_nocache(0x04008000, 0x200);
+	state->slot_control_read[1]     = (volatile unsigned long) ioremap_nocache(0x04020000, 0x200);
+	state->slot_control_write[1]     = (volatile unsigned long) ioremap_nocache(0x04000000, 0x200);
 #endif
 
 	memset(&core->ca, 0, sizeof(struct dvb_ca_en50221));
@@ -1000,13 +1000,13 @@ EXPORT_SYMBOL(getCiSource);
 
 int __init ufs9xx_cic_init(void)
 {
-    dprintk(1, "ufs9xx_cic loaded\n");
-    return 0;
+	dprintk(1, "ufs9xx_cic loaded\n");
+	return 0;
 }
 
 static void __exit ufs9xx_cic_exit(void)
 {  
-   dprintk(1,"ufs9xx_cic unloaded\n");
+	dprintk(1,"ufs9xx_cic unloaded\n");
 }
 
 module_init             (ufs9xx_cic_init);

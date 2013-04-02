@@ -257,6 +257,8 @@ static int info_model_read(char *page, char **start, off_t off, int count,
   int len = sprintf(page, "vip2-v1\n");
 #elif defined(UFS922)
   int len = sprintf(page, "ufs922\n");
+#elif defined(UFC960)
+  int len = sprintf(page, "ufc960\n");
 #elif defined(UFS912)
   int len = sprintf(page, "ufs912\n");
 #elif defined(UFS913)
@@ -633,7 +635,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/cec/send"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 /* dagobert: the dei settings can be used for all 7109 architectures to affec the de-interlacer */
 	{cProcEntry, "stb/video/plane/dei_fmd"                                          , NULL, NULL, NULL, NULL, "dei_fmd"},
 	{cProcEntry, "stb/video/plane/dei_mode"                                         , NULL, NULL, NULL, NULL, "dei_mode"},

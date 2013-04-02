@@ -29,6 +29,10 @@ ifdef UFS922
 obj-y	+= micom/
 endif
 
+ifdef UFC960
+obj-y	+= micom/
+endif
+
 ifdef TF7700
 obj-y	+= tffp/
 endif

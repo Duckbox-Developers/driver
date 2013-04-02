@@ -144,7 +144,7 @@ int micomSetLED(int which, int on)
 
     dprintk(100, "%s > %d, %d\n", __func__, which, on);
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
     if (which < 1 || which > 6)
     {
         printk("VFD/MICOM led number out of range %d\n", which);
@@ -226,7 +226,7 @@ int micomSetLedBrightness(int level)
 
 EXPORT_SYMBOL(micomSetLedBrightness);
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
 int micomSetModel(void)
 {
     char buffer[8];
@@ -480,7 +480,7 @@ int micomWriteString(unsigned char* aBuf, int len)
     memcpy(&lastdata.data, aBuf, 20);
     lastdata.length = len;
 
-    while ((i< len) && (j < 16))
+    while ((i< len) && (j < VFD_LENGTH))
     {
         if (aBuf[i] < 0x80)
             bBuf[j] = aBuf[i];
@@ -534,7 +534,7 @@ int micomWriteString(unsigned char* aBuf, int len)
         i++;
         j++;
     }
-    res = micomWriteCommand(0x21, bBuf, 16, 1);
+    res = micomWriteCommand(0x21, bBuf, VFD_LENGTH, 1);
 
     dprintk(100, "%s <\n", __func__);
 
@@ -543,14 +543,14 @@ int micomWriteString(unsigned char* aBuf, int len)
 
 int micom_init_func(void)
 {
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
     int vLoop;
 #endif
     dprintk(5, "%s >\n", __func__);
 
     sema_init(&write_sem, 1);
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
     printk("Kathrein UFS922 VFD/MICOM module initializing\n");
     micomSetModel();
 #else
@@ -563,7 +563,7 @@ int micom_init_func(void)
 
     micomWriteString(" Team Ducktales ", strlen(" Team Ducktales "));
 
-#ifdef UFS922
+#if defined(UFS922) || defined(UFC960)
     for (vLoop = ICON_MIN + 1; vLoop < ICON_MAX; vLoop++)
         micomSetIcon(vLoop, 0);
 #endif
