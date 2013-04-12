@@ -488,6 +488,11 @@ int mcom_WriteString(unsigned char* aBuf, int len)
 
     for (i = 0, payload_len = 0; i < len; i++)
     {
+		// workaround start
+		if (aBuf[i] > 0x 7f)
+			continue;
+		// workaround end
+
         if (mcomGetDisplayType() == _VFD)    // VFD display
         {
             memcpy(bBuf + _VAL + payload_len, mcom_ascii_char_14seg[aBuf[i]], 2);
