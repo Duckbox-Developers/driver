@@ -489,7 +489,7 @@ int mcom_WriteString(unsigned char* aBuf, int len)
     for (i = 0, payload_len = 0; i < len; i++)
     {
 		// workaround start
-		if (aBuf[i] > 0x 7f)
+		if (aBuf[i] > 0x7f)
 			continue;
 		// workaround end
 
