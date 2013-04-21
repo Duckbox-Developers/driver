@@ -202,7 +202,7 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
            msleep(waitMS);
 
 	       stpio_set_pin(state->slot_reset[slot], 0);
-                   
+
            msleep(waitMS * 2);
 
 		   dprintk(1, "Modul now present\n");
@@ -453,9 +453,9 @@ int cic_init_hw(void)
 	int i;
 
 #if defined(WHITEBOX)
-	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
-	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
-	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
+	state->ci_enable = stpio_request_pin (1, 3, "CI_ENABLE", STPIO_OUT);
+	state->slot_reset[0] = stpio_request_pin (3, 6, "SLOT_RESET", STPIO_OUT);
+	state->module_detect = stpio_request_pin (1, 5, "CI_DETECT", STPIO_IN);
 #else
 	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
 	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
@@ -473,6 +473,7 @@ int cic_init_hw(void)
 
     hs7110_write_register_u32(0xfe001114, 0x3f800100);
 
+#if 0
     hs7110_write_register_u32(0xfd026030, 0xe4); /* pio6 */
 
     hs7110_write_register_u32(0xfd022000, 0xf3); /* pio2 */
@@ -488,6 +489,7 @@ int cic_init_hw(void)
 
     hs7110_write_register_u32(0xfd025030, 0xaf); /* pio5 */
     hs7110_write_register_u32(0xfd025000, 0x2f); /* pio5 */
+#endif
 
     hs7110_write_register_u32(0xfe001134, 0x600000); /* lmi */
     hs7110_write_register_u32(0xfe0011a8, 0x66f379b); /* lmi */
