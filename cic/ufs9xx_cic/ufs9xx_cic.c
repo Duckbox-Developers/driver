@@ -125,7 +125,7 @@ void set_cam_path(int route);
 
 #if defined(UFS912)
 static int waitMS = 60;
-#elif defined(UFS913)
+#elif defined(UFS913) || defined(UFC960)
 static int waitMS = 200;
 #else
 static int waitMS = 100;
@@ -244,13 +244,13 @@ static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 	struct ufs9xx_cic_state *state = ca->data;
 	int                     slot_status = 0;
 	unsigned int            result;
-#if defined(UFS922) || defined(UFC960)
+#if defined(UFS922)
 	u8                      buf[2];
 #endif
 
 	dprintk(150, "%s (%d; open = %d) >\n", __FUNCTION__, slot, open);
 
-#if defined(UFS922) || defined(UFC960)
+#if defined(UFS922)
 /* hacky workaround for stmfb problem (yes I really mean stmfb ;-) ):
  * switching the hdmi output of my lcd to the ufs922 while running or
  * switching the resolution leads to a modification of register
