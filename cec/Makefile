@@ -39,5 +39,9 @@ ifdef ATEVIO7500
 EXTRA_CFLAGS	+= -DSTx7105
 endif
 
+ifdef VITAMIN_HD5000
+EXTRA_CFLAGS	+= -DSTx7111
+endif
+
 endif
 

@@ -22,7 +22,7 @@
 
 #if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411)
 #include "sci_7100.h"
-#elif defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX)
+#elif defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(VITAMIN_HD5000)
 #include "sci_7111.h"
 #elif defined(CONFIG_CPU_SUBTYPE_STX7105) || defined(ATEVIO7500)
 #include "sci_7105.h"
@@ -378,6 +378,9 @@ typedef struct
 	struct stpio_pin	*detect;
 	struct stpio_pin	*cmdvcc;
 	struct stpio_pin	*clock;
+#if defined(VITAMIN_HD5000)
+	struct stpio_pin	*pin_3v5v;
+#endif
 	struct task_struct  *thread;;
 	unsigned int 		polling;
 } SCI_CONTROL_BLOCK;

@@ -37,8 +37,9 @@ RingGeneric_c::RingGeneric_c( unsigned int MaxEntries )
 
 RingGeneric_c::~RingGeneric_c( void )
 {
-    OS_SetEvent( &Signal );
-    OS_SleepMilliSeconds( 1 );
+    //TUTAJ
+     //OS_SetEvent( &Signal );
+    //OS_SleepMilliSeconds( 1 );
 
     OS_TerminateMutex( &Lock );
     OS_TerminateEvent( &Signal );

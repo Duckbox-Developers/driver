@@ -459,6 +459,12 @@ obj-m += fe-core-twin2.o
 
 #------------------------------------------------- 
 
+else ifdef VITAMIN_HD5000
+stv090x-objs +=	vitamin_hd5000/stv090x.o
+stv090x-objs +=	vitamin_hd5000/stv6110x.o
+stv090x-objs +=	vitamin_hd5000/core.o
+obj-m += stv090x.o
+
 endif
 
 # other drivers already in kernel
