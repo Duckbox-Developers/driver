@@ -66,8 +66,8 @@ else ifdef HS7110
 obj-m += hs7110.o
 hs7110-objs:= hs7110/hs7110_cic.o
 else ifdef WHITEBOX
-dummy_cic-objs += dummy_cic/dummy_cic.o
-obj-m += dummy_cic.o
+obj-m += cnbox_cic.o
+cnbox_cic-objs:= cnbox_cic/cnbox_cic.o
 else ifdef SPARK
 dummy_cic-objs += dummy_cic/dummy_cic.o
 obj-m += dummy_cic.o

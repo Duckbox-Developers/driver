@@ -143,10 +143,13 @@ enum {
 
 #if defined(UFS922) || defined(UFS912) || defined(UFC969) || defined(UFH969)
 #define VFD_LENGTH 16
+#define VFD_CHARSIZE 1
 #elif defined(UFI510) || defined(UFC960)
 #define VFD_LENGTH 12
+#define VFD_CHARSIZE 2
 #else
 #define VFD_LENGTH 16
+#define VFD_CHARSIZE 1
 #endif
 
 #endif

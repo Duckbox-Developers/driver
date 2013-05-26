@@ -17,7 +17,7 @@
 
 extern struct DeviceContext_s* DeviceContext;
 
-#if defined(HS7110)/* || defined(WHITEBOX)*/
+#if defined(HS7110) || defined(WHITEBOX)
 extern int setMuxSource(int source);
 #endif
 int setCiSource(int slot, int source);
@@ -45,7 +45,7 @@ int proc_tsmux_input0_write(struct file *file, const char __user *buf, unsigned 
 #endif
 
 /* ciN for source ciN, e.g. A for TUNER */
-#if defined(HS7110)/* || defined(WHITEBOX)*/
+#if defined(HS7110) || defined(WHITEBOX)
 		if(strcmp(page, "A") == 0)
 			setMuxSource(0);
 	else
@@ -87,7 +87,7 @@ int proc_tsmux_input1_write(struct file *file, const char __user *buf, unsigned 
  * so maybe I understand what the developer
  * wants to do here.
  */
-#if defined(UFS922) || defined(UFC960)
+#if defined(UFS922)
 		if(strcmp(page, "CI0") == 0)
 			printk("%s ->CIO received\n", __func__);
 		else if(strcmp(page, "CI1") == 0)

@@ -57,9 +57,17 @@
 // i2c bus speed (100kHz ~ 10ms).
 #define I2C_FAST_DELAY 1
 
-static int debug;
+static int debug = 0;
 module_param(debug, int, 0644);
-MODULE_PARM_DESC(debug, "Activates frontend debugging (default:0)");
+MODULE_PARM_DESC(debug, "Activates frontend debugging (default: 0)");
+
+static short fastZap = 0;
+module_param(fastZap, short, 0644);
+MODULE_PARM_DESC(fastZap, "Activates faster zapping (default: 0)");
+
+static short useUnknown = 0;
+module_param(useUnknown, short, 0644);
+MODULE_PARM_DESC(useUnknown, "Activates alternative tuner routines (default: 0)");
 
 #define dprintk(args...) \
 	do { \
@@ -144,14 +152,12 @@ MODULE_PARM_DESC(debug, "Activates frontend debugging (default:0)");
 /* DiSEqC tone burst */
 static int toneburst = 1;
 module_param(toneburst, int, 0644);
-MODULE_PARM_DESC(toneburst, "DiSEqC toneburst 0=OFF, 1=TONE CACHE, "\
-	"2=MESSAGE CACHE (default:1)");
+MODULE_PARM_DESC(toneburst, "DiSEqC toneburst 0=OFF, 1=TONE CACHE, 2=MESSAGE CACHE (default: 1)");
 
 /* SNR measurements */
-static int esno_snr;
+static int esno_snr = 0;
 module_param(esno_snr, int, 0644);
-MODULE_PARM_DESC(debug, "SNR return units, 0=PERCENTAGE 0-100, "\
-	"1=ESNO(db * 10) (default:0)");
+MODULE_PARM_DESC(debug, "SNR return units, 0=PERCENTAGE 0-100, 1=ESNO(db * 10) (default: 0)");
 
 enum cmds {
 	CMD_SET_VCO     = 0x10,
@@ -166,7 +172,7 @@ enum cmds {
 	CMD_SET_TONE    = 0x23,
 	CMD_UPDFWVERS   = 0x35,
 	CMD_TUNERSLEEP  = 0x36,
-	CMD_AGCCONTROL  = 0x3b, /* Unknown */
+	CMD_AGCCONTROL  = 0x3b /* Unknown */
 };
 
 /* The Demod/Tuner can't easily provide these, we cache them */
@@ -451,7 +457,7 @@ static struct cx24116_modfec {
  { SYS_DVBS2, PSK_8, FEC_3_4,  0x00, 0x0e },
  { SYS_DVBS2, PSK_8, FEC_5_6,  0x00, 0x0f },
  { SYS_DVBS2, PSK_8, FEC_8_9,  0x00, 0x10 },
- { SYS_DVBS2, PSK_8, FEC_9_10, 0x00, 0x11 },
+ { SYS_DVBS2, PSK_8, FEC_9_10, 0x00, 0x11 }
  /*
   * `val' can be found in the FECSTATUS register when tuning.
   * FECSTATUS will give the actual FEC in use if tuning was successful.
@@ -593,7 +599,10 @@ static int cx24116_cmd_execute(struct dvb_frontend *fe, struct cx24116_cmd *cmd)
 	/* Start execution and wait for cmd to terminate */
 	cx24116_writereg(state, CX24116_REG_EXECUTE, 0x01);
 	while (cx24116_readreg(state, CX24116_REG_EXECUTE)) {
-		msleep(10);
+		if (fastZap == 1)
+			msleep(5);
+		else
+			msleep(10);
 		if (i++ > 64) {
 			/* Avoid looping forever if the firmware does
 				not respond */
@@ -648,13 +657,19 @@ static int cx24116_load_firmware(struct dvb_frontend *fe,
 	/* Prepare the demod, load the firmware, cleanup after load */
 
 	/* Init PLL */
-	cx24116_writereg(state, 0xE5, 0x00);
+	if (useUnknown == 0)
+		cx24116_writereg(state, 0xE5, 0x00);
 	cx24116_writereg(state, 0xF1, 0x08);
-	cx24116_writereg(state, 0xF2, 0x13);
+	if (useUnknown == 0)
+		cx24116_writereg(state, 0xF2, 0x13);
+	else
+		cx24116_writereg (state, 0xF2, 0x12);
 
 	/* Start PLL */
-	cx24116_writereg(state, 0xe0, 0x03);
-	cx24116_writereg(state, 0xe0, 0x00);
+	if (useUnknown == 0) {
+		cx24116_writereg(state, 0xe0, 0x03);
+		cx24116_writereg(state, 0xe0, 0x00);
+	}
 
 	/* Unknown */
 	cx24116_writereg(state, CX24116_REG_CLKDIV, 0x46);
@@ -676,10 +691,17 @@ static int cx24116_load_firmware(struct dvb_frontend *fe,
 	/* Firmware CMD 10: VCO config */
 	cmd.args[0x00] = CMD_SET_VCO;
 	cmd.args[0x01] = 0x05;
-	cmd.args[0x02] = 0xdc;
-	cmd.args[0x03] = 0xda;
-	cmd.args[0x04] = 0xae;
-	cmd.args[0x05] = 0xaa;
+	if (useUnknown == 0) {
+		cmd.args[0x02] = 0xdc;
+		cmd.args[0x03] = 0xda;
+		cmd.args[0x04] = 0xae;
+		cmd.args[0x05] = 0xaa;
+	} else {
+		cmd.args[0x02] = 0x8d;
+		cmd.args[0x03] = 0xdc;
+		cmd.args[0x04] = 0xb8;
+		cmd.args[0x05] = 0x5e;
+	}
 	cmd.args[0x06] = 0x04;
 	cmd.args[0x07] = 0x9d;
 	cmd.args[0x08] = 0xfc;
@@ -713,6 +735,9 @@ static int cx24116_load_firmware(struct dvb_frontend *fe,
 	ret = cx24116_cmd_execute(fe, &cmd);
 	if (ret != 0)
 		return ret;
+
+	if (useUnknown == 1)
+		cx24116_writereg (state, 0xe0, 0x08);
 
 	/* Firmware CMD 35: Get firmware version */
 	cmd.args[0x00] = CMD_UPDFWVERS;
@@ -878,11 +903,20 @@ static int cx24116_wait_for_lnb(struct dvb_frontend *fe)
 	dprintk("%s() qstatus = 0x%02x\n", __func__,
 		cx24116_readreg(state, CX24116_REG_QSTATUS));
 
-	/* Wait for up to 300 ms */
-	for (i = 0; i < 30 ; i++) {
-		if (cx24116_readreg(state, CX24116_REG_QSTATUS) & 0x20)
-			return 0;
-		msleep(10);
+	if (fastZap == 1) {
+		/* Wait for up to 125 ms */
+		for (i = 0; i < 25 ; i++) {
+			if (cx24116_readreg(state, CX24116_REG_QSTATUS) & 0x20)
+				return 0;
+			msleep(5);
+		}
+	} else {
+		/* Wait for up to 300 ms */
+		for (i = 0; i < 30 ; i++) {
+			if (cx24116_readreg(state, CX24116_REG_QSTATUS) & 0x20)
+				return 0;
+			msleep(10);
+		}
 	}
 
 	dprintk("%s(): LNB not ready\n", __func__);
@@ -1176,7 +1210,7 @@ struct plat_tuner_config tuner_resources[] =
                 .i2c_addr = 0x0a >> 1,
                 .tuner_enable = {2, 5, 1},
                 .lnb_enable = {3, 3, 1},
-                .lnb_vsel = {3, 6, 1},
+                .lnb_vsel = {3, 6, 1}
         },
         [1] = {
                 .adapter = 0,
@@ -1184,8 +1218,8 @@ struct plat_tuner_config tuner_resources[] =
                 .i2c_addr = 0x0a >> 1,
                 .tuner_enable = {2, 6, 1},
                 .lnb_enable = {1, 0, 1},
-                .lnb_vsel = {1, 3, 1},
-        },
+                .lnb_vsel = {1, 3, 1}
+        }
 #else
 	/* UFS910 tuner resources */
         [0] = {
@@ -1194,8 +1228,8 @@ struct plat_tuner_config tuner_resources[] =
                 .i2c_addr = 0x0a >> 1,
                 .tuner_enable = {2, 4, 1},
                 .lnb_enable = {1, 6, 0},
-                .lnb_vsel = {1, 7, 0},
-        },
+                .lnb_vsel = {1, 7, 0}
+        }
 #endif
 };
 
@@ -1285,18 +1319,18 @@ static int cx24116_remove (struct device *dev)
 	return 0; // TODO
 }
 
-static struct platform_driver cx24116_driver = 
+static struct platform_driver cx24116_driver =
 {
 	.driver	= {
 		.name		= "cx24116",
 	},
 	.probe = cx24116_probe,
-	.remove = cx24116_remove,
+	.remove = cx24116_remove
 };
 
 
 
-static struct platform_device tuner_device = 
+static struct platform_device tuner_device =
 {
         .name           = "cx24116",
         .dev = {
@@ -1306,7 +1340,7 @@ static struct platform_device tuner_device =
 
 static struct platform_device *pvr_devices[] =
 {
-	&tuner_device,
+	&tuner_device
 };
 
 void cx24116_register_frontend(struct dvb_adapter *dvb_adap)
@@ -1588,20 +1622,36 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 		if (ret != 0)
 			break;
 
-		/*
-		 * Wait for up to 500 ms before retrying
-		 *
+		 /*
 		 * If we are able to tune then generally it occurs within 100ms.
 		 * If it takes longer, try a different toneburst setting.
 		 */
-		for (i = 0; i < 50 ; i++) {
-			cx24116_read_status(fe, &tunerstat);
-			status = tunerstat & (FE_HAS_SIGNAL | FE_HAS_SYNC);
-			if (status == (FE_HAS_SIGNAL | FE_HAS_SYNC)) {
-				dprintk("%s: Tuned\n", __func__);
-				goto tuned;
+		if (fastZap == 1) {
+		 /*
+		 * Wait for up to 125 ms before retrying
+		 */
+			for (i = 0; i < 25 ; i++) {
+				cx24116_read_status(fe, &tunerstat);
+				status = tunerstat & (FE_HAS_SIGNAL | FE_HAS_SYNC);
+				if (status == (FE_HAS_SIGNAL | FE_HAS_SYNC)) {
+					dprintk("%s: Tuned\n", __func__);
+					goto tuned;
+				}
+				msleep(5);
 			}
-			msleep(10);
+		} else {
+		 /*
+		 * Wait for up to 500 ms before retrying
+		 */
+			for (i = 0; i < 50 ; i++) {
+				cx24116_read_status(fe, &tunerstat);
+				status = tunerstat & (FE_HAS_SIGNAL | FE_HAS_SYNC);
+				if (status == (FE_HAS_SIGNAL | FE_HAS_SYNC)) {
+					dprintk("%s: Tuned\n", __func__);
+					goto tuned;
+				}
+				msleep(10);
+			}
 		}
 
 		dprintk("%s: Not tuned\n", __func__);
@@ -1680,10 +1730,9 @@ static struct dvb_frontend_ops cx24116_ops = {
 
 	.set_property = cx24116_set_property,
 	.get_property = cx24116_get_property,
-	.set_frontend = cx24116_set_frontend,
+	.set_frontend = cx24116_set_frontend
 };
 
 MODULE_DESCRIPTION("DVB Frontend module for Conexant cx24116/cx24118 hardware");
 MODULE_AUTHOR("Oxygen-1");
 MODULE_LICENSE("GPL");
-

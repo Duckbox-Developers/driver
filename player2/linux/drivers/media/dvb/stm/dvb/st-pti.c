@@ -429,10 +429,6 @@ static int convert_source ( const dmx_source_t source)
     tag = TSIN0;
     break;
   case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
-#elif defined(UFC960)
-  case DMX_SOURCE_FRONT2:
-    tag = TSIN2;
-    break;
 #endif
 
 #if !defined(ADB_BOX)

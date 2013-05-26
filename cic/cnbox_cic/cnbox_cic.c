@@ -1,5 +1,5 @@
 /*
- * hs7110 ci controller handling.
+ * cnbox ci controller handling.
  *
  * gpl
  *
@@ -48,12 +48,12 @@
 #include "dvb_net.h"
 #include "dvb_ca_en50221.h"
 
-#include "hs7110_cic.h"
+#include "cnbox_cic.h"
 
 static int debug=0;
 static int extmoduldetect = 0;
 
-#define TAGDEBUG "[hs7110_cic] "
+#define TAGDEBUG "[cnbox_cic] "
 
 #define dprintk(level, x...) do { \
 if ((debug) && (debug >= level)) printk(TAGDEBUG x); \
@@ -87,19 +87,19 @@ unsigned long reg_config = 0;
 volatile unsigned long slot_attr_mem[cNumberSlots];
 volatile unsigned long slot_ctrl_mem[cNumberSlots];
 
-static struct hs7110_cic_core ci_core;
-static struct hs7110_cic_state ci_state;
+static struct cnbox_cic_core ci_core;
+static struct cnbox_cic_state ci_state;
 
 static int waitMS = 200;
 
-static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address);
+static int cnbox_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address);
 
 /* *************************** */
 /* map, write & read functions */
 /* *************************** */
 #define address_not_mapped
 
-unsigned char hs7110_read_register_u8(unsigned long address)
+unsigned char cnbox_read_register_u8(unsigned long address)
 {
     unsigned char result;
 
@@ -120,7 +120,7 @@ unsigned char hs7110_read_register_u8(unsigned long address)
     return result;
 }
 
-void hs7110_write_register_u8(unsigned long address, unsigned char value)
+void cnbox_write_register_u8(unsigned long address, unsigned char value)
 {
 #ifdef address_not_mapped
     volatile unsigned long mapped_register = (unsigned long)  ioremap_nocache(address, 1);
@@ -135,7 +135,7 @@ void hs7110_write_register_u8(unsigned long address, unsigned char value)
 #endif
 }
 
-void hs7110_write_register_u32(unsigned long address, unsigned int value)
+void cnbox_write_register_u32(unsigned long address, unsigned int value)
 {
 #ifdef address_not_mapped
     volatile unsigned long mapped_register = (unsigned long) ioremap_nocache(address, 4);
@@ -150,7 +150,7 @@ void hs7110_write_register_u32(unsigned long address, unsigned int value)
 #endif
 }
 
-u32 hs7110_read_register_u32(unsigned long address)
+u32 cnbox_read_register_u32(unsigned long address)
 {
     u32 res;
 #ifdef address_not_mapped
@@ -168,15 +168,15 @@ u32 hs7110_read_register_u32(unsigned long address)
 }
 
 #if 0
-void  hs7110_irq(struct stpio_pin *pin, void* dev_id)
+void  cnbox_irq(struct stpio_pin *pin, void* dev_id)
 {
    printk("%s\n", __func__);
 }
 #endif
 
-static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
+static int cnbox_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int open)
 {
-   struct hs7110_cic_state *state = ca->data;
+   struct cnbox_cic_state *state = ca->data;
    int                     slot_status = 0;
    unsigned int            result;
 
@@ -261,9 +261,9 @@ static int hs7110_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
   return slot_status;
 }
 
-static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
+static int cnbox_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 {
-	struct hs7110_cic_state *state = ca->data;
+	struct cnbox_cic_state *state = ca->data;
 
 	dprintk(1, "%s >\n", __FUNCTION__);
 
@@ -283,11 +283,11 @@ static int hs7110_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 	return 0;
 }
 
-static int hs7110_cic_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address)
+static int cnbox_cic_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address)
 {
 	unsigned char res = 0;
 
-	res = hs7110_read_register_u8(slot_attr_mem[slot] + address);
+	res = cnbox_read_register_u8(slot_attr_mem[slot] + address);
 
 	dprintk(100, "%s > slot = %d, address = 0x%.8lx\n", __FUNCTION__, slot, (unsigned long) slot_attr_mem[slot] + address);
 
@@ -304,20 +304,20 @@ static int hs7110_cic_read_attribute_mem(struct dvb_ca_en50221 *ca, int slot, in
 	return (int) res;
 }
 
-static int hs7110_cic_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address, u8 value)
+static int cnbox_cic_write_attribute_mem(struct dvb_ca_en50221 *ca, int slot, int address, u8 value)
 {
     dprintk(100, "%s > slot = %d, address = 0x%.8lx, value = 0x%.x\n", __FUNCTION__, slot, (unsigned long) slot_attr_mem[slot] + address, value);
-    hs7110_write_register_u8(slot_attr_mem[slot] + address, value);
+    cnbox_write_register_u8(slot_attr_mem[slot] + address, value);
 
 	return 0;
 }
 
-static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address)
+static int cnbox_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address)
 {
 	unsigned char res = 0;
 
     dprintk(100, "%s > slot = %d, address = 0x%.8lx\n", __FUNCTION__, slot, (unsigned long) slot_ctrl_mem[slot] + address);
-    res = hs7110_read_register_u8(slot_ctrl_mem[slot] + address);
+    res = cnbox_read_register_u8(slot_ctrl_mem[slot] + address);
 
 	if (address <= 2)
 	   dprintk (100, "address = 0x%x: res = 0x%x (0x%x)\n", address, res, (int) res);
@@ -332,31 +332,31 @@ static int hs7110_cic_read_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 a
 	return (int) res;
 }
 
-static int hs7110_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address, u8 value)
+static int cnbox_cic_write_cam_control(struct dvb_ca_en50221 *ca, int slot, u8 address, u8 value)
 {
     dprintk(100, "%s > slot = %d, address = 0x%.8lx, value = 0x%.x\n", __FUNCTION__, slot, (unsigned long) slot_ctrl_mem[slot] + address, value);
-    hs7110_write_register_u8(slot_ctrl_mem[slot] + address, value);
+    cnbox_write_register_u8(slot_ctrl_mem[slot] + address, value);
 
 		//without this some modules not working (unicam evo, unicam twin, zetaCam)
     //i have tested with 9 modules an all working with this code
     if(extmoduldetect == 1 && value == 8 && address == 1)
-		   hs7110_write_register_u8(slot_ctrl_mem[slot] + address, 0);
+		   cnbox_write_register_u8(slot_ctrl_mem[slot] + address, 0);
 
 	return 0;
 }
 
-static int hs7110_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
+static int cnbox_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 {
-	struct hs7110_cic_state *state = ca->data;
+	struct cnbox_cic_state *state = ca->data;
 
     dprintk(20, "%s > slot = %d\n", __FUNCTION__, slot);
 
 	return 0;
 }
 
-static int hs7110_cic_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
+static int cnbox_cic_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 {
-	struct hs7110_cic_state *state = ca->data;
+	struct cnbox_cic_state *state = ca->data;
 
 	dprintk(20, "%s > slot = %d\n", __FUNCTION__, slot);
 
@@ -375,73 +375,81 @@ void getCiSource(int slot, int* source)
 
 int setMuxSource(int source)
 {
+   struct cnbox_cic_state *state = &ci_state;
    u32 reg;
 
    printk("%s: source %d\n", __func__, source);
 
-   reg = hs7110_read_register_u32(0xfe001114);
+   reg = cnbox_read_register_u32(0xfe001114);
 
    /* e2 request source tuner not ci */
    if (source == 0)
    {
-      //hs7110_write_register_u32(0xfe001114, reg & ~0x20001);
-      hs7110_write_register_u32(0xfe001114, 0x3f800100);
+      cnbox_write_register_u32(0xfe001114, reg & ~0x1);
+ 
+      stpio_set_pin(state->cam_enable, 1);
+      stpio_set_pin(state->ts_enable, 0);
+#if 0
+      cnbox_write_register_u32(0xfd023000, 0x6b); /* pio3 */
 
-      hs7110_write_register_u32(0xfd023000, 0x6b); /* pio3 */
+      cnbox_write_register_u32(0xfd022030, 0xf3); /* pio2 */
+      cnbox_write_register_u32(0xfd022020, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022040, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022000, 0xfb); /* pio2 */
 
-      hs7110_write_register_u32(0xfd022030, 0xf3); /* pio2 */
-      hs7110_write_register_u32(0xfd022020, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022040, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022000, 0xfb); /* pio2 */
+      cnbox_write_register_u32(0xfd025030, 0x8f); /* pio5 */
+      cnbox_write_register_u32(0xfd025020, 0x0); /* pio5 */
+      cnbox_write_register_u32(0xfd025040, 0xc0); /* pio5 */
+      cnbox_write_register_u32(0xfd025000, 0x2f); /* pio5 */
 
-      hs7110_write_register_u32(0xfd025030, 0x8f); /* pio5 */
-      hs7110_write_register_u32(0xfd025020, 0x0); /* pio5 */
-      hs7110_write_register_u32(0xfd025040, 0xc0); /* pio5 */
-      hs7110_write_register_u32(0xfd025000, 0x2f); /* pio5 */
+      cnbox_write_register_u32(0xfd021030, 0x84); /* pio1 */
+      cnbox_write_register_u32(0xfd021020, 0x80); /* pio1 */
+      cnbox_write_register_u32(0xfd021040, 0x80); /* pio1 */
+      cnbox_write_register_u32(0xfd021000, 0x4); /* pio1 */
 
-      hs7110_write_register_u32(0xfd021030, 0x84); /* pio1 */
-      hs7110_write_register_u32(0xfd021020, 0x80); /* pio1 */
-      hs7110_write_register_u32(0xfd021040, 0x80); /* pio1 */
-      hs7110_write_register_u32(0xfd021000, 0x4); /* pio1 */
+      cnbox_write_register_u32(0xfd022030, 0xfb); /* pio2 */
+      cnbox_write_register_u32(0xfd022020, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022040, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022000, 0xfb); /* pio2 */
 
-      hs7110_write_register_u32(0xfd022030, 0xfb); /* pio2 */
-      hs7110_write_register_u32(0xfd022020, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022040, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022000, 0xfb); /* pio2 */
-
-      hs7110_write_register_u32(0xfd025030, 0xaf); /* pio5 */
-      hs7110_write_register_u32(0xfd025020, 0x0); /* pio5 */
-      hs7110_write_register_u32(0xfd025040, 0xc0); /* pio5 */
-      hs7110_write_register_u32(0xfd025000, 0x2f); /* pio5 */
+      cnbox_write_register_u32(0xfd025030, 0xaf); /* pio5 */
+      cnbox_write_register_u32(0xfd025020, 0x0); /* pio5 */
+      cnbox_write_register_u32(0xfd025040, 0xc0); /* pio5 */
+      cnbox_write_register_u32(0xfd025000, 0x2f); /* pio5 */
+#endif
    }
    else
    {
    /* source = CI0 = descrambled service */
-      //hs7110_write_register_u32(0xfe001114, reg | 0x20001);
+      cnbox_write_register_u32(0xfe001114, reg | 0x1);
 
-      hs7110_write_register_u32(0xfd023000, 0x63); /* pio3 */
+      stpio_set_pin(state->cam_enable, 0);
+      stpio_set_pin(state->ts_enable, 1);
+#if 0
+      cnbox_write_register_u32(0xfd023000, 0x63); /* pio3 */
 
-      hs7110_write_register_u32(0xfe001114, 0x3f820101);
+      cnbox_write_register_u32(0xfe001114, 0x3f820101);
 
-      hs7110_write_register_u32(0xfd022030, 0xb); /* pio2 */
-      hs7110_write_register_u32(0xfd022020, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022040, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022030, 0xb); /* pio2 */
+      cnbox_write_register_u32(0xfd022020, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022040, 0x3); /* pio2 */
 
-      hs7110_write_register_u32(0xfd025030, 0xa0); /* pio5 */
-      hs7110_write_register_u32(0xfd025020, 0x00); /* pio5 */
-      hs7110_write_register_u32(0xfd025040, 0xc0); /* pio5 */
+      cnbox_write_register_u32(0xfd025030, 0xa0); /* pio5 */
+      cnbox_write_register_u32(0xfd025020, 0x00); /* pio5 */
+      cnbox_write_register_u32(0xfd025040, 0xc0); /* pio5 */
 
-      hs7110_write_register_u32(0xfd021030, 0x80); /* pio1 */
-      hs7110_write_register_u32(0xfd021020, 0x80); /* pio1 */
-      hs7110_write_register_u32(0xfd021040, 0x80); /* pio1 */
+      cnbox_write_register_u32(0xfd021030, 0x80); /* pio1 */
+      cnbox_write_register_u32(0xfd021020, 0x80); /* pio1 */
+      cnbox_write_register_u32(0xfd021040, 0x80); /* pio1 */
 
-      hs7110_write_register_u32(0xfd022030, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022020, 0x3); /* pio2 */
-      hs7110_write_register_u32(0xfd022040, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022030, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022020, 0x3); /* pio2 */
+      cnbox_write_register_u32(0xfd022040, 0x3); /* pio2 */
 
-      hs7110_write_register_u32(0xfd025030, 0x80); /* pio5 */
-      hs7110_write_register_u32(0xfd025020, 0x00); /* pio5 */
-      hs7110_write_register_u32(0xfd025040, 0xc0); /* pio5 */
+      cnbox_write_register_u32(0xfd025030, 0x80); /* pio5 */
+      cnbox_write_register_u32(0xfd025020, 0x00); /* pio5 */
+      cnbox_write_register_u32(0xfd025040, 0xc0); /* pio5 */
+#endif
    }
 
    return 0;
@@ -449,51 +457,55 @@ int setMuxSource(int source)
 
 int cic_init_hw(void)
 {
-	struct hs7110_cic_state *state = &ci_state;
+	struct cnbox_cic_state *state = &ci_state;
 	int i;
 
-#if defined(WHITEBOX)
-	state->ci_enable = stpio_request_pin (1, 3, "CI_ENABLE", STPIO_OUT);
+	state->ci_enable     = stpio_request_pin (1, 3, "CI_ENABLE", STPIO_OUT);
 	state->slot_reset[0] = stpio_request_pin (3, 6, "SLOT_RESET", STPIO_OUT);
 	state->module_detect = stpio_request_pin (1, 5, "CI_DETECT", STPIO_IN);
-#else
-	state->ci_enable = stpio_request_pin (6, 5, "CI_ENABLE", STPIO_OUT);
-	state->slot_reset[0] = stpio_request_pin (6, 2, "SLOT_RESET", STPIO_OUT);
-	state->module_detect = stpio_request_pin (6, 0, "CI_DETECT", STPIO_IN);
-#endif
+	state->cam_enable    = stpio_request_pin (4, 6, "CAM_ENABLE", STPIO_OUT);
+	state->ts_enable     = stpio_request_pin (6, 1, "TS_ENABLE", STPIO_OUT);
+
+    if (state->cam_enable == NULL)
+    {
+        printk("\n\nCAM_ENABLE port open failed(4,6)!\n\n\n");
+        while(1);
+    }
+    if (state->ts_enable == NULL)
+    {
+        printk("\n\nTS_ENABLE port open failed(6,1)!\n\n\n");
+        while(1);
+    }
 
 	stpio_set_pin(state->ci_enable, 0);
   stpio_set_pin(state->slot_reset[0], 0);
 
-    hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0xc447f9);
-    hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xff86a8a8);
-    hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xff86a8a8);
-    hs7110_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0xa);
-    hs7110_write_register_u32(EMIConfigBaseAddress + EMI_GEN_CFG, 0x08);
+    cnbox_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA0, 0xc447f9);
+    cnbox_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA1, 0xff86a8a8);
+    cnbox_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA2, 0xff86a8a8);
+    cnbox_write_register_u32(EMIConfigBaseAddress + EMIBank2 + EMI_CFG_DATA3, 0xa);
+    cnbox_write_register_u32(EMIConfigBaseAddress + EMI_GEN_CFG, 0x08);
 
-    hs7110_write_register_u32(0xfe001114, 0x3f800100);
+    u32 reg;
+    
+    reg = cnbox_read_register_u32(0xfe001100);
 
-#if 0
-    hs7110_write_register_u32(0xfd026030, 0xe4); /* pio6 */
+    reg |= (1 << 0);
 
-    hs7110_write_register_u32(0xfd022000, 0xf3); /* pio2 */
+    cnbox_write_register_u32(0xfe001100, reg);
 
-    hs7110_write_register_u32(0xfd025030, 0x8f); /* pio5 */
-    hs7110_write_register_u32(0xfd025000, 0xf); /* pio5 */
+    reg = cnbox_read_register_u32(0xfe001114);
 
-    hs7110_write_register_u32(0xfd021030, 0x84); /* pio1 */
-    hs7110_write_register_u32(0xfd021000, 0x4); /* pio1 */
+    reg |= (1 << 0) | (1 << 17) | (1 << 23);
 
-    hs7110_write_register_u32(0xfd022030, 0xfb); /* pio2 */
-    hs7110_write_register_u32(0xfd022000, 0xfb); /* pio2 */
+    cnbox_write_register_u32(0xfe001114, reg);
 
-    hs7110_write_register_u32(0xfd025030, 0xaf); /* pio5 */
-    hs7110_write_register_u32(0xfd025000, 0x2f); /* pio5 */
-#endif
+	stpio_set_pin(state->cam_enable, 1);
+	stpio_set_pin(state->ts_enable, 0);
 
-    hs7110_write_register_u32(0xfe001134, 0x600000); /* lmi */
-    hs7110_write_register_u32(0xfe0011a8, 0x66f379b); /* lmi */
-    hs7110_write_register_u32(0xfe0011ac, 0x1800019b); /* lmi */
+    cnbox_write_register_u32(0xfe001134, 0x600000); /* lmi */
+    cnbox_write_register_u32(0xfe0011a8, 0x66f379b); /* lmi */
+    cnbox_write_register_u32(0xfe0011ac, 0x1800019b); /* lmi */
 
     slot_attr_mem[0] = 0x6008000;
     slot_ctrl_mem[0] = 0x6000000;
@@ -508,10 +520,10 @@ int cic_init_hw(void)
 		stpio_set_pin(state->ci_enable, 1);
 
 #if 0
-    if (stpio_flagged_request_irq(state->slot_reset[0], 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
+    if (stpio_flagged_request_irq(state->slot_reset[0], 0, cnbox_irq, NULL ,IRQ_DISABLED) < 0)
        printk("%s: failed to init irq\n", __func__);
 
-    if (stpio_flagged_request_irq(state->ci_enable, 0, hs7110_irq, NULL ,IRQ_DISABLED) < 0)
+    if (stpio_flagged_request_irq(state->ci_enable, 0, cnbox_irq, NULL ,IRQ_DISABLED) < 0)
        printk("%s: failed to init irq\n", __func__);
 #endif
 
@@ -522,11 +534,11 @@ EXPORT_SYMBOL(cic_init_hw);
 
 int init_ci_controller(struct dvb_adapter* dvb_adap)
 {
-	struct hs7110_cic_state *state = &ci_state;
-	struct hs7110_cic_core *core = &ci_core;
+	struct cnbox_cic_state *state = &ci_state;
+	struct cnbox_cic_core *core = &ci_core;
 	int result;
 
-	printk("init_hs7110_cic >\n");
+	printk("init_cnbox_cic >\n");
 
 	core->dvb_adap = dvb_adap;
 
@@ -540,15 +552,15 @@ printk("core->dvb_adap %p\n", core->dvb_adap);
 	/* register CI interface */
 	core->ca.owner = THIS_MODULE;
 
-	core->ca.read_attribute_mem   = hs7110_cic_read_attribute_mem;
-	core->ca.write_attribute_mem  = hs7110_cic_write_attribute_mem;
-	core->ca.read_cam_control 	  = hs7110_cic_read_cam_control;
-	core->ca.write_cam_control 	  = hs7110_cic_write_cam_control;
-	core->ca.slot_shutdown 		  = hs7110_cic_slot_shutdown;
-	core->ca.slot_ts_enable 	  = hs7110_cic_slot_ts_enable;
+	core->ca.read_attribute_mem   = cnbox_cic_read_attribute_mem;
+	core->ca.write_attribute_mem  = cnbox_cic_write_attribute_mem;
+	core->ca.read_cam_control 	  = cnbox_cic_read_cam_control;
+	core->ca.write_cam_control 	  = cnbox_cic_write_cam_control;
+	core->ca.slot_shutdown 		  = cnbox_cic_slot_shutdown;
+	core->ca.slot_ts_enable 	  = cnbox_cic_slot_ts_enable;
 
-	core->ca.slot_reset 		  = hs7110_cic_slot_reset;
-	core->ca.poll_slot_status 	  = hs7110_cic_poll_slot_status;
+	core->ca.slot_reset 		  = cnbox_cic_slot_reset;
+	core->ca.poll_slot_status 	  = cnbox_cic_poll_slot_status;
 
 	state->core 			      = core;
 	core->ca.data 			      = state;
@@ -557,7 +569,7 @@ printk("core->dvb_adap %p\n", core->dvb_adap);
 	cic_init_hw();
 printk("core->dvb_adap %p\n", core->dvb_adap);
 
-	dprintk(1, "init_hs7110_cic: call dvb_ca_en50221_init\n");
+	dprintk(1, "init_cnbox_cic: call dvb_ca_en50221_init\n");
 
 printk("%p %d\n", core->dvb_adap, cNumberSlots);
 	if ((result = dvb_ca_en50221_init(core->dvb_adap, &core->ca, 0, cNumberSlots)) != 0) {
@@ -565,15 +577,15 @@ printk("%p %d\n", core->dvb_adap, cNumberSlots);
 		goto error;
 	}
 
-	dprintk(1, "hs7110_cic: ca0 interface initialised.\n");
+	dprintk(1, "cnbox_cic: ca0 interface initialised.\n");
 
-	dprintk(10, "init_hs7110_cic <\n");
+	dprintk(10, "init_cnbox_cic <\n");
 
 	return 0;
 
 error:
 
-	printk("init_hs7110_cic < error\n");
+	printk("init_cnbox_cic < error\n");
 
 	return result;
 }
@@ -583,19 +595,19 @@ EXPORT_SYMBOL(setMuxSource);
 EXPORT_SYMBOL(setCiSource);
 EXPORT_SYMBOL(getCiSource);
 
-int __init hs7110_cic_init(void)
+int __init cnbox_cic_init(void)
 {
-    printk("hs7110_cic loaded\n");
+    printk("cnbox_cic loaded\n");
     return 0;
 }
 
-static void __exit hs7110_cic_exit(void)
+static void __exit cnbox_cic_exit(void)
 {
-   printk("hs7110_cic unloaded\n");
+   printk("cnbox_cic unloaded\n");
 }
 
-module_init             (hs7110_cic_init);
-module_exit             (hs7110_cic_exit);
+module_init             (cnbox_cic_init);
+module_exit             (cnbox_cic_exit);
 
 MODULE_DESCRIPTION      ("CI Controller");
 MODULE_AUTHOR           ("konfetti");
