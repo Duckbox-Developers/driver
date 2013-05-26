@@ -40,7 +40,7 @@ Date        Modification                                    Name
 
 #if defined(FORTIS_HDBOX) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
     defined(VIP1_V2) || defined(VIP2_V1) || defined(UFS912) || defined(SPARK) || \
-    defined(SPARK7162) || defined(OCTAGON1008) || \
+    defined(SPARK7162) || defined(OCTAGON1008) || defined(VITAMIN_HD5000) || \
     defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(IPBOX9900) || defined(IPBOX99) || \
     defined(IPBOX55) || defined(ADB_BOX) || defined(CUBEREVO) || \
     defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || \

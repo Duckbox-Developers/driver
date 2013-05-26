@@ -43,6 +43,7 @@
 #include "stv6412.h"
 #include "stv6417.h"
 #include "stv6418.h"
+#include "stv6419.h"
 #include "cxa2161.h"
 #include "vip2_avs.h"
 #include "vip1_avs.h"
@@ -56,6 +57,7 @@ enum
 	STV6412,
 	STV6417,
 	STV6418,
+	STV6419,
 	CXA2161,
 	VIP2_AVS,
 	VIP1_AVS,
@@ -72,6 +74,7 @@ static const struct i2c_device_id avs_id[] = {
         { "stv6412", STV6412 },
         { "stv6417", STV6417 },
         { "stv6418", STV6418 },
+        { "stv6419", STV6419 },
         { "cxa2161", CXA2161 },
         { "vip2_avs", VIP2_AVS },
 		{ "vip1_avs", VIP1_AVS },
@@ -92,7 +95,7 @@ static char *type = "ak4705";
 static unsigned short normal_i2c[] = {
 #if defined(HOMECAST5101)
 	I2C_ADDRESS_CXA2161, /* cxa2161, 0x48 */
-#elif defined(UFS922) || defined(CUBEREVO) \
+#elif defined(UFS922) || defined(CUBEREVO) || defined(VITAMIN_HD5000) \
    || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_2000HD)
 	0x4a, /* stv6412" */
 #elif defined(UFC960) || defined(FORTIS_HDBOX) || defined(TF7700) || defined(HL101) || defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(ADB_BOX)
@@ -130,6 +133,7 @@ static int avs_newprobe(struct i2c_client *client, const struct i2c_device_id *i
 	case STV6412:  stv6412_init(client);  break;
 	case STV6417:  stv6417_init(client);  break;
 	case STV6418:  stv6418_init(client);  break;
+	case STV6419:  stv6419_init(client);  break;
 	case CXA2161:  cxa2161_init(client);  break;
 	case FAKE_AVS: fake_avs_init(client); break;
 	case AVS_NONE: avs_none_init(client); break;
@@ -225,6 +229,7 @@ static int avs_command_ioctl(struct i2c_client *client, unsigned int cmd, void *
 	case STV6412:  err = stv6412_command(client, cmd, arg);  break;
 	case STV6417:  err = stv6417_command(client, cmd, arg);  break;
 	case STV6418:  err = stv6418_command(client, cmd, arg);  break;
+	case STV6419:  err = stv6419_command(client, cmd, arg);  break;
 	case CXA2161:  err = cxa2161_command(client, cmd, arg);  break;
 	case FAKE_AVS: err = fake_avs_command(client, cmd, arg); break;
 	case AVS_NONE: err = avs_none_command(client, cmd, arg); break;
@@ -259,6 +264,7 @@ int avs_command_kernel(unsigned int cmd, void *arg)
 	case STV6412:  err = stv6412_command_kernel(client, cmd, arg);  break;
 	case STV6417:  err = stv6417_command_kernel(client, cmd, arg);  break;
 	case STV6418:  err = stv6418_command_kernel(client, cmd, arg);  break;
+	case STV6419:  err = stv6419_command_kernel(client, cmd, arg);  break;
 	case CXA2161:  err = cxa2161_command_kernel(client, cmd, arg);  break;
 	case FAKE_AVS: err = fake_avs_command_kernel(client, cmd, arg); break;
 	case AVS_NONE: err = avs_none_command_kernel(client, cmd, arg); break;
@@ -321,6 +327,8 @@ static int avs_detect(struct i2c_client *client, int kind, struct i2c_board_info
 			kind = STV6417;
 		else if(!strcmp("stv6418", type))
 			kind = STV6418;
+		else if(!strcmp("stv6419", type))
+			kind = STV6419;
 		else if(!strcmp("cxa2161", type))
 			kind = CXA2161;
 		else if(!strcmp("vip2_avs", type))
@@ -341,6 +349,7 @@ static int avs_detect(struct i2c_client *client, int kind, struct i2c_board_info
 	case STV6412:  		name = "stv6412";  		break;
 	case STV6417:  		name = "stv6417";  		break;
 	case STV6418:  		name = "stv6418";  		break;
+	case STV6419:  		name = "stv6419";  		break;
 	case CXA2161:  		name = "cxa2161";  		break;
 	case VIP2_AVS: 		name = "vip2_avs"; 		break;
 	case VIP1_AVS: 		name = "vip1_avs"; 		break;
@@ -468,5 +477,5 @@ MODULE_DESCRIPTION("Multiplatform A/V scart switch driver");
 MODULE_LICENSE("GPL");
 
 module_param(type,charp,0);
-MODULE_PARM_DESC(type, "device type (ak4705, stv6412, cxa2161, stv6417, stv6418, vip2_avs, vip1_avs, fake_avs, avs_pio, avs_none)");
+MODULE_PARM_DESC(type, "device type (ak4705, stv6412, cxa2161, stv6417, stv6418, stv6419, vip2_avs, vip1_avs, fake_avs, avs_pio, avs_none)");
 

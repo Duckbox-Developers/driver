@@ -112,6 +112,9 @@ endif
 ifdef IPBOX55
 CCFLAGSY += -DIPBOX55
 endif
+ifdef VITAMIN_HD5000
+CCFLAGSY += -DVITAMIN_HD5000
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -269,6 +272,11 @@ obj-y    += smartcard/
 endif
 ifdef CUBEREVO_9500HD
 obj-y    += smartcard/
+endif
+ifdef VITAMIN_HD5000
+obj-y	+= cec/
+obj-y	+= smartcard/
+obj-y	+= cpu_frequ/
 endif
 
 endif
