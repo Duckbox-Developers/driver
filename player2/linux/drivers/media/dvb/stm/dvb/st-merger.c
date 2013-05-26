@@ -40,16 +40,12 @@ unsigned long TSM_NUM_1394_ALT_OUT;
 #define LOAD_TSM_DATA
 #endif
 
-<<<<<<< HEAD
 static short camRouting = 0;
 
 module_param(camRouting, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(camRouting, "Enable camRouting 0=disabled 1=enabled");
 
-#if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX)
-=======
 #if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(VITAMIN_HD5000)
->>>>>>> tdt/master
 #define TSMergerBaseAddress   	0xFE242000
 #else
 #define TSMergerBaseAddress   	0x19242000
@@ -662,7 +658,7 @@ void stm_tsm_init (int use_cimax)
          printk("[TSM] skip stpio stuff in reinit\n");
 #elif defined(ATEVIO7500)
       if (!reinit) {
-         struct stpio* pin;
+         struct stpio_pin* pin;
          /* set the muxer pin otherwise startci output will
           * not properly passed to tsmerger.
           */
@@ -719,7 +715,7 @@ void stm_tsm_init (int use_cimax)
 #if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(HOMECAST5101) && \
     !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(WHITEBOX) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
     !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
-        !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(VITAMIN_HD5000)
+    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(VITAMIN_HD5000)
       unsigned int stream_sync = 0xbc4733;
 #else
       unsigned int stream_sync = 0xbc4722;
@@ -852,7 +848,7 @@ else
 
       ctrl_outl(0x0, tsm_io + SWTS_CFG(0));
 
-#if  defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(IPBOX9900) || defined(VITAMIN_HD5000)
+#if defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(IPBOX9900) || defined(VITAMIN_HD5000)
       ctrl_outl(0x0, tsm_io + SWTS_CFG(1));
       ctrl_outl(0x0, tsm_io + SWTS_CFG(2));
 #endif
@@ -1395,7 +1391,7 @@ else
       if (reinit) {
          printk("reinit\n");
       } else {
-#if	defined(SPARK) || defined(SPARK7162) || defined(HS7110) || defined(WHITEBOX) || defined(VITAMIN_HD5000)
+#if defined(SPARK) || defined(SPARK7162) || defined(HS7110) || defined(WHITEBOX) || defined(VITAMIN_HD5000)
          tsm_io = ioremap (/* config->tsm_base_address */ TSMergerBaseAddress, 0x1000);
 #else // !defined(SPARK) && !defined(SPARK7162) && !defined(HS7110) && !defined(WHITEBOX)
          tsm_io = ioremap (/* config->tsm_base_address */ 0x19242000, 0x1000);
@@ -1475,7 +1471,6 @@ Dies sind die Options (also wohl auch view channel):
      ctrl_outl(0x1D00, tsm_io + TSM_STREAM5_CFG); // 0x1D00-0x1DFF
      ctrl_outl(0x1E00, tsm_io + TSM_STREAM6_CFG); // 0x1E00-0x1EFF
      ctrl_outl(0x1F00, tsm_io + TSM_STREAM7_CFG); // 0x1F00-0x1FFF
-
 #else // !defined(SPARK) && !defined(HS7110) && !defined(WHITEBOX)
       for (n=0;n<5;n++) {
          writel( TSM_RAM_ALLOC_START( 0x3 *n ), tsm_io + TSM_STREAM_CONF(n));
