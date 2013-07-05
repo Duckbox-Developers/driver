@@ -373,7 +373,7 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
   dma_unmap_sg(NULL, sg, nr_pages, DMA_TO_DEVICE);
 #else
-#warning FIXME, STM24, skipping dma_unmap_sg
+/* #warning FIXME, STM24, skipping dma_unmap_sg */
 /* dma_unmap_sg(NULL, sg, nr_pages, DMA_TO_DEVICE); */
 #endif
 
@@ -711,7 +711,6 @@ void stm_tsm_init (int use_cimax)
         * packet len = 188
         */
 
-//#if defined(UFS910) ???
 #if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(HOMECAST5101) && \
     !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(WHITEBOX) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
     !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
@@ -985,7 +984,6 @@ else
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM0_SYNC);
       ctrl_outl(0x0, tsm_io + 0x18 /* reserved ??? */);
 
-
       /* add tag bytes to stream + stream priority */
 #if defined(FORTIS_HDBOX) || defined(OCTAGON1008) || defined(ATEVIO7500)
 
@@ -997,7 +995,6 @@ else
 #endif
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM1_SYNC);
       ctrl_outl(0x0, tsm_io + 0x38 /* reserved ??? */);
-
 
       /* add tag bytes to stream + stream priority */
 #if defined(FORTIS_HDBOX) || defined(OCTAGON1008) || defined(ATEVIO7500)
@@ -1012,7 +1009,6 @@ else
 #endif
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM2_SYNC);
       ctrl_outl(0x0, tsm_io + 0x58 /* reserved ??? */);
-
 
       /* add tag bytes to stream + stream priority */
 #if defined(FORTIS_HDBOX) || defined(OCTAGON1008)
@@ -1039,7 +1035,6 @@ else
       ctrl_outl(stream_sync, tsm_io + TSM_STREAM3_SYNC);
       ctrl_outl(0x0, tsm_io + 0x78 /* reserved ??? */);
 
-//-if definied (UFS910) ???
 #if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(WHITEBOX) && !defined(IPBOX9900) && !defined(VITAMIN_HD5000)
       /* swts_req_trigger + pace cycles (1101) */
       ctrl_outl(0x800000d, tsm_io + SWTS_CFG(0));
@@ -1168,7 +1163,6 @@ else
       ret = ctrl_inl(tsm_io + TSM_1394_DEST);
       ctrl_outl(ret | 0x38 , tsm_io + TSM_1394_DEST);
 #elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA)
-
       /* route stream 1 to PTI */
       ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
       ctrl_outl(ret | 0x2,tsm_io + TSM_PTI_SEL);

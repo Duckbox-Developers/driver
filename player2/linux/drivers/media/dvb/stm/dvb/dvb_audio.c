@@ -55,17 +55,12 @@ Date        Modification                                    Name
 #include <sound/initval.h>
 
 #include <stm_ioctls.h>
-
 #include "e2_proc/e2_proc.h"
-
 #include "../../../../sound/pseudocard/pseudo_mixer.h"
 
-
 extern struct snd_kcontrol ** pseudoGetControls(int* numbers);
-extern int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol,
-                                struct snd_ctl_elem_value *ucontrol);
-extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
-                                struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol);
 
 #define PSEUDO_ADDR(x) (offsetof(struct snd_pseudo_mixer_settings, x))
 extern struct DeviceContext_s* DeviceContext;
@@ -92,7 +87,6 @@ int AudioIoctlSetAvSync (struct DeviceContext_s* Context, unsigned int State);
 static int AudioIoctlSetAvSync          (struct DeviceContext_s* Context,
                                          unsigned int            State);
 #endif
-
 static int AudioIoctlChannelSelect      (struct DeviceContext_s* Context,
                                          audio_channel_select_t  Channel);
 static int AudioIoctlSetSpeed           (struct DeviceContext_s* Context,
@@ -421,19 +415,20 @@ static int AudioIoctlSetBypassMode (struct DeviceContext_s* Context, unsigned in
     //libdreamdvd : 5=dts 6=lpcm
     DVB_DEBUG("Set BypassMode to %d\n", Mode);
 
-    if (Mode == 0 || Mode == 34)
-      Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_AC3;
-    else if (Mode == 2 || Mode == 5 || Mode == 16)
-      Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_DTS;
-    else if (Mode == 6)
-      Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_LPCM;
-    else if (Mode == 8 || Mode == 9)
-      Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_AAC;
-    else
-      Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_MPEG2;
+	if (Mode == 0 || Mode == 34)
+		Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_AC3;
+	else if (Mode == 2 || Mode == 5 || Mode == 16)
+		Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_DTS;
+	else if (Mode == 6)
+		Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_LPCM;
+	else if (Mode == 8 || Mode == 9)
+		Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_AAC;
+	else
+		Context->AudioEncoding      = (audio_encoding_t) AUDIO_ENCODING_MPEG2;
 
 //before we jump to any conclusions, does the user really want passtrough, its possible that he wants downmix!
 //ask e2_proc_audio what the user wants
+
     for (vLoop = 0; vLoop < number; vLoop++) {
         if (kcontrol[vLoop]->private_value == PSEUDO_ADDR(spdif_bypass)) {
             single_control = kcontrol[vLoop];
@@ -606,7 +601,7 @@ static int AudioIoctlClearBuffer (struct DeviceContext_s* Context)
     //it seems like the player forgets our current status after clear buffer
     if(prevSpeed == AUDIO_PAUSED)
     {
-      AudioIoctlSetSpeed (Context, DVB_SPEED_STOPPED);
+        AudioIoctlSetSpeed (Context, DVB_SPEED_STOPPED);
     }
 #endif
     return Result;
@@ -635,9 +630,7 @@ int AudioIoctlSetId (struct DeviceContext_s* Context, int Id)
 static int AudioIoctlSetMixer (struct DeviceContext_s* Context, audio_mixer_t* Mix)
 {
 #ifdef __TDT__
-/* HACK
- * set volume over avs.
- */
+    /* HACK set volume over avs. */
     char buf[3];
     snprintf(buf, 3, "%d", Mix->volume_left);
     proc_avs_0_volume_write(NULL, buf, strlen(buf), NULL);
@@ -1208,16 +1201,14 @@ static unsigned int AudioPoll (struct file* File, poll_table* Wait)
     struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDevice->priv;
     unsigned int                Mask            = 0;
 
-	//printk("[Audio] poll ->\n");
-
     if (((File->f_flags & O_ACCMODE) == O_RDONLY) || (Context->AudioStream == NULL))
         return 0;
-
 #ifdef __TDT__
     //TODO: Why is this true after seeking and never becomes false again?
     //      Is beeing reset at the end after nonblocking flush ioctl
     //      So not really a problem but still not nice
-    if (DvbStreamCheckDrained(Context->AudioStream) == 1) {
+    if (DvbStreamCheckDrained(Context->AudioStream) == 1)
+    {
         printk("Audio Stream drained\n");
         Mask |= (POLLIN);
     }
@@ -1232,11 +1223,7 @@ static unsigned int AudioPoll (struct file* File, poll_table* Wait)
         if (StreamBufferFree (Context->AudioStream))
             Mask   |= (POLLOUT | POLLWRNORM);
     }
-
-	//printk("[Audio] poll <- %d\n", Mask);
-
     return Mask;
 }
 /*}}}*/
-
 

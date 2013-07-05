@@ -135,8 +135,8 @@ PlayerInputDescriptor_t  *Descriptor;
 
 #ifdef __TDT__
     if(DemuxStatus == DemultiplexorBufferOverflow)
-	for(PlayerStream_t Stream = Playback->ListOfStreams; Stream != NULL; Stream = Stream->Next)
-        	Stream->Collator->DiscardAccumulatedData();
+	    for(PlayerStream_t Stream = Playback->ListOfStreams; Stream != NULL; Stream = Stream->Next)
+            Stream->Collator->DiscardAccumulatedData();
 #endif
 
     //

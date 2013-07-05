@@ -317,7 +317,6 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	// Perform continuity check
 	//
 
-#if defined(ADB_BOX)
 	if( Stream->ValidExpectedContinuityCount &&
 	    (DVB_CONTINUITY_COUNT(Header) != Stream->ExpectedContinuityCount) )
 	{
@@ -331,7 +330,6 @@ DemultiplexorBaseStreamContext_t *BaseStream;
 	    report( severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch.\n" );
 	    Player->InputGlitch( PlayerAllPlaybacks, BaseStream->Stream );
 	}
-#endif
 
 	Stream->ExpectedContinuityCount       = (DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f;
 	Stream->ValidExpectedContinuityCount  = DeferredValidExpectedContinuityCount;

@@ -934,20 +934,18 @@ unsigned long long	  Now;
 
 	    case PolicyValueDiscardLateFramesAfterSynchronize:
 #ifdef __TDT__
-                        // H.264 deadlock workaround
-                        // determine the pool usage
-                        DecodeBufferPool->GetPoolUsage( NULL,
-                                                        &DecodeBuffersInUse,
-                                                        NULL, NULL, NULL );
-                        Manifestor->GetDecodeBufferCount( &DecodeBufferCount );
+			// H.264 deadlock workaround
+			// determine the pool usage
+			DecodeBufferPool->GetPoolUsage( NULL, &DecodeBuffersInUse, NULL, NULL, NULL);
+			Manifestor->GetDecodeBufferCount( &DecodeBufferCount );
 
-                        // if the buffer pool is almost empty discard the frame to
-                        // prevent the decoder from running out of buffers
-                        if(DecodeBuffersInUse > DecodeBufferCount - 2)
-                        {
-                                        OutputTiming->TimingGenerated   = false;
-                                        return OutputTimerDropFrameTooLateForManifestation;
-                        }
+			// if the buffer pool is almost empty discard the frame to
+			// prevent the decoder from running out of buffers
+			if(DecodeBuffersInUse > DecodeBufferCount - 2)
+			{
+					OutputTiming->TimingGenerated = false;
+					return OutputTimerDropFrameTooLateForManifestation;
+			}
 #endif
 			if( !SeenAnInTimeFrame )
 			{

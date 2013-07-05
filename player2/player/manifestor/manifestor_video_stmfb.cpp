@@ -37,11 +37,8 @@ Date        Modification                                    Name
 #include "manifestor_video_stmfb.h"
 
 #ifdef __TDT__
-//dagobert
-typedef int (read_proc_t)(char *page, char **start, off_t off,
-                          int count, int *eof, void *data);
-typedef int (write_proc_t)(struct file *file, const char __user *buffer,
-                           unsigned long count, void *data);
+typedef int (read_proc_t)(char *page, char **start, off_t off, int count, int *eof, void *data);
+typedef int (write_proc_t)(struct file *file, const char __user *buffer, unsigned long count, void *data);
 #endif
 
 extern "C" {
@@ -51,11 +48,9 @@ extern "C" {
   /// from the buffer pool, sorry Julian, I have tried to make it as tidy looking as possible.
   extern volatile stm_display_buffer_t *ManifestorLastDisplayedBuffer;
 #ifdef __TDT__
-
   extern int sscanf(const char *, const char *, ...)
         __attribute__ ((format (scanf, 2, 3)));
 
-//Dagobert
   extern int cpp_install_e2_procs(const char *path, read_proc_t *read_func, write_proc_t *write_func, void* instance);
   extern int cpp_remove_e2_procs(const char *path, read_proc_t *read_func, write_proc_t *write_func);
 #endif
@@ -482,50 +477,49 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::OpenOutputSurface    (DeviceHandle_t
 }
 //}}}
 #ifdef __TDT__
-
 #ifdef UFS922
 int Manifestor_VideoStmfb_c::set_dei_fmd(struct file *file, const char __user *buf, unsigned long count)
 {
-        char            *page;
-        char            *myString;
-        ssize_t         ret = -1;
-        bool            value = true;
+	char 		*page;
+	char		*myString;
+	ssize_t 	ret = -1;
+	bool		value = true;
 
-        //the calling fuction has copied the data to buf from user
-        //so cast it here to get the data
-        page = (char*) buf;
+	//the calling fuction has copied the data to buf from user
+	//so cast it here to get the data
+	page = (char*) buf;
 
-        if (page)
-        {
-                int err;
+	if (page)
+	{
+		int err;
 
-                myString = (char *) OS_Malloc(count + 1);
-                strncpy(myString, page, count);
-                myString[count] = '\0';
+		myString = (char *) OS_Malloc(count + 1);
+		strncpy(myString, page, count);
+		myString[count] = '\0';
 
-                if ((strncmp("0", myString, count - 1) == 0) ||
-                    ((strncmp("false", myString, count - 1) == 0)) ||
-                    ((strncmp("disable", myString, count - 1) == 0)))
-                        value = false;
-                else
-                if ((strncmp("1", myString, count - 1) == 0) ||
-                    ((strncmp("true", myString, count - 1) == 0)) ||
-                    ((strncmp("enable", myString, count - 1) == 0)))
-                        value = true;
+		if ((strncmp("0", myString, count - 1) == 0) ||
+		    ((strncmp("false", myString, count - 1) == 0)) ||
+		    ((strncmp("disable", myString, count - 1) == 0)))
+			value = false;
+		else
+		if ((strncmp("1", myString, count - 1) == 0) ||
+		    ((strncmp("true", myString, count - 1) == 0)) ||
+		    ((strncmp("enable", myString, count - 1) == 0)))
+			value = true;
 
-                if ((err = stm_display_plane_set_control(Plane,
+			if ((err = stm_display_plane_set_control(Plane,
                                                   PLANE_CTRL_DEI_FMD_ENABLE,
-                                                  value)) < 0)
-                        MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
-                else
-                        MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
+										          value)) < 0)
+				MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
+		else
+			MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
 
-                OS_Free(myString);
-        }
+		OS_Free(myString);
+	}
 
-        ret = count;
+	ret = count;
 
-        return ret;
+	return ret;
 }
 
 int Manifestor_VideoStmfb_c::get_dei_fmd(char *page, char **start, off_t off, int count,int *eof)

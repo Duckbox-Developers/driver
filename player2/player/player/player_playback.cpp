@@ -1100,6 +1100,7 @@ unsigned long long	  Delay;
     //
     // Are we a blocking/non-blocking call
     //
+
     if( !NonBlocking )
     {
 	Status	= WaitForDrainCompletion( Stream, (PlayoutPolicyValue == PolicyValueDiscard) );

@@ -64,7 +64,7 @@ struct stream_data_s
     unsigned int                id;
     player_stream_handle_t     *stream;
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
-    struct device         stream_class_device;
+    struct device               stream_class_device;
 #else
     struct class_device         stream_class_device;
 #endif
@@ -78,7 +78,7 @@ struct playback_data_s
     unsigned int                id;
     player_playback_handle_t   *playback;
 #if defined(__TDT__) //&& (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-    struct device        *playback_class_device;
+    struct device              *playback_class_device;
 #else
     struct class_device        *playback_class_device;
 #endif
@@ -419,7 +419,7 @@ int event_playback_created_handler(struct player_event_s* Event)
     /* Create a class device and register it with sysfs ( = sysfs/class/player2/playback0,1,2,3....) */
     PlaybackData->playback_dev_t            = MKDEV(0,0);
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-    PlaybackData->playback_class_device     = device_create(&player2_class,            // pointer to the struct class that this device should be registered to
+    PlaybackData->playback_class_device     = device_create(&player2_class,                  // pointer to the struct class that this device should be registered to
                                                       NULL,                                 // pointer to the parent struct class_device of this new device, if any
                                                       PlaybackData->playback_dev_t,         // the dev_t for the (char) device to be added
                                                       NULL,                                 // a pointer to a struct device that is associated with this class device
@@ -598,14 +598,13 @@ int event_stream_terminated_handler(struct player_event_s* Event)
     // SYSFS_DEBUG("Unregistering %p\n", StreamData->stream_class_device);
     // NOTE: I suspect a bug in class_device_unregister, infact class_device_del works fine,
     // but if I add class_device_put I have a segemntation fault. It should be investigated better.
+    // class_device_unregister (&StreamData->stream_class_device);
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
     device_unregister (&StreamData->stream_class_device);
 #else
-    // class_device_unregister (&StreamData->stream_class_device);
-
     class_device_del(&StreamData->stream_class_device);
-    //class_device_put(&StreamData->stream_class_device);
 #endif
+    //class_device_put(&StreamData->stream_class_device);
 
     if (StreamData->notify_on_destroy)
 	    do_notify();

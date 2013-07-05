@@ -256,7 +256,8 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
             {
     	        FRAME_ERROR( "Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld  got %lld )\n",
     	                     NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
-                             SyntheticDelta, RealDelta);  	        
+                             SyntheticDelta, RealDelta);
+    	        
 
             }            
         }        

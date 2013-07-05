@@ -62,12 +62,12 @@ MODULE_PARM_DESC(NIMS, "NIMS type: single,twin (default single");
 enum {
 	SERIAL,
 	PARALLEL,
-	}; 
+}; 
 
 enum { 
 	SINGLE,
 	TWIN,
-	};
+};
 #endif
 
 #if defined(UFS922)
@@ -404,7 +404,6 @@ static int convert_source ( const dmx_source_t source)
     tag = TSIN0;
 #endif
     break;
-
   case DMX_SOURCE_FRONT1:
 #if defined(ADB_BOX)
          if (glowica == SINGLE) {
@@ -423,7 +422,6 @@ static int convert_source ( const dmx_source_t source)
     tag = TSIN1;
 #endif
     break;
-
 #if defined(SPARK7162)
   case DMX_SOURCE_FRONT2:
     tag = TSIN0;

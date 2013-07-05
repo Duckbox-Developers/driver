@@ -529,11 +529,11 @@ HavanaStatus_t HavanaPlayer_c::CreateDisplay   (char*                           
     return HavanaNoError;
 }
 //}}}  
+
 #ifdef __TDT__
-//Dagobert
 //{{{  isDisplayCreated
-int HavanaPlayer_c::isDisplayCreated   (char*                           Media,
-                                         unsigned int                    SurfaceId)
+int HavanaPlayer_c::isDisplayCreated   (char*           Media,
+                                        unsigned int    SurfaceId)
 {
     HavanaDisplay_c**   Display = NULL;
 
@@ -556,6 +556,7 @@ int HavanaPlayer_c::isDisplayCreated   (char*                           Media,
 }
 //}}}  
 #endif
+
 //{{{  DeleteDisplay
 HavanaStatus_t HavanaPlayer_c::DeleteDisplay   (char*           Media,
                                                 unsigned int    SurfaceId)

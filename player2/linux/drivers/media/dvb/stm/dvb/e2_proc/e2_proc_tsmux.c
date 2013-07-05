@@ -87,7 +87,7 @@ int proc_tsmux_input1_write(struct file *file, const char __user *buf, unsigned 
  * so maybe I understand what the developer
  * wants to do here.
  */
-#if defined(UFS922)
+#if defined(UFS922) || defined(UFC960)
 		if(strcmp(page, "CI0") == 0)
 			printk("%s ->CIO received\n", __func__);
 		else if(strcmp(page, "CI1") == 0)

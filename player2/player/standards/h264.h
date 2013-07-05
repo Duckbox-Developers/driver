@@ -47,10 +47,10 @@ Date        Modification                                    Name
 #define H264_CODED_FRAME_COUNT                          1024
 #define H264_MAXIMUM_FRAME_SIZE                         0x100000
 
-#define H264_FRAME_MEMORY_SIZE                          PLAYER2_H264_FRAME_MEMORY_SIZE /* 0x800000 */
-#define H264_STREAM_PARAMETERS_COUNT			PLAYER2_H264_STREAM_PARAMETERS_COUNT /* 64 */
-#define H264_FRAME_PARAMETERS_COUNT			PLAYER2_H264_FRAME_PARAMETERS_COUNT /* 64 */
-#define H264_MACROBLOCK_STRUCTURE_MEMORY                PLAYER2_H264_MACROBLOCK_STRUCTURE_MEMORY        /* 0.5mb per 1920x1088 frame */
+#define H264_FRAME_MEMORY_SIZE                          PLAYER2_H264_FRAME_MEMORY_SIZE           /* 0x800000 */
+#define H264_STREAM_PARAMETERS_COUNT                    PLAYER2_H264_STREAM_PARAMETERS_COUNT     /* 64 */
+#define H264_FRAME_PARAMETERS_COUNT                     PLAYER2_H264_FRAME_PARAMETERS_COUNT      /* 64 */
+#define H264_MACROBLOCK_STRUCTURE_MEMORY                PLAYER2_H264_MACROBLOCK_STRUCTURE_MEMORY /* 0.5mb per 1920x1088 frame */
 
 #define H264_STANDARD_MAX_SEQUENCE_PARAMETER_SETS       32
 #define H264_MAX_SEQUENCE_PARAMETER_SETS                32              /* Standard says 32 */

@@ -37,10 +37,6 @@ Date        Modification                                    Name
 
 ************************************************************************/
 
-// Use wyplay findnextstartcode optimization
-//#define WYPLAY_OPTIMIZE
-
-
 // /////////////////////////////////////////////////////////////////////
 //
 //      Include any component headers

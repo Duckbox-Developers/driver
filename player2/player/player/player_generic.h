@@ -665,7 +665,6 @@ public:
 
     PlayerStatus_t   CheckStreamDrained(	PlayerStream_t		  Stream);
 
-
     void ProcessCollateToParse(			PlayerStream_t		  Stream );
     void ProcessParseToDecode(			PlayerStream_t		  Stream );
     void ProcessDecodeToManifest(		PlayerStream_t		  Stream );

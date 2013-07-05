@@ -163,8 +163,8 @@ OS_Status_t   OS_LockMutex( OS_Mutex_t  *Mutex )
 #if defined(ADB_BOX)
 int   OS_LockMutex_trylock( OS_Mutex_t  *Mutex )
 {
-    return OSDEV_ClaimSemaphore_trylock( (OSDEV_Semaphore_t*)Mutex );
-    }
+	return OSDEV_ClaimSemaphore_trylock( (OSDEV_Semaphore_t*)Mutex );
+}
 #endif
 
 OS_Status_t   OS_UnLockMutex( OS_Mutex_t  *Mutex )

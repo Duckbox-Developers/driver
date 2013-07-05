@@ -43,7 +43,6 @@ Date        Modification                                    Name
 
 #ifdef __TDT__
 #include <linux/delay.h>
-
 extern void demultiplexDvbPackets(struct dvb_demux* demux, const u8 *buf, int count);
 extern int stm_tsm_inject_user_data(const char __user *data, off_t size);
 #endif
@@ -133,6 +132,7 @@ static int DvrOpen     (struct inode*     Inode,
     Context->StartOffset = -1;
     Context->EndOffset   = -1;
 #endif
+
     return OriginalDvrFops.open (Inode, File);
 
 }
@@ -242,17 +242,16 @@ static ssize_t DvrWrite (struct file *File, const char __user* Buffer, size_t Co
     struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
     struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
     int                         Result          = 0;
-
 #ifdef __TDT__
     // attach to the video stream context
     struct DeviceContext_s* Context0 = &Context->DvbContext->DeviceContext[0];
 #endif
 
     if (!DmxDevice->demux->write)
-	return -EOPNOTSUPP;
+        return -EOPNOTSUPP;
 
     if ((File->f_flags & O_ACCMODE) != O_WRONLY)
-	return -EINVAL;
+        return -EINVAL;
 
 #ifdef __TDT__
     while(1)
@@ -293,11 +292,11 @@ static ssize_t DvrWrite (struct file *File, const char __user* Buffer, size_t Co
 #endif
 
     if (mutex_lock_interruptible (&DmxDevice->mutex))
-	return -ERESTARTSYS;
+        return -ERESTARTSYS;
 
 #if 0 // We should enable this for security reasons, just want to check the impact because it can be performed inline.
     if (!access_ok(VERIFY_READ, Buffer, Count))
-	return -EINVAL;
+        return -EINVAL;
 #endif
 
 #ifdef __TDT__

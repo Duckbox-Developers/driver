@@ -159,11 +159,11 @@ struct DeviceContext_s
 
 #ifdef __TDT__
     struct PtiSession*          pPtiSession;
-    int dvr_write;
+    int                         dvr_write;
     int                         VideoPlaySpeed;
-    int provideToDecoder;
-    int feedPesType;
-    struct mutex injectMutex;
+    int                         provideToDecoder;
+    int                         feedPesType;
+    struct mutex                injectMutex;
 #endif
 };
 

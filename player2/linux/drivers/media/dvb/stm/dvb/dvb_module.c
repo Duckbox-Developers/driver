@@ -118,21 +118,21 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
     short int                   AdapterNumbers[] = { -1 };
 
     DvbContext  = kzalloc (sizeof (struct DvbContext_s),  GFP_KERNEL);
+#ifdef __TDT__
+    memset(DvbContext, 0, sizeof*DvbContext);
+#endif
+
     if (DvbContext == NULL)
     {
         DVB_ERROR("Unable to allocate device memory\n");
         return -ENOMEM;
     }
-#ifdef __TDT__
-    memset(DvbContext, 0, sizeof*DvbContext);
-#endif
 
 #ifdef __TDT__
-    if (swts)
-      printk("swts ->routing streams from dvr0 to tsm to pti to player\n");
-    else
-      printk("no swts ->routing streams from dvr0 direct to the player\n");
-
+	if (swts)
+		printk("swts ->routing streams from dvr0 to tsm to pti to player\n");
+	else
+		printk("no swts ->routing streams from dvr0 direct to the player\n");
 #endif
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
@@ -163,10 +163,10 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
         struct dvb_device*      DvrDevice;
 
 #ifdef __TDT__
-               //sylvester: wenn der stream vom user kommt soll WriteToDecoder nix
-                //tun, da das ja hier schon passiert. keine ahnung wie man das ansonsten
-                //verhindern soll;-)
-                DeviceContext->dvr_write = 0;
+        //sylvester: wenn der stream vom user kommt soll WriteToDecoder nix
+        //tun, da das ja hier schon passiert. keine ahnung wie man das ansonsten
+        //verhindern soll;-)
+        DeviceContext->dvr_write = 0;
 #endif
 
         DeviceContext->DvbContext               = DvbContext;
@@ -185,7 +185,7 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
         DvbDemux->start_feed                    = StartFeed;
         DvbDemux->stop_feed                     = StopFeed;
 #ifndef __TDT__
-	    DvbDemux->write_to_decoder              = NULL;
+        DvbDemux->write_to_decoder              = NULL;
 #else
         DvbDemux->write_to_decoder              = WriteToDecoder;
 #endif
@@ -253,19 +253,18 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
         /* register the CA device (e.g. CIMAX) */
         if(i < 3)
 #ifndef VIP2_V1
-	       dvb_register_device (&DvbContext->DvbAdapter,
-			            &DeviceContext->CaDevice,
-			            CaInit (DeviceContext),
-			            DeviceContext,
-			            DVB_DEVICE_CA);
+        dvb_register_device (&DvbContext->DvbAdapter,
+                             &DeviceContext->CaDevice,
+                             CaInit (DeviceContext),
+                             DeviceContext,
+                             DVB_DEVICE_CA);
 #endif
-
 #else
-	    dvb_register_device (&DvbContext->DvbAdapter,
-			         &DeviceContext->CaDevice,
-			         CaInit (DeviceContext),
-			         DeviceContext,
-			         DVB_DEVICE_CA);
+        dvb_register_device (&DvbContext->DvbAdapter,
+                             &DeviceContext->CaDevice,
+                             CaInit (DeviceContext),
+                             DeviceContext,
+                             DVB_DEVICE_CA);
 #endif
 
         dvb_register_device (&DvbContext->DvbAdapter,
@@ -290,21 +289,20 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
         DeviceContext->EncryptionOn             = 0;
 #ifdef __TDT__
         DeviceContext->VideoPlaySpeed           = DVB_SPEED_NORMAL_PLAY;
-        DeviceContext->provideToDecoder = 0;
-        DeviceContext->feedPesType = 0;
+        DeviceContext->provideToDecoder         = 0;
+        DeviceContext->feedPesType              = 0;
         mutex_init(&DeviceContext->injectMutex);
 
         if(i < 4)
         {
-          ptiInit(DeviceContext);
+            ptiInit(DeviceContext);
         }
 
         if(i < 1)
         {
-          init_e2_proc(DeviceContext);
+            init_e2_proc(DeviceContext);
         }
 #endif
-
     }
 
     mutex_unlock (&(DvbContext->Lock));
@@ -317,12 +315,11 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
 #endif 
 
 #ifndef __TDT__
-
 #if defined (CONFIG_CPU_SUBTYPE_STX7105) // || defined (CONFIG_CPU_SUBTYPE_STX7200)
     cap_init();
 #endif  
-
 #endif
+
     linuxdvb_v4l2_init();
 
     DVB_DEBUG("STM stream device loaded\n");

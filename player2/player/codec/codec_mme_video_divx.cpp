@@ -70,7 +70,6 @@ Codec_MmeVideoDivx_c::Codec_MmeVideoDivx_c( void)
         //MaxBytesPerFrame = 2000000;
         report (severity_info,"MaxBytesPerFrame =%d\n",MaxBytesPerFrame);
 #endif
-
 		CurrentWidth   = 720;
 		CurrentHeight  = 576;
 		CurrentVersion = 500;
@@ -269,7 +268,7 @@ CodecStatus_t  Codec_MmeVideoDivx_c::FillOutSetStreamParametersCommand( void )
 #ifndef __TDT__
 		if ( (Parsed->VolHeader.width > 960) ||  (Parsed->VolHeader.height > 576) )
 #else
-    		if ( (Parsed->VolHeader.width > 1280) || (Parsed->VolHeader.height > 720) )
+		if ( (Parsed->VolHeader.width > 1280) || (Parsed->VolHeader.height > 720) )
 #endif
 		{
 				report(severity_error,"Stream dimensions too large for playback (%d x %d)\n",Parsed->VolHeader.width,Parsed->VolHeader.height);

@@ -1542,6 +1542,7 @@ HavanaStatus_t HavanaStream_c::CheckEvent      (struct PlayerEventRecord_s*     
                 StreamEvent.code                        = STREAM_EVENT_FATAL_HARDWARE_FAILURE;
                 StreamEvent.u.longlong                  = PlayerEvent->Value[0].LongLong;
                 break;
+
             default:
                 STREAM_DEBUG("Unexpected event %x\n", PlayerEvent->Code);
                 StreamEvent.code                = STREAM_EVENT_INVALID;

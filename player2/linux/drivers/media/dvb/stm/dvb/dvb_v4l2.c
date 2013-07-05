@@ -924,7 +924,7 @@ static int linuxdvb_vm_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 	page_frame = ((unsigned long)page_addr >> PAGE_SHIFT);
 
 	if(!pfn_valid(page_frame))
-	  return VM_FAULT_SIGBUS;
+	    return VM_FAULT_SIGBUS;
 
 	vmf->page = virt_to_page(__va(page_addr));
 
@@ -933,6 +933,7 @@ static int linuxdvb_vm_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 	return 0;
 }
 #else
+
 static struct page* linuxdvb_vm_nopage(struct vm_area_struct *vma, unsigned long vaddr, int *type)
 {
 	struct page *page;
@@ -963,6 +964,7 @@ static struct page* linuxdvb_vm_nopage(struct vm_area_struct *vma, unsigned long
 	return page;
 }
 #endif
+
 static void linuxdvb_vm_open(struct vm_area_struct *vma)
 {
 	//DVB_DEBUG("/n");

@@ -115,11 +115,9 @@ Codec_MmeBase_c::Codec_MmeBase_c( void )
     Configuration.CodecName                             = "Unspecified";
 
 #if defined(__TDT__) && defined(UFS910)
-//Dagobert 16.11.2009: This must stay also for 7109er (ufs922). Removing
-//this hack leads to mysterious dropouts of audio and video.
-//must compile with debug to see details here.
-
-//Dagobert
+//	Dagobert 16.11.2009: This must stay also for 7109er (ufs922). Removing
+//	this hack leads to mysterious dropouts of audio and video.
+//	must compile with debug to see details here.
     strcpy( Configuration.TranscodedMemoryPartitionName, "BPA2_Region1" );
 #else
     strcpy( Configuration.TranscodedMemoryPartitionName, "BPA2_Region0" );
@@ -1303,6 +1301,15 @@ CodecStatus_t     Status;
 			ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[6],ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[7] );
 		BufferIndex     = CurrentDecodeBufferIndex;
 	    }
+
+//----patch start
+		if( ( BufferIndex == INVALID_INDEX ) || ( BufferIndex >= CODEC_MAX_DECODE_BUFFERS) ) 
+		{
+    		report( severity_error, "Codec_MmeBase_c::TranslateReferenceFrameLists(%s) - Reference frame buffer index is INVALID (curr=%d/0x%x, max=%d/0x%x) - skipping frame.\n",
+        		Configuration.CodecName, BufferIndex, CODEC_MAX_DECODE_BUFFERS); 
+    		return CodecError;
+		}
+//----patch end
 
 	    DecodeContext->ReferenceFrameList[i].EntryIndicies[j]   = BufferIndex;
 	    BufferState[BufferIndex].Buffer->IncrementReferenceCount();

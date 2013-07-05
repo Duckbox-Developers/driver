@@ -154,7 +154,7 @@ OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(  void )
     AudioConfiguration.MinimumManifestorSamplingFrequency       = 32000; // manifestor deploys resampler to assure this
     
     Configuration.FrameDecodeTime				= 0;
-    Configuration.MinimumManifestorLatency                      = LookupMinimumManifestorLatency(32000);
+    Configuration.MinimumManifestorLatency                      = LookupMinimumManifestorLatency(AudioConfiguration.MinimumManifestorSamplingFrequency);
     Configuration.EarlyDecodePorch				= 100 * 1000;
 
     Configuration.MaximumDecodeTimesToWait			= 4;
@@ -167,7 +167,7 @@ OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(  void )
     //
 
 #ifdef __TDT__
-    Configuration.SynchronizationErrorThreshold                 = 200000;
+    Configuration.SynchronizationErrorThreshold         = 200000;
 #else
     Configuration.SynchronizationErrorThreshold			= 1000;
 #endif

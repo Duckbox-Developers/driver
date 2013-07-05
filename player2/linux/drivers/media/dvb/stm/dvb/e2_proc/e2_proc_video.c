@@ -13,7 +13,6 @@
 #include <linux/string.h>
 #include <linux/fb.h>
 
-
 #define STMFBIO_VAR_CAPS_OPACITY        (1L<<4)
 
 #if defined(ADB_BOX)
@@ -295,8 +294,8 @@ int proc_video_policy_get(void) {
 				}
 				else if (policy_e2 == VIDEO_POL_NON_LINEAR)
 				{
-				policy_ply = VIDEO_CENTER_CUT_OUT;
-				aspect_ply = VIDEO_FORMAT_16_9;
+					policy_ply = VIDEO_CENTER_CUT_OUT;
+					aspect_ply = VIDEO_FORMAT_16_9;
 				}
 			}
 			else
@@ -368,7 +367,9 @@ int proc_video_switch_type_write(struct file *file, const char __user *buf, unsi
 		ret = mlen;
 		kfree(myString);
 	}
+
 out:
+
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
 	return ret;
@@ -486,6 +487,7 @@ int proc_video_switch_write(struct file *file, const char __user *buf, unsigned 
 		ret = mlen;
 		kfree(myString);
 	}
+
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
@@ -585,6 +587,7 @@ int proc_video_aspect_write(struct file *file, const char __user *buf, unsigned 
 		ret = count;
 		kfree(myString);
 	}
+
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
@@ -765,8 +768,7 @@ int proc_video_videomode_write(struct file *file, const char __user *buf, unsign
 		if (copy_from_user(page, buf, count))
 			goto out;
 
-		/* Dagobert: echo add a \n which will be counted as a char
-		 */
+		/* Dagobert: echo add a \n which will be counted as a char */
 		if (page[count - 1] == '\n')
 			new_count = count - 1;
 		else
@@ -883,6 +885,7 @@ int proc_video_videomode_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
+
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1041,6 +1044,7 @@ int proc_video_pal_h_start_write(struct file *file, const char __user *buf, unsi
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
+
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1139,6 +1143,7 @@ int proc_video_pal_h_end_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
+
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1238,6 +1243,7 @@ int proc_video_pal_v_start_write(struct file *file, const char __user *buf, unsi
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
+
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1336,6 +1342,7 @@ int proc_video_pal_v_end_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
+
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1454,13 +1461,13 @@ int proc_video_videomode_choices_read (char *page, char **start, off_t off, int 
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
-/*
+#if 0
 #if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(WHITEBOX) || defined(UFS913) || defined(VITAMIN_HD5000)
 	len = sprintf(page, "pal 1080i50 720p50 576p50 576i50 1080i60 720p60 1080p24 1080p25 1080p30 1080p50 1080p59 1080p60 PC\n");
 #else
 	len = sprintf(page, "pal 1080i50 720p50 576p50 576i50 1080i60 720p60 1080p24 1080p25 1080p30 PC\n");
 #endif
-*/
+#else
 /* BPanther: shows real resolution support by player (receiver independent) */
 	char fullstr[1024] = "";
 	int vLoop = 0;
@@ -1470,6 +1477,7 @@ int proc_video_videomode_choices_read (char *page, char **start, off_t off, int 
 	}
 	strcat(fullstr, "\n");
 	len = sprintf(page, fullstr);
+#endif
 
 	return len;
 }
@@ -1499,6 +1507,7 @@ int proc_video_videomode_preferred_write(struct file *file, const char __user *b
 		printk("%s\n", myString);
 		kfree(myString);
 	}
+
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));

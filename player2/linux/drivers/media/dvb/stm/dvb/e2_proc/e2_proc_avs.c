@@ -291,27 +291,26 @@ int proc_avs_0_input_write(struct file *file, const char __user *buf, unsigned l
 
 			// Note: Volumne is not changed directly but by using the MIXER instead of the AVS. 
 			// So this should always be set to the maximum
-			#if defined(UFS910) || defined(ADB_BOX)
+#if defined(UFS910) || defined(ADB_BOX)
 			avs_command_kernel(AVSIOSVOL, (void*) 31);
-			#else
+#else
 			avs_command_kernel(AVSIOSVOL, (void*) 0);
-			#endif
-			#if defined(ADB_BOX)
+#endif
+#if defined(ADB_BOX)
 			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_43F);
 			outputConfig.hdmi_config &= ~STMFBIO_OUTPUT_HDMI_DISABLED;
-			#endif
+#endif
 			current_input = ENCODER;
 		}
 
 		if(!strncmp("scart", myString, count - 1))
 		{
 			avs_command_kernel(SAAIOSSRCSEL, (void*) SAA_SRC_SCART);
-
 			avs_command_kernel(AVSIOSVOL, (void*) current_volume);
-			#if defined(ADB_BOX)
-				avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_OFF);
-				outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
-			#endif
+#if defined(ADB_BOX)
+			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_OFF);
+			outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
+#endif
 			current_input = SCART;
 		}
 

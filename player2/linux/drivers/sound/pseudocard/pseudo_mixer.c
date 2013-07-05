@@ -20,14 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifdef __TDT__
 #include <linux/version.h>
-#endif
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-/* sound/driver.h not available in stlinux24 */
-#else
-#include <sound/driver.h>
-#endif
 #include <linux/ioport.h>
 #include <linux/bpa2.h>
 #include <linux/init.h>
@@ -62,12 +55,12 @@ MODULE_LICENSE("GPL");
 MODULE_SUPPORTED_DEVICE("{{ALSA,Pseudo soundcard}}");
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-#warning Need to remove these typedefs
+/* #warning Need to remove these typedefs */
 typedef struct snd_pcm_substream snd_pcm_substream_t;
 typedef struct snd_pcm_runtime   snd_pcm_runtime_t;
 #else
 #if defined (CONFIG_KERNELVERSION) /* STLinux 2.3 */
-#warning Need to remove these typedefs
+/* #warning Need to remove these typedefs */
 typedef struct snd_pcm_substream snd_pcm_substream_t;
 typedef struct snd_pcm_runtime   snd_pcm_runtime_t;
 #endif
@@ -111,16 +104,6 @@ MODULE_PARM_DESC(pcm_substreams, "PCM substreams # (1-16) for pseudo driver.");
 module_param_array(bpa2_partition, charp, NULL, 0444);
 MODULE_PARM_DESC(bpa2_partition, "BPA2 partition ID string from which to allocate memory.");
 static struct platform_device *devices[SNDRV_CARDS];
-
-#if defined(__TDT__) && defined(HAVANA_P0207_5)
-#define snd_assert(expr, args...) do {\
-	if (!(expr)) {\
-		printk(KERN_ERR "ksound-core: BUG? (%s)\n", #expr);\
-		args;\
-	}\
-} while (0)
-#endif
-
 
 #define _CARD(n, major, minor, freq, chan, f) { \
 	.name = n, \
@@ -199,21 +182,20 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-	CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-	CARD        ("Analog",  0, 1,  48000, 2),
-	CARD        ("HDMI",    0, 0,  48000, 2),
-#else
-#if defined (CONFIG_KERNELVERSION)
-  #if defined(__TDT__) && ! defined(UFS922) && !defined(UFC960)  && !defined(OCTAGON1008) && !defined(UFS910) && !defined(FORTIS_HDBOX) && !defined(ADB_BOX) 
- 			 CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-      			 CARD        ("Analog",  1, 0,  48000, 2),
-      			 CARD        ("HDMI",    0, 0,  48000, 2),
-  #else
-
 			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
 			CARD        ("Analog",  0, 1,  48000, 2),
 			CARD        ("HDMI",    0, 0,  48000, 2),
-  #endif
+#else
+#if defined (CONFIG_KERNELVERSION)
+#if defined(__TDT__) && ! defined(UFS922) && !defined(UFC960)  && !defined(OCTAGON1008) && !defined(UFS910) && !defined(FORTIS_HDBOX) && !defined(ADB_BOX) 
+			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
+			CARD        ("Analog",  1, 0,  48000, 2),
+			CARD        ("HDMI",    0, 0,  48000, 2),
+#else
+			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
+			CARD        ("Analog",  0, 1,  48000, 2),
+			CARD        ("HDMI",    0, 0,  48000, 2),
+#endif
 #else /* STLinux 2.2 */
 			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
 			CARD        ("Analog",  1, 0,  48000, 2),
@@ -230,18 +212,17 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-                        CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-                        CARD        ("Analog",  0, 0,  48000, 2),
+			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
+			CARD        ("Analog",  0, 0,  48000, 2),
 #else
 #if defined (CONFIG_KERNELVERSION)
-  #if defined(__TDT__)
-                        CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-                        CARD        ("Analog",  0, 0,  48000, 2),
-  #else
-
+#if defined(__TDT__)
+			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
+			CARD        ("Analog",  0, 0,  48000, 2),
+#else
 			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
 			CARD        ("HDMI",    0, 0,  48000, 2),
-  #endif
+#endif
 #else /* STLinux-2.2 */
 			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
 			CARD        ("Analog",  0, 0,  48000, 2),
@@ -252,11 +233,11 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-                        CARD        ("Analog",  1, 0,  48000, 2),
+            CARD        ("Analog",  1, 0,  48000, 2),
 #else
 #if defined (CONFIG_KERNELVERSION)
   #if define(__TDT__)
-                        CARD        ("Analog",  1, 0,  48000, 2),
+            CARD        ("Analog",  1, 0,  48000, 2),
   #else
 
 			CARD        ("Analog",  0, 1,  48000, 2),
@@ -1460,8 +1441,8 @@ struct snd_kcontrol **kcontrol = NULL;
 
 struct snd_kcontrol ** pseudoGetControls(int* numbers)
 {
-        *numbers = ARRAY_SIZE(snd_pseudo_controls);
-        return kcontrol;
+	*numbers = ARRAY_SIZE(snd_pseudo_controls);
+	return kcontrol;
 }
 
 EXPORT_SYMBOL(pseudoGetControls);
@@ -1478,15 +1459,15 @@ static int __init snd_card_pseudo_new_mixer(struct snd_pseudo *pseudo)
 	strcpy(card->mixername, "Pseudo Mixer");
 
 #ifdef __TDT__
-        //Dagobert: Save the controls so we can call it from our proc handling
-        kcontrol = kmalloc(ARRAY_SIZE(snd_pseudo_controls) * sizeof(struct snd_kcontrol), GFP_KERNEL);
+	//Dagobert: Save the controls so we can call it from our proc handling
+	kcontrol = kmalloc(ARRAY_SIZE(snd_pseudo_controls) * sizeof(struct snd_kcontrol), GFP_KERNEL);
 
-        for (idx = 0; idx < ARRAY_SIZE(snd_pseudo_controls); idx++)
-        {
-                kcontrol[idx] = snd_ctl_new1(&snd_pseudo_controls[idx], pseudo);
-                if ((err = snd_ctl_add(card, kcontrol[idx])) < 0)
-                        return err;
-        }
+	for (idx = 0; idx < ARRAY_SIZE(snd_pseudo_controls); idx++)
+	{
+		kcontrol[idx] = snd_ctl_new1(&snd_pseudo_controls[idx], pseudo);
+		if ((err = snd_ctl_add(card, kcontrol[idx])) < 0)
+			return err;
+	}
 #else
 	for (idx = 0; idx < ARRAY_SIZE(snd_pseudo_controls); idx++) {
 		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_pseudo_controls[idx], pseudo))) < 0)
@@ -1579,7 +1560,7 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
         mixer->fatpipe_mask.md[0] = 0x70;
         mixer->fatpipe_mask.md[2] = 0x1f;
         mixer->fatpipe_mask.md[6] = 0x1f;
-	mixer->fatpipe_mask.md[14] = 0xffff;
+		mixer->fatpipe_mask.md[14] = 0xffff;
         
         /* topological structure */
         mixer->downstream_topology = default_topology[dev];

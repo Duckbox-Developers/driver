@@ -113,13 +113,11 @@ static struct dvb_backend_operations            DvbBackendOps        =
     .display_delete                             = DisplayDelete,
     .display_synchronize                        = DisplaySynchronize
 #ifdef __TDT__
-        ,
-/*Dagobert*/
-    .is_display_created                         = isDisplayCreated
+     , .is_display_created                      = isDisplayCreated
 #endif
-
 };
 
+#if 0
 static struct player_interface_operations       PlayerInterfaceOps        =
 {
     .owner                                      = THIS_MODULE,
@@ -128,6 +126,7 @@ static struct player_interface_operations       PlayerInterfaceOps        =
     .component_set_attribute                    = ComponentSetAttribute,
     .player_register_event_signal_callback      = PlayerRegisterEventSignalCallback
 };
+#endif
 
 static struct alsa_backend_operations           AlsaBackendOps          =
 {

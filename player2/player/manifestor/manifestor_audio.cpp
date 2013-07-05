@@ -519,13 +519,15 @@ unsigned int BufferIndex;
 	if( BufferQueueHead != INVALID_BUFFER_ID )
 	{
 #ifdef __TDT__
-                        if(QueuedBufferCount < 3) inject_silent_count = 3;
-                        if(inject_silent_count > 0)
-                        {
-                                OS_UnLockMutex(&BufferQueueLock);
-                                inject_silent_count--;
-                                return ManifestorWouldBlock;
-                        }
+		if(QueuedBufferCount < 3)
+			inject_silent_count = 3;
+
+		if(inject_silent_count > 0)
+		{
+			OS_UnLockMutex(&BufferQueueLock);
+			inject_silent_count--;
+			return ManifestorWouldBlock;
+		}
 #endif
 	    BufferIndex = BufferQueueHead;
 	    BufferQueueHead = StreamBuffer[BufferIndex].NextIndex;

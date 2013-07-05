@@ -43,9 +43,7 @@ Date        Modification                                    Name
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include "../../../../../../../pti/pti_hal.h"
 #endif
-
 #include "st-common.h"
-
 #endif
 
 static int CaOpen                    (struct inode           *Inode,
@@ -77,28 +75,26 @@ static struct dvb_device CaDevice =
 
 #ifdef __TDT__
 static int caInitialized = 0;
-
 #if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined (ADB_BOX)
 extern int init_ci_controller(struct dvb_adapter* dvb_adap);
 #endif
-
 #endif
 
 struct dvb_device* CaInit (struct DeviceContext_s*        DeviceContext)
 {
 #ifdef __TDT__
-  printk("CaInit()\n");
-  if(!caInitialized)
-  {
-    /* the following call creates ca0 associated with the cimax hardware */
-    printk("Initializing CI Controller\n");
+    printk("CaInit()\n");
+    if(!caInitialized)
+    {
+        /* the following call creates ca0 associated with the cimax hardware */
+        printk("Initializing CI Controller\n");
 
 #if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined(ADB_BOX)
-    init_ci_controller(&DeviceContext->DvbContext->DvbAdapter);
+        init_ci_controller(&DeviceContext->DvbContext->DvbAdapter);
 #endif
 
-    caInitialized = 1;
-  }
+        caInitialized = 1;
+    }
 #endif
     return &CaDevice;
 }
@@ -138,13 +134,12 @@ static int CaIoctl (struct inode*    Inode,
     struct dvb_device*  DvbDevice    = (struct dvb_device*)File->private_data;
     struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDevice->priv;
 #ifdef __TDT__
-
     struct PtiSession *pSession = Context->pPtiSession;
 
     if(pSession == NULL)
     {
-      printk("CA is not associated with a session\n");
-      return -EINVAL;
+		printk("CA is not associated with a session\n");
+		return -EINVAL;
     }
 
     dprintk("TEST %s : Ioctl %08x\n", __func__, IoctlCode);
@@ -165,8 +160,7 @@ static int CaIoctl (struct inode*    Inode,
 			pSession->descramblerForPid[pid]=descramble_index;
 			for ( vLoop = 0; vLoop < pSession->num_pids; vLoop++ )
   			{
-    				if (( ( unsigned short ) pSession->pidtable[vLoop] ==
-	 			( unsigned short ) pid ))
+    				if (( ( unsigned short ) pSession->pidtable[vLoop] == ( unsigned short ) pid ))
     				{
 					if ( pSession->type[vLoop] == DMX_TYPE_TS )
   					{
@@ -234,7 +228,6 @@ static int CaIoctl (struct inode*    Inode,
 		if (&Context->DvbContext->Lock != NULL)
                    mutex_unlock (&Context->DvbContext->Lock);
 
-
 		return 0;
 	break;
 	}
@@ -264,9 +257,9 @@ static int CaIoctl (struct inode*    Inode,
 		Context->EncryptionOn = 1;
 	else if (msg->type==4)
 		Context->EncryptionOn = 0;
-	else if (msg->type==7)
+	else if (msg->type==7) 
 		memcpy(&Context->StartOffset,msg->msg,sizeof(Context->StartOffset));
-	else if (msg->type==8)
+	else if (msg->type==8) 
 		memcpy(&Context->EndOffset,msg->msg,sizeof(Context->EndOffset));
 	  return -ENOIOCTLCMD;
 

@@ -281,7 +281,6 @@ extern int proc_fp_wakeup_time_read(char *page, char **start, off_t off, int cou
 extern int proc_fp_wakeup_time_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 #endif
 
-
 extern int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
@@ -293,12 +292,10 @@ extern int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *b
 extern int proc_vmpeg_0_dst_all_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 
-
 extern int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_aspect_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_vmpeg_0_framerate_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
-
 
 extern int proc_hdmi_audio_source_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_hdmi_audio_source_write(struct file *file, const char __user *buf, unsigned long count, void *data);
@@ -306,7 +303,6 @@ extern int proc_hdmi_audio_source_choices_read(char *page, char **start, off_t o
 
 extern int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-
 
 extern int proc_hdmi_output_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_hdmi_output_read (char *page, char **start, off_t off, int count, int *eof, void *data_unused);
@@ -348,7 +344,6 @@ extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char *page, cha
 extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char *page, char **start, off_t off, int count,int *eof, void *data_unused);
 extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-
 
 struct e2_procs
 {
@@ -464,7 +459,6 @@ struct e2_procs
   {"stb/stream/policy/LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE" , proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read, proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write, 0},
   {"stb/stream/policy/H264_ALLOW_NON_IDR_RESYNCHRONIZATION"           , proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read, proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write, 0},
   {"stb/stream/policy/MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG"             , proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read, proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write}
-
 };
 
 struct DeviceContext_s* ProcDeviceContext = NULL;

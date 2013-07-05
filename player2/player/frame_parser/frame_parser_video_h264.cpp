@@ -3000,9 +3000,9 @@ unsigned int	TimeDelta;
 
 #ifdef __TDT__
 //I would say that this is wrong implemented in libeplayer, but if so why did it work up until now?
-                if(TimeDelta > 10000)
-                        DefaultFrameRate        = Rational_t( TimeDelta, TimeScale );
-                else
+        if(TimeDelta > 10000)
+            DefaultFrameRate        = Rational_t( TimeDelta, TimeScale );
+        else
 #endif
 		DefaultFrameRate		= Rational_t( TimeScale, TimeDelta ); 
 		UserSpecifiedDefaultFrameRate	= true;
@@ -4194,8 +4194,8 @@ bool			ApplyTwoRefTestForBframes;
 
     ApplyTwoRefTestForBframes	= !SeenAnIDR || (PlaybackDirection == PlayBackward);
 
-    if( (Status == FrameParserNoError) &&
-	((ParsedVideoParameters->SliceType != SliceTypeI) && ((NumShortTerm + NumLongTerm) < 1)) ||
+    if( ((Status == FrameParserNoError) &&
+	((ParsedVideoParameters->SliceType != SliceTypeI) && ((NumShortTerm + NumLongTerm) < 1))) ||
 	(ApplyTwoRefTestForBframes && (ParsedVideoParameters->SliceType == SliceTypeB) && ((NumShortTerm + NumLongTerm) < 2)) )
 	Status	= FrameParserInsufficientReferenceFrames;
 
@@ -4829,10 +4829,8 @@ report( severity_info, "MMCO(%d %d %d) - %d - %3d %3d %3d %3d\n", Field, Top, Fr
 			}
 			break;
 		}
-	  }
+	    }
 	}
-
-#if defined(ADB_BOX) //likwiduje zawieszanie sie kanalow HD
 
 	if( (NumShortTerm + NumLongTerm) > NumReferenceFrames )
 	{
@@ -4843,7 +4841,6 @@ report( severity_info, "MMCO(%d %d %d) - %d - %3d %3d %3d %3d\n", Field, Top, Fr
 
 	    ReleaseReference( true, i, ReferenceFrames[CurrentEntry].Usage );
 	}
-#endif
 
 #ifdef DUMP_REFLISTS
     report( severity_info, "\n    List of reference frames After MMCO (%d %d):-\n", NumShortTerm, NumLongTerm );

@@ -1141,7 +1141,7 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
     }
 
     //if ((EventMask & EventSourceSizeChangeManifest) != 0)       // Create an event record indicating that size/shape has changed
-#warning "Not checking EventMask in SetDisplayWindows"
+/* #warning "Not checking EventMask in SetDisplayWindows" */
     if ((VideoParameters->Width != StreamDisplayParameters.Width) || (VideoParameters->Height != StreamDisplayParameters.Height) ||
         (VideoParameters->DisplayWidth != StreamDisplayParameters.DisplayWidth) || (VideoParameters->DisplayHeight != StreamDisplayParameters.DisplayHeight) ||
         (VideoParameters->PixelAspectRatio != StreamDisplayParameters.PixelAspectRatio))
@@ -1163,44 +1163,43 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
         {
             if (DisplayFormatPolicyValue == PolicyValueLetterBox)
             {
-                if (PictureAspectRatio > WindowAspectRatio)
-                {
-                    // Picture is wider than display surface so must shrink height
+               if (PictureAspectRatio > WindowAspectRatio)
+               {
+                   // Picture is wider than display surface so must shrink height
 #ifdef __TDT__
-                    Rational_t pRatioR = PictureAspectRatio * 1000;
-                    int pRatio = pRatioR.IntegerPart();
+                   Rational_t pRatioR = PictureAspectRatio * 1000;
+                   int pRatio = pRatioR.IntegerPart();
 
-                    Rational_t wRatioR = WindowAspectRatio * 1000;
-                    int wRatio = wRatioR.IntegerPart();
+                   Rational_t wRatioR = WindowAspectRatio * 1000;
+                   int wRatio = wRatioR.IntegerPart();
 
-                    DestHeight = (DestHeight * wRatio) / pRatio;
+                   DestHeight = (DestHeight * wRatio) / pRatio;
 #else
-                    Rational_t   NewHeight       = (DestHeight * WindowAspectRatio) / PictureAspectRatio;
-                    DestHeight                   = NewHeight.IntegerPart();
+                   Rational_t   NewHeight       = (DestHeight * WindowAspectRatio) / PictureAspectRatio;
 #endif
-                    DestY                        = DestY + ((SurfaceWindow.Height - DestHeight) >> 1);
+                   DestY                        = DestY + ((SurfaceWindow.Height - DestHeight) >> 1);
 
-                    MANIFESTOR_ERROR("check1: DestHeight=%d DestY=%d\n", DestHeight, DestY);
-                }
-                else
-                {
-                    // Picture is taller than display surface so must shrink width
+                   MANIFESTOR_ERROR("check1: DestHeight=%d DestY=%d\n", DestHeight, DestY);
+               }
+               else
+               {
+                   // Picture is taller than display surface so must shrink width
 #ifdef __TDT__
-                    Rational_t pRatioR = PictureAspectRatio * 1000;
-                    int pRatio = pRatioR.IntegerPart();
+                   Rational_t pRatioR = PictureAspectRatio * 1000;
+                   int pRatio = pRatioR.IntegerPart();
 
-                    Rational_t wRatioR = WindowAspectRatio * 1000;
-                    int wRatio = wRatioR.IntegerPart();
+                   Rational_t wRatioR = WindowAspectRatio * 1000;
+                   int wRatio = wRatioR.IntegerPart();
 
-                    DestWidth = (DestWidth * pRatio) / wRatio;
+                   DestWidth = (DestWidth * pRatio) / wRatio;
 #else
-                    Rational_t   NewWidth        = (DestWidth * PictureAspectRatio) / WindowAspectRatio;
-                    DestWidth                    = NewWidth.IntegerPart();
+                   Rational_t   NewWidth        = (DestWidth * PictureAspectRatio) / WindowAspectRatio;
+                   DestWidth                    = NewWidth.IntegerPart();
 #endif
-                    DestX                        = DestX + ((SurfaceWindow.Width - DestWidth) >> 1);
+                   DestX                        = DestX + ((SurfaceWindow.Width - DestWidth) >> 1);
 
-                    MANIFESTOR_ERROR("check2: DestWidth=%d DestX=%d\n", DestWidth, DestX);
-                }
+                   MANIFESTOR_ERROR("check2: DestWidth=%d DestX=%d\n", DestWidth, DestX);
+               }
             }
             else
             {
@@ -1297,9 +1296,9 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
     // Nick added signalling of changes in the output window
     //
 
-    if ((OutputWindow.X      != (unsigned int)DestX) ||
-        (OutputWindow.Y      != (unsigned int)DestY) ||
-        (OutputWindow.Width  != (unsigned int)DestWidth) ||
+    if ((OutputWindow.X      != (unsigned int)DestX) || 
+        (OutputWindow.Y      != (unsigned int)DestY) || 
+        (OutputWindow.Width  != (unsigned int)DestWidth) || 
         (OutputWindow.Height != (unsigned int)DestHeight))
     {
         DisplayEventRequested              |= EventOutputSizeChangeManifest;

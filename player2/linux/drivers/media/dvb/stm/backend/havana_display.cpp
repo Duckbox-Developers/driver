@@ -197,7 +197,6 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor  (class HavanaPlayer_c*           
             DecodeBufferParameters.BufferConfiguration.DecodedBufferFormat      = FormatVideo420_MacroBlock;
 
 #if defined(__TDT__)
-
 #if defined(UFS922) || defined(UFC960) || defined(TF7700)  || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
 //Dagobert: lmi_vid isn't available for pip :(
         if (SurfaceId != DISPLAY_ID_MAIN)
@@ -212,7 +211,6 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor  (class HavanaPlayer_c*           
 #else
         Partition   = "BPA2_Region1";
 #endif
-
 #else /* not __TDT__ */
         if (BufferLocation == BufferLocationVideoMemory)
             Partition   = "BPA2_Region1";
