@@ -1459,15 +1459,15 @@ static int MICOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
         break;
     case VFDGETTIME:
         res = micomGetTime();
-        copy_to_user(arg, &ioctl_data, 8);
+        copy_to_user((void *)arg, &ioctl_data, 8);
         break;
     case VFDGETVERSION:
         res = micomGetVersion();
-        copy_to_user(arg, &ioctl_data, 8);
+        copy_to_user((void *)arg, &ioctl_data, 8);
         break;
     case VFDGETWAKEUPMODE:
         res = micomGetWakeUpMode();
-        copy_to_user(arg, &ioctl_data, 8);
+        copy_to_user((void *)arg, &ioctl_data, 8);
         break;
     case VFDDISPLAYCHARS:
         if (mode == 0)
