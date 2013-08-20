@@ -40,6 +40,7 @@
 #include "cec_debug.h"
 #include "cec_worker.h"
 #include "cec_opcodes.h"
+#include "cec_opcodes_def.h"
 #include "cec_internal.h"
 #include "cec_proc.h"
 #include "cec_rc.h"
@@ -49,12 +50,15 @@
 
 static unsigned char cancelStart = 0;
 int activemode = 0;
+int debug = 0;
+char *deviceName = "DUCKBOX";
+unsigned char deviceType = DEVICE_TYPE_DVD;
 
 //----------------------------
 
 int __init cec_init(void)
 {
-    printk("[CEC] init - starting\n");
+    dprintk(0, "init - starting\n");
 
     cec_internal_init();
 
@@ -65,7 +69,7 @@ int __init cec_init(void)
     /* ********* */
     /* irq setup */
 
-   printk("[CEC] init - starting intterrupt (%d)\n", CEC_IRQ);
+    dprintk(2, "init - starting intterrupt (%d)\n", CEC_IRQ);
 
 #if defined (CONFIG_KERNELVERSION) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
     if (!request_irq(CEC_IRQ, (void*)cec_interrupt, IRQF_DISABLED, "cec", NULL))
@@ -77,10 +81,10 @@ int __init cec_init(void)
     }
     else 
     {
-       printk("[CEC] Can't get irq\n");
+        dprintk(0, "Can't get irq\n");
     }
 
-    if(activemode)
+    if (activemode)
     {
         init_e2_proc();
 
@@ -102,14 +106,14 @@ int __init cec_init(void)
 
 static void __exit cec_exit(void)
 {  
-    printk("[CEC] unloaded\n");
+    dprintk(0, "unloaded\n");
 
     cancelStart = 1;
     udelay(20000);
 
     endTask();
 
-    if(activemode)
+    if (activemode)
     {
         cleanup_e2_proc();
 
@@ -134,6 +138,10 @@ MODULE_LICENSE          ("GPL");
 
 module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 module_param(activemode, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+module_param(deviceType, byte, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+module_param(deviceName, charp, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(debug, "Debug Output 0=disabled >0=enabled(debuglevel)");
 MODULE_PARM_DESC(activemode, "Active mode 0=disabled >0=enabled(activemode)");
+MODULE_PARM_DESC(deviceType, "Device type (default: 4 (DVD))");
+MODULE_PARM_DESC(deviceName, "Name (default: DUCKBOX)");
 

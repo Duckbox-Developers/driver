@@ -20,6 +20,7 @@
 
 #include <linux/input.h>
 #include "cec_opcodes_def.h"
+#include "cec_debug.h"
 
 static char *button_driver_name = "TDT RC event driver";
 static struct input_dev *button_dev;
@@ -30,7 +31,7 @@ int input_init(void)
 	int error;
 	int vLoop = 0;
 
-	printk("[CEC] allocating and registering button device\n");
+	dprintk(0, "allocating and registering button device\n");
 
 	button_dev = input_allocate_device();
 	if (!button_dev)
@@ -61,7 +62,7 @@ int input_init(void)
 
 int input_cleanup(void)
 {
-	printk("[CEC] unregistering button device\n");
+	dprintk(0, "unregistering button device\n");
 	input_unregister_device(button_dev);
 
 	return 0;
@@ -105,8 +106,8 @@ int input_inject(unsigned int key, unsigned int type)
 	case USER_CONTROL_CODE_ROOT_MENU: code = KEY_MENU; break;
 	case USER_CONTROL_CODE_CONTENTS_MENU: code = KEY_FAVORITES; break;
 	case USER_CONTROL_CODE_SETUP_MENU: code = KEY_MENU; break;
-	case USER_CONTROL_CODE_NEXT: code = KEY_NEXT; break;
-	case USER_CONTROL_CODE_LAST: code = KEY_LAST; break;
+	case USER_CONTROL_CODE_NEXT: code = KEY_FASTFORWARD; break;
+	case USER_CONTROL_CODE_LAST: code = KEY_REWIND; break;
 	case USER_CONTROL_CODE_PAGEUP: code = KEY_PAGEUP; break;
 	case USER_CONTROL_CODE_PAGEDOWN: code = KEY_PAGEDOWN; break;
 	case USER_CONTROL_CODE_INFO: code = KEY_INFO; break;
@@ -124,5 +125,3 @@ int input_inject(unsigned int key, unsigned int type)
 		input_event(button_dev, 1, code, value);
 	return 0;
 }
-
-
