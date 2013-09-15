@@ -1936,6 +1936,8 @@ static int MICOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
         
         printk("VFDGETVERSION: version %d\n", micom->u.version.version);
         break;
+    case 0x5305:
+	break;
     default:
         printk("VFD/Micom: unknown IOCTL 0x%x\n", cmd);
         mode = 0;
