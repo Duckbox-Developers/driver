@@ -85,7 +85,11 @@ ifdef HS7110
 obj-y	+= nuvoton/
 endif
 
-ifdef WHITEBOX
+ifdef ATEMIO520
+obj-y	+= cn_micom/
+endif
+
+ifdef ATEMIO530
 obj-y	+= cn_micom/
 endif
 

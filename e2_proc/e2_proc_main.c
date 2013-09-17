@@ -279,8 +279,10 @@ static int info_model_read(char *page, char **start, off_t off, int count,
   int len = sprintf(page, "hs7810a\n");
 #elif defined(HS7110)
   int len = sprintf(page, "hs7110\n");
-#elif defined(WHITEBOX)
-  int len = sprintf(page, "whitebox\n");
+#elif defined(ATEMIO520)
+  int len = sprintf(page, "atemio520\n");
+#elif defined(ATEMIO530)
+  int len = sprintf(page, "atemio530\n");
 #elif defined(IPBOX9900)
   int len = sprintf(page, "ipbox9900\n");
 #elif defined(IPBOX99)
@@ -626,7 +628,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/plane/psi_contrast"                                     , NULL, NULL, NULL, NULL, "psi_contrast"},
 	{cProcEntry, "stb/video/plane/psi_tint"                                         , NULL, NULL, NULL, NULL, "psi_tint"},
 	{cProcEntry, "stb/video/plane/psi_apply"                                        , NULL, NULL, NULL, NULL, "psi_apply"},
-#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110)  || defined(WHITEBOX) || defined(HS7810A) || defined(SPARK) || defined(SPARK7162)
+#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(SPARK) || defined(SPARK7162)
 	{cProcDir  , "stb/cec"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_activesource"                                       , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_standby"                                            , NULL, NULL, NULL, NULL, ""},

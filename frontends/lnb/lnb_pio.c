@@ -99,7 +99,7 @@ int lnb_pio_init(void)
 
 		return -EIO;
 	}
-#elif defined(WHITEBOX)
+#elif defined(ATEMIO520)
 	lnb_power	= stpio_request_pin (6, 2, "lnb_power", 	STPIO_OUT);
 	lnb_13_18	= stpio_request_pin (6, 3, "lnb_13/18", 	STPIO_OUT);
 
@@ -108,12 +108,30 @@ int lnb_pio_init(void)
 		if(lnb_power != NULL)
 			stpio_free_pin(lnb_power);
 		else
-			dprintk("[LNB:WHITEBOX] error requesting lnb power pin\n");
+			dprintk("[LNB:ATEMIO520] error requesting lnb power pin\n");
 
 		if(lnb_13_18 != NULL)
 			stpio_free_pin (lnb_13_18);
 		else
-			dprintk("[LNB:WHITEBOX] error requesting lnb 13/18 pin\n");
+			dprintk("[LNB:ATEMIO520] error requesting lnb 13/18 pin\n");
+
+		return -EIO;
+	}
+#elif defined(ATEMIO530)
+	lnb_power	= stpio_request_pin (6, 2, "lnb_power", 	STPIO_OUT);
+	lnb_13_18	= stpio_request_pin (6, 3, "lnb_13/18", 	STPIO_OUT);
+
+	if ((lnb_power == NULL) || (lnb_13_18 == NULL))
+	{
+		if(lnb_power != NULL)
+			stpio_free_pin(lnb_power);
+		else
+			dprintk("[LNB:ATEMIO530] error requesting lnb power pin\n");
+
+		if(lnb_13_18 != NULL)
+			stpio_free_pin (lnb_13_18);
+		else
+			dprintk("[LNB:ATEMIO530] error requesting lnb 13/18 pin\n");
 
 		return -EIO;
 	}

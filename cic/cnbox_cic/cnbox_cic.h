@@ -18,11 +18,14 @@ struct cnbox_cic_state {
 	struct stpio_pin			*ci_enable;
 	struct stpio_pin			*module_detect;
 	struct stpio_pin			*slot_reset[cNumberSlots];
-#if defined(WHITEBOX)
+#if defined(ATEMIO520)
 	struct stpio_pin			*cam_enable;
 	struct stpio_pin			*ts_enable;
 #endif
-
+#if defined(ATEMIO530)
+	struct stpio_pin			*cam_enable;
+	struct stpio_pin			*ts_enable;
+#endif
     int                         module_ready[cNumberSlots];
     int                         module_present[cNumberSlots];
     unsigned long               detection_timeout[cNumberSlots];

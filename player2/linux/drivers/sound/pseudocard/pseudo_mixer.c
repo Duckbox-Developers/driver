@@ -585,8 +585,8 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
         };
         int err;
 
-	/* might have been called before ...  --martii */
-	snd_card_pseudo_hw_free(substream);
+        /* might have been called before ...  --martii */
+        snd_card_pseudo_hw_free(substream);
 
         /* allocate the hardware buffer and map it appropriately */
         err = snd_card_pseudo_alloc_pages(substream, params_buffer_bytes(hw_params));
@@ -1565,7 +1565,7 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
         mixer->fatpipe_mask.md[0] = 0x70;
         mixer->fatpipe_mask.md[2] = 0x1f;
         mixer->fatpipe_mask.md[6] = 0x1f;
-		mixer->fatpipe_mask.md[14] = 0xffff;
+        mixer->fatpipe_mask.md[14] = 0xffff;
         
         /* topological structure */
         mixer->downstream_topology = default_topology[dev];

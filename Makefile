@@ -90,8 +90,11 @@ endif
 ifdef HS7110
 CCFLAGSY += -DHS7110
 endif
-ifdef WHITEBOX
-CCFLAGSY += -DWHITEBOX
+ifdef ATEMIO520
+CCFLAGSY += -DATEMIO520
+endif
+ifdef ATEMIO530
+CCFLAGSY += -DATEMIO530
 endif
 ifdef HOMECAST5101
 CCFLAGSY += -DHOMECAST5101
@@ -202,10 +205,16 @@ obj-y += smartcard/
 obj-y += cpu_frequ/
 endif
 
-ifdef WHITEBOX
-obj-y += cec/
-obj-y += smartcard/
-obj-y += cpu_frequ/
+ifdef ATEMIo520
+obj-y	+= cec/
+obj-y	+= smartcard/
+obj-y	+= cpu_frequ/
+endif
+
+ifdef ATEMIO530
+obj-y	+= cec/
+obj-y	+= smartcard/
+obj-y	+= cpu_frequ/
 endif
 
 ifdef SPARK

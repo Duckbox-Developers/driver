@@ -65,7 +65,10 @@ starci-objs:= starci2win/starci2win.o
 else ifdef HS7110
 obj-m += hs7110.o
 hs7110-objs:= hs7110/hs7110_cic.o
-else ifdef WHITEBOX
+else ifdef ATEMIO520
+obj-m += cnbox_cic.o
+cnbox_cic-objs:= cnbox_cic/cnbox_cic.o
+else ifdef ATEMIO530
 obj-m += cnbox_cic.o
 cnbox_cic-objs:= cnbox_cic/cnbox_cic.o
 else ifdef SPARK

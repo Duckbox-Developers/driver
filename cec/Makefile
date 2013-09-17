@@ -31,7 +31,11 @@ ifdef SPARK7162
 EXTRA_CFLAGS	+= -DSTx7105
 endif
 
-ifdef WHITEBOX
+ifdef ATEMIO520
+EXTRA_CFLAGS	+= -DSTx7111
+endif
+
+ifdef ATEMIO530
 EXTRA_CFLAGS	+= -DSTx7111
 endif
 
