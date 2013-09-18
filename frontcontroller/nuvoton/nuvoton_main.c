@@ -99,6 +99,7 @@
 
 //----------------------------------------------
 short paramDebug = 10;
+int waitTime = 1000;
 
 static unsigned char expectEventData = 0;
 static unsigned char expectEventId = 1;
@@ -625,7 +626,7 @@ static int __init nuvoton_init_module(void)
         *ASC_X_INT_EN = *ASC_X_INT_EN | 0x00000001;
     else printk("FP: Can't get irq\n");
 
-    msleep(1000);
+    msleep(waitTime);
     nuvoton_init_func();
 
     if (register_chrdev(VFD_MAJOR, "VFD", &vfd_fops))
@@ -659,3 +660,5 @@ MODULE_LICENSE("GPL");
 module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled >0=enabled(debuglevel)");
 
+module_param(waitTime, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(waitTime, "Wait before init in ms (default=1000)");
