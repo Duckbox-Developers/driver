@@ -5406,12 +5406,16 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
     // Deduce interlaced and top field first flags
     //
 
+    // fix juddering on some HD channels
+#if 0
     if( ForceInterlacedProgressive )
     {
 	DeducedInterlacedFlag		= ForcedInterlacedFlag;
 	DeducedTopFieldFirst		= SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
     }
-    else if( FixDeducedFlags )
+    else
+#endif
+    if( FixDeducedFlags )
     {
 	// Leave flags as set
     }
