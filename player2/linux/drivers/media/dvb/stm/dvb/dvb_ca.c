@@ -75,7 +75,7 @@ static struct dvb_device CaDevice =
 
 #ifdef __TDT__
 static int caInitialized = 0;
-#if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined (ADB_BOX)
+#if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined (ADB_BOX) && !defined (CUBEREVO_2000HD)
 extern int init_ci_controller(struct dvb_adapter* dvb_adap);
 #endif
 #endif
@@ -89,7 +89,7 @@ struct dvb_device* CaInit (struct DeviceContext_s*        DeviceContext)
         /* the following call creates ca0 associated with the cimax hardware */
         printk("Initializing CI Controller\n");
 
-#if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined(ADB_BOX)
+#if !defined(VIP2_V1) && !defined (SPARK) && !defined (SPARK7162) && !defined(ADB_BOX) && !defined (CUBEREVO_2000HD)
         init_ci_controller(&DeviceContext->DvbContext->DvbAdapter);
 #endif
 

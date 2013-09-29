@@ -624,7 +624,7 @@ void stm_tsm_init (int use_cimax)
    int              n;
 
 //#if defined(UFS910) ???
-#if defined(VIP2_V1) || defined(SPARK) || defined(SPARK7162) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) // none ci targets
+#if defined(VIP2_V1) || defined(SPARK) || defined(SPARK7162) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(CUBEREVO_2000HD) // none ci targets
    use_cimax = 0;
 #endif
 
