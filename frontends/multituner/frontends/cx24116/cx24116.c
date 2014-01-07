@@ -2111,7 +2111,7 @@ static int cx24116_set_frontend (struct dvb_frontend *fe, struct dvb_frontend_pa
 	struct cx24116_state *state = fe->demodulator_priv;
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	struct cx24116_cmd cmd;
-	int i, status, ret, retune = 1;
+	int i, status, ret, retune = 2;
     int above30msps;
     
 	dprintk(10, "%s()\n", __func__);
@@ -2319,11 +2319,13 @@ static int cx24116_set_frontend (struct dvb_frontend *fe, struct dvb_frontend_pa
     printk("retuned %d\n", retune);
     
 	/* Toggle pilot bit when in auto-pilot */
-	if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2))
-    {
-		cmd.args[0x07] ^= CX24116_PILOT_ON;
-        printk("toggle pilot\n");
-    }
+		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
+			if (state->dcur.pilot == CX24116_PILOT_OFF)
+				cmd.args[0x07] ^= CX24116_PILOT_ON;
+			else
+				cmd.args[0x07] ^= CX24116_PILOT_OFF;
+			printk("toggle pilot\n");
+		}
     else
     if (c->delivery_system != SYS_DVBS2)
     {
