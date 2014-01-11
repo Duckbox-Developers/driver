@@ -2317,8 +2317,14 @@ static int cx24116_set_frontend (struct dvb_frontend *fe, struct dvb_frontend_pa
     }
 
     printk("retuned %d\n", retune);
-    
+
 	/* Toggle pilot bit when in auto-pilot */
+#if defined (CUBEREVO_MINI2)
+		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
+			cmd.args[0x07] ^= CX24116_PILOT_ON;
+			printk("toggle pilot\n");
+		}
+#else
 		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
 			if (state->dcur.pilot == CX24116_PILOT_OFF)
 				cmd.args[0x07] ^= CX24116_PILOT_ON;
@@ -2326,6 +2332,8 @@ static int cx24116_set_frontend (struct dvb_frontend *fe, struct dvb_frontend_pa
 				cmd.args[0x07] ^= CX24116_PILOT_OFF;
 			printk("toggle pilot\n");
 		}
+#endif
+
     else
     if (c->delivery_system != SYS_DVBS2)
     {
