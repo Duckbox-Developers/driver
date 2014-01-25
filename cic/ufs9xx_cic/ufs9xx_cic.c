@@ -106,14 +106,16 @@ if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
  * For the reason I dont understand the bits in the
  * i2c registers I use this constants.
  */
-#define  TUNER_1_VIEW 			0
-#define  TUNER_1_CAM_A_VIEW 		1
-#define  TUNER_1_CAM_B_VIEW 		2
-#define  TUNER_1_CAM_A_CAM_B_VIEW 	3
-#define  TUNER_2_CAM_A 		        4
-#define  TUNER_2_CAM_B 	 	        5
-#define  TUNER_2_CAM_A_B 		6
-#define  TUNER_2_VIEW                   7
+#define	TUNER_1_VIEW			0
+#define	TUNER_1_CAM_A_VIEW		1
+#define	TUNER_1_CAM_B_VIEW		2
+#define	TUNER_1_CAM_A_CAM_B_VIEW	3
+#define	TUNER_2_CAM_A			4
+#define	TUNER_2_CAM_B			5
+#define	TUNER_2_CAM_A_B			6
+#define	TUNER_2_VIEW			7
+#define	TUNER_1_CAM_A_TUNER_2_CAM_B	8
+#define	TUNER_1_VIEW_CAM_A		9
 
 static struct ufs9xx_cic_core ci_core;
 static struct ufs9xx_cic_state ci_state;
@@ -498,7 +500,7 @@ static int ufs9xx_cic_slot_shutdown(struct dvb_ca_en50221 *ca, int slot)
 
 static int ufs9xx_cic_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 {
-	struct ufs9xx_cic_state *state = ca->data;
+//	struct ufs9xx_cic_state *state = ca->data;
 	int aPresent, bPresent;
 
 	dprintk(20, "%s > slot = %d\n", __FUNCTION__, slot);
@@ -548,48 +550,56 @@ int setCiSource(int slot, int source)
 	{
 		if ((aPresent) && (!(bPresent)))
 		{
-			set_cam_path(TUNER_1_CAM_A_VIEW);
-			set_ts_path(TUNER_1_CAM_A_VIEW);
+			set_cam_path(TUNER_1_CAM_A_VIEW);				//	0x01	00000001	
+			set_ts_path(TUNER_1_CAM_A_VIEW);				//	0x23	00100011
 		} else
 		if ((!(aPresent)) && (bPresent))
 		{
-			set_cam_path(TUNER_1_CAM_B_VIEW);
-			set_ts_path(TUNER_1_CAM_B_VIEW);
+			set_cam_path(TUNER_1_CAM_B_VIEW);				//	0x10	00010000
+			set_ts_path(TUNER_1_CAM_B_VIEW);				//	0x24	00100100
 		} else
 		if ((aPresent) && (bPresent))
 		{
-			set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);
-			set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);
+			set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);				//	0x14	00010100
+			set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);				//	0x23	00100011
 		} else
 		if ((!(aPresent)) && (!(bPresent)))
 		{
-			set_cam_path(TUNER_1_VIEW);
-			set_ts_path(TUNER_1_VIEW);
+			set_cam_path(TUNER_1_VIEW);					//	0x00	00000000
+			set_ts_path(TUNER_1_VIEW);					//	0x21	00100001
 		}
 	} else
 	{
 		if ((aPresent) && (!bPresent))
 		{
-			set_cam_path(TUNER_2_CAM_A);
-			set_ts_path(TUNER_2_CAM_A);
+			set_cam_path(TUNER_2_CAM_A);					//	0x12	00010010
+			set_ts_path(TUNER_2_CAM_A);					//	0x31	00110001
 		} else
 		if ((!aPresent) && (bPresent))
 		{
-			set_cam_path(TUNER_2_CAM_B);
-			set_ts_path(TUNER_2_CAM_B);
+			set_cam_path(TUNER_2_CAM_B);					//	0x20	00100000
+			set_ts_path(TUNER_2_CAM_B);					//	0x41	01000001
 		} else
 		if ((aPresent) && (bPresent))
 		{
-			set_cam_path(TUNER_2_CAM_A_B);
-			if (slot == 0) 
-				set_ts_path(TUNER_2_CAM_A);
-			else
-				set_ts_path(TUNER_2_CAM_B);
+			if (slot == 0) {
+				if(ci_state.module_source[1] == 0) {			//	Cam A and Tuner 1 in use
+					set_cam_path(TUNER_1_VIEW_CAM_A);		//	0x12	00010010 T1_CAM_B_T2_CAM_A
+					set_ts_path(TUNER_1_VIEW_CAM_A);		//	0x34	00110100 T1_CAM_B_T2_CAM_A
+				} else {
+					set_cam_path(TUNER_2_CAM_A_B);			//	0x24	00100100
+					set_ts_path(TUNER_2_CAM_A);			//	0x31	00110001
+				}
+			} else {
+				set_cam_path(TUNER_1_CAM_A_TUNER_2_CAM_B);		//	0x21	00100001 T1_CAM_A_T2_CAM_B
+				set_ts_path(TUNER_1_CAM_A_TUNER_2_CAM_B);		//	0x43	01000011 T1_CAM_A_T2_CAM_B
+
+			}
 		} else
 		if ((!aPresent) && (!bPresent))
 		{
 /* ??? */
-			set_ts_path(TUNER_2_VIEW);
+			set_ts_path(TUNER_2_VIEW);					//	0x12	00010010
 		}
 	}
 #endif
@@ -642,6 +652,14 @@ void set_cam_path(int route)
 			dprintk(1,"%s: TUNER_2_CAM_A_B\n", __func__);
 			ufs9xx_cic_writereg(state, 0x02, 0x24);
 		break;
+		case TUNER_1_CAM_A_TUNER_2_CAM_B:
+			dprintk(1,"%s: TUNER_1_CAM_A_TUNER_2_CAM_B\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x21);
+		break;
+		case TUNER_1_VIEW_CAM_A:
+			dprintk(1,"%s: TUNER_1_VIEW_CAM_A\n", __func__);
+			ufs9xx_cic_writereg(state, 0x02, 0x12);
+		break;
 		default:
 			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
 			ufs9xx_cic_writereg(state, 0x02, 0x00);
@@ -684,6 +702,14 @@ void set_ts_path(int route)
 		case TUNER_2_CAM_B:
 			ufs9xx_cic_writereg(state, 0x01, 0x41);
 			dprintk(1, "%s: TUNER_2_CAM_B\n", __func__);
+		break;
+		case TUNER_1_CAM_A_TUNER_2_CAM_B:
+			ufs9xx_cic_writereg(state, 0x01, 0x43);
+			dprintk(1,"%s: TUNER_1_CAM_A_TUNER_2_CAM_B\n", __func__);
+		break;
+		case TUNER_1_VIEW_CAM_A:
+			ufs9xx_cic_writereg(state, 0x01, 0x34);
+			dprintk(1,"%s: TUNER_1_VIEW_CAM_A\n", __func__);
 		break;
 		default:
 			dprintk(1,"%s: TUNER_1_VIEW\n", __func__);
