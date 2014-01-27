@@ -560,8 +560,17 @@ int setCiSource(int slot, int source)
 		} else
 		if ((aPresent) && (bPresent))
 		{
-			set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);				//	0x14	00010100
-			set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);				//	0x23	00100011
+
+			if (ci_state.module_source[1] == 1) {				//	Cam B and Tuner 2 in use
+				set_cam_path(TUNER_1_CAM_A_TUNER_2_CAM_B);		//	0x21	00100001 T1_CAM_A_T2_CAM_B
+				set_ts_path(TUNER_1_CAM_A_TUNER_2_CAM_B);		//	0x43	01000011 T1_CAM_A_T2_CAM_B
+			} else if (ci_state.module_source[0] == 1) {			//	Cam A and Tuner 2 in use
+				set_cam_path(TUNER_1_VIEW_CAM_A);			//	0x12	00010010 T1_CAM_B_T2_CAM_A
+				set_ts_path(TUNER_1_VIEW_CAM_A);			//	0x34	00110100 T1_CAM_B_T2_CAM_A
+			} else {
+				set_cam_path(TUNER_1_CAM_A_CAM_B_VIEW);			//	0x14	00010100
+				set_ts_path(TUNER_1_CAM_A_CAM_B_VIEW);			//	0x23	00100011
+			}
 		} else
 		if ((!(aPresent)) && (!(bPresent)))
 		{
@@ -583,7 +592,7 @@ int setCiSource(int slot, int source)
 		if ((aPresent) && (bPresent))
 		{
 			if (slot == 0) {
-				if(ci_state.module_source[1] == 0) {			//	Cam A and Tuner 1 in use
+				if (ci_state.module_source[1] == 0) {			//	Cam B and Tuner 1 in use
 					set_cam_path(TUNER_1_VIEW_CAM_A);		//	0x12	00010010 T1_CAM_B_T2_CAM_A
 					set_ts_path(TUNER_1_VIEW_CAM_A);		//	0x34	00110100 T1_CAM_B_T2_CAM_A
 				} else {
