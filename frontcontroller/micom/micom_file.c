@@ -708,6 +708,17 @@ int micomSetLED(int which, int on)
         printk("VFD/MICOM led number out of range %d\n", which);
         return -EINVAL;
     }
+#elif defined(UFS912) || defined(UFS913)
+    /* 0x02 = green
+     * 0x03 = red
+     * 0x04 = left  (manually build-in)
+     * 0x05 = right (manually build-in)
+     */
+    if (which < 0x02 || which > 0x05)
+    {
+        printk("VFD/MICOM led number out of range %d\n", which);
+        return -EINVAL;
+    }
 #else
     /* 0x02 = green
      * 0x03 = red
