@@ -205,7 +205,7 @@ obj-y += smartcard/
 obj-y += cpu_frequ/
 endif
 
-ifdef ATEMIo520
+ifdef ATEMIO520
 obj-y	+= cec/
 obj-y	+= smartcard/
 obj-y	+= cpu_frequ/
