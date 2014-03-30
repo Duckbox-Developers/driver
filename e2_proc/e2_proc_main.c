@@ -648,6 +648,10 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},
 #endif
 
+#if defined(IPBOX9900) || defined(IPBOX99)
+	{cProcEntry, "stb/misc/fan"                                                             , NULL, NULL, NULL, NULL, ""},
+#endi
+
 #ifdef ADB_BOX
 	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
