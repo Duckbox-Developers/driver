@@ -187,10 +187,10 @@ obj-y += cpu_frequ/
 endif
 
 ifdef ATEVIO7500
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
-obj-y	+= sata_switch/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
+obj-y += sata_switch/
 endif
 
 ifdef HS7810A
@@ -206,15 +206,15 @@ obj-y += cpu_frequ/
 endif
 
 ifdef ATEMIO520
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef ATEMIO530
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 ifdef SPARK
@@ -276,9 +276,9 @@ ifdef CUBEREVO_9500HD
 obj-y += smartcard/
 endif
 ifdef VITAMIN_HD5000
-obj-y	+= cec/
-obj-y	+= smartcard/
-obj-y	+= cpu_frequ/
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
 endif
 
 endif
