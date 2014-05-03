@@ -142,6 +142,7 @@ obj-m += stv090x.o
 else ifdef UFS922
 cx21143-objs += cx24116/cx24116.o
 obj-m += cx21143.o
+ifeq (,$(wildcard $(DRIVER_TOPDIR)/frontends/avl2108_ufs922 ))
 avl2108-objs += avl2108/avl2108.o
 avl2108-objs += avl2108/stv6110a.o
 avl2108-objs += avl2108/stv6306.o
@@ -150,6 +151,10 @@ avl2108-objs += avl2108/lnbh221.o
 obj-m += avl2108.o
 avl2108_platform-objs += avl2108/avl2108_platform.o
 obj-m += avl2108_platform.o
+else
+avl2108-objs += avl2108_ufs922/avl2108.o
+obj-m += avl2108.o
+endif
 else ifdef UFC960
 #tda10023-objs += ufc960/stv090x.o
 #tda10023-objs += ufc960/stv6110x.o
