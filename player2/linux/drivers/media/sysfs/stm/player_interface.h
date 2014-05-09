@@ -50,7 +50,6 @@ Date        Modification                                    Name
 /* Output errors, should never be output in 'normal' operation */
 #define INTERFACE_ERROR(fmt, args...)  (printk("ERROR:Interface:%s: " fmt, __FUNCTION__, ##args))
 
-
 /* Entry point list */
 
 int PlayerInterfaceInit                (void);

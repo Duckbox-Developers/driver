@@ -225,7 +225,7 @@ AacAudioCodecStreamParameterContext_t	*Context = (AacAudioCodecStreamParameterCo
         return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize	= 0;
@@ -260,7 +260,7 @@ AacAudioCodecDecodeContext_t	*Context 	= (AacAudioCodecDecodeContext_t *)DecodeC
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize	= sizeof(Context->DecodeStatus);

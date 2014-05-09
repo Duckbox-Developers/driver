@@ -308,6 +308,7 @@ Buffer_t                          InitialFrameBuffer;
 	    }
 
 #if 0
+if( Stream->StreamType == StreamTypeVideo )
 {
 unsigned int A, B;
 	Stream->DecodeBufferPool->GetPoolUsage( &A, &B, NULL, NULL, NULL );
@@ -342,7 +343,7 @@ report( severity_info, "Got(%d) %3d (R = %d, K = %d) %d, %016llx - %d %d/%d\n", 
 	// We now have a buffer after frame re-ordering
 	//
 	// First calculate the sequence number that applies to this frame
-	// this calculation may appear wierd, the idea is this, assume you
+	// this calculation may appear weird, the idea is this, assume you
 	// have a video stream IPBB, sequence numbers 0 1 2 3, frame reordering
 	// will yield sequence numbers 0 2 3 1 IE any command to be executed at
 	// the end of the stream will appear 1 frame early, the calculations 
@@ -371,7 +372,7 @@ report( severity_info, "Got(%d) %3d (R = %d, K = %d) %d, %016llx - %d %d/%d\n", 
 
 	    //
 	    // First calculate the sequence number that applies to this frame
-	    // this calculation may appear wierd, the idea is this, assume you
+	    // this calculation may appear weird, the idea is this, assume you
 	    // have a video stream IPBB, sequence numbers 0 1 2 3, frame reordering
 	    // will yield sequence numbers 0 2 3 1 IE any command to be executed at
 	    // the end of the stream will appear 1 frame early, the calculations 

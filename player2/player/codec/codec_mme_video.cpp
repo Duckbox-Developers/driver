@@ -289,7 +289,7 @@ CodecBufferState_t	 *State;
 	if( (PreviousFieldParameters->PanScan.Count + ParsedVideoParameters->PanScan.Count) >
 	    MAX_PAN_SCAN_VALUES )
 	{
-	    report( severity_error, "Codec_MmeVideo_c::Input(%s) - Cummulative PanScanCount in two fields too great (%d + %d) - Implementation error.\n", Configuration.CodecName, PreviousFieldParameters->PanScan.Count, ParsedVideoParameters->PanScan.Count );
+	    report( severity_error, "Codec_MmeVideo_c::Input(%s) - Cumulative PanScanCount in two fields too great (%d + %d) - Implementation error.\n", Configuration.CodecName, PreviousFieldParameters->PanScan.Count, ParsedVideoParameters->PanScan.Count );
 	    Codec_MmeVideo_c::OutputPartialDecodeBuffers();
 	    return PlayerImplementationError;
 	}
@@ -368,7 +368,7 @@ CodecBufferState_t	 *State;
 
     DecodeContextBuffer->AttachBuffer( CodedFrameBuffer );
 
-    //! set up MME_TRANSFORM - SendMMEDecodeCommand no longer does this as we nned to do
+    //! set up MME_TRANSFORM - SendMMEDecodeCommand no longer does this as we need to do
     //! MME_SEND_BUFFERS instead for certain codecs, WMA being one, OGG Vorbis another
     DecodeContext->MMECommand.CmdCode = MME_TRANSFORM;
 
@@ -402,7 +402,7 @@ CodecBufferState_t	 *State;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// 	The intercept to the initailize data types function, that 
+// 	The intercept to the initialise data types function, that
 //	ensures the video specific type is recorded in the configuration 
 //	record.
 //

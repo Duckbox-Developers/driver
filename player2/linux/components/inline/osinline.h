@@ -43,13 +43,9 @@ typedef bool _Bool;
 #define bool  linux_types_bool
 #include <linux/stddef.h>
 #include <linux/types.h>
-#ifdef __TDT__
-/* we need linux/string.h here as "extern C" because "extern C" has been removed
-   from the header file in stlinux24. This change is compatible with stlinux22/23. */
 extern "C" {
 #include <linux/string.h>
 }
-#endif
 #undef  true
 #undef  false
 #undef  bool
@@ -132,7 +128,7 @@ typedef void  *(*OS_TaskEntry_t)( void* Parameter );
 #define Clamp( v, l, u )                {if( v < l ) v = l; else if( v > u ) v = u;}
 
 // --------------------------------------------------------------
-//      Specialist st200 intruction emulation functions.
+//      Specialist st200 instruction emulation functions.
 //      I have left these as inlines, since they do not
 //      interact with anything else, they are generally
 //      required to be fast.
@@ -274,7 +270,7 @@ OS_Status_t   OS_GetMessage(                    OS_MessageQueue_t       Queue,
 						bool                    Blocking );
 
 // --------------------------------------------------------------
-//      The Miscelaneous functions
+//      The Miscellaneous functions
 
 
 void          OS_ReSchedule(                    void );

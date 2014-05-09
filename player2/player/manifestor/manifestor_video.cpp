@@ -468,6 +468,7 @@ ManifestorStatus_t      Manifestor_Video_c::GetNextQueuedManifestationTime   (un
 
     return ManifestorNoError;
 }
+//}}}
 //{{{  ReleaseQueuedDecodeBuffers
 ManifestorStatus_t      Manifestor_Video_c::ReleaseQueuedDecodeBuffers(void)
 {
@@ -1176,6 +1177,7 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
                    DestHeight = (DestHeight * wRatio) / pRatio;
 #else
                    Rational_t   NewHeight       = (DestHeight * WindowAspectRatio) / PictureAspectRatio;
+                   DestHeight                   = NewHeight.IntegerPart();
 #endif
                    DestY                        = DestY + ((SurfaceWindow.Height - DestHeight) >> 1);
 
@@ -1319,6 +1321,7 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
     // Decide whether the display requires scaling/cropping or not
     DecimateIfAvailable                 = false;
 
+#if 0
     // Hm why is here not the decimate value used from havana_stream ?
     // Lets set it depending on the value from havana_stream
     if(OutputWindow.Height > 576 || OutputWindow.Height < 425)
@@ -1329,7 +1332,7 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
         else
             DecimateIfAvailable = true;
     }
-
+#endif
 #if defined (CROP_INPUT_WHEN_DECIMATION_NEEDED_BUT_NOT_AVAILABLE)
     if ((Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput) != PolicyValueDecimateDecoderOutputDisabled) &&
        ((SourceWidth > (DestWidth * MAX_SCALING_FACTOR)) || (SourceHeight > (DestHeight * MAX_SCALING_FACTOR))))
@@ -1355,6 +1358,12 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows (struct VideoDisplayPar
             SourceHeight                = DestHeight * MAX_SCALING_FACTOR;
         }
 
+        DecimateIfAvailable             = true;
+    }
+#else
+    if ((Player->PolicyValue (Playback, Stream, PolicyDecimateDecoderOutput) != PolicyValueDecimateDecoderOutputDisabled) &&
+       ((SourceWidth > (DestWidth * MAX_SCALING_FACTOR)) || (SourceHeight > (DestHeight * MAX_SCALING_FACTOR))))
+    {
         DecimateIfAvailable             = true;
     }
 #endif
@@ -1477,8 +1486,8 @@ void  Manifestor_Video_c::BufferReleaseThread (void)
     }
     OS_UnLockMutex (&BufferLock);
 
-    OS_SetEvent (&BufferReleaseThreadTerminated);
     MANIFESTOR_DEBUG ("Terminating\n");
+    OS_SetEvent (&BufferReleaseThreadTerminated);
 }
 //}}}
 //{{{  DisplaySignalThread

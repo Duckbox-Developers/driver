@@ -194,7 +194,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader( unsigned char *Fr
   unsigned int           NbSamples                = 0;
   char                   NumberOfAudioChannels    = 1;
   LpcmWordSize_t         WordSize1;
-  LpcmWordSize_t         WordSize2                = LpcmWordSizeNone;;
+  LpcmWordSize_t         WordSize2                = LpcmWordSizeNone;
   int                    DynamicRangeControl      = 0;
   int                    ChannelAssignment        = 0xff; // this is the default assignment for the firmware (not exported by the firmware headers)
   bool                   MuteFlag                 = false;
@@ -741,7 +741,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders( void )
     
     if ((ParsedFrameHeader.Length + AudioPesPrivateDataLength[ParsedFrameHeader.Type]) != BufferLength)
     {
-    	FRAME_ERROR("Buffer length (%d) is inconsistant with frame header (%d), bad collator selected?\n",
+    	FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
     	            BufferLength, ParsedFrameHeader.Length);
     	return FrameParserError;
     }
@@ -885,7 +885,7 @@ unsigned int SamplingFrequency = LpcmDVDSamplingFreq[CurrentStreamParameters.Sam
     }
 
     //
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     //
     
     Status = HandleCurrentFrameNormalizedPlaybackTime();

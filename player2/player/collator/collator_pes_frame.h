@@ -65,8 +65,8 @@ public:
     CollatorStatus_t    Input          (PlayerInputDescriptor_t  *Input,
                                         unsigned int              DataLength,
                                         void                     *Data,
-					bool			  NonBlocking = false,
-					unsigned int		 *DataLengthRemaining = NULL );
+                                        bool                      NonBlocking = false,
+                                        unsigned int             *DataLengthRemaining = NULL );
 
     CollatorStatus_t    InternalFrameFlush     (bool                   FlushedByStreamTerminate);
     CollatorStatus_t    InternalFrameFlush     (void );

@@ -625,7 +625,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders( void )
     
     if (ParsedFrameHeader.Length != BufferLength)
     {
-    	FRAME_ERROR("Buffer length (%d) is inconsistant with frame header (%d), bad collator selected?\n",
+    	FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
     	            BufferLength, ParsedFrameHeader.Length);
     	return FrameParserError;
     }
@@ -741,7 +741,7 @@ FrameParserStatus_t Status;
     }
 
     //
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     //
     
     Status = HandleCurrentFrameNormalizedPlaybackTime();

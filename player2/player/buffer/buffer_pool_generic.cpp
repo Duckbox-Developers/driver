@@ -564,14 +564,12 @@ unsigned long long	 EntryTime;
 		BufferReleaseSignalWaitedOn	= false;
 	    }
 
-#if defined(ADB_BOX)
 	    if( (OS_GetTimeInMicroSeconds() - EntryTime) > BUFFER_MAX_EXPECTED_WAIT_PERIOD )
 	    {
 		report( severity_info, "BufferPool_Generic_c::GetBuffer - Waiting for a buffer of type %04x - '%s'\n", BufferDescriptor->Type, 
 				(BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName );
 		EntryTime	= OS_GetTimeInMicroSeconds();
 	    }
-#endif
 
 	} while( !NonBlocking && !AbortGetBuffer && (RingStatus != RingNoError) );
 	OS_UnLockMutex( &Lock );
@@ -612,7 +610,7 @@ unsigned long long	 EntryTime;
 	LocalBuffer->OwnerIdentifier[i] = UNSPECIFIED_OWNER;
 
     //
-    // Initalize Attached buffers
+    // Initialize Attached buffers
     //
 
     for( i=0; i<MAX_ATTACHED_BUFFERS; i++ )

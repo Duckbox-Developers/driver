@@ -268,7 +268,7 @@ Takes as parameter a pointer to a Player class instance, a playback identifier, 
 /*! \fn PlayerStatus_t BaseComponentClass_c::SpecifySignalledEvents(PlayerEventMask_t EventMask, void *EventUserData)
 \brief Enable/disable ongoing event signalling.
 
-\param EventMask A mask indicating which occurances should raise an event record
+\param EventMask A mask indicating which occurrences should raise an event record
 \param EventUserData An optional void * value to be associated with any event raised.
 
 \return Player status code, PlayerNoError indicates success.

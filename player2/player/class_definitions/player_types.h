@@ -83,16 +83,16 @@ Date        Modification                                    Name
     // add their own here we define the base values for each component.
     //
 
-#define BASE_PLAYER             0x0001
-#define BASE_BUFFER             0x1000
-#define BASE_DEMULTIPLEXOR      0x2000
-#define BASE_COLLATOR           0x3000
-#define BASE_FRAME_PARSER       0x4000
-#define BASE_CODEC              0x5000
-#define BASE_MANIFESTOR         0x6000
-#define BASE_OUTPUT_TIMER       0x7000
-#define BASE_OUTPUT_COORDINATOR 0x8000
-#define BASE_EXTERNAL           0xf000
+#define BASE_PLAYER                 0x0001
+#define BASE_BUFFER                 0x1000
+#define BASE_DEMULTIPLEXOR          0x2000
+#define BASE_COLLATOR               0x3000
+#define BASE_FRAME_PARSER           0x4000
+#define BASE_CODEC                  0x5000
+#define BASE_MANIFESTOR             0x6000
+#define BASE_OUTPUT_TIMER           0x7000
+#define BASE_OUTPUT_COORDINATOR     0x8000
+#define BASE_EXTERNAL               0xf000
 
 enum
 {
@@ -210,7 +210,7 @@ typedef enum
     //
 
     PolicyExternalTimeMapping,                          // Apply/Disapply
-    PolicyExternalTimeMappingVsyncLocked,               // Apply/Disapply - only relevent if external mapping applied
+    PolicyExternalTimeMappingVsyncLocked,               // Apply/Disapply - only relevant if external mapping applied
 
     //
     // Enable/disable stream synchronization
@@ -569,7 +569,6 @@ typedef enum
     TimeFormatPts
 } PlayerTimeFormat_t;
 
-//
 
 typedef enum
 {

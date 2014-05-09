@@ -262,7 +262,7 @@ FrameParserStatus_t   FrameParser_AudioRma_c::GeneratePostDecodeParameterSetting
         TranslatePlaybackTimeNativeToNormalized( CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime );
     }
 
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     Status                                              = HandleCurrentFrameNormalizedPlaybackTime();
     if (Status != FrameParserNoError)
         return Status;

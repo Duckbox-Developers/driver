@@ -440,7 +440,7 @@ HavanaStatus_t HavanaStream_c::Discontinuity   (bool                    Continuo
 }
 //}}}
 //{{{  Drain
-HavanaStatus_t HavanaStream_c::Drain   (bool            Discard, 
+HavanaStatus_t HavanaStream_c::Drain   (bool            Discard,
                                         bool            NonBlock)
 {
     unsigned int        PolicyValue     = Discard ? PolicyValueDiscard : PolicyValuePlayout;
@@ -451,14 +451,14 @@ HavanaStatus_t HavanaStream_c::Drain   (bool            Discard,
                                                                 // i.e. we wait rather than use the event
     return HavanaNoError;
 }
-
+//}}}
+//{{{  CheckDrained
 HavanaStatus_t HavanaStream_c::CheckDrained   ()
 {
     PlayerStatus_t      Status;
     Status              = Player->CheckStreamDrained(PlayerStream);
     return (HavanaStatus_t)Status;
 }
-
 //}}}
 //{{{  Enable
 HavanaStatus_t HavanaStream_c::Enable  (bool    Manifest)
@@ -1053,8 +1053,8 @@ HavanaStatus_t HavanaStream_c::Step (void)
     Status      = Player->StreamStep (PlayerStream);
     if (Status != PlayerNoError)
     {
-            STREAM_ERROR("Failed to step stream\n");
-            return HavanaError;
+        STREAM_ERROR("Failed to step stream\n");
+        return HavanaError;
     }
 
     return HavanaNoError;
@@ -1240,10 +1240,9 @@ HavanaStatus_t HavanaStream_c::Switch  (char*   Format,
                 // ignore the return values (some codecs have immutable transformer names)
                 (void) PendingCodec->SetModuleParameters (sizeof(CodecParameterBlock_t), &AudioParameters);
             }
+
         }
-
     }
-
     PlayerStatus        = Player->SwitchStream (PlayerStream,
                                                 PendingCollator,
                                                 PendingFrameParser,
@@ -1399,12 +1398,9 @@ HavanaStatus_t HavanaStream_c::GetDecodeBufferPoolStatus (unsigned int* BuffersI
     unsigned int         MemoryAllocated;
     unsigned int         MemoryInUse;
 
-//
 // Nick changed the implementation of this function, instead of
 // returning buffers in pool obtained from get pool usage, we now return the
 // manifestor obtained value of how many buffers we can reasonably expect to allocate
-//
-
 
 //    STREAM_DEBUG("\n");
     Status = DecodeBufferPool->GetPoolUsage( NULL,

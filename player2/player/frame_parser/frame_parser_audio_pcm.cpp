@@ -259,7 +259,7 @@ FrameParserStatus_t   FrameParser_AudioPcm_c::GeneratePostDecodeParameterSetting
     }
 
     //FRAME_TRACE("%s:%llx, %llx\n", __FUNCTION__, ParsedFrameParameters->NormalizedPlaybackTime, ParsedFrameParameters->NativePlaybackTime);
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     Status                                              = HandleCurrentFrameNormalizedPlaybackTime();
     if (Status != FrameParserNoError)
         return Status;
@@ -414,7 +414,7 @@ FrameParserStatus_t   FrameParser_AudioPcm_c::ReadStreamHeader (void)
     {
         if (strcmp (HeaderId, " tmf") != 0)
         {
-            FRAME_ERROR ("Stream is not a valid Pcm stream\n");
+            FRAME_ERROR ("Stream is not a valid Pcm stream (%s)\n", HeaderId);
             Player->MarkStreamUnPlayable (Stream);
             return FrameParserError;
         }

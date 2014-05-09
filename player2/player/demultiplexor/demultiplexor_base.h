@@ -103,7 +103,7 @@ public:
     ~Demultiplexor_Base_c( 	void );
 
     //
-    // Context managment functions
+    // Context management functions
     //
 
     DemultiplexorStatus_t   CreateContext(	DemultiplexorContext_t	 *Context );

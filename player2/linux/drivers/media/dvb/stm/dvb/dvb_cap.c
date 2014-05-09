@@ -66,8 +66,8 @@ license from ST.
  * Private CONSTANTS and MACROS
  ******************************/
 
-#define CAP_ID 1
-#define AVR_DEFAULT_TARGET_LATENCY  		110   // milliseconds
+#define CAP_ID                            1
+#define AVR_DEFAULT_TARGET_LATENCY        110   // milliseconds
 
 /*
  * ALSA mixer controls
@@ -207,7 +207,7 @@ void cap_invalidate_external_time_mapping (cap_v4l2_shared_handle_t *shared_cont
  * This function is registered with the pseudocard and is called whenever the mixer settings are changed.
  * In reaction we must update audio_video_latency_offset and ensure that the player's external time mapping
  * is updated to account for the new latency values.
- 
+
 static void cap_update_external_time_mapping (void *ctx, const struct snd_pseudo_mixer_settings *mixer_settings)
 {
 	cap_v4l2_shared_handle_t *shared_context = ctx;

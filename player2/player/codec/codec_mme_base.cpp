@@ -1253,7 +1253,7 @@ unsigned int       w,h,hw;
 //      and increment usage counts appropriately.
 //
 
-CodecStatus_t   Codec_MmeBase_c::TranslateReferenceFrameLists(  bool              IncrementUseCountForReferenceFrame )
+CodecStatus_t   Codec_MmeBase_c::TranslateReferenceFrameLists( bool	  IncrementUseCountForReferenceFrame )
 {
 unsigned int      i,j;
 unsigned int      BufferIndex;

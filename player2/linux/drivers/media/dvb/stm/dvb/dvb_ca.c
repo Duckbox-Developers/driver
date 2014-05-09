@@ -138,8 +138,8 @@ static int CaIoctl (struct inode*    Inode,
 
     if(pSession == NULL)
     {
-		printk("CA is not associated with a session\n");
-		return -EINVAL;
+        printk("CA is not associated with a session\n");
+        return -EINVAL;
     }
 
     dprintk("TEST %s : Ioctl %08x\n", __func__, IoctlCode);

@@ -411,7 +411,7 @@ unsigned int    Flags;
     SpanningDecodeTime          = DecodeTime;
     UseSpanningTime             = true;
 
-    // We have 'consumed' the old values by transfering them to the spanning values.
+    // We have 'consumed' the old values by transferring them to the spanning values.
     PlaybackTimeValid           = false;
     DecodeTimeValid             = false;
 
@@ -528,8 +528,7 @@ report( severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld 
 	    //
 
 #if __TDT__
-	    // It seems that for BibleTV these 4 bits are set incorecctly
-	    // So lets ignore it like above for PTS
+	    // the TV.Berlin station (at least) transmits this field incorrectly so I have removed the check the 4 bit value
 	    Bits.FlushUnseen( 4 );
 #else
 	    MarkerBits( 4, 1 );

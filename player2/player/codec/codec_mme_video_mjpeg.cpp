@@ -77,7 +77,7 @@ static BufferDataDescriptor_t                   MjpegCodecDecodeContextDescripto
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoMjpeg_c::Codec_MmeVideoMjpeg_c( void )
@@ -174,17 +174,17 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::HandleCapabilities( void )
 CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutTransformerInitializationParameters( void )
 {
 #if defined (USE_JPEG_HW_TRANSFORMER)
-    // Fillout the command parameters
+    // Fill out the command parameters
     MjpegInitializationParameters.CircularBufferBeginAddr_p     = (U32*)0x00000000;
     MjpegInitializationParameters.CircularBufferEndAddr_p       = (U32*)0xffffffff;
 
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(MjpegInitializationParameters);
     MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&MjpegInitializationParameters);
 
 #else
     CODEC_TRACE("%s\n", __FUNCTION__);
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize       = 0;
     MMEInitializationParameters.TransformerInitParams_p         = NULL;
 
@@ -262,7 +262,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutDecodeCommand(       void )
     Param->AdditionalFlags                                      = JPEGDECHW_ADDITIONAL_FLAG_NONE;
     //}}}
 
-    // Fillout the actual command
+    // Fill out the actual command
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
 
     DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize      = sizeof(JPEGDECHW_VideoDecodeReturnParams_t);
@@ -303,7 +303,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutDecodeCommand(       void )
     Setup->outputWidth                                          = PictureHeader->frame_width;
     Setup->outputHeight                                         = PictureHeader->frame_height;
 
-    // Fillout the actual command
+    // Fill out the actual command
     memset( &DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t) );
 
     DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize      = sizeof(Context->DecodeStatus);
@@ -414,7 +414,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutTransformCommand(       void )
     Setup->outputWidth                                          = PictureHeader->frame_width;
     Setup->outputHeight                                         = PictureHeader->frame_height;
 
-    // Fillout the actual command
+    // Fill out the actual command
     memset( &DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t) );
     DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize      = sizeof(Context->DecodeStatus);
     DecodeContext->MMECommand.CmdStatus.AdditionalInfo_p        = (MME_GenericParams_t)(&Context->DecodeStatus);

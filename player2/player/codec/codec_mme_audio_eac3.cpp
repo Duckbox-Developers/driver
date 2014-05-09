@@ -279,7 +279,6 @@ CodecStatus_t Status;
 		ddp.ddp_features.DisableLfeDmix = (DRC.Type == DD_RF_MODE) ? ACC_MME_TRUE : ACC_MME_FALSE;
 
 		Config.Config[DDP_OUTPUT_SETTING] = ddp.ddp_output_settings;
-
     }
 
     Config.PcmScale = 0x7fff;
@@ -365,7 +364,7 @@ EAc3AudioCodecStreamParameterContext_t  *Context = (EAc3AudioCodecStreamParamete
 	return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -400,7 +399,7 @@ EAc3AudioCodecDecodeContext_t   *Context        = (EAc3AudioCodecDecodeContext_t
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

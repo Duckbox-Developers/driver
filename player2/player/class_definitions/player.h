@@ -80,8 +80,8 @@ public:
 
     PlayerStatus_t              InitializationStatus;
 
-    BufferType_t        MetaDataInputDescriptorType;
-    BufferType_t        MetaDataCodedFrameParametersType;    
+    BufferType_t                MetaDataInputDescriptorType;
+    BufferType_t                MetaDataCodedFrameParametersType;    
     BufferType_t                MetaDataStartCodeListType;
     BufferType_t                MetaDataParsedFrameParametersType;
     BufferType_t                MetaDataParsedFrameParametersReferenceType;
@@ -431,7 +431,7 @@ This function is specifically for enabling/disabling ongoing event signalling.
 
 \param Playback Playback identifier.
 \param Stream   Stream identifier.
-\param Events   Mask indicating which occurances should raise an event record.
+\param Events   Mask indicating which occurrences should raise an event record.
 \param UserData Optional user pointer to be associated with any event raised.
 
 \return Player status code, PlayerNoError indicates success.
@@ -445,7 +445,7 @@ This function is specifically for enabling/disabling ongoing event signalling.
 
 \param Playback Playback identifier.
 \param Stream   Stream identifier.
-\param Events   Mask indicating which occurances should raise an event record.
+\param Events   Mask indicating which occurrences should raise an event record.
 \param Event Pointer to an OS abstracted event (not to be confused with Player 2 Event records)
 
 \return Player status code, PlayerNoError indicates success.
@@ -463,7 +463,7 @@ The call is a blocking call by default, but NonBlocking can override this.
 
 \param Playback Playback identifier.
 \param Stream   Stream identifier.
-\param Events   Mask indicating which occurances should raise an event record.
+\param Events   Mask indicating which occurrences should raise an event record.
 \param Record Pointer to an event record (to be filled by the call)
 \param NonBlocking If true do not block if there are no events pending.
 
@@ -578,7 +578,7 @@ controlled by the policies currently in effect on the stream.
 The purpose of a switch is to seamlessly transition between streams
 (video/audio) in a playback, as such it is expected that we will be 
 playing out the data already injected, and consequently the call can be
-non-blocking. The playout nature can be overidden by a current policy. 
+non-blocking. The playout nature can be overridden by a current policy.
 After this call all future input data should be for the new stream.
 
 \param Stream        Stream identifier.
@@ -808,7 +808,7 @@ discarded.
 \param Playback Playback identifier.
 \param Stream   Stream identifier.
 \param SurplusDataInjected True if surplus data was injected.
-\param ContinuousReverseJump True if a continuous reverse jump has occured.
+\param ContinuousReverseJump True if a continuous reverse jump has occurred.
 
 \return Player status code, PlayerNoError indicates success.
 */

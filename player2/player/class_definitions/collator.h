@@ -125,7 +125,7 @@ This function is used to register the ring on which collated frame buffers are t
 For more information on discontinous streams see <b>InputJump</b> on \ref input.
 
 \param SurplusDataInjected True if the jump should discard or flush data.
-\param ContinuousReverseJump True if a continuous reverse jump has occured.
+\param ContinuousReverseJump True if a continuous reverse jump has occurred.
 
 \return Collator status code, CollatorNoError indicates success.
 */

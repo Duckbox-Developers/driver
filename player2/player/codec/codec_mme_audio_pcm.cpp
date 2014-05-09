@@ -253,7 +253,7 @@ CodecStatus_t   Codec_MmeAudioPcm_c::FillOutSetStreamParametersCommand( void )
     if (Status != CodecNoError)
         return Status;
 
-    // Fillout the actual command
+    // Fill out the actual command
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
     Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
@@ -282,7 +282,7 @@ CodecStatus_t   Codec_MmeAudioPcm_c::FillOutDecodeCommand(       void )
     // Zero the reply structure
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
-    // Fillout the actual command
+    // Fill out the actual command
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
     Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);

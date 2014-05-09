@@ -468,7 +468,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader( void )
 	    COLLATOR_DEBUG( "Found start code during error recovery (byte %d of %d)\n",
 		            CodeOffset, ReprocessingDataLength );
 	    
-	    // We found a start code, snip off all preceeding data
+	    // We found a start code, snip off all preceding data
 	    ReprocessingData += CodeOffset;
 	    ReprocessingDataLength -= CodeOffset;
 	}
@@ -592,13 +592,13 @@ CollatorStatus_t Collator_PesAudio_c::ReadFrame( void )
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-/// Handle a block of data that is not frame alligned.
+/// Handle a block of data that is not frame aligned.
 ///
 /// There may be the end of a frame, whole frames, the start of a frame or even just
 /// the middle of the frame.
 ///
 /// If we have incomplete blocks we build up a complete one in the saved data,
-/// in order to process we need to aquire a frame plus the next header (for sync check)
+/// in order to process we need to acquire a frame plus the next header (for sync check)
 /// we can end up with the save buffer having a frame + part of a header, and a secondary
 /// save with just part of a header.
 ///
@@ -1252,7 +1252,7 @@ CollatorStatus_t Status;
     Status = Collator_Pes_c::DiscardAccumulatedData();
     AccumulatedFrameReady = false;
     
-    return Status;;
+    return Status;
 }
 
 ////////////////////////////////////////////////////////////////////////////

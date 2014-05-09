@@ -730,7 +730,7 @@ long long		 Delay;
         return;
 
     //
-    // Obtain the relevent data
+    // Obtain the relevant data
     //
 
     Status	= OutputTimer->GetStreamStartDelay( &StreamDelay );

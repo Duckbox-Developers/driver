@@ -864,12 +864,12 @@ static int _ksnd_pcm_wait(snd_pcm_substream_t *substream, int timeout)
 			case SNDRV_PCM_STATE_XRUN:
 			case SNDRV_PCM_STATE_DRAINING:
 				res = -EPIPE;
-                break;
+				break;
 			case SNDRV_PCM_STATE_SUSPENDED:
 				printk("%s: result ESTRPIPE %d\n",
 				       __FUNCTION__, __LINE__);
 				res = -ESTRPIPE;
-                break;
+				break;
 			case SNDRV_PCM_STATE_PAUSED:
 				printk("%s: Waiting for buffer %d\n",
 				       __FUNCTION__, __LINE__);
@@ -878,8 +878,8 @@ static int _ksnd_pcm_wait(snd_pcm_substream_t *substream, int timeout)
 				break;
 			}
 
-            if (1 != res)
-                break;
+			if (1 != res)
+				break;
 
 			if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
 				avail = snd_pcm_playback_avail(runtime);
@@ -1115,15 +1115,11 @@ int ksnd_pcm_open(ksnd_pcm_t **kpcm,
 		goto _error_do_free;
 	}
 #if defined(__TDT__)
-#if defined(HAVANA_P0207_5)
-	minor = snd_find_minor(device_type, card, device);
-#else
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 	minor = snd_get_minor(device_type, card, device);
 #else
 	minor = SNDRV_MINOR(card, device_type + device);
 #endif
-#endif /* !HAVANA_P0207_5 */
 #else /* TDT */
 
 #if defined (CONFIG_KERNELVERSION)

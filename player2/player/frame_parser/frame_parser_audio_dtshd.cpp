@@ -1042,7 +1042,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
             if (ParsedFrameHeader->CodingComponent[0] & DTS_EXSUBSTREAM_CORE)
             {
                 CoreSize = ParsedFrameHeader->ExtSubCoreCodingComponentSize[0];
-                // the coding componenet is generally the first.
+                // the coding component is generally the first.
                 CoreOffset = 0;
             }
         }
@@ -1274,7 +1274,7 @@ FrameParserStatus_t   FrameParser_AudioDtshd_c::ReadHeaders( void )
     
     if (ParsedFrameHeader.Length != BufferLength)
     {
-    	FRAME_ERROR("Buffer length (%d) is inconsistant with frame header (%d), bad collator selected?\n",
+    	FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
     	            BufferLength, ParsedFrameHeader.Length);
     	return FrameParserError;
     }
@@ -1460,16 +1460,14 @@ FrameParserStatus_t   FrameParser_AudioDtshd_c::GeneratePostDecodeParameterSetti
             if ((DeltaDelta < -PtsJitterTollerenceThreshold || DeltaDelta > PtsJitterTollerenceThreshold) &&
                 (DeltaDelta > -correctUpToMs || DeltaDelta < correctUpToMs) )
             {
-				/*Hellmaster1024 instead of doing nothing we assume the calculated time is right, this prevents the chopped sound on some DTS files*/	        
-				ParsedFrameParameters->NormalizedPlaybackTime = NextFrameNormalizedPlaybackTime;        
-
-            }            
-        }        
+                /*Hellmaster1024 instead of doing nothing we assume the calculated time is right, this prevents the chopped sound on some DTS files*/
+                ParsedFrameParameters->NormalizedPlaybackTime = NextFrameNormalizedPlaybackTime;
+            }
+        }
     }
 #endif
-
     //
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     //
     
     Status = HandleCurrentFrameNormalizedPlaybackTime();

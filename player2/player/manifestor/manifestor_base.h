@@ -179,7 +179,7 @@ protected:
     Rational_t                           OutputRateSmoothingSubPPMPart;
     unsigned int                         OutputRateSmoothingBaseValue;
     unsigned int                         OutputRateSmoothingLastValue;
-    bool				 OutputRateMovingTo;
+    bool                                 OutputRateMovingTo;
 
     /* Event control */
     bool                        EventPending;

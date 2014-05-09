@@ -358,7 +358,7 @@ void ksnd_ctl_elem_id_set_interface(struct snd_ctl_elem_id *obj, snd_ctl_elem_if
 void ksnd_ctl_elem_id_set_name(struct snd_ctl_elem_id *obj, const char *val);
 void ksnd_ctl_elem_id_set_device(struct snd_ctl_elem_id *obj, unsigned int val);
 void ksnd_ctl_elem_id_set_index(struct snd_ctl_elem_id *obj, unsigned int val);
-struct snd_kcontrol *ksnd_substream_find_elem(struct snd_pcm_substream *substream, struct snd_ctl_elem_id *id);
+struct snd_kcontrol * ksnd_substream_find_elem(struct snd_pcm_substream *substream, struct snd_ctl_elem_id *id);
 void ksnd_ctl_elem_value_alloca(struct snd_ctl_elem_value **id);
 void ksnd_ctl_elem_value_set_id(struct snd_ctl_elem_value *obj, const struct snd_ctl_elem_id *ptr);
 void ksnd_ctl_elem_value_set_integer(struct snd_ctl_elem_value *obj, unsigned int idx, long val);

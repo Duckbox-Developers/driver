@@ -22,6 +22,7 @@ license from ST.
 ************************************************************************/
 
 #include <linux/device.h>
+#include <linux/version.h>
 #include <linux/fb.h>
 #include "sysfs_module.h"
 #include "player_sysfs.h"
@@ -29,14 +30,6 @@ license from ST.
 
 #define PLAYBACK_MAX_NUMBER     8
 #define STREAM_MAX_NUMBER       16
-
-#ifdef __TDT__
-#include <linux/version.h>
-#include <linux/device.h>
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30))
-#define bool int
-#endif
-#endif
 
 static int PlayerSetEvent (struct player_event_s*       Event);
 static struct mutex SysfsWriteLock;
@@ -115,7 +108,7 @@ static void do_notify(void)
 	sysfs_notify(&player2_class.subsys.kobj, NULL, "notify");
 #endif
 }
-/*}}}  */
+/*}}}*/
 /*{{{  show_generic_attribute*/
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 ssize_t show_generic_attribute (struct device *class_dev, char *buf, enum attribute_id_e attr_id, const char *attr_name)
@@ -131,32 +124,32 @@ ssize_t show_generic_attribute (struct class_device *class_dev, char *buf, enum 
     Result = ComponentGetAttribute (attributedata->component, attr_name, &value);
     if (Result < 0)
     {
-	SYSFS_DEBUG("%d: ComponentGetAttribute failed\n", __LINE__);
-	return sprintf(buf, "%s not available\n", attr_name);
+        SYSFS_DEBUG("%d: ComponentGetAttribute failed\n", __LINE__);
+        return sprintf(buf, "%s not available\n", attr_name);
     }
 
     switch(attr_id)
     {
-    	case ATTRIBUTE_ID_input_format:
-    	case ATTRIBUTE_ID_number_channels:
-    	    return sprintf(buf, "%s\n", value.ConstCharPointer);
-    	    break;
-    	case ATTRIBUTE_ID_decode_errors:
-    	case ATTRIBUTE_ID_sample_frequency:
-    	    return sprintf(buf, "%i\n", value.Int);
-    	    break;
-    	case ATTRIBUTE_ID_number_of_samples_processed:
-    	    return sprintf(buf, "%lld\n", value.UnsignedLongLongInt);
-    	    break;
-    	case ATTRIBUTE_ID_supported_input_format:
-    	    return sprintf(buf, "%i\n", value.Bool);
-    	    break;
-    	default:
-    	    return sprintf(buf, "%s not available\n", attr_name);
-    	    break;
+        case ATTRIBUTE_ID_input_format:
+        case ATTRIBUTE_ID_number_channels:
+            return sprintf(buf, "%s\n", value.ConstCharPointer);
+            break;
+        case ATTRIBUTE_ID_decode_errors:
+        case ATTRIBUTE_ID_sample_frequency:
+            return sprintf(buf, "%i\n", value.Int);
+            break;
+        case ATTRIBUTE_ID_number_of_samples_processed:
+            return sprintf(buf, "%lld\n", value.UnsignedLongLongInt);
+            break;
+        case ATTRIBUTE_ID_supported_input_format:
+            return sprintf(buf, "%i\n", value.Bool);
+            break;
+        default:
+            return sprintf(buf, "%s not available\n", attr_name);
+            break;
     }
 }
-/*}}}  */
+/*}}}*/
 /*{{{  store_generic_attribute*/
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 ssize_t store_generic_attribute (struct device *class_dev, const char *buf, enum attribute_id_e attr_id, const char *attr_name, size_t count)
@@ -191,7 +184,7 @@ ssize_t store_generic_attribute (struct class_device *class_dev, const char *buf
 
     return count;
 }
-/*}}}  */
+/*}}}*/
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 #define SHOW(x) 								\
@@ -232,7 +225,7 @@ SHOW(number_of_samples_processed);
 
 STORE(decode_errors);
 
-/* creation of class_device_attr_xx attributes */
+/* creation of device_attr_xx attributes */
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 DEVICE_ATTR(input_format, S_IRUGO, show_input_format, NULL);
@@ -267,7 +260,7 @@ struct playback_data_s* get_playback (void *playback)
 
     return &playback_data[p];
 }
-/*}}}  */
+/*}}}*/
 /*{{{  get_stream*/
 struct stream_data_s* get_stream (struct playback_data_s* PlaybackData, void* stream)
 {
@@ -285,7 +278,7 @@ struct stream_data_s* get_stream (struct playback_data_s* PlaybackData, void* st
 
     return &PlaybackData->stream_data[s];
 }
-/*}}}  */
+/*}}}*/
 
 /*
  * The following function is used by other modules (i.e. stmdvb) when they need to retrieve the proper device class
@@ -338,13 +331,13 @@ err0:
 	mutex_unlock(&SysfsWriteLock);
 	return NULL;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  player_sysfs_get_player_class_device*/
 struct class * player_sysfs_get_player_class(void)
 {
     return(&player2_class);
 }
-/*}}}  */
+/*}}}*/
 
 /*{{{  player_sysfs_get_class_id*/
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
@@ -363,7 +356,7 @@ int player_sysfs_get_stream_id(struct class_device* stream_dev)
 
      return streamdata->id;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  player_sysfs_new_attribute_notification */
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 void player_sysfs_new_attribute_notification(struct device* stream_dev)
@@ -389,7 +382,7 @@ void player_sysfs_new_attribute_notification(struct class_device* stream_dev)
 
     do_notify();
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_playback_created_handler*/
 int event_playback_created_handler(struct player_event_s* Event)
 {
@@ -444,7 +437,7 @@ int event_playback_created_handler(struct player_event_s* Event)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_playback_terminated_handler*/
 int event_playback_terminated_handler(struct player_event_s* Event)
 {
@@ -484,7 +477,7 @@ int event_playback_terminated_handler(struct player_event_s* Event)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_stream_created_handler*/
 int event_stream_created_handler(struct player_event_s* Event)
 {
@@ -565,7 +558,7 @@ int event_stream_created_handler(struct player_event_s* Event)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_stream_terminated_handler*/
 int event_stream_terminated_handler(struct player_event_s* Event)
 {
@@ -614,7 +607,7 @@ int event_stream_terminated_handler(struct player_event_s* Event)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_attribute_created_handler*/
 int event_attribute_created_handler(struct player_event_s* Event)
 {
@@ -747,7 +740,7 @@ err1:
     mutex_unlock(&SysfsWriteLock);
     return 1;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  event_input_format_changed_handler*/
 int event_input_format_changed_handler(struct player_event_s* Event)
 {
@@ -781,7 +774,7 @@ int event_input_format_changed_handler(struct player_event_s* Event)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  dump*/
 void dump (void)
 {
@@ -802,15 +795,13 @@ void dump (void)
         }
     }
 }
-/*}}}  */
+/*}}}*/
 /*{{{  SysfsInit*/
 void SysfsInit (void)
 {
     int res;
     int p;
     int s;
-
-    SYSFS_DEBUG("\n");
 
     res = class_register(&player2_class);
     if (0 != res) {
@@ -830,24 +821,23 @@ void SysfsInit (void)
 
     mutex_init(&SysfsWriteLock);
 }
-/*}}}  */
+/*}}}*/
 /*{{{  SysfsDelete*/
 void SysfsDelete (void)
 {
     SYSFS_DEBUG("\n");
 
-
     if (playback_count)
     {
-	SYSFS_ERROR("Delete called while playbacks still exists\n");
-	return;
+        SYSFS_ERROR("Delete called while playbacks still exists\n");
+        return;
     }
 
     class_unregister(&player2_class);
 
     mutex_destroy(&SysfsWriteLock);
 }
-/*}}}  */
+/*}}}*/
 
 /*{{{  PlayerSetEvent*/
 static int PlayerSetEvent (struct player_event_s*       Event)
@@ -868,7 +858,7 @@ static int PlayerSetEvent (struct player_event_s*       Event)
             SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_CREATED\n");
 
             Result = event_playback_created_handler(Event);
-	    if (Result) return Result;
+            if (Result) return Result;
 
             break;
         }
@@ -878,7 +868,7 @@ static int PlayerSetEvent (struct player_event_s*       Event)
             SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_TERMINATED\n");
 
             Result = event_playback_terminated_handler(Event);
-	    if (Result) return Result;
+            if (Result) return Result;
 
             break;
         }
@@ -911,9 +901,9 @@ static int PlayerSetEvent (struct player_event_s*       Event)
             SYSFS_DEBUG("PLAYER_EVENT_STREAM_TERMINATED\n");
 
             Result = event_stream_terminated_handler(Event);
-	    if (Result) return Result;
+            if (Result) return Result;
 
-	    break;
+            break;
         }
 
         case PLAYER_EVENT_INPUT_FORMAT_CHANGED:
@@ -921,7 +911,7 @@ static int PlayerSetEvent (struct player_event_s*       Event)
             SYSFS_DEBUG("PLAYER_EVENT_INPUT_FORMAT_CHANGED\n");
 
             Result = event_input_format_changed_handler(Event);
-	    if (Result) return Result;
+            if (Result) return Result;
 
             break;
         }
@@ -935,7 +925,7 @@ static int PlayerSetEvent (struct player_event_s*       Event)
 
     return Result;
 }
-/*}}}  */
+/*}}}*/
 
 EXPORT_SYMBOL(SysfsInit);
 EXPORT_SYMBOL(player_sysfs_get_class_device);

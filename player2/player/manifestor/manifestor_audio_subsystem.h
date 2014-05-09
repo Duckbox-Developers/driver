@@ -225,7 +225,7 @@ Fout = ----------------------------------
 \section audio_todo_sec Development Plan
 
  - [COMPLETE] Stereo playback via internal DAC (STx7109).
- - [COMPLETE] Stereo playback with mixer firmware transfering samples (STx7109).
+ - [COMPLETE] Stereo playback with mixer firmware transferring samples (STx7109).
  - [https://bugzilla.stlinux.com/show_bug.cgi?id=1760] Migrate downmix from decoder to mixer (STx7109).
  - Dynamic switching of output mode (sampling frequency) based on stream parameters (STx7109).
  - [https://bugzilla.stlinux.com/show_bug.cgi?id=1759] Silence stuffing when input is not present (STx7109).

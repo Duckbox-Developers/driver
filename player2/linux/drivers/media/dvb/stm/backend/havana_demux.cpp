@@ -31,7 +31,7 @@ HavanaDemux_c::HavanaDemux_c (void)
     PlayerPlayback      = NULL;
     DemuxContext        = NULL;
 }
-//}}}  
+//}}}
 //{{{  ~HavanaDemux_c
 HavanaDemux_c::~HavanaDemux_c (void)
 {
@@ -43,7 +43,7 @@ HavanaDemux_c::~HavanaDemux_c (void)
 
     OS_TerminateMutex (&InputLock);
 }
-//}}}  
+//}}}
 //{{{  Init
 //{{{  doxynote
 /// \brief Create and initialise all of the necessary player components for a new player stream
@@ -51,7 +51,7 @@ HavanaDemux_c::~HavanaDemux_c (void)
 /// \param PlayerPlayback       The player playback to which the stream will be added
 /// \param DemultiplexorContext Context variable used to manipulate the demultiplexor (TS).
 /// \return                     Havana status code, HavanaNoError indicates success.
-//}}}  
+//}}}
 HavanaStatus_t HavanaDemux_c::Init     (class Player_c*         Player,
                                         PlayerPlayback_t        PlayerPlayback,
                                         DemultiplexorContext_t  DemultiplexorContext)
@@ -70,7 +70,7 @@ HavanaStatus_t HavanaDemux_c::Init     (class Player_c*         Player,
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 //{{{  InjectData
 HavanaStatus_t HavanaDemux_c::InjectData       (const unsigned char*            Data,
                                                 unsigned int                    DataLength)
@@ -97,5 +97,5 @@ HavanaStatus_t HavanaDemux_c::InjectData       (const unsigned char*            
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 

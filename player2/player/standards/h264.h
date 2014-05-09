@@ -552,7 +552,7 @@ typedef struct H264SliceHeader_s
     // Supplementary data
     //
 
-    unsigned int                nal_unit_type;                                  // Nal header fields, relevent to slice header content
+    unsigned int                nal_unit_type;                                  // Nal header fields, relevant to slice header content
     unsigned int                nal_ref_idc;
 
     H264SequenceParameterSetHeader_t            *SequenceParameterSet;          // Pointer to the appropriate sequence parameter set.

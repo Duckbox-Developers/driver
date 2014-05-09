@@ -48,7 +48,7 @@ Date        Modification                                    Name
 ///
 /// To assist with this we introduce a thread whose job is to manage the
 /// issue of MME_TRANSFORM commands. This thread is woken every time a
-/// previous transform is complete and everytime an MME_SEND_BUFFERS command
+/// previous transform is complete and every time an MME_SEND_BUFFERS command
 /// is issued.
 ///
 /// \todo We need to move more into the thread to eliminate the race conditions.

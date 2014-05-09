@@ -95,14 +95,14 @@ static BufferDataDescriptor_t           H264PreProcessorBufferDescriptor = BUFFE
 
 // --------
 
-#define BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER "H264MacroBlockStructureBuffer"
-#define BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER_TYPE	{BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER, BufferDataTypeBase, AllocateFromSuppliedBlock, 256, 256, false, false, NOT_SPECIFIED}
+#define BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER         "H264MacroBlockStructureBuffer"
+#define BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER_TYPE    {BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER, BufferDataTypeBase, AllocateFromSuppliedBlock, 256, 256, false, false, NOT_SPECIFIED}
 
 static BufferDataDescriptor_t           H264MacroBlockStructureBufferDescriptor = BUFFER_H264_MACROBLOCK_STRUCTURE_BUFFER_TYPE;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoH264_c::Codec_MmeVideoH264_c( void )
@@ -209,7 +209,7 @@ OS_Thread_t               Thread;
     OSStatus    = OS_CreateThread( &Thread, Codec_MmeVideoH264_IntermediateProcess, this, "H264 Codec Int", (OS_MID_PRIORITY+9) );
     if( OSStatus != OS_NO_ERROR )
     {
-	report( severity_error, "Codec_MmeVideoH264_c::Codec_MmeVideoH264_c - Failed to create intermediate processe.\n" );
+	report( severity_error, "Codec_MmeVideoH264_c::Codec_MmeVideoH264_c - Failed to create intermediate process.\n" );
 	Terminating     = true;
 	OS_SleepMilliSeconds( MAX_EVENT_WAIT );
 	InitializationStatus    = CodecError;
@@ -220,7 +220,7 @@ OS_Thread_t               Thread;
 
     if( ProcessRunningCount != 1 )
     {
-	report( severity_error, "Codec_MmeVideoH264_c::Codec_MmeVideoH264_c - Intermediate processe failed to run.\n" );
+	report( severity_error, "Codec_MmeVideoH264_c::Codec_MmeVideoH264_c - Intermediate process failed to run.\n" );
 	Terminating     = true;
 	OS_SleepMilliSeconds( MAX_EVENT_WAIT );
 	InitializationStatus    = CodecError;
@@ -699,7 +699,7 @@ H264FrameParameters_t    *FrameParameters;
     PreProcessorBuffer->DecrementReferenceCount();
 
     //
-    // Now get an entry into the frames list, and fill in the relevent fields
+    // Now get an entry into the frames list, and fill in the relevant fields
     //
 
     for( i=0; i<H264_CODED_FRAME_COUNT; i++ )
@@ -784,7 +784,7 @@ CodecStatus_t   Codec_MmeVideoH264_c::HandleCapabilities( void )
     //
     // Unless things have changed, the firmware always 
     // reported zero for the sizes, so we use our own 
-    // knowm values.
+    // known values.
     //
 
     SD_MaxMBStructureSize		= 160;
@@ -805,14 +805,14 @@ CodecStatus_t   Codec_MmeVideoH264_c::FillOutTransformerInitializationParameters
 {
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     H264InitializationParameters.CircularBinBufferBeginAddr_p   = (U32 *)0x00000000;
     H264InitializationParameters.CircularBinBufferEndAddr_p     = (U32 *)0xffffffff;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(H264_InitTransformerParam_fmw_t);
@@ -838,7 +838,7 @@ H264PictureParameterSetHeader_t         *PPS;
 H264SequenceParameterSetHeader_t        *SPS;
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     SPS         = Parsed->SequenceParameterSet;
@@ -860,7 +860,9 @@ H264SequenceParameterSetHeader_t        *SPS;
     Context->StreamParameters.H264SetGlobalParamSPS.pic_height_in_map_units_minus1     = SPS->pic_height_in_map_units_minus1;
     Context->StreamParameters.H264SetGlobalParamSPS.frame_mbs_only_flag                = SPS->frame_mbs_only_flag;
     Context->StreamParameters.H264SetGlobalParamSPS.mb_adaptive_frame_field_flag       = SPS->mb_adaptive_frame_field_flag;
+
     Context->StreamParameters.H264SetGlobalParamSPS.direct_8x8_inference_flag          = SPS->direct_8x8_inference_flag;
+
     Context->StreamParameters.H264SetGlobalParamSPS.chroma_format_idc                  = SPS->chroma_format_idc;
 
     Context->StreamParameters.H264SetGlobalParamPPS.entropy_coding_mode_flag           = PPS->entropy_coding_mode_flag;
@@ -890,7 +892,7 @@ H264SequenceParameterSetHeader_t        *SPS;
     }
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -1083,7 +1085,7 @@ unsigned int			  MaxAllocatableDecodeBuffers;
 	    break;
 	 }       
     }   
-   
+
     DowngradeDecode				= ParsedFrameParameters->ApplySubstandardDecode &&
 		SLICE_TYPE_IS(((H264FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure)->SliceHeader.slice_type, H264_SLICE_TYPE_B );
 
@@ -1099,10 +1101,10 @@ unsigned int			  MaxAllocatableDecodeBuffers;
        Param->DecodedBufferAddress.LumaDecimated_p          = (H264_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedLumaPointer;
        Param->DecodedBufferAddress.ChromaDecimated_p        = (H264_ChromaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedChromaPointer;
     }
-   
-   
+
+
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );

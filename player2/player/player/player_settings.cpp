@@ -445,11 +445,11 @@ PlayerComponentFunction_t Fn;
 
     switch( Component )
     {
-	case ComponentFrameParser:	Fn	= FrameParserFnSetModuleParameters;	break;
-	case ComponentCodec:		Fn	= CodecFnSetModuleParameters;		break;
-	case ComponentOutputTimer:	Fn	= OutputTimerFnSetModuleParameters;	break;
-	case ComponentManifestor:	Fn	= ManifestorFnSetModuleParameters;	break;
-        default:			Fn	= 0xffffffff;				break;
+	case ComponentFrameParser:		Fn	= FrameParserFnSetModuleParameters;			break;
+	case ComponentCodec:			Fn	= CodecFnSetModuleParameters;				break;
+	case ComponentOutputTimer:		Fn	= OutputTimerFnSetModuleParameters;			break;
+	case ComponentManifestor:		Fn	= ManifestorFnSetModuleParameters;			break;
+	default:						Fn	= 0xffffffff;								break;
     }
 
     SequenceType	= Immediately ? SequenceTypeImmediate : SequenceTypeBeforeSequenceNumber;

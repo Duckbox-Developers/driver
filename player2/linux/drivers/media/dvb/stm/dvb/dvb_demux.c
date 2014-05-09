@@ -39,7 +39,6 @@ Date        Modification                                    Name
 #include <linux/dvb/ca.h>
 #include "dvb_ca_en50221.h"
 #endif
-
 #include "dvb_demux.h"          /* provides kernel demux types */
 
 #include "dvb_module.h"
@@ -203,7 +202,7 @@ int StartFeed (struct dvb_demux_feed* Feed)
 #if defined(ADB_BOX)
 extern int glowica;
 enum {
-    SINGLE,
+	SINGLE,
 	TWIN,
 };
 #endif

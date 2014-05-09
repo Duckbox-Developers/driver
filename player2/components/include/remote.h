@@ -22,7 +22,7 @@ license from ST.
 Source file name : remote.h
 Author :           Nick
 
-Contains the protoypes for the remote_control package
+Contains the prototypes for the remote_control package
 
 ************************************************************************/
 

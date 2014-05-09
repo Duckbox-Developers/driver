@@ -74,7 +74,7 @@ static BufferDataDescriptor_t                   H263CodecDecodeContextDescriptor
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoH263_c::Codec_MmeVideoH263_c( void )
@@ -168,7 +168,7 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutTransformerInitializationParameters
 
     report (severity_info, "Codec_MmeVideoH263_c::%s\n", __FUNCTION__);
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     H263InitializationParameters.PictureWidhth                  = H263_WIDTH_CIF;
@@ -181,7 +181,7 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutTransformerInitializationParameters
     CODEC_TRACE("  PictureHeight             %6u\n", H263_HEIGHT_CIF);
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(H263D_GlobalParams_t);
@@ -204,14 +204,14 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutSetStreamParametersCommand( void )
     report (severity_info, "Codec_MmeVideoH263_c::FillOutSetStreamParametersCommand (%dx%d)\n", Parsed->SequenceHeader.width, Parsed->SequenceHeader.height);
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     Context->StreamParameters.PictureWidhth             = Parsed->SequenceHeader.width;
     Context->StreamParameters.PictureHeight             = Parsed->SequenceHeader.height;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -251,7 +251,7 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand (void)
     KnownLastSliceInFieldFrame                  = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -262,7 +262,7 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand (void)
 
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset (&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));

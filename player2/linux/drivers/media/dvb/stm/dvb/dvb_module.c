@@ -118,15 +118,14 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
     short int                   AdapterNumbers[] = { -1 };
 
     DvbContext  = kzalloc (sizeof (struct DvbContext_s),  GFP_KERNEL);
-#ifdef __TDT__
-    memset(DvbContext, 0, sizeof*DvbContext);
-#endif
-
     if (DvbContext == NULL)
     {
         DVB_ERROR("Unable to allocate device memory\n");
         return -ENOMEM;
     }
+#ifdef __TDT__
+    memset(DvbContext, 0, sizeof*DvbContext);
+#endif
 
 #ifdef __TDT__
 	if (swts)
@@ -135,15 +134,12 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
 		printk("no swts ->routing streams from dvr0 direct to the player\n");
 #endif
 
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #if DVB_API_VERSION < 5
     Result      = dvb_register_adapter (&DvbContext->DvbAdapter, MODULE_NAME, THIS_MODULE, NULL);
 #else   
     Result      = dvb_register_adapter (&DvbContext->DvbAdapter, MODULE_NAME, THIS_MODULE, NULL, AdapterNumbers);
 #endif
-#else /* STLinux 2.2 kernel */
-    Result      = dvb_register_adapter (&DvbContext->DvbAdapter, MODULE_NAME, THIS_MODULE);
-#endif
+
     if (Result < 0)
     {
         DVB_ERROR("Failed to register adapter (%d)\n", Result);
@@ -184,10 +180,10 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
         DvbDemux->feednum                       = 32;
         DvbDemux->start_feed                    = StartFeed;
         DvbDemux->stop_feed                     = StopFeed;
-#ifndef __TDT__
-        DvbDemux->write_to_decoder              = NULL;
-#else
+#ifdef __TDT__
         DvbDemux->write_to_decoder              = WriteToDecoder;
+#else
+        DvbDemux->write_to_decoder              = NULL;
 #endif
         Result                                  = dvb_dmx_init (DvbDemux);
         if (Result < 0)

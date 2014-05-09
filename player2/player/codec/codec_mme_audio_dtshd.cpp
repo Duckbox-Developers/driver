@@ -344,7 +344,7 @@ DtshdAudioCodecStreamParameterContext_t *Context = (DtshdAudioCodecStreamParamet
 	return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -385,7 +385,7 @@ DtshdAudioCodecDecodeContext_t  *Context        = (DtshdAudioCodecDecodeContext_
     memcpy(&Context->ContextFrameParameters, ParsedFrameParameters->FrameParameterStructure, sizeof(DtshdAudioFrameParameters_t));
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

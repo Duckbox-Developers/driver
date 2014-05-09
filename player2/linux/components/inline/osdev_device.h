@@ -44,13 +44,19 @@ Date        Modification                                    Name
 #undef min
 #undef max
 
-#if defined(__TDT__)
-#include <linux/version.h>
-#endif
 #include <linux/kernel.h>
 #include <linux/sched.h>
 #include <linux/delay.h>
+#include <linux/version.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include <linux/string.h>
+#ifdef __cplusplus
+}
+#endif
+
 #include <linux/unistd.h>
 #include <linux/init.h>
 #include <linux/time.h>
@@ -408,11 +414,11 @@ STATIC_INLINE void            *OSDEV_MallocPartitioned( char                    
     numpages    = (Size + OSDEV_MEMORY_PAGE_SIZE - 1) / OSDEV_MEMORY_PAGE_SIZE;
     p           = bpa2_alloc_pages( partition, numpages, 0, 0 /*priority*/ );
 
-   
-    
-    
+
+
+
 //    if( p )
-//	p	= (unsigned long)phys_to_virt(p);
+//      p       = (unsigned long)phys_to_virt(p);
 
 
 #ifdef ENABLE_MALLOC_POISONING
@@ -657,7 +663,7 @@ int     i;
 #ifndef H_OSINLINE
 
 // --------------------------------------------------------------
-//      Specialist st200 intruction emulation functions
+//      Specialist st200 instruction emulation functions
 
 static inline unsigned int      __swapbw( unsigned int a )      // ByteSwap
 {

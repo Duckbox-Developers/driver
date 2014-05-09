@@ -185,7 +185,6 @@ struct dvb_device* VideoInit (struct DeviceContext_s* Context)
     Context->VideoState.video_format            = VIDEO_FORMAT_4_3;
     Context->VideoState.display_format          = VIDEO_CENTER_CUT_OUT;
 #endif
-
     Context->VideoSize.w                        = 0;
     Context->VideoSize.h                        = 0;
     Context->VideoSize.aspect_ratio             = 0;
@@ -780,6 +779,7 @@ int VideoIoctlSetSpeed (struct DeviceContext_s* Context, int Speed)
     prevSpeed = Context->VideoPlaySpeed;
     Context->VideoPlaySpeed = Speed;
 #endif
+
     Result      = DvbPlaybackSetSpeed (Context->Playback, Speed);
     if (Result >= 0)
         Result  = DvbPlaybackGetSpeed (Context->Playback, &Context->PlaySpeed);
@@ -1622,7 +1622,7 @@ static unsigned int VideoPoll (struct file* File, poll_table* Wait)
     //      Is beeing reset at the end after nonblocking flush ioctl
     //      So not really a problem but still not nice
     if (DvbStreamCheckDrained(Context->VideoStream) == 1)
-	{
+    {
         DVB_DEBUG("Video Stream drained\n");
         Mask |= (POLLIN);
     }
@@ -1690,11 +1690,11 @@ static void VideoSetEvent (struct DeviceContext_s* Context,
                the 16/9 icon or not
             */
 
-			Context->VideoState.display_format          = (video_displayformat_t) proc_video_policy_get();
-			Context->VideoState.video_format            = (video_format_t) proc_video_aspect_get();
+            Context->VideoState.display_format          = (video_displayformat_t) proc_video_policy_get();
+            Context->VideoState.video_format            = (video_format_t) proc_video_aspect_get();
 
-			VideoIoctlSetDisplayFormat (Context, (unsigned int)Context->VideoState.display_format);
-			VideoIoctlSetFormat        (Context, Context->VideoState.video_format);
+            VideoIoctlSetDisplayFormat (Context, (unsigned int)Context->VideoState.display_format);
+            VideoIoctlSetFormat        (Context, Context->VideoState.video_format);
 #endif
 
             Context->PixelAspectRatio.Numerator         = Event->u.size.pixel_aspect_ratio_numerator;

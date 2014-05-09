@@ -149,7 +149,7 @@ CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters( MME_LxAud
                                             "unknown"));
 
         // check for firmware decoder existence in case of SET_GLOBAL only
-        // (we dont't know the frame type at init time)
+        // (we don't know the frame type at init time)
 
     if (ParsedFrameParameters)
     {
@@ -259,7 +259,7 @@ AvsAudioCodecStreamParameterContext_t  *Context = (AvsAudioCodecStreamParameterC
         return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -294,7 +294,7 @@ AvsAudioCodecDecodeContext_t   *Context        = (AvsAudioCodecDecodeContext_t *
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

@@ -69,6 +69,7 @@ Date        Modification                                    Name
 //
 
 #define AUDIO_DECODER_TRANSFORMER_NAME "AUDIO_DECODER"
+
 extern const int ACC_AcMode2ChannelCountLUT[];
 extern const int ACC_SamplingFreqLUT[];
 #define ACC_AcMode2ChannelCount(AcMode) (ACC_AcMode2ChannelCountLUT[(AcMode&0xf)] + ((AcMode >= 0x80)?1:0))
@@ -182,12 +183,13 @@ public:
 
     //
     // Implementation of fill out function for generic video,
-    // may be overidden if necessary.
+    // may be overridden if necessary.
     //
 
     virtual CodecStatus_t   FillOutDecodeBufferRequest( BufferStructure_t        *Request );
 
     // utility functions
+
     static int      ConvertCodecSamplingFreq(enum eAccFsCode Code);
     static unsigned char GetNumberOfChannelsFromAudioConfiguration(enum eAccAcMode Mode);
 

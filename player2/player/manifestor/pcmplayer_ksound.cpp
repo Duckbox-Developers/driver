@@ -166,7 +166,6 @@ PcmPlayer_Ksound_c::PcmPlayer_Ksound_c(unsigned int Soundcard, unsigned int Subs
                         break;
                 }
         }
-
         
         PCMPLAYER_DEBUG("ALSA device (hw:%d,%d) %s support IEC60958 validity bits control\n",
         		Soundcard, Substream, (iec958_val_elem ? "does" : "doesn't"));
@@ -518,6 +517,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec61937StatusBits( struct snd_pseudo_mixe
                 //
                 // override the channel status necessary bits for IEC61937 mode
                 //
+
                 Status.status[0] &= ~0x30;  // IEC958_AES0_CON_MODE in <asoundef.h>, mode 0
                 Status.status[0] |= (1<<1); // IEC958_AES0_NONAUDIO in <asoundef.h>, channel status bit 1
                 Status.status[4] = (1<<1); // IEC958_AES4_CON_WORDLEN_20_16, 16-bits

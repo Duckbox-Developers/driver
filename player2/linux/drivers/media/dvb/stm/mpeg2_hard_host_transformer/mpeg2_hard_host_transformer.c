@@ -290,9 +290,9 @@ void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_Transfor
 			        frameParamsOut->verticalDecimationFactor = 1;
 			        break;		
 		}
-					
+
 		frameParamsOut->decimatedLumaDecodeFramebuffer    = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedLuma_p;
-		frameParamsOut->decimatedChromaDecodeFramebuffer  = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedChroma_p;	
+		frameParamsOut->decimatedChromaDecodeFramebuffer  = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedChroma_p;
 	}
 	
 	frameParamsOut->lumaBackwardReferenceFrame   = (unsigned char*)frameParamsIn->RefPicListAddress.BackwardReferenceLuma_p;

@@ -28,7 +28,7 @@ static int __init pcm_transcoder_init (void)
     Status              = PcmTranscoder_RegisterTransformer(TransformerName);
     if (Status != MME_SUCCESS)
     {
-        printk ("Failed to register %s with MME\n", TransformerName);
+        printk ("Failed to register %s with MME (%x)\n", TransformerName, Status);
         return -ENODEV;
     }
     printk ("%s registered with MME successfully\n", TransformerName);

@@ -92,7 +92,6 @@ int proc_stream_AV_SYNC_write(struct file *file, const char __user *buf, unsigne
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -167,7 +166,6 @@ int proc_stream_TRICK_MODE_AUDIO_write(struct file *file, const char __user *buf
 	
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -245,7 +243,6 @@ int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_write(struct file *file, const char __
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -322,7 +319,6 @@ int proc_stream_MASTER_CLOCK_write(struct file *file, const char __user *buf, un
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -401,7 +397,6 @@ int proc_stream_EXTERNAL_TIME_MAPPING_write(struct file *file, const char __user
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -457,7 +452,6 @@ int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file *file, const char __
 			{
 				printk("failed to set policy\n");
 			}
-			
 		}
 		else if (strncmp("disapply", myString, count - 1) == 0)
 		{
@@ -467,7 +461,6 @@ int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file *file, const char __
 			{
 				printk("failed to set policy\n");
 			}
-		
 		}
 		else
 		{
@@ -479,7 +472,6 @@ int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file *file, const char __
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -545,19 +537,16 @@ int proc_stream_STREAM_ONLY_KEY_FRAMES_write(struct file *file, const char __use
 			{
 				printk("failed to set policy\n");
 			}
-		
 		}
 		else
 		{
 			printk("invalid value\n");
 		}
-
 		kfree(myString);
 	}
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -576,8 +565,7 @@ int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char *page, cha
 		else
 			len = sprintf(page, "disapply\n");
 
-	}
-	else
+	} else
 		len = sprintf(page, "failed to get value\n");
 
 	return len;
@@ -633,7 +621,6 @@ int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_write(struct file *f
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -709,7 +696,6 @@ int proc_stream_PLAYOUT_ON_TERMINATE_write(struct file *file, const char __user 
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -785,7 +771,6 @@ int proc_stream_PLAYOUT_ON_SWITCH_write(struct file *file, const char __user *bu
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -861,7 +846,6 @@ int proc_stream_PLAYOUT_ON_DRAIN_write(struct file *file, const char __user *buf
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -993,7 +977,6 @@ int proc_stream_TRICK_MODE_DOMAIN_write(struct file *file, const char __user *bu
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -1079,7 +1062,6 @@ int proc_stream_DISCARD_LATE_FRAMES_write(struct file *file, const char __user *
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -1154,7 +1136,6 @@ int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_write(struct file *file, const char
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -1229,7 +1210,6 @@ int proc_stream_REBASE_ON_FRAME_DECODE_LATE_write(struct file *file, const char 
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -1306,7 +1286,6 @@ int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write(struct file
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }
@@ -1456,7 +1435,6 @@ int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file *file, cons
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }

@@ -3000,9 +3000,9 @@ unsigned int	TimeDelta;
 
 #ifdef __TDT__
 //I would say that this is wrong implemented in libeplayer, but if so why did it work up until now?
-        if(TimeDelta > 10000)
-            DefaultFrameRate        = Rational_t( TimeDelta, TimeScale );
-        else
+		if(TimeDelta > 10000)
+			DefaultFrameRate		= Rational_t( TimeDelta, TimeScale ); 
+		else
 #endif
 		DefaultFrameRate		= Rational_t( TimeScale, TimeDelta ); 
 		UserSpecifiedDefaultFrameRate	= true;
@@ -4194,9 +4194,9 @@ bool			ApplyTwoRefTestForBframes;
 
     ApplyTwoRefTestForBframes	= !SeenAnIDR || (PlaybackDirection == PlayBackward);
 
-    if( ((Status == FrameParserNoError) &&
-	((ParsedVideoParameters->SliceType != SliceTypeI) && ((NumShortTerm + NumLongTerm) < 1))) ||
-	(ApplyTwoRefTestForBframes && (ParsedVideoParameters->SliceType == SliceTypeB) && ((NumShortTerm + NumLongTerm) < 2)) )
+    if( (Status == FrameParserNoError) &&
+	(((ParsedVideoParameters->SliceType != SliceTypeI) && ((NumShortTerm + NumLongTerm) < 1)) ||
+	 (ApplyTwoRefTestForBframes && (ParsedVideoParameters->SliceType == SliceTypeB) && ((NumShortTerm + NumLongTerm) < 2))) )
 	Status	= FrameParserInsufficientReferenceFrames;
 
     //
@@ -4834,7 +4834,7 @@ report( severity_info, "MMCO(%d %d %d) - %d - %3d %3d %3d %3d\n", Field, Top, Fr
 
 	if( (NumShortTerm + NumLongTerm) > NumReferenceFrames )
 	{
-	    report( severity_error, "FrameParser_VideoH264_c::MarkReferencePictures - After MMCO operations, \n\t\tthere are more than the allowed number of reference frames.\n\t\tThe oldest will be discarded." );
+	    report( severity_error, "FrameParser_VideoH264_c::MarkReferencePictures - After MMCO operations, \n\t\tthere are more than the allowed number of reference frames.\n\t\tThe oldest will be discarded.\n" );
 	    for( i=0,j=1; j<(NumReferenceFrames+1); j++ )
 		if( ReferenceFrames[i].DecodeFrameIndex > ReferenceFrames[j].DecodeFrameIndex )
 		    i = j;
@@ -5733,7 +5733,7 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
     Buffer->AttachBuffer( FrameParametersBuffer );
 
     //
-    // Check wether or not we can safely handle reverse play,
+    // Check whether or not we can safely handle reverse play,
     //		Cannot reverse with B reference frames
     //		Cannot currently reverse field pictures
     //

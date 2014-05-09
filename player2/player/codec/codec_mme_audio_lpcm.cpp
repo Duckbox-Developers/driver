@@ -332,7 +332,7 @@ LpcmAudioCodecStreamParameterContext_t  *Context = (LpcmAudioCodecStreamParamete
 	return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -370,7 +370,7 @@ LpcmAudioFrameParameters_t    *Parsed         = (LpcmAudioFrameParameters_t *)Pa
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

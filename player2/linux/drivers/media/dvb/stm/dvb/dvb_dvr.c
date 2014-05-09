@@ -213,7 +213,7 @@ static int DvrRelease  (struct inode*  Inode,
 	/* Check to see if our playback has already been deleted by the demux context */
 	if (Context->DemuxContext->Playback != NULL)
 	{
-	    /* Try and delete playback then set our demux to Null if succesful or not.  If we fail someone else
+	    /* Try and delete playback then set our demux to Null if successful or not.  If we fail someone else
 	       is still using it but we are done. */
 	    if (DvbPlaybackDelete (Context->Playback) == 0)
 		DVB_TRACE("Playback deleted successfully\n");
@@ -242,6 +242,7 @@ static ssize_t DvrWrite (struct file *File, const char __user* Buffer, size_t Co
     struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
     struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
     int                         Result          = 0;
+
 #ifdef __TDT__
     // attach to the video stream context
     struct DeviceContext_s* Context0 = &Context->DvbContext->DeviceContext[0];

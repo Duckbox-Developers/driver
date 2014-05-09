@@ -349,7 +349,7 @@ unsigned int ExtensionLength;
 	if( ( Status != FrameParserNoError ) ||
             ( ParsedFrameHeader.Length + ExtensionLength != BufferLength ) )
         {
-	    FRAME_ERROR("Buffer length is inconsistant with frame header, bad collator selected?\n");
+	    FRAME_ERROR("Buffer length is inconsistent with frame header, bad collator selected?\n");
     	    return FrameParserError;
         }
 	
@@ -484,7 +484,7 @@ FrameParserStatus_t Status;
     }
 
     //
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     //
     
     Status = HandleCurrentFrameNormalizedPlaybackTime();

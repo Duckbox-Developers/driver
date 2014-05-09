@@ -1,7 +1,7 @@
 /* 
  * e2_proc_vmpeg.c
  */
- 
+
 #include <linux/proc_fs.h>  	/* proc fs */ 
 #include <asm/uaccess.h>    	/* copy_from_user */
 
@@ -74,6 +74,7 @@ int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsig
 				printk("failed to set output window %d\n", err);
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
+
 			mutex_unlock (&(pContext->DvbContext->Lock));
 		}
 
@@ -147,8 +148,8 @@ int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf, unsign
 	if (fb != NULL)
 	{
 		memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
-		y=screen_info.yres;
-		x=screen_info.xres;
+		y = screen_info.yres;
+		x = screen_info.xres;
 	}
 
 	page = (char *)__get_free_page(GFP_KERNEL);
@@ -183,6 +184,7 @@ int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf, unsign
 				printk("failed to set output window %d\n", err);
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
+
 			mutex_unlock (&(pContext->DvbContext->Lock));
 		}
 
@@ -291,9 +293,10 @@ int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf, unsi
 				printk("failed to set output window %d\n", err);
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
+
 			mutex_unlock (&(pContext->DvbContext->Lock));
 		}
-		
+
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
@@ -349,8 +352,8 @@ int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf, uns
 	char *page;
 	ssize_t ret = -ENOMEM;
 	int value, err, x = 720, y = 576;
-	void*           fb;
-	struct fb_info  *info;
+	void* fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
 	struct DeviceContext_s *pContext = (struct DeviceContext_s*)data;
 
@@ -401,6 +404,7 @@ int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf, uns
 				printk("failed to set output window %d\n", err);
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
+
 			mutex_unlock (&(pContext->DvbContext->Lock));
 		}
 
@@ -594,12 +598,12 @@ int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf, unsign
 				printk("failed to set output window %d\n", err);
 			else
 				printk("set output window ok %d %d %d %d\n", l, t, w, h);
+
 			mutex_unlock (&(pContext->DvbContext->Lock));
 		}
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);

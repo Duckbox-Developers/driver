@@ -386,7 +386,7 @@ OS_Status_t   OS_GetMessage( OS_MessageQueue_t   Queue,
 
 
 // --------------------------------------------------------------
-//      The Miscelaneous functions
+//      The Miscellaneous functions
 
 
 void OS_ReSchedule( void )

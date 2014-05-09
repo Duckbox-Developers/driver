@@ -982,7 +982,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateInputBuffer( MME_DataBuffer_t
     // Handle other bits of status (mostly the play state)
     //
     
-#if 0
+#ifndef __TDT__
     if( OutputState == PLAYING )
     {
         if( InputStatus->State != MIXER_INPUT_RUNNING )
@@ -1940,8 +1940,8 @@ bool MuteRequestAsserted = false;
                           SamplesInPcmBuffer, SamplesInCodedMmeDataBuffer, Delta );
     
         // Delta is -ve when we are starving (there may be enough samples to complete this frame but this cannot
-        // is not guaranteed unless Delta is +ve). If Delta is exceeds the sync threshhold then we must take
-        // corrective action. The sync threshhold is must be greater than the longest fixed size pause burst
+        // is not guaranteed unless Delta is +ve). If Delta is exceeds the sync threshold then we must take
+        // corrective action. The sync threshold is must be greater than the longest fixed size pause burst
         // mandated by IEC61937 (MPEG2, low sampling frequency fixes pause bursts at 64 IEC60938 frames) and may
         // optionally include a small fudge factor.
         if ( Delta < 0 || Delta > (64 + 16) )

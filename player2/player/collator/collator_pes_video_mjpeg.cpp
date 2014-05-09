@@ -272,7 +272,7 @@ CollatorStatus_t   Collator_PesVideoMjpeg_c::Input     (PlayerInputDescriptor_t*
             if( Status != CollatorNoError )
             {
                 DiscardAccumulatedData();
-		InputExit();
+                InputExit();
                 return Status;
             }
         }

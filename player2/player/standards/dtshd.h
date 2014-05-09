@@ -65,7 +65,7 @@ Date        Modification                                    Name
 #define DTSHD_START_CODE_SUBSTREAM              0x64582025
 #define DTSHD_START_CODE_SUBSTREAM_CORE         0x02b09261
 
-#define DTSHD_SYNCHRO_BYTES_NEEDED              6 // from 4 to 6 bytes: dts extention substream is 4 bytes while 14 bit core synchro takes 6 bytes...
+#define DTSHD_SYNCHRO_BYTES_NEEDED              6 // from 4 to 6 bytes: dts extension substream is 4 bytes while 14 bit core synchro takes 6 bytes...
 #define DTSHD_RAW_SYNCHRO_BYTES_NEEDED          5
 
 

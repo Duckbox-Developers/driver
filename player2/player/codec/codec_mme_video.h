@@ -93,7 +93,7 @@ public:
 
     //
     // Implementation of fill out function for generic video,
-    // may be overidden if necessary.
+    // may be overridden if necessary.
     //
 
     virtual CodecStatus_t   FillOutDecodeBufferRequest(	BufferStructure_t	 *Request );

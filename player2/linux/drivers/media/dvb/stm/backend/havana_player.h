@@ -146,6 +146,10 @@ public:
     HavanaStatus_t              CreateDisplay                  (char*                   Media,
                                                                 unsigned int            SurfaceId,
                                                                 HavanaDisplay_c**       HavanaDisplay);
+#ifdef __TDT__
+    int                         IsDisplayCreated               (char*                   Media,
+                                                                unsigned int            SurfaceId);
+#endif
     HavanaStatus_t              DeleteDisplay                  (char*                   Media,
                                                                 unsigned int            SurfaceId);
     HavanaStatus_t              SynchronizeDisplay             (char*                   Media,
@@ -153,10 +157,6 @@ public:
 
     player_event_signal_callback        RegisterEventSignalCallback    (player_event_signal_callback   EventSignalCallback);
     void                        EventSignalThread              (void);
-#ifdef __TDT__
-    int              isDisplayCreated                          (char*                   Media,
-                                                                unsigned int            SurfaceId);
-#endif
 };
 
 /*{{{  doxynote*/
@@ -231,14 +231,14 @@ pes video mpeg2 and pes video vc1 for example.
 \param SubId            TODO
 \param StreamType       Audio or Video
 \param Component        Which player component to be manufactured.
-\param Class            Pointer to location of ccomponent to build.
+\param Class            Pointer to location of component to build.
 
 \return Havana status code, HavanaNoError indicates success.
 */
 
 /*! \fn HavanaStatus_t HavanaPlayer_c::GetDemuxContext (unsigned int            DemuxId,
-                                                      class Demultiplexor_c** Demultiplexor,
-                                                      DemultiplexorContext_t* DemultiplexorContext);
+                                                        class Demultiplexor_c** Demultiplexor,
+                                                        DemultiplexorContext_t* DemultiplexorContext);
 
 \brief Identify or create the DemultiplexorContext associated with this DemuxId
 
@@ -256,7 +256,7 @@ pes video mpeg2 and pes video vc1 for example.
 
 \return Havana status code, HavanaNoError indicates success.
 */
-/*}}}  */
+/*}}}*/
 
 #endif
 

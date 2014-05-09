@@ -66,9 +66,8 @@ public:
     CollatorStatus_t    Input          (PlayerInputDescriptor_t  *Input,
                                         unsigned int              DataLength,
                                         void                     *Data,
-					bool			  NonBlocking = false,
-					unsigned int		 *DataLengthRemaining = NULL );
-
+                                        bool                      NonBlocking = false,
+                                        unsigned int             *DataLengthRemaining = NULL );
 };
 
 #endif // H_COLLATOR_PES_VIDEO_MJPEG

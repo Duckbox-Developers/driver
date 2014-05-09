@@ -155,7 +155,7 @@ the ranges in which particular fast forward algorithms operate.
 Passes onto the output ring any decode buffers that are partially
 filled, this includes buffers with only one field decoded, or a number 
 of slices. In the event that several slices have been queued but not 
-decoded, they should be decoded and the relevent buffer passed on.
+decoded, they should be decoded and the relevant buffer passed on.
 
 \return Codec status code, CodecNoError indicates success.
 */

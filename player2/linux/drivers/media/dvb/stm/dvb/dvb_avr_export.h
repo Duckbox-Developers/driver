@@ -221,7 +221,7 @@ enum
     /* Channel select for dual-mono streams. */
     V4L2_CID_STM_AVR_AUDIO_CHANNEL_SELECT,
 
-    /* Theshold at which audio is considered to be silent.
+    /* Threshold at which audio is considered to be silent.
      * Measured in decibels referenced against max. power (default is -80db)
      */
     V4L2_CID_STM_AVR_AUDIO_SILENCE_THRESHOLD,

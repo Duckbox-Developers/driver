@@ -1365,7 +1365,7 @@ Normalized Playback Time encapsulates the same information as Native
 Playback time, whilst scaling in a way that can be manipulated by 
 components that are not tied to the particular stream being played (ie 
 we don't want to have an mpeg2 player, synchronizer and manifestor 
-where the only relevent difference between mpeg2 and divx is the rate 
+where the only relevant difference between mpeg2 and divx is the rate
 at which time ticks). The Normalized Playback Time retains the 
 arbitrary base, since it is the sharing of that base by all the 
 components of a playback that allows synchronization between them. The 
@@ -1580,7 +1580,7 @@ and describes only the framework supporting MME based codec proxies.
 Like the collator framework the sub-class to support a specific audio
 codec is relatively simple.
 
-Firstly there are a family of similar FillOut... methods that must be overriden,
+Firstly there are a family of similar FillOut... methods that must be overridden,
 Codec_MmeAudio_c::FillOutTransformerGlobalParameters(),
 Codec_MmeBase_c::FillOutTransformerInitializationParameters(),
 Codec_MmeBase_c::FillOutSetStreamParametersCommand() and
@@ -1591,7 +1591,7 @@ Codec_MmeAudio_c::FillOutTransformerGlobalParameters(), which is, in
 effect, a utility class used to fill out both the initialization parameters
 and the set stream parameters calls.
 
-Another method that must be overriden is Codec_MmeBase_c::ValidateDecodeContext().
+Another method that must be overridden is Codec_MmeBase_c::ValidateDecodeContext().
 This is called from within the MME callback and has the dual purpose
 of squawking on the console if errors are detected (the firmware's tendancy
 to soft mute on error, while useful, does mean that the some decode errors
@@ -1640,7 +1640,7 @@ Again there are two changes that must be made.
 
 Firstly extend the ::audio_encoding_t enumeration to include an constant to describe
 the new codec. Insert this at the end. This may look slightly illogical byt will
-preserve binary compatiblity we previous releases.
+preserve binary compatibility we previous releases.
 
 Secondly extend the ::AudioContent array, which is indexed by ::audio_encoding_t, to
 tie the LinuxDVB name AUDIO_ENCODING_XXX to the player wrapper name BACKEND_XXX_ID.

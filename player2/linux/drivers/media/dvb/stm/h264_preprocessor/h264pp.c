@@ -173,7 +173,6 @@ OSDEV_Status_t  Status;
     //
     // Register our device
     //
-
     Status = OSDEV_RegisterDevice( &H264ppDeviceDescriptor );
     if( Status != OSDEV_NoError )
     {
@@ -855,7 +854,7 @@ unsigned int	IntermediateEndAddress;
     GNBvd42331DataPhysicalAddress	= (unsigned char *)State->BufferState->Parameters.OutputBufferPhysicalAddress + 0x10000;
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
-    __flush_wback_region((State->BufferState->Parameters.OutputBufferCachedAddress + 0x10000),sizeof(GNBvd42331Data));
+    __flush_wback_region( (State->BufferState->Parameters.OutputBufferCachedAddress + 0x10000), sizeof(GNBvd42331Data) );
 #else
     dma_cache_wback((State->BufferState->Parameters.OutputBufferCachedAddress + 0x10000),sizeof(GNBvd42331Data));
 #endif

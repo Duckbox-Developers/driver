@@ -59,8 +59,8 @@ HavanaStatus_t HavanaFactory_c::ReLink (class HavanaFactory_c*  Next)
 ///                     e.g. mpeg2 for an audio pes collator from an lpcm audio pes collator
 /// \param StreamType   Player type to indicate audio or video
 /// \param Component    Player class to be constructed
-/// \return             true if can build the componenet, false if not
-//}}}  
+/// \return             true if can build the component, false if not
+//}}}
 bool HavanaFactory_c::CanBuild         (const char*             Id,
                                         const char*             SubId,
                                         PlayerStreamType_t      StreamType,
@@ -79,7 +79,6 @@ bool HavanaFactory_c::CanBuild         (const char*             Id,
 HavanaStatus_t HavanaFactory_c::Build  (void**  Class)
 {
     //HAVANA_DEBUG("\n");
-
     *Class     = Factory ();
     if (*Class == NULL)
         return HavanaNoMemory;
@@ -89,13 +88,11 @@ HavanaStatus_t HavanaFactory_c::Build  (void**  Class)
 class HavanaFactory_c* HavanaFactory_c::Next   (void)
 {
     //HAVANA_DEBUG("\n");
-
     return NextFactory;
 }
 unsigned int HavanaFactory_c::Version  (void)
 {
     HAVANA_DEBUG("\n");
-
     return FactoryVersion;
 }
 

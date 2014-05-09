@@ -173,7 +173,7 @@ private:
     H264StreamParameters_t                       *StreamParameters;
     H264FrameParameters_t                        *FrameParameters;
 
-    bool					  UserSpecifiedDefaultFrameRate;
+    bool                                          UserSpecifiedDefaultFrameRate;
     Rational_t                                    DefaultFrameRate;
     Rational_t                                    DefaultPixelAspectRatio;
 

@@ -367,9 +367,7 @@ int proc_video_switch_type_write(struct file *file, const char __user *buf, unsi
 		ret = mlen;
 		kfree(myString);
 	}
-
 out:
-
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
 	return ret;
@@ -487,7 +485,6 @@ int proc_video_switch_write(struct file *file, const char __user *buf, unsigned 
 		ret = mlen;
 		kfree(myString);
 	}
-
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
@@ -587,7 +584,6 @@ int proc_video_aspect_write(struct file *file, const char __user *buf, unsigned 
 		ret = count;
 		kfree(myString);
 	}
-
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
@@ -885,7 +881,6 @@ int proc_video_videomode_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -984,7 +979,7 @@ int proc_video_pal_h_start_write(struct file *file, const char __user *buf, unsi
 
 		sscanf(myString, "%x", &value);
 
-		fb =  stmfb_get_fbinfo_ptr();
+		fb = stmfb_get_fbinfo_ptr();
 
 		info = (struct fb_info*) fb;
 
@@ -1044,7 +1039,6 @@ int proc_video_pal_h_start_write(struct file *file, const char __user *buf, unsi
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1131,7 +1125,8 @@ int proc_video_pal_h_end_write(struct file *file, const char __user *buf, unsign
 				if (err != 0)
 				{
 					printk("failed to set output window %d, %d, %d\n",  screen_info.xres,  screen_info.yres, err);
-				} else
+				}
+				else
 					printk("set output window to %d, %d ok\n",  screen_info.xres,  screen_info.yres);
 			}
 		}
@@ -1143,7 +1138,6 @@ int proc_video_pal_h_end_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1243,7 +1237,6 @@ int proc_video_pal_v_start_write(struct file *file, const char __user *buf, unsi
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1342,7 +1335,6 @@ int proc_video_pal_v_end_write(struct file *file, const char __user *buf, unsign
 		/* always return count to avoid endless loop */
 		ret = count;
 	}
-
 out:
 	free_page((unsigned long)page);
 	kfree(myString);
@@ -1507,7 +1499,6 @@ int proc_video_videomode_preferred_write(struct file *file, const char __user *b
 		printk("%s\n", myString);
 		kfree(myString);
 	}
-
 out:
 	free_page((unsigned long)page);
 	mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));

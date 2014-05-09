@@ -106,7 +106,6 @@ unsigned int    i;
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyExternalTimeMapping,					PolicyValueDisapply );
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyExternalTimeMappingVsyncLocked,			PolicyValueDisapply );
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyAVDSynchronization,   				PolicyValueApply );
-
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyClampPlaybackIntervalOnPlaybackDirectionChange,	PolicyValueApply );
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyTrickModeDomain,	 				PolicyValueTrickModeAuto );
 

@@ -233,7 +233,7 @@ MlpAudioCodecStreamParameterContext_t  *Context = (MlpAudioCodecStreamParameterC
 	return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -268,7 +268,7 @@ MlpAudioCodecDecodeContext_t   *Context        = (MlpAudioCodecDecodeContext_t *
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

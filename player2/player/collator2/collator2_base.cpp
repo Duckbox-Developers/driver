@@ -599,7 +599,7 @@ unsigned int	CodedFrameBufferSize;
 //	we hit a confirmed reversal point).
 //
 //	Note we stack the buffer, with the reversible point flag encoded in 
-//	bit 0, this assumes that buffer will be alligned to 16 bits at least 
+//	bit 0, this assumes that buffer will be aligned to 16 bits at least
 //	(32 expected). since this may not be true on future processors, we 
 //	test this assumption.
 //
@@ -788,7 +788,7 @@ unsigned long long 	 NewOffset;
 //
 //      Protected - This is a fairly crucial function, it takes the 
 //	accumulated data buffer and outputs the individual collated frames.
-//	it also manages the aquistition of a new operating buffer when 
+//	it also manages the acquisition of a new operating buffer when
 //	appropriate.
 //
 
@@ -868,7 +868,7 @@ unsigned char		 *TransferTo;
     }
 
     //
-    // Now we have finished partitioning, do we need to compact the partioning list 
+    // Now we have finished partitioning, do we need to compact the partitioning list
     // NOTE <= in loop copies the current partition also.
     //
 
@@ -1262,7 +1262,7 @@ long long		 Delay;
         return;
 
     //
-    // Obtain the relevent data
+    // Obtain the relevant data
     //
 
     Status	= OutputTimer->GetStreamStartDelay( &StreamDelay );

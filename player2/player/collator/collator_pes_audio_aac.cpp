@@ -82,7 +82,7 @@ Collator_PesAudioAac_c::Collator_PesAudioAac_c( void )
 /// see ISO/IEC 14496-3 for more details ($1.7.2) 
 ///
 /// Weak start codes are, in fact, the primary reason we have
-/// to verify the header of the subsequent frame before emitting the preceeding one.
+/// to verify the header of the subsequent frame before emitting the preceding one.
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///

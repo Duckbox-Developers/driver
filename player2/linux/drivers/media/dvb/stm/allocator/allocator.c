@@ -15,6 +15,7 @@
 #if defined(MULTICOM406)
 #include "ics.h"
 #endif
+
 /* --- */
 
 #include "allocatorio.h"
@@ -274,7 +275,6 @@ ICS_ERROR IcsErr;
     AllocatorContext->UnCachedAddress	= NULL;
     AllocatorContext->PhysicalAddress	= NULL;
 
-        
     AllocatorContext->CachedAddress	= ioremap_cache((unsigned int)AllocatorContext->Memory,AllocatorContext->Size);
     AllocatorContext->PhysicalAddress	= AllocatorContext->Memory ;
     AllocatorContext->UnCachedAddress	= (unsigned char *)OSDEV_IOReMap( (unsigned int)AllocatorContext->PhysicalAddress, AllocatorContext->Size );

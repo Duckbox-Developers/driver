@@ -368,7 +368,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders( void )
 				else if( (Code & VOP_START_CODE_MASK) == VOP_START_CODE )
 				{
 						// report (severity_error,"%x VOP_START_CODE\n",VOP_START_CODE);
-						// NOTE the vop reading depends on a valid Vol having been aquired
+						// NOTE the vop reading depends on a valid Vol having been acquired
 						if( StreamParametersSet )
 						{
 								Mpeg4VopHeader_t Vop;

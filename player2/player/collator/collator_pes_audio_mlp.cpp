@@ -57,7 +57,7 @@ Date        Modification                                    Name
 #define NB_SAMPLES_48_KHZ 960
 #define NB_SAMPLES_96_KHZ 1920
 #define NB_SAMPLES_192_KHZ 1920
-#warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync"
+/* #warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync" */
 
 const char NbAudioFramesToGlob[MlpSamplingFreqNone] =
 { 
@@ -102,7 +102,7 @@ Collator_PesAudioMlp_c::Collator_PesAudioMlp_c( void )
 /// Search for the MLP audio synchonrization word and, if found, report its offset.
 ///
 /// Weak start codes are, in fact, the primary reason we have
-/// to verify the header of the subsequent frame before emitting the preceeding one.
+/// to verify the header of the subsequent frame before emitting the preceding one.
 ///
 /// MLP frames synchronization can be of two types: minor and major sync
 /// This function will synchronize on major mlp sync

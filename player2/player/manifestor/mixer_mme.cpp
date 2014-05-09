@@ -1409,7 +1409,7 @@ int Mixer_Mme_c::SelectGainBasedOnMuteSettings(int ClientIdOrMixingStage, int No
 
 ////////////////////////////////////////////////////////////////////////////
 /// 
-/// Intialize and terminate the appropriate global resources based the state of the inputs.
+/// Initialize and terminate the appropriate global resources based the state of the inputs.
 ///
 /// Basically we examine the state of all the inputs (including interactive inputs)
 /// and determine which global services should be running. Then we make it so.
@@ -1881,7 +1881,7 @@ unsigned long long DisplayTimeOfNextCommit;
 /// the data in the decode buffers. When the decode buffers are consumed the
 /// mixer enters the starved state and mutes itself.
 ///
-/// If the PCM player buffers have a start threshhold of their own buffer
+/// If the PCM player buffers have a start threshold of their own buffer
 /// length then this method can simply mix in advance consuming samples from
 /// the buffer queue. Alternatively, if the PCM player buffer is 'short' then
 /// the buffer can simply be filled with silence.
@@ -1931,13 +1931,13 @@ PcmPlayerSurfaceParameters_t NewSurfaceParameters[MIXER_AUDIO_MAX_OUTPUT_BUFFERS
     // perform a fresh lookup.
     NominalOutputSamplingFrequency = LookupMixerSamplingFrequency();
     unsigned int NominalMixerGranuleSize = LookupMixerGranuleSize(NominalOutputSamplingFrequency);
-    
+
     if( PcmPlayerSurfaceParameters.PeriodParameters.SampleRateHz == NominalOutputSamplingFrequency )
     {
         MIXER_DEBUG( "Ingoring redundant attempt to update the audio parameters.\n" );
         return PlayerNoError;
     }   
-    
+
     for(unsigned int n=0;n<ActualNumDownstreamCards;n++) 
     {
         unsigned int ActualSampleRateHz = LookupOutputSamplingFrequency( n );
@@ -2988,8 +2988,8 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
     if( CurrentSortValue == TargetSortValue )
     {
 	struct snd_pseudo_mixer_downmix_index *index = DownmixFirmware->index + min_index;
-	snd_pseudo_mixer_downmix_Q15 *data = (snd_pseudo_mixer_downmix_Q15 *)(DownmixFirmware->index + 
-		DownmixFirmware->header.num_index_entries);
+	snd_pseudo_mixer_downmix_Q15 *data = (snd_pseudo_mixer_downmix_Q15 *)
+		(DownmixFirmware->index + DownmixFirmware->header.num_index_entries);
 	snd_pseudo_mixer_downmix_Q15 *table = data + index->offset;
 	
 	DMix.Config[DMIX_USER_DEFINED] = ACC_MME_TRUE;
@@ -3227,7 +3227,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
         SpdifOut.Config.UpdateSpdifControl = 1;
         SpdifOut.Config.UpdateMetaData = 1; // this is supposed to be FatPipe only but the examples set it...
         SpdifOut.Config.SpdifCompressed = 1;
-        SpdifOut.Config.AddIECPreamble = 1;;
+        SpdifOut.Config.AddIECPreamble = 1;
         SpdifOut.Config.ForcePC = 1; // compressed mode: firmware will get the stream type from the to Preamble_PC below
         
         //
@@ -3686,7 +3686,7 @@ unsigned int OutputBufferIndex = MixerCommand.Command.NumberInputBuffers;
 PlayerStatus_t Mixer_Mme_c::FillOutOutputBuffer( MME_DataBuffer_t *DataBuffer )
 {
 PlayerStatus_t Status;
-unsigned int PeriodSize = PcmPlayerSurfaceParameters.PeriodSize;;
+unsigned int PeriodSize = PcmPlayerSurfaceParameters.PeriodSize;
 
     // this value cannot be pre-configured from Mixer_Mme_c::Reset because its
     // value can be changed by Mixer_Mme_c::SetModuleParameters.
@@ -3746,7 +3746,7 @@ PlayerStatus_t Status;
             {
                 PrimaryCodedDataType = OutputEncoding;
                 // encoding has changed, so the sample rate and the number of samples of the 
-                // bypassed ouput may have also...
+                // bypassed output may have also...
                 PcmPlayerNeedsParameterUpdate = true;
                 MMENeedsParameterUpdate = true;
 

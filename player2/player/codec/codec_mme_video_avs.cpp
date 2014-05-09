@@ -96,7 +96,7 @@ static BufferDataDescriptor_t           AvsMbStructInitialDescriptor = BUFFER_AV
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoAvs_c::Codec_MmeVideoAvs_c( void )
@@ -161,8 +161,6 @@ Codec_MmeVideoAvs_c::Codec_MmeVideoAvs_c( void )
 
     Configuration.TrickModeParameters.DefaultGroupSize                  = 12;
     Configuration.TrickModeParameters.DefaultGroupReferenceFrameCount   = 4;
-
-//
 
     Reset();
 }
@@ -303,7 +301,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutTransformerInitializationParameters(
 
     CODEC_TRACE("%s\n", __FUNCTION__);
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     AvsInitializationParameters.CircularBufferBeginAddr_p       = (U32*)0x00000000;
@@ -341,7 +339,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutTransformerInitializationParameters(
     }
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(AvsInitializationParameters);
@@ -366,7 +364,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutSetStreamParametersCommand( void )
     AvsCodecStreamParameterContext_t*   Context         = (AvsCodecStreamParameterContext_t*)StreamParameterContext;
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     DecodingWidth                                       = Parsed->SequenceHeader.horizontal_size;
@@ -377,7 +375,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutSetStreamParametersCommand( void )
     Context->StreamParameters.Progressive_sequence      = (AVS_SeqSyntax_t)Parsed->SequenceHeader.progressive_sequence;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -687,7 +685,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(       void )
     #endif
     //}}}
 
-    // Fillout the actual command
+    // Fill out the actual command
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);

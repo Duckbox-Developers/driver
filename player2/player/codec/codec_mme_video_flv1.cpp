@@ -90,7 +90,7 @@ Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoFlv1_c::Codec_MmeVideoFlv1_c( void )
@@ -269,7 +269,7 @@ CodecStatus_t   Codec_MmeVideoFlv1_c::InitializeMMETransformer(      void )
 //
 CodecStatus_t   Codec_MmeVideoFlv1_c::FillOutTransformerInitializationParameters( void )
 {
-    // Fillout the command parameters
+    // Fill out the command parameters
     Flv1InitializationParameters.codec_id                       = FLV1;
     Flv1InitializationParameters.CodedWidth                     = DecodingWidth;
     Flv1InitializationParameters.CodedHeight                    = DecodingHeight;
@@ -278,7 +278,7 @@ CodecStatus_t   Codec_MmeVideoFlv1_c::FillOutTransformerInitializationParameters
     CODEC_TRACE("  DecodingWidth              %6u\n", DecodingWidth);
     CODEC_TRACE("  DecodingHeight             %6u\n", DecodingHeight);
 
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(FLV1_InitTransformerParam_t);
     MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&Flv1InitializationParameters);
 
@@ -384,7 +384,7 @@ CodecStatus_t   Codec_MmeVideoFlv1_c::FillOutDecodeCommand(       void )
     KnownLastSliceInFieldFrame                  = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -405,7 +405,7 @@ CodecStatus_t   Codec_MmeVideoFlv1_c::FillOutDecodeCommand(       void )
     Picture->size_in_bits                       = CodedDataLength * 8;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset (&DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t));

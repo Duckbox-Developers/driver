@@ -54,7 +54,7 @@ static inline unsigned int BE2LE (unsigned int Value)
 {
     return (((Value&0xff)<<24) | ((Value&0xff00)<<8) | ((Value>>8)&0xff00) | ((Value>>24)&0xff));
 }
-//}}}  
+//}}}
 
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ FrameParser_AudioVorbis_c::FrameParser_AudioVorbis_c( void )
 
     Reset();
 }
-//}}}  
+//}}}
 //{{{  Destructor
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -88,7 +88,7 @@ FrameParser_AudioVorbis_c::~FrameParser_AudioVorbis_c (void)
     Halt();
     Reset();
 }
-//}}}  
+//}}}
 
 //{{{  Reset
 /// /////////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::Reset (void )
 {
     return FrameParser_Audio_c::Reset();
 }
-//}}}  
+//}}}
 //{{{  RegisterOutputBufferRing
 /// /////////////////////////////////////////////////////////////////////////
 ///
@@ -119,7 +119,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::RegisterOutputBufferRing (Ring_
     // Pass the call down the line
     return FrameParser_Audio_c::RegisterOutputBufferRing( Ring );
 }
-//}}}  
+//}}}
 
 //{{{  ResetReferenceFrameList
 // /////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ResetReferenceFrameList( void )
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  PrepareReferenceFrameList
 /// /////////////////////////////////////////////////////////////////////////
 ///
@@ -144,7 +144,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PrepareReferenceFrameList (void
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  UpdateReferenceFrameList
 /// /////////////////////////////////////////////////////////////////////////
 ///
@@ -154,7 +154,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::UpdateReferenceFrameList (void)
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 
 //{{{  ProcessReverseDecodeStack
 // /////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeStack (void
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  ProcessReverseDecodeUnsatisfiedReferenceStack
 // /////////////////////////////////////////////////////////////////////////
 ///
@@ -176,7 +176,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeUnsatisfied
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  PurgeReverseDecodeUnsatisfiedReferenceStack
 // /////////////////////////////////////////////////////////////////////////
 ///
@@ -187,7 +187,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeUnsatisfiedRe
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  PurgeReverseDecodeStack
 // /////////////////////////////////////////////////////////////////////////
 ///
@@ -198,7 +198,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeStack (void)
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 
 //{{{  PurgeQueuedPostDecodeParameterSettings
 ///////////////////////////////////////////////////////////////////////////
@@ -211,7 +211,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeQueuedPostDecodeParameterS
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  ProcessQueuedPostDecodeParameterSettings
 ///////////////////////////////////////////////////////////////////////////
 ///
@@ -223,7 +223,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessQueuedPostDecodeParamete
 {
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 //{{{  GeneratePostDecodeParameterSettings
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -252,7 +252,6 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSett
 
     if( CodedFrameParameters->PlaybackTimeValid )
     {
-        FRAME_TRACE("%s:%d\n", __FUNCTION__, __LINE__);
         ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
         TranslatePlaybackTimeNativeToNormalized( CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime );
     }
@@ -264,7 +263,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSett
     }
 
     //FRAME_TRACE("%s:%llx, %llx\n", __FUNCTION__, ParsedFrameParameters->NormalizedPlaybackTime, ParsedFrameParameters->NativePlaybackTime);
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     Status                                              = HandleCurrentFrameNormalizedPlaybackTime();
     if (Status != FrameParserNoError)
         return Status;
@@ -310,7 +309,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSett
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 
 //{{{  TestForTrickModeFrameDrop
 // /////////////////////////////////////////////////////////////////////////
@@ -322,7 +321,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::TestForTrickModeFrameDrop (void
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 
 //{{{  ReadHeaders
 /// /////////////////////////////////////////////////////////////////////////
@@ -391,7 +390,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadHeaders (void)
     return FrameParserNoError;
 
 }
-//}}}  
+//}}}
 //{{{  ReadStreamHeaders
 /// /////////////////////////////////////////////////////////////////////////
 ///
@@ -511,5 +510,5 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadStreamHeaders (void)
 
     return FrameParserNoError;
 }
-//}}}  
+//}}}
 

@@ -81,7 +81,7 @@ Collator_PesAudioMpeg_c::Collator_PesAudioMpeg_c( void )
 /// set bits (starting on a byte boundary).
 ///
 /// Weak start codes are, in fact, the primary reason we have
-/// to verify the header of the subsequent frame before emitting the preceeding one.
+/// to verify the header of the subsequent frame before emitting the preceding one.
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///

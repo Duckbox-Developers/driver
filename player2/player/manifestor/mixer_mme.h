@@ -143,8 +143,8 @@ typedef struct
     MME_Resamplex2GlobalParams_t Resamplex2;
     MME_CMCGlobalParams_t       CMC;
     MME_DMixGlobalParams_t      Dmix;
-    MME_FatpipeGlobalParams_t	FatPipeOrSpdifOut;
-    MME_LimiterGlobalParams_t	Limiter;
+    MME_FatpipeGlobalParams_t   FatPipeOrSpdifOut;
+    MME_LimiterGlobalParams_t   Limiter;
 } MME_LxPcmPostProcessingGlobalParameters_Frozen_t; //!< PcmPostProcessings Params
 
 //Redefine this to deal with aggregation of parameter chains
@@ -178,21 +178,21 @@ typedef struct
 typedef struct
 {
     U32                   StructSize; //!< Size of this structure
-	
+
     //! System Init 
     enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached 
     //!< data aren't sent back at the end of the command
-	
+
     //! Mixer Init Params    
     U32                   NbInput; //the number of inputs that the mixer will control simultaneously (this number is limited by definition to 4)
     U32                   MaxNbOutputSamplesPerTransform; //the largest window size the host wants to control
-	
-    U32                   OutputNbChannels; 	//the interleaving of the output buffer that the host will send to the mixer at each transform
-    enum eAccFsCode       OutputSamplingFreq;	//the target output sampling frequency at which the audio will be played back
-	
+
+    U32                   OutputNbChannels;     //the interleaving of the output buffer that the host will send to the mixer at each transform
+    enum eAccFsCode       OutputSamplingFreq;   //the target output sampling frequency at which the audio will be played back
+
     //! Mixer specific global parameters 
-    MME_LxMixerBDTransformerGlobalParams_Extended_t	GlobalParams; 
-	
+    MME_LxMixerBDTransformerGlobalParams_Extended_t     GlobalParams; 
+
 } MME_LxMixerTransformerInitBDParams_Extended_t; 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -207,12 +207,12 @@ private:
     {
 	InputState_t State;
 	Manifestor_AudioKsound_c *Manifestor;
-        ParsedAudioParameters_t Parameters;
+	ParsedAudioParameters_t Parameters;
 	bool Muted;
     } Clients[MIXER_MAX_CLIENTS];
-    
+
     OS_Mutex_t ClientsStateManagementMutex;
-    
+
     struct
     {
         InputState_t State;
@@ -232,19 +232,19 @@ private:
     /// priority boosted.
     bool MMECallbackThreadBoosted;
     bool MMENeedsParameterUpdate;
-    
+
     /// Copy of the sampling frequency selected when the mixer transformer is initialized. May be a zero.
     unsigned int InitializedSamplingFrequency;
-    
+
     /// Copy of the sampling frequency selected when the mixer transformer was configured. Should never be
     /// zero at the point of 'consumption'.
     unsigned int MixerSamplingFrequency;
-    
+
     /// Copy of the sampling frequency selected when the PCM player was configured. This is basically a
     /// copy of Mixer_Mme_c::MixerSamplingFrequency with a subtly different life time. Should never be zero
     /// at the point of 'consumption'.
     unsigned int NominalOutputSamplingFrequency;
-    
+
     /// Copy of the mixer granule (period size) selected when the mixer transformer was configured. Should
     /// never be zero at the point of 'consumption'.
     unsigned int MixerGranuleSize;
@@ -255,7 +255,7 @@ private:
     /// interface level. Be warned that this structure may be updated without notice (or locking) from
     /// other threads. Where stability is valued use Mixer_Mme_c::OutputConfiguration instead.
     struct snd_pseudo_mixer_settings *UpstreamConfiguration;
-    
+
     /// Latched copy of the upstream configuration. The copy taken whenever ALSA notifies us that the state
     /// has changed. The copy is used to configure the firmware since it is stable (i.e. its value doesn't
     /// change except when we let it).
@@ -268,7 +268,7 @@ private:
 
     enum eAccAcMode LastInputMode[MIXER_AUDIO_MAX_OUTPUT_BUFFERS]; ///< Used to suppress duplicative messages
     enum eAccAcMode LastOutputMode[MIXER_AUDIO_MAX_OUTPUT_BUFFERS]; ///< Used to suppress duplicative messages
-    
+
     /// Whenever the mixer starts up we keep a copy the output topology to keep us safe against
     /// any changes to this structure.
     struct snd_pseudo_mixer_downstream_topology ActualTopology;
@@ -280,10 +280,10 @@ private:
     OS_Event_t PcmPlayerSurfaceParametersUpdated;
     void *PcmPlayerMappedSamples[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
     bool PcmPlayerNeedsParameterUpdate;
-    
+
     /// Index of the primary client. The primary client is the one that dictacts the hardware settings.
     unsigned int PrimaryClient;
-    
+
     struct
     {
 	char         TransformName[MME_MAX_TRANSFORMER_NAME];
@@ -317,7 +317,7 @@ private:
     unsigned int LookupMixerSamplingFrequency();
     enum eAccAcMode LookupMixerAudioMode();
     unsigned int LookupMixerGranuleSize(unsigned int Frequency);
-    
+
     int SelectGainBasedOnMuteSettings(int ClientIdOrMixingStage, int NormalValue, int MutedValue);
 
     PlayerStatus_t UpdateGlobalState();
@@ -339,13 +339,13 @@ private:
     PlayerStatus_t SendMMEMixCommand();
     PlayerStatus_t WaitForMMECallback();
     PlayerStatus_t UpdateMixerParameters();
-    
+
     void ResetOutputConfiguration();
     void ResetMixingMetadata();
 
     PlayerStatus_t FillOutTransformerGlobalParameters( MME_LxMixerBDTransformerGlobalParams_Extended_t *
 						       GlobalParams );
-    
+
     PcmPlayer_c::OutputEncoding LookupOutputEncoding( int dev_num, unsigned int freq = 0 );
     unsigned int LookupOutputSamplingFrequency( int dev_num );
 #if 0
@@ -358,23 +358,23 @@ private:
     unsigned int LookupRepetitionPeriod( PcmPlayer_c::OutputEncoding Encoding );
 
     void FillOutDeviceDownmixParameters( MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams, 
-	    			         int dev_num, bool EnableDMix );
+					 int dev_num, bool EnableDMix );
     void FillOutDeviceSpdifParameters( MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams,
-	    			       int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding );
+					 int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding );
     PlayerStatus_t FillOutDevicePcmParameters( MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
 						       PcmParams , int dev_num );
 
-    
+
     PlayerStatus_t AggregatePcmParameters( MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
 						       PcmParams );
-    
+
     PlayerStatus_t FillOutMixCommand();
     PlayerStatus_t FillOutOutputBuffer( MME_DataBuffer_t *DataBuffer );
     void FillOutInputBuffer( unsigned int ManifestorId );
     void FillOutInteractiveBuffer( unsigned int InteractiveId );
     void FillOutSilentBuffer( MME_DataBuffer_t *DataBuffer,
                               tMixerFrameParams *MixerFrameParams = NULL );
-    
+
     PlayerStatus_t UpdateOutputBuffer( MME_DataBuffer_t *DataBuffer );
     void UpdateInputBuffer( unsigned int ManifestorId );
     void UpdateInteractiveBuffer( unsigned int InteractiveId );
@@ -389,13 +389,13 @@ private:
     static unsigned int LookupSpdifPreamblePc( PcmPlayer_c::OutputEncoding Encoding );
     static const char * LookupAudioMode( enum eAccAcMode DiscreteMode );
     static enum eAccAcMode TranslateChannelAssignmentToAudioMode(
-	        struct snd_pseudo_mixer_channel_assignment ChannelAssignment );
+        struct snd_pseudo_mixer_channel_assignment ChannelAssignment );
     static struct snd_pseudo_mixer_channel_assignment TranslateAudioModeToChannelAssignment(
-	    	enum eAccAcMode AudioMode );
+        enum eAccAcMode AudioMode );
     static enum eAccAcMode TranslateDownstreamCardToMainAudioMode(
-	    	struct snd_pseudo_mixer_downstream_card *DownstreamCard );
+        struct snd_pseudo_mixer_downstream_card *DownstreamCard );
     static enum eAccAcMode TranslateDownstreamCardToAuxAudioMode(
-	    	struct snd_pseudo_mixer_downstream_card *DownstreamCard );
+        struct snd_pseudo_mixer_downstream_card *DownstreamCard );
     static enum eAccAcMode LookupFatPipeOutputMode(enum eAccAcMode InputMode);
 
 
@@ -424,7 +424,7 @@ public:
 
     void PlaybackThread();
     void CallbackFromMME( MME_Event_t Event, MME_Command_t *Command );
-    
+
     PlayerStatus_t AllocInteractiveInput( int *InteractiveId );
     PlayerStatus_t FreeInteractiveInput( int InteractiveId );
     PlayerStatus_t SetupInteractiveInput( int InteractiveId, struct alsa_substream_descriptor *Descriptor );
@@ -437,7 +437,7 @@ public:
     inline unsigned int GetWorstCaseStartupDelayInMicroSeconds() {
 	return (MIXER_NUM_PERIODS * MIXER_MAX_48K_GRANULE * 1000000ull) / 32000;
     }
-    
+
 };
 
 #endif // H_MIXER_MME_CLASS

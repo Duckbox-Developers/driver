@@ -11,7 +11,7 @@
 extern u64 __xdiv64_32(u64 n, u32 d);
 
 u64 __udivdi3(u64 n, u64 d) {
-	if (unlikely(d & 0xffffffff00000000LL))
+	if (unlikely(d & 0xffffffff00000000ULL))
     {
 		printk(KERN_WARNING "Workaround for 64-bit/64-bit division.");
 		uint32_t di = d;

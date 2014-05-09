@@ -1,8 +1,8 @@
-/* 
+/*
  * e2_proc_misc.c
  */
 
-#include <linux/proc_fs.h>  	/* proc fs */ 
+#include <linux/proc_fs.h>  	/* proc fs */
 #include <asm/uaccess.h>    	/* copy_from_user */
 
 #include <linux/dvb/video.h>	/* Video Format etc */
@@ -80,4 +80,5 @@ int proc_misc_12V_output_read (char *page, char **start, off_t off, int count, i
 
 	return len;
 }
+
 #endif

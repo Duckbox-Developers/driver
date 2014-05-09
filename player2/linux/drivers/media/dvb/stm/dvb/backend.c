@@ -627,7 +627,6 @@ int DvbStreamCheckDrained    (struct StreamContext_s*         Stream)
 
     return Result;
 }
-
 /*}}}*/
 /*{{{  DvbStreamStep*/
 int DvbStreamStep      (struct StreamContext_s*         Stream)

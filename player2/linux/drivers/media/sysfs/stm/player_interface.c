@@ -68,7 +68,7 @@ int register_player_interface  (char*                                   Name,
 
 }
 EXPORT_SYMBOL(register_player_interface);
-/*}}}  */
+/*}}}*/
 
 /*{{{  PlayerInterfaceInit*/
 int PlayerInterfaceInit (void)
@@ -86,7 +86,7 @@ int PlayerInterfaceInit (void)
 
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  PlayerInterfaceDelete*/
 int PlayerInterfaceDelete ()
 {
@@ -98,7 +98,7 @@ int PlayerInterfaceDelete ()
     PlayerInterface     = NULL;
     return 0;
 }
-/*}}}  */
+/*}}}*/
 
 /*{{{  ComponentGetAttribute*/
 int ComponentGetAttribute      (player_component_handle_t       Component,
@@ -113,7 +113,7 @@ int ComponentGetAttribute      (player_component_handle_t       Component,
 
     return Result;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  ComponentSetAttribute*/
 int ComponentSetAttribute      (player_component_handle_t       Component,
                                 const char*                     Attribute,
@@ -129,11 +129,11 @@ int ComponentSetAttribute      (player_component_handle_t       Component,
 
     return Result;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  PlayerRegisterEventSignalCallback*/
 player_event_signal_callback PlayerRegisterEventSignalCallback (player_event_signal_callback    Callback)
 {
     return PlayerInterface->Ops->player_register_event_signal_callback (Callback);
 }
-/*}}}  */
+/*}}}*/
 

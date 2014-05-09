@@ -351,7 +351,7 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::FillOutSetStreamParametersCommand( void
 	return Status;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -385,7 +385,7 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::FillOutDecodeCommand(       void )
     memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize = sizeof(Context->DecodeStatus);
@@ -431,7 +431,7 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::FillOutSendBufferCommand(       void )
     memset( &Context->BufferStatus, 0, sizeof(Context->BufferStatus) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     Context->BufferCommand.CmdStatus.AdditionalInfoSize = sizeof(Context->BufferStatus);

@@ -36,7 +36,7 @@ static OS_TaskEntry (EventSignalThreadStub)
     OS_TerminateThread ();
     return NULL;
 }
-//}}}  
+//}}}
 
 //{{{  HavanaPlayer_c
 HavanaPlayer_c::HavanaPlayer_c (void)
@@ -69,7 +69,7 @@ HavanaPlayer_c::HavanaPlayer_c (void)
     EventSignalCallback         = NULL;
 
 }
-//}}}  
+//}}}
 //{{{  ~HavanaPlayer_c
 HavanaPlayer_c::~HavanaPlayer_c (void)
 {
@@ -132,7 +132,7 @@ HavanaPlayer_c::~HavanaPlayer_c (void)
     EventSignalCallback = NULL;
 
 }
-//}}}  
+//}}}
 //{{{  Init
 HavanaStatus_t HavanaPlayer_c::Init (void)
 {
@@ -181,7 +181,7 @@ HavanaStatus_t HavanaPlayer_c::Init (void)
             return HavanaError;
         }
     }
-    //}}}  
+    //}}}
 
     if (BufferManager == NULL)
         BufferManager   = new BufferManager_Generic_c();
@@ -208,12 +208,12 @@ HavanaStatus_t HavanaPlayer_c::Init (void)
         HAVANA_ERROR("Failed to set up player event signal\n");
         return HavanaError;
     }
-    //Player->SpecifySignalledEvents (PlayerAllPlaybacks, PlayerAllStreams, EventAllEvents); // Must be done by every stream
 
+    //Player->SpecifySignalledEvents (PlayerAllPlaybacks, PlayerAllStreams, EventAllEvents); // Must be done by every stream
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 
 //{{{  CallFactory
 HavanaStatus_t HavanaPlayer_c::CallFactory     (const char*             Id,
@@ -234,6 +234,7 @@ HavanaStatus_t HavanaPlayer_c::CallFactory     (const char*             Id,
             return Factory->Build (Class);
         }
     }
+
     switch (Component)
     {
         case ComponentCollator:
@@ -261,7 +262,7 @@ HavanaStatus_t HavanaPlayer_c::CallFactory     (const char*             Id,
 
     return HavanaNoFactory;
 }
-//}}}  
+//}}}
 //{{{  RegisterFactory
 HavanaStatus_t HavanaPlayer_c::RegisterFactory (const char*             Id,
                                                 const char*             SubId,
@@ -311,7 +312,7 @@ HavanaStatus_t HavanaPlayer_c::RegisterFactory (const char*             Id,
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 //{{{  DeRegisterFactory
 HavanaStatus_t HavanaPlayer_c::DeRegisterFactory       (const char*             Id,
                                                         const char*             SubId,
@@ -351,13 +352,13 @@ HavanaStatus_t HavanaPlayer_c::DeRegisterFactory       (const char*             
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 
 //{{{  GetManifestor
 //{{{  doxynote
 /// \brief  access a manifestor - or create a new one if it doesn't exist
 /// \return Havana status code, HavanaNoError indicates success.
-//}}}  
+//}}}
 HavanaStatus_t HavanaPlayer_c::GetManifestor   (char*                           Media,
                                                 char*                           Encoding,
                                                 unsigned int                    SurfaceId,
@@ -383,12 +384,12 @@ HavanaStatus_t HavanaPlayer_c::GetManifestor   (char*                           
 
     return Status;
 }
-//}}}  
+//}}}
 //{{{  GetDemuxContext
 //{{{  doxynote
 /// \brief  Create a new demux context
 /// \return Havana status code, HavanaNoError indicates success.
-//}}}  
+//}}}
 HavanaStatus_t HavanaPlayer_c::GetDemuxContext (unsigned int                    DemuxId,
                                                 class Demultiplexor_c**         Demultiplexor,
                                                 DemultiplexorContext_t*         DemultiplexorContext)
@@ -413,7 +414,7 @@ HavanaStatus_t HavanaPlayer_c::GetDemuxContext (unsigned int                    
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 //{{{  CreatePlayback
 HavanaStatus_t HavanaPlayer_c::CreatePlayback    (HavanaPlayback_c**      HavanaPlayback)
 {
@@ -465,7 +466,7 @@ HavanaStatus_t HavanaPlayer_c::CreatePlayback    (HavanaPlayback_c**      Havana
 
     return HavanaNoError;
 }
-//}}}  
+//}}}
 //{{{  DeletePlayback
 HavanaStatus_t HavanaPlayer_c::DeletePlayback    (HavanaPlayback_c*       HavanaPlayback)
 {
@@ -493,7 +494,8 @@ HavanaStatus_t HavanaPlayer_c::DeletePlayback    (HavanaPlayback_c*       Havana
     OS_UnLockMutex (&Lock);
     return HavanaNoError;
 }
-//}}}  
+//}}}
+
 //{{{  CreateDisplay
 HavanaStatus_t HavanaPlayer_c::CreateDisplay   (char*                           Media,
                                                 unsigned int                    SurfaceId,
@@ -528,8 +530,7 @@ HavanaStatus_t HavanaPlayer_c::CreateDisplay   (char*                           
 
     return HavanaNoError;
 }
-//}}}  
-
+//}}}
 #ifdef __TDT__
 //{{{  isDisplayCreated
 int HavanaPlayer_c::isDisplayCreated   (char*           Media,
@@ -554,9 +555,8 @@ int HavanaPlayer_c::isDisplayCreated   (char*           Media,
 
     return 1;
 }
-//}}}  
+//}}}
 #endif
-
 //{{{  DeleteDisplay
 HavanaStatus_t HavanaPlayer_c::DeleteDisplay   (char*           Media,
                                                 unsigned int    SurfaceId)
@@ -583,8 +583,7 @@ HavanaStatus_t HavanaPlayer_c::DeleteDisplay   (char*           Media,
 
     return HavanaNoError;
 }
-//}}}  
-
+//}}}
 //{{{  SynchronizeDisplay
 HavanaStatus_t HavanaPlayer_c::SynchronizeDisplay   (char*           Media,
                                                      unsigned int    SurfaceId)
@@ -613,7 +612,7 @@ HavanaStatus_t HavanaPlayer_c::SynchronizeDisplay   (char*           Media,
 
     return (Status==PlayerNoError) ? HavanaNoError : HavanaError;
 }
-//}}}  
+//}}}
 
 //{{{  RegisterEventSignalCallback
 player_event_signal_callback HavanaPlayer_c::RegisterEventSignalCallback       (player_event_signal_callback   Callback)
@@ -623,7 +622,7 @@ player_event_signal_callback HavanaPlayer_c::RegisterEventSignalCallback       (
     this->EventSignalCallback   = Callback;
     return PreviousCallback;
 }
-//}}}  
+//}}}
 //{{{  EventSignalThread
 void  HavanaPlayer_c::EventSignalThread (void)
 {
@@ -788,12 +787,12 @@ void  HavanaPlayer_c::EventSignalThread (void)
                 if (Event.code != PLAYER_EVENT_INVALID)
                     EventSignalCallback (&Event);
             }
-            //}}}  
+            //}}}
         }
     }
 
     OS_SetEvent (&EventSignalThreadTerminated);
     HAVANA_DEBUG ("Terminating\n");
 }
-//}}}  
+//}}}
 

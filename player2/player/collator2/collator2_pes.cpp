@@ -468,7 +468,7 @@ unsigned int	 Flags;
     SpanningDecodeTime          = DecodeTime;
     UseSpanningTime             = true;
 
-    // We have 'consumed' the old values by transfering them to the spanning values.
+    // We have 'consumed' the old values by transferring them to the spanning values.
     PlaybackTimeValid           = false;
     DecodeTimeValid             = false;
 

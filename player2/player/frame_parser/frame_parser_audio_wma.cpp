@@ -441,7 +441,7 @@ FrameParserStatus_t Status;
     }
 
     //
-    // Sythesize the presentation time if required
+    // Synthesize the presentation time if required
     //
 
 

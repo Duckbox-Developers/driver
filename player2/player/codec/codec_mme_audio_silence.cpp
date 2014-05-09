@@ -262,7 +262,7 @@ CodecStatus_t   Codec_MmeAudioSilence_c::FillOutSetStreamParametersCommand( void
     }
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     StreamParameterContext->MMECommand.CmdStatus.AdditionalInfoSize        = 0;
@@ -288,7 +288,7 @@ CodecStatus_t   Codec_MmeAudioSilence_c::FillOutDecodeCommand(       void )
     memcpy(&Context->ContextFrameParameters, ParsedFrameParameters->FrameParameterStructure, sizeof(DtshdAudioFrameParameters_t));
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize        = 0;

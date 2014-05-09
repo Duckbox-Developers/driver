@@ -432,7 +432,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::FillOutSetStreamParametersCommand( void 
     if (Status != CodecNoError)
         return Status;
 
-    // Fillout the actual command
+    // Fill out the actual command
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
     Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
@@ -496,7 +496,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::FillOutDecodeCommand(       void )
     // Zero the reply structure
     memset (&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
 
-    // Fillout the actual command
+    // Fill out the actual command
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
     Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);
@@ -1086,9 +1086,9 @@ CodecStatus_t   Codec_MmeAudioStream_c::FillOutTransformContext( void )
     if (State->BufferStructure->ComponentCount != 1)
         CODEC_ERROR("(%s) Decode buffer structure contains unsupported number of components (%d).\n", Configuration.CodecName, State->BufferStructure->ComponentCount);
 
-     TransformContext->MMEBuffers[0].TotalSize          = State->BufferLength - State->BufferStructure->ComponentOffset[0];
-     TransformContext->MMEPages[0].Page_p               = State->BufferPointer + State->BufferStructure->ComponentOffset[0];
-     TransformContext->MMEPages[0].Size                 = State->BufferLength - State->BufferStructure->ComponentOffset[0];
+    TransformContext->MMEBuffers[0].TotalSize          = State->BufferLength - State->BufferStructure->ComponentOffset[0];
+    TransformContext->MMEPages[0].Page_p               = State->BufferPointer + State->BufferStructure->ComponentOffset[0];
+    TransformContext->MMEPages[0].Size                 = State->BufferLength - State->BufferStructure->ComponentOffset[0];
 
     OS_LockMutex (&Lock);
     TransformContext->DecodeInProgress                                  = true;
@@ -1116,7 +1116,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::FillOutTransformCommand( void )
     // Zero the reply structure
     memset (&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
 
-    // Fillout the actual command
+    // Fill out the actual command
     Context->BaseContext.MMECommand.StructSize                          = sizeof(MME_Command_t);
     Context->BaseContext.MMECommand.CmdCode                             = MME_TRANSFORM;
     Context->BaseContext.MMECommand.CmdEnd                              = MME_COMMAND_END_RETURN_NOTIFY;
