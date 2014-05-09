@@ -293,6 +293,8 @@ static int info_model_read(char *page, char **start, off_t off, int count,
   int len = sprintf(page, "adb_box\n");
 #elif defined(VITAMIN_HD5000)
   int len = sprintf(page, "vitamin_hd5000\n");
+#elif defined(SAGEMCOM88)
+  int len = sprintf(page, "sagemcom88\n");
 #else
   int len = sprintf(page, "ufs910\n");
 #endif
@@ -628,7 +630,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/plane/psi_contrast"                                     , NULL, NULL, NULL, NULL, "psi_contrast"},
 	{cProcEntry, "stb/video/plane/psi_tint"                                         , NULL, NULL, NULL, NULL, "psi_tint"},
 	{cProcEntry, "stb/video/plane/psi_apply"                                        , NULL, NULL, NULL, NULL, "psi_apply"},
-#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(SPARK) || defined(SPARK7162)
+#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)  || defined(VITAMIN_HD5000)
 	{cProcDir  , "stb/cec"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_activesource"                                       , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_standby"                                            , NULL, NULL, NULL, NULL, ""},

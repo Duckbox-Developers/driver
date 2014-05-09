@@ -45,6 +45,7 @@
 #include <linux/poll.h>
 #include <linux/workqueue.h>
 
+#include "aotom_ywdefs.h"
 #include "aotom_main.h"
 #include "utf.h"
 
@@ -215,7 +216,7 @@ static int draw_thread(void *arg)
 	int len = data->length;
 	int off = 0;
 	int doton3 = 0;
-	
+
 	if (YWPANEL_width == 4 && len == 5 && data->data[2] == '.')
 		doton3 = 1;
 
@@ -311,8 +312,9 @@ int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	}
 
 	if (draw_data->length < YWPANEL_width) {
-	char buf[DISPLAYWIDTH_MAX];
-	memset(buf, ' ', sizeof(buf));
+	char buf[DISPLAYWIDTH_MAX + 1];
+	memset(buf, 0, sizeof(buf));
+	memset(buf, ' ', sizeof(buf) - 1);
 	if (draw_data->length)
 		memcpy(buf, draw_data->data, draw_data->length);
 	YWPANEL_VFD_ShowString(buf);
@@ -420,12 +422,17 @@ static ssize_t AOTOMdev_write(struct file *filp, const char *buff, size_t len, l
 
 	dprintk(5, "%s > (len %d, offs %d)\n", __func__, len, (int) *off);
 
+	//printk("buff = %s\n", buff);
+
 	if (((tFrontPanelOpen *)(filp->private_data))->minor != FRONTPANEL_MINOR_VFD) {
 		printk("Error Bad Minor\n");
 		return -EOPNOTSUPP;
 	}
 
-	kernel_buf = kmalloc(len, GFP_KERNEL);
+	kernel_buf = kmalloc(len + 1, GFP_KERNEL);
+
+	memset(kernel_buf, 0, len + 1);
+	memset(&data, 0, sizeof(struct vfd_ioctl_data));
 
 	if (kernel_buf == NULL) {
 		printk("%s return no mem<\n", __func__);
@@ -630,7 +637,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 				icon_nr = 0; //no additional symbols at the moment
 				break;
 			}
-		}	  
+		}
 		if (aotom_data.u.icon.on != 0)
 			aotom_data.u.icon.on = 1;
 		if (icon_nr > 0 && icon_nr <= 45 )
@@ -649,7 +656,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 				break;
 			}
 		}
-#endif		
+#endif
 		mode = 0;
 		break;
 	}
@@ -933,7 +940,7 @@ static int __init aotom_init_module(void)
 	}
 
 	VFD_clr();
-	
+
 	if(button_dev_init() != 0)
 		return -1;
 
@@ -1008,3 +1015,4 @@ MODULE_PARM_DESC(gmt, "gmt offset (default +0000");
 MODULE_DESCRIPTION("VFD module for fulan boxes");
 MODULE_AUTHOR("Spider-Team, oSaoYa");
 MODULE_LICENSE("GPL");
+

@@ -41,6 +41,17 @@
 
 YWVFD_INFO_t YWVFD_INFO;
 
+//#define DEBUG
+#ifdef DEBUG
+#ifdef MODULE
+#define YWVFD_Debug(x...) printk(x)
+#else
+#define YWVFD_Debug(x...) printf(x)
+#endif
+#else
+#define YWVFD_Debug(x...)
+#endif
+
 static SegAddrVal_T VfdSegAddr[15];
 struct semaphore vfd_sem;
 struct semaphore vfd_sem_rw;
@@ -298,6 +309,200 @@ u8 NumLib[10][2] =
 	{0x7F, 0x7F},	//{01111111, 01111111},
 	{0x7D, 0x7B}	//{01111101, 01111011},
 };
+char dvfd_bitmap[95][5] =
+	{
+		//' ' 0x20 032
+		{0x00, 0x00, 0x00, 0x00, 0x00, },
+		//'!' 0x21 033
+		{0x10, 0x42, 0x08, 0x01, 0x04, },
+		//'"' 0x22 034
+		{0x68, 0xad, 0x00, 0x00, 0x00, },
+		//'#' 0x23 035
+		{0x28, 0xf5, 0xd5, 0x57, 0x0a, },
+		//'$' 0x24 036
+		{0x10, 0x5f, 0x1c, 0x7d, 0x04, },
+		//'%' 0x25 037
+		{0x8c, 0x89, 0x88, 0xc8, 0x18, },
+		//'&' 0x26 038
+		{0x88, 0x52, 0x44, 0x4d, 0x16, },
+		//''' 0x27 039
+		{0x10, 0x42, 0x00, 0x00, 0x00, },
+		//'(' 0x28 040
+		{0x40, 0x44, 0x08, 0x41, 0x10, },
+		//')' 0x29 041
+		{0x04, 0x41, 0x08, 0x11, 0x01, },
+		//'*' 0x2a 042
+		{0x90, 0xea, 0x88, 0xab, 0x04, },
+		//'+' 0x2b 043
+		{0x00, 0x42, 0x3e, 0x21, 0x00, },
+		//',' 0x2c 044
+		{0x00, 0x00, 0x00, 0x31, 0x02, },
+		//'-' 0x2d 045
+		{0x00, 0xf0, 0x01, 0x00, 0x00, },
+		//'.' 0x2e 046
+		{0x00, 0x00, 0x00, 0x61, 0x00, },
+		//'/' 0x2f 047
+		{0x00, 0x88, 0x88, 0x08, 0x00, },
+		//'0' 0x30 048
+		{0xb8, 0x18, 0x63, 0x8c, 0x0e, },
+		//'1' 0x31 049
+		{0x10, 0x43, 0x08, 0x21, 0x1f, },
+		//'2' 0x32 050
+		{0xb8, 0x08, 0x11, 0x11, 0x1f, },
+		//'3' 0x33 051
+		{0x38, 0xc8, 0x20, 0x84, 0x0f, },
+		//'4' 0x34 052
+		{0x20, 0xa6, 0xd2, 0x47, 0x1c, },
+		//'5' 0x35 053
+		{0xbc, 0xf0, 0x20, 0x84, 0x0f, },
+		//'6' 0x36 054
+		{0x30, 0x11, 0x5e, 0x8c, 0x0e, },
+		//'7' 0x37 055
+		{0x7c, 0x88, 0x10, 0x22, 0x04, },
+		//'8' 0x38 056
+		{0xb8, 0x18, 0x5d, 0x8c, 0x0e, },
+		//'9' 0x39 057
+		{0xb8, 0x18, 0x3d, 0x44, 0x06, },
+		//':' 0x3a 058
+		{0x00, 0x46, 0x00, 0x61, 0x00, },
+		//';' 0x3b 059
+		{0x00, 0x46, 0x00, 0x31, 0x02, },
+		//'<' 0x3c 060
+		{0x40, 0x26, 0x06, 0x81, 0x00, },
+		//'=' 0x3d 061
+		{0x80, 0x0f, 0x3e, 0x00, 0x00, },
+		//'>' 0x3e 062
+		{0x04, 0x83, 0x30, 0x09, 0x00, },
+		//'?' 0x3f 063
+		{0xb8, 0x08, 0x19, 0x01, 0x04, },
+		//'@' 0x40 064
+		{0xb8, 0x98, 0x6b, 0x0e, 0x1e, },
+		//'A' 0x41 065
+		{0x08, 0x93, 0xe2, 0x8f, 0x11, },
+		//'B' 0x42 066
+		{0xbc, 0x18, 0x5f, 0x8c, 0x0f, },
+		//'C' 0x43 067
+		{0xb8, 0x18, 0x42, 0x88, 0x0e, },
+		//'D' 0x44 068
+		{0xbc, 0x18, 0x63, 0x8c, 0x0f, },
+		//'E' 0x45 069
+		{0xfc, 0x18, 0x4e, 0x89, 0x1f, },
+		//'F' 0x46 070
+		{0x78, 0x21, 0x9c, 0x12, 0x06, },
+		//'G' 0x47 071
+		{0xf8, 0x10, 0x42, 0x8e, 0x1e, },
+		//'H' 0x48 072
+		{0xc4, 0x18, 0x7f, 0x8c, 0x11, },
+		//'I' 0x49 073
+		{0x38, 0x42, 0x08, 0x21, 0x0e, },
+		//'J' 0x4a 074
+		{0x70, 0x08, 0x61, 0x8c, 0x0e, },
+		//'K' 0x4b 075
+		{0xec, 0x54, 0x4e, 0x4a, 0x13, },
+		//'L' 0x4c 076
+		{0x1c, 0x21, 0x84, 0x10, 0x1f, },
+		//'M' 0x4d 077
+		{0xc4, 0xbd, 0x6b, 0x8d, 0x1b, },
+		//'N' 0x4e 078
+		{0xe4, 0x39, 0x6b, 0xce, 0x13, },
+		//'O' 0x4f 079
+		{0xb8, 0x18, 0x63, 0x8c, 0x0e, },
+		//'P' 0x50 080
+		{0xbc, 0x18, 0x5f, 0x08, 0x03, },
+		//'Q' 0x51 081
+		{0xb8, 0x18, 0x63, 0x4d, 0x16, },
+		//'R' 0x52 082
+		{0xbc, 0x18, 0x5f, 0x49, 0x13, },
+		//'S' 0x53 083
+		{0xb8, 0x18, 0x1c, 0x8c, 0x0e, },
+		//'T' 0x54 084
+		{0xfc, 0x4a, 0x08, 0x21, 0x0e, },
+		//'U' 0x55 085
+		{0xec, 0x18, 0x63, 0x8c, 0x0e, },
+		//'V' 0x56 086
+		{0xc4, 0x18, 0xa5, 0x52, 0x04, },
+		//'W' 0x57 087
+		{0xc4, 0x58, 0x6b, 0x55, 0x0a, },
+		//'X' 0x58 088
+		{0x44, 0xa9, 0x88, 0xca, 0x11, },
+		//'Y' 0x59 089
+		{0x44, 0xa9, 0x08, 0x21, 0x0e, },
+		//'Z' 0x5a 090
+		{0xfc, 0x88, 0x88, 0x88, 0x1f, },
+		//'[' 0x5b 091
+		{0x30, 0x42, 0x08, 0x21, 0x0c, },
+		//'\' 0x5c 092
+		{0x80, 0x20, 0x08, 0x82, 0x00, },
+		//']' 0x5d 093
+		{0x18, 0x42, 0x08, 0x21, 0x06, },
+		//'^' 0x5e 094
+		{0x00, 0xa2, 0x22, 0x00, 0x00, },
+		//'_' 0x5f 095
+		{0x00, 0x00, 0x00, 0xf8, 0x00, },
+		//'`' 0x60 096
+		{0x00, 0x02, 0x00, 0x00, 0x00, },
+		//'a' 0x61 097
+		{0x00, 0x07, 0x7d, 0xf4, 0x00, },
+		//'b' 0x62 098
+		{0x08, 0xe1, 0xa4, 0x74, 0x00, },
+		//'c' 0x63 099
+		{0x00, 0x17, 0x43, 0xf0, 0x00, },
+		//'d' 0x64 100
+		{0x20, 0xe4, 0x52, 0x72, 0x00, },
+		//'e' 0x65 101
+		{0x00, 0x17, 0x7f, 0xf0, 0x00, },
+		//'f' 0x66 102
+		{0x60, 0xe2, 0x09, 0x21, 0x0e, },
+		//'g' 0x67 103
+		{0x00, 0x26, 0x25, 0x87, 0x0e, },
+		//'h' 0x68 104
+		{0x08, 0xe1, 0xa4, 0x94, 0x00, },
+		//'i' 0x69 105
+		{0x10, 0x60, 0x08, 0x71, 0x00, },
+		//'j' 0x6a 106
+		{0x10, 0xe0, 0x10, 0x52, 0x0c, },
+		//'k' 0x6b 107
+		{0x08, 0x6d, 0x8c, 0x92, 0x00, },
+		//'l' 0x6c 108
+		{0x18, 0x42, 0x08, 0x61, 0x00, },
+		//'m' 0x6d 109
+		{0x00, 0x57, 0x6b, 0xad, 0x00, },
+		//'n' 0x6e 110
+		{0x00, 0x26, 0xa5, 0x94, 0x00, },
+		//'o' 0x6f 111
+		{0x00, 0x26, 0xa5, 0x64, 0x00, },
+		//'p' 0x70 112
+		{0x00, 0x27, 0xa5, 0x13, 0x02, },
+		//'q' 0x71 113
+		{0x00, 0x97, 0x92, 0x43, 0x08, },
+		//'r' 0x72 114
+		{0x80, 0x26, 0x84, 0x10, 0x00, },
+		//'s' 0x73 115
+		{0x00, 0x17, 0x0c, 0x3a, 0x00, },
+		//'t' 0x74 116
+		{0x88, 0x27, 0x84, 0x62, 0x00, },
+		//'u' 0x75 117
+		{0x80, 0x1c, 0x63, 0x74, 0x00, },
+		//'v' 0x76 118
+		{0x80, 0x18, 0x95, 0x22, 0x00, },
+		//'w' 0x77 119
+		{0x80, 0x58, 0xeb, 0x56, 0x00, },
+		//'x' 0x78 120
+		{0x80, 0xa9, 0x88, 0x9a, 0x00, },
+		//'y' 0x79 121
+		{0x80, 0x29, 0x15, 0x23, 0x04, },
+		//'z' 0x7a 122
+		{0x80, 0x8f, 0x88, 0xf8, 0x00, },
+		//'{' 0x7b 123
+		{0x60, 0x42, 0x04, 0x21, 0x18, },
+		//'|' 0x7c 124
+		{0x10, 0x42, 0x08, 0x21, 0x04, },
+		//'}' 0x7d 125
+		{0x0c, 0x42, 0x10, 0x21, 0x03, },
+		//'~' 0x7e 126
+		{0x00, 0x20, 0x2a, 0x02, 0x00, },
+	};
+
 
 enum
 {
@@ -357,7 +562,12 @@ enum
 	YWPANEL_INIT_INSTR_GETPOWERONSTATE, 	/* 0x77 */
 	YWPANEL_INIT_INSTR_SETPOWERONSTATE, 	/* 0x78 */
 
-	YWPANEL_INIT_INSTR_GETSTARTUPSTATE 	/* 0x79 */
+    YWPANEL_INIT_INSTR_GETSTARTUPSTATE,     /*0x79*/
+
+	YWPANEL_INIT_INSTR_SETMVFDDISPLAY = 0x80,		/*0x80*/
+	YWPANEL_INIT_INSTR_STRMVFDBRIGHTNESS,
+	YWPANEL_INIT_INSTR_SETMVFDTIMEMODE,
+	YWPANEL_INIT_INSTR_GETMVFDTIMEMODE,
 
 };
 enum YWPANL_READ_INSTR_e
@@ -374,7 +584,9 @@ enum YWPANL_WRITE_INSTR_e
 	YWPANEL_DISPLAY_INSTR_LBD = 0x30,
 	YWPANEL_DISPLAY_INSTR_LED,
 	YWPANEL_DISPLAY_INSTR_LCD,
-	YWPANEL_DISPLAY_INSTR_VFD
+	YWPANEL_DISPLAY_INSTR_VFD,
+	YWPANEL_DISPLAY_INSTR_MVFD_SINGLE,
+	YWPANEL_DISPLAY_INSTR_MVFD,
 
 };
 
@@ -528,6 +740,122 @@ u16 YWPANEL_GenerateCRC16( u8 * buffer, u32 bufLength )
 		nAccum = ( nAccum << 8 ) ^ ( u16 )Table_CRC[( nAccum >> 8 ) ^ *buffer++];
 	return nAccum;
 }
+
+BOOL YWPANEL_FP_DvfdFillCmd(YWPANEL_FPData_t *data,
+										YWPANEL_I2CData_t *I2CData)
+{
+	switch(data->data.dvfdData.type)
+	{
+		case YWPANEL_DVFD_DISPLAYSTRING:
+		{
+			I2CData->writeBuff[0] = YWPANEL_DISPLAY_INSTR_MVFD;
+		}
+		break;
+		case YWPANEL_DVFD_DISPLAYSYNC:
+		{
+			I2CData->writeBuff[0] = YWPANEL_INIT_INSTR_SETMVFDDISPLAY;
+		}
+		break;
+		case YWPANEL_DVFD_SETTIMEMODE:
+		{
+			I2CData->writeBuff[0] = YWPANEL_INIT_INSTR_SETMVFDTIMEMODE;
+		}
+		break;
+		case YWPANEL_DVFD_GETTIMEMODE:
+		{
+			I2CData->writeBuff[0] = YWPANEL_INIT_INSTR_GETMVFDTIMEMODE;
+		}
+		break;
+		default:
+			break;
+	}
+
+	return TRUE;
+}
+
+BOOL YWPANEL_FP_DvfdFillLen(YWPANEL_FPData_t *data,
+										YWPANEL_I2CData_t *I2CData)
+{
+	if(data->data.dvfdData.type == YWPANEL_DVFD_DISPLAYSTRING)
+	{
+		I2CData->writeBuff[1] = 1 + (5 + 1) * 4;
+	}
+	else
+	{
+		I2CData->writeBuff[1] = 0x4;
+	}
+
+	return TRUE;
+}
+
+void YWPANEL_FP_DvfdFillString(YWPANEL_FPData_t *data,
+										YWPANEL_I2CData_t *I2CData,
+										U8 	uMax)
+{
+	U8	i;
+
+	for (i = 0; i < uMax; i++)
+	{
+		I2CData->writeBuff[6 * i + 3] = data->data.dvfdData.address[i];
+		I2CData->writeBuff[6 * i + 4] = data->data.dvfdData.DisplayValue[i][0];
+		I2CData->writeBuff[6 * i + 5] = data->data.dvfdData.DisplayValue[i][1];
+		I2CData->writeBuff[6 * i + 6] = data->data.dvfdData.DisplayValue[i][2];
+		I2CData->writeBuff[6 * i + 7] = data->data.dvfdData.DisplayValue[i][3];
+		I2CData->writeBuff[6 * i + 8] = data->data.dvfdData.DisplayValue[i][4];
+	}
+}
+
+BOOL YWPANEL_FP_DvfdFillData(YWPANEL_FPData_t *data,
+										YWPANEL_I2CData_t *I2CData)
+{
+	switch(data->data.dvfdData.type)
+	{
+		case YWPANEL_DVFD_DISPLAYSTRING:
+		{
+			U8 	uMax = data->data.dvfdData.ulen;
+			if (uMax > 4)
+			{
+			    uMax = 4;
+			}
+			I2CData->writeBuff[2] = uMax;
+			YWPANEL_FP_DvfdFillString(data, I2CData, uMax);
+		}
+		break;
+		case YWPANEL_DVFD_SETTIMEMODE:
+		{
+			I2CData->writeBuff[2] = data->data.dvfdData.setValue;
+		}
+		break;
+		default:
+			break;
+	}
+
+	return TRUE;
+}
+
+BOOL YWPANEL_FP_DvfdFillCrc(YWPANEL_FPData_t *data,
+										YWPANEL_I2CData_t *I2CData)
+{
+	U16             usCRC16 = 0;
+
+	if(data->data.dvfdData.type == YWPANEL_DVFD_DISPLAYSTRING)
+	{
+		usCRC16 = YWPANEL_GenerateCRC16(I2CData->writeBuff, 27);
+		I2CData->writeBuff[27] =  (usCRC16 &0xff);
+		2CData->writeBuff[28] =  ((usCRC16>>8) &0xff);
+		I2CData->writeBuffLen = 29;
+	}
+	else
+	{
+		usCRC16 = YWPANEL_GenerateCRC16(I2CData->writeBuff, 6);
+		I2CData->writeBuff[6] =  (usCRC16 &0xff);
+		I2CData->writeBuff[7] =  ((usCRC16>>8) &0xff);
+		I2CData->writeBuffLen = 8;
+	}
+
+	return TRUE;
+}
+
 int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t   *I2CData)
 {
 	u16 			usCRC16 = 0;
@@ -567,6 +895,13 @@ int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t   *I2CData)
 		{
 			I2CData->writeBuff[0] = YWPANEL_DISPLAY_INSTR_VFD;
 		}
+		break;
+
+		case YWPANEL_DATATYPE_DVFD:
+		{
+			YWPANEL_FP_DvfdFillCmd(data, I2CData);
+		}
+
 		break;
 
 		case YWPANEL_DATATYPE_SCANKEY:
@@ -766,7 +1101,11 @@ int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t   *I2CData)
 			}
 		}
 		break;
-
+		case YWPANEL_DATATYPE_DVFD:
+		{
+			YWPANEL_FP_DvfdFillLen(data, I2CData);
+		}
+		break;
 		default:
 		{
 			I2CData->writeBuff[1] = 0x4;
@@ -829,6 +1168,12 @@ int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t   *I2CData)
 				}
 				break;
 			}
+		}
+		break;
+
+		case YWPANEL_DATATYPE_DVFD:
+		{
+			YWPANEL_FP_DvfdFillData(data, I2CData);
 		}
 		break;
 
@@ -957,6 +1302,11 @@ int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t   *I2CData)
 			}
 		}
 		break;
+		case YWPANEL_DATATYPE_DVFD:
+		{
+			YWPANEL_FP_DvfdFillCrc(data, I2CData);
+		}
+		break;
 
 		default:
 		{
@@ -1065,6 +1415,42 @@ int YWPANEL_FP_ParseI2cData(YWPANEL_FPData_t  *data,YWPANEL_I2CData_t	 *I2CData)
 		}
 		break;
 
+		case YWPANEL_DATATYPE_DVFD:
+		{
+			if (data->data.dvfdData.type == YWPANEL_DVFD_DISPLAYSTRING)
+			{
+				if(dataType != YWPANEL_READ_INSTR_ACK)
+				{
+//					printf("%s::error @%d\n",__FUNCTION__,__LINE__);
+					return FALSE;
+				}
+			}
+			else if (data->data.dvfdData.type == YWPANEL_DVFD_SETTIMEMODE)
+			{
+				if(dataType != YWPANEL_READ_INSTR_ACK)
+				{
+//					printf("%s::error @%d\n",__FUNCTION__,__LINE__);
+					return FALSE;
+				}
+			}
+			else if (data->data.dvfdData.type == YWPANEL_DVFD_GETTIMEMODE)
+			{
+				if(dataType != YWPANEL_INIT_INSTR_GETMVFDTIMEMODE)
+				{
+//					printf("%s::error @%d\n",__FUNCTION__,__LINE__);
+					return FALSE;
+				}
+			}
+			else
+			{
+				if(dataType != YWPANEL_READ_INSTR_ACK)
+				{
+//					printf("%s::error @%d\n",__FUNCTION__,__LINE__);
+					return FALSE;
+				}
+			}
+		}
+		break;
 		case YWPANEL_DATATYPE_GETSTBYKEY1:
 		case YWPANEL_DATATYPE_GETSTBYKEY2:
 		case YWPANEL_DATATYPE_GETSTBYKEY3:
@@ -2243,6 +2629,9 @@ static u8 YWPANEL_VFD_ScanKeyboard_StandBy(void)
 		break;
 	case YWPANEL_FP_DISPTYPE_LCD:
 		break;
+	case YWPANEL_FP_DISPTYPE_DVFD:
+		data.dataType = YWPANEL_DATATYPE_SCANKEY;
+		break;
 	case YWPANEL_FP_DISPTYPE_LED:
 		data.dataType = YWPANEL_DATATYPE_SCANKEY;
 		break;
@@ -2261,6 +2650,8 @@ static u8 YWPANEL_VFD_ScanKeyboard_StandBy(void)
 			return data.data.vfdData.key;
 		case YWPANEL_FP_DISPTYPE_LCD:
 			break;
+		case YWPANEL_FP_DISPTYPE_DVFD:
+			return data.data.ScanKeyData.keyValue;
 		case YWPANEL_FP_DISPTYPE_LED:
 			return data.data.ScanKeyData.keyValue;
 		case YWPANEL_FP_DISPTYPE_LBD:
@@ -2361,9 +2752,231 @@ int YWPANEL_VFD_GetKeyValue(void)
 }
 
 
+static BOOL	bTimeMode = TRUE;
+static char strDvfd[16][5];
+
+void YWVFDi_DVFDCleanChar(U8 i)
+{
+	U8	j;
+
+	if (i >= 16)
+	{
+	    return;
+	}
+	if (bTimeMode)
+	{
+		if (i >= 10)
+		{
+		    return;
+		}
+	}
+
+	for (j = 0; j < 5; j++)
+	{
+		if (bTimeMode)
+		{
+			strDvfd[i + 6][j] = 0;
+		}
+		else
+		{
+			strDvfd[i][j] = 0;
+		}
+	}
+}
+
+void YWVFDi_DVFDFillAsciiChar(U8 i, int iChar)
+{
+	U8	j;
+
+	if (i >= 16)
+	{
+	    return;
+	}
+
+	if (bTimeMode)
+	{
+		if (i >= 10)
+		{
+		    return;
+		}
+	}
+
+	for (j = 0; j < 5; j++)
+	{
+		if (bTimeMode)
+		{
+			strDvfd[i + 6][j] = dvfd_bitmap[iChar][j];
+		}
+		else
+		{
+			strDvfd[i][j] = dvfd_bitmap[iChar][j];
+		}
+	}
+}
+
+void YWVFDi_DVFDFillChar(U8 i, U8 c)
+{
+	if ((c >= 32) && (c <= 126))
+	{
+		YWVFDi_DVFDFillAsciiChar(i, c - 32);
+	}
+	else
+	{
+		YWVFDi_DVFDCleanChar(i);
+	}
+}
+
+int YWVFDi_DVFDFillString(char* str, U8 lenth)
+{
+	U8 i;
+
+	for(i = 0; i < 16; i++)
+	{
+		if(i < lenth)
+		{
+			YWVFDi_DVFDFillChar(i, str[i]);
+		}
+		else
+		{
+			YWVFDi_DVFDCleanChar(i);
+		}
+	}
+
+	return 0;
+}
+
+int YWVFDi_DVFDDisplaySync(void)
+
+{
+	int	ret = 0 ;
+	YWPANEL_FPData_t    data;
+
+	memset(&data, 0, sizeof(YWPANEL_FPData_t));
+
+	data.dataType = YWPANEL_DATATYPE_DVFD;
+	data.data.dvfdData.type = YWPANEL_DVFD_DISPLAYSYNC;
+
+	if(YWPANEL_FP_SendData(&data) != TRUE)
+	{
+		//printf("VFD show stings is wrong!!\n");
+		ret = -2;
+	}
+
+	return ret;
+}
+
+int YWVFDi_DVFDSendString(void)
+{
+	int	ret = 0 ;
+	U8	i, j;
+	YWPANEL_FPData_t    data;
+
+	memset(&data, 0, sizeof(YWPANEL_FPData_t));
+
+	data.dataType = YWPANEL_DATATYPE_DVFD;
+	data.data.dvfdData.type = YWPANEL_DVFD_DISPLAYSTRING;
+	for(i = 0; i < 4; i++)
+	{
+		data.data.dvfdData.ulen = 4;
+		for (j = 0; j < 4; j++)
+		{
+			U8 address = i * 4 + j;
+			data.data.dvfdData.address[j] = address;
+			data.data.dvfdData.DisplayValue[j][0] = strDvfd[address][0];
+			data.data.dvfdData.DisplayValue[j][1] = strDvfd[address][1];
+			data.data.dvfdData.DisplayValue[j][2] = strDvfd[address][2];
+			data.data.dvfdData.DisplayValue[j][3] = strDvfd[address][3];
+			data.data.dvfdData.DisplayValue[j][4] = strDvfd[address][4];
+		}
+		YWVFD_Debug("%s:%d\n", __FUNCTION__, __LINE__);
+		if(YWPANEL_FP_SendData(&data) != TRUE)
+		{
+			printk("VFD show stings is wrong!!\n");
+			ret = -2;
+		}
+	}
+
+	return ret;
+}
+
+int YWVFDi_DVFDDisplayString(void)
+{
+	int	ret = 0 ;
+	ret = YWVFDi_DVFDSendString();
+
+	YWVFD_Debug("%s:%d\n", __FUNCTION__, __LINE__);
+
+	ret = YWVFDi_DVFDDisplaySync();
+
+	return ret;
+}
+
+int YWVFD_STANDBY_DvfdShowString(char* str)
+{
+	int ret = 0 ;
+	U8 lenth;
+
+	lenth = strlen(str);
+	//printk("lenth = %d, str = %s\n", lenth, str);
+	if(lenth > 16)
+	{
+		//ret = -1 ;
+		//printk("Bad params\n");
+		//return ret;
+		lenth = 16;
+	}
+
+	YWVFD_Debug("%s:%d\n", __FUNCTION__, __LINE__);
+
+	YWVFDi_DVFDFillString(str, lenth);
+
+	YWVFD_Debug("%s:%d\n", __FUNCTION__, __LINE__);
+
+	ret = YWVFDi_DVFDDisplayString();
+
+	return ret;
+ }
+
+BOOL YWPANEL_FP_DvfdSetTimeMode(BOOL on)
+{
+	YWPANEL_FPData_t   Data;
+
+	memset(&Data, 0, sizeof(YWPANEL_FPData_t));
+	Data.dataType = YWPANEL_DATATYPE_DVFD;
+	Data.data.dvfdData.type = YWPANEL_DVFD_SETTIMEMODE;
+	Data.data.dvfdData.setValue = on;
+
+	if(YWPANEL_FP_SendData(&Data) != TRUE)
+	{
+		return FALSE;
+	}
+
+	bTimeMode = on;
+	return TRUE;
+}
+
+BOOL YWPANEL_FP_DvfdGetTimeMode(BOOL *pOn)
+{
+	YWPANEL_FPData_t   Data;
+
+	memset(&Data, 0, sizeof(YWPANEL_FPData_t));
+	Data.dataType = YWPANEL_DATATYPE_DVFD;
+	Data.data.dvfdData.type = YWPANEL_DVFD_GETTIMEMODE;
+
+	if(YWPANEL_FP_SendData(&Data) != TRUE)
+	{
+		return FALSE;
+	}
+
+	(*pOn) = Data.data.dvfdData.setValue;
+	bTimeMode = Data.data.dvfdData.setValue;
+
+	return TRUE;
+}
+
 //lwj add begin  for LED panel
 
-//  aaaaa 
+//  aaaaa
 // f     b
 // f     b
 //  ggggg
@@ -2412,7 +3025,7 @@ static void YWPANEL_LEDSetString(char *LEDStrBuf)
 	for(i = 0; i < YWPANEL_MAX_LED_LENGTH; i++) {
 		if(i < len) {
 			c = (int) LEDStrBuf[i + a];
-			if(i == 2 && c == 0x2e ) { //save one segment displaying dot e.g. 23.59  
+			if(i == 2 && c == 0x2e ) { //save one segment displaying dot e.g. 23.59
 				YWPANEL_LedDisplayData[i - 1]++;
 				a = 1;
 				c = (int) LEDStrBuf[i + a];
@@ -2834,9 +3447,21 @@ int YWPANEL_VFD_Init(void)
 		if(panel_disp_type<YWPANEL_FP_DISPTYPE_UNKNOWN || panel_disp_type>YWPANEL_FP_DISPTYPE_LBD)
 			panel_disp_type = YWPANEL_FP_DISPTYPE_VFD;
 
+			if (YWPANEL_FP_DISPTYPE_DVFD == panel_disp_type)
+			{
+				BOOL bOn;
+				//YWVFD_STANDBY_TYPE_VFD = TRUE;
+				YWPANEL_FP_DvfdGetTimeMode(&bOn);
+				YWVFD_Debug("INIT\n");
+				YWVFD_Debug("boot\n");
+			}
+
 		switch(panel_disp_type) {
 			case YWPANEL_FP_DISPTYPE_VFD:
 				YWPANEL_VFD_ShowString = YWPANEL_VFD_ShowString_StandBy;
+				break;
+			case YWPANEL_FP_DISPTYPE_DVFD:
+				YWPANEL_VFD_ShowString = YWVFD_STANDBY_DvfdShowString;
 				break;
 			case YWPANEL_FP_DISPTYPE_LED:
 				YWPANEL_width = 4;
@@ -2882,3 +3507,4 @@ static int  YWPANEL_VFD_Term_Common(void)
 }
 
 // vim:ts=4
+

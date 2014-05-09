@@ -333,9 +333,11 @@ struct sSET_STREAM_PATH {
 
 #define DEVICE_VENDOR_ID        0x87
 
-//SONY BRAVIA: 08 00 46
-//PANASONIC:   00 80 45
 //LG:          00 E0 91
+//PANASONIC:   00 02 45
+//PIONEER:     00 E0 36
+//SAMSUNG:     00 00 F0
+//SONY BRAVIA: 08 00 46
 
 struct sDEVICE_VENDOR_ID {
   unsigned char  VendorId[3];

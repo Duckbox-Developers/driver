@@ -255,3 +255,5 @@ obj-m += stv090x.o
 
 endif
 
+# other drivers already in kernel
+

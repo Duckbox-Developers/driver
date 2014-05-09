@@ -47,5 +47,9 @@ ifdef VITAMIN_HD5000
 EXTRA_CFLAGS	+= -DSTx7111
 endif
 
+ifdef SAGEMCOM88
+EXTRA_CFLAGS	+= -DSTx7105
+endif
+
 endif
 

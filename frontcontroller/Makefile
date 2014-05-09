@@ -14,113 +14,118 @@ CFLAGS += $(CCFLAGSY)
 endif
 
 ifdef UFS910
-obj-y	+= vfd/
+obj-y += vfd/
 endif
 
 ifdef HOMECAST5101
-obj-y	+= vfd_hs5101/
+obj-y += vfd_hs5101/
 endif
 
 ifdef FORTIS_HDBOX
-obj-y	+= nuvoton/
+obj-y += nuvoton/
 endif
 
 ifdef UFS922
-obj-y	+= micom/
+obj-y += micom/
 endif
 
 ifdef UFC960
-obj-y	+= micom/
+obj-y += micom/
 endif
 
 ifdef TF7700
-obj-y	+= tffp/
+obj-y += tffp/
 endif
 
 ifdef HL101
-obj-y   += proton/
+obj-y += proton/
 endif
 
 ifdef VIP1_V2
-obj-y   += aotom/
+obj-y += aotom/
 endif
 
 ifdef VIP2_V1
-obj-y   += aotom/
+obj-y += aotom/
 endif
 
 ifdef ADB_BOX
-obj-y   += adb_box_vfd/
+obj-y += adb_box_vfd/
 endif
 
 ifdef UFS912
-obj-y	+= micom/
+obj-y += micom/
 endif
 
 ifdef UFS913
-obj-y	+= micom/
+obj-y += micom/
 endif
 
 ifdef SPARK
-obj-y   += aotom_spark/
+obj-y += aotom_spark/
 endif
 
 ifdef SPARK7162
-obj-y   += aotom_spark/
+obj-y += aotom_spark/
 endif
 
 ifdef OCTAGON1008
-obj-y	+= nuvoton/
+obj-y += nuvoton/
 endif
 
 ifdef ATEVIO7500
-obj-y	+= nuvoton/
+obj-y += nuvoton/
 endif
 
 ifdef HS7810A
-obj-y	+= nuvoton/
+obj-y += nuvoton/
 endif
 
 ifdef HS7110
-obj-y	+= nuvoton/
+obj-y += nuvoton/
 endif
 
 ifdef ATEMIO520
-obj-y	+= cn_micom/
+obj-y += cn_micom/
 endif
 
 ifdef ATEMIO530
-obj-y	+= cn_micom/
+obj-y += cn_micom/
 endif
 
 ifdef IPBOX9900
-obj-y	+= ipbox99xx/
+obj-y += ipbox99xx/
 endif
 
 ifdef IPBOX99
-obj-y	+= ipbox99xx/
+obj-y += ipbox99xx/
 endif
 
 ifdef IPBOX55
-obj-y	+= ipbox55/
+obj-y += ipbox55/
 endif
 
 ifdef CUBEREVO
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_MINI
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_MINI2
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_250HD
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_9500HD
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_2000HD
-obj-y	+= ipbox/
+obj-y += ipbox/
 else ifdef CUBEREVO_MINI_FTA
-obj-y	+= ipbox/
+obj-y += ipbox/
 endif
 
 ifdef VITAMIN_HD5000
-obj-y	+= vitamin_hd5000/
+obj-y += vitamin_hd5000/
+endif
+
+ifdef SAGEMCOM88
+obj-y += front_led/
+obj-y += front_vfd/
 endif

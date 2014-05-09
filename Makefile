@@ -114,6 +114,9 @@ endif
 ifdef VITAMIN_HD5000
 CCFLAGSY += -DVITAMIN_HD5000
 endif
+ifdef SAGEMCOM88
+CCFLAGSY += -DSAGEMCOM88
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -131,7 +134,9 @@ obj-y += simu_button/
 obj-y += e2_proc/
 obj-y += frontends/
 obj-y += frontcontroller/
-#obj-y += wireless/
+ifdef WLANDRIVER
+obj-y += wireless/
+endif
 
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
 obj-y += pti/
@@ -279,6 +284,12 @@ ifdef VITAMIN_HD5000
 obj-y += cec/
 obj-y += smartcard/
 obj-y += cpu_frequ/
+endif
+ifdef SAGEMCOM88
+obj-y += cec/
+obj-y += smartcard/
+obj-y += cpu_frequ/
+obj-y += sagemcomtype/
 endif
 
 endif
