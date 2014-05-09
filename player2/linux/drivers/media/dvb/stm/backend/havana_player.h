@@ -147,7 +147,7 @@ public:
                                                                 unsigned int            SurfaceId,
                                                                 HavanaDisplay_c**       HavanaDisplay);
 #ifdef __TDT__
-    int                         IsDisplayCreated               (char*                   Media,
+    int                         isDisplayCreated               (char*                   Media,
                                                                 unsigned int            SurfaceId);
 #endif
     HavanaStatus_t              DeleteDisplay                  (char*                   Media,
