@@ -40,21 +40,27 @@ fe-core-objs += hl101/stv6110x.o
 fe-core-objs += hl101/ix7306.o
 fe-core-objs += hl101/core.o
 obj-m += fe-core.o
-else ifdef VIP1_V2
+endif
+
+ifdef VIP1_V2
 fe-core-objs += vip2/stv090x.o
 fe-core-objs += vip2/stv6110x.o
 fe-core-objs += vip2/ix7306.o
 fe-core-objs += vip2/zl10353.o
 fe-core-objs += vip2/core.o
 obj-m += fe-core.o
-else ifdef VIP2_V1
+endif
+
+ifdef VIP2_V1
 fe-core-objs += vip2/stv090x.o
 fe-core-objs += vip2/stv6110x.o
 fe-core-objs += vip2/ix7306.o
 fe-core-objs += vip2/zl10353.o
 fe-core-objs += vip2/core.o
 obj-m += fe-core.o
-else ifdef SPARK
+endif
+
+ifdef SPARK
 stv090x-objs += spark_dvbapi5/stv090x.o
 stv090x-objs += spark_dvbapi5/stv6110x.o
 stv090x-objs += spark_dvbapi5/ix7306.o
@@ -62,7 +68,9 @@ stv090x-objs += spark_dvbapi5/core.o
 stv090x-objs += spark_common/vz7903.o
 obj-m += stv090x.o
 obj-y += lnb/
-else ifdef SPARK7162
+endif
+
+ifdef SPARK7162
 spark7162-objs += spark7162/spark7162.o
 spark7162-objs += spark_common/ioarch.o
 spark7162-objs += spark7162/D3501.o
@@ -97,49 +105,65 @@ spark7162-objs += spark7162/tuner/mxl_spur_table.o
 spark7162-objs += spark7162/tuner/mxL_user_define.o
 
 obj-m += spark7162.o
-else ifdef UFS912
+endif
+
+ifdef UFS912
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs += stv090x/core.o
 obj-m += stv090x.o
-else ifdef UFS913
+endif
+
+ifdef UFS913
 obj-y += multituner/
-else ifdef HS7110
+endif
+
+ifdef HS7110
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs +=stv090x/core.o
 obj-m += stv090x.o
 obj-y += lnb/
-else ifdef ATEMIO520
+endif 
+
+ifdef ATEMIO520
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs += stv090x/core.o
 obj-m += stv090x.o
 obj-y += lnb/
-else ifdef ATEMIO530
+endif
+
+ifdef ATEMIO530
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs += stv090x/core.o
 obj-m += stv090x.o
 obj-y += lnb/
-else ifdef HS7810A
+endif
+
+ifdef HS7810A
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs += stv090x/core.o
 obj-m += stv090x.o
 obj-y += lnb/
-else ifdef FORTIS_HDBOX
+endif
+
+ifdef FORTIS_HDBOX
 stv090x-objs += stv090x/stv090x.o
 stv090x-objs += stv090x/stv6110x.o
 stv090x-objs += stv090x/ix7306.o
 stv090x-objs += stv090x/core.o
 obj-m += stv090x.o
-else ifdef UFS922
+endif
+
+ifdef UFS922
 cx21143-objs += cx24116/cx24116.o
 obj-m += cx21143.o
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/frontends/avl2108_ufs922 ))
@@ -155,20 +179,25 @@ else
 avl2108-objs += avl2108_ufs922/avl2108.o
 obj-m += avl2108.o
 endif
-else ifdef UFC960
-#tda10023-objs += ufc960/stv090x.o
-#tda10023-objs += ufc960/stv6110x.o
+endif
+
+ifdef UFC960
 tda10023-objs +=  ufc960/tda10023.o
-#tda10023-objs += ufc960/dvb-pll.o
 tda10023-objs += ufc960/core.o
 obj-m += tda10023.o
-else ifdef UFS910
+endif
+
+ifdef UFS910
 cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
-else ifdef TF7700
+endif
+
+ifdef TF7700
 cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
-else ifdef OCTAGON1008
+endif
+
+ifdef OCTAGON1008
 avl2108-objs += avl2108/avl2108.o
 avl2108-objs += avl2108/stv6110a.o
 avl2108-objs += avl2108/stv6306.o
@@ -178,7 +207,9 @@ obj-m += avl2108.o
 
 avl2108_platform-objs += avl2108/avl2108_platform.o
 obj-m += avl2108_platform.o
-else ifdef ATEVIO7500
+endif
+
+ifdef ATEVIO7500
 #avl2108-objs += avl2108/avl2108.o
 #avl2108-objs += avl2108/stv6110a.o
 #avl2108-objs += avl2108/stv6306.o
@@ -188,7 +219,9 @@ else ifdef ATEVIO7500
 #avl2108_platform-objs += avl2108/avl2108_platform.o
 #obj-m += avl2108_platform.o
 obj-y += multituner/
-else ifdef IPBOX9900
+endif
+
+ifdef IPBOX9900
 fe-core-objs +=        ipbox/stv090x.o
 fe-core-objs +=        ipbox/stv6110x.o
 fe-core-objs +=        ipbox/zl10353.o
@@ -196,7 +229,9 @@ fe-core-objs +=        ipbox/mxl5007t.o
 fe-core-objs +=        ipbox/tda10023.o
 fe-core-objs +=        ipbox/core.o
 obj-m += fe-core.o
-else ifdef IPBOX99
+endif
+
+ifdef IPBOX99
 fe-core-objs +=        ipbox/stv090x.o
 fe-core-objs +=        ipbox/stv6110x.o
 fe-core-objs +=        ipbox/zl10353.o
@@ -204,26 +239,44 @@ fe-core-objs +=        ipbox/mxl5007t.o
 fe-core-objs +=        ipbox/tda10023.o
 fe-core-objs +=        ipbox/core.o
 obj-m += fe-core.o
-else ifdef IPBOX55
+endif
+
+ifdef IPBOX55
 fe-core-objs +=        ipbox/stv090x.o
 fe-core-objs +=        ipbox/stv6110x.o
 fe-core-objs +=        ipbox/core.o
 obj-m += fe-core.o
-else ifdef CUBEREVO
+endif
+
+ifdef CUBEREVO
 obj-y += multituner/
-else ifdef CUBEREVO_MINI
+endif
+
+ifdef CUBEREVO_MINI
 obj-y += multituner/
-else ifdef CUBEREVO_MINI2
+endif
+
+ifdef CUBEREVO_MINI2
 obj-y += multituner/
-else ifdef CUBEREVO_250HD
+endif
+
+ifdef CUBEREVO_250HD
 obj-y += multituner/
-else ifdef CUBEREVO_9500HD
+endif
+
+ifdef CUBEREVO_9500HD
 obj-y += multituner/
-else ifdef CUBEREVO_2000HD
+endif
+
+ifdef CUBEREVO_2000HD
 obj-y += multituner/
-else ifdef CUBEREVO_MINI_FTA
+endif
+
+ifdef CUBEREVO_MINI_FTA
 obj-y += multituner/
-else ifdef ADB_BOX
+endif
+
+ifdef ADB_BOX
 # Single ----------------------------------
 # stb0899
 fe-core-objs +=        adb/stb0899_algo.o
@@ -247,13 +300,11 @@ fe-core-twin2-objs += adb_stv900/core.o
 obj-m += fe-core-twin2.o
 
 #------------------------------------------------- 
-else ifdef VITAMIN_HD5000
+endif
+
+ifdef VITAMIN_HD5000
 stv090x-objs += vitamin_hd5000/stv090x.o
 stv090x-objs += vitamin_hd5000/stv6110x.o
 stv090x-objs += vitamin_hd5000/core.o
 obj-m += stv090x.o
-
 endif
-
-# other drivers already in kernel
-

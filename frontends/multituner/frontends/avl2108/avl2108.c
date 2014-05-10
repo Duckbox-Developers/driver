@@ -906,7 +906,6 @@ u16 avl2108_set_functional_mode(struct dvb_frontend* fe)
 
     if (ret == AVL2108_OK) {
         do {		//wait for AVL2108 boot up.
-            
             if (useOriginTimings == 1)
                 mdelay(10);
             else
@@ -1159,7 +1158,7 @@ static int avl2108_send_diseqc_msg(struct dvb_frontend* fe, struct dvb_diseqc_ma
         eprintk("%s(): Output %u modulation bytes: fail!\n", __func__, d->msg_len);
     else {
 		msleep(55);
-        
+
         do {
             ret = avl2108_diseqc_get_tx_status(fe, &tx_status);
 
@@ -1665,7 +1664,7 @@ static int avl2108_set_property(struct dvb_frontend *fe, struct dtv_property* tv
 static int avl2108_get_property(struct dvb_frontend *fe, struct dtv_property* tvp)
 {
     /* get delivery system info */
-    if(tvp->cmd==DTV_DELIVERY_SYSTEM) {
+    if(tvp->cmd == DTV_DELIVERY_SYSTEM) {
         switch (tvp->u.data) {
         case SYS_DVBS2:
         case SYS_DVBS:
@@ -1825,7 +1824,7 @@ static int avl2108_set_frontend(struct dvb_frontend* fe, struct dvb_frontend_par
          msleep(250);
          stpio_set_pin(state->config->tuner_enable_pin, state->config->tuner_active_lh);
          msleep(250);
-        
+
          state->boot_done = 0;
          state->diseqc_status = DISEQC_STATUS_UNINIT;
 
@@ -1890,7 +1889,6 @@ static int avl2108_set_frontend(struct dvb_frontend* fe, struct dvb_frontend_par
     }
 
     /* Wait for tuner locking */
-	/* Wait for tuner locking */
 	max_time = 150;  /* Max waiting time: 150ms */
 
     if (useOriginTimings == 1)
