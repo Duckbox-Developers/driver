@@ -31,14 +31,13 @@ Copyright(C) 2011 SHARP CORPORATION
 */
 
 /* #include "StdAfx.h" */
-//#include <sys_config.h>
-//#include <retcode.h>
-//#include <types.h>
-//#include <api/libc/printf.h>
-/*#include <api/libc/string.h>
+#include <sys_config.h>
+#include <retcode.h>
+#include <types.h>
+#include <api/libc/printf.h>
+#include <api/libc/string.h>
 #include <bus/i2c/i2c.h>
-#include <osal/osal.h>*/
-#include "ywdefs.h"
+#include <osal/osal.h>
 #include "mxl_common.h"
 
 /* Spur shifting table number for analog mode : V9.2.7.0 */

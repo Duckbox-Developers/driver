@@ -4960,7 +4960,7 @@ static int stv090x_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
  
 	*strength = stv090x_table_lookup(stv090x_rf_tab, ARRAY_SIZE(stv090x_rf_tab) - 1, agc);
 	if (agc > stv090x_rf_tab[0].read)
-		*strength = 5;
+		*strength = 0;
 	else if (agc < stv090x_rf_tab[ARRAY_SIZE(stv090x_rf_tab) - 1].read)
 		*strength = -100;
 

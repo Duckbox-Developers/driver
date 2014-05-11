@@ -1,5 +1,11 @@
+#include <sys_config.h>
+#include <retcode.h>
+#include <types.h>
+#include <api/libc/printf.h>
+#include <api/libc/string.h>
+#include <bus/i2c/i2c.h>
+#include <osal/osal.h>
 
-#include "ywdefs.h"
 #include "mxl_common.h"
 
 
