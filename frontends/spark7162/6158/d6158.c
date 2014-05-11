@@ -206,7 +206,7 @@ YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
 	memset(&param, 0, sizeof(struct NIM_Channel_Change));
 
 	if(dev == NULL)
-	{
+	{
 		return YWHAL_ERROR_BAD_PARAMETER;
 	}
 
@@ -284,7 +284,7 @@ YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
 	memset(&param, 0, sizeof(struct NIM_Channel_Change));
 
 	if(dev == NULL)
-	{
+	{
 		return YWHAL_ERROR_BAD_PARAMETER;
 	}
 

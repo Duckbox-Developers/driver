@@ -1789,7 +1789,7 @@ INT32 nim_panic6158_attach(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig,TUNER_O
 
 	//jhy add start
 	if(YWTUNER_DELIVER_TER == Inst->Device)
-    {
+    {
 	    dev->DemodIOHandle[0] = Inst->DriverParam.Ter.DemodIOHandle;
 	    dev->DemodIOHandle[1] = Inst->DriverParam.Ter.TunerIOHandle;
 	}
