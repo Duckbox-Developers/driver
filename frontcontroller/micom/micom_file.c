@@ -595,8 +595,6 @@ unsigned char VFD_CHARTABLE[256] =
 		0x10,//0xfd,  reserved
 		0x10,//0xfe,  reserved
 		0x10,//0xff, reservedr
-
-	  
 };
 #endif
 
@@ -650,7 +648,8 @@ int micomWriteCommand(char command, char* buffer, int len, int needAck)
 
     for (i = 0; i < len; i++)
     {
-	      dprintk(201, "Put: %c\n", buffer[i]);
+          dprintk(201, "Put: %c\n", buffer[i]);
+          udelay(1);
 #ifdef DIRECT_ASC
           serial_putc (buffer[i]);
 #else
