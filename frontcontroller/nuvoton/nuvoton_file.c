@@ -353,10 +353,11 @@ int nuvotonWriteCommand(char* buffer, int len, int needAck)
 
     for (i = 0; i < len; i++)
     {
+        udelay(1);
 #ifdef DIRECT_ASC
-          serial_putc (buffer[i]);
+        serial_putc (buffer[i]);
 #else
-          nuvoton_putc(buffer[i]);
+        nuvoton_putc(buffer[i]);
 #endif
     }
 
@@ -1277,11 +1278,11 @@ static int NUVOTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int
         break;
     case VFDGETTIME:
         res = nuvotonGetTime();
-        copy_to_user(arg, &ioctl_data, 5);
+        copy_to_user((void *)arg, &ioctl_data, 5);
         break;
     case VFDGETWAKEUPMODE:
         res = nuvotonGetWakeUpMode();
-        copy_to_user(arg, &ioctl_data, 1);
+        copy_to_user((void *)arg, &ioctl_data, 1);
         break;
     case VFDDISPLAYCHARS:
         if (mode == 0)

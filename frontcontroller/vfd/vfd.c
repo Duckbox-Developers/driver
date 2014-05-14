@@ -164,6 +164,7 @@ static int VFD_DCRAM_Write(struct vfd_ioctl_data *data)
 
 	while ((i< data->length) && (j < 16))
 	{
+		udelay(1);
 		j++;
 #ifdef DCRAM_INVERT
 		write_data[data->length-i]=ROM_Char_Table[data->data[i]];

@@ -1176,15 +1176,19 @@ int micom_init_func(void)
     printk("Kathrein UFS912/913 VFD/MICOM module initializing\n");
     micomInitialize();
 #endif
+    msleep(10);
     micomSetBrightness(1);
 
+    msleep(10);
     micomSetLedBrightness(0x50);
 
+    msleep(10);
 #if VFD_LENGTH < 16
     micomWriteString(" T D T  ", strlen(" T D T  "));
 #else
     micomWriteString(" Team Ducktales ", strlen(" Team Ducktales "));
 #endif
+    msleep(10);
 
 #if defined(UFS922) || defined(UFC960)
     for (vLoop = ICON_MIN + 1; vLoop < ICON_MAX; vLoop++)
@@ -1487,7 +1491,7 @@ static int MICOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
             res = micomWriteString(data->data, data->length);
         } else
         {
-            //not suppoerted
+            //not supported
         }
 
         mode = 0;
@@ -1496,9 +1500,6 @@ static int MICOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
     case VFDDISPLAYWRITEONOFF:
         /* ->alles abschalten ? VFD_Display_Write_On_Off */
         printk("VFDDISPLAYWRITEONOFF ->not yet implemented\n");
-#if defined(UFS912) || defined(UFS913)
-        micomInitialize();
-#endif
         break;
     case 0x5305:
 	break;
