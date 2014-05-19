@@ -1064,7 +1064,7 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(       Mpeg4VopHeade
 		}
 		else
 		{
-				// try to determin a fake DivX NVOP or a real NVOP
+				// try to determine a fake DivX NVOP or a real NVOP
 				if( ( Vop->prediction_type == PREDICTION_TYPE_P ) &&
 					( LastPredictionType != PREDICTION_TYPE_B ) &&
 					( LastTimeIncrement == Vop->time_inc) )
@@ -1178,7 +1178,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::PrepareReferenceFrameList( void )
 		//
 		// Note we cannot use StreamParameters or FrameParameters to address data directly,
 		// as these may no longer apply to the frame we are dealing with.
-		// Particularly if we have seen a sequenece header or group of pictures
+		// Particularly if we have seen a sequence header or group of pictures
 		// header which belong to the next frame.
 		//
 

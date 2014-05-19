@@ -175,7 +175,7 @@ Codec_MmeBase_c::~Codec_MmeBase_c(      void )
 //      The Halt function, give up access to any registered resources
 //
 //      NOTE for some calls we ignore the return statuses, this is because
-//      we will procede with the halt even if we fail (what else can we do)
+//      we will proceed with the halt even if we fail (what else can we do)
 //
 
 CodecStatus_t   Codec_MmeBase_c::Halt(  void )
@@ -814,14 +814,14 @@ BufferStructure_t         BufferStructure;
     }
 
     //
-    // Check that the decode index is monotonicaly increasing
+    // Check that the decode index is monotonically increasing
     //
 
     if( (CurrentDecodeIndex != INVALID_INDEX) &&
 	((ParsedFrameParameters->DecodeFrameIndex < CurrentDecodeIndex) ||
 	(!Configuration.SliceDecodePermitted && (ParsedFrameParameters->DecodeFrameIndex == CurrentDecodeIndex))) )
     {
-	report( severity_error, "Codec_MmeBase_c::Input(%s) - Decode indices must be monotonicaly increasing (%d vs %d).\n", Configuration.CodecName, ParsedFrameParameters->DecodeFrameIndex, CurrentDecodeIndex );
+	report( severity_error, "Codec_MmeBase_c::Input(%s) - Decode indices must be monotonically increasing (%d vs %d).\n", Configuration.CodecName, ParsedFrameParameters->DecodeFrameIndex, CurrentDecodeIndex );
 	return PlayerImplementationError;
     }
 
@@ -1253,7 +1253,7 @@ unsigned int       w,h,hw;
 //      and increment usage counts appropriately.
 //
 
-CodecStatus_t   Codec_MmeBase_c::TranslateReferenceFrameLists( bool	  IncrementUseCountForReferenceFrame )
+CodecStatus_t   Codec_MmeBase_c::TranslateReferenceFrameLists( bool IncrementUseCountForReferenceFrame )
 {
 unsigned int      i,j;
 unsigned int      BufferIndex;
@@ -1493,7 +1493,6 @@ MME_ERROR                        MMEStatus;
 	report( severity_error, "Codec_MmeBase_c::InitializeMMETransformer(%s) - Failed to fill out transformer initialization parameters (%08x).\n", Configuration.CodecName, Status );
 	return Status;
     }
-
 //
 
     MMEStatus   = MME_InitTransformer( Configuration.TransformName[SelectedTransformer], &MMEInitializationParameters, &MMEHandle );

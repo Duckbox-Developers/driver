@@ -12,7 +12,6 @@
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/mempolicy.h>
-#include <asm/cacheflush.h>
 #else
 #include <string.h>
 #endif
@@ -20,6 +19,8 @@
 #include <mme.h>
 #include "pcm_transcoder.h"
 #include "Pcm_TranscoderTypes.h"
+#include "osinline.h"
+#include "osdev_device.h"
 
 #define PCM_INPUT_BUFFER                0
 #define PCM_OUTPUT_BUFFER               1
@@ -229,7 +230,7 @@ static MME_ERROR PcmTranscoder_Transform (void* Context, MME_Command_t* Command)
 #ifdef __KERNEL__
     // TODO: most of the Linux cache flush functions "don't do what you think they do". We take a
     //       conservative approach here.
-    flush_cache_all();
+    OSDEV_FlushCacheAll();
 #endif
 
     CommandStatus->Error                = MME_SUCCESS;
@@ -257,7 +258,7 @@ static MME_ERROR PcmTranscoder_SetGlobalParams(void* Context, MME_Command_t* Com
     return CommandStatus->Error;
 }
 /*}}}*/
-
+/*{{{  PcmTranscoder_ProcessCommand*/
 static MME_ERROR PcmTranscoder_ProcessCommand (void* Context, MME_Command_t* Command)
 {
     PCM_DEBUG("\n");
@@ -277,14 +278,15 @@ static MME_ERROR PcmTranscoder_ProcessCommand (void* Context, MME_Command_t* Com
 
     return MME_INVALID_ARGUMENT;
 }
-
+/*}}}*/
+/*{{{  PcmTranscoder_TermTransformer*/
 static MME_ERROR PcmTranscoder_TermTransformer (void* Context)
 {
     kfree (Context);
     return MME_SUCCESS;
 }
-
-
+/*}}}*/
+/*{{{  PcmTranscoder_RegisterTransformer*/
 MME_ERROR PcmTranscoder_RegisterTransformer (const char* Name)
 {
     return MME_RegisterTransformer     (Name,
@@ -294,3 +296,4 @@ MME_ERROR PcmTranscoder_RegisterTransformer (const char* Name)
                                         PcmTranscoder_ProcessCommand,
                                         PcmTranscoder_TermTransformer);
 }
+/*}}}*/

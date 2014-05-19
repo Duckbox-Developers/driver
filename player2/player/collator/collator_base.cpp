@@ -294,7 +294,7 @@ PlayerStatus_t  Status;
     }
 
     //
-    // Aquire an operating buffer
+    // Acquire an operating buffer
     //
 
     Status      = GetNewBuffer();
@@ -400,7 +400,6 @@ Buffer_t		BufferToOutput;
     BufferToOutput	= CodedFrameBuffer;
     Status      	= GetNewBuffer();
     OutputRing->Insert( (unsigned int )BufferToOutput );
-
 //
 
     return Status;
@@ -417,6 +416,7 @@ CollatorStatus_t   Collator_Base_c::DiscardAccumulatedData(     void )
     if( CodedFrameBuffer != NULL )
     {
 	AccumulatedDataSize                         = 0;
+
 	CodedFrameBuffer->SetUsedDataSize( AccumulatedDataSize );
 
 	if( Configuration.GenerateStartCodeList )

@@ -101,7 +101,7 @@ OutputTimer_Base_c::~OutputTimer_Base_c( 	void )
 // 	The Halt function, give up access to any registered resources
 //
 //	NOTE for some calls we ignore the return statuses, this is because
-//	we will procede with the halt even if we fail (what else can we do)
+//	we will proceed with the halt even if we fail (what else can we do)
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::Halt( 	void )
@@ -452,7 +452,7 @@ unsigned char			  SynchronizationPolicy;
 
     //
     // Check for large DTS changes, invalidating the mapping if we find one
-    // Note we allow negative jumps here of upto the decode porch time, simply
+    // Note we allow negative jumps here of up to the decode porch time, simply
     // because when we make up a DTS we often create a negative jump of 1 or 
     // two frame times.
     //
@@ -1441,7 +1441,7 @@ static unsigned int 	  HistoryIndex	= 0;
 
 	//
 	// We have a suspected sync error, we integrate over a number of values
-	// to elliminate glitch efects. If we confirm the error then we fall through
+	// to eliminate glitch effects. If we confirm the error then we fall through
 	// to the next state.
 	//
 
@@ -1463,7 +1463,7 @@ static unsigned int 	  HistoryIndex	= 0;
 	    SynchronizationState			= SyncStateConfirmedSyncError;
 
 	//
-	// Confirmed sync error, enterred by a fallthrough, 
+	// Confirmed sync error, entered by a fallthrough,
 	// We request the stream specific function to correct 
 	// it, then we fallthrough to start awaiting the 
 	// correction to work through.
@@ -1718,7 +1718,7 @@ PlayerEventRecord_t		  Event;
 	}
 
 	//
-	// We need to avoid riduculous adjusted speeds, and allow manifestation times 
+	// We need to avoid ridiculous adjusted speeds, and allow manifestation times
 	// to take the place of conditions where a large adjustment would have functioned.
 	//
 
@@ -1727,7 +1727,7 @@ PlayerEventRecord_t		  Event;
 	//
 	// Do we need to signal a change in the trick mode domain
 	//
-	
+
 	if( (TrickModeDomain != LastTrickModeDomain) &&
 	    ((EventTrickModeDomainChange & EventMask) != 0) )
 	{

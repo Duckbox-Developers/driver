@@ -231,7 +231,9 @@ static int __init kreplay_module_init(void)
 		return PTR_ERR(kreplay_kthread);
 	}
 
+#ifdef VERY_VERBOSE
 	printk(KERN_DEBUG "kreplay: Built %s %s\n", __DATE__, __TIME__);
+#endif
 	return 0;
 }
 

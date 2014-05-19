@@ -335,7 +335,6 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseFrameHeader( unsigned char *F
             FirstTime = false;
         }
     }
-
     return FrameParserNoError;
 }
 
@@ -563,7 +562,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseCoreHeader(BitStreamClass_c *
 
     if (PrimaryFrameByteSize < 95 || PrimaryFrameByteSize > 16383) 
     {
-        FRAME_ERROR("Invalid Frame Size\n", PrimaryFrameByteSize);
+        FRAME_ERROR("Invalid Frame Size %u\n", PrimaryFrameByteSize);
         return FrameParserError;
     }
     
@@ -590,7 +589,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                                                                    unsigned char SelectedAudioPresentation)
 {
     bool bStaticFieldsPresent = Bits->Get(1);
-    unsigned int nuNumAudioPresnt, nuNumAssets;
+    unsigned int nuNumAudioPresent, nuNumAssets;
     bool bMixMetadataEnabl = false, bMixMetadataPresent = false;
     unsigned int nuNumMixOutConfigs = 0;
     unsigned int nuNumMixOutCh[4] ={ 0, 0, 0 ,0};
@@ -607,14 +606,14 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
         {
             Bits->FlushUnseen(36);
         }
-        nuNumAudioPresnt = Bits->Get(3) + 1;
+        nuNumAudioPresent = Bits->Get(3) + 1;
         nuNumAssets = Bits->Get(3) + 1;
         unsigned int nuActiveExSSMask[8];
-        for (unsigned int nAuPr = 0; nAuPr < nuNumAudioPresnt; nAuPr ++)
+        for (unsigned int nAuPr = 0; nAuPr < nuNumAudioPresent; nAuPr ++)
         {
             nuActiveExSSMask[nAuPr] = Bits->Get(ParsedFrameHeader->SubStreamId + 1);
         }
-        for (unsigned int nAuPr = 0; nAuPr < nuNumAudioPresnt; nAuPr ++)
+        for (unsigned int nAuPr = 0; nAuPr < nuNumAudioPresent; nAuPr ++)
         {
             for (int nSS = 0; nSS < (ParsedFrameHeader->SubStreamId + 1); nSS++)
             {
@@ -640,10 +639,10 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
     }
     else
     {
-        nuNumAudioPresnt = nuNumAssets = 1;
+        nuNumAudioPresent = nuNumAssets = 1;
     }
 
-    FRAME_DEBUG("Number of audio presentations: %d, assets: %d\n", nuNumAudioPresnt, nuNumAssets);
+    FRAME_DEBUG("Number of audio presentations: %d, assets: %d\n", nuNumAudioPresent, nuNumAssets);
 
     for (unsigned int nAst = 0; nAst < nuNumAssets; nAst++)
     {
@@ -782,6 +781,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                 {
                     Bits->FlushUnseen(8); //nuCustomDRCCode = Bits->Get(8);
                 }
+
                 bool bEnblPerChMainAudioScale = Bits->Get(1);
 
                 for (unsigned int ns=0; ns<nuNumMixOutConfigs; ns++)
@@ -948,6 +948,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
             {
                 bOnetoOneMixingFlag = Bits->Get(1);
             }
+
             if (bOnetoOneMixingFlag) 
             {
                 bool bEnblPerChMainAudioScale = Bits->Get(1);
@@ -966,6 +967,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                     }
                 }
             } // End ofbOnetoOneMixingFlag==true condition
+
             //            bDecodeAssetInSecondaryDecoder = Bits->Get(1);
             //            Reserved = Bits->Get(¡Ä);
             //            ByteAlign = Bits->Get(0 ¡Ä 7);
@@ -984,11 +986,11 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
         unsigned int CoreExtSSIndex = 0, CoreAssetIndex = 0;
         unsigned int CoreOffset = 0, CoreSize = 0;
         
-        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresnt; nAuPr++)
+    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             bBcCorePresent[nAuPr] = Bits->Get(1);
         }
-        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresnt; nAuPr++)
+    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             if (bBcCorePresent[nAuPr])
             {
@@ -1002,7 +1004,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                 }
             }
         }
-        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresnt; nAuPr++)
+    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             if (bBcCorePresent[nAuPr])
             {
@@ -1019,7 +1021,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
 
         // now check if any backward core substream exists in our 
         // current selected presentation/extension couple
-        if (nuNumAudioPresnt > 1)
+        if (nuNumAudioPresent > 1)
         {
             if (bBcCorePresent[SelectedAudioPresentation])
             {
@@ -1046,6 +1048,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                 CoreOffset = 0;
             }
         }
+
         ParsedFrameHeader->SubStreamCoreOffset = CoreOffset + ParsedFrameHeader->ExtensionHeaderSize;
         ParsedFrameHeader->SubStreamCoreSize = CoreSize;
     }

@@ -69,7 +69,7 @@ public:
         Data           |= *Buffer++;
     }
 
-    /* Retrive a single bit */
+    /* Retrieve a single bit */
     int GetBit (void)
     {
         int                 Low             = (High + 1) >> 1;

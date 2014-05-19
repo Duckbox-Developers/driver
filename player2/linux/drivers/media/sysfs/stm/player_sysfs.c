@@ -292,15 +292,15 @@ struct device* player_sysfs_get_class_device(void *playback, void* stream)
 struct class_device* player_sysfs_get_class_device(void *playback, void* stream)
 #endif
 {
-    struct playback_data_s* 	PlaybackData;
-    struct stream_data_s*	StreamData;
+    struct playback_data_s*     PlaybackData;
+    struct stream_data_s*       StreamData;
 
     mutex_lock(&SysfsWriteLock);
 
     if (playback == NULL)
     {
-    	SYSFS_ERROR("Playback is  NULL. Nothing to do. \n");
-    	goto err0;
+        SYSFS_ERROR("Playback is  NULL. Nothing to do. \n");
+        goto err0;
     }
 
     /* Find specific playback */
@@ -699,12 +699,12 @@ int event_attribute_created_handler(struct player_event_s* Event)
     StreamData              = get_stream (PlaybackData, Event->stream);
     if (!StreamData)
     {
-	/* Stream doesn't exist -> create new stream and get it */
-        Result 		= event_stream_created_handler(Event);
+        /* Stream doesn't exist -> create new stream and get it */
+        Result          = event_stream_created_handler(Event);
         if (Result)
         {
-        	mutex_unlock(&SysfsWriteLock);
-        	return Result;
+            mutex_unlock(&SysfsWriteLock);
+            return Result;
         }
 
         StreamData      = get_stream (PlaybackData, Event->stream);

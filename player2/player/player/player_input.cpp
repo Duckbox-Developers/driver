@@ -75,7 +75,7 @@ void                     *Data;
 PlayerInputMuxType_t      MuxType;
 PlayerStatus_t            Status;
 #ifdef __TDT__
-DemultiplexorStatus_t	  DemuxStatus;
+DemultiplexorStatus_t     DemuxStatus;
 #endif
 PlayerInputDescriptor_t  *Descriptor;
 

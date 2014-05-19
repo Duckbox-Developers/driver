@@ -539,7 +539,7 @@ FrameParserStatus_t     Status;
 	if( !CodedFrameParameters->StreamDiscontinuity )
 	{
 	    Buffer->IncrementReferenceCount( IdentifierProcessParseToDecode );
-	    OutputRing->Insert( (unsigned int )Buffer );
+	    OutputRing->Insert( (unsigned int)Buffer );
 	}
 
 	return FrameParserNoError;
@@ -653,7 +653,7 @@ unsigned int	i;
 //
 
     Buffer->IncrementReferenceCount( IdentifierProcessParseToDecode );
-    OutputRing->Insert( (unsigned int )Buffer );
+    OutputRing->Insert( (unsigned int)Buffer );
 
 //OS_SleepMilliSeconds( 4000 );
 
@@ -768,7 +768,7 @@ FrameParserStatus_t     Status;
 ///     \brief Get a new frame parameters buffer.
 ///       
 ///     Allocate, initialise with zeros and return a pointer to a block of data in which to store the
-///     frane parameters.
+///     frame parameters.
 ///     As a side effect the existing buffer, referenced via FrameParser_Base_c::FrameParametersBuffer,
 ///     will have its reference count decreased, potentially causing it to be freed. It is the responsibility
 ///     of derived classes to make a claim on the existing buffer if they must refer to it later (or pass

@@ -155,8 +155,6 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength( u
   CollatorStatus_t Status = CollatorNoError; // assume success unless told otherwise
   EAc3AudioParsedFrameHeader_t ParsedFrameHeader;
 
-  //
-
   FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader( StoredFrameHeader,
 															  &ParsedFrameHeader,
 															  false);
@@ -164,7 +162,6 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength( u
   if( FPStatus == FrameParserNoError )
   {
       *FrameLength = ParsedFrameHeader.Length;
-	  
       if (CollatorState == SeekingFrameEnd)
 	  {
 		  // we already have an independant substream accumulated, check what to do with

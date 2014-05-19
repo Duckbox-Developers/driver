@@ -3174,7 +3174,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
         SpdifOut.Config.UpdateSpdifControl = 1;
         SpdifOut.Config.UpdateMetaData = 1; // this is supposed to be FatPipe only but the examples set it...
         SpdifOut.Config.SpdifCompressed = 1;
-        SpdifOut.Config.AddIECPreamble = (OutputEncoding == PcmPlayer_c::OUTPUT_AC3)?0:1;;
+        SpdifOut.Config.AddIECPreamble = (OutputEncoding == PcmPlayer_c::OUTPUT_AC3)?0:1;
         SpdifOut.Config.ForcePC = 1; // compressed mode: firmware will get the stream type from the to Preamble_PC below
         
         if ((OutputEncoding == PcmPlayer_c::OUTPUT_AC3) || (Clients[dev_num].Parameters.OriginalEncoding == AudioOriginalEncodingDdplus))

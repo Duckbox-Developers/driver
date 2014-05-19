@@ -25,7 +25,7 @@ Author :           Nick
     Contains the header file for the report functions,
     The actual reporting function, and a function to restrict
     the range of severities reported (NOTE Fatal and greater
-    messages are always reported). It is upto the caller to
+    messages are always reported). It is up to the caller to
     insert file/line number information into the report. Process
     information will be prepended to any report of severity error
     or greater.
@@ -47,13 +47,13 @@ extern "C" {
 #define REPORT_STRING_SIZE      256
 
 typedef enum
-    {
+{
 	severity_info           = 0,
 	severity_note           = 50,
 	severity_error          = 100,
 	severity_fatal          = 200,
 	severity_interrupt      = 1000
-    } report_severity_t;
+} report_severity_t;
 
 void report_init( void );
 

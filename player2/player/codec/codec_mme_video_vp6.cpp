@@ -89,7 +89,7 @@ Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoVp6_c::Codec_MmeVideoVp6_c( void )
@@ -189,7 +189,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::HandleCapabilities( void )
 //
 CodecStatus_t   Codec_MmeVideoVp6_c::FillOutTransformerInitializationParameters( void )
 {
-    // Fillout the command parameters
+    // Fill out the command parameters
     Vp6InitializationParameters.CodedWidth                      = DecodingWidth;
     Vp6InitializationParameters.CodedHeight                     = DecodingHeight;
     Vp6InitializationParameters.CodecVersion                    = VP6f;
@@ -198,7 +198,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutTransformerInitializationParameters(
     CODEC_TRACE("  DecodingWidth              %6u\n", DecodingWidth);
     CODEC_TRACE("  DecodingHeight             %6u\n", DecodingHeight);
 
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(VP6_InitTransformerParam_t);
     MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&Vp6InitializationParameters);
 
@@ -304,7 +304,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(       void )
     KnownLastSliceInFieldFrame                  = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -328,7 +328,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(       void )
     Picture->PictureStopOffset                  = CodedDataLength;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset (&DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t));

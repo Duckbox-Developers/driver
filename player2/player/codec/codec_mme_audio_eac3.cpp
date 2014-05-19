@@ -70,14 +70,8 @@ typedef struct EAc3AudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } EAc3AudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "EAc3AudioCodecStreamParameterContext"
-#define BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(EAc3AudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "EAc3AudioCodecStreamParameterContext"
 #define BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(EAc3AudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            EAc3AudioCodecStreamParameterContextDescriptor = BUFFER_EAC3_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -91,7 +85,7 @@ typedef struct
 
 typedef struct
 {
-	MME_LxAudioDecoderFrameStatus_t  DecStatus;  
+	MME_LxAudioDecoderFrameStatus_t  DecStatus;
 	MME_MixMetadataAc3FrameStatus_t  PcmStatus;
 } MME_LxAudioDecoderAc3FrameMixMetadataStatus_t;
 
@@ -107,14 +101,8 @@ typedef struct EAc3AudioCodecDecodeContext_s
 #define EAC3_MIN_MIXING_METADATA_SIZE       (sizeof(MME_LxAudioDecoderMixingMetadata_t) - sizeof(MME_MixingOutputConfiguration_t))
 #define EAC3_MIN_MIXING_METADATA_FIXED_SIZE (EAC3_MIN_MIXING_METADATA_SIZE - (2 * sizeof(U32))) // same as above minus Id and StructSize
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT  "EAc3AudioCodecDecodeContext"
-#define BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(EAc3AudioCodecDecodeContext_t)}
-#else
 #define BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT  "EAc3AudioCodecDecodeContext"
 #define BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(EAc3AudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            EAc3AudioCodecDecodeContextDescriptor = BUFFER_EAC3_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -242,7 +230,6 @@ CodecStatus_t Codec_MmeAudioEAc3_c::FillOutTransformerGlobalParameters( MME_LxAu
 CodecStatus_t Status;
 
 //
-
     MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
     GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
 
@@ -347,7 +334,7 @@ EAc3AudioCodecStreamParameterContext_t  *Context = (EAc3AudioCodecStreamParamete
 
     // if the stream is dd+, then the transcoding is required
     TranscodeEnable = (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDdplus);
-    
+
     //
     // Examine the parsed stream parameters and determine what type of codec to instanciate
     //
@@ -441,12 +428,12 @@ int TranscodedBufferSize = 0;
         // don't report an error to the higher levels (because the frame is muted)
     }
 
-    // if transcoding is required, check the transcoded buffer size...
+    // if transcoding is required, check the transcoded buffer size
     if (TranscodeEnable)
     {
         MME_Command_t * Cmd = &DecodeContext->BaseContext.MMECommand;
         TranscodedBufferSize = Cmd->DataBuffers_p[EAC3_TRANSCODE_SCATTER_PAGE_INDEX]->ScatterPages_p[0].BytesUsed;
-        
+
         if ((TranscodedBufferSize == 0) || (TranscodedBufferSize > EAC3_AC3_MAX_FRAME_SIZE))
         {
             CODEC_ERROR("Erroneous transcoded buffer size: %d\n", TranscodedBufferSize);
@@ -454,9 +441,9 @@ int TranscodedBufferSize = 0;
     }
 
     if (Status.NbOutSamples != EAC3_NBSAMPLES_NEEDED) 
-	{ // TODO: manifest constant
-		CODEC_ERROR("Unexpected number of output samples (%d)\n", Status.NbOutSamples);
-		//DumpCommand(bufferIndex);
+    { // TODO: manifest constant
+        CODEC_ERROR("Unexpected number of output samples (%d)\n", Status.NbOutSamples);
+        //DumpCommand(bufferIndex);
     }
 
     // SYSFS
@@ -490,7 +477,7 @@ int TranscodedBufferSize = 0;
 
     // Fill the parsed parameters with the AC3 stream metadata
     Codec_MmeAudioEAc3_c::FillStreamMetadata(AudioParameters, (MME_LxAudioDecoderFrameStatus_t*)&Status);
-    
+
     // Validate the extended status (without propagating errors)
     (void) ValidatePcmProcessingExtendedStatus(Context,
 	    (MME_PcmProcessingFrameExtStatus_t *) &DecodeContext->DecodeStatus.PcmStatus);
@@ -759,7 +746,6 @@ void Codec_MmeAudioEAc3_c::FillStreamMetadata(ParsedAudioParameters_t * AudioPar
     
     Metadata->LfeGain = 10;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //

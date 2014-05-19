@@ -184,8 +184,8 @@ static format_info stmfb_v4l2_mapping_info [] =
 unsigned long GetPhysicalContiguous(unsigned long ptr,size_t size)
 {
 	struct mm_struct *mm = current->mm;
-	//struct vma_area_struct *vma = find_vma(mm, ptr);
-	unsigned virt_base =  (ptr / PAGE_SIZE) * PAGE_SIZE;
+	/* struct vma_area_struct *vma = find_vma(mm, ptr); */
+	unsigned virt_base = (ptr / PAGE_SIZE) * PAGE_SIZE;
 	unsigned phys_base = 0;
 
 	pgd_t *pgd;
@@ -198,7 +198,7 @@ unsigned long GetPhysicalContiguous(unsigned long ptr,size_t size)
 	if (pgd_none(*pgd) || pgd_bad(*pgd))
 		goto out;
 
-	pmd = pmd_offset((pud_t*)pgd, virt_base);
+	pmd = pmd_offset((pud_t *) pgd, virt_base);
 	if (pmd_none(*pmd) || pmd_bad(*pmd))
 		goto out;
 

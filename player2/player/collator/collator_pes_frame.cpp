@@ -190,7 +190,7 @@ CollatorStatus_t   Collator_PesFrame_c::Input  (PlayerInputDescriptor_t*        
 	    InputExit();
             return CollatorError;
         }
-
+        //}}}
         //{{{  walk down optional bits
         if ((PesHeader[7] & 0x20) == 0x20)              // ESCR present
             Bits.FlushUnseen(48);                       // Size of ESCR
@@ -251,7 +251,7 @@ CollatorStatus_t   Collator_PesFrame_c::Input  (PlayerInputDescriptor_t*        
             return Status;
 	}
 
-        RemainingDataLength    -= PayloadLength;
+        RemainingDataLength     -= PayloadLength;
         if (RemainingDataLength <= 0)
         {
             Status              = InternalFrameFlush();         // flush out collected frame

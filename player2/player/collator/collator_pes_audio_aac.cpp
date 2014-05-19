@@ -94,7 +94,6 @@ CollatorStatus_t Collator_PesAudioAac_c::FindNextSyncWord( int *CodeOffset )
     int RemainingInPotential = PotentialFrameHeaderLength;
     unsigned char * PotentialFramePtr = PotentialFrameHeader;
     unsigned char * ElementaryPtr;
-
     // do the most naive possible search. there is no obvious need for performance here
     for( i=0; i<=(int)(RemainingElementaryLength + PotentialFrameHeaderLength - AAC_HEADER_SIZE); i++) 
     {

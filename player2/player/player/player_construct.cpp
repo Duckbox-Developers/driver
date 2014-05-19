@@ -46,7 +46,7 @@ extern int discardlateframe;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Contructor function - Initialize our data
+//      Constructor function - Initialize our data
 //
 
 Player_Generic_c::Player_Generic_c( void )

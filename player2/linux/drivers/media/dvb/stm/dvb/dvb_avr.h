@@ -27,13 +27,13 @@ license from ST.
 
 typedef struct avr_v4l_shared_handle_s
 {
-	struct DeviceContext_s 	avr_device_context;
+	struct DeviceContext_s  avr_device_context;
 
-	unsigned long long		target_latency;
-	long long 				audio_video_latency_offset;
-	bool 					update_player2_time_mapping;
-	unsigned int			dvp_irq;
-	int*					mapped_dvp_registers;
+	unsigned long long      target_latency;
+	long long               audio_video_latency_offset;
+	bool                    update_player2_time_mapping;
+	unsigned int            dvp_irq;
+	int*                    mapped_dvp_registers;
 
 	void                   *audio_context; //<! Cached for use by avr_set_vsync_offset()
 

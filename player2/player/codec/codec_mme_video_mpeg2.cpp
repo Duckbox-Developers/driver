@@ -92,14 +92,8 @@ typedef struct Mpeg2CodecStreamParameterContext_s
     MPEG2_SetGlobalParamSequence_t      StreamParameters;
 } Mpeg2CodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT             "Mpeg2CodecStreamParameterContext"
-#define BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT_TYPE        {BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(Mpeg2CodecStreamParameterContext_t)}
-#else
 #define BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT             "Mpeg2CodecStreamParameterContext"
 #define BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT_TYPE        {BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(Mpeg2CodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            Mpeg2CodecStreamParameterContextDescriptor = BUFFER_MPEG2_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -113,14 +107,8 @@ typedef struct Mpeg2CodecDecodeContext_s
     MPEG2_CommandStatus_t               DecodeStatus;
 } Mpeg2CodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MPEG2_CODEC_DECODE_CONTEXT       "Mpeg2CodecDecodeContext"
-#define BUFFER_MPEG2_CODEC_DECODE_CONTEXT_TYPE  {BUFFER_MPEG2_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(Mpeg2CodecDecodeContext_t)}
-#else
 #define BUFFER_MPEG2_CODEC_DECODE_CONTEXT       "Mpeg2CodecDecodeContext"
 #define BUFFER_MPEG2_CODEC_DECODE_CONTEXT_TYPE  {BUFFER_MPEG2_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(Mpeg2CodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            Mpeg2CodecDecodeContextDescriptor = BUFFER_MPEG2_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -128,7 +116,7 @@ static BufferDataDescriptor_t            Mpeg2CodecDecodeContextDescriptor = BUF
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoMpeg2_c::Codec_MmeVideoMpeg2_c( void )
@@ -229,14 +217,14 @@ CodecStatus_t   Codec_MmeVideoMpeg2_c::FillOutTransformerInitializationParameter
 {
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     Mpeg2InitializationParameters.InputBufferBegin      = 0x00000000;
     Mpeg2InitializationParameters.InputBufferEnd        = 0xffffffff;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(MPEG2_InitTransformerParam_t);
@@ -264,7 +252,7 @@ unsigned char                           *chroma_intra_quantizer_matrix;
 unsigned char                           *chroma_non_intra_quantizer_matrix;
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     Context->StreamParameters.StructSize                = sizeof(MPEG2_SetGlobalParamSequence_t);
@@ -311,7 +299,7 @@ unsigned char                           *chroma_non_intra_quantizer_matrix;
     memcpy( Context->StreamParameters.chroma_non_intra_quantiser_matrix, chroma_non_intra_quantizer_matrix, sizeof(QuantiserMatrix_t) );
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -350,7 +338,7 @@ unsigned int                     Entry;
     KnownLastSliceInFieldFrame                  = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -412,9 +400,9 @@ unsigned int                     Entry;
 	    else
 	      Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_INT;
 	    break;
-	 }       
+	 }
     }
-      
+
     Param->DecodingMode                         = MPEG2_NORMAL_DECODE;
 //    Param->DecodingMode                               = MPEG2_NORMAL_DECODE_WITHOUT_ERROR_RECOVERY;
     Param->AdditionalFlags                      = MPEG2_ADDITIONAL_FLAG_NONE;
@@ -458,7 +446,7 @@ unsigned int                     Entry;
 
 
     //
-    // Fillout the referece frame list stuff
+    // Fill out the reference frame list stuff
     //
 
     RefList->StructSize                         = sizeof(MPEG2_RefPicListAddress_t);
@@ -481,7 +469,7 @@ unsigned int                     Entry;
     }
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -603,40 +591,40 @@ MPEG2_TransformParam_t          *FrameParams;
 
 CodecStatus_t   Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters( CodecBaseDecodeContext_t *Context )
 {
-  
-  MME_Command_t             *MMECommand              = (MME_Command_t *)        (&Context->MMECommand);
-  MME_CommandStatus_t       *CmdStatus               = (MME_CommandStatus_t *)  (&MMECommand->CmdStatus);
-  MPEG2_CommandStatus_t     *AdditionalInfo_p        = (MPEG2_CommandStatus_t *)  CmdStatus->AdditionalInfo_p;
-  
-  if ( AdditionalInfo_p != NULL) {
 
-    if( AdditionalInfo_p->ErrorCode != MPEG2_DECODER_NO_ERROR ) {
+    MME_Command_t             *MMECommand              = (MME_Command_t *)        (&Context->MMECommand);
+    MME_CommandStatus_t       *CmdStatus               = (MME_CommandStatus_t *)  (&MMECommand->CmdStatus);
+    MPEG2_CommandStatus_t     *AdditionalInfo_p        = (MPEG2_CommandStatus_t *)  CmdStatus->AdditionalInfo_p;
 
-      switch ( AdditionalInfo_p->ErrorCode )
-      {
-	case MPEG2_DECODER_ERROR_MB_OVERFLOW:
-	{
-	  report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_MB_OVERFLOW   %x \n" , AdditionalInfo_p->ErrorCode );
-	  break;
-	}
-        case MPEG2_DECODER_ERROR_RECOVERED:
-	{
-	  report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_RECOVERED     %x \n" , AdditionalInfo_p->ErrorCode );
-	  break;
-	}
-        case MPEG2_DECODER_ERROR_NOT_RECOVERED:
-	{
-	  report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_NOT_RECOVERED %x \n" , AdditionalInfo_p->ErrorCode );
-	  break;
-	}
-        case MPEG2_DECODER_ERROR_TASK_TIMEOUT:
-	{
-	  report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_TASK_TIMEOUT  %x \n" , AdditionalInfo_p->ErrorCode );
-	  break;
-	}
-      }
+    if ( AdditionalInfo_p != NULL) {
+
+        if (AdditionalInfo_p->ErrorCode != MPEG2_DECODER_NO_ERROR)
+        {
+            switch (AdditionalInfo_p->ErrorCode)
+            {
+                case MPEG2_DECODER_ERROR_MB_OVERFLOW:
+                {
+                    report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_MB_OVERFLOW   %x \n" , AdditionalInfo_p->ErrorCode );
+                    break;
+                }
+                case MPEG2_DECODER_ERROR_RECOVERED:
+                {
+                    report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_RECOVERED     %x \n" , AdditionalInfo_p->ErrorCode );
+                    break;
+                }
+                case MPEG2_DECODER_ERROR_NOT_RECOVERED:
+                {
+                    report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_NOT_RECOVERED %x \n" , AdditionalInfo_p->ErrorCode );
+                    break;
+                }
+                case MPEG2_DECODER_ERROR_TASK_TIMEOUT:
+                {
+                    report( severity_info,  "Codec_MmeVideoMpeg2_c::CheckCodecReturnParameters - MPEG2_DECODER_ERROR_TASK_TIMEOUT  %x \n" , AdditionalInfo_p->ErrorCode );
+                    break;
+                }
+            }
+        }
     }
-  }
 
-  return CodecNoError;
+    return CodecNoError;
 }

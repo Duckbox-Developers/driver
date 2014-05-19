@@ -292,4 +292,3 @@ typedef struct Vc1FrameParameters_s
 //
 
 #endif
-

@@ -48,9 +48,7 @@ Date        Modification                                    Name
 #ifdef __TDT__
 #include "e2_proc/e2_proc.h"
 #include <linux/version.h>
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/mm.h>
-#endif
 #endif
 
 /*{{{  prototypes*/
@@ -90,27 +88,27 @@ static int VideoIoctlDiscontinuity      (struct DeviceContext_s* Context,
 /*{{{  static data*/
 static struct file_operations VideoFops =
 {
-        owner:          THIS_MODULE,
-        write:          VideoWrite,
-        unlocked_ioctl: DvbGenericUnlockedIoctl,
-        open:           VideoOpen,
-        release:        VideoRelease,
-        poll:           VideoPoll
+    owner:          THIS_MODULE,
+    write:          VideoWrite,
+    unlocked_ioctl: DvbGenericUnlockedIoctl,
+    open:           VideoOpen,
+    release:        VideoRelease,
+    poll:           VideoPoll
 };
 
 static struct dvb_device VideoDevice =
 {
-        priv:            NULL,
-        users:           8,
-        readers:         7,
-        writers:         1,
-        fops:            &VideoFops,
-        kernel_ioctl:    VideoIoctl,
+    priv:            NULL,
+    users:           8,
+    readers:         7,
+    writers:         1,
+    fops:            &VideoFops,
+    kernel_ioctl:    VideoIoctl,
 };
 
 /* Assign encodings to backend id's using the actual ID's rather on relying on the correct order */
 
-static char* VideoContent[]     =
+static char* VideoContent[] =
 {
   [VIDEO_ENCODING_AUTO]     = BACKEND_AUTO_ID,
   [VIDEO_ENCODING_MPEG1]    = BACKEND_MPEG1_ID,
@@ -178,7 +176,7 @@ struct dvb_device* VideoInit (struct DeviceContext_s* Context)
     Context->VideoState.play_state              = VIDEO_STOPPED;
     Context->VideoState.stream_source           = VIDEO_SOURCE_DEMUX;
 #ifdef __TDT__
-	/* Set 16:9 as standard */
+    /* Set 16:9 as standard */
     Context->VideoState.video_format            = VIDEO_FORMAT_16_9;
     Context->VideoState.display_format          = VIDEO_LETTER_BOX;
 #else

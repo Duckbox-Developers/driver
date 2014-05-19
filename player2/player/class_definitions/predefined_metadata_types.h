@@ -310,7 +310,7 @@ typedef struct MixingOutputConfiguration_s
 
 typedef struct MixingMetadata_s
 {
-    bool                               IsMixingMetadataPresent;                       //< does the stream embedd some mixing metadata?
+	bool                               IsMixingMetadataPresent;                       //< does the stream embedd some mixing metadata?
 	unsigned short                     PostMixGain;                                   //< unsigned Q3.13 gain to be applied to output of mixed primary and secondary
 	unsigned short                     NbOutMixConfig;                                //< Number of mix output configurations  
 	MixingOutputConfiguration_t        MixOutConfig[MAX_MIXING_OUTPUT_CONFIGURATION];//< This array is extensible according to NbOutMixConfig
@@ -368,8 +368,6 @@ typedef struct ParsedAudioParameters_s
 	Rational_t              SystemClockAdjustment;          \
 								\
 	bool                    TimingGenerated;
-
-
 
 typedef struct VideoOutputTiming_s
 {

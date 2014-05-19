@@ -222,7 +222,7 @@ Date        Modification                                    Name
 #define NO_LONG_TERM_FRAME_INDICES                                      0xffffffff
 
 //
-// Colour matrix coeffient codes
+// Colour matrix coefficient codes
 //
 
 #define  H264_MATRIX_COEFFICIENTS_IDENTITY		0		// already in RGB

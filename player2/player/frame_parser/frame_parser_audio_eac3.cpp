@@ -80,7 +80,7 @@ static int EAC3Blocks[] =
 
 static char EAC3FsCodeToFrameSize[] = 
 {
-	2, 0, 3
+	2, 0, 3, 0
 };
 	
 static int EAC3SamplingFreq[] = 
@@ -116,7 +116,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader( unsigned char *Fr
 	int NumberOfIndependantSubStreams = 0;
 	int NumberOfDependantSubStreams = 0;
 	int NumberOfSamples = 0;
-	
+
 	memset(ParsedFrameHeader, 0, sizeof(EAc3AudioParsedFrameHeader_t));
 	
 	do 
@@ -133,7 +133,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader( unsigned char *Fr
 		{
 			return (Status);
 		}
-		
+
 		if ((NextParsedFrameHeader.Type == TypeEac3Ind) || (NextParsedFrameHeader.Type == TypeAc3))
 		{
 			if (NumberOfIndependantSubStreams == 0)
@@ -163,8 +163,8 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader( unsigned char *Fr
 			FRAME_ERROR("Bad substream type: %d...\n", NextParsedFrameHeader.Type);
 			return FrameParserError;
 		}
-		
-      StreamIndex += NextParsedFrameHeader.Length;
+
+		StreamIndex += NextParsedFrameHeader.Length;
       
     } while (StreamIndex < GivenFrameSize);
   
@@ -177,7 +177,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader( unsigned char *Fr
 	if (NumberOfSamples != EAC3_NBSAMPLES_NEEDED)
 	{
 		FRAME_ERROR("Number of samples mismatch: %d (expected:%d)\n", NumberOfSamples, EAC3_BYTES_NEEDED);
-		return FrameParserError;		
+		return FrameParserError;
 	}
 	
 	// remember the last frame header type to know if this stream is DD+ or Ac3 (dependant eac3 substreams 
@@ -337,7 +337,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader( unsigned ch
       char StrmType = Bits.Get(2);
 	  int fscod;
 	  int fscod2_numblk;
-	  
+
       /* sub stream id (used for programme identification) */
       ParsedFrameHeader->SubStreamId =  Bits.Get(3);
       
@@ -523,13 +523,11 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader( unsigned ch
   
   FRAME_DEBUG("SamplingFrequency: %d, FrameSize: %d, Frame type: % d, NbSamples: %d, convsync: %d \n",
 			  SamplingFrequency, FrameSize, Type, NbSamples, convsync);
-  
-  //
-  
+
   ParsedFrameHeader->Type = Type;
   ParsedFrameHeader->SamplingFrequency = SamplingFrequency;
   ParsedFrameHeader->NumberOfSamples = NbSamples;
-  ParsedFrameHeader->Length = FrameSize; 
+  ParsedFrameHeader->Length = FrameSize;
   ParsedFrameHeader->FirstBlockForTranscoding = convsync;
   //
   return FrameParserNoError;
@@ -659,7 +657,6 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders( void )
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec
     ParsedAudioParameters->OriginalEncoding = (ParsedFrameHeader.Type == TypeAc3)?AudioOriginalEncodingAc3:AudioOriginalEncodingDdplus;
-
     return FrameParserNoError;
 }
 

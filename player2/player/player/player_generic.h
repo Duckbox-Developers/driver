@@ -22,7 +22,7 @@ license from ST.
 Source file name : player_generic.h
 Author :           Nick
 
-Definition of the player generic class implementationfor player 2.
+Definition of the player generic class implementation for player 2.
 
 
 Date        Modification                                    Name
@@ -758,7 +758,7 @@ public:
 						bool			  SignalEvent		= false,
 						void			 *EventUserData		= NULL );
 
-    PlayerStatus_t   CheckStreamDrained(	PlayerStream_t		  Stream,
+    PlayerStatus_t   CheckStreamDrained(PlayerStream_t		  Stream,
 						void			 *EventUserData		= NULL );
 
     //

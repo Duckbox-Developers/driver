@@ -109,9 +109,9 @@ protected:
     OS_Event_t                            StartStopEvent;
 
     unsigned int                          SD_MaxMBStructureSize;	        // Data items relating to macroblock structure buffers
-    unsigned int			  HD_MaxMBStructureSize;
-    allocator_device_t			  MacroBlockMemoryDevice;
-    void				 *MacroBlockMemory[3];
+    unsigned int                          HD_MaxMBStructureSize;
+    allocator_device_t                    MacroBlockMemoryDevice;
+    void                                  *MacroBlockMemory[3];
     BufferType_t                          MacroBlockStructureType;
     BufferPool_t                          MacroBlockStructurePool;
 

@@ -57,13 +57,13 @@ Date        Modification                                    Name
 ///
 ///  \par Note 1:
 ///
-///     Since we are accepting pes encapsulated data, and 
-///     junking the pes header, we need to accumulate the 
+///     Since we are accepting pes encapsulated data, and
+///     junking the pes header, we need to accumulate the
 ///     pes header, before parsing and junking it.
 ///
 ///  \par Note 2:
 ///
-///     We also need to accumulate and parse padding headers 
+///     We also need to accumulate and parse padding headers
 ///     to allow the skipping of pad data.
 ///
 ///  \par Note 3:
@@ -71,22 +71,22 @@ Date        Modification                                    Name
 ///     In general we deal with only 4 byte codes, so we do not
 ///     need to accumulate more than 4 bytes for a code.
 ///     A special case for this is code Zero. Pes packets may
-///     partition the input at any point, so standard start 
-///     codes can span a pes packet header, this is no problem 
-///     so long as we check the accumulated bytes alongside new 
-///     bytes after skipping a pes header. 
+///     partition the input at any point, so standard start
+///     codes can span a pes packet header, this is no problem
+///     so long as we check the accumulated bytes alongside new
+///     bytes after skipping a pes header.
 ///
 ///  \par Note 4:
 ///
 ///     The zero code special case, when we see 00 00 01 00, we
 ///     need to accumulate a further 3 bytes this is because we
-///     can have the special case of 
+///     can have the special case of
 ///
 ///             00 00 01 00 00 01 <pes/packing start code>
 ///
-///     where the first start code lead in has a terminal byte 
-///     later in the stream which may lead to a completely different 
-///     code. If we see 00 00 01 00 00 01 we always ignore the first 
+///     where the first start code lead in has a terminal byte
+///     later in the stream which may lead to a completely different
+///     code. If we see 00 00 01 00 00 01 we always ignore the first
 ///     code, as in a legal DVB stream this must be followed by a
 ///     pes/packing code of some sort, we accumulate the 3rd byte to
 ///     determine which
@@ -269,7 +269,7 @@ FrameParserHeaderFlag_t	HeaderFlags;
 				// Check whether or not this start code will be a block terminate in the future
 				//
 
-				if ( Configuration.DeferredTerminateFlag && ((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode)) 
+				if ( Configuration.DeferredTerminateFlag && ((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode))
 				    TerminationFlagIsSet = true;
 
 				break;
@@ -383,8 +383,8 @@ FrameParserHeaderFlag_t	HeaderFlags;
 	else
 	{
 	    //
-	    // If we had no spanning code, but we had a spanning PTS, and we 
-	    // had no normal PTS for this frame, then copy the spanning time 
+	    // If we had no spanning code, but we had a spanning PTS, and we
+	    // had no normal PTS for this frame, then copy the spanning time
 	    // to the normal time.
 	    //
 
@@ -420,7 +420,7 @@ FrameParserHeaderFlag_t	HeaderFlags;
 	    }
 
 	    //
-	    // Got a start code accumulate upto it, and process
+	    // Got a start code accumulate up to it, and process
 	    //
 
 	    Status      = AccumulateData( CodeOffset+4, RemainingData );
@@ -475,7 +475,7 @@ FrameParserHeaderFlag_t	HeaderFlags;
 	    GotPartialHeader		= false;
 	    AccumulatedDataSize		= 0;
 	}
-	else 
+	else
 	{
 	    // A generic start code
 	    GotPartialType		= HeaderGenericStartCode;

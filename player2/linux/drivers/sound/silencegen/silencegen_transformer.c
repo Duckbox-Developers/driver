@@ -17,6 +17,7 @@
 
 #include <mme.h>
 #include "silencegen.h"
+#include "osdev_device.h"
 
 static MME_ERROR SilenceGen_AbortCommand(void *ctx, MME_CommandId_t cmdId)
 {
@@ -62,7 +63,7 @@ static MME_ERROR SilenceGen_Transform(void *ctx, MME_Command_t *cmd)
 #ifdef __KERNEL__
         // TODO: most of the Linux cache flush functions "don't do what you think they do". We take a
         //       conservative approach here.
-        flush_cache_all();
+        OSDEV_FlushCacheAll();
 #endif
         
         return MME_SUCCESS;

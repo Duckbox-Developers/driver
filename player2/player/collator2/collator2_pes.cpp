@@ -31,6 +31,9 @@ Date        Modification                                    Name
 
 ************************************************************************/
 
+// Use wyplay findnextstartcode optimization
+//#define WYPLAY_OPTIMIZE
+
 // /////////////////////////////////////////////////////////////////////
 //
 //      Include any component headers
@@ -122,14 +125,13 @@ CollatorStatus_t        Status;
 
     AssertComponentState( "Collator2_Pes_c::DiscardAccumulatedData", ComponentRunning );
 
-//
 
     Status                      = Collator2_Base_c::DiscardAccumulatedData();
     if( Status != CodecNoError )
 	return Status;
 
     DiscardingData              = true;
-    GotPartialHeader		= false;	// New style most video
+    GotPartialHeader            = false;	// New style most video
     Skipping                    = 0;
     UseSpanningTime             = false;
     SpanningPlaybackTimeValid   = false;
@@ -247,14 +249,16 @@ CollatorStatus_t   Collator2_Pes_c::FindNextStartCode(
 unsigned int    i;
 unsigned char   IgnoreLower;
 unsigned char   IgnoreUpper;
+#if 0 // WYPLAY_OPTIMIZE
 unsigned char  *StartCode;
 int             DataLeft;
+#endif
 
     //
     // If less than 4 bytes we do not bother
     //
 
-    if( RemainingLength < 4 )
+    if ( RemainingLength < 4 )
 	return CollatorError;
 
     UseSpanningTime             = false;
@@ -264,7 +268,7 @@ int             DataLeft;
     IgnoreLower                 = Configuration.IgnoreCodesRangeStart;
     IgnoreUpper                 = Configuration.IgnoreCodesRangeEnd;
 
-#if WYPLAY_OPTIMIZE
+#if 0 // WYPLAY_OPTIMIZE
     StartCode = &RemainingData[0];
     DataLeft  = RemainingLength;
 

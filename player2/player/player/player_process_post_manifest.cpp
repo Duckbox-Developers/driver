@@ -307,7 +307,7 @@ report( severity_info, "Post Dn = %d %d, I = %d, TFF = %d, DS= %6lld, DAS = %6ll
 	}
     }
 
-    report( severity_info, "3333 Holding control strutures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
+    report( severity_info, "3333 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
 
     //
     // Make sur no one will wait for these

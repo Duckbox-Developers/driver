@@ -42,6 +42,7 @@ Date        Modification                                    Name
 //      Include any component headers
 
 #define CODEC_TAG "SPDIFIN audio codec"
+#include "osdev_device.h"
 #include "codec_mme_audio_spdifin.h"
 #include "codec_mme_audio_eac3.h"
 #include "codec_mme_audio_dtshd.h"
@@ -65,14 +66,8 @@ typedef struct SpdifinAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t    StreamParameters;
 } SpdifinAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT        "SpdifinAudioCodecStreamParameterContext"
-#define BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(SpdifinAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT        "SpdifinAudioCodecStreamParameterContext"
 #define BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(SpdifinAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t           SpdifinAudioCodecStreamParameterContextDescriptor = BUFFER_SPDIFIN_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -92,14 +87,8 @@ typedef struct SpdifinAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     BufferStatus;
 } SpdifinAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT          "SpdifinAudioCodecDecodeContext"
-#define BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(SpdifinAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT          "SpdifinAudioCodecDecodeContext"
 #define BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(SpdifinAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t           SpdifinAudioCodecDecodeContextDescriptor = BUFFER_SPDIFIN_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -396,11 +385,6 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::FillOutDecodeCommand(       void )
     return CodecNoError;
 }
 
-
-#ifdef __KERNEL__
-extern "C"{void flush_cache_all();};
-#endif
-
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Populate the AUDIO_DECODER's MME_SEND_BUFFERS parameters for SPDIFIN audio.
@@ -445,7 +429,7 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::FillOutSendBufferCommand(       void )
     Context->BufferCommand.CmdEnd                       = MME_COMMAND_END_RETURN_NO_INFO;
 
 #ifdef __KERNEL__
-    flush_cache_all();
+    OS_FlushCacheAll();
 #endif
 
     MME_ERROR Status = MME_SendCommand( MMEHandle, &Context->BufferCommand );
@@ -724,7 +708,6 @@ CodecStatus_t   Codec_MmeAudioSpdifin_c::ValidateDecodeContext( CodecBaseDecodeC
     {
 
 	CODEC_ERROR("SPDIFIN audio decode error (muted frame): %d\n", Status.DecStatus);
-
 	DecodeErrors++;
 
 	//DumpCommand(bufferIndex);

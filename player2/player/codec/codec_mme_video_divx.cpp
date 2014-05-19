@@ -276,7 +276,7 @@ CodecStatus_t  Codec_MmeVideoDivx_c::FillOutSetStreamParametersCommand( void )
 				return CodecError;
 		}
 
-		// It seems there is still a bug somewhere, we get 0xe4000 for some strange reason to be investiagted....
+		// It seems there is still a bug somewhere, we get 0xe4000 for some strange reason to be investigated....
 		if ( !(DivxTransformCapability.supports_311 == 0 || DivxTransformCapability.supports_311 == 1))
 				report(severity_error,"*** CAP *** = %d\n",DivxTransformCapability.supports_311);
 

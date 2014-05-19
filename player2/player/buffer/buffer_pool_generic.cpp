@@ -46,7 +46,7 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Contructor function - Initialize our data
+//      Constructor function - Initialize our data
 //
 
 BufferPool_Generic_c::BufferPool_Generic_c(     BufferManager_Generic_t   Manager,
@@ -239,11 +239,7 @@ unsigned int            ItemSize;
 
     if( (MemoryPool != NULL) && !Descriptor->AllocateOnPoolCreation )
     {
-#if 0
-	MemoryPoolAllocator     = new AllocatorSimple_c( Size, Descriptor->AllocationUnitSize, (unsigned char *)MemoryPool[PhysicalAddress] );
-#else
 	MemoryPoolAllocator     = new AllocatorSimple_c( Size, 1, (unsigned char *)MemoryPool[PhysicalAddress] );
-#endif
 	if( (MemoryPoolAllocator == NULL) || (MemoryPoolAllocator->InitializationStatus != AllocatorNoError) )
 	{
 	    report( severity_error, "BufferPool_Generic_c::BufferPool_Generic_c - Failed to initialize MemoryPool allocator\n" );
@@ -566,7 +562,7 @@ unsigned long long	 EntryTime;
 
 	    if( (OS_GetTimeInMicroSeconds() - EntryTime) > BUFFER_MAX_EXPECTED_WAIT_PERIOD )
 	    {
-		report( severity_info, "BufferPool_Generic_c::GetBuffer - Waiting for a buffer of type %04x - '%s'\n", BufferDescriptor->Type, 
+		report( severity_info, "BufferPool_Generic_c::GetBuffer - Waiting for a buffer of type %04x - '%s'\n", BufferDescriptor->Type,
 				(BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName );
 		EntryTime	= OS_GetTimeInMicroSeconds();
 	    }
@@ -690,7 +686,7 @@ PlayerEventRecord_t      ReleaseEvent;
     }
 
     //
-    // Release any non-persistant meta data
+    // Release any non-persistent meta data
     //
 
     LocationOfBlockPointer        = &LocalBuffer->ListOfMetaData;
@@ -729,7 +725,7 @@ PlayerEventRecord_t      ReleaseEvent;
     OS_UnLockMutex( &LocalBuffer->Lock );
 
     //
-    // If non-persistant delete the memory associated with the block
+    // If non-persistent delete the memory associated with the block
     //
 
     if( !BufferDescriptor->AllocateOnPoolCreation && (BufferDescriptor->AllocationSource != NoAllocation) )

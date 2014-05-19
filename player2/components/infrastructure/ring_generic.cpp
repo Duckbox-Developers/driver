@@ -83,7 +83,7 @@ RingStatus_t   RingGeneric_c::Extract(  unsigned int    *Value,
 					unsigned int     BlockingPeriod )
 {
     //
-    // If there is nothing in the ring we wait for upto the specified period.
+    // If there is nothing in the ring we wait for up to the specified period.
     //
 
     OS_ResetEvent( &Signal );

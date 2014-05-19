@@ -244,6 +244,16 @@ public:
 	*Value	= Negative ? -Val : Val;
 	*Shifted= Shift;
     }
+
+    // ////////////////////////////////////////////////////////////////////////
+    //
+    // Printing
+    //
+
+    void Print( void )
+    {
+	report( severity_info, "%s %16llx%8llx\n", Negative ? "Negative" : "Positive", Upper64, Lower32 );
+    }
 };
 
 typedef LongLongLong_c LongLongLong_t;

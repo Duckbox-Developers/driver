@@ -167,7 +167,7 @@ public:
 
     This function invalidates the mapping between system and playback times, for the stream. 
     It makes it impossible 
-    to obtain translations between system and playback times on the stream until a new mapping has beeen established.
+    to obtain translations between system and playback times on the stream until a new mapping has been established.
 
     A new mapping may be established by synchronizing the streams of a playback, or by 
     imposing a mapping from the application.
@@ -181,16 +181,16 @@ public:
     Calling this function will perform a process sleep until entry into a decode window 
     for the specified buffer, if certain conditions are met. The conditions are first that 
     a decode window is specified, or can be deduced, second that the window has no already 
-    been enterred and third that the window is not an unreasonable distance in the future.
+    been entered and third that the window is not an unreasonable distance in the future.
 
     A decode window is specified if the 'NormalizedDecodeTime' field in the 'parsedFrameParameters', 
     associated with the buffer, is not 'INVALID_TIME'. It can be deduced when this is not the case, 
     only if the buffer contains a non-reference frame, by applying an offset to the 
-    'NormalizedPlaybackTime' if it is not INVALID_TIME' (which it shopuld not be at this point 
+    'NormalizedPlaybackTime' if it is not INVALID_TIME' (which it should not be at this point
     for a non-reference frame).
 
     The test for an unreasonable distance in the future, will involve comparing the distance to 
-    the decode window agains a value involving (a constant X frame duration)/Speed.
+    the decode window gains a value involving (a constant X frame duration)/Speed.
 
     Any wait will abort should the output timer be halted, or the speed changed.
 

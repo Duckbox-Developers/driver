@@ -35,7 +35,7 @@ Date        Modification                                    Name
 #include "st_relay.h"
 #include <linux/version.h>
 
-extern "C" int sprintf(char * buf, const char * fmt, ...);
+extern "C" int sprintf(char * buf, const char * fmt, ...) __attribute__((format(printf, 2, 3)));
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -63,15 +63,15 @@ extern "C" int sprintf(char * buf, const char * fmt, ...);
 #endif
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ///
 ///
 PcmPlayer_Ksound_c::PcmPlayer_Ksound_c(unsigned int Soundcard, unsigned int Substream, unsigned int dev_num, unsigned int SPDIFmode)
-	: SoundcardHandle(NULL),
-	  SoundcardMappedSamples(0),
-	  TimeOfNextCommit(0),
-	  SPDIFmode(SPDIFmode),
-	  ResamplingFactor_x32(Q11_5_UNITY)
+    : SoundcardHandle(NULL),
+      SoundcardMappedSamples(0),
+      TimeOfNextCommit(0),
+      SPDIFmode(SPDIFmode),
+      ResamplingFactor_x32(Q11_5_UNITY)
 {
 	int Result;
 	int Index;
@@ -175,20 +175,20 @@ PcmPlayer_Ksound_c::PcmPlayer_Ksound_c(unsigned int Soundcard, unsigned int Subs
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ///
 ///
 PcmPlayer_Ksound_c::~PcmPlayer_Ksound_c()
 {
-	if (SoundcardHandle) {
-		ksnd_pcm_close(SoundcardHandle);
-		SoundcardHandle = NULL;
-	}
+    if (SoundcardHandle) {
+        ksnd_pcm_close(SoundcardHandle);
+        SoundcardHandle = NULL;
+    }
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ///
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::MapSamples(unsigned int SampleCount, bool NonBlock,
@@ -249,7 +249,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::MapSamples(unsigned int SampleCount, bool Non
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ///
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::CommitMappedSamples()
@@ -284,7 +284,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::CommitMappedSamples()
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Obtain the time at which the first sample of the next commit will be displayed.
 ///
 /// \param TimeP Pointer to be filled with the a time relative to ::OS_GetTimeInMicroseconds().
@@ -330,18 +330,18 @@ PlayerStatus_t PcmPlayer_Ksound_c::GetTimeOfNextCommit(unsigned long long *TimeP
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Configure the soundcard's surface parameters.
 ///
 /// \todo Contains an explicit hack to constrain the sample rate to >32000.
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::SetParameters(PcmPlayerSurfaceParameters_t *ParamsP)
 {
-	int Result;
-	snd_pcm_uframes_t BufferSize;
-	snd_pcm_uframes_t PeriodSize;
+    int Result;
+    snd_pcm_uframes_t BufferSize;
+    snd_pcm_uframes_t PeriodSize;
 
-	SurfaceParameters = *ParamsP;
+    SurfaceParameters = *ParamsP;
 
 	if (SoundcardMappedSamples) {
                 // this is not a 'hard' error hence this message is neither _TRACEd nor _ERRORed.
@@ -417,36 +417,36 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetParameters(PcmPlayerSurfaceParameters_t *P
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 ///
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::SetOutputRateAdjustment(int Rate, int *ActualRateP)
 {
-        int adjust;
-        int res;
+    int adjust;
+    int res;
 
-        if (elem) {
-		adjust	= Rate - (1000000 - FSYNTH_CONTROL_UNITY);
-        
-        	if(adjust != fsynth_adjust) {
-                        PCMPLAYER_DEBUG("Setting output rate adjustment to %d parts per million for %s\n",
-                                        adjust - FSYNTH_CONTROL_UNITY, Identity);
-        		ksnd_ctl_elem_value_set_integer(&control, 0, adjust);
-        		res = ksnd_hctl_elem_write(elem, &control);
-        		if (res < 0)
-        			PCMPLAYER_ERROR("Cannot set output rate adjustment (%d) for %s\n",
-        				        res, Identity);
-        		fsynth_adjust = adjust;
-        	}
+    if (elem) {
+        adjust	= Rate - (1000000 - FSYNTH_CONTROL_UNITY);
+
+        if(adjust != fsynth_adjust) {
+            PCMPLAYER_DEBUG("Setting output rate adjustment to %d parts per million for %s\n",
+                            adjust - FSYNTH_CONTROL_UNITY, Identity);
+            ksnd_ctl_elem_value_set_integer(&control, 0, adjust);
+            res = ksnd_hctl_elem_write(elem, &control);
+            if (res < 0)
+                PCMPLAYER_ERROR("Cannot set output rate adjustment (%d) for %s\n",
+                                res, Identity);
+            fsynth_adjust = adjust;
         }
- 
-        *ActualRateP = Rate;
-        return PlayerNoError;
+    }
+
+    *ActualRateP = Rate;
+    return PlayerNoError;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Update the IEC60958 status bits of the inferior sound card.
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::SetIec60958StatusBits(struct snd_pseudo_mixer_aes_iec958 *Iec958Status)
@@ -503,7 +503,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec60958StatusBits(struct snd_pseudo_mixer
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Update the IEC61937 status bits of the inferior sound card.
 ///
 PlayerStatus_t PcmPlayer_Ksound_c::SetIec61937StatusBits( struct snd_pseudo_mixer_aes_iec958 *Iec958Status )
@@ -513,7 +513,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec61937StatusBits( struct snd_pseudo_mixe
         if (iec958_elem) 
         {
                 int res;
-		
+
                 //
                 // override the channel status necessary bits for IEC61937 mode
                 //
@@ -561,27 +561,27 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec61937StatusBits( struct snd_pseudo_mixe
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Calculate the length in bytes of a number of samples.
-///	
+///
 unsigned int PcmPlayer_Ksound_c::SamplesToBytes(unsigned int SampleCount)
 {
-        // Adjust the sample count to switch between the nominal and actual sampling frequency
-	SampleCount = (SampleCount * ResamplingFactor_x32) / Q11_5_UNITY;
-                
-	return SampleCount * SurfaceParameters.PeriodParameters.ChannelCount *
-	       (SurfaceParameters.PeriodParameters.BitsPerSample / 8);
+    // Adjust the sample count to switch between the nominal and actual sampling frequency
+    SampleCount = (SampleCount * ResamplingFactor_x32) / Q11_5_UNITY;
+
+    return SampleCount * SurfaceParameters.PeriodParameters.ChannelCount *
+           (SurfaceParameters.PeriodParameters.BitsPerSample / 8);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Calculate the length in samples of a number of bytes.
-///	
+///
 unsigned int PcmPlayer_Ksound_c::BytesToSamples(unsigned int ByteCount)
 {
-    	// Adjust the sample count to switch between the nominal and actual sampling frequency
-        ByteCount = (ByteCount * Q11_5_UNITY) / ResamplingFactor_x32;
+    // Adjust the sample count to switch between the nominal and actual sampling frequency
+    ByteCount = (ByteCount * Q11_5_UNITY) / ResamplingFactor_x32;
 
-	return (ByteCount * 8) / (SurfaceParameters.PeriodParameters.ChannelCount *
-	                          SurfaceParameters.PeriodParameters.BitsPerSample);
+    return (ByteCount * 8) / (SurfaceParameters.PeriodParameters.ChannelCount *
+                              SurfaceParameters.PeriodParameters.BitsPerSample);
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -283,6 +283,7 @@ FrameParserStatus_t   FrameParser_VideoMjpeg_c::ReadStartOfFrame( void )
     }
 
     FrameParameters->PictureHeaderPresent       = true;
+
 #ifdef DUMP_HEADERS
     FRAME_TRACE( "Start of frame header:\n" );
     FRAME_TRACE( "        Length              %d\n", Header->length);

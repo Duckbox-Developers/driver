@@ -52,14 +52,8 @@ typedef struct AvsCodecStreamParameterContext_s
     MME_AVSSetGlobalParamSequence_t     StreamParameters;
 } AvsCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT             "AvsCodecStreamParameterContext"
-#define BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT_TYPE        {BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(AvsCodecStreamParameterContext_t)}
-#else
 #define BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT             "AvsCodecStreamParameterContext"
 #define BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT_TYPE        {BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(AvsCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            AvsCodecStreamParameterContextDescriptor = BUFFER_AVS_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -73,14 +67,8 @@ typedef struct AvsCodecDecodeContext_s
     MME_AVSVideoDecodeReturnParams_t    DecodeStatus;
 } AvsCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_AVS_CODEC_DECODE_CONTEXT       "AvsCodecDecodeContext"
-#define BUFFER_AVS_CODEC_DECODE_CONTEXT_TYPE  {BUFFER_AVS_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(AvsCodecDecodeContext_t)}
-#else
 #define BUFFER_AVS_CODEC_DECODE_CONTEXT       "AvsCodecDecodeContext"
 #define BUFFER_AVS_CODEC_DECODE_CONTEXT_TYPE  {BUFFER_AVS_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(AvsCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            AvsCodecDecodeContextDescriptor = BUFFER_AVS_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -486,7 +474,7 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(       void )
     #endif
     //}}}
 
-    //{{{  Fillout the reference frame lists
+    //{{{  Fill out the reference frame lists
     if (ParsedFrameParameters->NumberOfReferenceFrameLists != 0)
     {
         if (DecodeContext->ReferenceFrameList[0].EntryCount > 0)

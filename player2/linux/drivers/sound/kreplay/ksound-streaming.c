@@ -20,7 +20,7 @@
  */
 
 #include <linux/version.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30) )    // STLinux 2.3
 #include <sound/driver.h>
 #endif
 #include <sound/core.h>

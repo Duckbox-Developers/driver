@@ -156,7 +156,7 @@ OutputTimerStatus_t   OutputTimer_Video_c::InitializeConfiguration(  void )
 
     //
     // Synchronization controls
-    //      A threshhold error in micro seconds (needs to be low if we are aiming for 3ms tolerance)
+    //      A threshold error in micro seconds (needs to be low if we are aiming for 3ms tolerance)
     //      A count of frames to integrate the error over
     //      A count of frames to be ignored to allow any correction to work through
     //

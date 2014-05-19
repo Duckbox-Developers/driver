@@ -205,7 +205,6 @@ public:
     CollatorStatus_t   RegisterOutputBufferRing(Ring_t                    Ring );
 
     CollatorStatus_t   FrameFlush(              void );
-
     CollatorStatus_t   DiscardAccumulatedData(  void );
 
     CollatorStatus_t   InputJump(               bool                      SurplusDataInjected,

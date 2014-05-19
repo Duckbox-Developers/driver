@@ -84,7 +84,6 @@ HavanaStatus_t HavanaDemux_c::InjectData       (const unsigned char*            
 
     InputDescriptor->MuxType                    = MuxTypeTransportStream;
     InputDescriptor->DemultiplexorContext       = DemuxContext;
-
     InputDescriptor->PlaybackTimeValid          = false;
     InputDescriptor->DecodeTimeValid            = false;
     InputDescriptor->DataSpecificFlags          = 0;

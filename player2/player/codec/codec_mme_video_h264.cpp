@@ -143,7 +143,7 @@ OS_Thread_t               Thread;
 
     //
     // Since we pre-process the data, we shrink the coded data buffers
-    // before enterring the generic code. as a consequence we do
+    // before entering the generic code. as a consequence we do
     // not require the generic code to shrink buffers on our behalf,
     // and we do not want the generic code to find the coded data buffer
     // for us.
@@ -166,7 +166,7 @@ OS_Thread_t               Thread;
     Configuration.TrickModeParameters.DefaultGroupReferenceFrameCount   = 4;
 
     //
-    // Initailize variables before performing reset
+    // Initialize variables before performing reset
     //
 
     FramesInPreprocessorChainRing       = NULL;
@@ -344,7 +344,7 @@ CodecStatus_t   Codec_MmeVideoH264_c::Reset(            void )
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Register the output buffer ring, we take this opertunity to 
+//      Register the output buffer ring, we take this opportunity to
 //      create the buffer pools for use in the pre-processor, and the 
 //      macroblock structure buffers
 //
@@ -462,7 +462,6 @@ CodecStatus_t   Codec_MmeVideoH264_c::OutputPartialDecodeBuffers( void )
 {
 unsigned int    i;
 
-//
 
     OS_LockMutex( &H264Lock );
 
@@ -941,8 +940,7 @@ unsigned int			  MaxAllocatableDecodeBuffers;
     // structure buffer and attach it.
     //
 
-    if( ParsedFrameParameters->ReferenceFrame && 
-	!BufferState[CurrentDecodeBufferIndex].MacroblockStructurePresent )
+    if( ParsedFrameParameters->ReferenceFrame && !BufferState[CurrentDecodeBufferIndex].MacroblockStructurePresent )
     {
 	//
 	// Obtain a reference frame slot
@@ -1098,8 +1096,8 @@ unsigned int			  MaxAllocatableDecodeBuffers;
 
     if (Player->PolicyValue( Playback, Stream, PolicyDecimateDecoderOutput) != PolicyValueDecimateDecoderOutputDisabled)
     {
-       Param->DecodedBufferAddress.LumaDecimated_p          = (H264_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedLumaPointer;
-       Param->DecodedBufferAddress.ChromaDecimated_p        = (H264_ChromaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedChromaPointer;
+       Param->DecodedBufferAddress.LumaDecimated_p   = (H264_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedLumaPointer;
+       Param->DecodedBufferAddress.ChromaDecimated_p = (H264_ChromaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedChromaPointer;
     }
 
 
@@ -1223,7 +1221,7 @@ unsigned int                              DescriptorIndex;
     // Create the reference picture lists, NOTE this is a fudge, the
     // delta-phi requires reference picture lists for B and P pictures
     // to be supplied for all pictures (thats I B or P), so we have to
-    // make up reference picture lists for a frame that this isnt.
+    // make up reference picture lists for a frame that this isn't.
     //
 
     NumberOfUsedDescriptors     = 0;
@@ -1386,7 +1384,6 @@ H264CodecDecodeContext_t	*H264Context	= (H264CodecDecodeContext_t *)Context;
     if( H264Context->DecodeStatus.ErrorCode != H264_DECODER_NO_ERROR )
     {
 	report( severity_info, "H264 decode error %08x\n", H264Context->DecodeStatus.ErrorCode );
-
 #if 0
 {
 unsigned int i;

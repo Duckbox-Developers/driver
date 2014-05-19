@@ -30,8 +30,8 @@ Date        Modification                                    Name
 
 #include <linux/io.h>
 #include <linux/init.h>
+#include <linux/module.h>
 #include <linux/platform_device.h>
-#include <linux/autoconf.h>
 
 extern initcall_t  __initcall_stm_start6[], __initcall_stm_end6[];
 extern exitcall_t  __exitcall_stm_start[], __exitcall_stm_end[];

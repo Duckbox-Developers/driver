@@ -54,7 +54,7 @@ Date        Modification                                    Name
 #define PLAYER_MINIMUM_NUMBER_OF_WORKING_CODED_BUFFERS  24      // Absolute minimum number of working coded buffers free in a playback.
 								// To support reverse play, you need at least enough for one sequence
 								// plus whatever is need for the open group nature of the sequence ie
-								// an I and upto 3 Bs on the next sequence
+								// an I and up to 3 Bs on the next sequence
 
 #define PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS 3       // Absolute minimum number of working decode buffers free in a playback
 
@@ -316,8 +316,8 @@ typedef enum
     // the basis of starting at the first video frame and
     // letting audio join in appropriately. this has particular
     // effect in some transport streams where there may be a
-    // lead in time of upto 1 second of audio. Should only be set
-    // if using the agressive "PolicyDiscardLateFrames" policy.
+    // lead in time of up to 1 second of audio. Should only be set
+    // if using the aggressive "PolicyDiscardLateFrames" policy.
     //
 
     PolicyVideoStartImmediate,
@@ -332,7 +332,7 @@ typedef enum
 
     //
     // Policy controlling the allowed H264 streams. Standard
-    // streams contauin IDR frames as re-synchronization points
+    // streams contain IDR frames as re-synchronization points
     // jumps need to be to an IDR to guarantee reference frame
     // integrity. BBC broadcasts do not incorporate IDRs and use
     // I frames to indicate re-synchronization points.
@@ -583,7 +583,7 @@ typedef enum
 //
 // The wrapper pointer types, here before the structures to
 // allow for those self referential structures (such as lists),
-// and incestous references.
+// and incestuous references.
 //
 
 typedef struct DemultiplexorContext_s   *DemultiplexorContext_t;

@@ -119,7 +119,7 @@ static struct platform_device *devices[SNDRV_CARDS];
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING)
 #define CARD_FATPIPE(n, major, minor, freq, chan) \
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
-			                   SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
+                               SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
 // the following macro indicates the card is connected to a hdmi cell through the spdif player
 #define CARD_SPDIF_HDMI(n, major, minor, freq, chan) \
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
@@ -130,7 +130,7 @@ static struct platform_device *devices[SNDRV_CARDS];
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 
 #if defined CONFIG_CPU_SUBTYPE_STX7200 && !defined CONFIG_DUAL_DISPLAY
-			                   
+
 static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 	{
 		{
@@ -239,7 +239,6 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
   #if define(__TDT__)
             CARD        ("Analog",  1, 0,  48000, 2),
   #else
-
 			CARD        ("Analog",  0, 1,  48000, 2),
   #endif
 #else /* STLinux-2.2 */
@@ -652,7 +651,7 @@ static int snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *vma, stru
 	if (substream->ops->page) {
 		page = substream->ops->page(substream, offset);
 		if (! page)
-			return VM_FAULT_OOM; /* XXX: is this really due to OOM? */
+			return VM_FAULT_SIGBUS;
 	} else {
 		vaddr = runtime->dma_area + offset;
 		page = virt_to_page(vaddr);
@@ -720,15 +719,7 @@ static int snd_card_pseudo_pcm_mmap(struct snd_pcm_substream *substream,
 	area->vm_ops = &snd_card_pseudo_pcm_vm_ops_data;
 	area->vm_private_data = substream;
 	area->vm_flags |= VM_RESERVED;
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 	atomic_inc(&substream->mmap_count);
-#else
-#if defined (CONFIG_KERNELVERSION)
-	atomic_inc(&substream->mmap_count);
-#else /* STLinux 2.2 kernel */
-	atomic_inc(&substream->runtime->mmap_count);
-#endif
-#endif
 	return 0;
 }
 
@@ -1564,31 +1555,31 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
 	mixer->display_device_id = 0;
 	mixer->display_output_id = -1;
 
-        /* search for a valid hdmi output in the default display device 0 */
-        {
-            stm_display_device_t * pDev = stm_display_get_device(mixer->display_device_id);
-            if (pDev == NULL)
-            {
-                printk(KERN_ERR "Cannot get handle to display device %d \n", mixer->display_device_id);
-                mixer->display_device_id = -1;
-            }
-            else
-            {
-                int i = 0;
-                stm_display_output_t *out;
-                
-                while ( (out = stm_display_get_output(pDev, i++) ) != 0)
-                {
-                    ULONG caps;
-                    stm_display_output_get_capabilities(out, &caps);
-                    if ((caps & STM_OUTPUT_CAPS_TMDS) != 0)
-                    {
-                        mixer->display_output_id = (i-1);
-                    }
-                    stm_display_output_release(out);
-                }
-            }
-        }
+	/* search for a valid hdmi output in the default display device 0 */
+	{
+		stm_display_device_t* pDev = stm_display_get_device(mixer->display_device_id);
+		if (pDev == NULL)
+		{
+			printk(KERN_ERR "Cannot get handle to display device %d \n", mixer->display_device_id);
+			mixer->display_device_id = -1;
+		}
+		else
+		{
+			int i = 0;
+			stm_display_output_t *out;
+
+			while ( (out = stm_display_get_output(pDev, i++) ) != 0)
+			{
+				ULONG caps;
+				stm_display_output_get_capabilities(out, &caps);
+				if ((caps & STM_OUTPUT_CAPS_TMDS) != 0)
+				{
+					mixer->display_output_id = (i-1);
+				}
+				stm_display_output_release(out);
+			}
+		}
+	}
 }
 
 static int snd_card_pseudo_register_dynamic_controls_locked(struct snd_pseudo *pseudo)

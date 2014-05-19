@@ -61,9 +61,7 @@ class Codec_MmeAudioAac_c : public Codec_MmeAudio_c
 protected:
 
     // Data
-    
     eAccDecoderId DecoderId;
-
     // Functions
 
 public:

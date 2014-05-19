@@ -61,14 +61,8 @@ typedef struct AvsAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } AvsAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "AvsAudioCodecStreamParameterContext"
-#define BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(AvsAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "AvsAudioCodecStreamParameterContext"
 #define BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(AvsAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            AvsAudioCodecStreamParameterContextDescriptor = BUFFER_AVS_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -82,14 +76,8 @@ typedef struct AvsAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } AvsAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT  "AvsAudioCodecDecodeContext"
-#define BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(AvsAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT  "AvsAudioCodecDecodeContext"
 #define BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(AvsAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            AvsAudioCodecDecodeContextDescriptor = BUFFER_AVS_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -372,7 +360,7 @@ ParsedAudioParameters_t *AudioParameters;
     else
         {
                 AudioParameters->Source.SampleRateHz = 0;
-        CODEC_ERROR("DTSHD audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
+        CODEC_ERROR("AVS audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
         }
 
     return CodecNoError;

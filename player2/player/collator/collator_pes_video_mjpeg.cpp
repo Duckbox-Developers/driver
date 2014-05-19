@@ -241,7 +241,7 @@ CollatorStatus_t   Collator_PesVideoMjpeg_c::Input     (PlayerInputDescriptor_t*
                 break;
             }
 
-            // Got one accumulate upto and including it
+            // Got one accumulate up to and including it
             Status              = AccumulateData (CodeOffset+2, RemainingData);
             if (Status != CollatorNoError )
             {

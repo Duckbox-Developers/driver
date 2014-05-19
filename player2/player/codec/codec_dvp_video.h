@@ -75,7 +75,7 @@ public:
     CodecStatus_t   Input(                      Buffer_t                  CodedBuffer );
 
     //
-    // Stubbed out functions that do nothin a dvp situation
+    // Stubbed out functions that do nothing in a dvp situation
     //
 
     CodecStatus_t   OutputPartialDecodeBuffers( void )							{return CodecNoError;}

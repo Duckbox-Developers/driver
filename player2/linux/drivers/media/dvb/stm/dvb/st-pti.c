@@ -130,9 +130,11 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
     return -1;
 #endif
 
+#ifdef VERY_VERBOSE
   printk("start dmx %p, sh %d, pid %d, t %d, pt %d\n", demux,
                pSession->session, dvbdmxfeed->pid, dvbdmxfeed->type,
                dvbdmxfeed->pes_type );
+#endif
 
   switch ( dvbdmxfeed->type )
   {
@@ -172,10 +174,12 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
       return -EINVAL;
     }
   }
+#ifdef VERY_VERBOSE
   else
   {
     dprintk ( "type = %d \n",dvbdmxfeed->type );
   }
+#endif
 
   if (dvbdmxfeed->type == DMX_TYPE_SEC)
   	my_pes_type = 99;
@@ -205,13 +209,17 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
 	       int err;
 	       if ((err = pti_hal_descrambler_link(pSession->session, pSession->descramblers[pSession->descramblerindex[vLoop]], pSession->slots[vLoop])) != 0)
 	         printk("Error linking slot %d to descrambler %d, err = %d\n", pSession->slots[vLoop], pSession->descramblers[pSession->descramblerindex[vLoop]], err);
+#ifdef VERY_VERBOSE
 	       else
              printk("linking slot %d to descrambler %d, session = %d type = %d\n", pSession->slots[vLoop], pSession->descramblers[pSession->descramblerindex[vLoop]], pSession->session, dvbdmxfeed->pes_type);
+#endif
 	     }
       }
 
+#ifdef VERY_VERBOSE
       printk ( "pid %d already collecting. references %d \n",
 	       dvbdmxfeed->pid , pSession->references[vLoop]);
+#endif
       return 0;
     }
   }
@@ -230,7 +238,9 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
 
   pSession->descramblerindex[pSession->num_pids]= pSession->descramblerForPid[dvbdmxfeed->pid];
 
+#ifdef VERY_VERBOSE
   printk ( "SlotHandle = %d\n", pSession->slots[pSession->num_pids] );
+#endif
 
   if(pti_hal_slot_link_buffer ( pSession->session,
                              pSession->slots[pSession->num_pids],
@@ -257,8 +267,10 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
 	      printk("Error linking slot %d to descrambler %d, err = %d\n",
                 pSession->slots[pSession->num_pids],
                 pSession->descramblers[pSession->descramblerindex[pSession->num_pids]], err);
+#ifdef VERY_VERBOSE
      else
           printk("linking slot %d to descrambler %d, session = %d type=%d\n", pSession->slots[pSession->num_pids], pSession->descramblers[pSession->descramblerindex[pSession->num_pids]], pSession->session, dvbdmxfeed->pes_type);
+#endif
     }
   }
 
@@ -273,7 +285,7 @@ int stpti_start_feed ( struct dvb_demux_feed *dvbdmxfeed,
   dprintk ( "%s: pid = %d, num_pids = %d \n", __FUNCTION__, dvbdmxfeed->pid,
 	   pSession->num_pids );
 
-#if 0
+#ifdef VERY_VERBOSE
   printk ( "#  pid t pt ref\n");
   for ( vLoop = 0; vLoop < ( pSession->num_pids ); vLoop++ )
   {
@@ -316,7 +328,9 @@ int stpti_stop_feed ( struct dvb_demux_feed *dvbdmxfeed,
     return -1;
 #endif
 
+#ifdef VERY_VERBOSE
   printk ( "stop sh %d, pid %d, pt %d\n", pSession->session, dvbdmxfeed->pid, dvbdmxfeed->pes_type);
+#endif
   //printk ( "%s(): demux = %p, context = %p, sesison = %p, pid = %d, type = %d, pes_type = %d>", __FUNCTION__, dvbdmxfeed->demux, pContext, pSession, dvbdmxfeed->pid, dvbdmxfeed->type, dvbdmxfeed->pes_type );
 
   if (dvbdmxfeed->type == DMX_TYPE_SEC)
@@ -333,7 +347,9 @@ int stpti_stop_feed ( struct dvb_demux_feed *dvbdmxfeed,
     {
       pSession->references[vLoop]--;
 
+#ifdef VERY_VERBOSE
       printk("Reference = %d\n", pSession->references[vLoop]);
+#endif
 
       haveFound = 1;
 
@@ -608,7 +624,9 @@ int SetSource (struct dmx_demux* demux, const dmx_source_t *src)
     return -EINVAL;
   }
 
+#ifdef VERY_VERBOSE
   printk("SetSource(%p, %d)\n", pDvbDemux, *src);
+#endif
 
   pContext->pPtiSession->source = *src;
 

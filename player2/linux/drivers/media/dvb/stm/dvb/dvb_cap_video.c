@@ -536,7 +536,7 @@ struct stmcore_display_pipeline_data  pipeline_data;
 	   return -EINVAL;
 	}
        
-        Result	= DvbDisplayDelete (BACKEND_VIDEO_ID, Context->DeviceContext->Id);
+        Result = DvbDisplayDelete (BACKEND_VIDEO_ID, Context->DeviceContext->Id);
         if( Result )
 	{
 	    printk("Error in %s: DisplayDelete failed\n",__FUNCTION__);
@@ -829,13 +829,13 @@ CapBufferStack_t	*Record;
 
     if (Result != 0)
     {
-	printk( "Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__ );
-	return -1;
+        printk( "Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__ );
+        return -1;
     }
 
     if( Context->BytesPerLine != (Dimensions[0] * Context->BufferBytesPerPixel) )
     {
-	printk( "Error in %s: StreamGetDecodeBuffer returned an unexpected bytes per line value (%d instead of %d)\n", __FUNCTION__, Context->BytesPerLine, (Dimensions[0] * Context->BufferBytesPerPixel) );
+        printk( "Error in %s: StreamGetDecodeBuffer returned an unexpected bytes per line value (%d instead of %d)\n", __FUNCTION__, Context->BytesPerLine, (Dimensions[0] * Context->BufferBytesPerPixel) );
     }
 
 //
@@ -975,8 +975,8 @@ StreamInfo_t		 Packet;
     Result 	= DvbStreamInjectPacket( Context->DeviceContext->VideoStream, (const unsigned char*)(&Packet), sizeof(StreamInfo_t), true, Pts );
     if (Result < 0)
     {
-	printk("Error in %s: StreamInjectDataPacket failed\n", __FUNCTION__);
-	return Result;
+        printk("Error in %s: StreamInjectDataPacket failed\n", __FUNCTION__);
+        return Result;
     }
 
     //
@@ -986,8 +986,8 @@ StreamInfo_t		 Packet;
     Result	= DvbStreamReturnDecodeBuffer( Context->DeviceContext->VideoStream, Record->Buffer );
     if( Result < 0 )
     {
-	printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
-	// No point in returning
+        printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
+        // No point in returning
     }
 
     //

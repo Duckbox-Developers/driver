@@ -64,14 +64,8 @@ typedef struct SilentAudioCodecStreamParameterContext_s
     CodecBaseStreamParameterContext_t   BaseContext;
 } SilentAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "SilentAudioCodecStreamParameterContext"
-#define BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(SilentAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "SilentAudioCodecStreamParameterContext"
 #define BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(SilentAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            SilentAudioCodecStreamParameterContextDescriptor = BUFFER_SILENT_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -90,14 +84,8 @@ typedef struct SilentAudioCodecDecodeContext_s
     SilentAudioFrameParameters_t        ContextFrameParameters;
 } SilentAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT  "SilentAudioCodecDecodeContext"
-#define BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(SilentAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT  "SilentAudioCodecDecodeContext"
 #define BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(SilentAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            SilentAudioCodecDecodeContextDescriptor = BUFFER_SILENT_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 

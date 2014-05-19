@@ -318,10 +318,9 @@ PlayerStatus_t   Player_Generic_c::SetPolicy(	PlayerPlayback_t	  Playback,
 						PlayerPolicy_t		  Policy,
 						unsigned char		  PolicyValue )
 {
-PlayerPolicyState_t	*SpecificPolicyRecord;
+    PlayerPolicyState_t	*SpecificPolicyRecord;
 
-report( severity_info, "SetPolicy - %08x %08x %-45s %d\n", Playback, Stream, LookupPlayerPolicy(Policy), PolicyValue );
-//
+    report( severity_info, "SetPolicy - %08x %08x %-45s %d\n", Playback, Stream, LookupPlayerPolicy(Policy), PolicyValue );
 
     if( (Playback		!= PlayerAllPlaybacks) &&
 	(Stream			!= PlayerAllStreams) &&
@@ -331,8 +330,6 @@ report( severity_info, "SetPolicy - %08x %08x %-45s %d\n", Playback, Stream, Loo
 	return PlayerError;
     }
 
-//
-
     if( Stream != PlayerAllStreams )
 	SpecificPolicyRecord	= &Stream->PolicyRecord;
     else if( Playback != PlayerAllPlaybacks )
@@ -340,12 +337,8 @@ report( severity_info, "SetPolicy - %08x %08x %-45s %d\n", Playback, Stream, Loo
     else
 	SpecificPolicyRecord	= &PolicyRecord;
 
-//
-
     SpecificPolicyRecord->Specified[Policy/32]	|= 1 << (Policy % 32);
     SpecificPolicyRecord->Value[Policy]		 = PolicyValue;
-
-//
 
     return PlayerNoError;
 }
@@ -840,16 +833,11 @@ unsigned int		 Mask;
 	return PlayerError;
     }
 
-//
-
     if( Stream != PlayerAllStreams )
 	Playback	= Stream->Playback;
 
-//
-
     Offset		= Policy/32;
     Mask		= (1 << (Policy % 32));
-
     Value		= 0;
 
     if( (PolicyRecord.Specified[Offset] & Mask) != 0 )
@@ -869,5 +857,4 @@ unsigned int		 Mask;
 
     return Value;
 }
-
 

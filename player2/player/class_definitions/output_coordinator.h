@@ -191,9 +191,9 @@ public:
     Some notes on time mappings.
 
     Time mappings global mappings for a playback, but have local, stream specific, aspects. A playback will move 
-    from one time mnapping to another one when a discontinuity is encounterred within a playback. Since different 
-    streams within a playback will have the discontinuity pass thorugh timing functions at different (though closely 
-    spaced) times, different streams will transition between time mappings at different times. Through careful mangement 
+    from one time mapping to another one when a discontinuity is encountered within a playback. Since different
+    streams within a playback will have the discontinuity pass through timing functions at different (though closely
+    spaced) times, different streams will transition between time mappings at different times. Through careful management
     of the context associated with a stream, and the implementation of the synchronize function, the output coordinator 
     must manage these phased transitions. In addition it is necessary for the functions that translate between time domains
     to know which stream the translation is for (since the same playback time may generate completely different system 
@@ -252,9 +252,9 @@ public:
 /*! \fn OutputCoordinatorStatus_t OutputCoordinator_c::ResetTimeMapping( OutputCoordinatorContext_t	Context )
     \brief Invalidate the playback/system time mapping.
 
-    This function invalidates the mapping between system and playback times, for one stream, or for thew whole playback. 
+    This function invalidates the mapping between system and playback times, for one stream, or for the whole playback.
     It makes it impossible 
-    to obtain translations between system and playback times until a new mapping has beeen established.
+    to obtain translations between system and playback times until a new mapping has been established.
 
     A new mapping may be established by synchronizing the streams of a playback, or by 
     imposing a mapping from the application.
@@ -329,14 +329,14 @@ public:
     
     This function is responsible for establishing a time mapping and performing startup 
     synchronization for all of the currently registered streams. It waits until all the 
-    streams have enterred this function before establishing a mapping based on the stream 
+    streams have entered this function before establishing a mapping based on the stream
     with the earliest playback time. 
 
     Also on entry each stream is delayed to allow sufficient frames to be decoded to allow 
     smooth playback on return from this function.
 
     The function can establish a mapping based on a subset of the streams, if not all 
-    streams have eneterred the function within a reasonable time period, currently 
+    streams have entered the function within a reasonable time period, currently
     defined as a constant.
 
     \param Context Stream context identifier.
@@ -399,9 +399,9 @@ public:
 								long long			  CurrentError,
 								Rational_t			 *OutputRateAdjustment,
 								Rational_t			 *SystemClockAdjustment );
-    \brief Calculate output rate adjustment.
+    \brief Calculate output rate adjustments.
     
-    This function is responsible for calculating the necessary adjustments to the output rate
+    This function is responsible for calculating the necessary adjustments to the output rates
     to keep the output in synchronization with master clock. If this is context refers to the master 
     clock, this function also calculates the internally held adjustment to the system clock to
     keep it synchronized with the master output device.

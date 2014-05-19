@@ -48,7 +48,6 @@ Date        Modification                                    Name
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/version.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,7 +55,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 #include <linux/unistd.h>
 #include <linux/init.h>
 #include <linux/time.h>
@@ -71,6 +69,8 @@ extern "C" {
 #include <linux/interrupt.h>
 #include <linux/kthread.h>
 #include <linux/wait.h>
+#include <linux/spinlock.h>
+#include <linux/types.h>
 
 #include <linux/vmalloc.h>
 #include <linux/ioport.h>
@@ -85,7 +85,7 @@ extern "C" {
 
 #include <asm/uaccess.h>
 #include <asm/cacheflush.h>
-#include <asm/io.h>
+#include <linux/io.h>
 #include <asm/mman.h>
 
 #define OS_CACHE_LINE_SIZE      32
@@ -202,7 +202,7 @@ extern "C" {
 STATIC_PROTOTYPE void            *OSDEV_Malloc(                    unsigned int             Size );
 STATIC_PROTOTYPE OSDEV_Status_t   OSDEV_Free(                      void                    *Address );
 STATIC_PROTOTYPE void            *OSDEV_TranslateAddressToUncached( void                   *Address );
-STATIC_PROTOTYPE void             OSDEV_PurgeCacheAll(void);
+STATIC_PROTOTYPE void             OSDEV_FlushCacheAll(void);
 STATIC_PROTOTYPE void             OSDEV_FlushCacheRange(void *start, int size);
 STATIC_PROTOTYPE void             OSDEV_InvalidateCacheRange(void *start, int size);
 STATIC_PROTOTYPE void             OSDEV_SnoopCacheRange(void *start, int size);
@@ -234,8 +234,6 @@ typedef int (*OSDEV_LoadFn_t)( void );
 
 #define OSDEV_LoadEntrypoint(fn)        static int __init fn( void )
 
-//
-
 typedef void (*OSDEV_UnloadFn_t)( void );
 
 #define OSDEV_UnloadEntrypoint(fn)      static void __exit fn( void )
@@ -245,111 +243,63 @@ typedef void (*OSDEV_UnloadFn_t)( void );
 //
 typedef struct PlatformData_s
 {
-	int   NumberBaseAddresses;
-	int   NumberInterrupts;
-	int   BaseAddress[10];
-	int   Interrupt[10];
-	void *PrivateData;
+    int   NumberBaseAddresses;
+    int   NumberInterrupts;
+    int   BaseAddress[10];
+    int   Interrupt[10];
+    void *PrivateData;
 } PlatformData_t;
 
 #define OSDEV_PlatformLoadEntrypoint(fn) static int fn( PlatformData_t *PlatformData )
-
 #define OSDEV_PlatformUnloadEntrypoint(fn) static void fn( void )
 
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
-/* in stlinux24 we have to use platform device pointers instead of device pointers */
-#define OSDEV_RegisterPlatformDriverFn( name2, Loadfn, Unloadfn )       \
-	OSDEV_PlatformLoadEntrypoint(Loadfn);                           \
-	OSDEV_PlatformUnloadEntrypoint(Unloadfn);                       \
-	static int plat_probe(struct platform_device *dev) {                     \
-		PlatformData_t PData;                                   \
-		struct resource *res;                                   \
-		if (!dev || !dev->name) OSDEV_Print("Error No Platform Data\n"); \
-		PData.PrivateData = dev->dev.platform_data;     \
-		PData.NumberBaseAddresses = 0;                          \
-		do {                                                    \
-			res = platform_get_resource(dev,IORESOURCE_MEM,PData.NumberBaseAddresses); \
-			if (res) { \
-				PData.BaseAddress[PData.NumberBaseAddresses] = res->start; \
-				PData.NumberBaseAddresses++;            \
-			}                                               \
-		} while (res);                                          \
-		PData.NumberInterrupts = 0;                             \
-		do {                                                    \
-			res = platform_get_resource(dev,IORESOURCE_IRQ,PData.NumberInterrupts); \
-			if (res) { \
-				PData.Interrupt[PData.NumberInterrupts] = res->start; \
-				PData.NumberInterrupts++;               \
-			}                                               \
-		} while (res);                                          \
-		return Loadfn(&PData);                                  \
-	}                                                               \
-	static int plat_remove(struct platform_device *dev) {                    \
-		Unloadfn();                                             \
-		return 0;                                               \
-	}                                                               \
-	static struct platform_driver plat_driver = {                     \
-		.driver = { .owner  = THIS_MODULE,                           \
-			.name   = name2                                        \
-		},							\
-		.probe  = plat_probe,                                   \
-		.remove = plat_remove                                   \
-	};                                                              \
-	static int plat_init(void) {                                    \
-		return platform_driver_register(&plat_driver);                   \
-	}                                                               \
-	static void plat_cleanup(void) {                                \
-		platform_driver_unregister(&plat_driver);                        \
-	}                                                               \
-	module_init(plat_init);                                         \
-	module_exit(plat_cleanup);
-#else /* !stlinux24 */
-#define OSDEV_RegisterPlatformDriverFn( name2, Loadfn, Unloadfn )       \
-	OSDEV_PlatformLoadEntrypoint(Loadfn);                           \
-	OSDEV_PlatformUnloadEntrypoint(Unloadfn);                       \
-	static int plat_probe(struct device *dev) {                     \
-		PlatformData_t PData;                                   \
-		struct resource *res;                                   \
-		struct platform_device *device_data = to_platform_device(dev); \
-		if (!device_data || !device_data->name) OSDEV_Print("Error No Platform Data\n"); \
-		PData.PrivateData = device_data->dev.platform_data;     \
-		PData.NumberBaseAddresses = 0;                          \
-		do {                                                    \
-			res = platform_get_resource(device_data,IORESOURCE_MEM,PData.NumberBaseAddresses); \
-			if (res) { \
-				PData.BaseAddress[PData.NumberBaseAddresses] = res->start; \
-				PData.NumberBaseAddresses++;            \
-			}                                               \
-		} while (res);                                          \
-		PData.NumberInterrupts = 0;                             \
-		do {                                                    \
-			res = platform_get_resource(device_data,IORESOURCE_IRQ,PData.NumberInterrupts); \
-			if (res) { \
-				PData.Interrupt[PData.NumberInterrupts] = res->start; \
-				PData.NumberInterrupts++;               \
-			}                                               \
-		} while (res);                                          \
-		return Loadfn(&PData);                                  \
-	}                                                               \
-	static int plat_remove(struct device *dev) {                    \
-		Unloadfn();                                             \
-		return 0;                                               \
-	}                                                               \
-	static struct device_driver plat_driver = {                     \
-		.name   = name2,                                        \
-		.bus    = &platform_bus_type,                           \
-		.probe  = plat_probe,                                   \
-		.remove = plat_remove                                   \
-	};                                                              \
-	static int plat_init(void) {                                    \
-		return driver_register(&plat_driver);                   \
-	}                                                               \
-	static void plat_cleanup(void) {                                \
-		driver_unregister(&plat_driver);                        \
-	}                                                               \
-	module_init(plat_init);                                         \
-	module_exit(plat_cleanup);
-#endif
+#define OSDEV_RegisterPlatformDriverFn( name2, Loadfn, Unloadfn )                       \
+    OSDEV_PlatformLoadEntrypoint(Loadfn);                                               \
+    OSDEV_PlatformUnloadEntrypoint(Unloadfn);                                           \
+    static int plat_probe(struct platform_device *pdev) {                               \
+        PlatformData_t PData;                                                     \
+        struct resource *res;                                                           \
+        if (!pdev || !pdev->name) OSDEV_Print("Error No Platform Data\n");              \
+        PData.PrivateData = pdev->dev.platform_data;                                    \
+        PData.NumberBaseAddresses = 0;                                                  \
+        do {                                                                            \
+            res = platform_get_resource(pdev,IORESOURCE_MEM,PData.NumberBaseAddresses); \
+            if (res) {                                                                  \
+                PData.BaseAddress[PData.NumberBaseAddresses] = res->start;              \
+                PData.NumberBaseAddresses++;                                            \
+            }                                                                           \
+        } while (res);                                                                  \
+        PData.NumberInterrupts = 0;                                                     \
+        do {                                                                            \
+            res = platform_get_resource(pdev,IORESOURCE_IRQ,PData.NumberInterrupts);    \
+            if (res) {                                                                  \
+                PData.Interrupt[PData.NumberInterrupts] = res->start;                   \
+                PData.NumberInterrupts++;                                               \
+            }                                                                           \
+        } while (res);                                                                  \
+        return Loadfn(&PData);                                                          \
+    }                                                                                   \
+    static int plat_remove(struct platform_device *pdev) {                              \
+        Unloadfn();                                                                     \
+        return 0;                                                                       \
+    }                                                                                   \
+    static struct platform_driver plat_driver = {                                       \
+        .driver = {                                                                     \
+        .name   = name2,                                                                \
+        .owner = THIS_MODULE,                                                           \
+        },                                                                              \
+        .probe  = plat_probe,                                                           \
+        .remove = plat_remove,                                                          \
+    };                                                                                  \
+    static int plat_init(void) {                                                        \
+        return platform_driver_register(&plat_driver);                                  \
+    }                                                                                   \
+    static void plat_cleanup(void) {                                                    \
+        platform_driver_unregister(&plat_driver);                                       \
+    }                                                                                   \
+    module_init(plat_init);                                                             \
+    module_exit(plat_cleanup);
+
 // -----------------------------------------------------------------------------------------------
 //
 // malloc and free used later
@@ -358,14 +308,16 @@ typedef struct PlatformData_s
 STATIC_INLINE void            *OSDEV_Malloc(                    unsigned int             Size )
 {
     void *p;
+
     if( Size < (PAGE_SIZE * 4) )
-	p = (void *)kmalloc( Size, GFP_KERNEL );
+        p = (void *)kmalloc( Size, GFP_KERNEL );
     else
-	p = bigphysarea_alloc( Size );
+        p = bigphysarea_alloc( Size );
 
 #ifdef ENABLE_MALLOC_POISONING
-    if (p) {
-	memset(p, 0xca, Size);
+    if (p)
+    {
+        memset(p, 0xca, Size);
     }
 #endif
 
@@ -382,26 +334,26 @@ STATIC_INLINE OSDEV_Status_t   OSDEV_Free(                      void            
 
     if( Address == NULL )
     {
-	printk( "OSDEV_Free- Attempt to free null pointer\n" );
-	return OSDEV_Error;
+        printk( "OSDEV_Free- Attempt to free null pointer\n" );
+        return OSDEV_Error;
     }
 
     bigphysarea_memory( &Base, &Size );
     if( (Addr >= Base) && (Addr < (Base + Size)) )
-	bigphysarea_free_pages( Address );
+        bigphysarea_free_pages( Address );
     else
-	kfree( Address );
+        kfree( Address );
 
     return OSDEV_NoError;
 }
 
 // -----------------------------------------------------------------------------------------------
 //
-// Partioned versions of malloc and free 
+// Partitioned versions of malloc and free
 //
 
-STATIC_INLINE void            *OSDEV_MallocPartitioned( char                    *Partition,
-							unsigned int             Size )
+STATIC_INLINE void          *OSDEV_MallocPartitioned(   char                    *Partition,
+                                                        unsigned int             Size )
 {
     struct bpa2_part    *partition;
     unsigned int         numpages;
@@ -409,12 +361,10 @@ STATIC_INLINE void            *OSDEV_MallocPartitioned( char                    
 
     partition   = bpa2_find_part(Partition);
     if( partition == NULL )
-	return NULL;
+        return NULL;
 
     numpages    = (Size + OSDEV_MEMORY_PAGE_SIZE - 1) / OSDEV_MEMORY_PAGE_SIZE;
     p           = bpa2_alloc_pages( partition, numpages, 0, 0 /*priority*/ );
-
-
 
 
 //    if( p )
@@ -422,9 +372,9 @@ STATIC_INLINE void            *OSDEV_MallocPartitioned( char                    
 
 
 #ifdef ENABLE_MALLOC_POISONING
-    if( p ) 
+    if( p )
     {
-	memset( (void *)p, 0xca, Size);
+        memset( (void *)p, 0xca, Size);
     }
 #endif
 
@@ -434,21 +384,21 @@ STATIC_INLINE void            *OSDEV_MallocPartitioned( char                    
 // -----------------------------------------------------------------------------------------------
 
 STATIC_INLINE OSDEV_Status_t   OSDEV_FreePartitioned(   char                    *Partition,
-							void                    *Address )
+                                                        void                    *Address )
 {
     struct bpa2_part    *partition;
 
     partition   = bpa2_find_part(Partition);
     if( partition == NULL )
     {
-	printk( "OSDEV_FreePartitioned - Partition not found\n" );
-	return OSDEV_Error;
+        printk( "OSDEV_FreePartitioned - Partition not found\n" );
+        return OSDEV_Error;
     }
 
     if( Address == NULL )
     {
-	printk( "OSDEV_FreePartitioned- Attempt to free null pointer\n" );
-	return OSDEV_Error;
+        printk( "OSDEV_FreePartitioned- Attempt to free null pointer\n" );
+        return OSDEV_Error;
     }
 
     bpa2_free_pages( partition, (unsigned int)Address );
@@ -540,15 +490,15 @@ static inline OSDEV_Status_t   OSDEV_RegisterDevice(    OSDEV_Descriptor_t      
 {
     if( OSDEV_DeviceDescriptors[Descriptor->MajorNumber] != NULL )
     {
-	OSDEV_Print( "OSDEV_RegisterDevice - %s - Attempt to register two devices with same MajorNumber.\n", Descriptor->Name );
-	return OSDEV_Error;
+        OSDEV_Print( "OSDEV_RegisterDevice - %s - Attempt to register two devices with same MajorNumber.\n", Descriptor->Name );
+        return OSDEV_Error;
     }
 
     OSDEV_DeviceDescriptors[Descriptor->MajorNumber] = (OSDEV_Descriptor_t *)OSDEV_Malloc( sizeof(OSDEV_Descriptor_t) );
     if( OSDEV_DeviceDescriptors[Descriptor->MajorNumber] == NULL )
     {
-	OSDEV_Print( "OSDEV_RegisterDevice - %s - Insufficient memory to hold device descriptor.\n", Descriptor->Name );
-	return OSDEV_Error;
+        OSDEV_Print( "OSDEV_RegisterDevice - %s - Insufficient memory to hold device descriptor.\n", Descriptor->Name );
+        return OSDEV_Error;
     }
 
     memset( OSDEV_DeviceDescriptors[Descriptor->MajorNumber], 0, sizeof(OSDEV_Descriptor_t) );
@@ -562,12 +512,12 @@ static inline OSDEV_Status_t   OSDEV_RegisterDevice(    OSDEV_Descriptor_t      
     OSDEV_DeviceDescriptors[Descriptor->MajorNumber]->Name              = OSDEV_Malloc( strlen( Descriptor->Name )+1 );
     if( OSDEV_DeviceDescriptors[Descriptor->MajorNumber]->Name == NULL )
     {
-	OSDEV_Print( "OSDEV_RegisterDevice - %s - Insufficient memory to record device name.\n", Descriptor->Name );
+        OSDEV_Print( "OSDEV_RegisterDevice - %s - Insufficient memory to record device name.\n", Descriptor->Name );
 
-	OSDEV_Free( OSDEV_DeviceDescriptors[Descriptor->MajorNumber] );
-	OSDEV_DeviceDescriptors[Descriptor->MajorNumber] = NULL;
+        OSDEV_Free( OSDEV_DeviceDescriptors[Descriptor->MajorNumber] );
+        OSDEV_DeviceDescriptors[Descriptor->MajorNumber] = NULL;
 
-	return OSDEV_Error;
+        return OSDEV_Error;
     }
     strcpy( OSDEV_DeviceDescriptors[Descriptor->MajorNumber]->Name, Descriptor->Name );
 
@@ -578,28 +528,28 @@ static inline OSDEV_Status_t   OSDEV_RegisterDevice(    OSDEV_Descriptor_t      
 
 static inline OSDEV_Status_t   OSDEV_DeRegisterDevice(  OSDEV_Descriptor_t      *Descriptor )
 {
-int     i;
-
-//
+    int     i;
 
     if( OSDEV_DeviceDescriptors[Descriptor->MajorNumber] == NULL )
     {
-	OSDEV_Print( "OSDEV_DeRegisterDevice - %s - Attempt to de-register an unregistered device.\n", Descriptor->Name );
-	return OSDEV_Error;
+        OSDEV_Print( "OSDEV_DeRegisterDevice - %s - Attempt to de-register an unregistered device.\n", Descriptor->Name );
+        return OSDEV_Error;
     }
 
     Descriptor                                          = OSDEV_DeviceDescriptors[Descriptor->MajorNumber];
     OSDEV_DeviceDescriptors[Descriptor->MajorNumber]    = NULL;
 
     for( i=0; i<OSDEV_MAX_OPENS; i++ )
-	if( Descriptor->OpenContexts[i].Open )
-	{
-	    OSDEV_Print( "OSDEV_DeRegisterDevice - %s - Forcing close\n", Descriptor->Name );
-	    Descriptor->CloseFn( &Descriptor->OpenContexts[i] );
-	}
+    {
+        if( Descriptor->OpenContexts[i].Open )
+        {
+            OSDEV_Print( "OSDEV_DeRegisterDevice - %s - Forcing close\n", Descriptor->Name );
+            Descriptor->CloseFn( &Descriptor->OpenContexts[i] );
+        }
+    }
 
     if( Descriptor->Name != NULL )
-	OSDEV_Free( Descriptor->Name );
+        OSDEV_Free( Descriptor->Name );
 
     OSDEV_Free( Descriptor );
     return OSDEV_NoError;
@@ -608,32 +558,32 @@ int     i;
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t   OSDEV_LinkDevice(        char                    *Name,
-							unsigned int             MajorNumber,
-							unsigned int             MinorNumber )
+                            unsigned int             MajorNumber,
+                            unsigned int             MinorNumber )
 {
-int     i;
-
-//
+    int     i;
 
     OSDEV_Print( "OSDEV_LinkDevice - %s, Major %d, Minor %d\n", Name, MajorNumber, MinorNumber );
 
     for( i=0; i<OSDEV_MAXIMUM_DEVICE_LINKS; i++ )
-	if( !OSDEV_DeviceList[i].Valid )
-	{
-	    OSDEV_DeviceList[i].MajorNumber     = MajorNumber;
-	    OSDEV_DeviceList[i].MinorNumber     = MinorNumber;
-	    OSDEV_DeviceList[i].Name            = OSDEV_Malloc( strlen( Name )+1 );
+    {
+        if( !OSDEV_DeviceList[i].Valid )
+        {
+            OSDEV_DeviceList[i].MajorNumber     = MajorNumber;
+            OSDEV_DeviceList[i].MinorNumber     = MinorNumber;
+            OSDEV_DeviceList[i].Name            = OSDEV_Malloc( strlen( Name )+1 );
 
-	    if( OSDEV_DeviceList[i].Name == NULL )
-	    {
-		OSDEV_Print( "OSDEV_LinkDevice - Unable to allocate memory for link name.\n" );
-		return OSDEV_Error;
-	    }
-	    strcpy( OSDEV_DeviceList[i].Name, Name );
+            if( OSDEV_DeviceList[i].Name == NULL )
+            {
+                OSDEV_Print( "OSDEV_LinkDevice - Unable to allocate memory for link name.\n" );
+                return OSDEV_Error;
+            }
+            strcpy( OSDEV_DeviceList[i].Name, Name );
 
-	    OSDEV_DeviceList[i].Valid           = true;
-	    return OSDEV_NoError;
-	}
+            OSDEV_DeviceList[i].Valid           = true;
+            return OSDEV_NoError;
+        }
+    }
 
     OSDEV_Print( "OSDEV_LinkDevice - All device links used.\n" );
     return OSDEV_Error;
@@ -643,17 +593,17 @@ int     i;
 
 static inline OSDEV_Status_t   OSDEV_UnLinkDevice(      char                    *Name )
 {
-int     i;
-
-//
+    int     i;
 
     for( i=0; i<OSDEV_MAXIMUM_DEVICE_LINKS; i++ )
-	if( OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0) )
-	{
-	    OSDEV_Free( OSDEV_DeviceList[i].Name );
-	    OSDEV_DeviceList[i].Valid           = false;
-	    return OSDEV_NoError;
-	}
+    {
+        if( OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0) )
+        {
+            OSDEV_Free( OSDEV_DeviceList[i].Name );
+            OSDEV_DeviceList[i].Valid           = false;
+            return OSDEV_NoError;
+        }
+    }
 
     OSDEV_Print( "OSDEV_UnLinkDevice - Device not found.\n" );
     return OSDEV_Error;
@@ -667,19 +617,17 @@ int     i;
 
 static inline unsigned int      __swapbw( unsigned int a )      // ByteSwap
 {
-unsigned int tmp1 = (a << 8) & 0xFF00FF00;
-unsigned int tmp2 = (a >> 8) & 0x00FF00FF;
-unsigned int tmp3 = tmp1 | tmp2;
+    unsigned int tmp1 = (a << 8) & 0xFF00FF00;
+    unsigned int tmp2 = (a >> 8) & 0x00FF00FF;
+    unsigned int tmp3 = tmp1 | tmp2;
 
     return ((tmp3 >> 16) | (tmp3 << 16));
 }
 
-//
-
 static inline unsigned int      __lzcntw( unsigned int a )      // CountLeadingZeros
 {
-unsigned int    i = 0;
-unsigned int    b;
+    unsigned int    i = 0;
+    unsigned int    b;
 
     i = (a ? 0 : 1);
 
@@ -705,14 +653,10 @@ unsigned int    b;
     return i;
 }
 
-//
-
 static inline unsigned int      __gethw( unsigned long long a )
 {
     return (unsigned int)(a >> 32);
 }
-
-//
 
 static inline unsigned int      __getlw( unsigned long long a )
 {
@@ -731,23 +675,23 @@ static inline int   OSDEV_ClaimSemaphore_trylock(    OSDEV_Semaphore_t       *Se
 #endif
 
 static inline OSDEV_Status_t   OSDEV_InitializeSemaphore( OSDEV_Semaphore_t     *Semaphore,
-							  unsigned int           InitialCount )
+                              unsigned int           InitialCount )
 {
     *Semaphore = (OSDEV_Semaphore_t)OSDEV_Malloc( sizeof(struct semaphore) );
     if( *Semaphore != NULL )
     {
-	sema_init( *Semaphore, InitialCount );
-	return OSDEV_NoError;
+        sema_init( *Semaphore, InitialCount );
+        return OSDEV_NoError;
     }
     else
-      return OSDEV_Error;
+        return OSDEV_Error;
 }
 
 // -----------------------------------------------------------------------------------------------
 
 
 static inline OSDEV_Status_t   OSDEV_ReInitializeSemaphore( OSDEV_Semaphore_t     *Semaphore,
-							    unsigned int           InitialCount )
+                                unsigned int           InitialCount )
 {
     sema_init( *Semaphore, InitialCount );
     return OSDEV_NoError;
@@ -777,7 +721,7 @@ static inline OSDEV_Status_t   OSDEV_ClaimSemaphore(    OSDEV_Semaphore_t       
 static inline OSDEV_Status_t   OSDEV_ClaimSemaphoreInterruptible(    OSDEV_Semaphore_t       *Semaphore )
 {
     if( down_interruptible( *Semaphore ) != 0 )
-	return OSDEV_Error;
+        return OSDEV_Error;
     return OSDEV_NoError;
 }
 
@@ -799,11 +743,11 @@ static inline OSDEV_Status_t    OSDEV_InitializeWaitQueue(      OSDEV_WaitQueue_
     *WaitQueue  = (OSDEV_WaitQueue_t)OSDEV_Malloc( sizeof(wait_queue_head_t) );
     if( *WaitQueue != NULL )
     {
-	init_waitqueue_head( *WaitQueue );
-	return OSDEV_NoError;
+        init_waitqueue_head( *WaitQueue );
+        return OSDEV_NoError;
     }
     else
-      return OSDEV_Error;
+        return OSDEV_Error;
 }
 
 static inline OSDEV_Status_t    OSDEV_ReInitializeWaitQueue(    OSDEV_WaitQueue_t      WaitQueue )
@@ -819,13 +763,13 @@ static inline OSDEV_Status_t    OSDEV_DeInitializeWaitQueue(    OSDEV_WaitQueue_
 }
 
 static inline OSDEV_Status_t    OSDEV_WaitForQueue(             OSDEV_WaitQueue_t       WaitQueue,
-								bool*                   Condition,
-								unsigned int            Timeout )
+                                bool*                   Condition,
+                                unsigned int            Timeout )
 {
     if (Timeout == OSDEV_INFINITE)
-	wait_event( *WaitQueue, *Condition );
+        wait_event( *WaitQueue, *Condition );
     else
-	wait_event_timeout( *WaitQueue, *Condition, msecs_to_jiffies (Timeout) );
+        wait_event_timeout( *WaitQueue, *Condition, msecs_to_jiffies (Timeout) );
     return OSDEV_NoError;
 }
 
@@ -839,10 +783,10 @@ static inline OSDEV_Status_t    OSDEV_WakeUpQueue (             OSDEV_WaitQueue_
 
 
 static inline void            *OSDEV_AllignedMalloc(            unsigned int             Allignment,
-								unsigned int             Size )
+                                unsigned int             Size )
 {
-void    *Base;
-void    *Result;
+    void    *Base;
+    void    *Result;
 
     Result                      = NULL;
     Size                        = Size + sizeof(void *) + Allignment - 1;
@@ -850,8 +794,8 @@ void    *Result;
 
     if( Base != NULL )
     {
-	Result                  = (void *)((((unsigned int)Base + sizeof(void *)) + (Allignment - 1)) & (~(Allignment-1)));
-	((void **)Result)[-1]   = Base;
+        Result                  = (void *)((((unsigned int)Base + sizeof(void *)) + (Allignment - 1)) & (~(Allignment-1)));
+        ((void **)Result)[-1]   = Base;
     }
 
     return Result;
@@ -861,12 +805,13 @@ void    *Result;
 
 
 static inline void            *OSDEV_Calloc(                    unsigned int             Quantity,
-								unsigned int             Size )
+                                unsigned int             Size )
 {
     void* Memory = OSDEV_Malloc(Quantity * Size);
 
     if( Memory != NULL )
-	memset( Memory, '\0', Quantity * Size );
+        memset( Memory, '\0', Quantity * Size );
+
     return Memory;
 }
 
@@ -875,12 +820,12 @@ static inline void            *OSDEV_Calloc(                    unsigned int    
 
 static inline OSDEV_Status_t   OSDEV_AllignedFree(              void                    *Address )
 {
-void    *Base;
+    void    *Base;
 
     if( Address != NULL )
     {
-	Base            = ((void **)Address)[-1];
-	OSDEV_Free( Base );
+        Base            = ((void **)Address)[-1];
+        OSDEV_Free( Base );
     }
     return OSDEV_NoError;
 }
@@ -889,16 +834,14 @@ void    *Base;
 
 static inline unsigned int OSDEV_GetTimeInMilliSeconds(         void )
 {
-struct timeval  Now;
+    struct timeval  Now;
 
 #if !defined (CONFIG_USE_SYSTEM_CLOCK)
-ktime_t         Ktime   = ktime_get();
+    ktime_t         Ktime   = ktime_get();
 
-    Now                 = ktime_to_timeval(Ktime);
-
+    Now = ktime_to_timeval(Ktime);
 #else
     do_gettimeofday( &Now );
-
 #endif
 
     return ((Now.tv_sec * 1000) + (Now.tv_usec/1000));
@@ -909,12 +852,12 @@ ktime_t         Ktime   = ktime_get();
 static inline unsigned long long OSDEV_GetTimeInMicroSeconds(         void )
 {
 #if defined (CONFIG_USE_SYSTEM_CLOCK)
-struct timeval  Now;
+    struct timeval  Now;
 
     do_gettimeofday( &Now );
     return (((unsigned long long)Now.tv_sec * 1000000LL) + (unsigned long long)Now.tv_usec);
 #else
-ktime_t         Ktime   = ktime_get();
+    ktime_t         Ktime   = ktime_get();
 
     return ktime_to_us(Ktime);
 #endif
@@ -924,8 +867,8 @@ ktime_t         Ktime   = ktime_get();
 
 static inline void OSDEV_SleepMilliSeconds( unsigned int Value )
 {
-sigset_t allset, oldset;
-unsigned int  Jiffies = ((Value*HZ)/1000)+1;
+    sigset_t allset, oldset;
+    unsigned int  Jiffies = ((Value*HZ)/1000)+1;
 
     /* Block all signals during the sleep (i.e. work correctly when called via ^C) */
     sigfillset(&allset);
@@ -942,8 +885,8 @@ unsigned int  Jiffies = ((Value*HZ)/1000)+1;
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t   OSDEV_CopyToDeviceSpace(         void                    *DeviceAddress,
-								unsigned int             UserAddress,
-								unsigned int             Size )
+                                unsigned int             UserAddress,
+                                unsigned int             Size )
 {
     memcpy( DeviceAddress, (void *)UserAddress, Size );
     return OSDEV_NoError;
@@ -952,8 +895,8 @@ static inline OSDEV_Status_t   OSDEV_CopyToDeviceSpace(         void            
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t   OSDEV_CopyToUserSpace(           unsigned int             UserAddress,
-								void                    *DeviceAddress,
-								unsigned int             Size )
+                                void                    *DeviceAddress,
+                                unsigned int             Size )
 {
     memcpy( (void *)UserAddress, DeviceAddress, Size );
     return OSDEV_NoError;
@@ -968,7 +911,7 @@ STATIC_INLINE void            *OSDEV_TranslateAddressToUncached( void           
 
 // -----------------------------------------------------------------------------------------------
 
-STATIC_INLINE void OSDEV_PurgeCacheAll(void)
+STATIC_INLINE void OSDEV_FlushCacheAll( void )
 {
     flush_cache_all();
 }
@@ -999,12 +942,12 @@ STATIC_INLINE void OSDEV_InvalidateCacheRange(void *start, int size)
 
 STATIC_INLINE void OSDEV_SnoopCacheRange(void *start, int size)
 {
-	/* this can only be support on SH-4 platforms but it's
-	 * capabilities are too good to ignore
-	 */
+    /* this can only be support on SH-4 platforms but it's
+     * capabilities are too good to ignore
+     */
 #ifdef __SH4__
-	extern void sh4_cache_snoop(void *p, unsigned int len);
-	sh4_cache_snoop(start, size);
+    extern void sh4_cache_snoop(void *p, unsigned int len);
+    sh4_cache_snoop(start, size);
 #endif
 }
 
@@ -1021,7 +964,8 @@ STATIC_INLINE void OSDEV_PurgeCacheRange(void *start, int size)
 
 // -----------------------------------------------------------------------------------------------
 
-struct ThreadInfo_s {
+struct ThreadInfo_s
+{
   OSDEV_ThreadFn_t       thread;
   void                  *args;
   unsigned int          priority;
@@ -1029,7 +973,7 @@ struct ThreadInfo_s {
 
 static int             OSDEV_CreateThreadHelper(                void                    *p )
 {
-struct ThreadInfo_s *t=(struct ThreadInfo_s*)p;
+    struct ThreadInfo_s *t=(struct ThreadInfo_s*)p;
 
     t->thread(t->args);
     kfree(t);
@@ -1038,38 +982,39 @@ struct ThreadInfo_s *t=(struct ThreadInfo_s*)p;
 }
 
 static inline OSDEV_Status_t   OSDEV_CreateThread( OSDEV_Thread_t          *Thread,
-						   OSDEV_ThreadFn_t         Entrypoint,
-						   OSDEV_ThreadParam_t      Parameter,
-						   const char              *Name,
-						   OSDEV_ThreadPriority_t   Priority )
+                           OSDEV_ThreadFn_t         Entrypoint,
+                           OSDEV_ThreadParam_t      Parameter,
+                           const char              *Name,
+                           OSDEV_ThreadPriority_t   Priority )
 {
-struct ThreadInfo_s *t = (struct ThreadInfo_s *)kmalloc(sizeof(struct ThreadInfo_s),GFP_KERNEL);
-struct sched_param    Param;
-struct task_struct          *Taskp;
+    struct ThreadInfo_s *t = (struct ThreadInfo_s *)kmalloc(sizeof(struct ThreadInfo_s),GFP_KERNEL);
+    struct sched_param    Param;
+    struct task_struct          *Taskp;
 
     t->thread    = Entrypoint;
     t->args      = Parameter;
     t->priority  = Priority;
 
-
     /* create the task and leave it suspended */
     Taskp = kthread_create(OSDEV_CreateThreadHelper, t, "%s", Name);
-    if (IS_ERR(Taskp)) {
-	return OSDEV_Error;
+    if (IS_ERR(Taskp))
+    {
+        return OSDEV_Error;
     }
     Taskp->flags |= PF_NOFREEZE;
 
     /* switch to real time scheduling (if requested) */
-    if (0 != Priority) {
-	Param.sched_priority = Priority;
-	if (0 != sched_setscheduler(Taskp, SCHED_RR, &Param)) {
-	    printk(KERN_ERR "FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Priority);
-	    Priority = 0;
-	}
+    if (0 != Priority)
+    {
+        Param.sched_priority = Priority;
+        if (0 != sched_setscheduler(Taskp, SCHED_RR, &Param))
+        {
+            printk(KERN_ERR "FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Priority);
+            Priority = 0;
+        }
     }
 
     wake_up_process(Taskp);
-
     *Thread = Taskp;
 
     return OSDEV_NoError;
@@ -1084,14 +1029,15 @@ struct task_struct          *Taskp;
 static inline OSDEV_Status_t   OSDEV_SetPriority( OSDEV_ThreadPriority_t   Priority )
 {
     int Result;
-    struct sched_param Param = { .sched_priority = Priority }; 
+    struct sched_param Param = { .sched_priority = Priority };
 
     /* switch to real time scheduling (if requested) */
     Result = sched_setscheduler(current, (Priority ? SCHED_RR : SCHED_NORMAL), &Param);
-    if (0 != Result) {
-	printk(KERN_ERR "FAILED to set scheduling parameters to priority %d (%s)\n",
-	       Priority, (Priority ? "SCHED_RR" : "SCHED_NORMAL"));
-	return OSDEV_Error;
+    if (0 != Result)
+    {
+        printk(KERN_ERR "FAILED to set scheduling parameters to priority %d (%s)\n",
+               Priority, (Priority ? "SCHED_RR" : "SCHED_NORMAL"));
+        return OSDEV_Error;
     }
 
     return OSDEV_NoError;
@@ -1115,71 +1061,71 @@ static inline char *OSDEV_ThreadName(void)
 //
 
 #define OSDEV_OpenEntry()       void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;
+                                unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;
 
 #define OSDEV_OpenExit(Status)  OSDEV_OpenContext->PrivateData                  = OSDEV_PrivateData;    \
-				(void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
-				return Status;
+                                (void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
+                                return Status;
 
 //
 
 #define OSDEV_CloseEntry()      void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;
+                                unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;
 
 
 #define OSDEV_CloseExit(Status) OSDEV_OpenContext->PrivateData                  = OSDEV_PrivateData;    \
-				(void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
-				return Status;
+                                (void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
+                                return Status;
 
 //
 
 #define OSDEV_WriteEntry()      void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				const char      *OSDEV_Buffer                   = buf;                                  \
-				size_t           OSDEV_Count                    = count;                                \
-				loff_t          *OSDEV_Offset                   = ppos;
+                                const char      *OSDEV_Buffer                   = buf;                                  \
+                                size_t           OSDEV_Count                    = count;                                \
+                                loff_t          *OSDEV_Offset                   = ppos;
 
 
 #define OSDEV_WriteExit(Status) filp->private_data                              = OSDEV_PrivateData;    \
-				return (Status == OSDEV_NoError) ? 0 : -1;
+                                return (Status == OSDEV_NoError) ? 0 : -1;
 
 //
 
 #define OSDEV_PollEntry()       void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				poll_table      *OSDEV_PollTable                = wait;
+                                poll_table      *OSDEV_PollTable                = wait;
 
 #define OSDEV_PollExit(Status)  OSDEV_OpenContext->PrivateData                  = OSDEV_PrivateData;    \
-				return Status;
+                                return Status;
 
 //
 
 #define OSDEV_IoctlEntry()      void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;       \
-				unsigned int     OSDEV_IoctlCode                = cmd;                                  \
-				unsigned int     OSDEV_ParameterAddress         = arg;
+                                unsigned int     OSDEV_MinorDeviceNumber        = OSDEV_OpenContext->MinorNumber;       \
+                                unsigned int     OSDEV_IoctlCode                = cmd;                                  \
+                                unsigned int     OSDEV_ParameterAddress         = arg;
 
 
 #define OSDEV_IoctlExit(Status) OSDEV_OpenContext->PrivateData                  = OSDEV_PrivateData;    \
-				(void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
-				return Status;
+                                (void) OSDEV_MinorDeviceNumber; /* warning suppression */               \
+                                return Status;
 
 //
 
 #define OSDEV_MmapEntry()       void            *OSDEV_PrivateData              = OSDEV_OpenContext->PrivateData;       \
-				unsigned char   *OSDEV_VirtualMemoryStart       = NULL;                                 \
-				unsigned char   *OSDEV_VirtualMemoryEnd         = (unsigned char *)OSDEV_VMSize;        \
-				unsigned int     OSDEV_Offset                   = OSDEV_VMOffset;
+                                unsigned char   *OSDEV_VirtualMemoryStart       = NULL;                                 \
+                                unsigned char   *OSDEV_VirtualMemoryEnd         = (unsigned char *)OSDEV_VMSize;        \
+                                unsigned int     OSDEV_Offset                   = OSDEV_VMOffset;
 
 #define OSDEV_MmapExit(Status)  OSDEV_OpenContext->PrivateData                  = OSDEV_PrivateData;                    \
-				*OSDEV_VMAddress                                = OSDEV_VirtualMemoryStart;             \
-				(void) OSDEV_VirtualMemoryEnd; /* warning suppression */                                \
-				(void) OSDEV_Offset; /* warning suppression */                                          \
-				return Status;
+                                *OSDEV_VMAddress                                = OSDEV_VirtualMemoryStart;             \
+                                (void) OSDEV_VirtualMemoryEnd; /* warning suppression */                                \
+                                (void) OSDEV_Offset; /* warning suppression */                                          \
+                                return Status;
 
 #define OSDEV_MmapPerformMap(PhysicalAddress, MappingStatus)                                                            \
-				{                                                                                       \
-				    MappingStatus                               = OSDEV_NoError;                        \
-				    OSDEV_VirtualMemoryStart                    = PhysicalAddress;                      \
-				}
+                                {                                                                                       \
+                                    MappingStatus                               = OSDEV_NoError;                        \
+                                    OSDEV_VirtualMemoryStart                    = PhysicalAddress;                      \
+                                }
 
 // -----------------------------------------------------------------------------------------------
 //
@@ -1195,7 +1141,6 @@ static inline char *OSDEV_ThreadName(void)
 //
 
 #define OSDEV_LoadEntry()
-
 #define OSDEV_LoadExit(Status)                          return (Status == OSDEV_NoError) ? 0 : -1;
 
 
@@ -1224,30 +1169,25 @@ static inline void OSDEV_IOUnMap( unsigned int MapAddress )
     iounmap( (void*)MapAddress );
 }
 
-
 static inline unsigned int OSDEV_PeripheralAddress( unsigned int CPUAddress )
 {
     return virt_to_phys( (void *) CPUAddress );
 }
-
 
 static inline unsigned int OSDEV_ReadLong( unsigned int Address )
 {
     return (unsigned int)readl( Address );
 }
 
-
 static inline unsigned int OSDEV_ReadByte( unsigned int Address )
 {
     return (unsigned int)readb( Address );
 }
 
-
 static inline void OSDEV_WriteLong( unsigned int Address, unsigned int Value )
 {
     writel( Value, Address );
 }
-
 
 static inline void OSDEV_WriteByte( unsigned int Address, unsigned int Value )
 {

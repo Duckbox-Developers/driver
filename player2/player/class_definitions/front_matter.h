@@ -426,7 +426,7 @@ data.
 
 We recognise that Player 1 today has no capability of exporting events 
 to the outside world, relating to playout, specific times being
-reached, particular conditions being encounterred, speed changes 
+reached, particular conditions being encountered, speed changes
 occurring, or any other useful occurrence. In order to rectify this I 
 intend to put into Player 2 the capability to request specific events 
 to be signalled internally to the Player, and for these to be retrieved 
@@ -1160,7 +1160,7 @@ typedef struct AudioOutputSurfaceDescriptor_s
 	beyond the startup phase.
 
 	In the current M3 release, we are seeing a startup synchronization 
-	error of upto 40ms which is corrected after some 250ms after which 
+	error of up to 40ms which is corrected after some 250ms after which
 	we remain within 1ms until after some 10 minutes when the fact that 
 	output rate adjustment is disabled for audio causes a 1 ms correction.
 	We expect to bring the startup error down to within 8ms later in the 
@@ -1328,7 +1328,7 @@ This section contains out of date information regarding the player's handling
 time. However the replacement test (above) was circulated with the following proviso.
 
 <pre>
-  Looking thorugh my mails, I think that they do not summarise the 
+  Looking through my mails, I think that they do not summarise the
   position, in one chunk, coherently. So I am going to try to write a short 
   summary of all the interesting bits about time in one place as it applies 
   to a player 2 based system. This may confuse more than enlighten, in which 

@@ -71,11 +71,7 @@ int MonitorMMEInit                     (struct DeviceContext_s*         DeviceCo
     struct sched_param          Param;
     struct task_struct*         Taskp;
     int                         Status;
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
     struct clk*                 Tmu1Clock       = clk_get(NULL, "tmu1_clk");
-#else
-    struct clk*                 Tmu1Clock       = clk_get("tmu1_clk");
-#endif
     unsigned long long          TimeStamp;
     unsigned int                TimeValue;
 

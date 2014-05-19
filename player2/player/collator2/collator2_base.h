@@ -22,7 +22,7 @@ license from ST.
 Source file name : collator2_base.h
 Author :           Nick
 
-Definition of the base class of the reversing collator implementation 
+Definition of the base class of the reversing collator implementation
 for player 2.
 
 
@@ -72,7 +72,7 @@ typedef struct Collator2Configuration_s
     unsigned int          SubStreamIdentifierMask;      // For PES of type extended_stream_id indicates the pes sub stream identifier (set to zero if no filtering is to be done)
     unsigned int          SubStreamIdentifierCode;
 
-    unsigned char         IgnoreCodesRangeStart;        // Start codes to ignore, IE all but first slice header 
+    unsigned char         IgnoreCodesRangeStart;        // Start codes to ignore, IE all but first slice header
     unsigned char         IgnoreCodesRangeEnd;          // start > end ignores none
 
     bool		  InsertFrameTerminateCode;	// if set causes a terminal code to be inserted into the

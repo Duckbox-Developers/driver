@@ -802,7 +802,6 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders( void )
     ParsedAudioParameters->Source.SampleRateHz = LpcmDVDSamplingFreq[ParsedFrameHeader.SamplingFrequency1];
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec    
-    
     return FrameParserNoError;
 }
 

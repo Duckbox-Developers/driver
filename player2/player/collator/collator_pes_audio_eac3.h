@@ -59,7 +59,6 @@ class Collator_PesAudioEAc3_c : public Collator_PesAudioDvd_c
   int              ProgrammeId;           ///< Identifier if the eac3 programme to be decoded
   int              NbAccumulatedSamples;  ///< The collator has to accumulate 1536 samples so that the eac3->ac3 transcoding is possible (for spdif output)
   
-
   /// \todo This variable should be updated according to the manifestor constraints via SetModuleParameters
   ///
 

@@ -242,7 +242,7 @@ bool				  DiscardBuffer;
 	}
     }
 
-    report( severity_info, "0000 Holding control strutures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
+    report( severity_info, "0000 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
 
     //
     // Signal we have terminated

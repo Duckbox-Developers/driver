@@ -44,7 +44,7 @@ Date        Modification                                    Name
 
 /*      Debug printing macros   */
 #ifndef ENABLE_STREAM_DEBUG
-#define ENABLE_STREAM_DEBUG             1
+#define ENABLE_STREAM_DEBUG             0
 #endif
 
 #define STREAM_DEBUG(fmt, args...)      ((void) (ENABLE_STREAM_DEBUG && \

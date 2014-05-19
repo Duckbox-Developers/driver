@@ -65,23 +65,23 @@ Manifestor_Audio_c::Manifestor_Audio_c  (void)
 
     if (InitializationStatus != ManifestorNoError)
     {
-	MANIFESTOR_ERROR ("Initialization status not valid - aborting init\n");
-	return;
+        MANIFESTOR_ERROR ("Initialization status not valid - aborting init\n");
+        return;
     }
 
     if (OS_InitializeMutex (&BufferQueueLock) != OS_NO_ERROR)
     {
-	MANIFESTOR_ERROR ("Unable to create the buffer queue lock\n");
-	InitializationStatus = ManifestorError;
-	return;
+        MANIFESTOR_ERROR ("Unable to create the buffer queue lock\n");
+        InitializationStatus = ManifestorError;
+        return;
     }
 
     if (OS_InitializeEvent (&BufferQueueUpdated) != OS_NO_ERROR)
     {
-	MANIFESTOR_ERROR("Unable to create the buffer queue update event\n");
-	OS_TerminateMutex( &BufferQueueLock );
-	InitializationStatus = ManifestorError;
-	return;
+        MANIFESTOR_ERROR("Unable to create the buffer queue update event\n");
+        OS_TerminateMutex( &BufferQueueLock );
+        InitializationStatus = ManifestorError;
+        return;
     }
 
     DestroySyncrhonizationPrimatives = true;
@@ -106,8 +106,8 @@ Manifestor_Audio_c::~Manifestor_Audio_c   (void)
 
     if( DestroySyncrhonizationPrimatives )
     {
-	OS_TerminateMutex(&BufferQueueLock);
-	OS_TerminateEvent(&BufferQueueUpdated);
+        OS_TerminateMutex(&BufferQueueLock);
+        OS_TerminateEvent(&BufferQueueUpdated);
     }
 }
 
@@ -126,7 +126,7 @@ ManifestorStatus_t      Manifestor_Audio_c::Halt (void)
     //
 
     ReleaseQueuedDecodeBuffers();
-    
+
     MANIFESTOR_ASSERT(0 == QueuedBufferCount);
     MANIFESTOR_ASSERT(0 == NotQueuedBufferCount);
 
@@ -143,7 +143,7 @@ ManifestorStatus_t Manifestor_Audio_c::Reset (void)
     MANIFESTOR_DEBUG (">><<\n");
 
     if (TestComponentState (ComponentRunning))
-	Halt ();
+        Halt ();
 
     BufferQueueHead             = INVALID_BUFFER_ID;
     BufferQueueTail             = ANY_BUFFER_ID;

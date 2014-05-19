@@ -153,7 +153,7 @@ public:
 	// which cause me to shift, and lose some accuracy.
 	// The first two are when one of the denominator, or
 	// numerator is a multiple of the other, the third 
-	// involves the use of factors of 10, I have elliminated 
+	// involves the use of factors of 10, I have eliminated
 	// both cases, and reduced the accuracy losing shift a 
 	// great deal.
 	//

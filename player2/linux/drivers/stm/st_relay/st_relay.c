@@ -1,5 +1,6 @@
-#include <linux/autoconf.h>
+#include <linux/version.h>
 #include <linux/init.h>
+#include <linux/module.h>
 #include <linux/err.h>
 #include <linux/platform_device.h>
 #include <linux/jiffies.h>
@@ -45,8 +46,8 @@ unsigned char relay_type_names[RELAY_NUMBER_OF_TYPES][ST_RELAY_TYPE_NAME_LEN] = 
 	"DataToPCM7",
 	"MMELog",
 	[ST_RELAY_TYPE_CRC] = "CRC",
-    "LowLatencyInput0",
-    "LowLatencyInput1",
+	"LowLatencyInput0",
+	"LowLatencyInput1",
 };
 
 relay_entry_t relay_entries[RELAY_NUMBER_OF_TYPES];
@@ -161,7 +162,7 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 
 				if(wrote2!=0) {
 
-					wrote3 = st_relay_write(st_relay_chan, buf+(vid_info->chroma_offset), 
+					wrote3 = st_relay_write(st_relay_chan, buf+(vid_info->chroma_offset),
 										((relay_entries[id].x * relay_entries[id].y)/2));
 
 					if(wrote3!=0) {
@@ -208,6 +209,7 @@ unsigned int st_relayfs_getindex(unsigned int source)
 				if(audio_manifestor_indexes[n]==0) {
 					audio_manifestor_indexes[n]=1;
 					index=n;
+					break;
 				}
 			}
 			break;
@@ -216,6 +218,7 @@ unsigned int st_relayfs_getindex(unsigned int source)
 				if(video_manifestor_indexes[n]==0) {
 					video_manifestor_indexes[n]=1;
 					index=n;
+					break;
 				}
 			}
 			break;
@@ -262,7 +265,7 @@ int st_relayfs_open(void)
 
 		if(st_relay_chan) {
 			for(n=0;n<RELAY_NUMBER_OF_TYPES;n++) {
-				relay_entries[n].dentry = 
+				relay_entries[n].dentry =
 					debugfs_create_u32(relay_entries[n].name, 0666, strelay_dir, &(relay_entries[n].active));
 			}
 		} else {

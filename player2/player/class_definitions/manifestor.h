@@ -117,7 +117,7 @@ public:
 
 // ---------------------------------------------------------------------
 //
-// Docuentation
+// Documentation
 //
 
 /*! \class Manifestor_c
@@ -246,7 +246,7 @@ will be the first buffer to be submitted via the normal route.
 */
 
 /*! \fn ManifestorStatus_t Manifestor_c::QueueDecodeBuffer(Buffer_t Buffer)
-    \brief Queue a buffer for manifestion.
+    \brief Queue a buffer for manifestation.
 
     Provide a buffer to the manifestor to allow manifestation of it's contents.
 
@@ -256,7 +256,7 @@ will be the first buffer to be submitted via the normal route.
 */
 
 /*! \fn ManifestorStatus_t Manifestor_c::QueueNullManifestation(void)
-    \brief Insert blank, or silence, in the manifestion queue.
+    \brief Insert blank, or silence, in the manifestation queue.
 
     Insertion is such that the screen will go blank, or the speaker 
     will go silent, after the last queued buffer has been manifested.
@@ -267,7 +267,7 @@ will be the first buffer to be submitted via the normal route.
 */
 
 /*! \fn ManifestorStatus_t Manifestor_c::QueueEventSignal(PlayerEventRecord_t *Event)
-    \brief Request that a manifestion event be emitted.
+    \brief Request that a manifestation event be emitted.
 
     A call to this function informs the manifestor that the specified event record 
     is to be copied, and supplied to the player fn SignalEvent() at the appropriate time.

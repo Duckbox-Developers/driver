@@ -207,6 +207,7 @@ Buffer_t                          InitialFrameBuffer;
 	    {
 		SequenceNumber                          = SequenceNumberStructure->Value;
 		MaximumActualSequenceNumberSeen		= max(SequenceNumber, MaximumActualSequenceNumberSeen);
+
 		ProcessAccumulatedControlMessages(  Stream, 
 						    &AccumulatedBeforeControlMessagesCount,
 						    PLAYER_MAX_DTOM_MESSAGES,
@@ -411,7 +412,7 @@ report( severity_info, "Got(%d) %3d (R = %d, K = %d) %d, %016llx - %d %d/%d\n", 
 	    }
 
 	    //
-	    // If we are not discarding everything, then procede to process the buffer
+	    // If we are not discarding everything, then proceed to process the buffer
 	    //
 
 	    DiscardBuffer       = Stream->DiscardingUntilMarkerFrameDtoM;
@@ -529,7 +530,7 @@ OS_SleepMilliSeconds( 4000 );
 	    {
 		Stream->Codec->ReleaseDecodeBuffer( Buffer );
 
-		if( Stream->Playback->Speed == 0 )
+		if ( Stream->Playback->Speed == 0 )
 		    Stream->Step	= true;
 	    }
 
@@ -605,7 +606,7 @@ OS_SleepMilliSeconds( 4000 );
 
     FlushNonDecodedFrameList( Stream );
 
-    report( severity_info, "2222 Holding control strutures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
+    report( severity_info, "2222 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
 
     //
     // Signal we have terminated

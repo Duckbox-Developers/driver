@@ -56,7 +56,7 @@ static struct Count_s
     unsigned int        PanScanCountValue;
     unsigned int        DisplayCount0Value;
     unsigned int        DisplayCount1Value;
-} Counts[] = 
+} Counts[] =
 {
 				// ProgSeq  Frame   TFF   RFF
     { true,  1, 1, 0 },         //    0       0      0     0
@@ -92,21 +92,21 @@ static struct Count_s
 //             the compiler will silently ignore them..........
 // Convert all aspect ratios to w/h to be consistent with all other content
 #if 0
-static unsigned int     Mpeg2AspectRatioValues[][2]     = 
-    { 
+static unsigned int     Mpeg2AspectRatioValues[][2]     =
+    {
 	{0,1},
 	{1,1},
 	{3, 4 },
 	{ 9, 16 },
 	{ 100, 221 } };
 #else
-static unsigned int     Mpeg2AspectRatioValues[][2]     = 
-    { 
+static unsigned int     Mpeg2AspectRatioValues[][2]     =
+    {
 	{   1,   0 },
 	{   1,   1 },
 	{   4,   3 },
 	{  16,   9 },
-	{ 221, 100 } 
+	{ 221, 100 }
     };
 #endif
 
@@ -119,8 +119,8 @@ static unsigned int     Mpeg2AspectRatioValues[][2]     =
 
 // BEWARE !!!! you cannot declare static initializers of a constructed type such as Rational_t
 //             the compiler will silently ignore them..........
-static unsigned int     Mpeg1AspectRatioValues[][2]     = 
-    { 
+static unsigned int     Mpeg1AspectRatioValues[][2]     =
+    {
 	{0,1},
 	{10000, 10000},
 #ifdef __TDT__
@@ -149,7 +149,7 @@ static unsigned int     Mpeg1AspectRatioValues[][2]     =
 #define MIN_LEGAL_FRAME_RATE_CODE               1
 #define MAX_LEGAL_FRAME_RATE_CODE               8
 
-static unsigned int     FrameRateValues[][2]    =  
+static unsigned int     FrameRateValues[][2]    =
     {
 	{0,1},
 	{ 24000, 1001 },
@@ -470,8 +470,8 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ResetReferenceFrameList( void )
 
 
 // /////////////////////////////////////////////////////////////////////////
-//      Stream specific override function for processing decode stacks, this 
-//      initializes the post decode ring before passing into the real 
+//      Stream specific override function for processing decode stacks, this
+//      initializes the post decode ring before passing into the real
 //      implementation of this function.
 //
 
@@ -485,9 +485,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayProcessDecodeStacks( void
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to generate the post decode parameter 
+//      Stream specific function to generate the post decode parameter
 //      settings for reverse play, these consist of the display frame index,
-//      and presentation time, both of which may be deferred if the information 
+//      and presentation time, both of which may be deferred if the information
 //      is unavailable.
 //
 //      For mpeg2 reverse play, this function will use a simple numbering system,
@@ -555,9 +555,9 @@ unsigned int    ReferenceFramesNeeded;
 unsigned int    PictureCodingType;
 
     //
-    // Note we cannot use StreamParameters or FrameParameters to address data directly, 
+    // Note we cannot use StreamParameters or FrameParameters to address data directly,
     // as these may no longer apply to the frame we are dealing with.
-    // Particularly if we have seen a sequenece header or group of pictures 
+    // Particularly if we have seen a sequence header or group of pictures
     // header which belong to the next frame.
     //
 
@@ -567,7 +567,7 @@ unsigned int    PictureCodingType;
     //
     // Detect the special case of a second field referencing the first
     // this is when we have the field startup condition
-    //          I P P P 
+    //          I P P P
     // where the first P actually references its own decode buffer.
     //
 
@@ -581,7 +581,7 @@ unsigned int    PictureCodingType;
 	LastFirstFieldWasAnI    = (PictureCodingType == MPEG2_PICTURE_CODING_TYPE_I);
 
     //
-    // Now we cannot decode if we do not have enbough reference frames, 
+    // Now we cannot decode if we do not have enbough reference frames,
     // and this is not the most heinous of special cases.
     //
 
@@ -612,8 +612,8 @@ unsigned int    PictureCodingType;
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Stream specific function to manage a reference frame list in forward play
-//      we only record a reference frame as such on the last field, in order to 
-//      ensure the correct management of reference frames in the codec, we immediately 
+//      we only record a reference frame as such on the last field, in order to
+//      ensure the correct management of reference frames in the codec, we immediately
 //      inform the codec of a release on the first field of a field picture.
 //
 
@@ -626,7 +626,7 @@ bool            LastField;
 
     if( ParsedFrameParameters->ReferenceFrame )
     {
-	LastField       = (ParsedVideoParameters->PictureStructure == StructureFrame) || 
+	LastField       = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 			  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 
 	if( LastField )
@@ -654,7 +654,7 @@ bool            LastField;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to add a frame to the reference 
+//      Stream specific function to add a frame to the reference
 //      frame list in reverse play.
 //
 
@@ -664,7 +664,7 @@ bool            LastField;
 
 //
 
-    LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) || 
+    LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 		  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 
     if( ParsedFrameParameters->ReferenceFrame && LastField )
@@ -684,10 +684,10 @@ bool            LastField;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to remove a frame from the reference 
+//      Stream specific function to remove a frame from the reference
 //      frame list in reverse play.
 //
-//      Note, we only inserted the reference frame in the list on the last 
+//      Note, we only inserted the reference frame in the list on the last
 //      field but we need to inform the codec we are finished with it on both
 //      fields (for field pictures).
 //
@@ -698,7 +698,7 @@ bool            LastField;
 
 //
 
-    LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) || 
+    LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 		  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 
     if( (ReferenceFrameList.EntryCount != 0) && LastField )
@@ -1575,7 +1575,7 @@ Mpeg2VideoPictureSpatialScalableExtension_t     *Header;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      On a first slice code, we should have garnered all the data 
+//      On a first slice code, we should have garnered all the data
 //      we require we for a frame decode, this function records that fact.
 //
 
@@ -1611,7 +1611,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
 	((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !FrameParameters->PictureCodingExtensionHeaderPresent) )
     {
 	report( severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Frame parameters unavailable for decode.\n" );
-	report( severity_info, "        %d %d %d\n", 
+	report( severity_info, "        %d %d %d\n",
 		(FrameParameters == NULL),
 		!FrameParameters->PictureHeaderPresent,
 		((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !FrameParameters->PictureCodingExtensionHeaderPresent) );
@@ -1635,7 +1635,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
     // Check that the constrained parameters flag is valid for the specific standard
     //
 
-    if( (StreamParameters->StreamType == MpegStreamTypeMpeg2) && 
+    if( (StreamParameters->StreamType == MpegStreamTypeMpeg2) &&
 	(StreamParameters->SequenceHeader.constrained_parameters_flag != 0) )
     {
 	report( severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - constrained_parameters_flag has illegal value (%02x) for mpeg2 standard.\n", StreamParameters->SequenceHeader.constrained_parameters_flag );
@@ -1649,7 +1649,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
     ProgressiveSequence = !StreamParameters->SequenceExtensionHeaderPresent ||
 			  StreamParameters->SequenceExtensionHeader.progressive_sequence;
 
-    PictureStructure    = FrameParameters->PictureCodingExtensionHeaderPresent ? 
+    PictureStructure    = FrameParameters->PictureCodingExtensionHeaderPresent ?
 				PictureStructures[FrameParameters->PictureCodingExtensionHeader.picture_structure] :
 				StructureFrame;
 
@@ -1662,7 +1662,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
     TopFieldFirst       = FrameParameters->PictureCodingExtensionHeaderPresent &&
 			  FrameParameters->PictureCodingExtensionHeader.top_field_first;
 
-    PanAndScanCount     = FrameParameters->PictureDisplayExtensionHeaderPresent ? 
+    PanAndScanCount     = FrameParameters->PictureDisplayExtensionHeaderPresent ?
 				PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField) :
 				0;
 
@@ -1681,7 +1681,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
 
     //
     // If we are doing field decode check for sequence error, and set appropriate flags
-    // Update AccumulatedPictureStructure for nex pass, if this is the first decode of a field picture 
+    // Update AccumulatedPictureStructure for nex pass, if this is the first decode of a field picture
     // it is what we have otherwise it is empty
     //
 
@@ -1697,7 +1697,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
     }
 
     //
-    // For a field decode we need to recalculate top field first, 
+    // For a field decode we need to recalculate top field first,
     // as this is always set false for a field picture.
     //
 
@@ -1789,7 +1789,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
 
     ParsedVideoParameters->Content.Progressive                          = ProgressiveSequence;
     ParsedVideoParameters->Content.OverscanAppropriate                  = false;
-    ParsedVideoParameters->Content.PixelAspectRatio                     = (StreamParameters->StreamType == MpegStreamTypeMpeg2) ? 
+    ParsedVideoParameters->Content.PixelAspectRatio                     = (StreamParameters->StreamType == MpegStreamTypeMpeg2) ?
 										Mpeg2AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information) :
 										Mpeg1AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information);
     ParsedVideoParameters->Content.FrameRate                            = FrameRates(StreamParameters->SequenceHeader.frame_rate_code);
@@ -1808,8 +1808,8 @@ MatrixCoefficientsType_t MatrixCoefficients;
     //
     // Specialist code for broadcast streams that do not get progressive_frame right
     //
-    // Whay we do is treat every frame as interlaced, except those which we have 
-    // good reason not to. If for example we have seen a repeat first field in the 
+    // What we do is treat every frame as interlaced, except those which we have
+    // good reason not to. If for example we have seen a repeat first field in the
     // stream then we suspect that some sort of pulldown (possibly 3:2) may be in effect.
     //
 
@@ -1826,7 +1826,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
     }
 
     //
-    // Now insert the pan and scan counts if we have them, 
+    // Now insert the pan and scan counts if we have them,
     // alternatively repeat the last value for the appropriate period
     //
 
@@ -1858,8 +1858,8 @@ MatrixCoefficientsType_t MatrixCoefficients;
     if( (ParsedVideoParameters->Content.PixelAspectRatio != Rational_t(1,1)) &&
 	(StreamParameters->StreamType == MpegStreamTypeMpeg2) )
     {
-	Width                                   = ParsedVideoParameters->Content.DisplayWidth;
-	Height                                  = ParsedVideoParameters->Content.DisplayHeight;
+        Width                                   = ParsedVideoParameters->Content.DisplayWidth;
+        Height                                  = ParsedVideoParameters->Content.DisplayHeight;
 	// This is a bodge to cope with streams which set their aspect ratios on the width/height
 	// rather than DisplayWidth/DisplayHeight (e.g. Rome and Stargate).
 	if ((ParsedVideoParameters->Content.DisplayWidth < ParsedVideoParameters->Content.Width) &&
@@ -1882,8 +1882,8 @@ MatrixCoefficientsType_t MatrixCoefficients;
 
     //
     // We clear the FrameParameters pointer, a new one will be obtained
-    // before/if we read in headers pertaining to the next frame. This 
-    // will generate an error should I accidentally write code that 
+    // before/if we read in headers pertaining to the next frame. This
+    // will generate an error should I accidentally write code that
     // accesses this data when it should not.
     //
 
@@ -1901,7 +1901,7 @@ MatrixCoefficientsType_t MatrixCoefficients;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Boolean function to evaluate whether or not the stream 
+//      Boolean function to evaluate whether or not the stream
 //      parameters are new.
 //
 

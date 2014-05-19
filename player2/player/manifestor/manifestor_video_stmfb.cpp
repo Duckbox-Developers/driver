@@ -339,7 +339,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::Reset (void)
 //{{{  UpdateOutputSurfaceDescriptor
 //{{{  doxynote
 /// \brief      Find out information about display plane and output
-/// \return     ManifestorNoError if done sucessfully
+/// \return     ManifestorNoError if done successfully
 //}}}
 ManifestorStatus_t Manifestor_VideoStmfb_c::UpdateOutputSurfaceDescriptor    ( void )
 {
@@ -967,12 +967,12 @@ static void SelectDisplaySource (struct BufferStructure_s*   BufferStructure,
       default:
           MANIFESTOR_ERROR("Unsupported display format (%d).\n", BufferStructure->Format);
           break;
-    }   
+    }
 
 }
 
 static int SelectColourMatrixCoefficients(struct ParsedVideoParameters_s* VideoParameters)
-{  
+{
    unsigned int Flags = 0;
 
     switch( VideoParameters->Content.ColourMatrixCoefficients )
@@ -993,7 +993,7 @@ static int SelectColourMatrixCoefficients(struct ParsedVideoParameters_s* VideoP
 
         case MatrixCoefficients_Undefined:
         default:
-                // Base coefficients on display size SD=601, HD = 709 
+                // Base coefficients on display size SD=601, HD = 709
                 if (VideoParameters->Content.Width > 720)
                     Flags                      |= STM_PLANE_SRC_COLORSPACE_709;
                 break;
@@ -1005,7 +1005,7 @@ static int SelectColourMatrixCoefficients(struct ParsedVideoParameters_s* VideoP
 void Manifestor_VideoStmfb_c::SelectDisplayBufferPointers(struct BufferStructure_s*   BufferStructure,
                                         struct StreamBuffer_s*       StreamBuff,
                                         stm_display_buffer_t*       DisplayBuff)
-{  
+{
     // Fill in src fields depends on decimation
     if ((!StreamBuff->DecimateIfAvailable) || (BufferStructure->DecimatedSize == 0))
     {
@@ -1066,7 +1066,7 @@ void Manifestor_VideoStmfb_c::ApplyPixelAspectRatioCorrection ( stm_display_buff
 
     DisplayBuff->src.PixelAspectRatio.numerator   = (long)RestrictedPixelAspectRatio.GetNumerator();
     DisplayBuff->src.PixelAspectRatio.denominator = (long)RestrictedPixelAspectRatio.GetDenominator();
-    DisplayBuff->src.ulLinearCenterPercentage     = PixelAspectRatioCorrectionPolicyValue;   
+    DisplayBuff->src.ulLinearCenterPercentage     = PixelAspectRatioCorrectionPolicyValue;
 
 }
 //}}}
@@ -1108,10 +1108,9 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer        (unsigned int    
     //
     // Clear the DisplayBuff record
     //
-
     memset( (void*)DisplayBuff, 0, sizeof(stm_display_buffer_t));
 
-//
+
 
 #if defined (QUEUE_BUFFER_CAN_FAIL)
     DisplayFlush                = false;
@@ -1142,7 +1141,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer        (unsigned int    
 
     SelectDisplayBufferPointers(BufferStructure,StreamBuff,DisplayBuff);
 
-    ApplyPixelAspectRatioCorrection(DisplayBuff,VideoParameters);   
+    ApplyPixelAspectRatioCorrection(DisplayBuff,VideoParameters);
 
     SelectDisplaySource (BufferStructure,DisplayBuff);
 
@@ -1416,7 +1415,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer        (unsigned int    
             DisplayEvent.PlaybackTime                   = OS_GetTimeInMicroSeconds ();
             Player->SignalEvent (&DisplayEvent);
 
-            Player->MarkStreamUnPlayable (Stream);
+//            Player->MarkStreamUnPlayable (Stream);
             MANIFESTOR_ERROR ("Failed to queue buffer %d to display\n", BufferIndex);
             return ManifestorUnplayable;
 #else
@@ -1437,7 +1436,6 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer        (unsigned int    
 #endif
         }
         DisplayBuff->info.presentationTime              = 0;
-
     }
 
     if (Status == 0)
@@ -1485,7 +1483,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueInitialFrame  (unsigned int    
 
     SelectDisplayBufferPointers(BufferStructure,StreamBuff,DisplayBuff);
 
-    ApplyPixelAspectRatioCorrection(DisplayBuff,VideoParameters);   
+    ApplyPixelAspectRatioCorrection(DisplayBuff,VideoParameters);
 
     SelectDisplaySource (BufferStructure,DisplayBuff);
 
@@ -1539,7 +1537,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueInitialFrame  (unsigned int    
         return ManifestorNoError;
 
     InitialFrameState                           = InitialFrameNotQueued;
-    Player->MarkStreamUnPlayable (Stream);
+//    Player->MarkStreamUnPlayable (Stream);
     MANIFESTOR_ERROR ("Failed to queue initial frame %d to display - error %d\n", BufferIndex,QueueBufferResult);
     return ManifestorUnplayable;
 }

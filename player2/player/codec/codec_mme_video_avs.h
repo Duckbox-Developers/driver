@@ -116,6 +116,7 @@ protected:
 #if defined (AVS_MBSTRUCT)
     CodecStatus_t   RegisterOutputBufferRing(   Ring_t                    Ring );
 #endif
+
     CodecStatus_t   FillOutTransformerInitializationParameters( void );
     CodecStatus_t   FillOutSetStreamParametersCommand(          void );
     CodecStatus_t   FillOutDecodeCommand(                       void );

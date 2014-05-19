@@ -426,7 +426,7 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame( Mpeg2HardHandle_t                 Handle
 	// Remember the decode buffer to check whether we are the second half of a field picture
 	Context->LumaDecodeFrameBuffer  = FrameParams->lumaDecodeFramebuffer;
 
-//      flush_cache_all();
+//      OS_FlushCacheAll();
 
 	WriteRegister( VID_PPR(0), PictureParameters );
 

@@ -44,7 +44,8 @@ Date        Modification                                    Name
 static unsigned char            ASFHeaderObjectGuid[]   = {0x30, 0x26, 0xb2, 0x75,
                                                            0x8e, 0x66, 0xcf, 0x11,
                                                            0xa6, 0xd9, 0x00, 0xaa,
-                                                           0x00, 0x62, 0xce, 0x6c};
+                                                           0x00, 0x62, 0xce, 0x6c
+};
 /*}}}*/
 
 /* The backend context provides access to the backend operations table */
@@ -612,8 +613,6 @@ int DvbStreamDrain2    (struct StreamContext_s*         Stream,
     return Result;
 }
 
-
-
 int DvbStreamCheckDrained    (struct StreamContext_s*         Stream)
 {
     int         Result;
@@ -975,7 +974,7 @@ int DisplayCreate      (char*           Media,
 
     return Result;
 }
-
+/*}}}*/
 /*{{{  isDisplayCreated */
 int isDisplayCreated      (char*           Media,
                            unsigned int    SurfaceId)
@@ -991,6 +990,7 @@ int isDisplayCreated      (char*           Media,
 
     return Result;
 }
+/*}}}*/
 #endif
 
 /*{{{  DisplaySynchronize*/
@@ -1004,7 +1004,7 @@ int DvbDisplaySynchronize   (char*           Media,
 
     Result = Backend->Ops->display_synchronize (Media, SurfaceId);
     if (Result < 0)
-        BACKEND_ERROR("Failed to synchronize %s surface\n", Media);
+        BACKEND_ERROR("Failed to synchronize media %s surface\n", Media);
 
     return Result;
 }

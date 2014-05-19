@@ -325,7 +325,7 @@ unsigned int	NextHighestUsedBlockIndex;
     OS_LockMutex( &Lock );
 
     //
-    // Note by adding adjascent block records to the one we are trying to free,
+    // Note by adding adjacent block records to the one we are trying to free,
     // this loop does concatenation of free blocks as well as freeing the 
     // current block.
     //

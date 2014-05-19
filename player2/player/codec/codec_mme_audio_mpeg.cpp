@@ -61,14 +61,8 @@ typedef struct MpegAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } MpegAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "MpegAudioCodecStreamParameterContext"
-#define BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(MpegAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "MpegAudioCodecStreamParameterContext"
 #define BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(MpegAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            MpegAudioCodecStreamParameterContextDescriptor = BUFFER_MPEG_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -82,14 +76,8 @@ typedef struct MpegAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } MpegAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT  "MpegAudioCodecDecodeContext"
-#define BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(MpegAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT  "MpegAudioCodecDecodeContext"
 #define BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(MpegAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            MpegAudioCodecDecodeContextDescriptor = BUFFER_MPEG_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -318,7 +306,7 @@ MpegAudioCodecDecodeContext_t   *Context        = (MpegAudioCodecDecodeContext_t
 CodecStatus_t   Codec_MmeAudioMpeg_c::ValidateDecodeContext( CodecBaseDecodeContext_t *Context )
 {
 MpegAudioCodecDecodeContext_t *DecodeContext = (MpegAudioCodecDecodeContext_t *) Context;
-MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
+MME_LxAudioDecoderFrameStatus_t &Status      = DecodeContext->DecodeStatus;
 ParsedAudioParameters_t *AudioParameters;
 
 
@@ -372,7 +360,7 @@ ParsedAudioParameters_t *AudioParameters;
     else
 	{
 		AudioParameters->Source.SampleRateHz = 0;
-        CODEC_ERROR("DTSHD audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
+		CODEC_ERROR("MPEG audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
 	}
 
     return CodecNoError;

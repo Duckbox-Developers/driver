@@ -37,7 +37,6 @@ Date        Modification                                    Name
 #include <mme.h>
 #include <ACC_Transformers/Audio_DecoderTypes.h>
 #include <ACC_Transformers/Mixer_ProcessorTypes.h>
-
 #include "osinline.h"
 #include "allocinline.h"
 #include "manifestor_audio.h"
@@ -63,11 +62,11 @@ public:
     enum BypassPhysicalChannel_t
     {
         /// The bypass is done over SPDIF
-        SPDIF,
-        
+        SPDIF = 0,
+
         /// The bypass is done over HDMI
-        HDMI,
-        
+        HDMI = 1,
+
         /// number of possible values
         BypassPhysicalChannelCount
     };
@@ -78,7 +77,7 @@ private:
     {
         /// There is no manifestor connected to this input.
         DISCONNECTED,
-        
+
         /// Neither the input nor the output side are running.
         STOPPED,
 
@@ -87,7 +86,7 @@ private:
         STARTING,
 
         /// The output side is running but no connected to a input.
-        /// This state is effictively a soft mute state during which it is safe to (hard)
+        /// This state is effectively a soft mute state during which it is safe to (hard)
         /// unmute anything connected downstream.
         MUTED,
 
@@ -95,32 +94,32 @@ private:
         STARVED,
 
         /// The output side is running and consuming input.
-        PLAYING,
+        PLAYING
     };
 
     Mixer_Mme_c *Mixer;
     bool RegisteredWithMixer;
     bool EnabledWithMixer;
-    
+
     /// Held when any of the DisplayTimeOfNextCommit family of variables are accessed.
     OS_Mutex_t DisplayTimeOfNextCommitMutex;
-    
+
     unsigned int SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit;
     unsigned int SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated;
-    
+
     unsigned int SamplesToRemoveWhenPlaybackCommences; ///< Carry over samples from previous attempt to shorten.
     bool ReleaseAllInputBuffersDuringUpdate; ///< Flush all pended buffers during update.
-    
+
     unsigned long long DisplayTimeOfNextCommit;
     unsigned long long LastDisplayTimeOfNextCommit; ///< Used only for debugging (to display deltas)
-    
+
     ParsedAudioParameters_t              InputAudioParameters; ///< SampleCount is unused
     unsigned int			 OutputSampleRateHz;
     unsigned int                         OutputChannelCount;
     unsigned int                         OutputSampleDepthInBytes;
     unsigned long long                   LastActualSystemPlaybackTime;			 
     unsigned int                         CodedFrameSampleCount;
-    
+
     unsigned int SamplesUntilNextCodedDataRepetitionPeriod;
     bool FirstCodedDataBufferPartiallyConsumed;
     bool IsCodedDataPlaying;
@@ -130,14 +129,14 @@ private:
 
     static const unsigned int SamplesNeededForFadeOutAfterResampling = 128;
     unsigned int SamplesNeededForFadeOutBeforeResampling;
-    
+
     OutputState_t OutputState;
 
     bool                                 IsTranscoded; ///< keeps track of whether the Coded Buffer has an attached Transcoded Buffer
 
     int HandleRequestedOutputTiming(unsigned int BufferIndex);
     void HandleAnticipatedOutputTiming(unsigned int BufferIndex, unsigned int SampleOffset);
-    
+
     ManifestorStatus_t ShortenDataBuffer( MME_DataBuffer_t *DataBuffer,
                                           tMixerFrameParams *MixerFrameParams,
                                           unsigned int SamplesToRemoveBeforeResampling,
@@ -149,7 +148,7 @@ private:
                                          unsigned int SamplesToInjectBeforeResampling,
                                          unsigned int EndOffsetAfterResampling,
                                          Rational_c RescaleFactor );
-    
+
     ManifestorStatus_t UpdateAudioParameters(unsigned int BufferIndex);
 
     ManifestorStatus_t FlushInputBuffer( MME_DataBuffer_t *DataBuffer,
@@ -168,9 +167,9 @@ private:
         unsigned int *RepetitionPeriod );
 
     static bool DoesTranscodedBufferExist(BypassPhysicalChannel_t BypassChannel, ParsedAudioParameters_t * AudioParameters);
-    
+
     void DequeueFirstCodedDataBuffer( MME_DataBuffer_t *CodedDataBuffer );
-                                                
+
     unsigned int LookupCodedDataBufferLength( MME_DataBuffer_t *CodedDataBuffer );
                                                                                                 
     ManifestorStatus_t FillOutCodedDataBuffer( MME_DataBuffer_t *PcmBuffer,
@@ -198,7 +197,7 @@ private:
     {
         return SampleLength * BytesPerSample();
     }
-    
+
     /// Use the input audio parameters to convert a length in bytes to samples (c.f. ALSA frames)
     inline unsigned int BytesToSamples( unsigned int ByteLength )
     {
@@ -236,8 +235,8 @@ public:
 
 
     void   CallbackFromMME(			MME_Event_t		  Event,
-						MME_Command_t		 *Command );
-    
+                                    MME_Command_t		 *Command );
+
     ManifestorStatus_t FillOutInputBuffer( unsigned int SamplesToDescatter,
                                            Rational_c RescaleFactor,
                                            bool FinalBuffer,
@@ -252,7 +251,7 @@ public:
                                           MME_MixerInputStatus_t *InputStatus,
                                           MME_DataBuffer_t *CodedDataBuffer = 0,
                                           MME_MixerInputStatus_t *CodedInputStatus = 0 );
-    
+
     static inline const char *LookupOutputState( OutputState_t OutputState )
     {
         switch ( OutputState )
@@ -265,13 +264,14 @@ public:
             E( STARVED );
             E( PLAYING );
 #undef E
-            default:return "INVALID";
+        default:
+            return "INVALID";
         }
     }
-    
+
     inline const char *LookupState()
     {
-    	return LookupOutputState( OutputState );
+        return LookupOutputState( OutputState );
     }
 };
 

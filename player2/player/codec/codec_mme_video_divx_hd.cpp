@@ -229,8 +229,6 @@ CodecStatus_t Codec_MmeVideoDivxHd_c::FillOutTransformerInitializationParameters
 {
 		Mpeg4VideoStreamParameters_t  *Parsed  = (Mpeg4VideoStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 
-		//	report(severity_error,"%s :: %d\n",__FUNCTION__,__LINE__);
-
 		// This may not be needed may be able to go back to frame parser defaulting to 500
 		if (Parsed->VolHeader.version == 100)
 				Parsed->VolHeader.version = 500;
@@ -242,17 +240,6 @@ CodecStatus_t Codec_MmeVideoDivxHd_c::FillOutTransformerInitializationParameters
 				Player->MarkStreamUnPlayable( Stream );
 				return CodecError;
 		}
-
-		// temp until we have fully working firmware
-	/*
-	if (Parsed->VolHeader.version < 400 )
-	{
-		report (severity_error,"DivX Version %d - Interlaced %d\n",Parsed->VolHeader.version,Parsed->VolHeader.interlaced);
-		report(severity_error,"Current DivX HD firmware does not support anything but progressive Divx 5 content\n");
-		Player->MarkStreamUnPlayable( Stream );
-		return CodecError;
-	}
-	*/
 
 		DivxInitializationParameters.width                          = Parsed->VolHeader.width;
 		DivxInitializationParameters.height                         = Parsed->VolHeader.height;
@@ -338,7 +325,7 @@ CodecStatus_t  Codec_MmeVideoDivxHd_c::FillOutSetStreamParametersCommand( void )
 				MMEStatus   = MME_InitTransformer( Configuration.TransformName[SelectedTransformer], &MMEInitializationParameters, &MMEHandle );
 				if( MMEStatus != MME_SUCCESS )
 				{
-						report( severity_error, "Codec_MmmBase_c::InitializeMMETransformer(%s) - Failed to initialize mme transformer (%08x).\n", Configuration.CodecName, MMEStatus );
+						report( severity_error, "Codec_MmeBase_c::InitializeMMETransformer(%s) - Failed to initialize mme transformer (%08x).\n", Configuration.CodecName, MMEStatus );
 						return CodecError;
 				}
 
@@ -516,5 +503,5 @@ CodecStatus_t Codec_MmeVideoDivxHd_c::DumpSetStreamParameters( void *Parameters 
 
 CodecStatus_t  Codec_MmeVideoDivxHd_c::DumpDecodeParameters( void *Parameters )
 {
-		return CodecNoError;
+	return CodecNoError;
 }

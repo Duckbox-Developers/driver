@@ -41,23 +41,13 @@
 
 #include "ksound.h"
 
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 /* #warning Need to remove these typedefs and externs */
 typedef struct snd_pcm_runtime snd_pcm_runtime_t;
 typedef struct snd_pcm snd_pcm_t;
 typedef struct snd_mask snd_mask_t;
 typedef struct snd_pcm_sw_params snd_pcm_sw_params_t;
 typedef struct snd_pcm_hw_params snd_pcm_hw_params_t;
-#else
-#if defined (CONFIG_KERNELVERSION) /* STLinux 2.3 */
-/* #warning Need to remove these typedefs and externs */
-typedef struct snd_pcm_runtime snd_pcm_runtime_t;
-typedef struct snd_pcm snd_pcm_t;
-typedef struct snd_mask snd_mask_t;
-typedef struct snd_pcm_sw_params snd_pcm_sw_params_t;
-typedef struct snd_pcm_hw_params snd_pcm_hw_params_t;
-#endif
-#endif
+
 
 /*
 	In STM2.4 all these helper functions were moved to the OSS lib, which has lots of dependencies and therefore
@@ -665,7 +655,7 @@ static inline snd_pcm_uframes_t _ksnd_pcm_avail_update(snd_pcm_substream_t
 		snd_pcm_update_hw_ptr(substream);
 #else
 	if (_ksnd_pcm_state(substream) == SNDRV_PCM_STATE_RUNNING)
-	    snd_pcm_update_hw_ptr(substream);
+		snd_pcm_update_hw_ptr(substream);
 #endif
 #endif
 
@@ -678,19 +668,11 @@ static inline snd_pcm_uframes_t _ksnd_pcm_avail_update(snd_pcm_substream_t
 snd_pcm_uframes_t ksnd_pcm_avail_update(ksnd_pcm_t *kpcm)
 {
 	snd_pcm_substream_t *substream = kpcm->substream;
-	snd_pcm_runtime_t *runtime = substream->runtime;
 	snd_pcm_uframes_t avail;
 
 	snd_pcm_stream_lock_irq(substream);
 	avail = _ksnd_pcm_avail_update(substream);
 	snd_pcm_stream_unlock_irq(substream);
-
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-        // attribute xfer_align is not used any more
-#else
-	if (avail > runtime->xfer_align)
-		avail -= avail % runtime->xfer_align;
-#endif
 
 	return avail;
 }
@@ -705,7 +687,7 @@ snd_pcm_uframes_t ksnd_pcm_avail_update(ksnd_pcm_t *kpcm)
  * The alsa-lib doxygen comments include the following:
  * Note this function does not update the actual r/w pointer
  * for applications.
- * 
+ *
  * However examining the implementation of snd_pcm_hw_htimestamp()
  * there is a call to snd_pcm_hw_avail_update(). This implementation
  * therefore makes an equivalent call.
@@ -716,19 +698,19 @@ int ksnd_pcm_htimestamp(ksnd_pcm_t *kpcm, snd_pcm_uframes_t *avail, struct times
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	snd_pcm_uframes_t myavail;
 	struct timespec mystamp;
-	
+
 	/* we can use a radically different approach to the userspace library (which loops making sure
 	 * avail is not modified). this is primarily because we can lock out interrupts.
 	 */
 	
 	snd_pcm_stream_lock_irq(substream);
 
-/*NICK made changes here, first he did as suggested by Dan and changed myavail 
-       to be obtained by checking the data structure without doing any update. 
-       Then he realised that myavail actually just confuses the issue, it is 
-       almost always 8, because the timestamp was taken after the hardware started 
-       to read the first 8 sample block. Even when it isn't 8, this is simply 
-       showing the jitter in the timestamp. The purpose of myavail is to try 
+/*NICK made changes here, first he did as suggested by Dan and changed myavail
+       to be obtained by checking the data structure without doing any update.
+       Then he realised that myavail actually just confuses the issue, it is
+       almost always 8, because the timestamp was taken after the hardware started
+       to read the first 8 sample block. Even when it isn't 8, this is simply
+       showing the jitter in the timestamp. The purpose of myavail is to try
        and correct that jitter, however because it is quantized to 8 samples, it
        actually makes the jitter much worse, since you have a jitter that varies by
        10 or 20 us, and you correct for it by adjusting by lumps of around 160 us.
@@ -742,30 +724,23 @@ int ksnd_pcm_htimestamp(ksnd_pcm_t *kpcm, snd_pcm_uframes_t *avail, struct times
 #if defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
     defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
     defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
-        myavail = _ksnd_pcm_avail_update(kpcm->substream);
+	myavail = _ksnd_pcm_avail_update(kpcm->substream);
 #else
-        myavail	= 0;
+	myavail = 0;
 #endif
 /*NICK*/
 	mystamp = runtime->status->tstamp;
 	snd_pcm_stream_unlock_irq(substream);
-	
-        if( (mystamp.tv_sec == 0) && (mystamp.tv_nsec == 0) )
-	    return -1;
+
+	if( (mystamp.tv_sec == 0) && (mystamp.tv_nsec == 0) )
+		return -1;
 
 	if (myavail < 0)
 		return myavail;
-	
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-        // attribute xfer_align is not used any more
-#else
-	if (myavail > runtime->xfer_align)
-		myavail -= myavail % runtime->xfer_align;
-#endif
-	
+
 	*avail = myavail;
 	*tstamp = mystamp;
-	
+
 	return 0;
 }
 EXPORT_SYMBOL(ksnd_pcm_htimestamp);
@@ -910,12 +885,6 @@ static void _ksnd_pcm_mmap_begin(snd_pcm_substream_t *substream,
 		avail = snd_pcm_playback_avail(runtime);
 	else
 		avail = snd_pcm_capture_avail(runtime);
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-        // attribute xfer_align is not used any more
-#else
-	if (avail > runtime->xfer_align)
-		avail -= avail % runtime->xfer_align;
-#endif
 
 	f = *frames;
 	if (f > avail)
@@ -939,9 +908,9 @@ int ksnd_pcm_mmap_begin(ksnd_pcm_t *pcm, const snd_pcm_channel_area_t **areas,
 	snd_pcm_substream_t *substream = pcm->substream;
 	snd_pcm_channel_area_t *xareas = pcm->hwareas;
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(substream && areas && offset && frames, return -EFAULT);
-#endif
+	if (snd_BUG_ON(!substream || !areas || !offset || !frames))
+		return -EFAULT;
+
 	snd_pcm_stream_lock_irq(substream);
 	_ksnd_pcm_mmap_begin(substream, offset, frames);
 	snd_pcm_stream_unlock_irq(substream);
@@ -979,13 +948,6 @@ static int _ksnd_pcm_update_appl_ptr(snd_pcm_substream_t *substream,
 			return err;
 	}
 
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-	// snd_pcm_tick_prepare is not used any more
-#else
-	if (runtime->sleep_min &&
-	    runtime->status->state == SNDRV_PCM_STATE_RUNNING)
-		snd_pcm_tick_prepare(substream);
-#endif
 	return 0;
 }
 
@@ -999,9 +961,8 @@ snd_pcm_sframes_t ksnd_pcm_mmap_commit(ksnd_pcm_t *pcm,
 	snd_pcm_sframes_t res = frames;
 	int err;
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(substream, return -EFAULT);
-#endif
+	if (snd_BUG_ON(!substream))
+		return -EFAULT;
 
 	/* for SPDIF we need to run though the just committed PCM samples and
 	 * add formating (unless raw mode is enabled)
@@ -1204,7 +1165,9 @@ static int _ksnd_pcm_write_transfer(snd_pcm_substream_t *substream,
 	char *uncachedbuf = ioremap_nocache(runtime->dma_addr, runtime->dma_bytes);
 	char *hwbuf = uncachedbuf + frames_to_bytes(runtime, hwoff);
 
+#ifdef VERY_VERBOSE
 	printk("offset %d base %p samples %p\n", hwoff, uncachedbuf, hwbuf);
+#endif
 
 	if (srcchannels == runtime->channels) {
 		memcpy(hwbuf, buf, frames_to_bytes(runtime, frames));
@@ -1338,28 +1301,16 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 			avail = snd_pcm_playback_avail(runtime);
 		}
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-		if (avail > runtime->xfer_align)
-			avail -= avail % runtime->xfer_align;
-#else
-		if (avail > runtime->min_align)
-			avail -= avail % runtime->min_align;
-#endif
-
 		frames = size > avail ? avail : size;
-		cont =
-		    runtime->buffer_size -
-		    runtime->control->appl_ptr % runtime->buffer_size;
-
+		cont = runtime->buffer_size - runtime->control->appl_ptr % runtime->buffer_size;
 		if (frames > cont)
 			frames = cont;
-
-		snd_assert(frames != 0, snd_pcm_stream_unlock_irq(substream);
-			   return -EINVAL);
-
+		if (snd_BUG_ON(!frames)) {
+			snd_pcm_stream_unlock_irq(substream);
+			return -EINVAL;
+		}
 		appl_ptr = runtime->control->appl_ptr;
 		appl_ofs = appl_ptr % runtime->buffer_size;
-
 		snd_pcm_stream_unlock_irq(substream);
 
 		if ((err =
@@ -1379,7 +1330,6 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 		default:
 			break;
 		}
-
 		appl_ptr += frames;
 
 		if (appl_ptr >= runtime->boundary) {
@@ -1403,14 +1353,6 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 			if (err < 0)
 				goto _end_unlock;
 		}
-
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-		// snd_pcm_tick_prepare is not used any more 
-#else
-		if (runtime->sleep_min &&
-		    _ksnd_pcm_state(substream) == SNDRV_PCM_STATE_RUNNING)
-			snd_pcm_tick_prepare(substream);
-#endif
 	}
 
       _end_unlock:
@@ -1426,15 +1368,8 @@ int ksnd_pcm_writei(ksnd_pcm_t *kpcm,
 	snd_pcm_runtime_t *runtime;
 	int err;
 	transfer_f out_func = 0;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(substream != NULL, return -ENXIO);
-#endif
+
 	runtime = substream->runtime;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(runtime != NULL, return -ENXIO);
-	snd_assert(runtime->dma_area != NULL, return -EINVAL);
-	snd_assert(runtime->dma_addr != 0, return -EINVAL);
-#endif
 
 	if (substream->pcm->card->number == 2) {
 		out_func = _ksnd_pcm_IEC60958_transfer;
@@ -1454,13 +1389,6 @@ int ksnd_pcm_writei(ksnd_pcm_t *kpcm,
 
 	if (size == 0)
 		return 0;
-
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-	// attribute xfer_align is not used any more
-#else
-	if (size > runtime->xfer_align)
-		size -= size % runtime->xfer_align;
-#endif
 
 	do {
 		err =
@@ -1514,10 +1442,13 @@ int ksnd_pcm_pause(ksnd_pcm_t *kpcm, unsigned int push)
 
 int ksnd_pcm_mute(ksnd_pcm_t *kpcm, unsigned int push)
 {
+	int err;
 	snd_pcm_substream_t *substream = kpcm->substream;
 
 	if (push == 0) {
-		ksnd_pcm_prepare(kpcm);
+		err = ksnd_pcm_prepare(kpcm);
+		if (err < 0)
+			return err;
 		ksnd_pcm_start(kpcm);
 	} else {
 		_ksnd_pcm_pause(substream, push);
@@ -1687,9 +1618,9 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	}
 
 	err = ksnd_pcm_hw_params_any(pcm, hw_params);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	_snd_pcm_hw_param_setinteger(hw_params, SNDRV_PCM_HW_PARAM_PERIODS);
 	_snd_pcm_hw_param_min(hw_params, SNDRV_PCM_HW_PARAM_PERIODS, 2, 0);
 
@@ -1707,36 +1638,36 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	err =
 	    snd_pcm_hw_param_set(substream, hw_params, SNDRV_PCM_HW_PARAM_RATE,
 				 samplerate, 0);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	err =
 	    snd_pcm_hw_param_near(substream, hw_params,
 				  SNDRV_PCM_HW_PARAM_CHANNELS, nrchannels,
 				  NULL);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	err =
 	    snd_pcm_hw_param_near(substream, hw_params,
 				  SNDRV_PCM_HW_PARAM_FORMAT, format, 0);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	err =
 	    snd_pcm_hw_param_near(substream, hw_params,
 				  SNDRV_PCM_HW_PARAM_PERIOD_SIZE, periodsize,
 				  NULL);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	err =
 	    snd_pcm_hw_param_near(substream, hw_params,
 				  SNDRV_PCM_HW_PARAM_BUFFER_SIZE, buffersize,
 				  NULL);
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(err >= 0, goto failure);
-#endif
+	if (snd_BUG_ON(err < 0))
+		goto failure;
+
 	_ksnd_pcm_drop(substream);
 
 	/*now we re-use the 61937 control to enable the HW sync mechanism */
@@ -1753,19 +1684,10 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 			    (runtime->buffer_size - (runtime->period_size * 2));
 
 	sw_params->stop_threshold = runtime->buffer_size;
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-	sw_params->tstamp_mode = SNDRV_PCM_TSTAMP_ENABLE;
-#else
-	sw_params->tstamp_mode = SNDRV_PCM_TSTAMP_MMAP;
-#endif
 	sw_params->period_step = 1;
 	sw_params->sleep_min = 0;
 	sw_params->avail_min = runtime->period_size;
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-	// attribute xfer_align is not used any more
-#else
-	sw_params->xfer_align = 1;
-#endif
+	sw_params->tstamp_mode = SNDRV_PCM_TSTAMP_ENABLE;
 	sw_params->silence_threshold = runtime->period_size;
 	sw_params->silence_size = runtime->period_size;
 
@@ -1915,10 +1837,10 @@ void ksnd_ctl_elem_id_alloca(snd_ctl_elem_id_t **id)
  */
 void ksnd_ctl_elem_id_set_name(snd_ctl_elem_id_t *obj, const char *val)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(obj);
-#endif
-	strncpy((char *)obj->name, val, sizeof(obj->name));
+	if (snd_BUG_ON(!obj))
+		return;
+	strncpy((char *)obj->name, val, sizeof(obj->name)-1);
+	obj->name[sizeof(obj->name)-1] = '\0';
 }
 
 /**
@@ -1928,9 +1850,8 @@ void ksnd_ctl_elem_id_set_name(snd_ctl_elem_id_t *obj, const char *val)
  */
 void ksnd_ctl_elem_id_set_interface(snd_ctl_elem_id_t *obj, snd_ctl_elem_iface_t val)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(obj);
-#endif
+	if (snd_BUG_ON(!obj))
+		return;
 	obj->iface = val;
 }
 
@@ -1941,9 +1862,8 @@ void ksnd_ctl_elem_id_set_interface(snd_ctl_elem_id_t *obj, snd_ctl_elem_iface_t
  */
 void ksnd_ctl_elem_id_set_device(snd_ctl_elem_id_t *obj, unsigned int val)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(obj);
-#endif
+	if (snd_BUG_ON(!obj))
+		return;
 	obj->device = val;
 }
 /**
@@ -1953,9 +1873,8 @@ void ksnd_ctl_elem_id_set_device(snd_ctl_elem_id_t *obj, unsigned int val)
  */
 void ksnd_ctl_elem_id_set_index(snd_ctl_elem_id_t *obj, unsigned int val)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(obj);
-#endif
+	if (snd_BUG_ON(!obj))
+		return;
 	obj->index = val;
 }
 
@@ -2005,9 +1924,8 @@ void ksnd_ctl_elem_value_set_integer(snd_ctl_elem_value_t *obj, unsigned int idx
  */ 
 void ksnd_ctl_elem_value_set_iec958(snd_ctl_elem_value_t *obj, const struct snd_aes_iec958 *ptr)
 {
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-	snd_assert(obj && ptr, return);
-#endif
+	if (snd_BUG_ON(!obj || !ptr))
+		return;
 	memcpy(&obj->value.iec958, ptr, sizeof(obj->value.iec958));
 }
 

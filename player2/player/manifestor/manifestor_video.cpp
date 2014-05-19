@@ -433,11 +433,9 @@ ManifestorStatus_t      Manifestor_Video_c::GetNextQueuedManifestationTime   (un
         Period          = (Behind.IntegerPart() + 5) * Period;          // we want to be at least 4 vsyncs ahead
         *Time           = Vsync + Period.RoundedLongLongIntegerPart();
         NextTimeSlot    = *Time;                                        // Initialize timeslot.
-        MANIFESTOR_TRACE ("0 - Estimate %llu, Time from now %u, Time since Vsync %u, FrameRate %d.%06d\n", *Time,
+        MANIFESTOR_DEBUG ("Estimate %llu, Time from now %u, Time since Vsync %u, FrameRate %d.%06d\n", *Time,
                           (unsigned int)(*Time - Now), (unsigned int)(Now - Vsync),
                           SurfaceDescriptor.FrameRate.IntegerPart(), SurfaceDescriptor.FrameRate.RemainderDecimal());
-        Behind.Print();
-        Period.Print();
         return ManifestorNoError;
     }
 
@@ -445,8 +443,7 @@ ManifestorStatus_t      Manifestor_Video_c::GetNextQueuedManifestationTime   (un
     if ((NextTimeSlot != 0ull) && (TimeSlotOnDisplay == 0ull))
     {
         *Time           = NextTimeSlot;
-        MANIFESTOR_TRACE ("1 - Estimate %llu, Time from now %u\n", *Time, (unsigned int)(*Time - Now));
-        Period.Print();
+        MANIFESTOR_DEBUG ("Estimate %llu, Time from now %u\n", *Time, (unsigned int)(*Time - Now));
         return ManifestorNoError;
     }
 
@@ -460,11 +457,9 @@ ManifestorStatus_t      Manifestor_Video_c::GetNextQueuedManifestationTime   (un
         Period          = (Behind.IntegerPart() + 5) * Period;        // we want to be at least 4 vsyncs ahead
         *Time          += Period.RoundedLongLongIntegerPart();
     }
-    MANIFESTOR_TRACE ("2 - NextTimeSlot %llu, TimeSlotOnDisplay %llu Buff.TimeOnDisplay %llu  Estimate %llu, Now %llu diff %d\n",
+    MANIFESTOR_DEBUG ("NextTimeSlot %llu, TimeSlotOnDisplay %llu Buff.TimeOnDisplay %llu  Estimate %llu, Now %llu diff %d\n",
                       NextTimeSlot, TimeSlotOnDisplay, StreamBuffer[BufferOnDisplay].TimeOnDisplay,
                       *Time, Now, *Time - Now);
-    Behind.Print();
-    Period.Print();
 
     return ManifestorNoError;
 }
@@ -472,7 +467,7 @@ ManifestorStatus_t      Manifestor_Video_c::GetNextQueuedManifestationTime   (un
 //{{{  ReleaseQueuedDecodeBuffers
 ManifestorStatus_t      Manifestor_Video_c::ReleaseQueuedDecodeBuffers(void)
 {
-    NextTimeSlot	= TimeSlotOnDisplay;
+    NextTimeSlot                      = TimeSlotOnDisplay;
     return Manifestor_Base_c::ReleaseQueuedDecodeBuffers();
 }
 //}}}
@@ -670,6 +665,7 @@ ManifestorStatus_t      Manifestor_Video_c::_QueueDecodeBuffer   (class Buffer_c
         StreamBuff->TimeSlot            = ValidTime    (VideoOutputTiming->SystemPlaybackTime) ?
                                                                 VideoOutputTiming->SystemPlaybackTime :
                                                                 NextTimeSlot;
+
         StreamBuff->NativePlaybackTime  = FrameParameters->NativePlaybackTime;
 
         Status                          = QueueBuffer  (BufferIndex,
@@ -680,7 +676,7 @@ ManifestorStatus_t      Manifestor_Video_c::_QueueDecodeBuffer   (class Buffer_c
         if (Status != ManifestorNoError)
         {
             NotQueuedBufferCount++;
-            MANIFESTOR_ERROR ("Failed to queue buffer %d to display.\n", BufferIndex);
+            //MANIFESTOR_ERROR ("Failed to queue buffer %d to display.\n", BufferIndex);
             DisplayEventRequested       = 0;
             EventPending                = false;
             //return ManifestorNoError;
@@ -1486,7 +1482,7 @@ void  Manifestor_Video_c::BufferReleaseThread (void)
     }
     OS_UnLockMutex (&BufferLock);
 
-    MANIFESTOR_DEBUG ("Terminating\n");
+    MANIFESTOR_DEBUG("Terminating\n");
     OS_SetEvent (&BufferReleaseThreadTerminated);
 }
 //}}}

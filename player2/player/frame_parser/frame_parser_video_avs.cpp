@@ -1201,7 +1201,7 @@ FrameParserStatus_t   FrameParser_VideoAvs_c::PrepareReferenceFrameList (void)
 
     // Note we cannot use StreamParameters or FrameParameters to address data directly,
     // as these may no longer apply to the frame we are dealing with.
-    // Particularly if we have seen a sequenece header or group of pictures
+    // Particularly if we have seen a sequence header or group of pictures
     // header which belong to the next frame.
 
     PictureHeader               = &(((AvsFrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure))->PictureHeader);

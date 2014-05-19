@@ -83,10 +83,10 @@ protected:
 
     CodecStatus_t   FillOutTransformerGlobalParameters        ( MME_LxAudioDecoderGlobalParams_t *GlobalParams );
     CodecStatus_t   FillOutTransformerInitializationParameters( void );
-    CodecStatus_t   FillOutSetStreamParametersCommand( 		void );
-    CodecStatus_t   FillOutDecodeCommand(       		void );
-    CodecStatus_t   ValidateDecodeContext( CodecBaseDecodeContext_t *Context );
-    CodecStatus_t   DumpSetStreamParameters( 			void	*Parameters );
-    CodecStatus_t   DumpDecodeParameters( 			void	*Parameters );
+    CodecStatus_t   FillOutSetStreamParametersCommand(          void );
+    CodecStatus_t   FillOutDecodeCommand(                       void );
+    CodecStatus_t   ValidateDecodeContext(                      CodecBaseDecodeContext_t *Context );
+    CodecStatus_t   DumpSetStreamParameters(                    void   *Parameters );
+    CodecStatus_t   DumpDecodeParameters(                       void   *Parameters );
 };
 #endif

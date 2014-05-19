@@ -51,12 +51,9 @@ Date        Modification                                    Name
 //
 //      Include any component headers
 
+#include "osdev_device.h"
 #include "codec_mme_audio_stream.h"
 #include "ksound.h"
-
-#ifdef __KERNEL__
-extern "C"{void flush_cache_all();};
-#endif
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -154,7 +151,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::Halt(     void )
 ///
 /// The Reset function release any resources, and reset all variables
 ///
-/// \todo This method is mismatched with the contructor; it frees events that it shouldn't
+/// \todo This method is mismatched with the constructor; it frees events that it shouldn't
 ///
 CodecStatus_t   Codec_MmeAudioStream_c::Reset(     void )
 {
@@ -372,7 +369,6 @@ CodecStatus_t   Codec_MmeAudioStream_c::Input(     Buffer_t          CodedBuffer
     }
     memcpy (&SavedSequenceNumberStructure, SequenceNumberStructure, sizeof(PlayerSequenceNumber_t));
 
-
     // Perform base operations, on return we may need to mark the stream as unplayable
     Status      = Codec_MmeAudio_c::Input (CodedBuffer);
 
@@ -572,7 +568,7 @@ void Codec_MmeAudioStream_c::FinishedDecode( void )
 {
     // We have NOT finished decoding into this buffer
     // This is to replace the cleanup after an MME_TRANSFORM from superclass Input function
-    // But as we over-ride this with an MME_SEND_BUFFERS, and do the transform from a seperate thread
+    // But as we over-ride this with an MME_SEND_BUFFERS, and do the transform from a separate thread
     // we don't want to clean up anything here
 
     return;
@@ -849,7 +845,7 @@ CodecStatus_t Codec_MmeAudioStream_c::AbortMMECommands (BufferPool_t CommandCont
 
             // It might, perhaps, looks a little odd to check for a zero command identifier here. Basically
             // the callback action calls ReleaseDecodeContext() which will zero the structures. We really
-            // ought to use a better techinque to track in-flight commands (and possible move the call to
+            // ought to use a better technique to track in-flight commands (and possible move the call to
             // ReleaseDecodeContext() into the Stream playback thread.
             if (0 == Command.CmdStatus.CmdId ||
                 MME_COMMAND_COMPLETED == Command.CmdStatus.State ||
@@ -880,7 +876,7 @@ CodecStatus_t Codec_MmeAudioStream_c::AbortMMECommands (BufferPool_t CommandCont
                                  Command.CmdStatus.CmdId );
                 else
                     CODEC_ERROR ("(%s) Cannot issue abort on command %08x (%d)\n", Configuration.CodecName,
-                                 Command.CmdStatus.CmdId, Error );
+                                 Command.CmdStatus.CmdId, Error);
             }
         }
 
@@ -1149,10 +1145,10 @@ CodecStatus_t   Codec_MmeAudioStream_c::SendMMETransformCommand( void )
     // Check that we have not commenced shutdown.
     if (TestComponentState(ComponentHalted))
     {
-        CODEC_ERROR("(%s) Attempting to send Stream transform command when compontent is halted\n", Configuration.CodecName);
+        CODEC_ERROR("(%s) Attempting to send Stream transform command when component is halted\n", Configuration.CodecName);
         MMECommandAbortedCount++;
         // XXX: This code was refactored from Codec_MmeAudioStream_c::StreamThread(), it used to cause the
-        //      imediate death of the thread (instant return), this felt wrong so instead report success and
+        //      Immediate death of the thread (instant return), this felt wrong so instead report success and
         //      rely on other components to examine the component state. Once this path has been tested
         //      the CODEC_ERROR() can probably be removed.
         return CodecNoError;
@@ -1167,7 +1163,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::SendMMETransformCommand( void )
     // out pointer to the context data.
 
 #ifdef __KERNEL__
-    flush_cache_all();
+    OS_FlushCacheAll();
 #endif
 
     TransformContextBuffer                      = NULL;
@@ -1262,7 +1258,7 @@ void Codec_MmeAudioStream_c::TransformThread (void)
                 Status          = AbortMMECommands (TransformContextPool);
                 if( Status != CodecNoError )
                 {
-                     CODEC_ERROR("(%s) Could not abort all pending MME_TRANSFORM comamnds\n", Configuration.CodecName);
+                     CODEC_ERROR("(%s) Could not abort all pending MME_TRANSFORM commands\n", Configuration.CodecName);
                      // no recovery possible
                 }
 
@@ -1272,7 +1268,7 @@ void Codec_MmeAudioStream_c::TransformThread (void)
                 OS_UnLockMutex (&DecodeContextPoolMutex);
                 if( Status != CodecNoError )
                 {
-                     CODEC_ERROR("(%s) Could not abort all pending MME_SEND_BUFFERS comamnds\n", Configuration.CodecName);
+                     CODEC_ERROR("(%s) Could not abort all pending MME_SEND_BUFFERS commands\n", Configuration.CodecName);
                      // no recovery possible
                 }
 
@@ -1309,7 +1305,7 @@ void Codec_MmeAudioStream_c::TransformThread (void)
         {
             if (TransformContextBuffer != NULL)
             {
-                CODEC_ERROR("(%) Already have a decode context.\n", Configuration.CodecName);
+                CODEC_ERROR("(%s) Already have a decode context.\n", Configuration.CodecName);
                 break;
             }
 
@@ -1372,7 +1368,7 @@ void Codec_MmeAudioStream_c::TransformThread (void)
     //Status      = AbortTransformCommands();
     Status      = AbortMMECommands (TransformContextPool);
     if (Status != CodecNoError)
-        CODEC_ERROR("(%s)Could not abort all pending MME_TRANSFORM comamnds (resources will leak)\n", Configuration.CodecName);
+        CODEC_ERROR("(%s)Could not abort all pending MME_TRANSFORM commands (resources will leak)\n", Configuration.CodecName);
 
 
     //Status      = AbortSendBuffersCommands();
@@ -1380,7 +1376,7 @@ void Codec_MmeAudioStream_c::TransformThread (void)
     Status      = AbortMMECommands (DecodeContextPool);
     OS_UnLockMutex (&DecodeContextPoolMutex);
     if (Status != CodecNoError)
-        CODEC_ERROR("(%s)Could not abort all pending MME_SEND_BUFFERS comamnds (resources will leak)\n", Configuration.CodecName);
+        CODEC_ERROR("(%s)Could not abort all pending MME_SEND_BUFFERS commands (resources will leak)\n", Configuration.CodecName);
 
     CODEC_TRACE("Terminating transform thread\n");
     OS_SetEvent (&TransformThreadTerminated);

@@ -469,7 +469,7 @@ unsigned char           Code;
 	    }
 
 	    //
-	    // Got one accumulate upto and including it
+	    // Got one accumulate up to and including it
 	    //
 
 	    Status      = AccumulateData( CodeOffset+4, RemainingData );

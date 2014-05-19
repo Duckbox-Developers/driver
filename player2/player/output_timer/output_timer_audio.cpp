@@ -167,7 +167,7 @@ OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(  void )
     //
 
 #ifdef __TDT__
-    Configuration.SynchronizationErrorThreshold         = 200000;
+    Configuration.SynchronizationErrorThreshold			= 200000;
 #else
     Configuration.SynchronizationErrorThreshold			= 1000;
 #endif
@@ -376,7 +376,6 @@ report( severity_info, "Timing  - ORA = %d.%06d - Samples = %4d - DisplayCount =
     PlaybackTimeIncrement			= Duration.RoundedLongLongIntegerPart();
 
 //
-
     return OutputTimerNoError;
 }
 
@@ -465,10 +464,10 @@ unsigned int OutputTimer_Audio_c::LookupMinimumManifestorLatency(unsigned int Sa
 
     // keep doubling the sampling rate until it is above the minimum
     while (SamplingFrequency && SamplingFrequency < AudioConfiguration.MinimumManifestorSamplingFrequency)
-	    SamplingFrequency *= 2;
+        SamplingFrequency *= 2;
 
     numerator =  AudioConfiguration.MinimumManifestorLatencyInSamples * (1000000 >> no_overflow);
     denominator = SamplingFrequency >> no_overflow;
-    
+
     return numerator / denominator;
 }

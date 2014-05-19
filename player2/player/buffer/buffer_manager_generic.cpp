@@ -42,7 +42,7 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Contructor function - Initialize our data
+//      Constructor function - Initialize our data
 //
 
 BufferManager_Generic_c::BufferManager_Generic_c( void )
@@ -256,6 +256,12 @@ BufferPool_Generic_t	 NewPool;
     // Initialize the return parameter
     //
 
+    if( Pool == NULL )
+    {
+	report( severity_error, "BufferManager_Generic_c::CreatePool - Null supplied as place to return Pool pointer.\n" );
+	return BufferError;
+    }
+
     *Pool	= NULL;
 
     //
@@ -269,12 +275,6 @@ BufferPool_Generic_t	 NewPool;
     //
     // Perform simple parameter checks
     //
-
-    if( Pool == NULL )
-    {
-	report( severity_error, "BufferManager_Generic_c::CreatePool - Null supplied as place to return Pool pointer.\n" );
-	return BufferError;
-    }
 
     if( Descriptor->AllocateOnPoolCreation &&
 	(NumberOfBuffers == NOT_SPECIFIED) )

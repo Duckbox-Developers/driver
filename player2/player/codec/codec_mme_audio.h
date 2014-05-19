@@ -62,7 +62,6 @@ Date        Modification                                    Name
 #include <ACC_Transformers/TrueHD_DecoderTypes.h>
 #include <ACC_Transformers/RealAudio_DecoderTypes.h>
 #include <ACC_Transformers/OV_DecoderTypes.h>
-
 ////////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -91,14 +90,14 @@ typedef struct {
 
 #define ACC_PCM_PROCESSING_GLOBAL_PARAMS_SIZE sizeof(MME_LxPcmProcessingGlobalParams_Subset_t)
 //#define ACC_PCM_PROCESSING_NODMIX_PARAMS_SIZE offsetof(MME_LxPcmProcessingGlobalParams_Subset_t, DMix)
-//}}}  
+//}}}
 
 //{{{  MME_PcmProcessingFrameExtStatus_Concrete_t
 typedef struct {
     MME_PcmProcessingFrameExtStatus_t PcmStatus;
     char Padding[256 - sizeof(MME_PcmProcessingFrameExtStatus_t)]; // additional padding...
 } MME_PcmProcessingFrameExtStatus_Concrete_t;
-//}}}  
+//}}}
 
 // /////////////////////////////////////////////////////////////////////////
 //

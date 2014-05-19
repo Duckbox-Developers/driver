@@ -468,7 +468,7 @@ ManifestorStatus_t      Manifestor_Base_c::GetNextQueuedManifestTime    (unsigne
 /// \brief      Passes onto the output ring any decode buffers that are currently queued,
 ///             but not in the process of being manifested.
 /// \return     Buffer index of last buffer sent for display
-//}}}  
+//}}}
 ManifestorStatus_t      Manifestor_Base_c::ReleaseQueuedDecodeBuffers   (void)
 {
     int i;
@@ -488,7 +488,7 @@ ManifestorStatus_t      Manifestor_Base_c::ReleaseQueuedDecodeBuffers   (void)
 
     return ManifestorNoError;
 }
-//}}}  
+//}}}
 
 
 // /////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ ManifestorStatus_t      Manifestor_Base_c::QueueNullManifestation       (void)
 /// \brief      Copy event record to be signalled when last queued buffer is displayed
 /// \param      Event Pointer to a player 2 event record to be signalled
 /// \return     Success if saved, failure if event queue full
-//}}}  
+//}}}
 ManifestorStatus_t      Manifestor_Base_c::QueueEventSignal    (PlayerEventRecord_t*   Event)
 {
     MANIFESTOR_DEBUG ("\n");
@@ -538,7 +538,7 @@ ManifestorStatus_t      Manifestor_Base_c::QueueEventSignal    (PlayerEventRecor
 
     return ManifestorNoError;
 }
-//}}}  
+//}}}
 
 //{{{  ServiceEventQueue
 //{{{  doxynote
@@ -547,7 +547,7 @@ ManifestorStatus_t      Manifestor_Base_c::QueueEventSignal    (PlayerEventRecor
 ///             including the one associated with the chosen buffer.
 /// \param Id   Index of buffer
 /// \return
-//}}}  
+//}}}
 ManifestorStatus_t      Manifestor_Base_c::ServiceEventQueue   (unsigned int    Id)
 {
     bool        EventsToQueue;
@@ -576,7 +576,7 @@ ManifestorStatus_t      Manifestor_Base_c::ServiceEventQueue   (unsigned int    
 
     return ManifestorNoError;
 }
-//}}}  
+//}}}
 
 // /////////////////////////////////////////////////////////////////////
 //
@@ -731,7 +731,7 @@ if( Configuration.StreamType == StreamTypeAudio ) report( severity_info, "Output
         OutputRateSmoothingLastRate                     = OutputRateAdjustment;
         OutputRateSmoothingSubPPMPart                   = Remainder(   OutputRateAdjustment * 1000000 );
         OutputRateSmoothingBaseValue                    = IntegerPart( OutputRateAdjustment * 1000000 );
-	OutputRateMovingTo				= true;
+        OutputRateMovingTo                              = true;
     }
 
     //

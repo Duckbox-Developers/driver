@@ -82,14 +82,8 @@ typedef struct AacAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } AacAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT	"AacAudioCodecDecodeContext"
-#define BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT_TYPE	{BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(AacAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT	"AacAudioCodecDecodeContext"
 #define BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT_TYPE	{BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(AacAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t		 AacAudioCodecDecodeContextDescriptor = BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -138,11 +132,8 @@ Codec_MmeAudioAac_c::~Codec_MmeAudioAac_c( void )
 CodecStatus_t Codec_MmeAudioAac_c::FillOutTransformerGlobalParameters( MME_LxAudioDecoderGlobalParams_t *GlobalParams_p )
 {
 
-//
-
     CODEC_TRACE("Initializing AAC audio decoder\n");
 
-//
 
     MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
     GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
@@ -162,7 +153,6 @@ CodecStatus_t Codec_MmeAudioAac_c::FillOutTransformerGlobalParameters( MME_LxAud
     {
         Config.Config[AAC_FORMAT_TYPE] = AAC_ADTS_FORMAT;
     }
-//
 
     return Codec_MmeAudio_c::FillOutTransformerGlobalParameters( GlobalParams_p );
 }
@@ -314,7 +304,7 @@ ParsedAudioParameters_t *AudioParameters;
     AudioParameters->Source.BitsPerSample = AudioOutputSurface->BitsPerSample;
     AudioParameters->Source.ChannelCount = AudioOutputSurface->ChannelCount;
     AudioParameters->Organisation = Status.AudioMode;
-    
+
     AudioParameters->SampleCount = Status.NbOutSamples;
 
     int SamplingFreqCode = Status.SamplingFreq;
@@ -325,7 +315,7 @@ ParsedAudioParameters_t *AudioParameters;
     else
 	{
 		AudioParameters->Source.SampleRateHz = 0;
-        CODEC_ERROR("DTSHD audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
+        CODEC_ERROR("AAC audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
 	}
 	
 

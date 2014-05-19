@@ -101,7 +101,7 @@ Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoRmv_c::Codec_MmeVideoRmv_c( void )
@@ -258,7 +258,7 @@ CodecStatus_t   Codec_MmeVideoRmv_c::HandleCapabilities( void )
 CodecStatus_t   Codec_MmeVideoRmv_c::FillOutTransformerInitializationParameters( void )
 {
     unsigned int        i;
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize      = sizeof(RV89Dec_InitTransformerParam_t);
     MMEInitializationParameters.TransformerInitParams_p        = (MME_GenericParams_t)(&InitializationParameters);
 
@@ -434,7 +434,7 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutDecodeCommand(       void )
     Param                                       = &Context->DecodeParameters;
     SegmentList                                 = &Frame->SegmentList;
 
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
 #if defined (RV89_INTERFACE_V0_0_4)
     Param->InBuffer.pCompressedData             = (unsigned char*)CodedData;
     Param->InBuffer.CompressedDataBufferSize    = CodedDataLength;
@@ -536,7 +536,7 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutDecodeCommand(       void )
     BufferState[CurrentDecodeBufferIndex].BufferRasterPointer                   = Param->CurrDecFrame.pLuma;
     BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructurePointer      = Param->CurrDecFrame.pChroma;
 
-    // Fillout the reference frame lists - default to self if not present
+    // Fill out the reference frame lists - default to self if not present
     if ((ParsedFrameParameters->NumberOfReferenceFrameLists == 0) || (DecodeContext->ReferenceFrameList[0].EntryCount == 0))
     {
         Param->PrevRefFrame.pLuma               = Param->CurrDecFrame.pLuma;
@@ -580,7 +580,7 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutDecodeCommand(       void )
     }
     //}}}
 
-    // Fillout the actual command
+    // Fill out the actual command
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
 
     Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = sizeof(RV89Dec_TransformStatusAdditionalInfo_t);

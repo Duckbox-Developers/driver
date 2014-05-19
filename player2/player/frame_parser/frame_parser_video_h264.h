@@ -244,13 +244,13 @@ private:
     unsigned int                                  PrevFrameNum;
     unsigned int                                  PrevFrameNumOffset;
     unsigned long long                            PicOrderCntOffset;                    // Offset increased every IDR to allow Displayframe indices to be derived
-    unsigned long long				  PicOrderCntOffsetAdjust;
+    unsigned long long                            PicOrderCntOffsetAdjust;
     bool                                          SeenDpbValue;
     unsigned int                                  BaseDpbValue;
     unsigned int                                  LastCpbDpbDelaysPresentFlag;
 
-    bool					  DisplayOrderByDpbValues;
-    bool					  DpbValuesInvalidatedByPTS;
+    bool                                          DisplayOrderByDpbValues;
+    bool                                          DpbValuesInvalidatedByPTS;
 
     //
     // Copies of context variables that are used when we 

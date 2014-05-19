@@ -39,6 +39,7 @@ Date        Modification                                    Name
 #include <linux/dvb/ca.h>
 #include "dvb_ca_en50221.h"
 #endif
+
 #include "dvb_demux.h"          /* provides kernel demux types */
 
 #include "dvb_module.h"
@@ -52,7 +53,7 @@ extern int AudioIoctlSetAvSync (struct DeviceContext_s* Context, unsigned int St
 extern int AudioIoctlStop (struct DeviceContext_s* Context);
 
 extern int stpti_start_feed (struct dvb_demux_feed *dvbdmxfeed, struct DeviceContext_s *DeviceContext);
-extern int stpti_stop_feed (struct dvb_demux_feed *dvbdmxfeed,  struct DeviceContext_s *pContext);
+extern int stpti_stop_feed (struct dvb_demux_feed *dvbdmxfeed, struct DeviceContext_s *pContext);
 #endif
 
 /********************************************************************************
@@ -334,7 +335,7 @@ int StartFeed (struct dvb_demux_feed* Feed)
             if (!Audio && !Video)
             {
 #ifdef __TDT__
-		    DVB_DEBUG ("pes_type = %d\n<\n", Feed->pes_type);
+                DVB_DEBUG ("pes_type = %d\n<\n", Feed->pes_type);
 #endif
                 /*mutex_unlock (&(DvbContext->Lock));  This doesn't look right we haven't taken it yet*/
                 return 0;
@@ -377,8 +378,8 @@ int StartFeed (struct dvb_demux_feed* Feed)
                     Result = VideoIoctlSetPlayInterval (Context, &Context->AudioPlayInterval);
 		            if (Result < 0)
                     {
-                  	    mutex_unlock (&(DvbContext->Lock));
-                  	    return Result;
+                        mutex_unlock (&(DvbContext->Lock));
+                        return Result;
                     }
 		        }
 #endif
@@ -493,12 +494,12 @@ int StopFeed (struct dvb_demux_feed* Feed)
     {
         if ((Context->pPtiSession->source==DMX_SOURCE_FRONT1) && (StopFeed_!=NULL))
             StopFeed_(Feed);
-        }
-        else if (glowica == TWIN)
-        {
-            if ((Context->pPtiSession->source==DMX_SOURCE_FRONT2) && (StopFeed_!=NULL))
-                StopFeed_(Feed);
-        }
+    }
+    else if (glowica == TWIN)
+    {
+        if ((Context->pPtiSession->source==DMX_SOURCE_FRONT2) && (StopFeed_!=NULL))
+             StopFeed_(Feed);
+    }
 #endif
 
     switch (Feed->type)
@@ -623,7 +624,7 @@ int StopFeed (struct dvb_demux_feed* Feed)
             break;
         default:
 #ifdef __TDT
-			printk("%s(): INVALID FEED TYPE (%d)\n", __func__, Feed->type);
+            printk("%s(): INVALID FEED TYPE (%d)\n", __func__, Feed->type);
 #endif
             return -EINVAL;
     }

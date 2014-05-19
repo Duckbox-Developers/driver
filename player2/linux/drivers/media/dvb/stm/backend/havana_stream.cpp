@@ -382,7 +382,6 @@ HavanaStatus_t HavanaStream_c::InjectData      (const unsigned char*    Data,
 
     InputDescriptor->MuxType                    = MuxTypeUnMuxed;
     InputDescriptor->UnMuxedStream              = PlayerStream;
-
     InputDescriptor->PlaybackTimeValid          = false;
     InputDescriptor->DecodeTimeValid            = false;
     InputDescriptor->DataSpecificFlags          = 0;
@@ -411,7 +410,6 @@ HavanaStatus_t HavanaStream_c::InjectDataPacket(const unsigned char*    Data,
 
     InputDescriptor->MuxType                    = MuxTypeUnMuxed;
     InputDescriptor->UnMuxedStream              = PlayerStream;
-
     InputDescriptor->PlaybackTimeValid          = PlaybackTimeValid;
     InputDescriptor->PlaybackTime               = PlaybackTime;
     InputDescriptor->DecodeTimeValid            = false;
@@ -421,6 +419,7 @@ HavanaStatus_t HavanaStream_c::InjectDataPacket(const unsigned char*    Data,
     Buffer->SetUsedDataSize (DataLength);
 
     Player->InjectData (PlayerPlayback, Buffer);
+
     OS_UnLockMutex (&InputLock);
 
     return HavanaNoError;
@@ -1240,9 +1239,9 @@ HavanaStatus_t HavanaStream_c::Switch  (char*   Format,
                 // ignore the return values (some codecs have immutable transformer names)
                 (void) PendingCodec->SetModuleParameters (sizeof(CodecParameterBlock_t), &AudioParameters);
             }
-
         }
     }
+
     PlayerStatus        = Player->SwitchStream (PlayerStream,
                                                 PendingCollator,
                                                 PendingFrameParser,

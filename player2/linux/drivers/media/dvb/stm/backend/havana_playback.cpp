@@ -39,7 +39,6 @@ HavanaPlayback_c::HavanaPlayback_c (void)
     OutputCoordinator   = NULL;
 
     LockInitialised     = false;
-
 }
 //}}}
 //{{{  ~HavanaPlayback_c
@@ -80,7 +79,6 @@ HavanaPlayback_c::~HavanaPlayback_c (void)
         OS_TerminateMutex (&Lock);
         LockInitialised         = false;
     }
-
 }
 //}}}
 //{{{  Init
@@ -253,6 +251,7 @@ HavanaStatus_t HavanaPlayback_c::AddStream     (char*                   Media,
     //    return HavanaStreamAlreadyExists;
 
     OS_LockMutex (&Lock);
+
     for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
     {
         if (Stream[i] == NULL)
@@ -314,6 +313,7 @@ HavanaStatus_t HavanaPlayback_c::RemoveStream  (class HavanaStream_c*   HavanaSt
         if (Stream[i] == HavanaStream)
             break;
     }
+
     if (i == MAX_STREAMS_PER_PLAYBACK)
     {
         PLAYBACK_ERROR("Unable to locate stream for delete\n");
@@ -479,6 +479,7 @@ HavanaStatus_t HavanaPlayback_c::SetOption     (play_option_t           Option,
         PLAYBACK_ERROR("Unable to set playback option %x, %x\n", PlayerPolicy, PolicyValue);
         return HavanaError;
     }
+
     return HavanaNoError;
 }
 //}}}

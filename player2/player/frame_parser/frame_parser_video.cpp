@@ -427,7 +427,6 @@ FrameParserStatus_t     Status;
     FrameToDecode                       = false; 
     ParsedVideoParameters->FirstSlice	= true;			// Default for non-slice decoders
 
-
     Status      = ReadHeaders();
     if( Status != FrameParserNoError )
 	return Status;
@@ -449,7 +448,6 @@ FrameParserStatus_t     Status;
 	Status  = RevPlayProcessFrame();
 
 //
-
     return Status;
 }
 
@@ -685,7 +683,7 @@ PlayerEventRecord_t	Event;
     }
 
     //
-    // Output queueing debug information
+    // Output queuing debug information
     //
 
 #if 0
@@ -730,7 +728,7 @@ unsigned int     Checksum;
     // Allow the base class to actually queue the frame
     //
 
-    NewStreamParametersSeenButNotQueued		= false;
+    NewStreamParametersSeenButNotQueued   = false;
 
     return FrameParser_Base_c::QueueFrameForDecode();
 }
@@ -1497,7 +1495,7 @@ bool                     DerivePresentationTime;
 //
 //      The calculation code to calculate the decode time stamp.
 //
-//      Note the deduced decode times are jittered by upto 1/4 
+//      Note the deduced decode times are jittered by up to 1/4
 //      of a frame period. We use field counts in the calculation.
 //      With 3:2 pulldown this jitters the value (not using field 
 //      counts in this case would contract all decode times to take
@@ -1898,7 +1896,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayJunkReferenceFrameList( void )
 //      Private function to convert a us per frame 
 //
 //	We define matching as within 8us, since we can have errors of 
-//	upto 5.5555555 us when trying to express a frame time as a 
+//	up to 5.5555555 us when trying to express a frame time as a
 //	PTS (90kHz clock) 
 //
 
@@ -1909,7 +1907,7 @@ void   FrameParser_Video_c::DeduceFrameRateFromPresentationTime( 	long long int	
 long long int	 CurrentMicroSecondsPerFrame;
 
     //
-    // Are we ok with what we have got. 
+    // Are we ok with what we have got.
     // If not, then we mark the rate as not standard, to force a recalculation, 
     // but not immediately, since this may be just a glitch.
     //

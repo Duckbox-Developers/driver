@@ -34,6 +34,7 @@ Date        Modification                                    Name
 //
 //      Include any component headers
 
+#include "osdev_device.h"
 #include "theora.h"
 #include "codec_mme_video_theora.h"
 #include "allocinline.h"
@@ -92,7 +93,7 @@ Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoTheora_c::Codec_MmeVideoTheora_c( void )
@@ -257,7 +258,7 @@ CodecStatus_t   Codec_MmeVideoTheora_c::FillOutTransformerInitializationParamete
     CODEC_TRACE("  CodecVersion         %6x\n", TheoraInitializationParameters.CodecVersion);
 #endif
 
-    // Fillout the actual command
+    // Fill out the actual command
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(THEORA_InitTransformerParam_t);
     MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&TheoraInitializationParameters);
 
@@ -543,7 +544,7 @@ CodecStatus_t   Codec_MmeVideoTheora_c::FillOutSetStreamParametersCommand( void 
                 CODEC_ERROR ("Failed to allocate buffer memory\n" );
                 return CodecError;
             }
-            TheoraInitializationParameters.CoefficientBuffer        = (U32)AllocatorPhysicalAddress (BufferMemoryDevice);
+            TheoraInitializationParameters.CoefficientBuffer = (U32)AllocatorPhysicalAddress (BufferMemoryDevice);
         }
 #else
         CODEC_TRACE("Allocating %d bytes for buffer memory\n", THEORA_BUFFER_SIZE);
@@ -605,7 +606,7 @@ CodecStatus_t   Codec_MmeVideoTheora_c::FillOutDecodeCommand(       void )
     KnownLastSliceInFieldFrame                  = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -616,7 +617,7 @@ CodecStatus_t   Codec_MmeVideoTheora_c::FillOutDecodeCommand(       void )
     Picture->PictureStopOffset                  = CodedDataLength;
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset (&DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t));
@@ -655,8 +656,7 @@ CodecStatus_t   Codec_MmeVideoTheora_c::FillOutDecodeCommand(       void )
     DecodeContext->MMEBuffers[THEORA_MME_CODED_DATA_BUFFER].TotalSize                           = CodedDataLength;
     #if 0
     report (severity_info, "Picture (%d)\n", CodedDataLength);
-    extern "C"{void flush_cache_all();};
-    flush_cache_all();
+    OS_FlushCacheAll();
     for (i=0; i<32; i++)
         report (severity_info, "%02x ", CodedData[i]);
     report (severity_info, "\n");

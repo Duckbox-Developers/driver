@@ -34,6 +34,7 @@ Date        Modification                                    Name
 #include <linux/dvb/audio.h>
 #include <linux/dvb/video.h>
 #include "linux/dvb/stm_ioctls.h"
+#include <linux/device.h>
 
 #ifdef __TDT__
 #include <pti_public.h>

@@ -52,9 +52,9 @@ extern "C" {
 #else
 #include <linux/stddef.h>
 #include <linux/types.h>
+#include <linux/string.h>
 #endif
 #include <linux/unistd.h>
-#include <linux/string.h>
 
 #include "report.h"
 
@@ -196,13 +196,14 @@ static inline unsigned int      __getlw( unsigned long long a )
 extern "C" {
 #endif
 // --------------------------------------------------------------
-//      The Memeory functions
+//      The Memory functions
 
 void         *OS_Malloc(                        unsigned int             Size );
 OS_Status_t   OS_Free(                          void                    *Address );
 
 void          OS_InvalidateCacheRange(          void                    *CPUAddress,
 						unsigned int             size );
+void          OS_FlushCacheAll(                 void );
 void          OS_FlushCacheRange(               void                    *CPUAddress,
 						unsigned int             size );
 void          OS_PurgeCacheRange(               void                    *CPUAddress,
@@ -228,9 +229,10 @@ OS_Status_t   OS_LockMutex(                     OS_Mutex_t             *Mutex );
 int           OS_LockMutex_trylock(             OS_Mutex_t             *Mutex );                                //Added by Duola
 #endif
 OS_Status_t   OS_UnLockMutex(                   OS_Mutex_t             *Mutex );
+int           OS_MutexIsLocked(                 OS_Mutex_t             *Mutex );
 
 // --------------------------------------------------------------
-//      The Event functions - not implemented
+//      The Event functions
 
 OS_Status_t   OS_InitializeEvent(               OS_Event_t             *Event );
 OS_Status_t   OS_WaitForEvent(                  OS_Event_t             *Event,
@@ -279,7 +281,7 @@ unsigned int  OS_GetTimeInMilliSeconds(         void );
 unsigned long long  OS_GetTimeInMicroSeconds(   void );
 void          OS_SleepMilliSeconds(             unsigned int            Value );
 void          OS_RegisterTuneable(              const char             *Name,
-						unsigned int           *Address );
+                                                unsigned int           *Address );
 
 // ----------------------------------------------------------------------------------------
 //

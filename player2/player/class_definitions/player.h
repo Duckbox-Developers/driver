@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include the numerous consituent header files in a reasonable 
+//      Include the numerous constituent header files in a reasonable
 //      order.
 
 #include "osinline.h"
@@ -350,7 +350,7 @@ the primary means for the player wrapper to manipulate a player instance.
 */
 
 /*! \var PlayerStatus_t Player_c::InitializationStatus;
-\brief Status flag indicating how the intitialization of the class went.
+\brief Status flag indicating how the initialization of the class went.
 
 In order to fit well into the Linux kernel environment the player is 
 compiled with exceptions and RTTI disabled. In C++ constructors cannot 
@@ -672,7 +672,7 @@ the playback speed.
 							unsigned long long        SystemTime    = INVALID_TIME )
 \brief Inform the synchronizer of the current native playback time.
 
-This interface is for the use of external sychronization modules. See
+This interface is for the use of external synchronization modules. See
 \ref time. 
 It sets the synchronization point between the Native playback time, and 
 the system time clock. If the system clock is unspecified, then the current 
@@ -689,7 +689,7 @@ time is taken as equivalent to the native time.
 							unsigned long long       *NativeTime )
 \brief Ask the synchronizer for the current native playback time.
 
-This interface is for the use of external sychronization modules. See
+This interface is for the use of external synchronization modules. See
 \ref time.
 
 \param Playback   Playback identifier
@@ -703,7 +703,7 @@ This interface is for the use of external sychronization modules. See
 							unsigned long long       *SystemTime )
 \brief Translate stream time value to an operating system time value.
 
-This interface is for the use of external sychronization modules. See
+This interface is for the use of external synchronization modules. See
 \ref time.
 
 \param Playback   Playback identifier
@@ -716,7 +716,7 @@ This interface is for the use of external sychronization modules. See
 /*! \fn PlayerStatus_t Player_c::RequestTimeNotification(       PlayerStream_t            Stream,
 							unsigned long long        NativeTime,
 							void                     *EventUserData         = NULL )
-\brief Requstion notification when a specificed stream time is manifested.
+\brief Request notification when a specified stream time is manifested.
 
 An event record will be signalled when the playback time is reached
 (indicated by the manifestation of the first frame with a playback time 
@@ -781,13 +781,13 @@ The buffer instance will be of a specific type, with no data
 allocation and with an attached meta data structure describing the 
 input.
 
-\param Buffer Pointer to a vaiable to hold a the pointer to the Buffer_c instance.
+\param Buffer Pointer to a variable to hold a the pointer to the Buffer_c instance.
 \return Player status code, PlayerNoError indicates success.
 */
 
 /*! \fn PlayerStatus_t Player_c::InjectData(            PlayerPlayback_t          Playback,
 							Buffer_t                  Buffer )
-\brief Inject data desribed the specified buffer instance.
+\brief Inject data described the specified buffer instance.
 
 \param Playback Playback identifier.
 \param Buffer   Pointer to a Buffer_c instance.
@@ -833,7 +833,7 @@ Indicates to the player that a glitch in the input stream has occurred. Usually 
 							PlayerStream_t            Stream,
 							unsigned long long        NativeTime            = TIME_NOT_APPLICABLE,
 							void                     *EventUserData         = NULL )
-\brief Requstion notification when a decode buffer is available.
+\brief Request notification when a decode buffer is available.
 
 An event record will be signalled when the decode buffer is available, 
 with a playback time greater than or equal to the specified time is 
@@ -976,7 +976,7 @@ Note: Only those pointers that are non-NULL will be filled in.
 
 \param Playback Playback identifier.
 \param Speed     Pointer to a variable to hold the (rational) playback speed.
-\param Direction Pointer to a variable to hold the playbak direction.
+\param Direction Pointer to a variable to hold the playback direction.
 
 \return Player status code, PlayerNoError indicates success.
 */
@@ -1054,7 +1054,7 @@ Takes as parameters a playback identifier, a stream identifier and a policy iden
 <b>WARNING</b>: This is an internal function and should only be called by player components.
 
 This function should be called by a Frame Parser or Codec if it decides that the current 
-stream is unplayable for some reason. The playerr implementation is then responsible for 
+stream is unplayable for some reason. The player implementation is then responsible for
 curtailing parsing and decode activities, and for informing the user of the state of 
 affairs via the appropriate event.
 
@@ -1085,7 +1085,7 @@ and fast piece of code.
 							Buffer_t		  Buffer,
 							ParsedFrameParameters_t	 *ParsedFrameParameters )
 \brief Provide a hint to the player, that a frame submitted for decode has been discarded, and will not
-come on the outoput ring.
+come on the output ring.
 
 <b>WARNING</b>: This is an internal function and should only be called by player components.
 

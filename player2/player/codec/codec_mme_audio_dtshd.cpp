@@ -63,27 +63,15 @@ typedef struct DtshdAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } DtshdAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT               "DtshdAudioCodecStreamParameterContext"
-#define BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE  {BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(DtshdAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT               "DtshdAudioCodecStreamParameterContext"
 #define BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE  {BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(DtshdAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            DtshdAudioCodecStreamParameterContextDescriptor = BUFFER_DTSHD_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
 // --------
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT "DtshdAudioCodecDecodeContext"
-#define BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT_TYPE    {BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(DtshdAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT "DtshdAudioCodecDecodeContext"
 #define BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT_TYPE    {BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(DtshdAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            DtshdAudioCodecDecodeContextDescriptor = BUFFER_DTSHD_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
@@ -227,7 +215,7 @@ CodecStatus_t Status;
     Config.Config[DTS_ES_ENABLE]  = ACC_MME_TRUE;
     Config.Config[DTS_96K_ENABLE] = ACC_MME_TRUE;
     Config.Config[DTS_NBBLOCKS_PER_TRANSFORM] = ACC_MME_TRUE;
-    // DTS HD specifc parameters... (no impact on dts decoder)
+    // DTS HD specific parameters... (no impact on dts decoder)
     Config.Config[DTS_XBR_ENABLE] = ACC_MME_TRUE;
     Config.Config[DTS_XLL_ENABLE] = ACC_MME_TRUE;
     Config.Config[DTS_MIX_LFE]    = ACC_MME_FALSE;

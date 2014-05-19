@@ -66,14 +66,8 @@ typedef struct MlpAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } MlpAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT        "MlpAudioCodecStreamParameterContext"
-#define BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(MlpAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT        "MlpAudioCodecStreamParameterContext"
 #define BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(MlpAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            MlpAudioCodecStreamParameterContextDescriptor = BUFFER_MLP_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -87,14 +81,8 @@ typedef struct MlpAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } MlpAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT          "MlpAudioCodecDecodeContext"
-#define BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(MlpAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT          "MlpAudioCodecDecodeContext"
 #define BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(MlpAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t            MlpAudioCodecDecodeContextDescriptor = BUFFER_MLP_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 

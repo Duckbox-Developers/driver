@@ -226,7 +226,9 @@ int __init ktone_module_init(void)
 		return PTR_ERR(ktone_kthread);
 	}
 
+#ifdef VERY_VERBOSE
 	printk(KERN_DEBUG "ktone: Built %s %s\n", __DATE__, __TIME__);
+#endif
 	return 0;
 }
 

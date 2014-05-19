@@ -238,16 +238,16 @@ unsigned int    NumSamplesPerChannel;
 						     Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
     if( BitRate == 0 )
     {
-	FRAME_ERROR( "Invalid bit rate, %x, %x, %x\n",
-				FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
+	FRAME_ERROR( "Invalid bit rate, %x, %x, %x, %x\n",
+                     FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
 	return FrameParserError;
     }
 
     SamplingFrequency           = SamplingFrequencyLookup[MpegIndex][SamplingFrequencyIndex];
     if( SamplingFrequency == 0 )
     {
-	FRAME_ERROR( "Invalid frequency, %x, %x\n",
-				FrameHeader, MpegIndex, SamplingFrequencyIndex);
+	FRAME_ERROR( "Invalid frequency, %x, %x, %x\n",
+                     FrameHeader, MpegIndex, SamplingFrequencyIndex);
 	return FrameParserError;
     }
 
@@ -515,7 +515,6 @@ unsigned int ExtensionLength;
     ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec
-    
     return FrameParserNoError;
 }
 

@@ -19,7 +19,7 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
-Source file name : collator_base.cpp
+Source file name : collator2_base.cpp
 Author :           Nick
 
 Implementation of the base collator class for player 2.
@@ -47,7 +47,7 @@ Date        Modification                                    Name
 
 #define LIMITED_EARLY_INJECTION_WINDOW		500000		// Say half a second
 #define MAXIMUM_LIMITED_EARLY_INJECTION_DELAY	42000		// Restrict to 42ms norm for 24fps
- 
+
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -197,7 +197,7 @@ CollatorStatus_t   Collator2_Base_c::Reset(      void )
     LimitHandlingLastPTS		= INVALID_TIME;
     LimitHandlingJumpInEffect		= false;
     LimitHandlingJumpAt			= INVALID_TIME;
- 
+
     LastFramePreGlitchPTS		= INVALID_TIME;
     FrameSinceLastPTS			= 0;
 
@@ -248,7 +248,7 @@ PlayerStatus_t  Status;
 	    report( severity_error, "Collator2_Base_c::RegisterOutputBufferRing - Failed to create accumulated start code list.\n" );
 	    CodedFrameBufferPool        = NULL;
 	    return Status;
-	}	
+	}
 	memset( AccumulatedStartCodeList, 0x00, SizeofStartCodeList(MAXIMUM_ACCUMULATED_START_CODES) );
 
 	Status  = CodedFrameBufferPool->AttachMetaData( Player->MetaDataStartCodeListType, SizeofStartCodeList(Configuration.MaxStartCodes) );
@@ -276,7 +276,7 @@ PlayerStatus_t  Status;
     }
 
     //
-    // Aquire an operating buffer, hopefully all of the memory available to this pool
+    // Acquire an operating buffer, hopefully all of the memory available to this pool
     //
 
     Status      = CodedFrameBufferPool->GetBuffer( &CodedFrameBuffer, IdentifierCollator, MaximumCodedFrameSize, false, true );
@@ -325,7 +325,7 @@ unsigned char		 Policy;
 
 //
 
-    AssertComponentState( "Collator2_PesVideo_c::Input", ComponentRunning );
+    AssertComponentState( "Collator2_Base_c::Input", ComponentRunning );
 
     //
     // Initialize return value
@@ -398,7 +398,7 @@ unsigned char		 Policy;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - This function is called when we enter input 
+//      Protected - This function is called when we enter input
 //	for a specific collator
 
 CollatorStatus_t   Collator2_Base_c::InputEntry(
@@ -437,7 +437,7 @@ CollatorStatus_t	Status;
     NonBlockingInput	= NonBlocking;
 
     if( ExtendCodedFrameBufferAtEarliestOpportunity )
-	Status	= PartitionOutput();
+       Status  = PartitionOutput();
 
 //
 
@@ -447,7 +447,7 @@ CollatorStatus_t	Status;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - This function is called when we exit input 
+//      Protected - This function is called when we exit input
 //	for a specific collator
 
 CollatorStatus_t   Collator2_Base_c::InputExit(		void )
@@ -459,7 +459,7 @@ CollatorStatus_t	Status;
     Status		= CollatorNoError;
 
     if( PartitionPointSafeToOutputCount != 0 )
-	Status	= PartitionOutput();
+       Status  = PartitionOutput();
 
 //
 
@@ -469,7 +469,7 @@ CollatorStatus_t	Status;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//    Protected - Support functions for adjusting partition boundary 
+//    Protected - Support functions for adjusting partition boundary
 //    to recognize data added or removed
 
 
@@ -525,8 +525,8 @@ unsigned char           TerminalStartCode[4];
     // NOTE we preload the terminate code in reverse play
     //
 
-    if( (PlayDirection == PlayForward) && 
-	(NextPartition->PartitionSize != 0) && 
+    if( (PlayDirection == PlayForward) &&
+	(NextPartition->PartitionSize != 0) &&
 	Configuration.InsertFrameTerminateCode )
     {
 	TerminalStartCode[0]    = 0x00;
@@ -553,8 +553,8 @@ unsigned char           TerminalStartCode[4];
 
 //
 
-    if( (PlayDirection != PlayForward) && 
-	(NextPartition->PartitionSize != 0) && 
+    if( (PlayDirection != PlayForward) &&
+	(NextPartition->PartitionSize != 0) &&
 	Configuration.InsertFrameTerminateCode )
     {
 	TerminalStartCode[0]    = 0x00;
@@ -594,13 +594,13 @@ unsigned int	CodedFrameBufferSize;
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function handles the output of a partition. This
-//	is easy when we are in forward play, but depends on the associated 
-//	header status bits when we are in reverse (IE we stack frames until 
+//	is easy when we are in forward play, but depends on the associated
+//	header status bits when we are in reverse (IE we stack frames until
 //	we hit a confirmed reversal point).
 //
-//	Note we stack the buffer, with the reversible point flag encoded in 
+//	Note we stack the buffer, with the reversible point flag encoded in
 //	bit 0, this assumes that buffer will be aligned to 16 bits at least
-//	(32 expected). since this may not be true on future processors, we 
+//	(32 expected). since this may not be true on future processors, we
 //	test this assumption.
 //
 
@@ -621,16 +621,16 @@ unsigned int 		 BufferAndFlag;
     {
 	CheckForGlitchPromotion( Descriptor );
 	DelayForInjectionThrottling( Descriptor );
-	OutputRing->Insert( (unsigned int )Descriptor->Buffer );
+	OutputRing->Insert( (unsigned int)Descriptor->Buffer );
     }
     else
     {
 	if( ((unsigned int)Descriptor->Buffer & 0x1) != 0 )
-	    report( severity_fatal, "Collator2_Base_c::OutputOnePartition - We assume word allignment of buffer structure - Implementation error.\n" );
+	    report( severity_fatal, "Collator2_Base_c::OutputOnePartition - We assume word alignment of buffer structure - Implementation error.\n" );
 
  	CheckForGlitchPromotion( Descriptor );
 
-	BufferAndFlag	= (unsigned int)Descriptor->Buffer | 
+	BufferAndFlag	= (unsigned int)Descriptor->Buffer |
 			  (((Descriptor->FrameFlags & FrameParserHeaderFlagPossibleReversiblePoint) != 0) ? 1 : 0);
 
 	ReverseFrameStack->Push( BufferAndFlag );
@@ -668,7 +668,6 @@ unsigned int 		 BufferAndFlag;
 		Parameters->StreamDiscontinuity		= true;
 		Parameters->ContinuousReverseJump	= true;
 
-//
 
 		OutputRing->Insert( (unsigned int)Buffer );
 		while( ReverseFrameStack->NonEmpty() )
@@ -786,7 +785,7 @@ unsigned long long 	 NewOffset;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - This is a fairly crucial function, it takes the 
+//      Protected - This is a fairly crucial function, it takes the
 //	accumulated data buffer and outputs the individual collated frames.
 //	it also manages the acquisition of a new operating buffer when
 //	appropriate.
@@ -893,11 +892,11 @@ unsigned char		 *TransferTo;
     CodedFrameBufferFreeSpace			= CodedFrameBufferSize - CodedFrameBufferUsedSpace;
 
     //
-    // Has the extension led to a buffer of an acceptable size, 
+    // Has the extension led to a buffer of an acceptable size,
     // if not then can we get a new one, and transfer any data we have to it.
     //
 
-    AcceptableBufferSpace			= ((NextPartition->PartitionSize > LargestFrameSeen) ? 
+    AcceptableBufferSpace			= ((NextPartition->PartitionSize > LargestFrameSeen) ?
 							min((NextPartition->PartitionSize + (MaximumCodedFrameSize/16)), MaximumCodedFrameSize) :
 							(LargestFrameSeen + MINIMUM_ACCUMULATION_HEADROOM) ) - NextPartition->PartitionSize;
     MinimumSoughtSize				= CodedFrameBufferUsedSpace + AcceptableBufferSpace;
@@ -911,8 +910,8 @@ unsigned char		 *TransferTo;
 	if( !NonBlockingInput || ((KnownFreeBuffers != 0) && (LargestFreeMemoryBlock >= MinimumSoughtSize)) )
 	{
 	    //
-	    // We are going to get a new buffer, minimise our use of the 
-	    // current one (NOTE no shrink, it gives us jip when we are reversing). 
+	    // We are going to get a new buffer, minimise our use of the
+	    // current one (NOTE no shrink, it gives us jip when we are reversing).
 	    // No point holding onto memory that we aren't using.
 	    //
 
@@ -958,7 +957,7 @@ unsigned char		 *TransferTo;
 	    //
 	    // Move any current partition pointers to the new buffer
 	    //    NOTE it may be possible to have zero length partitions
-	    //         even if there is no actual data associated with 
+	    //         even if there is no actual data associated with
 	    //	       them (discontinuities etc...)
 	    //
 
@@ -1007,7 +1006,7 @@ bool			PreservedNonBlocking;
 
     PreservedNonBlocking	= NonBlockingInput;
     NonBlockingInput		= false;
-    Status			= PartitionOutput();
+    Status                  = PartitionOutput();
     NonBlockingInput		= PreservedNonBlocking;
     OS_UnLockMutex( &PartitionLock );
 
@@ -1137,7 +1136,7 @@ CollatorStatus_t	Status;
 
     if( CodedFrameBufferFreeSpace < Length )
     {
-	Status	= PartitionOutput();
+	Status  = PartitionOutput();
 	if( Status != CollatorNoError )
 	{
 	    report( severity_error, "Collator2_Base_c::AccumulateData - Output of partitions failed.\n" );
@@ -1184,7 +1183,7 @@ CollatorStatus_t   Collator2_Base_c::AccumulateStartCode(	PackedStartCode_t	Code
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - Check if we should promote a glitch to a full blown 
+//      Private - Check if we should promote a glitch to a full blown
 // 		  discontinuity. This works by checking pts flow around
 //		  the glitch.
 //
@@ -1198,11 +1197,11 @@ long long		 Range;
     {
 	//
 	// Handle any glitch promotion
-	//     We promote if there is a glitch, and if the 
+	//     We promote if there is a glitch, and if the
 	//     PTS varies by more than the maximum of 1/4 second, and 40ms times the number of frames that have passed since a pts.
 	//
 
-	if( Descriptor->Glitch && 
+	if( Descriptor->Glitch &&
 	    (LastFramePreGlitchPTS != INVALID_TIME) )
 	{
 	    DeltaPTS		= Descriptor->CodedFrameParameters.PlaybackTime - LastFramePreGlitchPTS;
@@ -1231,7 +1230,7 @@ long long		 Range;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - If the input is to be throttled, the the delay 
+//      Private - If the input is to be throttled, the the delay
 //		  will occur here.
 //
 
@@ -1294,7 +1293,7 @@ long long		 Delay;
     if( LimitHandlingJumpInEffect )
     {
 	Status = Player->RetrieveNativePlaybackTime( Playback, &CurrentPTS );
-	if( (Status != PlayerNoError) || 
+	if( (Status != PlayerNoError) ||
 	    !inrange((CurrentPTS - LimitHandlingJumpAt), 0, 16*90000) )
 	    return;
 
@@ -1315,5 +1314,5 @@ long long		 Delay;
     if( Delay > MAXIMUM_LIMITED_EARLY_INJECTION_DELAY )
 	Delay			= MAXIMUM_LIMITED_EARLY_INJECTION_DELAY;
 
-    OS_SleepMilliSeconds( Delay / 1000 ); 
+    OS_SleepMilliSeconds( Delay / 1000 );
 }

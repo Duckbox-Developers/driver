@@ -269,7 +269,6 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor  (class HavanaPlayer_c*           
             return HavanaError;
         }
         //}}}
-
     }
     else
         PlayerStreamType        = StreamTypeOther;

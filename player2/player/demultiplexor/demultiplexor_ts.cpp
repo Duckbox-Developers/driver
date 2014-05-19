@@ -120,7 +120,6 @@ unsigned int PidTableIndex;
     Context->Streams[Context->Base.LastStreamSet].SelectOnPriority              = ((StreamIdentifier & DEMULTIPLEXOR_SELECT_ON_PRIORITY) != 0);
     Context->Streams[Context->Base.LastStreamSet].DesiredPriority               = ((StreamIdentifier & DEMULTIPLEXOR_PRIORITY_HIGH) != 0);
     Context->AddedNewStream                                                     = true;
-
 //
 
     return DemultiplexorError;

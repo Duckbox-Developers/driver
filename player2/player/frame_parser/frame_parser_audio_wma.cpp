@@ -194,7 +194,7 @@ FrameParserStatus_t FrameParser_AudioWma_c::ParseStreamHeader(unsigned char*    
 
   return FrameParserNoError;
 }
-//}}}  
+//}}}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -465,7 +465,7 @@ FrameParserStatus_t Status;
     // To avoid underflow the WMA decoder needs a generous 'float' of data
     // before it attempts to decode a frame. The maninitude of this float
     // must be encoded into the DTS otherwise the output timer will delay
-    // issuing data for decode. 
+    // issuing data for decode.
     //
 
     const unsigned long long VeryEarlyDecodePorch = 250000;
@@ -502,7 +502,7 @@ FrameParserStatus_t Status;
     // *Don't* call GenerateNextFrameNormalizedPlaybackTime() here since it is meaningless
     // for WMA streams. This means that LastNormalizedPlaybackTime and
     // NextFrameNormalizedPlaybackTime will always be UNSPECIFIED_TIME.
-    // 
+    //
 
     return FrameParserNoError;
 }

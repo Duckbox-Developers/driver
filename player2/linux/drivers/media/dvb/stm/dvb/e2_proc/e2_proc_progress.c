@@ -47,7 +47,6 @@ int proc_progress_write(struct file *file, const char __user *buf, unsigned long
 
 	ret = count;
 out:
-	
 	free_page((unsigned long)page);
 	return ret;
 }

@@ -148,9 +148,8 @@ FrameParserStatus_t	Status;
     Status	= FrameParser_Base_c::Input( CodedBuffer );
     if( Status != FrameParserNoError )
 	return Status;
-
-    st_relayfs_write(ST_RELAY_TYPE_CODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_FRAME_PARSER, (unsigned char *)BufferData, BufferLength, 0 );
     
+    st_relayfs_write(ST_RELAY_TYPE_CODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_FRAME_PARSER, (unsigned char *)BufferData, BufferLength, 0 );
     //
     // Obtain audio specific pointers to data associated with the buffer.
     //
@@ -236,13 +235,13 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
     }
     else
     {
-    	// reset the accumulated error
-    	NextFramePlaybackTimeAccumulatedError = 0;
+        // reset the accumulated error
+        NextFramePlaybackTimeAccumulatedError = 0;
 
-    	FRAME_DEBUG( "Using real PTS for frame %d:      %lluus (delta %lldus)\n",
-    		     NextDecodeFrameIndex,
-    	             ParsedFrameParameters->NormalizedPlaybackTime,
-    	             ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime );
+        FRAME_DEBUG( "Using real PTS for frame %d:      %lluus (delta %lldus)\n",
+                     NextDecodeFrameIndex,
+                     ParsedFrameParameters->NormalizedPlaybackTime,
+                     ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime );
 
         // Squawk if time does not progress quite as expected.
         if ( LastNormalizedPlaybackTime != UNSPECIFIED_TIME )
@@ -254,11 +253,9 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
             // Check that the predicted and actual times deviate by no more than the threshold
             if (DeltaDelta < -PtsJitterTollerenceThreshold || DeltaDelta > PtsJitterTollerenceThreshold) 
             {
-    	        FRAME_ERROR( "Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld  got %lld )\n",
-    	                     NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
+                FRAME_ERROR( "Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld  got %lld )\n",
+                             NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
                              SyntheticDelta, RealDelta);
-    	        
-
             }            
         }        
     }

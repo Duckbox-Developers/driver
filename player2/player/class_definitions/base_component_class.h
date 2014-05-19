@@ -209,7 +209,7 @@ public:
 
 // ---------------------------------------------------------------------
 //
-// Docuentation
+// Documentation
 //
 
 /*! \class BaseComponentClass_c
@@ -223,7 +223,7 @@ have.
 */
 
 /*! \var BaseComponentClass_c::InitializationStatus
-\brief Status flag indicating how the intitialization of the class went.
+\brief Status flag indicating how the initialization of the class went.
 
 In order to fit well into the Linux kernel environment the player is
 compiled with exceptions and RTTI disabled. In C++ constructors cannot

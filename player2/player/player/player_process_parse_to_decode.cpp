@@ -170,7 +170,7 @@ bool				  PromoteNextStreamParametersToNew;
 						SequenceNumber, INVALID_TIME );
 
 	    //
-	    // If we are not discarding everything, then procede to process the buffer
+	    // If we are not discarding everything, then proceed to process the buffer
 	    //
 
 	    DiscardBuffer       = Stream->DiscardingUntilMarkerFramePtoD;
@@ -228,8 +228,9 @@ bool				  PromoteNextStreamParametersToNew;
 
 		SequenceNumberStructure->TimePassToCodec        = OS_GetTimeInMicroSeconds();
 		Status	= Stream->Codec->Input( Buffer );
+
 		if( Status != CodecNoError )
-		    DiscardBuffer				= true;
+		    DiscardBuffer               = true;
 	    }
 
 	    if( DiscardBuffer )
@@ -294,7 +295,7 @@ bool				  PromoteNextStreamParametersToNew;
 	}
     }
 
-    report( severity_info, "1111 Holding control strutures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
+    report( severity_info, "1111 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount );
 
     //
     // Signal we have terminated

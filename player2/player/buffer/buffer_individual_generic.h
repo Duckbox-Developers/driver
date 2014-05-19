@@ -22,7 +22,7 @@ license from ST.
 Source file name : buffer_individual_generic.h
 Author :           Nick
 
-Implementation of the generic class definition of the buffer individual 
+Implementation of the generic class definition of the buffer individual
 class for use in player 2
 
 
@@ -65,7 +65,7 @@ private:
     // Data
 
     OS_Mutex_t			  Lock;
-		
+
     // Functions
 
 public:
@@ -162,11 +162,11 @@ public:
 
 	//
 	// Cache functions
-	// 
-		
-    BufferStatus_t	 FlushCache(		void);		
-    BufferStatus_t	 PurgeCache(		void);		
-		
+	//
+
+    BufferStatus_t	 FlushCache(		void);
+    BufferStatus_t	 PurgeCache(		void);
+
     //
     // Status dump/reporting
     //

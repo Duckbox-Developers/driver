@@ -451,7 +451,6 @@ FrameParserStatus_t Status;
     ParsedAudioParameters->Source.SampleRateHz = MlpSamplingFreq[ParsedFrameHeader.SamplingFrequency];
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec
-    
     return FrameParserNoError;
 }
 

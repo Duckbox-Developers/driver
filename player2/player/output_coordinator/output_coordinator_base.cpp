@@ -134,7 +134,7 @@ OutputCoordinator_Base_c::~OutputCoordinator_Base_c(    void )
 //      The Halt function, give up access to any registered resources
 //
 //      NOTE for some calls we ignore the return statuses, this is because
-//      we will procede with the halt even if we fail (what else can we do)
+//      we will proceed with the halt even if we fail (what else can we do)
 //
 
 OutputCoordinatorStatus_t   OutputCoordinator_Base_c::Halt(     void )
@@ -712,7 +712,7 @@ PlayerEventRecord_t             Event;
     MinimumVsyncOffset                                  = 0x7fffffffffffffffll;
 
     //
-    // Propogate this to the appropriate coordinated contexts
+    // Propagate this to the appropriate coordinated contexts
     //
 
     for( ContextLoop     = (Context == PlaybackContext) ? CoordinatedContexts : Context;
@@ -1310,7 +1310,7 @@ long long       PlaybackTimeReverseJumpThreshold;
     }
 
     //
-    // Check if this is relevent
+    // Check if this is relevant
     //
 
     if( !MasterTimeMappingEstablished )

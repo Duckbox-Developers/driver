@@ -454,7 +454,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadStreamHeaders (void)
         StreamParameters->SampleRate                    = BE2LE(Bits.Get(32));
         if ((StreamParameters->ChannelCount == 0) || (StreamParameters->SampleRate == 0))
         {
-            FRAME_ERROR ("Invalid Vorbis channel count %d or Sample Rate %d \n", StreamParameters->VorbisVersion);
+            FRAME_ERROR ("Invalid Vorbis channel count %d or Sample Rate %d\n", StreamParameters->VorbisVersion);
             Player->MarkStreamUnPlayable (Stream);
             return FrameParserError;
         }

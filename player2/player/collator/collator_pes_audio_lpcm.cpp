@@ -310,7 +310,7 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength( u
 
       PlaybackTime += (GlobbedFramesOfNewPacket * LpcmPresentationTime[StreamType][NextParsedFrameHeader.SamplingFrequency1]);
 
-      COLLATOR_DEBUG("PlaybackTime: %x\n", PlaybackTime);
+      COLLATOR_DEBUG("PlaybackTime: %llx\n", PlaybackTime);
     }
   else
     {

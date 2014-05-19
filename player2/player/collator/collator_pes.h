@@ -70,7 +70,7 @@ protected:
 
     bool                  SeekingPesHeader;
 
-    bool                  GotPartialHeader;			// New style partial header mangement
+    bool                  GotPartialHeader;			// New style partial header management
     PartialHeaderType_t	  GotPartialType;
     unsigned int          GotPartialCurrentSize;
     unsigned int          GotPartialDesiredSize;

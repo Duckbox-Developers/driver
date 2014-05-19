@@ -288,7 +288,7 @@ void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_Transfor
 			        break;
 		        default:
 			        frameParamsOut->verticalDecimationFactor = 1;
-			        break;		
+			        break;
 		}
 
 		frameParamsOut->decimatedLumaDecodeFramebuffer    = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedLuma_p;

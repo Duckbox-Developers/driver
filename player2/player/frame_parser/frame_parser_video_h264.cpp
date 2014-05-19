@@ -128,7 +128,7 @@ static SliceType_t SliceTypeTranslation[]  = { SliceTypeP, SliceTypeB, SliceType
 #define Assert(L)		if( !(L) )											 	\
 				{													\
 				    report( severity_error, "Assertion fail %s %d\n", __FUNCTION__, __LINE__ );	\
-				    /*Player->MarkStreamUnPlayable( Stream );*/								\
+				    Player->MarkStreamUnPlayable( Stream );								\
 				    return FrameParserError;										\
 				}
 
@@ -139,7 +139,7 @@ static SliceType_t SliceTypeTranslation[]  = { SliceTypeP, SliceTypeB, SliceType
 				    if( Status != FrameParserNoError )						\
 				    {										\
 				        report( severity_error, "FrameParser_VideoH264_c::%s - Anti Emulation Test fail.\n", Text );	\
-					/*Player->MarkStreamUnPlayable( Stream );*/					\
+					Player->MarkStreamUnPlayable( Stream );					\
 					return FrameParserError;						\
 				    }										\
 				}
@@ -281,12 +281,11 @@ unsigned int	i;
     // this is because stream parameters (which are freed in the lower level reset)
     // may have parameter sets attached to them.
     //
-
     FrameParser_Video_c::Reset();
 
     //
     // Destroy the paramneter set pools - picture parameter set first, 
-    // since it may have attached sequenece parameter sets.
+    // since it may have attached sequence parameter sets.
     //
 
     if( PictureParameterSetPool != NULL )
@@ -607,16 +606,16 @@ unsigned int		UnitLength;
 
 			CheckAntiEmulationBuffer( DEFAULT_ANTI_EMULATION_REQUEST );
 
-			Status 		= ReadNalSliceHeader();
+			Status		= ReadNalSliceHeader();
 
-			// Commit for decode if status is ok, and this is not the first slice 
+			// Commit for decode if status is ok, and this is not the first slice
 			// (IE we haven't already got the frame to decode flag, and its a first slice)
 			if( (Status == FrameParserNoError) && !FrameToDecode )
 			{
 			    ParsedFrameParameters->DataOffset	= ExtractStartCodeOffset(Code);
 			    Status				= CommitFrameForDecode();
 
-			    SEIPictureTiming.Valid		= 0;		// any picture timning applied only to this decode
+			    SEIPictureTiming.Valid		= 0;		// any picture timing applied only to this decode
 			}
 			break;
 
@@ -631,7 +630,6 @@ unsigned int		UnitLength;
 			    DisplayOrderByDpbValues		= (ForcePicOrderCntValue != PolicyValueApply) && !DpbValuesInvalidatedByPTS;
 			}
 			break;
-
 
 	    case NALU_TYPE_SPS:
 			CheckAntiEmulationBuffer( UnitLength );
@@ -1219,15 +1217,12 @@ FrameParserStatus_t   Status;
     }
 #endif
 
-//
-
     AssertAntiEmulationOk( "ReadVUISequenceParameters" );
 
 //
 
     return FrameParserNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1315,7 +1310,7 @@ unsigned int				*FallbackScalingList[8];
 	    {
 		Header->seq_scaling_list_present_flag[i]=  u(1);
 		Status = ReadScalingList(       Header->seq_scaling_list_present_flag[i],
-						Header->ScalingList4x4[i], 
+						Header->ScalingList4x4[i],
 						DefaultScalingList[i],
 						FallbackScalingList[i],
 						16, 
@@ -1429,7 +1424,6 @@ unsigned int				*FallbackScalingList[8];
 //
 // Dump this header
 //
-
     if( CpbDpbDelaysPresentFlag != LastCpbDpbDelaysPresentFlag )
     {
 	if( CpbDpbDelaysPresentFlag )
@@ -1783,7 +1777,7 @@ unsigned int				*FallbackScalingList[8];
 		{
 		    Header->pic_scaling_list_present_flag[i+6]=  u(1);
 		    Status = ReadScalingList(   Header->pic_scaling_list_present_flag[i+6],
-						Header->ScalingList8x8[i], 
+						Header->ScalingList8x8[i],
 						DefaultScalingList[i+6],
 						FallbackScalingList[i+6],
 						64, 
@@ -3001,7 +2995,7 @@ unsigned int	TimeDelta;
 #ifdef __TDT__
 //I would say that this is wrong implemented in libeplayer, but if so why did it work up until now?
 		if(TimeDelta > 10000)
-			DefaultFrameRate		= Rational_t( TimeDelta, TimeScale ); 
+			DefaultFrameRate		= Rational_t( TimeDelta, TimeScale );
 		else
 #endif
 		DefaultFrameRate		= Rational_t( TimeScale, TimeDelta ); 
@@ -3616,7 +3610,7 @@ ReferenceFrameList_t	*List1;
 	List0->EntryCount = LowerEntries + Count;
 
 	//
-	// Now copy this list (in two sepearate portions),
+	// Now copy this list (in two separate portions),
 	// into reference list 1.
 	//
 
@@ -3767,7 +3761,7 @@ unsigned int    NumActiveReferences1;
 	ReferenceFrameListShortTerm[0].EntryCount = LowerEntries + Count;
 
 	//
-	// Now copy this list (in two sepearate portions),
+	// Now copy this list (in two separate portions),
 	// into reference list 1.
 	//
 
@@ -5315,7 +5309,7 @@ bool					  ForceTopBottomInterlaced;
 
     //
     // Calculate the crop units so any crop adjustment can be applied correctly
-    // to frame widt/height and pan/scan offsets.
+    // to frame width/height and pan/scan offsets.
     //
 
     CalculateCropUnits();
@@ -5498,7 +5492,7 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
 
     if( (SPS->frame_cropping_rect_top_offset != 0) || (SPS->frame_cropping_rect_left_offset != 0) )
     {
-	report( severity_error, "FrameParser_VideoH264_c::CommitFrameForDecode - Uexpected frame cropping rectangle (%d, %d, %d, %d) - implementation error.\n",
+	report( severity_error, "FrameParser_VideoH264_c::CommitFrameForDecode - Unexpected frame cropping rectangle (%d, %d, %d, %d) - implementation error.\n",
 			       SPS->frame_cropping_rect_left_offset, SPS->frame_cropping_rect_top_offset,
 			       SPS->frame_cropping_rect_right_offset, SPS->frame_cropping_rect_bottom_offset );
     }
@@ -5602,10 +5596,10 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
 	    pic_struct	= (SliceHeader->bottom_field_flag == 0) ?
 					SEI_PICTURE_TIMING_PICSTRUCT_TOP_FIELD :
 					SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_FIELD;
-	else if( SPS->frame_mbs_only_flag || (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot) )
+	else if( SPS->frame_mbs_only_flag && (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot) )
 	    pic_struct	= SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
 	else
-	    pic_struct	= (SliceHeader->PicOrderCntTop < SliceHeader->PicOrderCntBot) ?
+	    pic_struct	= (SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot) ?
 					SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM :
 					SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP;
     }
@@ -5666,7 +5660,7 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
 
 	case SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM_TOP:
 		    ParsedVideoParameters->Content.Progressive				= false;
-		    ParsedVideoParameters->InterlacedFrame				= false;
+		    ParsedVideoParameters->InterlacedFrame				= DeducedInterlacedFlag;
 		    ParsedVideoParameters->TopFieldFirst                                = true;
 		    ParsedVideoParameters->DisplayCount[0]                              = 2;
 		    ParsedVideoParameters->DisplayCount[1]                              = 1;
@@ -5675,7 +5669,7 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
 
 	case SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP_BOTTOM:
 		    ParsedVideoParameters->Content.Progressive				= false;
-		    ParsedVideoParameters->InterlacedFrame				= false;
+		    ParsedVideoParameters->InterlacedFrame				= DeducedInterlacedFlag;
 		    ParsedVideoParameters->TopFieldFirst                                = false;
 		    ParsedVideoParameters->DisplayCount[0]                              = 2;
 		    ParsedVideoParameters->DisplayCount[1]                              = 1;
@@ -5859,7 +5853,7 @@ FrameParserStatus_t	Status;
     StreamParameters->PictureParameterSet		= SliceHeader->PictureParameterSet;
 
     //
-    // Attch the picture parameter set, note the sequence 
+    // Attach the picture parameter set, note the sequence
     // parameter set, and its extension, is already attached 
     // to the picture parameter set.
     //
@@ -5887,8 +5881,10 @@ void    FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 unsigned int	i;
 unsigned int 	Index;
 unsigned char   SpecialCaseDpb;
+#ifndef __TDT__
 unsigned int	MaxDeferals;
 unsigned int	InvalidPTSSequence;
+#endif
 
     //
     // Adjust pic order cnt for fields given same pic order cnt
@@ -6005,7 +6001,7 @@ unsigned int	InvalidPTSSequence;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to process entries in the defereed DFI/PTS list
+//      Function to process entries in the deferred DFI/PTS list
 //
 
 void   FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto( unsigned long long 	 ExtendedPicOrderCnt )
@@ -6060,7 +6056,7 @@ bool		UsePTSFrameRate;
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to process entries in the defereed DFI/PTS list
+//      Function to process entries in the deferred DFI/PTS list
 //
 
 void   FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto( unsigned long long 	 ExtendedPicOrderCnt )
@@ -6110,11 +6106,8 @@ void   FrameParser_VideoH264_c::SetupPanScanValues(		ParsedFrameParameters_t	 *P
 								ParsedVideoParameters_t	 *ParsedVideoParameters )
 {
 unsigned int                     i;
-bool                             PanScanIsOn;
 H264SliceHeader_t               *SliceHeader;
 H264SEIPanScanRectangle_t       *SEIPanScanRectangle;
-unsigned char                    DisplayFormat;
-unsigned char                    DisplayAspectRatio;
 unsigned int                     FrameHeightInMbs;
 unsigned int                     Left;
 unsigned int                     Right;
@@ -6186,20 +6179,10 @@ unsigned int                     Bottom;
     }
 
     //
-    // Is pan scan on. This is recalculated every frame, because a change in policy can reset it
-    //
-
-    DisplayFormat	= Player->PolicyValue( Playback, Stream, PolicyDisplayFormat );
-    DisplayAspectRatio	= Player->PolicyValue( Playback, Stream, PolicyDisplayAspectRatio );
-
-    PanScanIsOn		= (DisplayFormat == PolicyValuePanScan) &&
-			  (DisplayAspectRatio == PolicyValue4x3);
-
-    //
     // setup the values
     //
 
-    ParsedVideoParameters->PanScan.Count	= PanScanIsOn ? PanScanState.Count : 0;
+    ParsedVideoParameters->PanScan.Count  = PanScanState.Count;
 
     for( i=0; i<ParsedVideoParameters->PanScan.Count; i++ )
     {

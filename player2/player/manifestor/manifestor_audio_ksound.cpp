@@ -64,7 +64,7 @@ Date        Modification                                    Name
 ///
 /// Initialize and reset the ksound manifestor.
 ///
-/// Like pretty much all player2 components the contructor does little work
+/// Like pretty much all player2 components the constructor does little work
 /// and the constructed object has a very light memory footprint. This is
 /// the almost all allocation is performed by methods called after
 /// construction. In our case most if this work happens in
@@ -73,7 +73,7 @@ Date        Modification                                    Name
 Manifestor_AudioKsound_c::Manifestor_AudioKsound_c  ()
 {
     MANIFESTOR_DEBUG (">><<\n");
-    
+
     if (InitializationStatus != ManifestorNoError)
     {
         MANIFESTOR_ERROR ("Initialization status not valid - aborting init\n");
@@ -86,7 +86,7 @@ Manifestor_AudioKsound_c::Manifestor_AudioKsound_c  ()
         InitializationStatus = ManifestorError;
         return;
     }
-    
+
     Reset ();
 }
 
@@ -95,7 +95,7 @@ Manifestor_AudioKsound_c::Manifestor_AudioKsound_c  ()
 ///
 /// Trivial destruction of the ksound manifestor.
 ///
-/// Unlike the contructor (which does very little allocation) the destructor
+/// Unlike the constructor (which does very little allocation) the destructor
 /// has far more work to do but this is almost entirely handled by the
 /// Manifestor_AudioKsound_c::Halt() method.
 ///
@@ -105,7 +105,7 @@ Manifestor_AudioKsound_c::~Manifestor_AudioKsound_c   (void)
 
     (void) Manifestor_AudioKsound_c::Halt ();
     // no useful error recovery can be performed...
-    
+
     OS_TerminateMutex(&DisplayTimeOfNextCommitMutex);
 }
 
@@ -115,9 +115,9 @@ Manifestor_AudioKsound_c::~Manifestor_AudioKsound_c   (void)
 /// Shutdown, stop presenting and retrieving frames.
 ///
 /// Blocks until complete. The primarily cause of blocking will be caused when
-/// we wait for the manifestion thread, executing Manifestor_AudioKsound_c::PlaybackThread(),
-/// to observe the request to terminate. 
-///  
+/// we wait for the manifestation thread, executing Manifestor_AudioKsound_c::PlaybackThread(),
+/// to observe the request to terminate.
+///
 ManifestorStatus_t      Manifestor_AudioKsound_c::Halt (void)
 {
     PlayerStatus_t PStatus;
@@ -128,8 +128,8 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::Halt (void)
         PStatus = Mixer->DisableManifestor( this );
         if( PStatus != ManifestorNoError )
         {
-    	    MANIFESTOR_ERROR("Failed to disable manifestor\n");
-    	    // non-fatal - it probably means that we were not already registered
+            MANIFESTOR_ERROR("Failed to disable manifestor\n");
+            // non-fatal - it probably means that we were not already registered
         }
         EnabledWithMixer = false;
         OutputState = STOPPED;
@@ -141,7 +141,7 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::Halt (void)
         MANIFESTOR_ERROR("Failed to halt parent - aborting\n");
         return Status;
     }
-    
+
     CloseOutputSurface ();
     
     return ManifestorNoError;
@@ -165,20 +165,20 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::Halt (void)
 ManifestorStatus_t Manifestor_AudioKsound_c::Reset (void)
 {
     MANIFESTOR_DEBUG (">><<\n");
-    
+
     if (TestComponentState (ComponentRunning))
         Halt ();
 
     RegisteredWithMixer = false;
     EnabledWithMixer = false;
-    
+
     SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit = 0;
     SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated = 0;
     SamplesToRemoveWhenPlaybackCommences = 0;
     ReleaseAllInputBuffersDuringUpdate = false;
     DisplayTimeOfNextCommit = INVALID_TIME;
     LastDisplayTimeOfNextCommit = INVALID_TIME;
-    
+
     memset( &InputAudioParameters, 0, sizeof( InputAudioParameters ) );
 
     OutputSampleRateHz = 0;
@@ -193,9 +193,9 @@ ManifestorStatus_t Manifestor_AudioKsound_c::Reset (void)
     CurrentCodedDataEncoding = PcmPlayer_c::OUTPUT_IEC60958;
     CurrentCodedDataRepetitionPeriod = 1;
     LastCodedDataSyncOffset = 0;
-    
+
     SamplesNeededForFadeOutBeforeResampling = SamplesNeededForFadeOutAfterResampling;
-    
+
     OutputState = STOPPED;
 
     IsTranscoded = false;
@@ -203,7 +203,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::Reset (void)
     CodedFrameSampleCount = 0;
     
 //
-    
+
     return Manifestor_Audio_c::Reset ();
 }
 
@@ -220,13 +220,13 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::SetModuleParameters (unsigned 
                                                                  void*          ParameterBlock )
 {
     ManifestorStatus_t Status;
-    
+
     if( ParameterBlockSize == sizeof( ManifestorAudioParameterBlock_t ) )
     {
         ManifestorAudioParameterBlock_t *ManifestorParameters;
-        
+
         ManifestorParameters = (ManifestorAudioParameterBlock_t *) ParameterBlock;
-        
+
         if( ManifestorParameters->ParameterType == ManifestorAudioMixerConfiguration )
         {
             Mixer = (Mixer_Mme_c *) ManifestorParameters->Mixer;
@@ -236,16 +236,16 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::SetModuleParameters (unsigned 
         {
             if( EnabledWithMixer )
             {
-        	return Mixer->SetManifestorEmergencyMuteState( this, ManifestorParameters->EmergencyMute );
+                return Mixer->SetManifestorEmergencyMuteState( this, ManifestorParameters->EmergencyMute );
             }
             else
             {
-        	MIXER_ERROR( "Cannot set mute state when not registered with the mixer\n" );
-        	return ManifestorError;
+                MIXER_ERROR( "Cannot set mute state when not registered with the mixer\n" );
+                return ManifestorError;
             }
         }
     }
-    
+
     if( ParameterBlockSize == sizeof( OutputTimerParameterBlock_t ) )
     {
 	OutputTimerParameterBlock_t *OutputTimerParameters;
@@ -317,17 +317,17 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::SetModuleParameters (unsigned 
 ///
 ManifestorStatus_t      Manifestor_AudioKsound_c::GetDecodeBufferPool         (class BufferPool_c**   Pool)
 {
-ManifestorStatus_t Status;
-PlayerStatus_t PStatus;
+    ManifestorStatus_t Status;
+    PlayerStatus_t PStatus;
 
     Status = Manifestor_Audio_c::GetDecodeBufferPool(Pool);
     if( Status != ManifestorNoError )
     {
-    	return Status;
+        return Status;
     }
-    
+
     // We are now ComponentRunning...
-    
+
     if (!EnabledWithMixer)
     {
         memset( &InputAudioParameters, 0, sizeof( InputAudioParameters ) );
@@ -335,13 +335,13 @@ PlayerStatus_t PStatus;
         PStatus = Mixer->EnableManifestor(this);
         if( PStatus != PlayerNoError )
         {
-    	    MANIFESTOR_ERROR("Failed to enable manifestor\n");
-    	    return ManifestorError;
+            MANIFESTOR_ERROR("Failed to enable manifestor\n");
+            return ManifestorError;
         }
         EnabledWithMixer = true;
         OutputState = STARTING;
     }
-    
+
     return ManifestorNoError;
 }
 
@@ -354,8 +354,8 @@ PlayerStatus_t PStatus;
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::OpenOutputSurface ()
 {
-PlayerStatus_t Status;
-    
+    PlayerStatus_t Status;
+
     MANIFESTOR_DEBUG (">><<\n");
 
     Status = Mixer->RegisterManifestor( this );
@@ -365,7 +365,7 @@ PlayerStatus_t Status;
         return ManifestorError;
     }
     RegisteredWithMixer = true;
-    
+
     return ManifestorNoError;
 }
 
@@ -376,12 +376,12 @@ PlayerStatus_t Status;
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::CloseOutputSurface (void)
 {
-PlayerStatus_t Status;
+    PlayerStatus_t Status;
 
     MANIFESTOR_DEBUG (">><<\n");
-    
+
     MANIFESTOR_ASSERT( !EnabledWithMixer );
-    
+
     if( RegisteredWithMixer )
     {
         Status = Mixer->DeRegisterManifestor( this );
@@ -417,20 +417,20 @@ PlayerStatus_t Status;
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::GetNextQueuedManifestationTime (unsigned long long* Time)
 {
-unsigned long long DisplayTime;
-unsigned long long WallTime;
+    unsigned long long DisplayTime;
+    unsigned long long WallTime;
 
     WallTime = OS_GetTimeInMicroSeconds();
-    
+
     // must use switch (or copy OututState) otherwise read may not be atomic
     switch (OutputState)
     {
     case STARTING:
-    	// we don't know the sampling frequency so the worst case is triple buffered
-    	// output(s) at 32KHz
-    	DisplayTime = WallTime + Mixer->GetWorstCaseStartupDelayInMicroSeconds();
-    	break;
-    
+        // we don't know the sampling frequency so the worst case is triple buffered
+        // output(s) at 32KHz
+        DisplayTime = WallTime + Mixer->GetWorstCaseStartupDelayInMicroSeconds();
+        break;
+
     case MUTED:
     case STARVED:
     case PLAYING:
@@ -451,18 +451,18 @@ unsigned long long WallTime;
                                         OutputSampleRateHz );
     	}
 
-    	DisplayTime = DisplayTimeOfNextCommit +
-    	          ((((unsigned long long) SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit) * 1000000ull) /
-    	            ((unsigned long long) OutputSampleRateHz));
-    	            
-    	OS_UnLockMutex(&DisplayTimeOfNextCommitMutex);
-    	break;
-    
+        DisplayTime = DisplayTimeOfNextCommit +
+                   ((((unsigned long long) SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit) * 1000000ull) /
+                    ((unsigned long long) OutputSampleRateHz));
+
+        OS_UnLockMutex(&DisplayTimeOfNextCommitMutex);
+        break;
+
     default:
-    	MANIFESTOR_ERROR("Unexpected OutputState %s\n", LookupState());
-    	return ManifestorError;
+        MANIFESTOR_ERROR("Unexpected OutputState %s\n", LookupState());
+        return ManifestorError;
     }
-    
+
     MANIFESTOR_DEBUG("At %llx (%s) next queued manifestation time was %llx (decimal delta %lld)\n",
                      WallTime, LookupState(), DisplayTime, DisplayTime - WallTime);
     *Time = DisplayTime;
@@ -474,7 +474,7 @@ unsigned long long WallTime;
 ///
 /// Handle a super-class notification that a buffer is about to be queued.
 ///
-ManifestorStatus_t Manifestor_AudioKsound_c::QueueBuffer        (unsigned int                    BufferIndex)
+ManifestorStatus_t Manifestor_AudioKsound_c::QueueBuffer(unsigned int BufferIndex)
 {
 ManifestorStatus_t Status;
 
@@ -506,14 +506,14 @@ ManifestorStatus_t Status;
 
     OS_LockMutex(&DisplayTimeOfNextCommitMutex);
     SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit +=
-    		    StreamBuffer[BufferIndex].AudioParameters->SampleCount;
+        StreamBuffer[BufferIndex].AudioParameters->SampleCount;
     OS_UnLockMutex(&DisplayTimeOfNextCommitMutex);
 
     //
     // If we haven't set the input parameters then peek at the parameters before
-    // enqueuing them. 
+    // enqueuing them.
     //
-    
+
     if( 0 == InputAudioParameters.Source.SampleRateHz )
     {
         Status = UpdateAudioParameters( BufferIndex );
@@ -537,14 +537,14 @@ ManifestorStatus_t Status;
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::ReleaseBuffer(unsigned int BufferIndex)
 {
-	
+
     //
     // Maintain the number of queued samples (used by GetNextQueuedManifestationTime)
     //
-    
+
     OS_LockMutex(&DisplayTimeOfNextCommitMutex);
     SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit -=
-    		    StreamBuffer[BufferIndex].AudioParameters->SampleCount;
+        StreamBuffer[BufferIndex].AudioParameters->SampleCount;
     OS_UnLockMutex(&DisplayTimeOfNextCommitMutex);
 
     return ManifestorNoError;
@@ -572,7 +572,7 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::QueueNullManifestation (void)
 ///
 /// \todo Not implemented. Should set a flag that the playback thread will observe
 ///       and act upon, then wait for an event.
-/// 
+///
 ManifestorStatus_t      Manifestor_AudioKsound_c::FlushDisplayQueue (void)
 {
     MANIFESTOR_DEBUG(">><<\n");
@@ -607,7 +607,7 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::FlushDisplayQueue (void)
 ///   used when the stream is in a silent state (MUTED or STARVING).
 ///
 /// \param DataBuffer         The MME data buffer structure to be populated with input buffers.
-/// \param MixerFrameParams   The mixer command structure associated with the stream. 
+/// \param MixerFrameParams   The mixer command structure associated with the stream.
 /// \param SamplesToDescatter The number of samples required (post-mix) to cleanly output sound (not including
 ///                           any de-pop buffer).
 /// \param RescaleFactor      The pre-mix resampling factor. This can be used to calculate how many samples
@@ -640,24 +640,24 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
     // resampling currently applied
     TimeToFillInSamples = (RescaleFactor * SamplesToDescatter).RoundedUpIntegerPart();
     SamplesNeededForFadeOutBeforeResampling =
-	(RescaleFactor * SamplesNeededForFadeOutAfterResampling).RoundedUpIntegerPart();
-    
+        (RescaleFactor * SamplesNeededForFadeOutAfterResampling).RoundedUpIntegerPart();
+
     // ensure we descatter sufficient samples to perform a fade out
     MANIFESTOR_DEBUG( "TimeToFillInSamples %d + %d = %d\n",
-	              TimeToFillInSamples, SamplesNeededForFadeOutBeforeResampling,
-	              TimeToFillInSamples + SamplesNeededForFadeOutBeforeResampling );
+                      TimeToFillInSamples, SamplesNeededForFadeOutBeforeResampling,
+                      TimeToFillInSamples + SamplesNeededForFadeOutBeforeResampling );
     TimeToFillInSamples += SamplesNeededForFadeOutBeforeResampling;
-    
+
     MixerFrameParams->PTS = 0;
     MixerFrameParams->PTSflags = 0;
 
     //
     // Examine the already-descattered buffers
     //
-    
+
     MANIFESTOR_ASSERT( InputAudioParameters.Source.ChannelCount );
     MANIFESTOR_ASSERT( InputAudioParameters.Source.BitsPerSample );
-    
+
     NumSamplesCurrentlyEnqueued = BytesToSamples( DataBuffer->TotalSize );
     MANIFESTOR_ASSERT( NumSamplesCurrentlyEnqueued >= SamplesToRemoveWhenPlaybackCommences );
     TimeCurrentlyEnqueuedInSamples = NumSamplesCurrentlyEnqueued - SamplesToRemoveWhenPlaybackCommences;
@@ -666,15 +666,15 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
     //
     // Dequeue buffers until the input buffer is complete
     //
-    
+
     while( TimeCurrentlyEnqueuedInSamples < TimeToFillInSamples )
     {
         int SamplesToInjectIntoThisBuffer; // Number of samples that must be removed from the buffer
-        
+
         //
         // Try to exit early without applying output timing to buffers we're not going to play
         //
-        
+
 	if( FinalBuffer )
         {
             if( OutputState == PLAYING && TimeCurrentlyEnqueuedInSamples >= SamplesNeededForFadeOutBeforeResampling )
@@ -723,38 +723,38 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
                 // In such a case, a buffer with a presentation time a long way in the future, we need to
                 // push back the buffer, mute the entire input frame and wait for the next one.
                 //
-                
+
                 if( ( SamplesToInjectIntoThisBuffer > 0 ) &&
-                    ( ((TimeCurrentlyEnqueuedInSamples - NumSamplesCurrentlyEnqueued) + SamplesToInjectIntoThisBuffer) >
-                      ((int) EndOffsetBeforeResampling - SamplesNeededForFadeOutBeforeResampling) ) )
+                        ( ((TimeCurrentlyEnqueuedInSamples - NumSamplesCurrentlyEnqueued) + SamplesToInjectIntoThisBuffer) >
+                          ((int) EndOffsetBeforeResampling - SamplesNeededForFadeOutBeforeResampling) ) )
                 {
                     PushBackBuffer( BufferIndex );
                     Status = ManifestorError;
                 }
             }
-    	}
-    	else
-    	{
-    	    MANIFESTOR_ERROR("No scatter pages remain to describe input - injecting silence\n");
-    	    Status = ManifestorError;
-    	}
+        }
+        else
+        {
+            MANIFESTOR_ERROR("No scatter pages remain to describe input - injecting silence\n");
+            Status = ManifestorError;
+        }
 
-    	if( Status != ManifestorNoError )
-    	{
-    	    if (OutputState == PLAYING)
+        if( Status != ManifestorNoError )
+        {
+            if (OutputState == PLAYING)
             {
                 if (NumSamplesCurrentlyEnqueued < SamplesNeededForFadeOutBeforeResampling)
                 {
                     MANIFESTOR_ERROR("NumSamplesCurrentlyEnqueued is insufficient to de-pop (have %d, need %d)\n",
                                      NumSamplesCurrentlyEnqueued, SamplesNeededForFadeOutBeforeResampling);
-                }              
+                }
 
-    	    	MixerFrameParams->Command = MIXER_PAUSE;
-    	    	if (NumSamplesCurrentlyEnqueued >= EndOffsetBeforeResampling)
-    	    	    MixerFrameParams->StartOffset = EndOffsetAfterResampling;
-    	    	else
-    	    	    MixerFrameParams->StartOffset =
-    	    			(NumSamplesCurrentlyEnqueued / RescaleFactor).RoundedIntegerPart();
+                MixerFrameParams->Command = MIXER_PAUSE;
+                if (NumSamplesCurrentlyEnqueued >= EndOffsetBeforeResampling)
+                    MixerFrameParams->StartOffset = EndOffsetAfterResampling;
+                else
+                    MixerFrameParams->StartOffset =
+                        (NumSamplesCurrentlyEnqueued / RescaleFactor).RoundedIntegerPart();
 
                 if (Status == ManifestorWouldBlock)
                 {
@@ -774,11 +774,11 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
             else
             {
                 MANIFESTOR_DEBUG("Injecting further silence (whilst %s)\n", LookupState());
-		// still starving (or muted and not yet ready to start-up) so don't play any samples
-    	    	MixerFrameParams->Command = MIXER_PAUSE;
-    	    	MixerFrameParams->StartOffset = 0;
-    	    }
-            
+                // still starving (or muted and not yet ready to start-up) so don't play any samples
+                MixerFrameParams->Command = MIXER_PAUSE;
+                MixerFrameParams->StartOffset = 0;
+            }
+
             // We must release all input buffers when the mixer command completes otherwise we'll have
             // a glitch as the old samples are played during an unmute
             ReleaseAllInputBuffersDuringUpdate = true;
@@ -786,12 +786,12 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
             return FillOutCodedDataBuffer( DataBuffer, MixerFrameParams,
                                            CodedDataBuffer, CodedMixerFrameParams, 
                                            OutputEncoding, BypassChannel );
-    	}
+        }
 
         //
         // Update the manifestation parameters if required
         //
-        
+
         if( StreamBuffer[BufferIndex].UpdateAudioParameters )
         {
             Status = UpdateAudioParameters(BufferIndex);
@@ -800,25 +800,25 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
                 MANIFESTOR_ERROR("Ignored failure to update audio parameters\n");
             }
         }
-     	    	
+
         //
         // Update the scatter page
         //
-            
+
     	MME_ScatterPage_t *CurrentPage = DataBuffer->ScatterPages_p + DataBuffer->NumberOfScatterPages;
         CurrentPage->Page_p = StreamBuffer[BufferIndex].Data;
         CurrentPage->Size = StreamBuffer[BufferIndex].AudioParameters->SampleCount *
                             StreamBuffer[BufferIndex].AudioParameters->Source.ChannelCount *
                             (StreamBuffer[BufferIndex].AudioParameters->Source.BitsPerSample / 8);
         CurrentPage->FlagsIn = 0;
-        
+
     	unsigned int *BufferIndexPtr = ((unsigned int *) DataBuffer->UserData_p) +
     	                               DataBuffer->NumberOfScatterPages;
     	*BufferIndexPtr = BufferIndex;
-        
+
          DataBuffer->NumberOfScatterPages++;
          DataBuffer->TotalSize += CurrentPage->Size;
-         
+
          NumSamplesCurrentlyEnqueued += StreamBuffer[BufferIndex].AudioParameters->SampleCount;
          TimeCurrentlyEnqueuedInSamples += StreamBuffer[BufferIndex].AudioParameters->SampleCount +
                                       SamplesToInjectIntoThisBuffer;
@@ -832,30 +832,30 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
 
     MANIFESTOR_DEBUG( "Initial DataBuffer->TotalSize %d (%d samples)\n",
                       DataBuffer->TotalSize, BytesToSamples(DataBuffer->TotalSize) );
-                     
+
     if( NumSamplesCurrentlyEnqueued == TimeCurrentlyEnqueuedInSamples )
     {
         MixerFrameParams->Command = MIXER_PLAY;
         MixerFrameParams->StartOffset = 0;
         OutputState = PLAYING;
-        
+
         Status = ManifestorNoError;
     }
     else if( NumSamplesCurrentlyEnqueued > TimeCurrentlyEnqueuedInSamples )
     {
         unsigned int SamplesToRemoveBeforeResampling = NumSamplesCurrentlyEnqueued - TimeCurrentlyEnqueuedInSamples;
-        
+
         Status = ShortenDataBuffer( DataBuffer, MixerFrameParams, SamplesToRemoveBeforeResampling,
-        	                    IdealisedStartOffset, EndOffsetAfterResampling, RescaleFactor );
+                                    IdealisedStartOffset, EndOffsetAfterResampling, RescaleFactor );
     }
     else
     {
         unsigned int SamplesToInjectBeforeResampling = TimeCurrentlyEnqueuedInSamples - NumSamplesCurrentlyEnqueued;
         
         Status = ExtendDataBuffer( DataBuffer, MixerFrameParams, SamplesToInjectBeforeResampling,
-        	                   EndOffsetAfterResampling, RescaleFactor );
+                                   EndOffsetAfterResampling, RescaleFactor );
     }
-    
+
     MANIFESTOR_DEBUG( "Massaged DataBuffer->TotalSize %d (%d samples)\n",
                       DataBuffer->TotalSize, BytesToSamples(DataBuffer->TotalSize) );
 
@@ -869,7 +869,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
         MixerFrameParams->StartOffset = 0;
         OutputState = PLAYING;
     }
-    
+
     if( Status == ManifestorNoError )
         return FillOutCodedDataBuffer( DataBuffer, MixerFrameParams,
                                        CodedDataBuffer, CodedMixerFrameParams, 
@@ -907,82 +907,82 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateInputBuffer( MME_DataBuffer_t
     if( ReleaseAllInputBuffersDuringUpdate )
     {
         ReleaseAllInputBuffersDuringUpdate = false;
-        
+
         return FlushInputBuffer( DataBuffer, InputStatus, CodedDataBuffer, CodedInputStatus );
     }
-    
+
     //
     // Work out which buffers can be marked as completed (and do so)
     //
-    
+
     for (i=0; i<DataBuffer->NumberOfScatterPages; i++)
     {
-    	MME_ScatterPage_t *CurrentPage = DataBuffer->ScatterPages_p + i;
-	unsigned int &BufferIndex = ((unsigned int*) DataBuffer->UserData_p)[i];
-	MANIFESTOR_ASSERT(BufferIndex != INVALID_BUFFER_ID);
+        MME_ScatterPage_t *CurrentPage = DataBuffer->ScatterPages_p + i;
+        unsigned int &BufferIndex = ((unsigned int*) DataBuffer->UserData_p)[i];
+        MANIFESTOR_ASSERT(BufferIndex != INVALID_BUFFER_ID);
 
-	BytesUsed -= CurrentPage->Size;
-	
-	if( BytesUsed >= 0 )
-	{
-	    // this scatter page was entirely consumed
-	    SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated +=
-	    		   StreamBuffer[BufferIndex].AudioParameters->SampleCount;
-	    if( StreamBuffer[BufferIndex].EventPending )
-		ServiceEventQueue( BufferIndex );
-	    OutputRing->Insert( (unsigned int) StreamBuffer[BufferIndex].Buffer );
+        BytesUsed -= CurrentPage->Size;
+
+        if( BytesUsed >= 0 )
+        {
+            // this scatter page was entirely consumed
+            SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated +=
+                StreamBuffer[BufferIndex].AudioParameters->SampleCount;
+            if( StreamBuffer[BufferIndex].EventPending )
+                ServiceEventQueue( BufferIndex );
+            OutputRing->Insert( (unsigned int) StreamBuffer[BufferIndex].Buffer );
             OS_LockMutex(&BufferQueueLock);
             NotQueuedBufferCount--;
             OS_UnLockMutex(&BufferQueueLock);
-	    BufferIndex = INVALID_BUFFER_ID;
-	}
-	else
-	{
-	    // this scatter page was partially consumed so update the page structure...
-	    unsigned int BytesRemaining = -BytesUsed;
-	    
-	    CurrentPage->Page_p = ((unsigned char *) CurrentPage->Page_p) + CurrentPage->Size - BytesRemaining;
-	    CurrentPage->Size = BytesRemaining;
-	    
-	    break;
-	}
+            BufferIndex = INVALID_BUFFER_ID;
+        }
+        else
+        {
+            // this scatter page was partially consumed so update the page structure...
+            unsigned int BytesRemaining = -BytesUsed;
+
+            CurrentPage->Page_p = ((unsigned char *) CurrentPage->Page_p) + CurrentPage->Size - BytesRemaining;
+            CurrentPage->Size = BytesRemaining;
+
+            break;
+        }
     }
     CompletedPages = i;
-    
+
     //
     // Shuffle everything downwards
     //
-    
+
     int RemainingPages = DataBuffer->NumberOfScatterPages - CompletedPages;
     unsigned int FirstRemainingPage = DataBuffer->NumberOfScatterPages - RemainingPages;
     if( RemainingPages > 0 )
     {
-    	memmove(DataBuffer->ScatterPages_p,
-    	        DataBuffer->ScatterPages_p + FirstRemainingPage,
-    	        RemainingPages * sizeof(MME_ScatterPage_t));
-    	memmove(DataBuffer->UserData_p,
-    	        ((unsigned int *) DataBuffer->UserData_p) + FirstRemainingPage,
-    	        RemainingPages * sizeof(unsigned int));
-	
-	DataBuffer->NumberOfScatterPages = RemainingPages;
+        memmove(DataBuffer->ScatterPages_p,
+                DataBuffer->ScatterPages_p + FirstRemainingPage,
+                RemainingPages * sizeof(MME_ScatterPage_t));
+        memmove(DataBuffer->UserData_p,
+                ((unsigned int *) DataBuffer->UserData_p) + FirstRemainingPage,
+                RemainingPages * sizeof(unsigned int));
+
+        DataBuffer->NumberOfScatterPages = RemainingPages;
     }
     else
     {
-    	DataBuffer->NumberOfScatterPages = 0;
-    	
-    	if( RemainingPages < 0 )
-    	{
-    	    MANIFESTOR_ERROR("Firmware consumed more data than it was supplied with!!!\n");
-    	}
+        DataBuffer->NumberOfScatterPages = 0;
+
+        if( RemainingPages < 0 )
+        {
+            MANIFESTOR_ERROR("Firmware consumed more data than it was supplied with!!!\n");
+        }
     }
 
     DataBuffer->TotalSize -= InputStatus->BytesUsed;
-    
+
     //
     // Handle other bits of status (mostly the play state)
     //
-    
-#ifndef __TDT__
+
+#if 0
     if( OutputState == PLAYING )
     {
         if( InputStatus->State != MIXER_INPUT_RUNNING )
@@ -998,11 +998,11 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateInputBuffer( MME_DataBuffer_t
         }
     }
     else
-    { 
+    {
         if( InputStatus->State == MIXER_INPUT_RUNNING )
         {
             MANIFESTOR_ERROR( "Unexpected mixer mode MIXER_INPUT_RUNNING whilst %s\n", LookupState() );
-        }        
+        }
     }
 #endif
 
@@ -1023,8 +1023,8 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateInputBuffer( MME_DataBuffer_t
 ///
 /// This function should not be called while a mix command is being processed.
 ///
-ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t *DataBuffer,
-                                                               MME_MixerInputStatus_t *InputStatus,
+ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t* DataBuffer,
+                                                               MME_MixerInputStatus_t* InputStatus,
                                                                MME_DataBuffer_t *CodedDataBuffer,
                                                                MME_MixerInputStatus_t *CodedInputStatus )
 {
@@ -1035,7 +1035,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t 
     //
     // Work out which buffers can be marked as completed (and do so)
     //
-    
+
     for (unsigned int i = 0; i < DataBuffer->NumberOfScatterPages; i++ )
     {
         MME_ScatterPage_t *CurrentPage = DataBuffer->ScatterPages_p + i;
@@ -1043,7 +1043,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t 
         MANIFESTOR_ASSERT(BufferIndex != INVALID_BUFFER_ID);
 
         BytesUsed -= CurrentPage->Size;
-        
+
         if( BytesUsed >= 0 )
         {
             // this scatter page was entirely consumed (so we update the samples played business)
@@ -1053,11 +1053,11 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t 
         else
         {
             // this buffer was not played and is being released in an unusual way
-            (void) ReleaseBuffer( BufferIndex );                       
+            (void) ReleaseBuffer( BufferIndex );
         }
-        
-	if( StreamBuffer[BufferIndex].EventPending )
-	    ServiceEventQueue( BufferIndex );
+
+        if( StreamBuffer[BufferIndex].EventPending )
+            ServiceEventQueue( BufferIndex );
         OutputRing->Insert( (unsigned int) StreamBuffer[BufferIndex].Buffer );
         OS_LockMutex(&BufferQueueLock);
         NotQueuedBufferCount--;
@@ -1068,11 +1068,11 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FlushInputBuffer( MME_DataBuffer_t 
     //
     // Tidy up the data buffer to make clear that we really did flush everything.
     //
-    
+
     DataBuffer->NumberOfScatterPages = 0;
     DataBuffer->TotalSize = 0;
     DataBuffer->StartOffset = 0;
-    
+
     // zero-length, null pointer, no flags
     memset( &DataBuffer->ScatterPages_p[0], 0, sizeof( DataBuffer->ScatterPages_p[0] ) );
 
@@ -1091,9 +1091,9 @@ void Manifestor_AudioKsound_c::UpdateDisplayTimeOfNextCommit(unsigned long long 
     // we must hold this lock from the point we touch SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit to
     // the point we update DisplayTimeOfNextCommit.
     OS_AutoLockMutex automatic( &DisplayTimeOfNextCommitMutex );
-    
+
     SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit -=
-                    SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated;
+        SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated;
     SamplesPlayedSinceDisplayTimeOfNextCommitWasCalculated = 0;
 
     DisplayTimeOfNextCommit = Time;
@@ -1101,7 +1101,7 @@ void Manifestor_AudioKsound_c::UpdateDisplayTimeOfNextCommit(unsigned long long 
     //MANIFESTOR_DEBUG("DisplayTimeOfNextCommit %llu (delta %llu)\n",
     //                 DisplayTimeOfNextCommit, DisplayTimeOfNextCommit - LastDisplayTimeOfNextCommit);
     LastDisplayTimeOfNextCommit = DisplayTimeOfNextCommit;
-    
+
     if( OutputState == STARTING )
     {
         MANIFESTOR_DEBUG( "Switching from STARTING to MUTED after display time update\n" );
@@ -1111,10 +1111,10 @@ void Manifestor_AudioKsound_c::UpdateDisplayTimeOfNextCommit(unsigned long long 
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Make the best effort possible to honour the requested output timing.
 ///
-/// At present this is acheived by dicking about rampantly with the sample count.
+/// At present this is achieved by dicking about rampantly with the sample count.
 /// See Manifestor_AudioKsound_c::SetModuleParameters to see how we ensure space exists
 /// to do this in.
 ///
@@ -1128,27 +1128,27 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
     //unsigned int ChannelCount = StreamBuffer[BufferIndex].AudioParameters->Source.ChannelCount;
     unsigned int DisplayCount = StreamBuffer[BufferIndex].AudioOutputTiming->DisplayCount;
     unsigned long long SystemPlaybackTime = StreamBuffer[BufferIndex].AudioOutputTiming->SystemPlaybackTime;
-    unsigned long long ActualSystemPlaybackTime = StreamBuffer[BufferIndex].AudioOutputTiming->ActualSystemPlaybackTime; 
+    unsigned long long ActualSystemPlaybackTime = StreamBuffer[BufferIndex].AudioOutputTiming->ActualSystemPlaybackTime;
     unsigned int SamplingFrequency = StreamBuffer[BufferIndex].AudioParameters->Source.SampleRateHz;
-    
+
     int SamplesRequiredToHonourDisplayCount;
     long long TimeRequiredToHonourSystemPlaybackTime;
     int SamplesRequiredToHonourSystemPlaybackTime;
     int SamplesRequiredToHonourEverything;
     int Adjustment;
-    
-    
+
+
     //
     // Send the tuning parameters to the frequency synthesiser
     //
-    
+
     DerivePPMValueFromOutputRateAdjustment( PreciseAdjustment, &Adjustment );
     Mixer->SetOutputRateAdjustment( Adjustment );
-    
+
     //
-    // Calculate how man samples to inject or remove
+    // Calculate how many samples to inject or remove
     //
-    
+
     SamplesRequiredToHonourDisplayCount = DisplayCount - SampleCount;
     if (SamplesRequiredToHonourDisplayCount)
         MANIFESTOR_DEBUG("Deploying percussive adjustment due to ::DisplayCount %u  SampleCount %u  Delta %d\n",
@@ -1158,11 +1158,11 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
     TimeRequiredToHonourDisplayCount = (SamplesRequiredToHonourDisplayCount * 1000000) / SamplingFrequency;
     ActualSystemPlaybackTime += TimeRequiredToHonourDisplayCount;
 #endif
-    
+
     //
     // Figure out what actions would have to be taken in order to honour the system playback time.
     //
-    
+
     if( (SystemPlaybackTime == INVALID_TIME) || (SystemPlaybackTime == UNSPECIFIED_TIME) )
     {
         SamplesRequiredToHonourSystemPlaybackTime = 0;
@@ -1170,13 +1170,13 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
     else
     {
         TimeRequiredToHonourSystemPlaybackTime = SystemPlaybackTime - ActualSystemPlaybackTime;
-        
+
         if( TimeRequiredToHonourSystemPlaybackTime )
         {
             if (TimeRequiredToHonourSystemPlaybackTime > 5000000ll)
             {
                 MANIFESTOR_ERROR("Playback time is more than 5 seconds in the future (%lld) - ignoring\n",
-                	         TimeRequiredToHonourSystemPlaybackTime);
+                                 TimeRequiredToHonourSystemPlaybackTime);
                 TimeRequiredToHonourSystemPlaybackTime = 0;
             }
             else if( TimeRequiredToHonourSystemPlaybackTime < 3000ll &&
@@ -1207,7 +1207,7 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
                                         SamplesRequiredToHonourSystemPlaybackTime;
 
     if (SamplesRequiredToHonourEverything < (-1*(int)SampleCount) ||
-        SamplesRequiredToHonourDisplayCount > (int) SampleCount)
+           SamplesRequiredToHonourDisplayCount > (int) SampleCount)
     {
         MANIFESTOR_ERROR("Found BUG (SamplesRequiredToHonourEverything %d) - deployed automated fly swat\n",
                          SamplesRequiredToHonourEverything);
@@ -1219,7 +1219,7 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Calculate the time at which we anticipate the buffer will be output.
 ///
 /// The basis of this calculation is that the manifestor is notified (before
@@ -1237,10 +1237,10 @@ int Manifestor_AudioKsound_c::HandleRequestedOutputTiming(unsigned int BufferInd
 /// \param SamplesAlreadyPlayed Number of samples by which to offset the display time.
 ///
 void Manifestor_AudioKsound_c::HandleAnticipatedOutputTiming(
-		unsigned int BufferIndex, unsigned int SamplesAlreadyPlayed)
+    unsigned int BufferIndex, unsigned int SamplesAlreadyPlayed)
 {
     unsigned int SamplingFrequency = StreamBuffer[BufferIndex].AudioParameters->Source.SampleRateHz;
-	
+
     //
     // Calculate and record the output timings
     //
@@ -1259,12 +1259,12 @@ void Manifestor_AudioKsound_c::HandleAnticipatedOutputTiming(
     TimeForSamplesAlreadyPlayedInSeconds	/=  StreamBuffer[BufferIndex].AudioOutputTiming->SystemClockAdjustment;
 
     StreamBuffer[BufferIndex].AudioOutputTiming->ActualSystemPlaybackTime =
-            DisplayTimeOfNextCommit + IntegerPart( 1000000 * TimeForSamplesAlreadyPlayedInSeconds );
+        DisplayTimeOfNextCommit + IntegerPart( 1000000 * TimeForSamplesAlreadyPlayedInSeconds );
 
     MANIFESTOR_DEBUG("ActualPlaybackTime %llu (delta %llu) @ offset %u\n",
                      StreamBuffer[BufferIndex].AudioOutputTiming->ActualSystemPlaybackTime,
                      StreamBuffer[BufferIndex].AudioOutputTiming->ActualSystemPlaybackTime -
-                             LastActualSystemPlaybackTime,
+                     LastActualSystemPlaybackTime,
                      SamplesAlreadyPlayed);
 #if 0
 {
@@ -1302,28 +1302,27 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ShortenDataBuffer( MME_DataBuffer_t
     unsigned int TotalSamples = BytesToSamples(DataBuffer->TotalSize);
     unsigned int MaximumToRemove = TotalSamples - EndOffsetBeforeResampling;
     unsigned int BytesToRemove = SamplesToBytes( SamplesToRemoveBeforeResampling );
-    
+
     unsigned int PageOffset;
-    
+
     MME_ScatterPage_t *Pages = DataBuffer->ScatterPages_p;
-    
+
     if (SamplesToRemoveBeforeResampling > MaximumToRemove)
     {
         MANIFESTOR_ERROR( "SamplesToRemoveBeforeResampling is too large (%d, max %d)\n",
-        	          SamplesToRemoveBeforeResampling, MaximumToRemove );
+                          SamplesToRemoveBeforeResampling, MaximumToRemove );
         return ManifestorError;
     }
-    
+
     if( OutputState != PLAYING )
     {
         //
         // Output is silent, must remove samples from the front of the buffer
         //
-        
         MixerFrameParams->Command = MIXER_PLAY;
         MixerFrameParams->StartOffset = 0;
         OutputState = PLAYING;
-        
+
         MIXER_DEBUG( "Removing %d samples with MIXER_PLAY at %d\n",
         	SamplesToRemoveBeforeResampling, MixerFrameParams->StartOffset );
                      
@@ -1342,33 +1341,34 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ShortenDataBuffer( MME_DataBuffer_t
         //
         // Search for the first seam that is at least 128 samples into the buffer
         //
-        
+
         PageOffset = 0;
         AccumulatedOffset = BytesToSamples( Pages[PageOffset].Size );
+
         while (AccumulatedOffset < SamplesNeededForFadeOutBeforeResampling)
-                AccumulatedOffset += BytesToSamples( Pages[++PageOffset].Size );
-        
+            AccumulatedOffset += BytesToSamples( Pages[++PageOffset].Size );
+
         ApplyChangeAt = AccumulatedOffset - SamplesToRemoveBeforeResampling;
         if (ApplyChangeAt < (int) SamplesNeededForFadeOutBeforeResampling)
             ApplyChangeAt = SamplesNeededForFadeOutBeforeResampling;
-        
+
         if( ApplyChangeAt <= (int) (EndOffsetBeforeResampling - SamplesNeededForFadeOutBeforeResampling) )
         {
             //
             // Deploy MIXER_FOFI
             //
-            
+
             MixerFrameParams->Command = MIXER_FOFI;
             MixerFrameParams->StartOffset = (ApplyChangeAt / RescaleFactor).RoundedIntegerPart();
             // OutputState is already correct;
 
             MIXER_DEBUG( "Removing %d samples with MIXER_FOFI at %d\n",
                          SamplesToRemoveBeforeResampling, MixerFrameParams->StartOffset );
-            
+
             unsigned int SamplesRemoved = AccumulatedOffset - ApplyChangeAt;
             unsigned int BytesRemoved = SamplesToBytes( SamplesRemoved );
-            
-            BytesToRemove -= BytesRemoved;            
+
+            BytesToRemove -= BytesRemoved;
             SamplesToRemoveBeforeResampling -= SamplesRemoved;
             DataBuffer->TotalSize -= BytesRemoved;
             Pages[PageOffset].Size -= BytesRemoved;
@@ -1384,16 +1384,16 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ShortenDataBuffer( MME_DataBuffer_t
             //
             // Deploy MIXER_PAUSE
             //
-            
+
             MixerFrameParams->Command = MIXER_PAUSE;
             MixerFrameParams->StartOffset = EndOffsetAfterResampling;
             OutputState = MUTED;
-            
+
             MIXER_DEBUG( "Carrying over %d samples with MIXER_PAUSE at %d\n",
                          SamplesToRemoveBeforeResampling, MixerFrameParams->StartOffset );
-                         
+
             SamplesToRemoveWhenPlaybackCommences = SamplesToRemoveBeforeResampling;
-            
+
             // Don't fall through into the sample destuction code below
             return ManifestorNoError;
         }
@@ -1413,18 +1413,18 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ShortenDataBuffer( MME_DataBuffer_t
             MANIFESTOR_ERROR( "PageOffset overflowed - probable implementation bug\n");
             return ManifestorError;
         }
-            
+
         MANIFESTOR_ASSERT(BytesToRemove == SamplesToBytes( SamplesToRemoveBeforeResampling ));
     }
-    
- 
-        
+
+
+
     unsigned char *DataPtr = (unsigned char *) Pages[PageOffset].Page_p;
     Pages[PageOffset].Page_p = (void *) (DataPtr + BytesToRemove);
     Pages[PageOffset].Size -= BytesToRemove;
     DataBuffer->TotalSize -= BytesToRemove;
 
-         
+
     return ManifestorNoError;
 }
 
@@ -1436,22 +1436,22 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ExtendDataBuffer( MME_DataBuffer_t 
 {
     unsigned int EndOffsetBeforeResampling = (RescaleFactor*EndOffsetAfterResampling).RoundedUpIntegerPart();
     unsigned int SamplesToInjectAfterResampling =
-	    (SamplesToInjectBeforeResampling / RescaleFactor).RoundedIntegerPart();
-    
+        (SamplesToInjectBeforeResampling / RescaleFactor).RoundedIntegerPart();
+
     if( SamplesToInjectBeforeResampling > EndOffsetBeforeResampling )
     {
         MANIFESTOR_ERROR("SamplesToInjectBeforeResampling is too large (%d, max %d)\n", SamplesToInjectBeforeResampling, EndOffsetBeforeResampling);
         return ManifestorError;
     }
-    
+
     if( OutputState == PLAYING )
     {
         MixerFrameParams->Command = MIXER_PAUSE;
         MixerFrameParams->StartOffset = EndOffsetAfterResampling - SamplesToInjectAfterResampling;
         OutputState = MUTED;
-        
+
         MANIFESTOR_DEBUG( "Injecting %d samples with MIXER_PAUSE at %d\n",
-                     SamplesToInjectBeforeResampling, MixerFrameParams->StartOffset );
+                          SamplesToInjectBeforeResampling, MixerFrameParams->StartOffset );
     }
     else
     {
@@ -1461,40 +1461,40 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ExtendDataBuffer( MME_DataBuffer_t 
         MixerFrameParams->StartOffset = SamplesToInjectAfterResampling;
         OutputState = PLAYING;
     }
-    
+
     return ManifestorNoError;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Update the manifestation parameters (if required)
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::UpdateAudioParameters(unsigned int BufferIndex)
 {
     ManifestorStatus_t Status;
     ParsedAudioParameters_t *AudioParameters;
-    
+
     if (!StreamBuffer[BufferIndex].UpdateAudioParameters)
     {
-    	MANIFESTOR_ERROR( "Audio parameters do not require updating at frame %d\n",
+        MANIFESTOR_ERROR( "Audio parameters do not require updating at frame %d\n",
                           StreamBuffer[BufferIndex].FrameParameters->DisplayFrameIndex );
-    	return ManifestorError;
+        return ManifestorError;
     }
-    
+
 //
 
-    MANIFESTOR_DEBUG("Updating audio parameters\n");  
+    MANIFESTOR_DEBUG("Updating audio parameters\n");
     AudioParameters = StreamBuffer[BufferIndex].AudioParameters;
-    
+
     MANIFESTOR_ASSERT(AudioParameters->Source.ChannelCount);
     MANIFESTOR_ASSERT(AudioParameters->Source.BitsPerSample);
-    
+
     if (AudioParameters->Source.ChannelCount != SurfaceDescriptor.ChannelCount)
     {
-    	MANIFESTOR_ERROR("Codec did not honour the surface's channel interleaving (%d instead of %d)\n",
-    	                 AudioParameters->Source.ChannelCount, SurfaceDescriptor.ChannelCount);
-    	// this error is non-fatal (providing the codec doesn't run past the end of its buffers)
+        MANIFESTOR_ERROR("Codec did not honour the surface's channel interleaving (%d instead of %d)\n",
+                         AudioParameters->Source.ChannelCount, SurfaceDescriptor.ChannelCount);
+        // this error is non-fatal (providing the codec doesn't run past the end of its buffers)
     }
 
 //
@@ -1502,7 +1502,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateAudioParameters(unsigned int 
     //
     // Memorise the new audio parameters.
     //
-    
+
     InputAudioParameters = *AudioParameters;
     Status = Mixer->UpdateManifestorParameters( this, AudioParameters );
     if( Status != PlayerNoError )
@@ -1522,7 +1522,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateAudioParameters(unsigned int 
 
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Study a coded data buffer and identify what output encoding to use (dts case)
 ///
 /// \param CodedDataBufferSize The caller usually has this to hand so we can avoid another lookup
@@ -1532,13 +1532,13 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateAudioParameters(unsigned int 
 PcmPlayer_c::OutputEncoding Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOutputEncoding(
     ParsedAudioParameters_t *ParsedAudioParameters,
     unsigned int CodedDataBufferSize,
-    unsigned int *RepetitionPeriod )
+    unsigned int *RepetitionPeriod)
 {
     unsigned int CompatibleSampleCount = ParsedAudioParameters->BackwardCompatibleProperties.SampleCount;
     unsigned int Iec60958Size = CompatibleSampleCount * 4; /* stereo, 16-bit */
     unsigned int MaxIec61937Size = Iec60958Size - 8; /* PA/PB/PC/PD @ 16-bits each */
-    
-    // in case of dtshd stream without compatible core (i.e. XLL only stream), 
+
+    // in case of dtshd stream without compatible core (i.e. XLL only stream),
     // the transcoded buffer will be void, so fallback to PCM
     if ( CodedDataBufferSize == 0 )
     {
@@ -1549,33 +1549,33 @@ PcmPlayer_c::OutputEncoding Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOu
     {
         if( CodedDataBufferSize == Iec60958Size )
             return PcmPlayer_c::BYPASS_DTS_CDDA;
-        
+
         return PcmPlayer_c::OUTPUT_IEC60958;
     }
-    
+
     *RepetitionPeriod = CompatibleSampleCount;
-    
+
     switch( CompatibleSampleCount )
     {
         case 512:
             return PcmPlayer_c::BYPASS_DTS_512;
-            
+
         case 1024:
             return PcmPlayer_c::BYPASS_DTS_1024;
-            
+
         case 2048:
             return PcmPlayer_c::BYPASS_DTS_2048;
     }
-    
+
     *RepetitionPeriod = 1;
     return PcmPlayer_c::OUTPUT_IEC60958;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Study a coded data buffer and identify what output encoding to use.
 ///
-/// \param CodedDataBuffer Coded data buffer to extrac the meta data from
+/// \param CodedDataBuffer Coded data buffer to extract the meta data from
 /// \param CodedDataBufferSize The caller usually has this to hand so we can avoid another lookup
 /// \param RepetitionPeriod Pointer to where the repetition period of the coded data should be stored
 /// \return Output encoding to be used.
@@ -1585,8 +1585,8 @@ PcmPlayer_c::OutputEncoding Manifestor_AudioKsound_c::LookupCodedDataBufferOutpu
                                                 unsigned int *RepetitionPeriod,
                                                 BypassPhysicalChannel_t BypassChannel )
 {
-BufferStatus_t Status;
-ParsedAudioParameters_t *ParsedAudioParameters;
+    BufferStatus_t Status;
+    ParsedAudioParameters_t *ParsedAudioParameters;
 
     //
 
@@ -1606,15 +1606,15 @@ ParsedAudioParameters_t *ParsedAudioParameters;
     {
     case AudioOriginalEncodingUnknown:
         *RepetitionPeriod = 1;
-        return PcmPlayer_c::OUTPUT_IEC60958;    
-        
+        return PcmPlayer_c::OUTPUT_IEC60958;
+
     case AudioOriginalEncodingAc3:
         return PcmPlayer_c::BYPASS_AC3;
 
     case AudioOriginalEncodingDdplus:
         if ( BypassChannel == SPDIF )
         {
-             // by this point we've already located the transcoded buffer
+            // by this point we've already located the transcoded buffer
             return PcmPlayer_c::BYPASS_AC3;
         }
         else
@@ -1625,32 +1625,32 @@ ParsedAudioParameters_t *ParsedAudioParameters;
     case AudioOriginalEncodingDts:
         return (Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOutputEncoding(ParsedAudioParameters, CodedDataBufferSize, RepetitionPeriod));
 
-   case AudioOriginalEncodingDtshd:
-   case AudioOriginalEncodingDtshdMA:
-       if ( BypassChannel == SPDIF )
-       {
-           // a transcoded buffer is available...
-           return (Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOutputEncoding(ParsedAudioParameters, CodedDataBufferSize, RepetitionPeriod));
-       }
-       else
-       {
-           if (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshd)
-           {
-               *RepetitionPeriod = 2048;
-               return PcmPlayer_c::BYPASS_DTSHD_HR;
-           }
-           else
-           {
-               *RepetitionPeriod = 8192;
-               return PcmPlayer_c::BYPASS_DTSHD_MA;
-           }
-       }
+    case AudioOriginalEncodingDtshd:
+    case AudioOriginalEncodingDtshdMA:
+        if ( BypassChannel == SPDIF )
+        {
+            // a transcoded buffer is available...
+            return (Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOutputEncoding(ParsedAudioParameters, CodedDataBufferSize, RepetitionPeriod));
+        }
+        else
+        {
+            if (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshd)
+            {
+                *RepetitionPeriod = 2048;
+                return PcmPlayer_c::BYPASS_DTSHD_HR;
+            }
+            else
+            {
+                *RepetitionPeriod = 8192;
+                return PcmPlayer_c::BYPASS_DTSHD_MA;
+            }
+        }
 
-   case AudioOriginalEncodingDtshdLBR:
-       if ( BypassChannel == SPDIF )
+    case AudioOriginalEncodingDtshdLBR:
+        if ( BypassChannel == SPDIF )
         {
             *RepetitionPeriod = 1;
-            return PcmPlayer_c::OUTPUT_IEC60958;    
+            return PcmPlayer_c::OUTPUT_IEC60958;
         }
         else
         {
@@ -1658,11 +1658,11 @@ ParsedAudioParameters_t *ParsedAudioParameters;
             return PcmPlayer_c::BYPASS_DTSHD_LBR;
         }
 
-   case AudioOriginalEncodingTrueHD:
-       if ( BypassChannel == SPDIF )
+    case AudioOriginalEncodingTrueHD:
+        if ( BypassChannel == SPDIF )
         {
             *RepetitionPeriod = 1;
-            return PcmPlayer_c::OUTPUT_IEC60958;    
+            return PcmPlayer_c::OUTPUT_IEC60958;
         }
         else
         {
@@ -1675,14 +1675,14 @@ ParsedAudioParameters_t *ParsedAudioParameters;
 #endif
         }
     }
-    
+
     MANIFESTOR_ERROR( "Unexpected audio coded data format (%d)\n", ParsedAudioParameters->OriginalEncoding );
     *RepetitionPeriod = 1;
-    return PcmPlayer_c::OUTPUT_IEC60958;      
+    return PcmPlayer_c::OUTPUT_IEC60958;
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Dequeue the first coded buffer and release it.
 ///
 /// There is no error checking here in order to prevent callers having to check the return code then they
@@ -1705,7 +1705,7 @@ void Manifestor_AudioKsound_c::DequeueFirstCodedDataBuffer( MME_DataBuffer_t *Co
         MANIFESTOR_ERROR( "Cannot decrement coded data buffer reference count (%d)\n", Status );
         // no error recovery possible
     }
-                
+
     memmove( CodedMmeDataBuffer->ScatterPages_p,
              CodedMmeDataBuffer->ScatterPages_p + 1,
              CodedMmeDataBuffer->NumberOfScatterPages * sizeof(MME_ScatterPage_t) );
@@ -1715,36 +1715,34 @@ void Manifestor_AudioKsound_c::DequeueFirstCodedDataBuffer( MME_DataBuffer_t *Co
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Examine the queued compressed data buffers and determine the exact lengths (in sample frames).
 ///
 unsigned int Manifestor_AudioKsound_c::LookupCodedDataBufferLength( MME_DataBuffer_t *CodedDataBuffer )
 {
     unsigned int Length;
 
-    //
-
     // calculate the 'fundamental' length
     Length = CodedDataBuffer->NumberOfScatterPages * CurrentCodedDataRepetitionPeriod;
-    
+
     // add in any sample frames pending at the mixer
     Length += SamplesUntilNextCodedDataRepetitionPeriod;
-    
+
     // remove the head of the queue if it is partial consumed (that was already accounted for by the above
     // addition)
     if( FirstCodedDataBufferPartiallyConsumed )
         Length -=  CurrentCodedDataRepetitionPeriod;
-        
+
     return Length;
 }
 
 
 bool Manifestor_AudioKsound_c::DoesTranscodedBufferExist(BypassPhysicalChannel_t BypassChannel, ParsedAudioParameters_t * AudioParameters)
 {
-    // local table to prevent from being accessed appart from this method
-    // this table tells whether a transcoded buffer exists according to the 
+    // local table to prevent from being accessed apart from this method
+    // this table tells whether a transcoded buffer exists according to the
     // stream format and output type
-    const static bool IsTranscodedMatrix[BypassPhysicalChannelCount][AudioOriginalEncodingTrueHD + 1] = 
+    const static bool IsTranscodedMatrix[BypassPhysicalChannelCount][AudioOriginalEncodingTrueHD + 1] =
     {
         // None   AC3    DD+   DTS     DTSHD  DTSHDMA  DTSHDLBR  TrueHD  over SPDIF
         { false,  false, true, false,  true,  true,    false,    false},
@@ -1754,18 +1752,18 @@ bool Manifestor_AudioKsound_c::DoesTranscodedBufferExist(BypassPhysicalChannel_t
 
     AudioOriginalEncoding_t Encoding = AudioParameters->OriginalEncoding;
 
-    if ((BypassChannel < BypassPhysicalChannelCount) && 
-        (Encoding <= AudioOriginalEncodingTrueHD))
+    if ((BypassChannel < BypassPhysicalChannelCount) &&
+            (Encoding <= AudioOriginalEncodingTrueHD))
     {
         bool TranscodedBufferExists = IsTranscodedMatrix[BypassChannel][Encoding];
 
         // special case of DTS-HD: a dts core might not be present...
-        if ( (Encoding == AudioOriginalEncodingDtshdMA) || 
-             (Encoding == AudioOriginalEncodingDtshd) )
+        if ( (Encoding == AudioOriginalEncodingDtshdMA) ||
+                (Encoding == AudioOriginalEncodingDtshd) )
         {
             if (!AudioParameters->BackwardCompatibleProperties.SampleRateHz || !AudioParameters->BackwardCompatibleProperties.SampleCount)
             {
-                // no core is present, so transcoding is not possible  
+                // no core is present, so transcoding is not possible
                 TranscodedBufferExists = false;
             }
         }
@@ -1779,7 +1777,7 @@ bool Manifestor_AudioKsound_c::DoesTranscodedBufferExist(BypassPhysicalChannel_t
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Examine the queued LPCM buffers and create a partner coded data queue.
 ///
 /// \todo Account for resampling...
@@ -1791,18 +1789,18 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutCodedDataBuffer( MME_DataBuf
                                                                      PcmPlayer_c::OutputEncoding *OutputEncoding,
                                                                      BypassPhysicalChannel_t BypassChannel )
 {
-BufferStatus_t Status;
-bool MuteRequestAsserted = false;
+    BufferStatus_t Status;
+    bool MuteRequestAsserted = false;
 
     //
     // Locate any new buffers in the PCM queue and append them to the coded queue.
     //
-    
+
     for (unsigned int i=0; i<PcmBuffer->NumberOfScatterPages; i++)
     {
         unsigned int &BufferIndex = ((unsigned int*) PcmBuffer->UserData_p)[i];
         MANIFESTOR_ASSERT(BufferIndex != INVALID_BUFFER_ID);
-        
+
         if( StreamBuffer[BufferIndex].QueueAsCodedData )
         {
             Buffer_c* Buffer = StreamBuffer[BufferIndex].Buffer;
@@ -1810,7 +1808,7 @@ bool MuteRequestAsserted = false;
             PcmPlayer_c::OutputEncoding CurrentBufferEncoding;
             unsigned int CurrentBufferRepetitionPeriod;
             bool IsTranscoded = DoesTranscodedBufferExist(BypassChannel, StreamBuffer[BufferIndex].AudioParameters);
-            
+
             if( CodedMmeDataBuffer && (CodedMmeDataBuffer->NumberOfScatterPages >= MIXER_AUDIO_PAGES_PER_BUFFER) )
             {
                 MANIFESTOR_ERROR("No scatter pages remain to describe input - ignoring\n");
@@ -1818,7 +1816,7 @@ bool MuteRequestAsserted = false;
             }
             
             StreamBuffer[BufferIndex].QueueAsCodedData = false;
-             
+
             Status = Buffer->ObtainAttachedBufferReference( Stream->CodedFrameBufferType, &CodedFrameBuffer );
             if( Status != BufferNoError )
             {
@@ -1918,14 +1916,14 @@ bool MuteRequestAsserted = false;
                               CodedMmeDataBuffer->NumberOfScatterPages );
         }
     }
-    
+
     if (CodedMmeDataBuffer == NULL)
         return ManifestorNoError;
-        
+
     //
     // Is any additional percussive action required upon the compressed buffers?
     //
-    
+
     int Delta = 0;
     int RatioCompressedVsPcm = CodedFrameSampleCount?(CurrentCodedDataRepetitionPeriod/CodedFrameSampleCount):1;
     
@@ -2034,12 +2032,12 @@ static const char *LookupMixerInputState(unsigned int x)
     switch( x )
     {
 #define X(y) case y: return #y
-    X(MIXER_INPUT_NOT_RUNNING);
-    X(MIXER_INPUT_RUNNING);
-    X(MIXER_INPUT_FADING_OUT);
-    X(MIXER_INPUT_MUTED);
-    X(MIXER_INPUT_PAUSED);
-    X(MIXER_INPUT_FADING_IN);
+        X(MIXER_INPUT_NOT_RUNNING);
+        X(MIXER_INPUT_RUNNING);
+        X(MIXER_INPUT_FADING_OUT);
+        X(MIXER_INPUT_MUTED);
+        X(MIXER_INPUT_PAUSED);
+        X(MIXER_INPUT_FADING_IN);
 #undef X
     }
 
@@ -2047,7 +2045,7 @@ static const char *LookupMixerInputState(unsigned int x)
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Retire any already played buffers.
 ///
 /// Release the references for any buffers that have been completely consumed and
@@ -2061,20 +2059,20 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
     unsigned int CompletedPages;
     
     int BytesUsed = CodedInputStatus->BytesUsed + CodedDataBuffer->StartOffset;
-    
+
     //
     // Work out which buffers can be marked as completed (and do so)
     //
-    
+
     if (BytesUsed > 0)
     {
         for( i=0; i<CodedDataBuffer->NumberOfScatterPages; i++ )
         {
             MME_ScatterPage_t *CurrentPage = CodedDataBuffer->ScatterPages_p + i;
             Buffer_c *CodedFrameBuffer = ((Buffer_c **) CodedDataBuffer->UserData_p)[i];
-        
+
             BytesUsed -= CurrentPage->Size;
-        
+
             if( BytesUsed >= 0 )
             {
                 // this scatter page was entirely consumed
@@ -2087,19 +2085,19 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
                     MANIFESTOR_ERROR( "Cannot decrement coded data buffer reference count (%d)\n", Status );
                     // no error recovery possible
                 }
-            
+
                 MANIFESTOR_DEBUG( "Removing whole of a %d byte buffer from the queue\n", CurrentPage->Size );
 
                 CodedDataBuffer->TotalSize -= CurrentPage->Size;
-            
+
                 if( BytesUsed == 0 )
                 {
                     CodedDataBuffer->StartOffset = 0;
                     FirstCodedDataBufferPartiallyConsumed = false;
-                
+
                     // ensure this buffer is included in the shuffle and break immediately (to ensure the value
                     // of FirstCodedDataBufferPartiallyConsumed remains unchanged)
-                    i++;       
+                    i++;
                     break;
                 }
             }
@@ -2107,10 +2105,10 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
             {
                 // this scatter page was partially consumed so update the page structure...
                 unsigned int BytesRemaining = -BytesUsed;
-            
+
                 MANIFESTOR_DEBUG( "Removing %d of a %d byte buffer from the queue (new length %d)\n", 
                                   CurrentPage->Size - BytesRemaining, CurrentPage->Size, BytesRemaining );
-                                  
+
                 // the coded data input is 'special' - it wants the whole page back because its using the
                 // size field to work out how much padding to insert. in exchange for its odd behavior it
                 // promises to give sum the BytesUsed itself (i.e. we don't have to remember that we didn't
@@ -2118,19 +2116,18 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
                 //CurrentPage->Page_p = ((unsigned char *) CurrentPage->Page_p) + CurrentPage->Size - BytesRemaining;
                 //CurrentPage->Size = BytesRemaining;
                 CodedDataBuffer->StartOffset = CurrentPage->Size + BytesUsed; // BytesUsed is -ve
-            
                 FirstCodedDataBufferPartiallyConsumed = true;
                 break;
             }
         }
-        
+
         CompletedPages = i;
     }
     else
     {
         CompletedPages = 0;
     }
-    
+
     //
     // Shuffle everything downwards
     //
@@ -2147,9 +2144,9 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
             memmove(CodedDataBuffer->UserData_p,
                     ((unsigned int *) CodedDataBuffer->UserData_p) + FirstRemainingPage,
                     RemainingPages * sizeof(unsigned int));
-        
+
             CodedDataBuffer->NumberOfScatterPages = RemainingPages;
-            
+
             // see above comments regarding how 'special' the coded data input is
             //CodedDataBuffer->TotalSize -= CodedInputStatus->BytesUsed;
         }
@@ -2158,18 +2155,18 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
     {
         CodedDataBuffer->NumberOfScatterPages = 0;
         CodedDataBuffer->TotalSize = 0;
-        
+
         if( RemainingPages < 0 )
         {
             MANIFESTOR_ERROR("Firmware consumed more data than it was supplied with!!!\n");
         }
     }
-    
+
 
     //
     // Update the state based on the reply from the firmware
     //
-    
+
     IsCodedDataPlaying = CodedInputStatus->State == MIXER_INPUT_RUNNING;
     //    IsCodedDataPlaying = CodedInputStatus->State != MIXER_INPUT_NOT_RUNNING;
     if ( IsCodedDataPlaying )
@@ -2195,11 +2192,11 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
             SamplesUntilNextCodedDataRepetitionPeriod = CurrentCodedDataRepetitionPeriod -
                                                         (CodedDataBuffer->StartOffset / 4);
         }
-        
+
         MANIFESTOR_DEBUG("Retired %d whole buffers, %d buffers partially consumed (%d frames remaining)\n",
                          CompletedPages, FirstCodedDataBufferPartiallyConsumed,
                          SamplesUntilNextCodedDataRepetitionPeriod);
-        
+
     }
     else
     {
@@ -2232,40 +2229,40 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer( MME_DataBuff
 }
 
 ////////////////////////////////////////////////////////////////////////////
-/// 
+///
 /// Drop the references for any buffer in the coded data queue.
 ///
-ManifestorStatus_t Manifestor_AudioKsound_c::FlushCodedDataBuffer( MME_DataBuffer_t *CodedMmeDataBuffer )
+ManifestorStatus_t Manifestor_AudioKsound_c::FlushCodedDataBuffer(MME_DataBuffer_t *CodedMmeDataBuffer )
 {
-BufferStatus_t Status;
-Buffer_c *CodedFrameBuffer;
+    BufferStatus_t Status;
+    Buffer_c *CodedFrameBuffer;
 
     // release any references to the old buffers
     for( unsigned int i=0; i<CodedMmeDataBuffer->NumberOfScatterPages; i++ )
     {
         CodedFrameBuffer = ((Buffer_c **) CodedMmeDataBuffer->UserData_p)[i];
         ((unsigned int *) CodedMmeDataBuffer->UserData_p)[i] = INVALID_BUFFER_ID;
-        
+
         if (IsTranscoded)
             ReleaseTranscodedDataBuffer( CodedFrameBuffer );
-        
+
         Status = CodedFrameBuffer->DecrementReferenceCount( IdentifierManifestor );
         if( BufferNoError != Status  )
         {
             MANIFESTOR_ERROR( "Cannot decrement coded data buffer reference count (%d)\n", Status );
             return ManifestorError;
         }
-        
+
         MANIFESTOR_DEBUG( "Flushed buffer %p from the queue\n", CodedFrameBuffer );                                         
     }
-    
+
     CodedMmeDataBuffer->NumberOfScatterPages = 0;
     CodedMmeDataBuffer->TotalSize = 0;
-    
+
     // the queue to longer has a type
     CurrentCodedDataEncoding = PcmPlayer_c::OUTPUT_IEC60958;
     CurrentCodedDataRepetitionPeriod = 1;
-    
+
     return ManifestorNullQueued;
 }
 
@@ -2298,3 +2295,4 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ReleaseTranscodedDataBuffer( Buffer
     
     return ManifestorNoError;
 }
+

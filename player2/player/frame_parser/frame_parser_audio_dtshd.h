@@ -68,9 +68,8 @@ private:
     unsigned char DecodeExtensionId;   ///< if DecodeLowestExtensionId is false, decode the extension id indicated by this field
     unsigned char SelectedAudioPresentation;   ///< if DecodeLowestExtensionId is false, decode the extension id indicated by this field
 
-    
-
     // Functions
+
 public:
 
     //

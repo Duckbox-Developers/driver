@@ -34,11 +34,9 @@ Date        Modification                                    Name
 //
 //      Include any component headers
 
+#include "osdev_device.h"
 #include "codec_mme_video_mjpeg.h"
 #include "mjpeg.h"
-#ifdef __KERNEL__
-extern "C"{void flush_cache_all();};
-#endif
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -471,7 +469,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::SendMMEDecodeCommand(  void )
     //
 
 #ifdef __KERNEL__
-    flush_cache_all();
+    OS_FlushCacheAll();
 #endif
 
     DecodeContextBuffer                 = NULL;
@@ -482,7 +480,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::SendMMEDecodeCommand(  void )
     MMEStatus                           = MME_SendCommand( MMEHandle, &DecodeContext->MMECommand );
     if (MMEStatus != MME_SUCCESS)
     {
-        CODEC_ERROR ("(%s) - Unable to send decode command (%08x).\n", Configuration.CodecName, MMEStatus);
+        CODEC_ERROR ("(%s) Unable to send decode command (%08x).\n", Configuration.CodecName, MMEStatus);
         return CodecError;
     }
 
@@ -491,7 +489,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::SendMMEDecodeCommand(  void )
     MMEStatus                           = MME_SendCommand (MMEHandle, &DecodeContext->MMECommand);
     if (MMEStatus != MME_SUCCESS)
     {
-        CODEC_ERROR ("(%s) - Unable to send decode command (%08x).\n", Configuration.CodecName, MMEStatus);
+        CODEC_ERROR ("(%s) Unable to send decode command (%08x).\n", Configuration.CodecName, MMEStatus);
         return CodecError;
     }
 

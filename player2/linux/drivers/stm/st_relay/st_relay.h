@@ -23,7 +23,7 @@ enum relay_source_ids
 
 	ST_RELAY_SOURCE_AUDIO_COLLATOR,
 	ST_RELAY_SOURCE_VIDEO_COLLATOR,
-	
+
 	ST_RELAY_SOURCE_AUDIO_FRAME_PARSER,
 	ST_RELAY_SOURCE_VIDEO_FRAME_PARSER,
 
@@ -43,7 +43,7 @@ enum relay_type_ids
 
 	ST_RELAY_TYPE_CODED_AUDIO_BUFFER,
 	ST_RELAY_TYPE_CODED_VIDEO_BUFFER,
-	
+
 	ST_RELAY_TYPE_PES_AUDIO_BUFFER,
 	ST_RELAY_TYPE_PES_VIDEO_BUFFER,
 
@@ -55,7 +55,7 @@ enum relay_type_ids
 	ST_RELAY_TYPE_DATA_TO_PCM5,
 	ST_RELAY_TYPE_DATA_TO_PCM6,
 	ST_RELAY_TYPE_DATA_TO_PCM7,
-        
+
 	ST_RELAY_TYPE_MME_LOG,
 
 	ST_RELAY_TYPE_CRC,
@@ -84,7 +84,7 @@ struct relay_entry_s {
 	unsigned int count;
 	unsigned int len;
 //below here for internal use only
-	unsigned int active;	//controlled via debugfs 
+	unsigned int active;	//controlled via debugfs
 	struct dentry *dentry;
 };
 typedef struct relay_entry_s relay_entry_t;

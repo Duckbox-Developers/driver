@@ -123,7 +123,7 @@ public:
 
 // ---------------------------------------------------------------------
 //
-// Docuentation
+// Documentation
 //
 
 /*! \class FrameParser_c

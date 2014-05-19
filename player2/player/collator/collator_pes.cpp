@@ -267,8 +267,11 @@ CollatorStatus_t   Collator_Pes_c::FindNextStartCode(
 unsigned int    i;
 unsigned char   IgnoreLower;
 unsigned char   IgnoreUpper;
+#if 0 // WYPLAY_OPTIMIZE
 unsigned char  *StartCode;
 int             DataLeft;
+#endif
+
     //
     // If less than 4 bytes we do not bother
     //
@@ -283,7 +286,7 @@ int             DataLeft;
     IgnoreLower                 = Configuration.IgnoreCodesRangeStart;
     IgnoreUpper                 = Configuration.IgnoreCodesRangeEnd;
 
-#if WYPLAY_OPTIMIZE
+#if 0 // WYPLAY_OPTIMIZE
     StartCode = &RemainingData[0];
     DataLeft  = RemainingLength;
 
@@ -367,6 +370,7 @@ int             DataLeft;
 	}
     }
 #endif
+
     //
     // No matches
     //
@@ -394,7 +398,7 @@ int             DataLeft;
                                 }
 
 #define MarkerBit( v ) 		MarkerBits( 1, v )
-				
+
 
 CollatorStatus_t   Collator_Pes_c::ReadPesHeader(               void )
 {
@@ -480,6 +484,7 @@ unsigned int    Flags;
 	    MarkerBit( 1 );
 	    PlaybackTimeValid    = true;
 #if 0
+if( !Configuration.GenerateStartCodeList )
 {
 unsigned long long Now;
 unsigned int MilliSeconds;
@@ -505,12 +510,12 @@ long long       T1;
     M1                  = PlaybackTime < LastPts;
     T1                  = M0 ? (LastPts - PlaybackTime) : (PlaybackTime - LastPts);
 
-report( severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld - %c%lld\n", 
+report( severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld - %c%lld\n",
 	Configuration.GenerateStartCodeList,
 	(MilliSeconds / 3600000),
-	((MilliSeconds / 60000) % 60), 
-	((MilliSeconds / 1000) % 60), 
-	(MilliSeconds % 1000), 
+	((MilliSeconds / 60000) % 60),
+	((MilliSeconds / 1000) % 60),
+	(MilliSeconds % 1000),
 	PlaybackTime,
 	(M0 ? '-' : ' '),
 	((T0 * 300) / 27),
@@ -527,11 +532,11 @@ report( severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld 
 	    // Read the DTS
 	    //
 
-#if __TDT__
+#if 0
+	    MarkerBits( 4, 1 );
+#else
 	    // the TV.Berlin station (at least) transmits this field incorrectly so I have removed the check the 4 bit value
 	    Bits.FlushUnseen( 4 );
-#else
-	    MarkerBits( 4, 1 );
 #endif
 	    DecodeTime           = (unsigned long long)(Bits.Get( 3 )) << 30;
 	    MarkerBit( 1 );
@@ -663,7 +668,7 @@ report( severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld 
 //        report(severity_error,"Playbacktime = %lld\n",PlaybackTime);
 
     //
-    // We either save it to be loaded at the next buffer, or if we 
+    // We either save it to be loaded at the next buffer, or if we
     // have not started picture aquisition we use it immediately.
     //
 

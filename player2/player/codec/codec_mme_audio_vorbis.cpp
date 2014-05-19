@@ -44,10 +44,6 @@ Date            Modification            Name
 #include "codec_mme_audio_vorbis.h"
 #include "vorbis_audio.h"
 
-#ifdef __KERNEL__
-extern "C"{void flush_cache_all();};
-#endif
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -100,7 +96,7 @@ Codec_MmeAudioVorbis_c::Codec_MmeAudioVorbis_c( void )
 //{{{  Destructor
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor function, ensures a full halt and reset 
+///     Destructor function, ensures a full halt and reset
 ///     are executed for all levels of the class.
 ///
 Codec_MmeAudioVorbis_c::~Codec_MmeAudioVorbis_c( void )

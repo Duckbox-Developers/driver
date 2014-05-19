@@ -272,7 +272,7 @@ CodecStatus_t   Codec_MmeAudio_c::SetModuleParameters(
 	    ForceStreamParameterReload      = true;
 	}
 	return CodecNoError;
-    }	    
+    }
 
     return Codec_MmeBase_c::SetModuleParameters( ParameterBlockSize, ParameterBlock );
 }
@@ -370,8 +370,6 @@ CodecStatus_t   Status;
     Status      = Codec_MmeBase_c::RegisterOutputBufferRing( Ring );
     if( Status != CodecNoError )
 	return Status;
-
-
 
 //
 
@@ -565,7 +563,7 @@ void Codec_MmeAudio_c::FinishedDecode( void )
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The intercept to the initailize data types function, that
+///     The intercept to the initialize data types function, that
 ///     ensures the audio specific type is recorded in the configuration
 ///     record.
 ///
@@ -653,10 +651,9 @@ CodecStatus_t Codec_MmeAudio_c::FillOutTransformerGlobalParameters( MME_LxAudioD
     MME_LxDecConfig_t &Config = *((MME_LxDecConfig_t *) GlobalParams.DecConfig);
     unsigned char *PcmParams_p = ((unsigned char *) &Config) + Config.StructSize;
 
-//
+    //
 
-    MME_LxPcmProcessingGlobalParams_Subset_t &PcmParams =
-	*((MME_LxPcmProcessingGlobalParams_Subset_t *) PcmParams_p);
+    MME_LxPcmProcessingGlobalParams_Subset_t &PcmParams = *((MME_LxPcmProcessingGlobalParams_Subset_t *) PcmParams_p);
     PcmParams.StructSize = sizeof(PcmParams);
     PcmParams.DigSplit   = ACC_SPLIT_AUTO;
     PcmParams.AuxSplit   = ACC_SPLIT_AUTO;
@@ -705,7 +702,7 @@ CodecStatus_t Codec_MmeAudio_c::FillOutTransformerGlobalParameters( MME_LxAudioD
 /// Populate the AUDIO_DECODER's initialization parameters for audio.
 ///
 /// Zero the entire initialization structure and populate those portions that
-/// are generic for all AUDIO_DECODER instanciations.
+/// are generic for all AUDIO_DECODER instantiations.
 ///
 /// WARNING: This method does not do what you think it does.
 ///
@@ -715,7 +712,7 @@ CodecStatus_t Codec_MmeAudio_c::FillOutTransformerGlobalParameters( MME_LxAudioD
 /// initialization parameters are variable size so from this method we don't
 /// know what byte offset to use.
 ///
-/// The upshot of all this is that this method \b must be overriden in
+/// The upshot of all this is that this method \b must be overridden in
 /// our sub-classes.
 ///
 CodecStatus_t Codec_MmeAudio_c::FillOutTransformerInitializationParameters()
@@ -731,17 +728,17 @@ MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
     Params.StructSize = sizeof(MME_LxAudioDecoderInitParams_t);
     Params.CacheFlush = ACC_MME_ENABLED;
 
-    // Detect changes between BL025 and BL028 (delete this code when BL025 is accient history)
+    // Detect changes between BL025 and BL028 (delete this code when BL025 is ancient history)
     #if DRV_MULTICOM_AUDIO_DECODER_VERSION >= 0x090128
     Params.BlockWise.u32 = 0;
     #else
 	Params.BlockWise = ACC_MME_FALSE;
     #endif
 
-    // upsampling must be enabled seperately for each codec since it requires frame analyser support
+    // upsampling must be enabled separately for each codec since it requires frame analyser support
     Params.SfreqRange = ACC_FSRANGE_UNDEFINED;
 
-    // run the audio decoder with a fixed number of main (surround) channels and no auxillary output at all
+    // run the audio decoder with a fixed number of main (surround) channels and no auxiliary output at all
     Params.NChans[ACC_MIX_MAIN] = AudioOutputSurface->ChannelCount;
     Params.NChans[ACC_MIX_AUX]  = 0;
     Params.ChanPos[ACC_MIX_MAIN] = 0;

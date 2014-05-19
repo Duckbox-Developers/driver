@@ -459,7 +459,7 @@ PlayerEventRecord_t       Event;
     }
 
     //
-    // Create the tasks that pass data bewteen components, 
+    // Create the tasks that pass data between components,
     // and provide them with a context in which to operate.
     // NOTE Since we are unsure about the startup, we use a 
     // simple delay to shut down the threads if startup is not 
@@ -1175,7 +1175,7 @@ unsigned int   Player_Generic_c::CheckStreamDrained(PlayerStream_t Stream,
 OS_Status_t	OSStatus;
 unsigned int	IndividualWaitTime = 10;
 
-    OSStatus					= OS_WaitForEvent( &Stream->Drained, IndividualWaitTime );
+    OSStatus = OS_WaitForEvent( &Stream->Drained, IndividualWaitTime );
     return (OSStatus == OS_NO_ERROR) ? PlayerNoError : PlayerTimedOut;
 }
 

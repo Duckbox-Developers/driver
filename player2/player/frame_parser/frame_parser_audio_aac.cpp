@@ -168,7 +168,7 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader( unsigned char *Fra
 
         if (FrameParserNoError != FrameParser_AudioAac_c::ParseAudioMuxElementConfig( &Bits, 
                                                                                       &SamplingFrequency, 
-                                                                                      &SampleCount, 
+                                                                                      &SampleCount,
                                                                                       AvailableBytes - AAC_LOAS_ASS_SYNC_LENGTH_HEADER_SIZE,
                                                                                       Action ))
         {
@@ -214,8 +214,8 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader( unsigned char *Fra
                 return FrameParserError;
             }
 
-            // multiple the sampling freq by two in case a sbr object is present
-            SamplingFrequency   = aac_sample_rates[sampling_frequency_index] * 2;
+            // multiply the sampling freq by two in case a sbr object is present
+            SamplingFrequency = aac_sample_rates[sampling_frequency_index] * 2;
 
             Bits.FlushUnseen(1); //private_bit
 
@@ -240,7 +240,7 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader( unsigned char *Fra
             Bits.FlushUnseen(11); //adts_buffer_fullness
 
             unsigned int no_raw_data_blocks_in_frame = Bits.Get(2);
-            
+
             // multiple the sample count by two in case a sbr object is present
             SampleCount         = (no_raw_data_blocks_in_frame + 1) * 1024 * 2 ;
         }
@@ -619,7 +619,7 @@ FrameParserStatus_t Status;
     ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec
-    
+
     return FrameParserNoError;
 }
 
@@ -719,7 +719,7 @@ FrameParserStatus_t Status;
     //
     // Use the super-class utilities to complete our housekeeping chores
     //
-    
+
     // no call to HandleUpdateStreamParameters() because UpdateStreamParameters is always false
     FRAME_ASSERT( false == UpdateStreamParameters && NULL == StreamParametersBuffer );
 

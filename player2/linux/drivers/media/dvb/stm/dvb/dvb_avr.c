@@ -36,6 +36,7 @@ license from ST.
 #include <asm/irq.h>
 
 #include <linux/autoconf.h>
+#include <linux/device.h>
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -74,7 +75,7 @@ license from ST.
  ******************************/
 
 #define DVP_ID 0
-#define AVR_DEFAULT_TARGET_LATENCY  		110   // milliseconds
+#define AVR_DEFAULT_TARGET_LATENCY        110   // milliseconds
 
 /*
  * ALSA mixer controls
@@ -86,7 +87,7 @@ license from ST.
 #define STM_CTRL_AUDIO_SPDIF_LATENCY      STM_CTRL_AUDIO_HDMI_LATENCY + 1
 #define STM_CTRL_AUDIO_ANALOG_LATENCY     STM_CTRL_AUDIO_SPDIF_LATENCY + 1
 
-#define AncillaryAssert( v, s )		if( !(v) ) { printk( "Assert fail - %s\n", s ); return -EINVAL; }
+#define AncillaryAssert( v, s )         if( !(v) ) { printk( "Assert fail - %s\n", s ); return -EINVAL; }
 
 #define FAIL_IF_NULL(x) do { if (!(x)) return -EINVAL; } while(0)
 
@@ -115,11 +116,11 @@ struct stvin_description {
 
 //< Describes the video input surfaces to user
 static struct stvin_description g_vinDevice[] = {
-  { "NULL", 0, 0 },		//<! "NULL", NO video input taken from the DVP
-  { "D1-DVP0", 0, 0 }		//<! "D1-DVP0", video input taken from the DVP
-//  { "VIDEO0",  0, 0 },	//<! "VIDEO0", decoded video produced by the primary video pipeline (/dev/dvb/adapter0/video0)
-//  { "VIDEO1",  0, 0 },	//<! "VIDEO1", decoded video produced by the secondary video pipeline (/dev/dvb/adapter0/video1)
-//  { "VIDEO2",  0, 0 }		//<! "VIDEO2", decoded video produced by the BD-J MPEG drip pipeline (/dev/dvb/adapter0/video2)
+  { "NULL", 0, 0 },             //<! "NULL", NO video input taken from the DVP
+  { "D1-DVP0", 0, 0 }           //<! "D1-DVP0", video input taken from the DVP
+//  { "VIDEO0",  0, 0 },        //<! "VIDEO0", decoded video produced by the primary video pipeline (/dev/dvb/adapter0/video0)
+//  { "VIDEO1",  0, 0 },        //<! "VIDEO1", decoded video produced by the secondary video pipeline (/dev/dvb/adapter0/video1)
+//  { "VIDEO2",  0, 0 }         //<! "VIDEO2", decoded video produced by the BD-J MPEG drip pipeline (/dev/dvb/adapter0/video2)
 };
 
 /*  
@@ -134,11 +135,11 @@ struct stain_description {
 
 //< Describes the audio input surfaces to user
 static struct stain_description g_ainDevice[] = {
-  { "NULL", 0, 0 },		//<! "NULL", NO audio input taken from the DVP
-  { "I2S0", 0, 0 },		//<! "I2S0", audio input taken from the PCM reader
-  { "I2S1", 0, 0 }		//<! "I2S1"
-//  { "AUDIO0",  0, 0 },	//<! "AUDIO0", decoded audio produced by the primary audio pipeline (/dev/dvb/adapter0/audio0)
-//  { "AUDIO1",  0, 0 }		//<! "AUDIO0", decoded audio produced by the primary audio pipeline (/dev/dvb/adapter0/audio0)
+  { "NULL", 0, 0 },             //<! "NULL", NO audio input taken from the DVP
+  { "I2S0", 0, 0 },             //<! "I2S0", audio input taken from the PCM reader
+  { "I2S1", 0, 0 }              //<! "I2S1"
+//  { "AUDIO0",  0, 0 },        //<! "AUDIO0", decoded audio produced by the primary audio pipeline (/dev/dvb/adapter0/audio0)
+//  { "AUDIO1",  0, 0 }         //<! "AUDIO0", decoded audio produced by the primary audio pipeline (/dev/dvb/adapter0/audio0)
 };
 
 
@@ -184,7 +185,7 @@ int avr_set_external_time_mapping (avr_v4l2_shared_handle_t *shared_context, str
 	// starting (or switching the mode of) a capture.
 	//
 
-	systemtime		+= (shared_context->target_latency * 1000);
+	systemtime += (shared_context->target_latency * 1000);
 
 	//
 
@@ -248,8 +249,8 @@ static void avr_update_mixer_settings (void *ctx, const struct snd_pseudo_mixer_
 	if (old_offset != shared_context->audio_video_latency_offset)
 		shared_context->update_player2_time_mapping = true;
 
-        // store the changes only if the mixer settings are different
-        if (memcmp(&shared_context->mixer_settings, mixer_settings, sizeof(shared_context->mixer_settings))) {
+	// store the changes only if the mixer settings are different
+	if (memcmp(&shared_context->mixer_settings, mixer_settings, sizeof(shared_context->mixer_settings))) {
 		// store new mixer settings
 		down_write(&shared_context->mixer_settings_semaphore);
 		memcpy((void*)&shared_context->mixer_settings,
@@ -258,7 +259,7 @@ static void avr_update_mixer_settings (void *ctx, const struct snd_pseudo_mixer_
 
 		// notify the audio system so it can reconfigure the PCM chains
 		AvrAudioMixerSettingsChanged(shared_context->audio_context);
-        }
+	}
 }
 
 /*
@@ -383,8 +384,8 @@ static int avr_ioctl_overlay_stop(avr_v4l2_shared_handle_t *shared_context,
 
 	ret = DvbPlaybackDelete(shared_context->avr_device_context.Playback);
 	if (ret < 0) {
-            DVB_ERROR("PlaybackDelete failed\n");
-            return -EINVAL;
+        DVB_ERROR("PlaybackDelete failed\n");
+        return -EINVAL;
 	}
 
 	shared_context->avr_device_context.Playback = NULL;
@@ -1310,7 +1311,7 @@ static int avr_probe(struct device *dev)
 	if (res < 0)
 		DVB_ERROR("Cannot register mixer observer (%d), using default latency value\n", res);
 		// no further recovery possible
-	
+
 	// get persistant access to the downmix firmware (if present)
 	shared_context->downmix_firmware = snd_pseudo_get_downmix_rom(0);
 	if (IS_ERR_VALUE(shared_context->downmix_firmware)) {

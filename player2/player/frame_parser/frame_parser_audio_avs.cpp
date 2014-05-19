@@ -402,7 +402,6 @@ unsigned int ExtensionLength;
     ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
     ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
     ParsedAudioParameters->Organisation = 0; // filled in by codec
-    
     return FrameParserNoError;
 }
 

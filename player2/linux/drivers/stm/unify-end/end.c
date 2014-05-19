@@ -30,7 +30,6 @@ Date        Modification                                    Name
 
 #include <linux/io.h>
 #include <linux/init.h>
-#include <linux/autoconf.h>
 
 static __init int stm_init(void)
 {
@@ -41,12 +40,5 @@ static __exit void stm_exit(void)
 {
 
 }
-
-#ifdef __TDT__
-// __attribute_used__ was declared deprecated
-initcall_t  __initcall_stm_end6 __attribute__((__section__(".initcall6.init"))) = stm_init;
-exitcall_t  __exitcall_stm_end __attribute__((__section__(".exitcall.exit"))) = stm_exit;
-#else
-initcall_t  __initcall_stm_end6 __attribute_used__ __attribute__((__section__(".initcall6.init"))) = stm_init;
-exitcall_t  __exitcall_stm_end __attribute_used__ __attribute__((__section__(".exitcall.exit"))) = stm_exit;
-#endif
+initcall_t  __initcall_stm_end6 __used __attribute__((__section__(".initcall6.init"))) = stm_init;
+exitcall_t  __exitcall_stm_end __used __attribute__((__section__(".exitcall.exit"))) = stm_exit;

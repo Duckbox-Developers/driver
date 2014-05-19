@@ -63,12 +63,6 @@ Date        Modification                                    Name
 #include "wma_audio.h"
 #include "ksound.h"
 
-//! AWTODO
-#ifdef __KERNEL__
-extern "C"{void flush_cache_all();};
-#endif
-//!
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -90,14 +84,8 @@ typedef struct WmaAudioCodecStreamParameterContext_s
     MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } WmaAudioCodecStreamParameterContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT         "WmaAudioCodecStreamParameterContext"
-#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE    {BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(WmaAudioCodecStreamParameterContext_t)}
-#else
 #define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT         "WmaAudioCodecStreamParameterContext"
 #define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE    {BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecStreamParameterContext_t)}
-#endif
 
 static BufferDataDescriptor_t            WmaAudioCodecStreamParameterContextDescriptor = BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
@@ -111,14 +99,8 @@ typedef struct WmaAudioCodecDecodeContext_s
     MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } WmaAudioCodecDecodeContext_t;
 
-//#if __KERNEL__
-#if 0
-#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT   "WmaAudioCodecDecodeContext"
-#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE      {BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(WmaAudioCodecDecodeContext_t)}
-#else
 #define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT   "WmaAudioCodecDecodeContext"
 #define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE      {BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecDecodeContext_t)}
-#endif
 
 static BufferDataDescriptor_t           WmaAudioCodecDecodeContextDescriptor    = BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 

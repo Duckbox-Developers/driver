@@ -170,7 +170,6 @@ Ring_t                    DestinationRing;
 		    Words[3]		= va_arg( List, unsigned int );
 		}
 		va_end( List );
-
 		break;
 
 //

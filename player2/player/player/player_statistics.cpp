@@ -158,7 +158,3 @@ unsigned int	CodedBufferCount,CodedBuffersUsed,DecodeBufferCount,DecodeBuffersUs
 	Stream->Statistics.Count	= 0;
     }
 }
-
-
-
-

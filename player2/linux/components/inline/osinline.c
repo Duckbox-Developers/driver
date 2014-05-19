@@ -80,6 +80,11 @@ void OS_InvalidateCacheRange( void* CPUAddress, unsigned int size )
 
 // --------
 
+void OS_FlushCacheAll( void )
+{
+    OSDEV_FlushCacheAll();
+}
+
 void OS_FlushCacheRange( void* CPUAddress, unsigned int size )
 {
     OSDEV_FlushCacheRange(CPUAddress,size);
@@ -271,7 +276,7 @@ OSDEV_Status_t      Status;
 
 //
 
-    for( FreeEntry=0; FreeEntry<(OS_MAX_TASKS-1); FreeEntry++ )
+    for( FreeEntry = 0; FreeEntry < (OS_MAX_TASKS-1); FreeEntry++ )
 	if( OS_TaskNameTable[FreeEntry].Name[0] == '\0' )
 	    break;
 

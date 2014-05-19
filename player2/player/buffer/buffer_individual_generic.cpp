@@ -52,7 +52,7 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Contructor function - Initialize our data
+//      Constructor function - Initialize our data
 //
 
 Buffer_Generic_c::Buffer_Generic_c( 	BufferManager_Generic_t	  Manager,
@@ -120,7 +120,7 @@ Buffer_Generic_c::~Buffer_Generic_c( void )
 	BufferBlock = NULL;
     }
     else
-	report(severity_error,"Maybe not such a bug!\n");	
+	report(severity_error,"Maybe not such a bug!\n");
     OS_TerminateMutex( &Lock );
 }
 
@@ -216,7 +216,7 @@ BlockDescriptor_t	 Block;
 //	Detach meta data
 //
 
-BufferStatus_t   Buffer_Generic_c::DetachMetaData(	
+BufferStatus_t   Buffer_Generic_c::DetachMetaData(
 						MetaDataType_t	  Type )
 {
 BlockDescriptor_t	*LocationOfBlockPointer;
@@ -229,7 +229,7 @@ BlockDescriptor_t	 Block;
     AssertNonZeroReferenceCount( "Buffer_Generic_c::DetachMetaData" );
 
     OS_LockMutex( &Lock );
-    
+
     for( LocationOfBlockPointer	  = &ListOfMetaData;
 	 *LocationOfBlockPointer != NULL;
 	 LocationOfBlockPointer	  = &((*LocationOfBlockPointer)->Next) )
@@ -266,7 +266,7 @@ BlockDescriptor_t	 Block;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Obtain a meta data reference 
+//	Obtain a meta data reference
 //
 
 BufferStatus_t	 Buffer_Generic_c::ObtainMetaDataReference(
@@ -276,13 +276,13 @@ BufferStatus_t	 Buffer_Generic_c::ObtainMetaDataReference(
 BlockDescriptor_t	 Block;
 
     //
-    // Find the descriptor block 
+    // Find the descriptor block
     //
-    
+
     AssertNonZeroReferenceCount( "Buffer_Generic_c::ObtainMetaDataReference " );
 
     OS_LockMutex( &Lock );
-    
+
     for( Block  = ListOfMetaData;
 	 Block != NULL;
 	 Block  = Block->Next )
@@ -377,7 +377,7 @@ BufferStatus_t	 Buffer_Generic_c::ExtendBuffer(unsigned int	 *NewSize,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Partition a buffer into sepearate buffers
+//	Partition a buffer into separate buffers
 //
 
 BufferStatus_t   Buffer_Generic_c::PartitionBuffer(
@@ -467,7 +467,7 @@ void			 *MemoryBlock;
     DataSize				= LeaveInFirstPartitionSize;
 
     //
-    // Do we need to copy the metadata 
+    // Do we need to copy the metadata
     //
 
     if( DuplicateMetaData )
@@ -552,7 +552,7 @@ BufferStatus_t   Buffer_Generic_c::RegisterDataReference(
 
     if( BufferBlock->Descriptor->AllocationSource != NoAllocation )
     {
-	report( severity_error, "Buffer_Generic_c::RegisterDataReference - Attempt to register a data reference pointer on an allocated buffer.\n" ); 
+	report( severity_error, "Buffer_Generic_c::RegisterDataReference - Attempt to register a data reference pointer on an allocated buffer.\n" );
 	return BufferOperationNotSupportedByThisDescriptor;
     }
 
@@ -572,10 +572,10 @@ BufferStatus_t   Buffer_Generic_c::RegisterDataReference(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
-BufferStatus_t   Buffer_Generic_c::ObtainDataReference(	
+BufferStatus_t   Buffer_Generic_c::ObtainDataReference(
 						unsigned int	 *BlockSize,
 						unsigned int	 *UsedDataSize,
 						void		**Pointer,
@@ -592,8 +592,8 @@ BufferStatus_t   Buffer_Generic_c::ObtainDataReference(
     {
         // This is not an exceptional behaviour (we call this from the audio compressed data bypass code
         // to discover if the buffer *has* compressed data attached in the first place). Since we do this
-        // every frame we could really do not to report each occassion this happens.
-	//report( severity_error, "Buffer_Generic_c::ObtainDataReference - Attempt to obtain a data reference pointer on a buffer with no data.\n" ); 
+        // every frame we could really do not to report each occasion this happens.
+	//report( severity_error, "Buffer_Generic_c::ObtainDataReference - Attempt to obtain a data reference pointer on a buffer with no data.\n" );
 	return BufferNoDataAttached;
     }
 
@@ -623,7 +623,7 @@ BufferStatus_t   Buffer_Generic_c::ObtainDataReference(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::TransferOwnership(
@@ -653,14 +653,13 @@ unsigned int	  i;
     }
 
 //
-
     return BufferNoError;
 }
 
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::IncrementReferenceCount( unsigned int  NewOwnerIdentifier )
@@ -699,7 +698,7 @@ unsigned int	  i;
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Decrement a reference count, and release the buffer if we get to zero.
-//	We take a copy (during the locked period) of the reference to ensure 
+//	We take a copy (during the locked period) of the reference to ensure
 //	that if two processes are decrementing the count, only one will do the
 //	actual release (without having to extend the period of locking).
 //
@@ -802,7 +801,7 @@ unsigned int	i;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Obtain a meta data reference 
+//	Obtain a meta data reference
 //
 
 BufferStatus_t	 Buffer_Generic_c::ObtainAttachedBufferReference(
@@ -848,7 +847,7 @@ BufferStatus_t   Buffer_Generic_c::GetType(	BufferType_t	 *Type )
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	Discover the type of buffer supported nby the pool
+//	Discover the type of buffer supported by the pool
 //
 
 BufferStatus_t   Buffer_Generic_c::GetIndex(	unsigned int	 *Index )
@@ -862,7 +861,7 @@ BufferStatus_t   Buffer_Generic_c::GetIndex(	unsigned int	 *Index )
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::GetMetaDataCount( 	unsigned int	 *Count )
@@ -883,7 +882,7 @@ BlockDescriptor_t	  Block;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::GetMetaDataList(	unsigned int	  ArraySize,
@@ -917,7 +916,7 @@ BlockDescriptor_t	  Block;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::GetOwnerCount( 	unsigned int	 *Count )
@@ -931,7 +930,7 @@ BufferStatus_t   Buffer_Generic_c::GetOwnerCount( 	unsigned int	 *Count )
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t   Buffer_Generic_c::GetOwnerList(	unsigned int	  ArraySize,
@@ -969,7 +968,7 @@ unsigned int		  i,j;
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 BufferStatus_t		 Buffer_Generic_c::FlushCache( void )
@@ -992,7 +991,7 @@ BufferStatus_t		 Buffer_Generic_c::PurgeCache( void )
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//	
+//
 //
 
 void		 Buffer_Generic_c::Dump( unsigned int	  Flags )
@@ -1106,8 +1105,5 @@ void Buffer_Generic_c::DumpToRelayFS( unsigned int id, unsigned int source, void
 	default:
 		break;
 	}
-
 }
-
-
 

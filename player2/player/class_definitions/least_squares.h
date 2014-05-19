@@ -181,7 +181,7 @@ public:
 	    if( TopShift > BottomShift )
 		BottomLong	/= (1<<(TopShift - BottomShift));
 	    else
-		TopLong		/= (1<<(BottomShift - TopShift));
+		TopLong	/= (1<<(BottomShift - TopShift));
 	}
 
 	return Rational_t( TopLong, BottomLong );

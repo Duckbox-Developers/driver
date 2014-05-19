@@ -28,7 +28,7 @@ Definition of the collator class module for player 2.
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
-31-Jul-09   Added GuaranteedNonBlockingWriteSpace() 
+31-Jul-09   Added GuaranteedNonBlockingWriteSpace()
 	    supported in reversing collator.		    Nick
 ************************************************************************/
 
@@ -47,7 +47,7 @@ enum
     CollatorNoError				= PlayerNoError,
     CollatorError				= PlayerError,
 
-    CollatorWouldBlock				= BASE_COLLATOR,				
+    CollatorWouldBlock				= BASE_COLLATOR,
     CollatorBufferOverflow,
     CollatorBufferUnderflow, ///< Primarily for internal use
     CollatorUnwindStack, ///< Reported to cause execution to unwind (to avoid recursion)
@@ -87,13 +87,13 @@ public:
 
 // ---------------------------------------------------------------------
 //
-// Docuentation
+// Documentation
 //
 
 /*! \class Collator_c
 \brief Responsible for taking demultiplexed input data and creating frames suitable for parsing/decoding.
 
-The collator class is responsible for taking as input blocks of demultiplexed data and creating frames of output suitable for parsing/decoding. This is a list of its entrypoints, and a partial list of the calls it makes, and the data structures it accesses, these are in addition to the standard component class entrypoints, and the complete list of support entrypoints in the Player class. 
+The collator class is responsible for taking as input blocks of demultiplexed data and creating frames of output suitable for parsing/decoding. This is a list of its entrypoints, and a partial list of the calls it makes, and the data structures it accesses, these are in addition to the standard component class entrypoints, and the complete list of support entrypoints in the Player class.
 
 The partial list of entrypoints used by this class:
 
@@ -110,9 +110,9 @@ The partial list of meta data types used by this class:
 */
 
 /*! \fn CollatorStatus_t Collator_c::RegisterOutputBufferRing(Ring_t Ring)
-\brief Register the ring on which collacted frames are to be placed.
+\brief Register the ring on which collated frames are to be placed.
 
-This function is used to register the ring on which collated frame buffers are to be placed. 
+This function is used to register the ring on which collated frame buffers are to be placed.
 
 \param Ring A pointer to a Ring class instance.
 
@@ -122,7 +122,7 @@ This function is used to register the ring on which collated frame buffers are t
 /*! \fn CollatorStatus_t Collator_c::InputJump(bool SurplusDataInjected, bool ContinuousReverseJump)
 \brief Demark discontinuous input data.
 
-For more information on discontinous streams see <b>InputJump</b> on \ref input.
+For more information on discontinuous streams see <b>InputJump</b> on \ref input.
 
 \param SurplusDataInjected True if the jump should discard or flush data.
 \param ContinuousReverseJump True if a continuous reverse jump has occurred.
@@ -133,7 +133,7 @@ For more information on discontinous streams see <b>InputJump</b> on \ref input.
 /*! \fn CollatorStatus_t   Collator_c::InputGlitch(             void )
 \brief Demark a glitch in the input data.
 
-For more information on discontinous streams see <b>InputGlitch</b> on \ref input.
+For more information on discontinuous streams see <b>InputGlitch</b> on \ref input.
 
 \return Collator status code, CollatorNoError indicates success.
 */
@@ -156,9 +156,9 @@ For more information on discontinous streams see <b>InputGlitch</b> on \ref inpu
 \brief Assert that the current input data is a complete frame.
 
 This function indicates that the current input data is a complete
-frame. It is used in those data streams were a frame is usually 
+frame. It is used in those data streams were a frame is usually
 detected as being complete when the start of the next frame is
-detected, to signal that the accumulated data should be tranferred to 
+detected, to signal that the accumulated data should be transferred to
 the output ring.
 
 \return Collator status code, CollatorNoError indicates success.
@@ -177,7 +177,7 @@ This function indicates that the current input data that has been accumulated, b
 
 This function indicates how much data can be written with a guarantee that the writes will not block.
 
-\return Collator status code, CollatorNoError indicates success, PlayerNotImplemented will be 
+\return Collator status code, CollatorNoError indicates success, PlayerNotImplemented will be
 returned for the non-reversing collator which does not include support for this facility.
 */
 #endif

@@ -227,7 +227,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialFrameHeader( void )
   COLLATOR_DEBUG(">><<\n");
   
   //
-  
+
   BytesNeeded = FrameHeaderLength - GotPartialFrameHeaderBytes;
   BytesToRead = min( RemainingElementaryLength, BytesNeeded );
 
@@ -558,7 +558,6 @@ CollatorStatus_t Collator_PesAudio_c::ReadFrame( void )
     }
   
   //
-  
   BytesToRead = min( FramePayloadRemaining, RemainingElementaryLength );
   
   if (CollatorState == ReadSubFrame)
@@ -951,7 +950,7 @@ unsigned char PesPrivateData[MAX_PES_PRIVATE_DATA_LENGTH];
 	      
 	      SeekingPesHeader = true;
 	      DiscardAccumulatedData();
-	      
+
 	      // we have contained the error by changing states...
 	      return CollatorNoError;
     	    }
@@ -1113,7 +1112,7 @@ CollatorStatus_t	Status;
     //
 
     Status = CollatorNoError;
-    while( Status == CollatorNoError &&  RemainingLength != 0 )
+    while( Status == CollatorNoError &&  RemainingLength != 0)
     {
     	//COLLATOR_DEBUG("De-PESing loop has %d bytes remaining\n", RemainingLength);
     	//report_dump_hex( severity_note, RemainingData, min(RemainingLength, 188), 32, 0);

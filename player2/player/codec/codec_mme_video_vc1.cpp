@@ -85,7 +85,7 @@ static BufferDataDescriptor_t                   Vc1CodecDecodeContextDescriptor 
 //{{{  Constructor
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Cosntructor function, fills in the codec specific parameter values
+//      Constructor function, fills in the codec specific parameter values
 //
 
 Codec_MmeVideoVc1_c::Codec_MmeVideoVc1_c( void )
@@ -183,7 +183,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::Reset( void )
 CodecStatus_t   Codec_MmeVideoVc1_c::HandleCapabilities( void )
 {
     CODEC_TRACE("MME Transformer '%s' capabilities are :-\n", VC9_MME_TRANSFORMER_NAME);
-    CODEC_TRACE("    Maximum field decoding latency %d\n", Vc1TransformCapability.MaximumFieldDecodingLatency90KHz);
+//    CODEC_TRACE("    Maximum field decoding latency %d\n", Vc1TransformCapability.MaximumFieldDecodingLatency90KHz);
 
     return CodecNoError;
 }
@@ -254,7 +254,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutTransformerInitializationParameters(
 {
 
     //
-    // Fillout the command parameters
+    // Fill out the command parameters
     //
 
     // Vc1InitializationParameters.InputBufferBegin     = 0x00000000;
@@ -263,7 +263,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutTransformerInitializationParameters(
     CODEC_TRACE("FillOutTransformerInitializationParameters\n");
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     MMEInitializationParameters.TransformerInitParamsSize       = sizeof(VC9_InitTransformerParam_fmw_t);
@@ -289,7 +289,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutSetStreamParametersCommand( void )
 {
     //report (severity_info, "Codec_MmeVideoVc1_c::FillOutSetStreamParametersCommand\n");
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     // memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -336,7 +336,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutDecodeCommand(       void )
     KnownLastSliceInFieldFrame                      = true;
 
     //
-    // Fillout the straight forward command parameters
+    // Fill out the straight forward command parameters
     //
 
     Param                                       = &Context->DecodeParameters;
@@ -585,7 +585,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutDecodeCommand(       void )
     //Param->BackwardPicOrderCount            = 0;                    // FIX for trick modes
 
     //
-    // Fillout the reference frame list stuff
+    // Fill out the reference frame list stuff
     //
 
     if (ParsedFrameParameters->NumberOfReferenceFrameLists != 0)
@@ -664,7 +664,7 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutDecodeCommand(       void )
     //}}}
 
     //
-    // Fillout the actual command
+    // Fill out the actual command
     //
 
     memset( &Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t) );
@@ -912,7 +912,6 @@ void Codec_MmeVideoVc1_c::GetBackwardIntensityCompensationData (unsigned int    
     Intensity->BackTop_2                = RefIntensityComp->Top2;
     Intensity->BackBot_1                = RefIntensityComp->Bottom1;
     Intensity->BackBot_2                = RefIntensityComp->Bottom2;
-
 }
 //}}}
 //{{{  CheckCodecReturnParameters

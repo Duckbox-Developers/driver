@@ -97,10 +97,9 @@ protected:
 	CodecStatus_t   FillOutDecodeCommand( void );
     
 	CodecStatus_t   ValidateDecodeContext( CodecBaseDecodeContext_t *Context );
-    
+
 	CodecStatus_t   DumpSetStreamParameters( void *Parameters );
 	CodecStatus_t   DumpDecodeParameters( void *Parameters );
-
 	CodecStatus_t   InitializeMMETransformer( void );
 };
 #endif
