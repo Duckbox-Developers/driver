@@ -205,9 +205,9 @@ CodecStatus_t Status;
 
 
     MME_LxDtsConfig_t &Config = *((MME_LxDtsConfig_t *) GlobalParams.DecConfig);
+    memset(&Config.Config, 0, sizeof(MME_LxDtsConfig_t));
     Config.DecoderId = ACC_DTS_ID;
     Config.StructSize = sizeof(MME_LxDtsConfig_t);
-    memset(&Config.Config, 0, sizeof(MME_LxDtsConfig_t));
     // set the common fields
     Config.Config[DTS_CRC_ENABLE] = ACC_MME_FALSE;
     Config.Config[DTS_LFE_ENABLE] = ACC_MME_TRUE;

@@ -701,11 +701,7 @@ static struct vm_operations_struct snd_card_pseudo_pcm_vm_ops_data =
 {
 	.open =         snd_pcm_mmap_data_open,
 	.close =        snd_pcm_mmap_data_close,
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 	.fault =        snd_card_pseudo_pcm_mmap_data_nopage,
-#else
-	.nopage =       snd_card_pseudo_pcm_mmap_data_nopage,
-#endif
 };
 
 /*

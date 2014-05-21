@@ -101,7 +101,6 @@ typedef enum
 class OutputTimer_c : public BaseComponentClass_c
 {
 public:
-
     virtual OutputTimerStatus_t   RegisterOutputCoordinator(	OutputCoordinator_t	  OutputCoordinator ) = 0;
 
     virtual OutputTimerStatus_t   ResetTimeMapping(		void ) = 0;

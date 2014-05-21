@@ -561,7 +561,6 @@ CodecStatus_t   Codec_MmeVideoH264_c::CheckReferenceFrameList(
 							ReferenceFrameList_t      ReferenceFrameList[] )
 {
 unsigned int            i, j, k;
-ReferenceFrameList_t    LocalReferenceFrameList[H264_NUM_REF_FRAME_LISTS];
 
     //
     // Check we can cope
@@ -860,7 +859,7 @@ H264SequenceParameterSetHeader_t        *SPS;
     Context->StreamParameters.H264SetGlobalParamSPS.frame_mbs_only_flag                = SPS->frame_mbs_only_flag;
     Context->StreamParameters.H264SetGlobalParamSPS.mb_adaptive_frame_field_flag       = SPS->mb_adaptive_frame_field_flag;
 
-    Context->StreamParameters.H264SetGlobalParamSPS.direct_8x8_inference_flag          = SPS->direct_8x8_inference_flag;
+    Context->StreamParameters.H264SetGlobalParamSPS.direct_8x8_inference_flag          = SPS->level_idc >= 30 ? true : SPS->direct_8x8_inference_flag;
 
     Context->StreamParameters.H264SetGlobalParamSPS.chroma_format_idc                  = SPS->chroma_format_idc;
 
@@ -950,6 +949,7 @@ unsigned int			  MaxAllocatableDecodeBuffers;
 	if( Status != CodecNoError )
 	{
 #ifdef __TDT__
+		report( severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Failed to obtain a reference frame slot.\n" );
 		/* This is necessary to avoid deadlocks caused by lack
 			of further reference frame slots. (There is a firmware
 			limitation of 16 reference frames.) It is unclear
@@ -961,7 +961,6 @@ unsigned int			  MaxAllocatableDecodeBuffers;
 			manifestor decode buffers) to speed up the resynchronization
 			but most of them lead to another deadlock.
 		*/
-		report( severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Failed to obtain a reference frame slot.\n" );
 		H264ReleaseReferenceFrame( CODEC_RELEASE_ALL);
 #else
 	    report( severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Failed to obtain a reference frame slot.\n" );

@@ -240,7 +240,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialFrameHeader( void )
       
       COLLATOR_DEBUG( "BytesNeeded %d; BytesToRead %d\n", BytesNeeded, BytesToRead );
       if( BytesNeeded == BytesToRead )
-    	{
+      {
 	  //
 	  // Woo hoo! We've got the whole header, examine it and change state
 	  //
@@ -558,7 +558,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadFrame( void )
     }
   
   //
-  BytesToRead = min( FramePayloadRemaining, RemainingElementaryLength );
+  BytesToRead = min( (unsigned int)FramePayloadRemaining, RemainingElementaryLength );
   
   if (CollatorState == ReadSubFrame)
     {
@@ -573,7 +573,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadFrame( void )
 
   if( Status == CollatorNoError )
     {
-      if (BytesToRead == FramePayloadRemaining) 
+      if (BytesToRead - FramePayloadRemaining == 0)
 	{
 	  GotPartialFrameHeaderBytes = 0;
 	  CollatorState = SeekingFrameEnd;

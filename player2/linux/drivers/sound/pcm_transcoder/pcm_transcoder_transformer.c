@@ -19,7 +19,6 @@
 #include <mme.h>
 #include "pcm_transcoder.h"
 #include "Pcm_TranscoderTypes.h"
-#include "osinline.h"
 #include "osdev_device.h"
 
 #define PCM_INPUT_BUFFER                0

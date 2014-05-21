@@ -588,7 +588,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle,struct stm_v4l2_driver *drive
 	case VIDIOC_S_FMT:
 	{
 		struct v4l2_format *fmt = arg;
-		int n,surface = -1;;
+		int n,surface = -1;
 
 		if (!ldvb)
 			goto err_inval;
@@ -682,8 +682,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle,struct stm_v4l2_driver *drive
 				return -EAGAIN;
 
 		// Otherwise loop until the blit has been completed
-		if (wait_event_interruptible (buffer_blitted,
-					      ldvb->capture->complete != 0))
+		if (wait_event_interruptible (buffer_blitted, ldvb->capture->complete != 0))
 			return -ERESTARTSYS;
 
 		if (ldvb->capture->complete != 1)

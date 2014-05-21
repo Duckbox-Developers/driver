@@ -130,6 +130,9 @@ protected:
     unsigned int                          NumberOfUsedDescriptors;                              // Map of used descriptors when constructing a reference list 
     unsigned char                         DescriptorIndices[3 * H264_MAX_REFERENCE_FRAMES];
 
+    ReferenceFrameList_t                  LocalReferenceFrameList[H264_NUM_REF_FRAME_LISTS];
+
+
     // Functions
 
     // Internal process functions called via C

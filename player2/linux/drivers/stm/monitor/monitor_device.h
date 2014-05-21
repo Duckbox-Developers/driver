@@ -32,7 +32,6 @@ Date        Modification                                    Name
 #define H_MONITOR_DEVICE
 
 #include <linux/spinlock.h>
-#include <linux/smp_lock.h>
 
 #include "monitor_ioctls.h"
 #include "monitor_mme.h"
@@ -66,7 +65,7 @@ struct EventValue_s
 
 struct DeviceContext_s
 {
-    struct class_device*                ClassDevice;
+    struct device*                      Device;
     struct cdev                         CDev;
 
     unsigned int                        Id;

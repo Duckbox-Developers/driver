@@ -701,7 +701,7 @@ static void* Mixer1AudioFactory (void)
 }
 //}}}
 
-static void* DefaultFactory (void)
+static inline void* DefaultFactory (void)
 {
     PLAYER_DEBUG("No factory available\n");
     return NULL;

@@ -51,7 +51,7 @@ struct alsa_backend_operations
 {
     struct module                      *owner;
     
-    int (*mixer_get_instance)          (int StreamId, component_handle_t* Classoid);                                 
+    int (*mixer_get_instance)          (int StreamId, component_handle_t* Classoid);
     int (*mixer_set_module_parameters) (component_handle_t component, void *data, unsigned int size);
     
     int (*mixer_alloc_substream)       (component_handle_t Component, int *SubStreamId);
@@ -63,7 +63,6 @@ struct alsa_backend_operations
     int (*mixer_stop_substream)        (component_handle_t Component, int SubStreamId);
 };
 
-int register_alsa_backend       (char                           *name,
-                                 struct alsa_backend_operations *alsa_backend_ops);
-                                 
+int register_alsa_backend              (char *name, struct alsa_backend_operations *alsa_backend_ops);
+
 #endif /* H_ALSA_BACKEND_OPS */

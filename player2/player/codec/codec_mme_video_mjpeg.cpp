@@ -34,7 +34,6 @@ Date        Modification                                    Name
 //
 //      Include any component headers
 
-#include "osdev_device.h"
 #include "codec_mme_video_mjpeg.h"
 #include "mjpeg.h"
 
@@ -198,7 +197,7 @@ CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutTransformerInitializationParameter
 //
 CodecStatus_t   Codec_MmeVideoMjpeg_c::FillOutSetStreamParametersCommand( void )
 {
-    CODEC_ERROR ("%s - This should not be called as we have no stream parameters\n");
+    CODEC_ERROR ("This should not be called as we have no stream parameters\n");
     return CodecError;
 }
 //}}}

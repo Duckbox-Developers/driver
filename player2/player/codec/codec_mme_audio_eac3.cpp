@@ -236,6 +236,7 @@ CodecStatus_t Status;
 //
 
     MME_LxDDPConfig_t &Config = *((MME_LxDDPConfig_t *) GlobalParams.DecConfig);
+    memset(&Config, 0, sizeof(MME_LxDDPConfig_t));
     Config.DecoderId = isFwEac3Capable ? ACC_DDPLUS_ID : ACC_AC3_ID;
     Config.StructSize = sizeof(MME_LxDDPConfig_t);
     Config.Config[DD_CRC_ENABLE] = ACC_MME_TRUE;

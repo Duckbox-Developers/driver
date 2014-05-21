@@ -33,6 +33,7 @@ Date        Modification                                    Name
 #include <linux/sched.h>
 #include <linux/syscalls.h>
 #include <linux/ioport.h>
+#include <asm/io.h>
 #include <linux/fs.h>
 #include <linux/bpa2.h>
 #include <linux/module.h>
@@ -43,10 +44,7 @@ Date        Modification                                    Name
 #include <linux/cdev.h>
 #include <asm/uaccess.h>
 #include <linux/platform_device.h>
-#ifdef __TDT__
-#include <asm/io.h>
 #include <linux/version.h>
-#endif
 
 #include "monitor_module.h"
 
@@ -132,29 +130,17 @@ static int StmMonitorProbe(struct device *dev)
             printk (KERN_ERR "%s: unable to add device\n",__FUNCTION__);
             return -ENODEV;
         }
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-        DeviceContext->ClassDevice              = device_create (ModuleContext->DeviceClass,
+        DeviceContext->Device              = device_create (ModuleContext->DeviceClass,
                                                                        NULL,
                                                                        DeviceContext->CDev.dev,
                                                                        NULL,
                                                                        kobject_name (&(DeviceContext->CDev.kobj)));
-#else
-        DeviceContext->ClassDevice              = class_device_create (ModuleContext->DeviceClass,
-                                                                       NULL,
-                                                                       DeviceContext->CDev.dev,
-                                                                       NULL,
-                                                                       kobject_name (&(DeviceContext->CDev.kobj)));
-#endif
-        if (IS_ERR(DeviceContext->ClassDevice))
+        if (IS_ERR(DeviceContext->Device))
         {
-            printk (KERN_ERR "%s: unable to create class device\n",__FUNCTION__);
-            DeviceContext->ClassDevice          = NULL;
+            printk (KERN_ERR "%s: unable to create device\n",__FUNCTION__);
+            DeviceContext->Device          = NULL;
             return -ENODEV;
         }
-
-#if defined(__TDT__) && (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30))
-        class_set_devdata (DeviceContext->ClassDevice, DeviceContext);
-#endif
     }
 
     mutex_unlock (&(ModuleContext->Lock));

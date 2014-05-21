@@ -67,8 +67,8 @@ class Collator_PesAudioLpcm_c : public Collator_PesAudio_c
   unsigned char                NewPesPrivateDataArea[LPCM_MAX_PRIVATE_HEADER_LENGTH];
   int                          AccumulatedFrameNumber;
   unsigned char                StreamId;
-  int                          RemainingDataLength;
-  int                          PesPrivateToSkip;
+  unsigned int                 RemainingDataLength;
+  unsigned int                 PesPrivateToSkip;
   int                          GlobbedFramesOfNewPacket;
 
 protected:

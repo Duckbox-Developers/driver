@@ -89,7 +89,7 @@ public:
 
 // ---------------------------------------------------------------------
 //
-// Docuentation
+// Documentation
 //
 
 /*! \class Demultiplexor_c

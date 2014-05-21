@@ -68,7 +68,7 @@ int DisplayInit (void)
     Pipelines   = i;
     return 0;
 }
-/*}}}  */
+/*}}}*/
 /*{{{  GetDisplayInfo*/
 int GetDisplayInfo     (unsigned int            Id,
                         DeviceHandle_t*         Device,
@@ -109,4 +109,4 @@ int GetDisplayInfo     (unsigned int            Id,
 
     return  0;
 }
-/*}}}  */
+/*}}}*/

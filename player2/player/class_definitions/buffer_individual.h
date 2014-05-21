@@ -135,11 +135,11 @@ public:
 
 	//
 	// Cache functions
-	// 
-		
+	//
+
     virtual BufferStatus_t	 FlushCache(		void) { return BufferNoError; }
     virtual BufferStatus_t	 PurgeCache(		void) { return BufferNoError; }
-		
+
     //
     // Status dump/reporting
     //

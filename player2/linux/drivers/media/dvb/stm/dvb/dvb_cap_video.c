@@ -1798,7 +1798,7 @@ long long 		 DriftLimit;
     {
 	case CapInactive:
 //			printk( "CapInterrupt - Cap inactive - possible implementation error.\n" );
-// Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevent here
+// Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevant here
 //			CapHaltCapture( Context );				// Try and halt it
 			break;
 

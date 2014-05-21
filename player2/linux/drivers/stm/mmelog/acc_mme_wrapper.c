@@ -11,15 +11,10 @@
 
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/version.h>
-#if defined(__TDT__) && (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30))
-#include <asm/semaphore.h>
-#else
 #include <linux/semaphore.h>
-#endif
+
 
 #include "acc_mme.h"
-#include "report.h"
 #include "st_relay.h"
 
 MODULE_LICENSE("GPL");
