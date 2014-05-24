@@ -143,7 +143,7 @@ unsigned int                     entropy_coding_mode_flag;
 unsigned int                     mb_adaptive_frame_field_flag;
 
     //
-    // Is this ok
+    // Is this OK
     //
 
     if( Device == H264_PP_INVALID_DEVICE )
@@ -256,7 +256,7 @@ h264pp_ioctl_dequeue_t   Parameters;
 int                      Status;
 
     //
-    // Is this ok
+    // Is this OK
     //
 
     if( Device == H264_PP_INVALID_DEVICE )

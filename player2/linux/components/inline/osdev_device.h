@@ -48,13 +48,7 @@ Date        Modification                                    Name
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/version.h>
-#ifdef __cplusplus
-extern "C" {
-#endif
 #include <linux/string.h>
-#ifdef __cplusplus
-}
-#endif
 #include <linux/unistd.h>
 #include <linux/init.h>
 #include <linux/time.h>

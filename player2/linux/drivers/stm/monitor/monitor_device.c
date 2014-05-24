@@ -287,7 +287,7 @@ static ssize_t MonitorRead (struct file *File, char __user* Buffer, size_t Count
     struct ModuleContext_s*     ModuleContext   = Context->ModuleContext;
     int                         Result          = 0;
     struct EventQueue_s*        EventList       = &Context->EventQueue;
-    unsigned int                Flags;
+    unsigned long               Flags;
     unsigned int                RecordLength    = 0;
 
     /*MONITOR_DEBUG ("EventList: Read %d, Write %d\n", EventList->Read, EventList->Write);*/
@@ -346,7 +346,7 @@ static ssize_t MonitorWrite    (struct file *File, const char __user* Buffer, si
     struct ModuleContext_s*     ModuleContext   = Context->ModuleContext;
     int                         Result          = 0;
     struct EventQueue_s*        EventList       = &Context->EventQueue;
-    unsigned int                Flags;
+    unsigned long               Flags;
     unsigned int                Next;
     struct EventRecord_s*       EventRecord;
 
@@ -461,14 +461,14 @@ void MonitorRecordEvent        (struct DeviceContext_s*         Context,
     struct EventQueue_s*                EventList;
     unsigned int                        Next;
     unsigned int                        EventReceived   = false;
-    unsigned int                        Flags;
+    unsigned long                       Flags;
     struct EventRecord_s*               EventRecord;
     struct EventValue_s*                StoredEvent;
 
     StoredEvent                 = &(Context->StoredEventValues[EventCode & MONITOR_EVENT_INDEX_MASK]);
 
     if (Parameters)
-        memcpy (StoredEvent->Parameters, Parameters, MONITOR_PARAMETER_COUNT);
+        memcpy (StoredEvent->Parameters, Parameters, sizeof(Parameters));
     StoredEvent->Count++;
 
     if ((EventCode & MONITOR_EVENT_REPORT_ON_REQUEST) != 0)

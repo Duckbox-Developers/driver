@@ -28,13 +28,12 @@
 /** Maximum number of supported outputs (subordinate ALSA soundcards) */
 #define SND_PSEUDO_MAX_OUTPUTS          4
 
-
 #define Q3_13_MIN               0
 #define Q3_13_UNITY             ((1 << 13) - 1)
 #define Q3_13_MAX               0xffff
 
 #define Q0_8_MIN                0
-#define Q0_8_UNITY              ((1 << 8) -1 )
+#define Q0_8_UNITY              ((1 << 8) - 1)
 #define Q0_8_MAX                0xFF
 
 enum snd_pseudo_mixer_metadata_update
@@ -57,7 +56,7 @@ enum snd_pseudo_mixer_interactive_audio_mode
 	SND_PSEUDO_MIXER_INTERACTIVE_AUDIO_MODE_3_4,
 	SND_PSEUDO_MIXER_INTERACTIVE_AUDIO_MODE_3_2,
 	SND_PSEUDO_MIXER_INTERACTIVE_AUDIO_MODE_2_0
-};       
+};
 
 enum snd_pseudo_mixer_drc_type
 {
@@ -189,7 +188,7 @@ struct snd_pseudo_mixer_settings
 	char spdif_bypass;
 	char hdmi_bypass;
 
-	/* The next two indicies help us getting an handle to the hdmi output device*/
+	/* The next two indicies help us getting an handle to the hdmi output device */
 	unsigned int display_device_id;
 	int display_output_id;
 
@@ -260,9 +259,9 @@ struct snd_pseudo_transformer_name
 #define SND_PSEUDO_MIXER_DOWNMIX_HEADER_MAGIC 0x58494d44 /* 'DMIX' */
 #define SND_PSEUDO_MIXER_DOWNMIX_HEADER_VERSION 2
 #define SND_PSEUDO_MIXER_DOWNMIX_HEADER_SIZE(hdr) \
-    (sizeof(struct snd_pseudo_mixer_downmix_header) + \
-     ((hdr).num_index_entries * sizeof(struct snd_pseudo_mixer_downmix_index)) + \
-     ((hdr).data_length * sizeof(snd_pseudo_mixer_downmix_Q15)))
+	(sizeof(struct snd_pseudo_mixer_downmix_header) + \
+	((hdr).num_index_entries * sizeof(struct snd_pseudo_mixer_downmix_index)) + \
+	((hdr).data_length * sizeof(snd_pseudo_mixer_downmix_Q15)))
 
 struct snd_pseudo_mixer_downmix_header {
 	uint32_t magic;
@@ -277,8 +276,8 @@ struct snd_pseudo_mixer_downmix_header {
 struct snd_pseudo_mixer_downmix_index {
 	struct snd_pseudo_mixer_channel_assignment input_id;
 	struct snd_pseudo_mixer_channel_assignment output_id;
-	uint8_t  input_dimension;
-	uint8_t  output_dimension;
+	uint8_t input_dimension;
+	uint8_t output_dimension;
 	uint16_t offset;
 };
 

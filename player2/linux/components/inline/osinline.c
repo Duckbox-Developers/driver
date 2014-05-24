@@ -73,21 +73,21 @@ OS_Status_t      OS_Free(       void                    *Address )
 
 // --------
 
-void OS_InvalidateCacheRange( void* CPUAddress, unsigned int size )
-{
-    OSDEV_InvalidateCacheRange(CPUAddress,size);
-}
-
-// --------
-
 void OS_FlushCacheAll( void )
 {
     OSDEV_FlushCacheAll();
 }
 
+// --------
+
 void OS_FlushCacheRange( void* CPUAddress, unsigned int size )
 {
     OSDEV_FlushCacheRange(CPUAddress,size);
+}
+
+void OS_InvalidateCacheRange( void* CPUAddress, unsigned int size )
+{
+    OSDEV_InvalidateCacheRange(CPUAddress,size);
 }
 
 // --------
@@ -165,18 +165,18 @@ OS_Status_t   OS_LockMutex( OS_Mutex_t  *Mutex )
 
 //
 
+OS_Status_t   OS_UnLockMutex( OS_Mutex_t  *Mutex )
+{
+    OSDEV_ReleaseSemaphore( (OSDEV_Semaphore_t*)Mutex );
+    return OS_NO_ERROR;
+}
+
 #if defined(ADB_BOX)
 int   OS_LockMutex_trylock( OS_Mutex_t  *Mutex )
 {
 	return OSDEV_ClaimSemaphore_trylock( (OSDEV_Semaphore_t*)Mutex );
 }
 #endif
-
-OS_Status_t   OS_UnLockMutex( OS_Mutex_t  *Mutex )
-{
-    OSDEV_ReleaseSemaphore( (OSDEV_Semaphore_t*)Mutex );
-    return OS_NO_ERROR;
-}
 
 // -----------------------------------------------------------------------------------------------
 // The event functions
@@ -343,7 +343,7 @@ char   *OS_ThreadName( void )
 unsigned int        i;
 
     for( i=0; i<OS_MAX_TASKS; i++ )
-	if( (OS_TaskNameTable[i].Name != '\0') &&(OS_TaskNameTable[i].Thread == current) )
+	if( (OS_TaskNameTable[i].Name[0] != '\0') &&(OS_TaskNameTable[i].Thread == current) )
 	    return OS_TaskNameTable[i].Name;
 
     return OSDEV_ThreadName();

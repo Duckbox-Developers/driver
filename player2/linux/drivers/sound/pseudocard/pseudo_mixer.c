@@ -1,10 +1,10 @@
 /*
  * Pseudo ALSA device (mixer and PCM player) implemented (mostly) software
- * 
+ *
  * Copied from sound/drivers/dummy.c by Jaroslav Kysela
  * Copyright (c) 2007 STMicroelectronics R&D Limited <daniel.thompson@st.com>
  * Copyright (c) by Jaroslav Kysela <perex@suse.cz>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,7 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <linux/version.h>
+#include <linux/module.h>
 #include <linux/ioport.h>
 #include <linux/bpa2.h>
 #include <linux/init.h>
@@ -33,13 +33,14 @@
 #include <linux/time.h>
 #include <linux/wait.h>
 #include <linux/moduleparam.h>
+#include <linux/version.h>
 #include <sound/core.h>
 #include <sound/control.h>
 #include <sound/pcm.h>
 #include <sound/pcm_params.h>
 #include <sound/rawmidi.h>
 #include <sound/initval.h>
-#include <asm/io.h>
+#include <linux/io.h>
 #include <asm/cacheflush.h>
 
 #include <ACC_Transformers/acc_mmedefines.h>
@@ -120,12 +121,12 @@ static struct platform_device *devices[SNDRV_CARDS];
 #define CARD_FATPIPE(n, major, minor, freq, chan) \
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
                                SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
-// the following macro indicates the card is connected to a hdmi cell through the spdif player
+/* the following macro indicates the card is connected to a hdmi cell through the spdif player */
 #define CARD_SPDIF_HDMI(n, major, minor, freq, chan) \
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
                                SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 
-// the following macro indicates the card is connected to a hdmi cell through the pcm player
+/* the following macro indicates the card is connected to a hdmi cell through the pcm player */
 #define CARD_HDMI(n, major, minor, freq, chan) \
 	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 
@@ -248,7 +249,6 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 		},
 	},
 };
-
 
 #elif defined CONFIG_CPU_SUBTYPE_STX7141 && !defined CONFIG_DUAL_DISPLAY 
 
@@ -548,8 +548,6 @@ static int snd_card_pseudo_alloc_pages(
 
 	num_pages = (size + (PAGE_SIZE-1)) / PAGE_SIZE;
 
-
-
 	runtime->dma_addr = bpa2_alloc_pages(pseudo->allocator,
 			                     num_pages, 0, GFP_KERNEL);
 	if (!runtime->dma_addr)
@@ -697,6 +695,7 @@ static struct page *snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *
         return page;
 }
 #endif
+
 static struct vm_operations_struct snd_card_pseudo_pcm_vm_ops_data =
 {
 	.open =         snd_pcm_mmap_data_open,
@@ -724,7 +723,7 @@ static struct snd_pseudo_pcm *new_pcm_stream(struct snd_pcm_substream *substream
 	struct snd_pseudo_pcm *ppcm;
 
 	ppcm = kzalloc(sizeof(*ppcm), GFP_KERNEL);
-	if (! ppcm)
+	if (!ppcm)
 		return ppcm;
 	spin_lock_init(&ppcm->lock);
 	ppcm->substream = substream;
@@ -980,7 +979,7 @@ static int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
 		return res;
 
 	mutex_lock(&pseudo->mixer_lock);
-	for (i=0; i<uinfo.count; i++)
+	for (i = 0; i < uinfo.count; i++)
 		if (uinfo.count == SND_PSEUDO_MIXER_CHANNELS)
 			ucontrol->value.integer.value[i] = volumesp[remap_channels[i]];
 		else
@@ -1009,7 +1008,7 @@ static int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
 	if (res < 0)
 		return res;
 
-	for (i=0; i<uinfo.count; i++) {
+	for (i = 0; i < uinfo.count; i++) {
 		update[i] = ucontrol->value.integer.value[i];
 		if (update[i] < uinfo.value.integer.min)
 			update[i] = uinfo.value.integer.min;
@@ -1539,7 +1538,7 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
 	/* fatpipe meta data (see FatPipe 1.1 spec, section 6.0 for interpretation) */
 	mixer->fatpipe_metadata.md[0] = 0x40;
 
-	/* fatpipe mask (see FatPipe 1.1 spec, section 6.0 for interpretation) */ 
+	/* fatpipe mask (see FatPipe 1.1 spec, section 6.0 for interpretation) */
 	mixer->fatpipe_mask.md[0] = 0x70;
 	mixer->fatpipe_mask.md[2] = 0x1f;
 	mixer->fatpipe_mask.md[6] = 0x1f;
@@ -1697,9 +1696,10 @@ static int __init snd_pseudo_validate_downmix_index(
 		struct snd_pseudo_mixer_downmix_index *index)
 {
 	int i;
-	uint64_t last_sort_value = 0; /* known to be illegal because pair4 is not NOT_CONNECTED */
+	/* known to be illegal because pair4 is not NOT_CONNECTED */
+	uint64_t last_sort_value = 0;
 
-	for (i=0; i<header->num_index_entries; i++) {
+	for (i = 0; i < header->num_index_entries; i++) {
 		union {
 			struct snd_pseudo_mixer_channel_assignment ca;
 			uint32_t n;
@@ -1732,9 +1732,7 @@ static int __init snd_pseudo_probe(struct platform_device *devptr)
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 	int result;
-	result = snd_card_create(index[dev], id[dev], THIS_MODULE,
-				 sizeof(struct snd_pseudo),
-				 &card);
+	result = snd_card_create(index[dev], id[dev], THIS_MODULE, sizeof(struct snd_pseudo), &card);
 	if (result != 0)
 		return result;
 #else
@@ -1805,8 +1803,7 @@ static int __init snd_pseudo_probe(struct platform_device *devptr)
 		return 0;
 	}
 
-
-      __nodev:
+__nodev:
 	snd_card_free(card);
 	return err;
 }
@@ -1847,19 +1844,16 @@ static int snd_pseudo_resume(struct platform_device *pdev)
 #define SND_PSEUDO_DRIVER       "snd_pseudo"
 
 static struct platform_driver snd_pseudo_driver = {
-	.probe          = snd_pseudo_probe,
-	.remove         = snd_pseudo_remove,
+	.probe = snd_pseudo_probe,
+	.remove = snd_pseudo_remove,
 #ifdef CONFIG_PM
-	.suspend        = snd_pseudo_suspend,
-	.resume         = snd_pseudo_resume,
+	.suspend = snd_pseudo_suspend,
+	.resume = snd_pseudo_resume,
 #endif
-	.driver         = {
-		.name   = SND_PSEUDO_DRIVER
+	.driver = {
+		.name = SND_PSEUDO_DRIVER
 	},
 };
-
-
-
 
 static int snd_card_pseudo_register_backend(struct platform_device *pdev,
                                             struct alsa_backend_operations *alsa_backend_ops)
@@ -1877,15 +1871,17 @@ static int snd_card_pseudo_register_backend(struct platform_device *pdev,
 	pseudo->backend_mixer = mixer;
 
 	if (default_transformer_name.magic)
-		(void) pseudo->backend_ops->mixer_set_module_parameters(
-				pseudo->backend_mixer,
-				(void *) &default_transformer_name, sizeof(default_transformer_name));
+		(void) pseudo->backend_ops->mixer_set_module_parameters
+			(pseudo->backend_mixer,
+			(void *) &default_transformer_name,
+			sizeof(default_transformer_name));
 
 	/* only only update of the downmix firmware (if it exists) */
 	if (pseudo->downmix_firmware) {
-		err = pseudo->backend_ops->mixer_set_module_parameters(
-			        pseudo->backend_mixer,
-				    pseudo->downmix_firmware->data, pseudo->downmix_firmware->size);
+		err = pseudo->backend_ops->mixer_set_module_parameters
+			(pseudo->backend_mixer,
+			(void *)(pseudo->downmix_firmware->data),
+			pseudo->downmix_firmware->size);
 		if (0 != err)
 			printk(KERN_ERR "%s: Can not pass downmix firmware to mixer\n", pseudo->card->shortname);
 			/* do not propagate error */
@@ -1904,7 +1900,7 @@ int register_alsa_backend       (char                           *name,
 {
 	int i;
 
-	for (i=0; i<SNDRV_CARDS; i++) {
+	for (i = 0; i < SNDRV_CARDS; i++) {
 		if (devices[i]) {
 			snd_card_pseudo_register_backend(devices[i], alsa_backend_ops);
 		}
