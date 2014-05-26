@@ -13,6 +13,7 @@
 #include <linux/gpio.h>
 #include <linux/stm/gpio.h>
 #include "asc.h"
+#include "utf.h"
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
@@ -35,7 +36,7 @@ static struct input_dev *button_dev;
 static struct workqueue_struct *wq;
 static int bad_polling = 1;
 
-static const unsigned char rom[256] =
+static const unsigned char rom[128] =
 {
         0x2e,//0x00, icon play
         0x8f,//0x01, icon stop
@@ -106,10 +107,10 @@ static const unsigned char rom[256] =
         0x3f,//0x3f, ?  
 
         0x40,//0x40,@ 
-        119,//0x41,A ok
-        0x7f,//0x42,B ok
+        119,//0x41,A
+        124,//0x42,displayed b for easy reading
         57,//0x43,C ok
-        0x3f,//0x44,D ok
+        94,//0x44, displayed d for easy reading
         121,//0x45,E ok
         113,//0x46,F ok
         0x7d,//0x47,G ok
@@ -124,9 +125,9 @@ static const unsigned char rom[256] =
 
         115,//0x50,P  ok
         0x3f,//0x51,Q  ok
-        119,//0x52,R  ok
+        0x50,//0x52, displayed r for easy reading
         109,//0x53,S  ok
-        49,//0x54,T  ok
+        120,//0x54, displayed t for easy reading
         62,//0x55,U  ok
         62,//0x56,V  ok
         62,//0x57,W  ok
@@ -140,11 +141,11 @@ static const unsigned char rom[256] =
         0x5f,//0x5f,  
 
         0x60,//0x60,`  
-        119,//0x61,a  ok
+        119,//0x61,displayed A for easy reading
         124,//0x62,b  ok
         88,//0x63,c  ok
         94,//0x64,d  ok
-        121,//0x65,e  ok
+        121,//0x65, displayed E for easy reading
         113,//0x66,f  ok
         0x6f,//0x67,g  ok
         116,//0x68,h  ok
@@ -173,6 +174,7 @@ static const unsigned char rom[256] =
         0x7e,//0x7e,~  
         0x7f,//0x7f, <DEL>--> all light on
 
+#if 0
         0x84,//0x80,a -umulaut  
         0x94,//0x81,o -umulaut  
         0x81,//0x82,u -umulaut  
@@ -309,6 +311,7 @@ static const unsigned char rom[256] =
         0x10,//0xfd,  reserved
         0x10,//0xfe,  reserved
         0x10,//0xff, reservedr
+#endif
 };
 
 #define VFD_MAJOR	147
@@ -330,8 +333,8 @@ static struct vfd_driver vfd;
 static int debug  = 0;
 static jasnosc = 1;
 
-#define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
-#define ERR(fmt, args...) printk(KERN_ERR "[vfd] :: " fmt "\n", ## args )
+#define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[front_led]::" fmt "\n", ## args )
+#define ERR(fmt, args...) printk(KERN_ERR "[front_led]::" fmt "\n", ## args )
 
 
 
@@ -384,16 +387,16 @@ static DECLARE_WORK(button_obj, button_bad_polling);
 
 static int button_input_open(struct input_dev *dev)
 {
-	DBG("[BTN] button_input_open\n");
+	//DBG("[%s] button_input_open",__func__);
 
 	wq = create_workqueue("button");                   
 	if(queue_work(wq, &button_obj))
 	{                    
-		DBG("[BTN] queue_work successful ...\n");
+		DBG("[BTN] queue_work successful ...",__func__);
 	}
 	else
 	{
-		DBG("[BTN] queue_work not successful, exiting ...\n");
+		DBG("[BTN] queue_work not successful, exiting ...",__func__);
 		return 1;
 	}
 	return 0;
@@ -401,7 +404,7 @@ static int button_input_open(struct input_dev *dev)
 
 static void button_input_close(struct input_dev *dev)
 {
-	DBG("[BTN] button_input_close\n");
+	//DBG("[BTN] button_input_close");
 	bad_polling = 0;
 	while (bad_polling != 2)
 		msleep(1);
@@ -409,9 +412,9 @@ static void button_input_close(struct input_dev *dev)
 
 	if (wq)
 	{
-		DBG("[BTN] workqueue destroy start\n");
+		DBG("[BTN] workqueue destroy start");
 		destroy_workqueue(wq);                           
-		DBG("[BTN] workqueue destroyed\n");
+		DBG("[BTN] workqueue destroyed");
 	}
 }
 
@@ -442,7 +445,7 @@ int serial_putc (char Data)
 
     if (Counter == 0)
     {
-        printk("Error writing char (%c) \n", Data);
+        DBG("Error writing char (%c)", Data);
     }
 
     *ASC_3_TX_BUFF = Data;
@@ -472,32 +475,32 @@ int WriteChars(unsigned char* aData, int aSize)
 
 int ESI88_WriteFront(unsigned char* data, unsigned char len )
 {
-unsigned char wdata[8];
+unsigned char wdata[8] = {0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 int i = 0;
 unsigned char crc=0xff;
+int doton3 = 0; //by using doton3 we safe one segment and use human style of writing e.g. "23:54, or PL.TV"
 
-  if(len<4) return 0;
-  wdata[0] = 0x81;crc=crc^wdata[0];
-  wdata[1] = rom[data[0]];crc=crc^wdata[1];
-  wdata[2] = rom[data[1]];crc=crc^wdata[2];
-  wdata[3] = rom[data[2]];crc=crc^wdata[3];
-  wdata[4] = rom[data[3]];crc=crc^wdata[4];
-
-  if(len>4)
-  {
-	  if(data[4]=='0') {wdata[5] = 0x00;crc=crc^wdata[5];}//dwie kropki
+  if (len >= 5){
+    if (data[2] == '.'){doton3 = 1;wdata[5] = 0x02;}//lower dot
 	  else
-	  if(data[4]=='1') {wdata[5] = 0x01;crc=crc^wdata[5];}//dwie kropki
+    if (data[2] == "'"){doton3 = 1;wdata[5] = 0x01;}//upper dot
 	  else
-	  if(data[4]=='2') {wdata[5] = 0x02;crc=crc^wdata[5];}//dwie kropki
-	  else
-	  if(data[4]=='3') {wdata[5] = 0x03;crc=crc^wdata[5];}//dwie kropki
-	  else
-		  {wdata[5] = 0x00;crc=crc^wdata[5];}//dwie kropki
+    if (data[2] == ':'){doton3 = 1;wdata[5] = 0x03;}//two dots
   }
-	else
-		  {wdata[5] = 0x00;crc=crc^wdata[5];}//dwie kropki
 
+  //assigning correct chars
+  if (len >= 1) wdata[1] = rom[data[0]];
+  if (len >= 2) wdata[2] = rom[data[1]];
+  if (len >= 3) wdata[3] = rom[data[2 + doton3]];
+  if (len >= 4) wdata[4] = rom[data[3 + doton3]];
+
+  //calculating crc with previously set dot(s)
+  crc=crc^wdata[0];
+  crc=crc^wdata[1];
+  crc=crc^wdata[2];
+  crc=crc^wdata[3];
+  crc=crc^wdata[4];
+  crc=crc^wdata[5];
 /*
   if(len>5)
   {
@@ -526,14 +529,17 @@ static void ESI88_set_icon(unsigned char *kbuf, unsigned char len)
 
         switch(kbuf[0])
         {
-        case 1://czer
+        case 1://red
             if(kbuf[4]==1) gpio_set_value(LED1, 1); else gpio_set_value(LED1, 0);
             break;
-        case 2://ziel
+        case 2://green
             if(kbuf[4]==1) gpio_set_value(LED2, 1); else gpio_set_value(LED2, 0);
             break;
+        case 35://for compatibility with adb_box remote
+            if(kbuf[4]==1) gpio_set_value(LED1, 1); else gpio_set_value(LED1, 0);
+            break;
         default:
-            ERR("icon unknown %d", kbuf[0]);
+            ERR("[%s] icon unknown %d",__func__, kbuf[0]);
             break;
         }
             
@@ -548,6 +554,7 @@ return 0;
 
 static void ESI88_setup(void)
 {
+  return 0;
 }
 
 static void ESI88_set_brightness(int level )
@@ -604,7 +611,7 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 //	    ESI88_setup();
     break;
   default:
-    ERR("[vfd] unknown ioctl %08x", cmd );
+    ERR("[%s] unknown ioctl %08x",__func__, cmd );
     break;
   }
   return 0;
@@ -612,23 +619,70 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 }
 
 static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t *off ) {
-  unsigned char  kbuf[8];
+  unsigned char  kbuf[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
   size_t         wlen;
+  int i =0;
+  int j =0;
 
-  DBG("vfd_write");
-
-  DBG("write : len = %d (%d), off = %d.\n", len, 4, (int)*off);
+  DBG("[%s] initial text = '%s'\n",__func__, buf);
 
   if ( len == 0 ) return len;
 
-  if(len>6) len=6;	//z1 z2 z3 z4 kropki jasnosc
-
-  copy_from_user(kbuf, buf, len); 
+  while ((i< len) && (j < 8))
+	{
+	//j++;
+	if (buf[i] < 0x80) {
+		kbuf[j]=buf[i];
+		DBG("kbuf[%i] = '%s'(%s) \n",j, kbuf[j],buf[i]);
+		j++;
+	}
+	else if (buf[i] < 0xE0) {
+		switch (buf[i])	{
+			case 0xc2:
+				UTF_Char_Table = UTF_C2;
+				break;
+			case 0xc3:
+				UTF_Char_Table = UTF_C3;
+				break;
+			case 0xc4:
+				UTF_Char_Table = UTF_C4;
+				break;
+			case 0xc5:
+				UTF_Char_Table = UTF_C5;
+				break;
+			case 0xd0:
+				UTF_Char_Table = UTF_D0;
+				break;
+			case 0xd1:
+				UTF_Char_Table = UTF_D1;
+				break;
+			default:
+				UTF_Char_Table = NULL;
+		}
+		if (UTF_Char_Table) {
+			kbuf[j]=UTF_Char_Table[buf[i] & 0x3f];			
+			j++;
+		}
+		i++;
+	}
+	else {
+		if (buf[i] < 0xF0)
+			i+=2;
+		else if (buf[i] < 0xF8)
+			i+=3;
+		else if (buf[i] < 0xFC)
+			i+=4;
+		else
+			i+=5;
+		//kbuf[j]=0x20;
+	}
+	i++;
+    }
   
   wlen = len;
   if ( kbuf[len-1] == '\n' ) { kbuf[len-1] = '\0'; wlen--; }
 
-  DBG("write : len = %d, wlen = %d, kbuf = '%s'.\n", len, wlen, kbuf);
+  DBG("[%s] initial length= %d, text length = %d, text = '%s'",__func__, len, wlen, kbuf);
 
   ESI88_WriteFront(kbuf,wlen);
 
@@ -641,15 +695,15 @@ static ssize_t vfd_read(struct file *filp, char *buf, size_t len, loff_t *off ) 
 
 static int vfd_open( struct inode *inode, struct file *file ) {
 
-  DBG("vfd_open");
+  //DBG("[%s]",__func__);
 
   if ( down_interruptible( &(vfd.sem) ) ) {
-        DBG("interrupted while waiting for sema.");
+        DBG("[%s] interrupted while waiting for sema.",__func__);
     return -ERESTARTSYS;
   }
 
   if ( vfd.opencount > 0 ) {
-        DBG("device already opened.");
+        DBG("[%s] device already opened.",__func__);
     up( &(vfd.sem) );
     return -EUSERS;
   }
@@ -661,7 +715,7 @@ static int vfd_open( struct inode *inode, struct file *file ) {
 }
 
 static int vfd_close( struct inode *inode, struct file *file ) {
-  DBG("vfd_close");
+  //DBG("[%s]",__func__);
   vfd.opencount = 0;
   return 0;
 }
@@ -677,17 +731,18 @@ static struct file_operations vfd_fops = {
 
 static void __exit led_module_exit(void) 
 {
-  unregister_chrdev( VFD_MAJOR, "vfd" );
+  DBG("LED SagemCom88 [%s]",__func__);
 #ifdef BUTTON_FRONT
+  if (button_dev)
   input_unregister_device(button_dev);
 #endif
+  unregister_chrdev( VFD_MAJOR, "vfd" );
 }
 
 static int __init led_module_init( void ) {
 int error;
 	
-	DBG("LED ESI88 init.");
-	DBG("register character device %d.", VFD_MAJOR );
+  DBG("LED SagemCom88 init > register character device %d.", VFD_MAJOR );
 	if(register_chrdev( VFD_MAJOR, "vfd", &vfd_fops ) ) 
 	{
 	ERR("register major %d failed", VFD_MAJOR );
@@ -708,12 +763,12 @@ int error;
 gpio_request(LED1, "LED1");
 if (LED1==NULL){ERR("Request LED1 failed. abort.");goto led_init_fail;}
 gpio_direction_output(LED1, STM_GPIO_DIRECTION_OUT);
-gpio_set_value(LED1, 0);//czerwona
+gpio_set_value(LED1, 0);//red
   
 gpio_request(LED2, "LED2");
 if (LED2==NULL){ERR("Request LED2 failed. abort.");goto led_init_fail;}
 gpio_direction_output(LED2, STM_GPIO_DIRECTION_OUT);
-gpio_set_value(LED2, 1);//zielona
+gpio_set_value(LED2, 1);//green
 
 #ifdef BUTTON_FRONT
 
@@ -763,7 +818,8 @@ gpio_direction_input(KEY_PWR);
 		goto led_init_fail;
 	}
 #endif
-
+  //Clean display during init
+  ESI88_WriteFront("    ",4);
 return 0;
 
   led_init_fail:
@@ -775,5 +831,5 @@ module_init(led_module_init);
 module_exit(led_module_exit);
 
 MODULE_DESCRIPTION("SagemCom88 front_led driver");
-MODULE_AUTHOR("Nemo");
+MODULE_AUTHOR("Nemo mod j00zek");
 MODULE_LICENSE("GPL");

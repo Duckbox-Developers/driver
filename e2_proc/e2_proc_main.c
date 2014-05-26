@@ -656,7 +656,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/misc/fan"                                                             , NULL, NULL, NULL, NULL, ""},
 #endif
 
-#if defined(ADB_BOX)
+#if defined(ADB_BOX) || defined(SAGEMCOM88)
 	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},

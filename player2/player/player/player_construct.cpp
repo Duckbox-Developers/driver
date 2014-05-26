@@ -184,6 +184,9 @@ unsigned int    i;
     SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyMPEG2DoNotHonourProgressiveFrameFlag,                PolicyValueApply );
 
     //SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyLimitInputInjectAhead,                             PolicyValueApply );
+
+    //Fix juddering on channels using DPB ordering e.g. FashionTV HD on 13E
+    SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyH264ForcePicOrderCntIgnoreDpbDisplayFrameOrdering,	PolicyValueApply );
 #endif
 
     InitializationStatus        = BufferNoError;

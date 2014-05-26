@@ -86,6 +86,9 @@ endif
 ifdef VITAMIN_HD5000
  PART2=1
 endif
+ifdef SAGEMCOM88
+ PART2=1
+endif
 
 ifndef PART1
 ifndef PART2

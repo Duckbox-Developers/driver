@@ -842,7 +842,7 @@ BOOL YWPANEL_FP_DvfdFillCrc(YWPANEL_FPData_t *data,
 	{
 		usCRC16 = YWPANEL_GenerateCRC16(I2CData->writeBuff, 27);
 		I2CData->writeBuff[27] =  (usCRC16 &0xff);
-		2CData->writeBuff[28] =  ((usCRC16>>8) &0xff);
+		I2CData->writeBuff[28] =  ((usCRC16>>8) &0xff);
 		I2CData->writeBuffLen = 29;
 	}
 	else

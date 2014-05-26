@@ -61,7 +61,7 @@ int proc_fan_write(struct file *file, const char __user *buf,
 	ssize_t 	ret = -ENOMEM;
 	
 
-	printk("%s %d - ", __FUNCTION__, (int) count);
+	//printk("%s %d - ", __FUNCTION__, (int) count);
 
 	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page) 
@@ -76,7 +76,7 @@ int proc_fan_write(struct file *file, const char __user *buf,
 		myString[count] = '\0';
 
 		sscanf(myString, "%d", &value);
-		printk("%s %d\n",myString, value );
+		//printk("%s %d\n",myString, value );
 
 		kfree(myString);
 		
@@ -104,7 +104,7 @@ int proc_fan_read(char *page, char **start, off_t off, int count,
         int rv = 0;
         if (fan_pin)
     		rv = stpio_get_pin(fan_pin);
-	printk("%s %d\n", __FUNCTION__, rv);	 
+	//printk("%s %d\n", __FUNCTION__, rv);	 
 
 	if ( rv == 1  )
 		len = sprintf(page, "1\n");
