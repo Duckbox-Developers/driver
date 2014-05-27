@@ -398,7 +398,7 @@ FrameParserStatus_t     Status;
 	if( !CodedFrameParameters->StreamDiscontinuity )
 	{
 	    Buffer->IncrementReferenceCount( IdentifierFrameParserMarkerFrame );
-	    OutputRing->Insert( (unsigned int )Buffer );
+	    OutputRing->Insert( (uintptr_t)Buffer );
 	}
 
 	return FrameParserNoError;
@@ -1745,8 +1745,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSet
 
     if( !ParsedFrameParameters->ReferenceFrame )
     {
-	ReverseQueuedPostDecodeSettingsRing->Insert( (unsigned int)ParsedFrameParameters );
-	ReverseQueuedPostDecodeSettingsRing->Insert( (unsigned int)ParsedVideoParameters );
+	ReverseQueuedPostDecodeSettingsRing->Insert( (uintptr_t)ParsedFrameParameters );
+	ReverseQueuedPostDecodeSettingsRing->Insert( (uintptr_t)ParsedVideoParameters );
     }
     else
 
@@ -1762,8 +1762,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSet
 	{
 	    while( ReverseQueuedPostDecodeSettingsRing->NonEmpty() )
 	    {
-		ReverseQueuedPostDecodeSettingsRing->Extract( (unsigned int *)&DeferredParsedFrameParameters );
-		ReverseQueuedPostDecodeSettingsRing->Extract( (unsigned int *)&DeferredParsedVideoParameters );
+		ReverseQueuedPostDecodeSettingsRing->Extract( (uintptr_t *)&DeferredParsedFrameParameters );
+		ReverseQueuedPostDecodeSettingsRing->Extract( (uintptr_t *)&DeferredParsedVideoParameters );
 		CalculateFrameIndexAndPts( DeferredParsedFrameParameters, DeferredParsedVideoParameters );
 	    }
 	}
@@ -2030,7 +2030,8 @@ unsigned char           *Pointer;
 
     if( Size > (ANTI_EMULATION_BUFFER_SIZE - 16) )
     {
-	report( severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %d - Implementation error.\n" );
+        report( severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %u (avail: %d) - Implementation error.\n",
+            Size, (ANTI_EMULATION_BUFFER_SIZE - 16) );
 	return;
     }
 

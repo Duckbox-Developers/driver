@@ -330,6 +330,7 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 };
 
 #elif defined CONFIG_CPU_SUBTYPE_STX7108
+
 #warning "7108 values haven't been tested"
 static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 	{
@@ -368,8 +369,7 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] = {
 #error Unsupported CPU subtype/dual display combination
 #endif
 
-
-#if defined (CONFIG_CPU_SUBTYPE_STX7200)
+#ifdef CONFIG_CPU_SUBTYPE_STX7200
 
 static const struct snd_pseudo_transformer_name default_transformer_name = {
 	SND_PSEUDO_TRANSFORMER_NAME_MAGIC,
@@ -383,7 +383,6 @@ static const struct snd_pseudo_transformer_name default_transformer_name = {
 };
 
 #endif
-
 
 struct snd_pseudo {
 	struct snd_card *card;
@@ -577,6 +576,7 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
 		.callback = snd_card_pseudo_pcm_callback,
 		.user_data = substream,
 	};
+
 	int err;
 
 	/* might have been called before ...  --martii */
@@ -590,7 +590,7 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
 	/* ensure stale data does not leak to userspace */
 	memset(runtime->dma_area, 0, runtime->dma_bytes);
 
-	/* populate the runtime-variable portion of the descriptor */       
+	/* populate the runtime-variable portion of the descriptor */
 	descriptor.hw_buffer = runtime->dma_area;
 	descriptor.hw_buffer_size = runtime->dma_bytes;
 	descriptor.channels = params_channels(hw_params);
@@ -627,7 +627,9 @@ static int snd_card_pseudo_hw_free(struct snd_pcm_substream *substream)
 }
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-/* copied from player2_131 */
+/*
+ * copied from player2_131
+ */
 static int snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 {
 	struct snd_pcm_substream *substream = vma->vm_private_data;
@@ -746,10 +748,12 @@ static int snd_card_pseudo_playback_open(struct snd_pcm_substream *substream)
 	/* settings private_free makes the infrastructure responsible for freeing ppcm */
 	runtime->private_free = snd_card_pseudo_runtime_free;
 	runtime->hw = snd_card_pseudo_playback;
+
 	if (substream->pcm->device & 1) {
 		runtime->hw.info &= ~SNDRV_PCM_INFO_INTERLEAVED;
 		runtime->hw.info |= SNDRV_PCM_INFO_NONINTERLEAVED;
 	}
+
 	if (substream->pcm->device & 2)
 		runtime->hw.info &= ~(SNDRV_PCM_INFO_MMAP|SNDRV_PCM_INFO_MMAP_VALID);
 	if ((err = add_playback_constraints(runtime)) < 0)
@@ -757,7 +761,9 @@ static int snd_card_pseudo_playback_open(struct snd_pcm_substream *substream)
 
 	sigfillset(&allset);
 	sigprocmask(SIG_BLOCK, &allset, &oldset);
+
 	err = pseudo->backend_ops->mixer_alloc_substream(pseudo->backend_mixer, &ppcm->substream_identifier);
+
 	sigprocmask(SIG_SETMASK, &oldset, NULL);
 	if (err < 0)
 		return err;
@@ -768,8 +774,8 @@ static int snd_card_pseudo_playback_open(struct snd_pcm_substream *substream)
 static int snd_card_pseudo_playback_close(struct snd_pcm_substream *substream)
 {
 	struct snd_pcm_runtime *runtime = substream->runtime;
-	struct snd_pseudo_pcm *ppcm = runtime->private_data;
 	struct snd_pseudo *pseudo = substream->private_data;
+	struct snd_pseudo_pcm *ppcm = runtime->private_data;
 	int err;
 
 	BUG_ON(-1 == ppcm->substream_identifier);
@@ -800,8 +806,7 @@ static int __init snd_card_pseudo_pcm(struct snd_pseudo *pseudo, int device, int
 	struct snd_pcm *pcm;
 	int err;
 
-	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device,
-			       substreams, 0, &pcm)) < 0)
+	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device, substreams, 0, &pcm)) < 0)
 		return err;
 	pseudo->pcm = pcm;
 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &snd_card_pseudo_playback_ops);
@@ -1160,7 +1165,7 @@ static int snd_pseudo_route_info(struct snd_kcontrol *kcontrol,
 	if (uinfo->value.enumerated.item > (num_texts-1))
 		uinfo->value.enumerated.item = (num_texts-1);
 	strcpy(uinfo->value.enumerated.name,
-	       texts[uinfo->value.enumerated.item]);
+		texts[uinfo->value.enumerated.item]);
 
 	return 0;
 }
@@ -1320,7 +1325,6 @@ static int snd_pseudo_blob_put(struct snd_kcontrol *kcontrol,
 		}
 	}
 	mutex_unlock(&pseudo->mixer_lock);
-
 
 	return changed;
 }
@@ -1729,18 +1733,11 @@ static int __init snd_pseudo_probe(struct platform_device *devptr)
 	struct snd_pseudo *pseudo;
 	int idx, err;
 	int dev = devptr->id;
-
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 	int result;
+
 	result = snd_card_create(index[dev], id[dev], THIS_MODULE, sizeof(struct snd_pseudo), &card);
 	if (result != 0)
 		return result;
-#else
-	card = snd_card_new(index[dev], id[dev], THIS_MODULE,
-				 sizeof(struct snd_pseudo));
-	if (card == NULL)
-		return -ENOMEM;
-#endif
 	pseudo = card->private_data;
 
 	pseudo->card = card;
@@ -1855,8 +1852,7 @@ static struct platform_driver snd_pseudo_driver = {
 	},
 };
 
-static int snd_card_pseudo_register_backend(struct platform_device *pdev,
-                                            struct alsa_backend_operations *alsa_backend_ops)
+static int snd_card_pseudo_register_backend(struct platform_device *pdev, struct alsa_backend_operations *alsa_backend_ops)
 {
 	struct snd_card *card = platform_get_drvdata(pdev);
 	struct snd_pseudo *pseudo = card->private_data;
@@ -1895,8 +1891,7 @@ static int snd_card_pseudo_register_backend(struct platform_device *pdev,
 	return 0;
 }
 
-int register_alsa_backend       (char                           *name,
-                                 struct alsa_backend_operations *alsa_backend_ops)
+int register_alsa_backend(char *name, struct alsa_backend_operations *alsa_backend_ops)
 {
 	int i;
 

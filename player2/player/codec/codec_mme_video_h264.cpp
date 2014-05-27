@@ -460,7 +460,7 @@ h264pp_status_t		PPStatus;
 
 CodecStatus_t   Codec_MmeVideoH264_c::OutputPartialDecodeBuffers( void )
 {
-unsigned int    i;
+    uintptr_t    i;
 
 
     OS_LockMutex( &H264Lock );
@@ -491,7 +491,7 @@ unsigned int    i;
 
 CodecStatus_t   Codec_MmeVideoH264_c::DiscardQueuedDecodes( void )
 {
-unsigned int    i;
+    uintptr_t    i;
 
 //
 
@@ -525,7 +525,7 @@ unsigned int    i;
 
 CodecStatus_t   Codec_MmeVideoH264_c::ReleaseReferenceFrame(    unsigned int              ReferenceFrameDecodeIndex )
 {
-unsigned int    i;
+    uintptr_t    i;
 
 //
 
@@ -607,14 +607,14 @@ unsigned int            i, j, k;
 
 CodecStatus_t   Codec_MmeVideoH264_c::Input(            Buffer_t                  CodedBuffer )
 {
-unsigned int              i;
-PlayerStatus_t            Status;
-h264pp_status_t           PPStatus;
-unsigned int              CodedDataLength;
-ParsedFrameParameters_t  *ParsedFrameParameters;
-ParsedVideoParameters_t  *ParsedVideoParameters;
-Buffer_t                  PreProcessorBuffer;
-H264FrameParameters_t    *FrameParameters;
+    uintptr_t                 i;
+    PlayerStatus_t            Status;
+    h264pp_status_t           PPStatus;
+    unsigned int              CodedDataLength;
+    ParsedFrameParameters_t  *ParsedFrameParameters;
+    ParsedVideoParameters_t  *ParsedVideoParameters;
+    Buffer_t                  PreProcessorBuffer;
+    H264FrameParameters_t    *FrameParameters;
 
     //
     // First extract the useful pointers from the buffer all held locally
@@ -1706,15 +1706,15 @@ Codec_MmeVideoH264_c    *Codec = (Codec_MmeVideoH264_c *)Parameter;
 
 void Codec_MmeVideoH264_c::IntermediateProcess( void )
 {
-PlayerStatus_t	Status;
-h264pp_status_t PPStatus;
-RingStatus_t    RingStatus;
-unsigned int    Entry;
-unsigned int    PPEntry;
-unsigned int    PPSize;
-unsigned int    PPStatusMask;
-unsigned char	AllowBadPPFrames;
-bool		PromoteNextStreamParametersToNew;
+    PlayerStatus_t  Status;
+    h264pp_status_t PPStatus;
+    RingStatus_t    RingStatus;
+    uintptr_t       Entry;
+    unsigned int    PPEntry;
+    unsigned int    PPSize;
+    unsigned int    PPStatusMask;
+    unsigned char   AllowBadPPFrames;
+    bool            PromoteNextStreamParametersToNew;
 
     //
     // Signal we have started

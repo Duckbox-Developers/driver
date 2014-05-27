@@ -137,15 +137,15 @@ public:
 	    SpareBitsForArithmetic	= 31 - Shift; 		// Careful we do not overflow doing this scale, 
 	    if( Denominator < (1ULL << SpareBitsForArithmetic) )
 	    {
-		NewDenominator	= Denominator & (0xffffffff << (Shift + 1));
+		NewDenominator	= Denominator & (0xffffffffULL << (Shift + 1));
 		Numerator	= (Numerator * NewDenominator) / Denominator;
 		Denominator	= NewDenominator;
 	    }
 
 //
 
-	    Numerator		= (Numerator + (1 << Shift)) >> (Shift + 1);
-	    Denominator		= (Denominator + (1 << Shift)) >> (Shift + 1);
+	    Numerator		= (Numerator + (1ULL << Shift)) >> (Shift + 1);
+	    Denominator		= (Denominator + (1ULL << Shift)) >> (Shift + 1);
 	}
 
 	//

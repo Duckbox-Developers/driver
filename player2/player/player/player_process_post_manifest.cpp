@@ -110,7 +110,7 @@ unsigned long long		  Now;
 
     while( !Stream->Terminating )
     {
-	RingStatus	= Stream->ManifestedBufferRing->Extract( (unsigned int *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
+	RingStatus	= Stream->ManifestedBufferRing->Extract( (uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
 
 	Now	= OS_GetTimeInMicroSeconds();
 	if( Stream->ReTimeQueuedFrames && ((Now - Stream->ReTimeStart) > PLAYER_MAX_TIME_IN_RETIMING) )

@@ -48,9 +48,6 @@ HavanaPlayback_c::~HavanaPlayback_c (void)
 
     PLAYBACK_DEBUG("\n");
 
-    if (OutputCoordinator != NULL)
-        delete OutputCoordinator;
-
     for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
     {
         if (Stream[i] != NULL)
@@ -73,6 +70,9 @@ HavanaPlayback_c::~HavanaPlayback_c (void)
         Player->TerminatePlayback (PlayerPlayback, true);
         PlayerPlayback  = NULL;
     }
+
+    if (OutputCoordinator != NULL)
+        delete OutputCoordinator;
 
     if (LockInitialised)
     {

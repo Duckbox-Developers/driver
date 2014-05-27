@@ -318,7 +318,6 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::SetModuleParameters (unsigned 
 ManifestorStatus_t      Manifestor_AudioKsound_c::GetDecodeBufferPool         (class BufferPool_c**   Pool)
 {
     ManifestorStatus_t Status;
-    PlayerStatus_t PStatus;
 
     Status = Manifestor_Audio_c::GetDecodeBufferPool(Pool);
     if( Status != ManifestorNoError )
@@ -330,6 +329,8 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::GetDecodeBufferPool         (c
 
     if (!EnabledWithMixer)
     {
+        PlayerStatus_t PStatus;
+
         memset( &InputAudioParameters, 0, sizeof( InputAudioParameters ) );
 
         PStatus = Mixer->EnableManifestor(this);
@@ -376,7 +377,6 @@ ManifestorStatus_t Manifestor_AudioKsound_c::OpenOutputSurface ()
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::CloseOutputSurface (void)
 {
-    PlayerStatus_t Status;
 
     MANIFESTOR_DEBUG (">><<\n");
 
@@ -384,6 +384,8 @@ ManifestorStatus_t Manifestor_AudioKsound_c::CloseOutputSurface (void)
 
     if( RegisteredWithMixer )
     {
+        PlayerStatus_t Status;
+
         Status = Mixer->DeRegisterManifestor( this );
         if( Status != PlayerNoError )
         {

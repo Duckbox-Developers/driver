@@ -986,11 +986,11 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
         unsigned int CoreExtSSIndex = 0, CoreAssetIndex = 0;
         unsigned int CoreOffset = 0, CoreSize = 0;
         
-    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
+        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             bBcCorePresent[nAuPr] = Bits->Get(1);
         }
-    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
+        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             if (bBcCorePresent[nAuPr])
             {
@@ -1004,7 +1004,7 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader( BitStreamClas
                 }
             }
         }
-    for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
+        for (unsigned int nAuPr=0; nAuPr<nuNumAudioPresent; nAuPr++)
         {
             if (bBcCorePresent[nAuPr])
             {

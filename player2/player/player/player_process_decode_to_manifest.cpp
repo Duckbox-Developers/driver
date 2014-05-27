@@ -220,7 +220,7 @@ Buffer_t                          InitialFrameBuffer;
 						    Stream->AccumulatedAfterDtoMControlMessages, 
 						    SequenceNumber, Time );
 
-		Stream->ManifestedBufferRing->Insert( (unsigned int)MarkerFrameBuffer );        // Pass on the marker
+		Stream->ManifestedBufferRing->Insert( (uintptr_t)MarkerFrameBuffer );        // Pass on the marker
 		MarkerFrameBuffer                       = NULL;
 		Stream->DiscardingUntilMarkerFrameDtoM  = false;
 		continue;
@@ -230,7 +230,7 @@ Buffer_t                          InitialFrameBuffer;
 	    // Get a new buffer (continue will still perform the scan)
 	    //
 
-	    RingStatus  = Stream->DecodedFrameRing->Extract( (unsigned int *)(&Buffer), PLAYER_NEXT_FRAME_EVENT_WAIT );
+	    RingStatus  = Stream->DecodedFrameRing->Extract( (uintptr_t *)(&Buffer), PLAYER_NEXT_FRAME_EVENT_WAIT );
 	    if( (RingStatus == RingNothingToGet) || (Buffer == NULL) || Stream->Terminating )
 		continue;
 

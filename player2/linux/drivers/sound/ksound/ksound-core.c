@@ -19,6 +19,7 @@
  */
 
 #include <linux/version.h>
+#include <linux/module.h>
 #include <linux/init.h>
 #include <linux/smp_lock.h>
 #include <linux/slab.h>
@@ -571,6 +572,7 @@ EXPORT_SYMBOL(ksnd_pcm_mmap_begin);
 EXPORT_SYMBOL(ksnd_pcm_mmap_commit);
 EXPORT_SYMBOL(ksnd_pcm_delay);
 EXPORT_SYMBOL(ksnd_pcm_start);
+EXPORT_SYMBOL(ksnd_pcm_stop);
 EXPORT_SYMBOL(ksnd_pcm_open);
 EXPORT_SYMBOL(ksnd_pcm_close);
 EXPORT_SYMBOL(ksnd_pcm_writei);
@@ -724,15 +726,15 @@ int ksnd_pcm_htimestamp(ksnd_pcm_t *kpcm, snd_pcm_uframes_t *avail, struct times
 #if defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
     defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
     defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
-	myavail = _ksnd_pcm_avail_update(kpcm->substream);
+    myavail = _ksnd_pcm_avail_update(kpcm->substream);
 #else
-	myavail = 0;
+    myavail	= 0;
 #endif
 /*NICK*/
 	mystamp = runtime->status->tstamp;
 	snd_pcm_stream_unlock_irq(substream);
 
-	if( (mystamp.tv_sec == 0) && (mystamp.tv_nsec == 0) )
+	if((mystamp.tv_sec == 0) && (mystamp.tv_nsec == 0))
 		return -1;
 
 	if (myavail < 0)
@@ -1237,6 +1239,9 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 	snd_pcm_uframes_t offset = 0;
 	int err = 0;
 
+	if (size == 0)
+		return 0;
+
 	snd_pcm_stream_lock_irq(substream);
 	switch (_ksnd_pcm_state(substream)) {
 	case SNDRV_PCM_STATE_PREPARED:
@@ -1355,9 +1360,9 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 		}
 	}
 
-      _end_unlock:
+_end_unlock:
 	snd_pcm_stream_unlock_irq(substream);
-      _end:
+_end:
 	return xfer > 0 ? (snd_pcm_sframes_t) xfer : err;
 }
 

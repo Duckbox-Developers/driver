@@ -467,7 +467,7 @@ Buffer_t	Buffer;
 
     while( true )
     {
-	Status	= CloneOutputRing->Extract( (unsigned int *)(&Buffer), OS_INFINITE );
+	Status	= CloneOutputRing->Extract( (uintptr_t *)(&Buffer), OS_INFINITE );
 
 	if( Buffer == NULL )
 	    break;

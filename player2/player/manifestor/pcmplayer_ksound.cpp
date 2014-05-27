@@ -62,6 +62,43 @@ extern "C" int sprintf(char * buf, const char * fmt, ...) __attribute__((format(
 #endif
 #endif
 
+
+static void UpdateIec958SamplingFrequency(unsigned int SampleRateHz, struct snd_aes_iec958 *Status)
+{
+    //
+    // Strip out of the original sampling frequency
+    //
+
+    Status->status[3] &= ~0x0f;
+
+    //
+    // Drop in a new one
+    //
+
+    switch (SampleRateHz) {
+        // macro to let us express table entries in the same form as the tables in the standard...
+#define C(b0, b1, b2, b3, sfreq) case sfreq: Status->status[3] |= b0<<0 | b1<<1 | b2<<2 | b3<<3; break
+
+        C(0, 0, 1, 0,   22050);
+        C(0, 0, 0, 0,   44100);
+        C(0, 0, 0, 1,   88200);
+        C(0, 0, 1, 1,  176400);
+
+        C(0, 1, 1, 0,   24000);
+        C(0, 1, 0, 0,   48000);
+        C(0, 1, 0, 1,   96000);
+        C(0, 1, 1, 1,  192000);
+
+        C(1, 1, 0, 0,   32000);
+        C(1, 0, 0, 1,  768000);
+
+    default:
+        Status->status[3] |= 1;
+#undef C
+    }
+}
+
+
 ////////////////////////////////////////////////////////////////////////////
 ///
 ///
@@ -456,32 +493,7 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec60958StatusBits(struct snd_pseudo_mixer
 	if (iec958_elem) {
 		int res;
 		
-		//
-		// override the sampling frequency
-		//
-		
-		Status.status[3] &= ~0x0f;
-		switch (SurfaceParameters.ActualSampleRateHz) {
-		// macro to let us express table entries in the same form as the tables in the standard...
-#define C(b0, b1, b2, b3, sfreq) case sfreq: Status.status[3] |= b0<<0 | b1<<1 | b2<<2 | b3<<3; break
-
-		C(0, 0, 1, 0,   22050);
-		C(0, 0, 0, 0,   44100);
-		C(0, 0, 0, 1,   88200);
-		C(0, 0, 1, 1,  176400);
-
-		C(0, 1, 1, 0,   24000);
-		C(0, 1, 0, 0,   48000);
-		C(0, 1, 0, 1,   96000);
-		C(0, 1, 1, 1,  192000);
-
-		C(1, 1, 0, 0,   32000);
-		C(1, 0, 0, 1,  768000);
-
-		default:
-			Status.status[3] |= 1;
-#undef C
-		}
+		UpdateIec958SamplingFrequency(SurfaceParameters.ActualSampleRateHz, &Status);
 
 		//
 		// Issue the update
@@ -513,6 +525,8 @@ PlayerStatus_t PcmPlayer_Ksound_c::SetIec61937StatusBits( struct snd_pseudo_mixe
         if (iec958_elem) 
         {
                 int res;
+
+                UpdateIec958SamplingFrequency(SurfaceParameters.ActualSampleRateHz, &Status);
 
                 //
                 // override the channel status necessary bits for IEC61937 mode

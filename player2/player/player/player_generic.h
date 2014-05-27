@@ -640,7 +640,7 @@ private:
 						PlayerStream_t		  Stream,
 						PlayerEventMask_t	  Events );
 
-    void   ProcessStatistics(			PlayerStream_t		  Stream,
+    void   ProcessStatistics(			PlayerStream_t            Stream,
 						PlayerSequenceNumber_t	 *Record );
 
     bool   CheckForNonDecodedFrame( 		PlayerStream_t		  Stream,

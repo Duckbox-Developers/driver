@@ -276,7 +276,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader( unsigned ch
 																	 bool SearchForConvSync)
 {
   unsigned int    SamplingFrequency;
-  unsigned int    FrameSize;
+  unsigned int    FrameSize = 0;
   unsigned int    NbSamples;
   unsigned char   Bsid;
   Ac3StreamType_t Type;

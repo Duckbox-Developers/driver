@@ -276,7 +276,7 @@ OSDEV_InterruptHandlerEntrypoint( H264ppInterruptHandler )
     //
 
     State->Accumulated_ITS |= PP_ITS;
-    if( ((PP_ITS & PP_ITM__DMA_CMP) != 0) && State->Busy )
+    if( State->Busy )
     {
         //
         // Record the completion of this process
@@ -286,7 +286,10 @@ OSDEV_InterruptHandlerEntrypoint( H264ppInterruptHandler )
 
         Record->PP          = N;
         Record->PP_ITS      = State->Accumulated_ITS;
-        Record->OutputSize  = (PP_WDL - PP_ISBG);
+        if(PP_ITS & PP_ITM__DMA_CMP)
+            Record->OutputSize  = (PP_WDL - PP_ISBG);
+        else
+            Record->OutputSize  = 0;
         Record->DecodeTime  = Now - Record->DecodeTime;
 
         Record->Processed   = true;
@@ -620,7 +623,8 @@ static void H264ppInitializeDevice( void )
         OSDEV_WriteLong( PP_MAX_CHUNK_SIZE(N),          0 );
         OSDEV_WriteLong( PP_MAX_MESSAGE_SIZE(N),        3 );
 
-        OSDEV_WriteLong( PP_ITS(N),                     0xffffffff );           // Clear interrupt status
+        // Clear interrupt status
+        OSDEV_WriteLong( PP_ITS(N),                     0xffffffff );
 
         Status  = request_irq( DeviceContext.InterruptNumber[N], H264ppInterruptHandler, IRQF_DISABLED, "H264 PP", (void *)N );
 
@@ -869,5 +873,4 @@ static void H264ppWorkAroundGNBvd42331( H264ppState_t        *State,
 
     OSDEV_WriteLong( PP_ITS(N),                     0xffffffff );           // Clear interrupt status
     OSDEV_WriteLong( PP_ITM(N), SavedITM );
-
 }

@@ -743,7 +743,7 @@ Buffer_t                 Buffer;
     {
 	OS_WaitForEvent( &Stream->StartStopEvent, 2 * PLAYER_MAX_EVENT_WAIT );
 
-	if(  Stream->ProcessRunningCount != 0 )
+	if( Stream->ProcessRunningCount != 0 )
 	    report( severity_error, "Player_Generic_c::CleanUpAfterStream - Stream processes failed to terminate (%d).\n", Stream->ProcessRunningCount );
     }
 
@@ -755,9 +755,12 @@ Buffer_t                 Buffer;
     {
 	while( Stream->CollatedFrameRing->NonEmpty() )
 	{
-	    Stream->CollatedFrameRing->Extract( (unsigned int *)(&Buffer) );
-	    Buffer->GetOwnerList( 1, &OwnerIdentifier );
-	    Buffer->DecrementReferenceCount( OwnerIdentifier );
+		Stream->CollatedFrameRing->Extract( (uintptr_t *)(&Buffer) );
+		if( Buffer != NULL )
+		{
+			Buffer->GetOwnerList( 1, &OwnerIdentifier );
+			Buffer->DecrementReferenceCount( OwnerIdentifier );
+		}
 	}
 
 	delete Stream->CollatedFrameRing;
@@ -769,9 +772,12 @@ Buffer_t                 Buffer;
     {
 	while( Stream->ParsedFrameRing->NonEmpty() )
 	{
-	    Stream->ParsedFrameRing->Extract( (unsigned int *)(&Buffer) );
-	    Buffer->GetOwnerList( 1, &OwnerIdentifier );
-	    Buffer->DecrementReferenceCount( OwnerIdentifier );
+		Stream->ParsedFrameRing->Extract( (uintptr_t *)(&Buffer) );
+		if( Buffer != NULL )
+		{
+			Buffer->GetOwnerList( 1, &OwnerIdentifier );
+			Buffer->DecrementReferenceCount( OwnerIdentifier );
+		}
 	}
 
 	delete Stream->ParsedFrameRing;
@@ -783,9 +789,12 @@ Buffer_t                 Buffer;
     {
 	while( Stream->DecodedFrameRing->NonEmpty() )
 	{
-	    Stream->DecodedFrameRing->Extract( (unsigned int *)(&Buffer) );
-	    Buffer->GetOwnerList( 1, &OwnerIdentifier );
-	    Buffer->DecrementReferenceCount( OwnerIdentifier );
+		Stream->DecodedFrameRing->Extract( (uintptr_t *)(&Buffer) );
+		if( Buffer != NULL )
+		{
+			Buffer->GetOwnerList( 1, &OwnerIdentifier );
+			Buffer->DecrementReferenceCount( OwnerIdentifier );
+		}
 	}
 
 	delete Stream->DecodedFrameRing;
@@ -797,9 +806,12 @@ Buffer_t                 Buffer;
     {
 	while( Stream->ManifestedBufferRing->NonEmpty() )
 	{
-	    Stream->ManifestedBufferRing->Extract( (unsigned int *)(&Buffer) );
-	    Buffer->GetOwnerList( 1, &OwnerIdentifier );
-	    Buffer->DecrementReferenceCount( OwnerIdentifier );
+		Stream->ManifestedBufferRing->Extract( (uintptr_t *)(&Buffer) );
+		if( Buffer != NULL )
+		{
+			Buffer->GetOwnerList( 1, &OwnerIdentifier );
+			Buffer->DecrementReferenceCount( OwnerIdentifier );
+		}
 	}
 
 	delete Stream->ManifestedBufferRing;
@@ -1051,7 +1063,7 @@ unsigned long long	  Delay;
     OS_ResetEvent( &Stream->Drained );
 
     MarkerFrame->GetIndex( &Stream->MarkerInCodedFrameIndex );
-    Stream->CollatedFrameRing->Insert( (unsigned int)MarkerFrame );
+    Stream->CollatedFrameRing->Insert( (uintptr_t)MarkerFrame );
 
     //
     // Issue an in sequence synchronization reset

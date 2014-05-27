@@ -49,12 +49,31 @@ extern "C" {
 #undef  true
 #undef  false
 #undef  bool
+#undef NULL
+#define NULL 0
+#undef  inline
 #else
 #include <linux/stddef.h>
 #include <linux/types.h>
 #include <linux/string.h>
 #endif
 #include <linux/unistd.h>
+
+#ifndef __KERNEL__
+#include <stdint.h>
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#ifndef __KERNEL__
+#include <errno.h>
+#else
+#include <linux/errno.h>
+#endif
+#ifdef __cplusplus
+}
+#endif
 
 #include "report.h"
 
@@ -196,6 +215,14 @@ static inline unsigned int      __getlw( unsigned long long a )
 extern "C" {
 #endif
 // --------------------------------------------------------------
+// Kernel BUG features
+
+void          OS_Warn(                          const char              *str );
+void          OS_WarnOn(                        unsigned long            condition );
+void          OS_Bug(                           void );
+void          OS_BugOn(                         unsigned long            condition );
+
+// --------------------------------------------------------------
 //      The Memory functions
 
 void         *OS_Malloc(                        unsigned int             Size );
@@ -336,6 +363,7 @@ public:
 private:
 	OS_Mutex_t *Mutex;
 };
-#endif
+
+#endif  // __cplusplus
 
 #endif

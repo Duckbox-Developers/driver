@@ -34,7 +34,7 @@ Date        Modification                                    Name
 #define H_MONITOR_INLINE
 
 
-#include "monitor_types.h"
+#include "linux/stm/monitor_types.h"
 
 #if defined (CONFIG_MONITOR)
 

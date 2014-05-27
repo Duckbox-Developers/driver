@@ -95,7 +95,7 @@ Codec_MmeVideoMjpeg_c::Codec_MmeVideoMjpeg_c( void )
 
     Configuration.MaxDecodeIndicesPerBuffer             = 2;
     Configuration.SliceDecodePermitted                  = false;
-    Configuration.DecimatedDecodePermitted              = false;
+    Configuration.DecimatedDecodePermitted              = true;
 
 #if defined (USE_JPEG_HW_TRANSFORMER)
     Configuration.TransformName[0]                      = JPEGHWDEC_MME_TRANSFORMER_NAME "0";

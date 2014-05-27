@@ -34,7 +34,7 @@ Date        Modification                                    Name
 //{{{  HavanaStream_c
 HavanaStream_c::HavanaStream_c (void)
 {
-    HAVANA_DEBUG("\n");
+    STREAM_DEBUG("\n");
 
     PlayerStreamType            = StreamTypeNone;
     PlayerStream                = NULL;
@@ -69,7 +69,7 @@ HavanaStream_c::HavanaStream_c (void)
 //{{{  ~HavanaStream_c
 HavanaStream_c::~HavanaStream_c (void)
 {
-    HAVANA_DEBUG("\n");
+    STREAM_DEBUG("\n");
 
     if (PlayerStream != NULL)
     {
@@ -156,7 +156,7 @@ HavanaStatus_t HavanaStream_c::Init    (class HavanaPlayer_c*   HavanaPlayer,
     HavanaStatus_t      Status          = HavanaNoError;
     PlayerStatus_t      PlayerStatus    = PlayerNoError;
 
-    HAVANA_DEBUG("Stream %s %s %s\n", Media, Format, Encoding);
+    STREAM_DEBUG("Stream %s %s %s\n", Media, Format, Encoding);
 
     this->Player                = Player;
     this->PlayerPlayback        = PlayerPlayback;
@@ -1192,7 +1192,7 @@ HavanaStatus_t HavanaStream_c::Switch  (char*   Format,
     class FrameParser_c*        PendingFrameParser      = NULL;
     class Codec_c*              PendingCodec            = NULL;
 
-    HAVANA_DEBUG("Stream %s %s \n", Format, Encoding);
+    STREAM_DEBUG("Stream %s %s \n", Format, Encoding);
 
     Status      = HavanaPlayer->CallFactory (Format, Encoding, PlayerStreamType, ComponentCollator, (void**)&PendingCollator);
     if (Status != HavanaNoError)

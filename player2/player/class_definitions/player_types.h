@@ -42,9 +42,11 @@ Date        Modification                                    Name
 //      External types
 //
 
+#ifdef __cplusplus
 #include "ring.h"
 #include "stack.h"
 #include "rational.h"
+#endif // __cplusplus
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -612,6 +614,7 @@ typedef struct PlayerStream_s           *PlayerStream_t;
 // The event record
 //
 
+#ifdef __cplusplus
 typedef struct PlayerEventRecord_s
 {
     PlayerEventIdentifier_t        Code;
@@ -634,6 +637,7 @@ typedef struct PlayerEventRecord_s
 
     void                          *UserData;
 } PlayerEventRecord_t;
+#endif //cplusplus
 
 //
 

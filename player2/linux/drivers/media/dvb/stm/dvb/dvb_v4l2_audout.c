@@ -76,21 +76,16 @@ static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle,
 		case VIDIOC_S_AUDOUT:
 		{
 			const struct v4l2_audioout *const audioout = arg;
-			int index =
-			    audioout->index - driver->index_offset[device];
+			int index = audioout->index - driver->index_offset[device];
 
 			if (index < 0 || index >= ARRAY_SIZE(g_aoutDevice)) {
-				DVB_ERROR
-				    ("VIDIOC_S_AUDOUT: Output number out of range %d\n",
-				     index);
+				DVB_ERROR("VIDIOC_S_AUDOUT: Output number out of range %d\n", index);
 				return -EINVAL;
 			}
 			/* allocate handle for driver registration */
 
-			handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle =
-			    kmalloc(sizeof(struct v4l2_audioout), GFP_KERNEL);
-			if (handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle ==
-			    NULL) {
+			handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle = kmalloc(sizeof(struct v4l2_audioout), GFP_KERNEL);
+			if (handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle == NULL) {
 				DVB_ERROR("VIDIOC_S_AUDOUT: kmalloc failed\n");
 				return -EINVAL;
 			}

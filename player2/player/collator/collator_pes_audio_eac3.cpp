@@ -157,7 +157,7 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength( u
 
   FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader( StoredFrameHeader,
 															  &ParsedFrameHeader,
-															  false);
+															  true);
 
   if( FPStatus == FrameParserNoError )
   {

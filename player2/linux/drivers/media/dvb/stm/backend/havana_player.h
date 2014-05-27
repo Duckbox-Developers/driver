@@ -36,6 +36,7 @@ Date        Modification                                    Name
 
 #include "backend_ops.h"
 #include "player_interface_ops.h"
+#include "osinline.h"
 #include "player.h"
 #include "buffer_generic.h"
 #include "player_generic.h"

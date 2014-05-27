@@ -63,43 +63,44 @@ Date        Modification                                    Name
 
 class Mixer_c:public BaseComponentClass_c
 {
-  public:
+public:
     enum InputState_t
     {
-	/// There is no manifestor connected to this input.
-	DISCONNECTED,
+        /// There is no manifestor connected to this input.
+        DISCONNECTED,
 
-	/// Neither the input nor the output side are running.
-	STOPPED,
+        /// Neither the input nor the output side are running.
+        STOPPED,
 
-	/// Manifestor has been enabled but we have yet to receive parameters from it.
-	UNCONFIGURED,
+        /// Manifestor has been enabled but we have yet to receive parameters from it.
+        UNCONFIGURED,
 
-	/// Manifestor has been configured and we are waiting for the mixer loop to start using it.
-	STARTING,
+        /// Manifestor has been configured and we are waiting for the mixer loop to start using it.
+        STARTING,
 
-	/// The output side is primed and ready but might not be sending (muted)
-	/// samples to the speakers yet.
-	STARTED,
+        /// The output side is primed and ready but might not be sending (muted)
+        /// samples to the speakers yet.
+        STARTED,
 
-	/// Manifestor has been disabled but we have not yet stopped mixing from it.
-	STOPPING,
+        /// Manifestor has been disabled but we have not yet stopped mixing from it.
+        STOPPING,
     };
 
     static inline const char *LookupInputState( InputState_t state )
     {
-	switch ( state )
-	{
+        switch ( state )
+        {
 #define E(x) case x: return #x
-	    E( DISCONNECTED );
-	    E( STOPPED );
-	    E( UNCONFIGURED );
-	    E( STARTING );
-	    E( STARTED );
-	    E( STOPPING );
+            E( DISCONNECTED );
+            E( STOPPED );
+            E( UNCONFIGURED );
+            E( STARTING );
+            E( STARTED );
+            E( STOPPING );
 #undef E
-	    default:return "INVALID";
-	}
+        default:
+            return "INVALID";
+        }
     }
 };
 

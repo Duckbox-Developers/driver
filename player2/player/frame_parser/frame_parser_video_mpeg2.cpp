@@ -512,8 +512,8 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayGeneratePostDecodeParamet
 
 	if( !ParsedFrameParameters->ReferenceFrame )
 	{
-	    ReverseQueuedPostDecodeSettingsRing->Insert( (unsigned int)ParsedFrameParameters );
-	    ReverseQueuedPostDecodeSettingsRing->Insert( (unsigned int)ParsedVideoParameters );
+	    ReverseQueuedPostDecodeSettingsRing->Insert( (uintptr_t)ParsedFrameParameters );
+	    ReverseQueuedPostDecodeSettingsRing->Insert( (uintptr_t)ParsedVideoParameters );
 	}
 	else
 
@@ -526,8 +526,8 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayGeneratePostDecodeParamet
 
 	    while( ReverseQueuedPostDecodeSettingsRing->NonEmpty() )
 	    {
-		ReverseQueuedPostDecodeSettingsRing->Extract( (unsigned int *)&DeferredParsedFrameParameters );
-		ReverseQueuedPostDecodeSettingsRing->Extract( (unsigned int *)&DeferredParsedVideoParameters );
+		ReverseQueuedPostDecodeSettingsRing->Extract( (uintptr_t *)&DeferredParsedFrameParameters );
+		ReverseQueuedPostDecodeSettingsRing->Extract( (uintptr_t *)&DeferredParsedVideoParameters );
 		CalculateFrameIndexAndPts( DeferredParsedFrameParameters, DeferredParsedVideoParameters );
 	    }
 	}

@@ -49,15 +49,15 @@ private:
     unsigned int         Limit;
     unsigned int         NextExtract;
     unsigned int         NextInsert;
-    unsigned int        *Storage;
+    uintptr_t           *Storage;
 
 public:
 
     RingUnprotected_c( unsigned int MaxEntries = 16 );
     ~RingUnprotected_c( void );
 
-    RingStatus_t Insert( unsigned int    Value );
-    RingStatus_t Extract( unsigned int  *Value );
+    RingStatus_t Insert( uintptr_t    Value );
+    RingStatus_t Extract( uintptr_t  *Value );
     RingStatus_t Flush( void );
     bool         NonEmpty( void );
 };

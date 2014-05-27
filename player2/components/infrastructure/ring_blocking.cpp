@@ -26,7 +26,7 @@ RingBlocking_c::RingBlocking_c( unsigned int MaxEntries )
     Limit       = MaxEntries + 1;
     NextExtract = 0;
     NextInsert  = 0;
-    Storage     = new unsigned int[Limit];
+    Storage     = new uintptr_t[Limit];
 
     InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
@@ -40,13 +40,13 @@ RingBlocking_c::~RingBlocking_c( void )
     OS_TerminateEvent( &Signal );
 
     if( Storage != NULL )
-	delete Storage;
+	delete [] Storage;
 }
 
 // ------------------------------------------------------------------------
 // Insert function
 
-RingStatus_t   RingBlocking_c::Insert( unsigned int      Value )
+RingStatus_t   RingBlocking_c::Insert( uintptr_t         Value )
 {
 unsigned int OldNextInsert;
 
@@ -70,7 +70,7 @@ unsigned int OldNextInsert;
 // ------------------------------------------------------------------------
 // Extract function
 
-RingStatus_t   RingBlocking_c::Extract( unsigned int    *Value )
+RingStatus_t   RingBlocking_c::Extract( uintptr_t       *Value )
 {
 
     while( true )

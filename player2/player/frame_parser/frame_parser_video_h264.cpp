@@ -2944,8 +2944,8 @@ unsigned char	ParametersVersion;
 unsigned int	FieldsPresentMask;
 unsigned int	PixelAspectRatioNumerator;
 unsigned int	PixelAspectRatioDenominator;
-unsigned int	TimeScale;
-unsigned int	TimeDelta;
+unsigned int	TimeScale = 0;
+unsigned int	TimeDelta = 0;
 
 //
 
@@ -5596,10 +5596,10 @@ report( severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
 	    pic_struct	= (SliceHeader->bottom_field_flag == 0) ?
 					SEI_PICTURE_TIMING_PICSTRUCT_TOP_FIELD :
 					SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_FIELD;
-	else if( SPS->frame_mbs_only_flag && (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot) )
+	else if( SPS->frame_mbs_only_flag || (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot) )
 	    pic_struct	= SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
 	else
-	    pic_struct	= (SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot) ?
+	    pic_struct	= (SliceHeader->PicOrderCntTop < SliceHeader->PicOrderCntBot) ?
 					SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM :
 					SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP;
     }
@@ -6106,8 +6106,11 @@ void   FrameParser_VideoH264_c::SetupPanScanValues(		ParsedFrameParameters_t	 *P
 								ParsedVideoParameters_t	 *ParsedVideoParameters )
 {
 unsigned int                     i;
+bool                             PanScanIsOn;
 H264SliceHeader_t               *SliceHeader;
 H264SEIPanScanRectangle_t       *SEIPanScanRectangle;
+unsigned char                    DisplayFormat;
+unsigned char                    DisplayAspectRatio;
 unsigned int                     FrameHeightInMbs;
 unsigned int                     Left;
 unsigned int                     Right;
@@ -6179,10 +6182,20 @@ unsigned int                     Bottom;
     }
 
     //
+    // Is pan scan on. This is recalculated every frame, because a change in policy can reset it
+    //
+
+    DisplayFormat	= Player->PolicyValue( Playback, Stream, PolicyDisplayFormat );
+    DisplayAspectRatio	= Player->PolicyValue( Playback, Stream, PolicyDisplayAspectRatio );
+
+    PanScanIsOn		= (DisplayFormat == PolicyValuePanScan) &&
+			  (DisplayAspectRatio == PolicyValue4x3);
+
+    //
     // setup the values
     //
 
-    ParsedVideoParameters->PanScan.Count  = PanScanState.Count;
+    ParsedVideoParameters->PanScan.Count  = PanScanIsOn ? PanScanState.Count : 0;
 
     for( i=0; i<ParsedVideoParameters->PanScan.Count; i++ )
     {

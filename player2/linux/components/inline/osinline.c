@@ -105,7 +105,6 @@ void OS_PurgeCacheRange( void* CPUAddress, unsigned int size )
     OSDEV_PurgeCacheRange(CPUAddress,size);
 }
 
-
 // --------------------------------------------------------------
 //      The Semaphore functions
 

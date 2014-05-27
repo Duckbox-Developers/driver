@@ -117,6 +117,7 @@ static struct dvb_backend_operations            DvbBackendOps        =
 #endif
 };
 
+#ifndef __TDT__
 static struct player_interface_operations       PlayerInterfaceOps        =
 {
     .owner                                      = THIS_MODULE,
@@ -125,6 +126,7 @@ static struct player_interface_operations       PlayerInterfaceOps        =
     .component_set_attribute                    = ComponentSetAttribute,
     .player_register_event_signal_callback      = PlayerRegisterEventSignalCallback
 };
+#endif
 
 static struct alsa_backend_operations           AlsaBackendOps          =
 {

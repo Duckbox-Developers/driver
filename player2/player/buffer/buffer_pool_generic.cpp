@@ -202,7 +202,7 @@ unsigned int            ItemSize;
 	    Buffer->Index       = i;
 	    ListOfBuffers       = Buffer;
 
-	    FreeBuffer->Insert( (unsigned int)Buffer );
+	    FreeBuffer->Insert( (uintptr_t)Buffer );
 
 	    //
 	    // Have we allocated the buffer data block
@@ -547,7 +547,7 @@ unsigned long long	 EntryTime;
 	{
 	    OS_ResetEvent( &BufferReleaseSignal );
 
-	    RingStatus	= FreeBuffer->Extract( (unsigned int *)(&LocalBuffer), RING_NONE_BLOCKING );
+	    RingStatus	= FreeBuffer->Extract( (uintptr_t *)(&LocalBuffer), RING_NONE_BLOCKING );
 
 	    if( !NonBlocking && !AbortGetBuffer && (RingStatus != RingNoError) )
 	    {
@@ -742,7 +742,7 @@ PlayerEventRecord_t      ReleaseEvent;
 
     if( NumberOfBuffers != NOT_SPECIFIED )
     {
-	FreeBuffer->Insert( (unsigned int)LocalBuffer );
+	FreeBuffer->Insert( (uintptr_t)LocalBuffer );
 	OS_SetEvent( &BufferReleaseSignal );
     }
     else

@@ -110,7 +110,7 @@ bool				  DiscardBuffer;
 
     while( !Stream->Terminating )
     {
-	RingStatus	= Stream->CollatedFrameRing->Extract( (unsigned int *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
+	RingStatus	= Stream->CollatedFrameRing->Extract( (uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
 	if( (RingStatus == RingNothingToGet) || Stream->Terminating )
 	    continue;
 

@@ -73,34 +73,32 @@ static struct dvb_device        DvrDevice =
 extern int swts;
 #endif
 
-struct dvb_device* DvrInit (struct file_operations* KernelDvrFops)
+struct dvb_device *DvrInit(const struct file_operations *KernelDvrFops)
 {
-    /*
-     * Copy the fops table from the standard dvr fops.  We use our own versions of
-     * write, open and release so we can convert blueray content and detect when
-     * the device is opened and closed allowing us to create/destroy the player demux.
-     */
-    memcpy (&OriginalDvrFops, KernelDvrFops, sizeof (struct file_operations));
-    memcpy (&DvrFops, KernelDvrFops, sizeof (struct file_operations));
+	/*
+	 * Copy the fops table from the standard dvr fops.  We use our own versions of
+	 * write, open and release so we can convert blueray content and detect when
+	 * the device is opened and closed allowing us to create/destroy the player demux.
+	 */
+	memcpy(&OriginalDvrFops, KernelDvrFops, sizeof(struct file_operations));
+	memcpy(&DvrFops, KernelDvrFops, sizeof(struct file_operations));
 
-    DvrFops.owner                      = THIS_MODULE;
-    DvrFops.open                       = DvrOpen;
-    DvrFops.release                    = DvrRelease;
-    DvrFops.write                      = DvrWrite;
+	DvrFops.owner = THIS_MODULE;
+	DvrFops.open = DvrOpen;
+	DvrFops.release = DvrRelease;
+	DvrFops.write = DvrWrite;
 
-    return &DvrDevice;
+	return &DvrDevice;
 }
 
-
-static int DvrOpen     (struct inode*     Inode,
-			struct file*      File)
+static int DvrOpen(struct inode *Inode, struct file *File)
 {
     struct dvb_device*          DvbDevice       = (struct dvb_device*)File->private_data;
     struct dmxdev*              DmxDevice       = (struct dmxdev*)DvbDevice->priv;
     struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
     struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
 
-    DVB_DEBUG("\n");
+	DVB_DEBUG("\n");
 #if 0
     if ((Context->Playback == NULL) && (Context->DemuxContext->Playback == NULL))
     {
@@ -133,13 +131,11 @@ static int DvrOpen     (struct inode*     Inode,
     Context->EndOffset   = -1;
 #endif
 
-    return OriginalDvrFops.open (Inode, File);
+	return OriginalDvrFops.open(Inode, File);;
 
 }
 
-
-static int DvrRelease  (struct inode*  Inode,
-			struct file*   File)
+static int DvrRelease(struct inode *Inode, struct file *File)
 {
     struct dvb_device*          DvbDevice       = (struct dvb_device*)File->private_data;
     struct dmxdev*              DmxDevice       = (struct dmxdev*)DvbDevice->priv;
@@ -231,11 +227,11 @@ static int DvrRelease  (struct inode*  Inode,
 
     Context->StreamType         = STREAM_TYPE_TRANSPORT;
 
-    return OriginalDvrFops.release (Inode, File);
+	return OriginalDvrFops.release(Inode, File);
 #endif
 }
 
-static ssize_t DvrWrite (struct file *File, const char __user* Buffer, size_t Count, loff_t* ppos)
+static ssize_t DvrWrite (struct file *File, const char __user * Buffer, size_t Count, loff_t* ppos)
 {
     struct dvb_device*          DvbDevice       = (struct dvb_device*)File->private_data;
     struct dmxdev*              DmxDevice       = (struct dmxdev*)DvbDevice->priv;
@@ -424,6 +420,4 @@ static ssize_t DvrWrite (struct file *File, const char __user* Buffer, size_t Co
 	}
 	return Result;
     }
-
 }
-

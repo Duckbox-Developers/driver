@@ -268,7 +268,7 @@ Ring_t                    DestinationRing;
     // Send it to the appropriate process
     //
 
-    DestinationRing->Insert( (unsigned int)ControlStructureBuffer );
+    DestinationRing->Insert( (uintptr_t)ControlStructureBuffer );
 
 //
 

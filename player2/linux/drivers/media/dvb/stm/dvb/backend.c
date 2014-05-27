@@ -22,7 +22,6 @@ license from ST.
 Source file name : backend.c - linuxdvb backend engine for driving player
 Author :           Julian
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 31-Jan-07   Created                                         Julian
@@ -41,10 +40,10 @@ Date        Modification                                    Name
 #include "backend_ops.h"
 
 /*{{{  static data*/
-static unsigned char            ASFHeaderObjectGuid[]   = {0x30, 0x26, 0xb2, 0x75,
-                                                           0x8e, 0x66, 0xcf, 0x11,
-                                                           0xa6, 0xd9, 0x00, 0xaa,
-                                                           0x00, 0x62, 0xce, 0x6c
+static unsigned char ASFHeaderObjectGuid[] = {0x30, 0x26, 0xb2, 0x75,
+                                              0x8e, 0x66, 0xcf, 0x11,
+                                              0xa6, 0xd9, 0x00, 0xaa,
+                                              0x00, 0x62, 0xce, 0x6c
 };
 /*}}}*/
 
@@ -970,7 +969,7 @@ int DisplayCreate      (char*           Media,
 
     Result = Backend->Ops->display_create (Media, SurfaceId);
     if (Result < 0)
-        BACKEND_ERROR("Failed to open %s surface\n", Media);
+        BACKEND_ERROR("Failed to create media %s surface\n", Media);
 
     return Result;
 }
@@ -993,7 +992,7 @@ int isDisplayCreated      (char*           Media,
 /*}}}*/
 #endif
 
-/*{{{  DisplaySynchronize*/
+/*{{{  DvbDisplaySynchronize*/
 int DvbDisplaySynchronize   (char*           Media,
                              unsigned int    SurfaceId)
 {

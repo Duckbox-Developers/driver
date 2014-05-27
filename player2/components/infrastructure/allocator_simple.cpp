@@ -28,7 +28,7 @@ Date        Modification                                    Name
 // ------------------------------------------------------------------------
 // Macro
 
-#define On64MBBoundary( O )	((((unsigned int)(O) + (unsigned int)PhysicalAddress) & 0x03ffffff) == 0)
+#define On64MBBoundary( O )	((((uintptr_t)(O) + (uintptr_t)PhysicalAddress) & 0x03ffffff) == 0)
 
 // ------------------------------------------------------------------------
 // Constructor function
@@ -285,7 +285,7 @@ unsigned char		*LocalOffset;
 
     LocalBufferSize		= BufferSize;
     LocalOffset			= NULL;
-    MaxBlockSize		= 0x4000000 - ((unsigned int)PhysicalAddress & 0x03ffffff);
+    MaxBlockSize		= 0x4000000 - ((uintptr_t)PhysicalAddress & 0x03ffffff);
     HighestUsedBlockIndex	= 0;
 
     for( i=0; ((LocalBufferSize != 0) && (i<ALLOCATOR_SIMPLE_MAX_BLOCKS)); i++ )

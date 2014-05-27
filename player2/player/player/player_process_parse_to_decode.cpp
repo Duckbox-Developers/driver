@@ -111,7 +111,7 @@ bool				  PromoteNextStreamParametersToNew;
 
     while( !Stream->Terminating )
     {
-	RingStatus      = Stream->ParsedFrameRing->Extract( (unsigned int *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
+	RingStatus      = Stream->ParsedFrameRing->Extract( (uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT );
 	if( (RingStatus == RingNothingToGet) || Stream->Terminating )
 	{
 	    continue;
@@ -367,7 +367,7 @@ PlayerStatus_t          Status;
 
 	    if( (Stream->InsertionsIntoNonDecodedBuffers - Stream->RemovalsFromNonDecodedBuffers) > 
 		(PLAYER_MAX_DISCARDED_FRAMES - 2) )
-		Stream->DecodedFrameRing->Insert( (unsigned int)NULL );
+		Stream->DecodedFrameRing->Insert( (uintptr_t)NULL );
 
 	    return;
 	}

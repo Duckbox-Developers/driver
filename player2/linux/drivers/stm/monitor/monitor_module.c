@@ -36,11 +36,11 @@ Date        Modification                                    Name
 #include <asm/io.h>
 #include <linux/fs.h>
 #include <linux/bpa2.h>
+#include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/device.h>
 #include <linux/file.h>
 #include <linux/kthread.h>
-#include <linux/autoconf.h>
 #include <linux/cdev.h>
 #include <asm/uaccess.h>
 #include <linux/platform_device.h>

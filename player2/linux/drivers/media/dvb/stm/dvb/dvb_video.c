@@ -88,83 +88,83 @@ static int VideoIoctlDiscontinuity      (struct DeviceContext_s* Context,
 /*{{{  static data*/
 static struct file_operations VideoFops =
 {
-    owner:          THIS_MODULE,
-    write:          VideoWrite,
-    unlocked_ioctl: DvbGenericUnlockedIoctl,
-    open:           VideoOpen,
-    release:        VideoRelease,
-    poll:           VideoPoll
+	owner:          THIS_MODULE,
+	write:          VideoWrite,
+	unlocked_ioctl: DvbGenericUnlockedIoctl,
+	open:           VideoOpen,
+	release:        VideoRelease,
+	poll:           VideoPoll
 };
 
 static struct dvb_device VideoDevice =
 {
-    priv:            NULL,
-    users:           8,
-    readers:         7,
-    writers:         1,
-    fops:            &VideoFops,
-    kernel_ioctl:    VideoIoctl,
+	priv:            NULL,
+	users:           8,
+	readers:         7,
+	writers:         1,
+	fops:            &VideoFops,
+	kernel_ioctl:    VideoIoctl,
 };
 
 /* Assign encodings to backend id's using the actual ID's rather on relying on the correct order */
 
 static char* VideoContent[] =
 {
-  [VIDEO_ENCODING_AUTO]     = BACKEND_AUTO_ID,
-  [VIDEO_ENCODING_MPEG1]    = BACKEND_MPEG1_ID,
-  [VIDEO_ENCODING_MPEG2]    = BACKEND_MPEG2_ID,
-  [VIDEO_ENCODING_MJPEG]    = BACKEND_MJPEG_ID,
-  [VIDEO_ENCODING_DIVX3]    = BACKEND_DIVX3_ID,
-  [VIDEO_ENCODING_DIVX4]    = BACKEND_DIVX4_ID,
-  [VIDEO_ENCODING_DIVX5]    = BACKEND_DIVX5_ID,  
-  [VIDEO_ENCODING_MPEG4P2]  = BACKEND_MPEG4P2_ID,
-  [VIDEO_ENCODING_H264]     = BACKEND_H264_ID,
-  [VIDEO_ENCODING_WMV]      = BACKEND_WMV_ID,
-  [VIDEO_ENCODING_VC1]      = BACKEND_VC1_ID,    
-  [VIDEO_ENCODING_RAW]      = BACKEND_RAW_ID,
-  [VIDEO_ENCODING_H263]     = BACKEND_H263_ID,
-  [VIDEO_ENCODING_FLV1]     = BACKEND_FLV1_ID,
-  [VIDEO_ENCODING_VP6]      = BACKEND_VP6_ID, 
-  [VIDEO_ENCODING_RMV]      = BACKEND_RMV_ID,
-  [VIDEO_ENCODING_DIVXHD]   = BACKEND_DIVXHD_ID,
-  [VIDEO_ENCODING_AVS]      = BACKEND_AVS_ID,
-  [VIDEO_ENCODING_VP3]      = BACKEND_VP3_ID,
-  [VIDEO_ENCODING_THEORA]   = BACKEND_THEORA_ID,
-  [VIDEO_ENCODING_COMPOCAP] = BACKEND_CAP_ID,
-  [VIDEO_ENCODING_NONE]     = BACKEND_NONE_ID,
-  [VIDEO_ENCODING_PRIVATE]  = BACKEND_DVP_ID
+	[VIDEO_ENCODING_AUTO]     = BACKEND_AUTO_ID,
+	[VIDEO_ENCODING_MPEG1]    = BACKEND_MPEG1_ID,
+	[VIDEO_ENCODING_MPEG2]    = BACKEND_MPEG2_ID,
+	[VIDEO_ENCODING_MJPEG]    = BACKEND_MJPEG_ID,
+	[VIDEO_ENCODING_DIVX3]    = BACKEND_DIVX3_ID,
+	[VIDEO_ENCODING_DIVX4]    = BACKEND_DIVX4_ID,
+	[VIDEO_ENCODING_DIVX5]    = BACKEND_DIVX5_ID,  
+	[VIDEO_ENCODING_MPEG4P2]  = BACKEND_MPEG4P2_ID,
+	[VIDEO_ENCODING_H264]     = BACKEND_H264_ID,
+	[VIDEO_ENCODING_WMV]      = BACKEND_WMV_ID,
+	[VIDEO_ENCODING_VC1]      = BACKEND_VC1_ID,    
+	[VIDEO_ENCODING_RAW]      = BACKEND_RAW_ID,
+	[VIDEO_ENCODING_H263]     = BACKEND_H263_ID,
+	[VIDEO_ENCODING_FLV1]     = BACKEND_FLV1_ID,
+	[VIDEO_ENCODING_VP6]      = BACKEND_VP6_ID, 
+	[VIDEO_ENCODING_RMV]      = BACKEND_RMV_ID,
+	[VIDEO_ENCODING_DIVXHD]   = BACKEND_DIVXHD_ID,
+	[VIDEO_ENCODING_AVS]      = BACKEND_AVS_ID,
+	[VIDEO_ENCODING_VP3]      = BACKEND_VP3_ID,
+	[VIDEO_ENCODING_THEORA]   = BACKEND_THEORA_ID,
+	[VIDEO_ENCODING_COMPOCAP] = BACKEND_CAP_ID,
+	[VIDEO_ENCODING_NONE]     = BACKEND_NONE_ID,
+	[VIDEO_ENCODING_PRIVATE]  = BACKEND_DVP_ID
 };
 
 #define PES_VIDEO_START_CODE                            0xe0
 #define MPEG2_SEQUENCE_END_CODE                         0xb7
-#if defined (INJECT_WITH_PTS)
+#ifdef INJECT_WITH_PTS
 static const unsigned char Mpeg2VideoPesHeader[]  =
 {
-    0x00, 0x00, 0x01, PES_VIDEO_START_CODE,             /* header start code */
-    0x00, 0x00,                                         /* Length word */
-    0x80,                                               /* Marker (10), Scrambling control, Priority, Alignment, Copyright, Original/Copy */
-    0x80,                                               /* Pts present, ESCR, ES_rate, DSM_trick, Add_copy, CRC_flag, Extension */
-    0x05,                                               /* Pes header data length (pts) */
-    0x21,                                               /* Marker bit + Pts top 3 bits + marker bit */
-    0x00, 0x01,                                         /* next 15 bits + marker bit */
-    0x00, 0x01                                          /* bottom 15 bits + marker bit */
+	0x00, 0x00, 0x01, PES_VIDEO_START_CODE,             /* header start code */
+	0x00, 0x00,                                         /* Length word */
+	0x80,                                               /* Marker (10), Scrambling control, Priority, Alignment, Copyright, Original/Copy */
+	0x80,                                               /* Pts present, ESCR, ES_rate, DSM_trick, Add_copy, CRC_flag, Extension */
+	0x05,                                               /* Pes header data length (pts) */
+	0x21,                                               /* Marker bit + Pts top 3 bits + marker bit */
+	0x00, 0x01,                                         /* next 15 bits + marker bit */
+	0x00, 0x01                                          /* bottom 15 bits + marker bit */
 };
 #else
 static const unsigned char Mpeg2VideoPesHeader[]  =
 {
-    0x00, 0x00, 0x01, PES_VIDEO_START_CODE,             /* header start code */
-    0x00, 0x00,                                         /* Length word */
-    0x80,                                               /* Marker (10), Scrambling control, Priority, Alignment, Copyright, Original/Copy */
-    0x00,                                               /* Pts present, ESCR, ES_rate, DSM_trick, Add_copy, CRC_flag, Extension */
-    0x00,                                               /* Pes header data length (no pts) */
+	0x00, 0x00, 0x01, PES_VIDEO_START_CODE,             /* header start code */
+	0x00, 0x00,                                         /* Length word */
+	0x80,                                               /* Marker (10), Scrambling control, Priority, Alignment, Copyright, Original/Copy */
+	0x00,                                               /* Pts present, ESCR, ES_rate, DSM_trick, Add_copy, CRC_flag, Extension */
+	0x00,                                               /* Pes header data length (no pts) */
 };
 #endif
 static const unsigned char Mpeg2SequenceEnd[]  =
 {
-    0x00, 0x00, 0x01, MPEG2_SEQUENCE_END_CODE,          /* sequence end code */
-    0xff, 0xff, 0xff, 0xff,                             /* padding */
-    0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff
+	0x00, 0x00, 0x01, MPEG2_SEQUENCE_END_CODE,          /* sequence end code */
+	0xff, 0xff, 0xff, 0xff,                             /* padding */
+	0xff, 0xff, 0xff, 0xff,
+	0xff, 0xff, 0xff, 0xff
 };
 /*}}}*/
 /*{{{  Videoinit*/

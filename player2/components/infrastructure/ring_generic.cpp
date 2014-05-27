@@ -27,7 +27,7 @@ RingGeneric_c::RingGeneric_c( unsigned int MaxEntries )
     Limit       = MaxEntries + 1;
     NextExtract = 0;
     NextInsert  = 0;
-    Storage     = new unsigned int[Limit];
+    Storage     = new uintptr_t[Limit];
 
     InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
@@ -44,13 +44,13 @@ RingGeneric_c::~RingGeneric_c( void )
     OS_TerminateEvent( &Signal );
 
     if( Storage != NULL )
-	delete Storage;
+	delete [] Storage;
 }
 
 // ------------------------------------------------------------------------
 // Insert function
 
-RingStatus_t   RingGeneric_c::Insert( unsigned int       Value )
+RingStatus_t   RingGeneric_c::Insert( uintptr_t      Value )
 {
 unsigned int OldNextInsert;
 
@@ -79,7 +79,7 @@ unsigned int OldNextInsert;
 // ------------------------------------------------------------------------
 // Extract function
 
-RingStatus_t   RingGeneric_c::Extract(  unsigned int    *Value,
+RingStatus_t   RingGeneric_c::Extract(  uintptr_t       *Value,
 					unsigned int     BlockingPeriod )
 {
     //
@@ -125,6 +125,13 @@ RingStatus_t   RingGeneric_c::Flush( void )
 
 bool   RingGeneric_c::NonEmpty( void )
 {
-    return (NextExtract != NextInsert);
+bool result;
+    OS_LockMutex( &Lock );
+
+    result = (NextExtract != NextInsert);
+
+    OS_UnLockMutex( &Lock );
+
+    return result;
 }
 

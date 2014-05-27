@@ -103,4 +103,4 @@ license from ST.
 #define PP_ITM__SRS_COMP                        0x00000002  // Soft reset is completed
 #define PP_ITM__DMA_CMP                         0x00000001  // Write DMA is completed
 
-#endif
+#endif // _H264PP_H_

@@ -84,7 +84,7 @@ protected:
 public:
 
     FrameParser_Audio_c();
-    
+
     //
     // Overrides for component base class functions
     //

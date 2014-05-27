@@ -90,7 +90,8 @@ int MonitorMMEInit                     (struct DeviceContext_s*         DeviceCo
     TimeStamp                           = ktime_to_us (ktime_get ()) - TimeStamp;
 
     // If my maths is correct you don't need to cope with rap case....
-    Context->TicksPerSecond             = ((((unsigned long long)TimeValue) * 1000000ull) / (unsigned long long)TimeStamp);
+    Context->TicksPerSecond             = (((unsigned long long)TimeValue) * 1000000ull);
+    do_div(Context->TicksPerSecond, (unsigned long long)TimeStamp);
 
     MONITOR_TRACE("TicksPerSecond %lld\n",Context->TicksPerSecond);
 
@@ -132,7 +133,8 @@ int MonitorMMETerminate                (struct MMEContext_s*    Context)
     {
         Context->Monitoring     = false;
 
-        down_interruptible (&(Context->ThreadTerminated));
+        if (down_interruptible (&(Context->ThreadTerminated)) != 0)
+            MONITOR_ERROR("%s: MonitorMMETerminate: Failed to wait for thread to terminate\n", Context->TransformerName);
     }
 
     return 0;
@@ -318,7 +320,9 @@ static int MonitorMMEThread (void* Param)
             else
                 TimeDiff        = ((unsigned long long)Context->MMECommandStatus.TimeCode + Context->ClockMaxValue + 1) - (unsigned long long)TimeValue;
 
-            TimeStamp          -= ((unsigned long long)TimeDiff * 1000000ull) / Context->TicksPerSecond;
+            TimeDiff            = ((unsigned long long)TimeDiff * 1000000ull);
+            do_div( TimeDiff, Context->TicksPerSecond);
+            TimeStamp          -= TimeDiff;
         }
         if (Context->Monitoring)
             MonitorRecordEvent         (Context->DeviceContext,

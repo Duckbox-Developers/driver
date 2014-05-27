@@ -123,11 +123,11 @@ Date        Modification                                    Name
 
 //Freeze this structure as it is now.
 //Otherwise, changes to AudioMixer_ProcessorTypes.h that inserted structures
-//could cause huge problems at aggregation (because lack of initialised size
+//could cause huge problems at aggregation (because lack of initialized size
 //field on substructures means we can't even skip over them)
 //Of course, remain vulnerable to changes in higher structures, but I'm
 //taking a bet they'll change less
-typedef struct 
+typedef struct
 {
     enum eAccMixerId            Id;                //!< Id of the PostProcessing structure.
     U16                         StructSize;        //!< Size of this structure
@@ -155,23 +155,22 @@ typedef struct
     MME_LxMixerGainSet_t                       InGainConfig;    //!< Specific configuration of input gains
     MME_LxMixerPanningSet_t                    InPanningConfig; //!< Specific configuration of input panning
     MME_LxMixerInIAudioConfig_t                InIaudioConfig;  //!< Specific configuration of iaudio input
-    MME_LxMixerBDGeneral_t                     InBDGenConfig;   //!< some geenral config for BD mixer
+    MME_LxMixerBDGeneral_t                     InBDGenConfig;   //!< some general config for BD mixer
     MME_LxMixerOutConfig_t                     OutConfig;       //!< output specific configuration information
-    MME_LxPcmPostProcessingGlobalParameters_Frozen_t PcmParams[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
-                                                                //!< PcmPostProcessings Params
+    MME_LxPcmPostProcessingGlobalParameters_Frozen_t PcmParams[MIXER_AUDIO_MAX_OUTPUT_BUFFERS]; //!< PcmPostProcessings Params
 } MME_LxMixerBDTransformerGlobalParams_Extended_t;
 
 typedef struct
 {
-  U32                                         BytesUsed;  // Amount of this structure already filled
-  MME_MixerFrameOutExtStatus_t                FrameOutStatus;
-  MME_LimiterStatus_t                         LimiterStatus[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
+    U32                                         BytesUsed;  // Amount of this structure already filled
+    MME_MixerFrameOutExtStatus_t                FrameOutStatus;
+    MME_LimiterStatus_t                         LimiterStatus[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
 } MME_MixerFrameExtStatusLimit_t;
 
 typedef struct
 {
-  MME_LxMixerTransformerFrameDecodeStatusParams_t     MixStatus;
-	MME_MixerFrameExtStatusLimit_t                      MixExtStatus;
+    MME_LxMixerTransformerFrameDecodeStatusParams_t     MixStatus;
+    MME_MixerFrameExtStatusLimit_t                      MixExtStatus;
 } MME_LxMixerTransformerFrameMix_ExtendedParams_t;
 
 //Redefine this too, to incorporate the above extension
@@ -197,7 +196,7 @@ typedef struct
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-/// Mixer implementated using MMSU's MIXER_TRANSFORMER.
+/// Mixer implemented using MMSU's MIXER_TRANSFORMER.
 ///
 class Mixer_Mme_c:public Mixer_c
 {
@@ -262,8 +261,8 @@ private:
     struct snd_pseudo_mixer_settings OutputConfiguration;
 
     struct DownmixFirmwareStruct {
-	    struct snd_pseudo_mixer_downmix_header header;
-	    struct snd_pseudo_mixer_downmix_index index[];
+        struct snd_pseudo_mixer_downmix_header header;
+        struct snd_pseudo_mixer_downmix_index index[];
     } *DownmixFirmware;
 
     enum eAccAcMode LastInputMode[MIXER_AUDIO_MAX_OUTPUT_BUFFERS]; ///< Used to suppress duplicative messages
@@ -286,27 +285,27 @@ private:
 
     struct
     {
-	char         TransformName[MME_MAX_TRANSFORMER_NAME];
-	unsigned int MixerPriority;
+        char         TransformName[MME_MAX_TRANSFORMER_NAME];
+        unsigned int MixerPriority;
     } AudioConfiguration;
 
     struct
     {
-	MME_Command_t Command;
-	MME_DataBuffer_t *DataBufferList[MIXER_AUDIO_MAX_BUFFERS];
-	MME_DataBuffer_t DataBuffers[MIXER_AUDIO_MAX_BUFFERS];
-	MME_ScatterPage_t ScatterPages[MIXER_AUDIO_MAX_PAGES];
-	unsigned int BufferIndex[MIXER_AUDIO_MAX_PAGES];
-	unsigned int ScatterPagesInUse;
-	MME_LxMixerTransformerFrameDecodeParams_t InputParams;
-		MME_LxMixerTransformerFrameMix_ExtendedParams_t OutputParams;
+        MME_Command_t Command;
+        MME_DataBuffer_t *DataBufferList[MIXER_AUDIO_MAX_BUFFERS];
+        MME_DataBuffer_t DataBuffers[MIXER_AUDIO_MAX_BUFFERS];
+        MME_ScatterPage_t ScatterPages[MIXER_AUDIO_MAX_PAGES];
+        unsigned int BufferIndex[MIXER_AUDIO_MAX_PAGES];
+        unsigned int ScatterPagesInUse;
+        MME_LxMixerTransformerFrameDecodeParams_t InputParams;
+        MME_LxMixerTransformerFrameMix_ExtendedParams_t OutputParams;
     } MixerCommand;
 
     struct
     {
-	MME_Command_t Command;
-	MME_LxMixerBDTransformerGlobalParams_Extended_t InputParams;
-	MME_LxMixerTransformerSetGlobalStatusParams_t OutputParams;
+        MME_Command_t Command;
+        MME_LxMixerBDTransformerGlobalParams_Extended_t InputParams;
+        MME_LxMixerTransformerSetGlobalStatusParams_t OutputParams;
     } ParamsCommand;
 
     /// Nominal (meaning pre-optimisation) PCM processing chains for each of the outputs.
@@ -435,7 +434,7 @@ public:
     inline bool IsPlaybackThreadRunning() { return PlaybackThreadRunning; }
     inline unsigned int GetMixerGranuleSize() { return MixerGranuleSize; }
     inline unsigned int GetWorstCaseStartupDelayInMicroSeconds() {
-	return (MIXER_NUM_PERIODS * MIXER_MAX_48K_GRANULE * 1000000ull) / 32000;
+    return (MIXER_NUM_PERIODS * MIXER_MAX_48K_GRANULE * 1000000ull) / 32000;
     }
 
 };

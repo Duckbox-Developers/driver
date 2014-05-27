@@ -95,7 +95,7 @@ PlayerStatus_t          Status;
     OutputRing  = Ring;
 
     //
-    // Obtain the class list
+    // Obtain the buffer manager
     //
 
     Player->GetBufferManager( &BufferManager );

@@ -1462,7 +1462,7 @@ void  Manifestor_Video_c::BufferReleaseThread (void)
             if (Stepping)
                 RequeueBufferOnDisplayIfNecessary ();
             OS_UnLockMutex (&BufferLock);
-            OS_SleepMilliSeconds (20);
+            OS_SleepMilliSeconds (10);
         }
     }
 

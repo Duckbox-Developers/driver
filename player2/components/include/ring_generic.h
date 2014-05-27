@@ -53,15 +53,15 @@ private:
     unsigned int 	 Limit;
     unsigned int 	 NextExtract;
     unsigned int 	 NextInsert;
-    unsigned int	*Storage;
+    uintptr_t		*Storage;
 
 public:
 
     RingGeneric_c( unsigned int MaxEntries = 16 );
     ~RingGeneric_c( void );
 
-    RingStatus_t Insert(  unsigned int	 Value );
-    RingStatus_t Extract( unsigned int	*Value,
+    RingStatus_t Insert(  uintptr_t     Value );
+    RingStatus_t Extract( uintptr_t    *Value,
 			  unsigned int   BlockingPeriod = OS_INFINITE );
     RingStatus_t Flush( void );
     bool         NonEmpty( void );
