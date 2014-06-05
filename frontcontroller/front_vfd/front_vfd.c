@@ -13,6 +13,7 @@
 #include <linux/gpio.h>
 #include <linux/stm/gpio.h>
 #include "asc.h"
+#include "utf.h"
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
@@ -183,19 +184,66 @@ int WriteChars(unsigned char* aData, int aSize)
 
 int ESI88_WriteFront(unsigned char* data, unsigned char len )
 {
-unsigned char wdata[24]={0x87,0xff,0x87,0xff,0x87,0xff,0x4f,0x10,  0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20};
-unsigned char i = 0;
+  unsigned char wdata[24]={0x87,0xff,0x87,0xff,0x87,0xff,0x4f,0x10,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20};
+  int i =0;
+  int j =8;
 
-if(len>16) len=16;
+  wdata[1]=jasnosc;
+  wdata[3]=jasnosc;
+  wdata[5]=jasnosc;
 
-wdata[1]=jasnosc;
-wdata[3]=jasnosc;
-wdata[5]=jasnosc;
-
-for(i=0;i<len;i++)
-{
-    wdata[8+i]=data[i];
-}
+  while ((i< len) && (j < 8 + 16))
+	{
+	//j++;
+	if (data[i] < 0x80) {
+		wdata[j]=data[i];
+		DBG("[%s] data[%i] = '0x%X'\n", __func__, j, data[i]);
+		j++;
+	}
+	else if (data[i] < 0xE0) {
+		DBG("[%s] UTF_Char_Table= 0x%X",__func__, data[i]);
+		switch (data[i])	{
+			case 0xc2:
+				UTF_Char_Table = UTF_C2;
+				break;
+			case 0xc3:
+				UTF_Char_Table = UTF_C3;
+				break;
+			case 0xc4:
+				UTF_Char_Table = UTF_C4;
+				break;
+			case 0xc5:
+				UTF_Char_Table = UTF_C5;
+				break;
+			case 0xd0:
+				UTF_Char_Table = UTF_D0;
+				break;
+			case 0xd1:
+				UTF_Char_Table = UTF_D1;
+				break;
+			default:
+				UTF_Char_Table = NULL;
+		}
+		i++;
+		if (UTF_Char_Table) {
+			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[data[i] & 0x3f], i);
+			wdata[j]=UTF_Char_Table[data[i] & 0x3f];			
+			j++;
+		}
+	}
+	else {
+		if (data[i] < 0xF0)
+			i+=2;
+		else if (data[i] < 0xF8)
+			i+=3;
+		else if (data[i] < 0xFC)
+			i+=4;
+		else
+			i+=5;
+		//wdata[j]=0x20;
+	}
+	i++;
+    }
 
     WriteChars(wdata,24);
     return 0;

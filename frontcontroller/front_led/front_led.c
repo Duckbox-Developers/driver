@@ -330,7 +330,7 @@ struct vfd_driver {
 spinlock_t mr_lock = SPIN_LOCK_UNLOCKED;
 
 static struct vfd_driver vfd;
-static int debug  = 0;
+static int debug = 1;
 static jasnosc = 1;
 
 #define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[front_led]::" fmt "\n", ## args )
@@ -482,9 +482,9 @@ int doton3 = 0; //by using doton3 we safe one segment and use human style of wri
 
   if (len >= 5){
     if (data[2] == '.'){doton3 = 1;wdata[5] = 0x02;}//lower dot
-	  else
+    else
     if (data[2] == "'"){doton3 = 1;wdata[5] = 0x01;}//upper dot
-	  else
+    else
     if (data[2] == ':'){doton3 = 1;wdata[5] = 0x03;}//two dots
   }
 
@@ -518,7 +518,7 @@ int doton3 = 0; //by using doton3 we safe one segment and use human style of wri
 	else
 		{wdata[6] = 0x01;crc=crc^wdata[6];}
 
-wdata[7] = crc;
+  wdata[7] = crc;
   WriteChars(wdata, 8);
   return 0;
 }
@@ -608,7 +608,7 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
     ESI88_set_icon(vfddata.data,vfddata.length);
 	break;
   case VFDIOC_DRIVERINIT:
-//	    ESI88_setup();
+    //ESI88_setup();
     break;
   default:
     ERR("[%s] unknown ioctl %08x",__func__, cmd );
@@ -618,7 +618,7 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 
 }
 
-static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t *off ) {
+static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t len, loff_t *off ) {
   unsigned char  kbuf[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
   size_t         wlen;
   int i =0;
@@ -633,10 +633,11 @@ static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t
 	//j++;
 	if (buf[i] < 0x80) {
 		kbuf[j]=buf[i];
-		DBG("kbuf[%i] = '%s'(%s) \n",j, kbuf[j],buf[i]);
+		DBG("[%s] buf[%i] = '0x%X'\n", __func__, j, buf[i]);
 		j++;
 	}
 	else if (buf[i] < 0xE0) {
+		DBG("[%s] UTF_Char_Table= 0x%X",__func__, buf[i]);
 		switch (buf[i])	{
 			case 0xc2:
 				UTF_Char_Table = UTF_C2;
@@ -659,11 +660,12 @@ static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t
 			default:
 				UTF_Char_Table = NULL;
 		}
+		i++;
 		if (UTF_Char_Table) {
+			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[buf[i] & 0x3f], i);
 			kbuf[j]=UTF_Char_Table[buf[i] & 0x3f];			
 			j++;
 		}
-		i++;
 	}
 	else {
 		if (buf[i] < 0xF0)
@@ -734,20 +736,20 @@ static void __exit led_module_exit(void)
   DBG("LED SagemCom88 [%s]",__func__);
 #ifdef BUTTON_FRONT
   if (button_dev)
-  input_unregister_device(button_dev);
+    input_unregister_device(button_dev);
 #endif
   unregister_chrdev( VFD_MAJOR, "vfd" );
 }
 
 static int __init led_module_init( void ) {
-int error;
-	
-  DBG("LED SagemCom88 init > register character device %d.", VFD_MAJOR );
-	if(register_chrdev( VFD_MAJOR, "vfd", &vfd_fops ) ) 
-	{
-	ERR("register major %d failed", VFD_MAJOR );
-	goto led_init_fail;
-	}
+  int error;
+
+    DBG("LED SagemCom88 init > register character device %d.", VFD_MAJOR );
+    if(register_chrdev( VFD_MAJOR, "vfd", &vfd_fops ) ) 
+    {
+        ERR("register major %d failed", VFD_MAJOR );
+        goto led_init_fail;
+    }
 
     // Address for FiFo enable/disable
     unsigned int         *ASC_X_CTRL       = (unsigned int*)(ASCXBaseAddress + ASC_CTRL);
@@ -818,13 +820,13 @@ gpio_direction_input(KEY_PWR);
 		goto led_init_fail;
 	}
 #endif
-  //Clean display during init
-  ESI88_WriteFront("    ",4);
-return 0;
+    //Clean display during init
+    ESI88_WriteFront("    ",4);
+    return 0;
 
-  led_init_fail:
-  led_module_exit();
-  return -EIO;
+    led_init_fail:
+    led_module_exit();
+    return -EIO;
 }
 
 module_init(led_module_init);
