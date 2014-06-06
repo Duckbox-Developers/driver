@@ -110,7 +110,7 @@ static BufferDataDescriptor_t           WmaAudioCodecDecodeContextDescriptor    
 ///
 /// Fill in the configuration parameters used by the super-class and reset everything.
 ///
-Codec_MmeAudioWma_c::Codec_MmeAudioWma_c( void )
+Codec_MmeAudioWma_c::Codec_MmeAudioWma_c(void)
 {
     CODEC_DEBUG("%s\n", __FUNCTION__);
     Configuration.CodecName                             = "WMA audio";
@@ -134,21 +134,21 @@ Codec_MmeAudioWma_c::Codec_MmeAudioWma_c( void )
     SendbufTriggerTransformCount                        = 1;
 
 }
-//}}}  
+//}}}
 //{{{  Destructor
 ////////////////////////////////////////////////////////////////////////////
 ///
 ///     Destructor function, ensures a full halt and reset
 ///     are executed for all levels of the class.
 ///
-Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c( void )
+Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c(void)
 {
     CODEC_DEBUG("%s\n", __FUNCTION__);
     Halt();
     Reset();
 
 }
-//}}}  
+//}}}
 
 //{{{  FillOutTransformerGlobalParameters
 ////////////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c( void )
 /// Populate the supplied structure with parameters for WMA audio.
 ///
 ///
-CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters( MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
+CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
 
     MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
@@ -169,12 +169,12 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters( MME_LxAud
 //    MME_LxWmaProLslConfig_t &config = ((MME_LxWmaProLslConfig_t *) globalParams.DecConfig)[0];
     memset(&Config, 0, sizeof(Config));
     Config.DecoderId = ACC_WMAPROLSL_ID;
-/*
-Audio_DecoderTypes.h:   ACC_WMA9_ID,
-Audio_DecoderTypes.h:   ACC_WMAPROLSL_ID,
-Audio_DecoderTypes.h:   ACC_WMA_ST_FILE,
-Audio_EncoderTypes.h:   ACC_WMAE_ID,
-*/
+    /*
+    Audio_DecoderTypes.h:   ACC_WMA9_ID,
+    Audio_DecoderTypes.h:   ACC_WMAPROLSL_ID,
+    Audio_DecoderTypes.h:   ACC_WMA_ST_FILE,
+    Audio_EncoderTypes.h:   ACC_WMAE_ID,
+    */
     Config.StructSize = sizeof(Config);
 #if 0
     config.MaxNbPages = NUM_SEND_BUFFERS_COMMANDS;
@@ -192,13 +192,13 @@ Audio_EncoderTypes.h:   ACC_WMAE_ID,
         WmaAudioStreamParameters_t*     StreamParams    = (WmaAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 
         Config.NbSamplesOut = StreamParams->SamplesPerFrame ? StreamParams->SamplesPerFrame : 2048;
-        CODEC_TRACE("%s - StreamParams->SamplesPerFrame %d\n", __FUNCTION__, StreamParams->SamplesPerFrame );
-        CODEC_TRACE("%s - Config.NbSamplesOut %d\n", __FUNCTION__, Config.NbSamplesOut );
+        CODEC_TRACE("%s - StreamParams->SamplesPerFrame %d\n", __FUNCTION__, StreamParams->SamplesPerFrame);
+        CODEC_TRACE("%s - Config.NbSamplesOut %d\n", __FUNCTION__, Config.NbSamplesOut);
 
         if (0 == StreamParams->StreamNumber)
         {
             // zero is an illegal stream number
-            CODEC_ERROR("ILLEGAL STREAM NUMBER\n" );
+            CODEC_ERROR("ILLEGAL STREAM NUMBER\n");
             Config.NewAudioStreamInfo       = ACC_MME_FALSE;
             NeedToMarkStreamUnplayable      = true;
             return CodecError;
@@ -233,19 +233,20 @@ Audio_EncoderTypes.h:   ACC_WMAE_ID,
     }
     else
     {
-        CODEC_ERROR("No Params\n" );
+        CODEC_ERROR("No Params\n");
         //no params, no set-up
         Config.NewAudioStreamInfo = ACC_MME_FALSE;
         Config.StructSize = 2 * sizeof(U32) ; // only transmit the ID and StructSize (all other params are irrelevant)
     }
+
     // This is not what the ACC headers make it look like but this is what
     // the firmware actually expects (tightly packed against the config structure)
     // unsigned char *pcmParams = ((unsigned char *) &Config) + Config.StructSize;
     // FillPcmProcessingGlobalParams((void *) pcmParams);
 
-    return Codec_MmeAudio_c::FillOutTransformerGlobalParameters( GlobalParams_p );
+    return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
 
     //  return CodecNoError;
 }
-//}}}  
+//}}}
 

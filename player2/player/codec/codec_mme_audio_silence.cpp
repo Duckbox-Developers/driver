@@ -101,7 +101,7 @@ static BufferDataDescriptor_t            InitialTranscodedFrameBufferDescriptor 
 /// \todo This uses default values for SizeOfTransformCapabilityStructure and
 ///       TransformCapabilityStructurePointer. This is wrong (but harmless).
 ///
-Codec_MmeAudioSilence_c::Codec_MmeAudioSilence_c( void )
+Codec_MmeAudioSilence_c::Codec_MmeAudioSilence_c(void)
 {
     CodecStatus_t Status;
     int i;
@@ -114,32 +114,34 @@ Codec_MmeAudioSilence_c::Codec_MmeAudioSilence_c( void )
     Configuration.DecodeContextCount                    = 4;
     Configuration.DecodeContextDescriptor               = &SilentAudioCodecDecodeContextDescriptor;
 
-    for (i =0; i< CODEC_MAX_TRANSFORMERS; i++)
-	Configuration.TransformName[i]                  = "SILENCE_GENERATOR";
+    for (i = 0; i < CODEC_MAX_TRANSFORMERS; i++)
+        Configuration.TransformName[i]                  = "SILENCE_GENERATOR";
+
     Configuration.AvailableTransformers                 = CODEC_MAX_TRANSFORMERS;
 
     Configuration.AddressingMode                        = CachedAddress;
 
 //
-    
+
     CurrentTranscodeBufferIndex = 0;
-    
+
     TranscodedFramePool = NULL;
-    
+
     TranscodedFrameMemory[CachedAddress]      = NULL;
     TranscodedFrameMemory[UnCachedAddress]    = NULL;
     TranscodedFrameMemory[PhysicalAddress]    = NULL;
-    
+
     Reset();
-    
-    ProtectTransformName				= true;
-    
+
+    ProtectTransformName                = true;
+
     Status = GloballyVerifyMMECapabilities();
-    if( CodecNoError != Status )
+
+    if (CodecNoError != Status)
     {
-	CODEC_ERROR( "Silence generator not found (module not installed?)\n" );
-	InitializationStatus = PlayerNotSupported;
-	return;
+        CODEC_ERROR("Silence generator not found (module not installed?)\n");
+        InitializationStatus = PlayerNotSupported;
+        return;
     }
 }
 
@@ -148,44 +150,44 @@ Codec_MmeAudioSilence_c::Codec_MmeAudioSilence_c( void )
 ///
 /// Reset method to manage the transcoded frame pool
 ///
-CodecStatus_t Codec_MmeAudioSilence_c::Reset( void )
+CodecStatus_t Codec_MmeAudioSilence_c::Reset(void)
 {
     //
     // Release the coded frame buffer pool
     //
-    
-    if( TranscodedFramePool != NULL )
+
+    if (TranscodedFramePool != NULL)
     {
-        BufferManager->DestroyPool( TranscodedFramePool );
+        BufferManager->DestroyPool(TranscodedFramePool);
         TranscodedFramePool  = NULL;
     }
-    
-    if( TranscodedFrameMemory[CachedAddress] != NULL )
+
+    if (TranscodedFrameMemory[CachedAddress] != NULL)
     {
 #if __KERNEL__
-        AllocatorClose( TranscodedFrameMemoryDevice );
+        AllocatorClose(TranscodedFrameMemoryDevice);
 #endif
-	
+
         TranscodedFrameMemory[CachedAddress]      = NULL;
         TranscodedFrameMemory[UnCachedAddress]    = NULL;
         TranscodedFrameMemory[PhysicalAddress]    = NULL;
     }
-    
-    //	PreviousTranscodeBuffer = NULL;
+
+    //  PreviousTranscodeBuffer = NULL;
     CurrentTranscodeBuffer = NULL;
-    
+
     TranscodeEnable = false;
 
-    //!     
+    //!
     return Codec_MmeAudio_c::Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor function, ensures a full halt and reset 
+///     Destructor function, ensures a full halt and reset
 ///     are executed for all levels of the class.
 ///
-Codec_MmeAudioSilence_c::~Codec_MmeAudioSilence_c( void )
+Codec_MmeAudioSilence_c::~Codec_MmeAudioSilence_c(void)
 {
     Halt();
     Reset();
@@ -197,9 +199,9 @@ Codec_MmeAudioSilence_c::~Codec_MmeAudioSilence_c( void )
 /// Examine the capability structure returned by the firmware.
 ///
 /// Unconditionally return success; the silence generator does not report
-/// anything other than a version number. 
+/// anything other than a version number.
 ///
-CodecStatus_t   Codec_MmeAudioSilence_c::HandleCapabilities( void )
+CodecStatus_t   Codec_MmeAudioSilence_c::HandleCapabilities(void)
 {
     return CodecNoError;
 }
@@ -214,11 +216,11 @@ CodecStatus_t   Codec_MmeAudioSilence_c::HandleCapabilities( void )
 /// MPEG audio decoder (defaults to MPEG Layer II but can be updated by new
 /// stream parameters).
 ///
-CodecStatus_t   Codec_MmeAudioSilence_c::FillOutTransformerInitializationParameters( void )
+CodecStatus_t   Codec_MmeAudioSilence_c::FillOutTransformerInitializationParameters(void)
 {
     MMEInitializationParameters.TransformerInitParamsSize = 0;
     MMEInitializationParameters.TransformerInitParams_p = NULL;
-    
+
     return CodecNoError;
 }
 
@@ -227,12 +229,12 @@ CodecStatus_t   Codec_MmeAudioSilence_c::FillOutTransformerInitializationParamet
 ///
 /// Populate the (non-existant) MME_SET_GLOBAL_TRANSFORMER_PARAMS parameters.
 ///
-CodecStatus_t   Codec_MmeAudioSilence_c::FillOutSetStreamParametersCommand( void )
+CodecStatus_t   Codec_MmeAudioSilence_c::FillOutSetStreamParametersCommand(void)
 {
 
     // if the stream is dtshd, then the "transcoding" might be required
-    if ( (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshdMA) || 
-         (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshd) )
+    if ((ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshdMA) ||
+            (ParsedAudioParameters->OriginalEncoding == AudioOriginalEncodingDtshd))
     {
         if (ParsedAudioParameters->BackwardCompatibleProperties.SampleRateHz && ParsedAudioParameters->BackwardCompatibleProperties.SampleCount)
         {
@@ -267,7 +269,7 @@ CodecStatus_t   Codec_MmeAudioSilence_c::FillOutSetStreamParametersCommand( void
 ///
 /// Populate the (non-existant) MME_TRANSFORM parameters.
 ///
-CodecStatus_t   Codec_MmeAudioSilence_c::FillOutDecodeCommand(       void )
+CodecStatus_t   Codec_MmeAudioSilence_c::FillOutDecodeCommand(void)
 {
 
     SilentAudioCodecDecodeContext_t  *Context        = (SilentAudioCodecDecodeContext_t *)DecodeContext;
@@ -290,26 +292,26 @@ CodecStatus_t   Codec_MmeAudioSilence_c::FillOutDecodeCommand(       void )
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Validate the (non-existant) reply from the transformer.
-/// 
+///
 /// Unconditionally return success. Given the whole point of the transformer is
 /// to mute the output it cannot 'successfully' fail in the way the audio firmware
 /// does.
 ///
 /// \return CodecNoError
 ///
-CodecStatus_t   Codec_MmeAudioSilence_c::ValidateDecodeContext( CodecBaseDecodeContext_t *Context )
+CodecStatus_t   Codec_MmeAudioSilence_c::ValidateDecodeContext(CodecBaseDecodeContext_t *Context)
 {
 
-	SilentAudioCodecDecodeContext_t *LocalDecodeContext = (SilentAudioCodecDecodeContext_t *) Context;
+    SilentAudioCodecDecodeContext_t *LocalDecodeContext = (SilentAudioCodecDecodeContext_t *) Context;
 
-    memset( &AudioDecoderStatus, 0, sizeof(AudioDecoderStatus));    // SYSFS
-    
+    memset(&AudioDecoderStatus, 0, sizeof(AudioDecoderStatus));     // SYSFS
+
     if (TranscodeEnable)
     {
         Codec_MmeAudioDtshd_c::TranscodeDtshdToDts(&LocalDecodeContext->BaseContext,
-                                                   LocalDecodeContext->TranscodeBufferIndex,
-                                                   &LocalDecodeContext->ContextFrameParameters.DtshdAudioFrameParameters,
-                                                   TranscodedBuffers);
+                LocalDecodeContext->TranscodeBufferIndex,
+                &LocalDecodeContext->ContextFrameParameters.DtshdAudioFrameParameters,
+                TranscodedBuffers);
     }
 
     return CodecNoError;
@@ -317,13 +319,13 @@ CodecStatus_t   Codec_MmeAudioSilence_c::ValidateDecodeContext( CodecBaseDecodeC
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to dump out the set stream 
+//      Function to dump out the set stream
 //      parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioSilence_c::DumpSetStreamParameters(          void    *Parameters )
+CodecStatus_t   Codec_MmeAudioSilence_c::DumpSetStreamParameters(void    *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");  
+    CODEC_ERROR("Not implemented\n");
     return CodecNoError;
 }
 
@@ -333,9 +335,9 @@ CodecStatus_t   Codec_MmeAudioSilence_c::DumpSetStreamParameters(          void 
 //      parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioSilence_c::DumpDecodeParameters(             void    *Parameters )
+CodecStatus_t   Codec_MmeAudioSilence_c::DumpDecodeParameters(void    *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");  
+    CODEC_ERROR("Not implemented\n");
     return CodecNoError;
 }
 
@@ -344,17 +346,18 @@ CodecStatus_t   Codec_MmeAudioSilence_c::DumpDecodeParameters(             void 
 ///  Set Default FrameBase style TRANSFORM command for AudioDecoder MT
 ///  with 1 Input Buffer and 1 Output Buffer.
 
-void Codec_MmeAudioSilence_c::SetCommandIO( void )
-{	
+void Codec_MmeAudioSilence_c::SetCommandIO(void)
+{
     if (TranscodeEnable)
     {
         CodecStatus_t Status = GetTranscodeBuffer();
-	
+
         if (Status != CodecNoError)
-        {            
+        {
             CODEC_ERROR("Error while requesting Transcoded buffer: %d. Disabling transcoding...\n", Status);
             TranscodeEnable = false;
         }
+
         ((SilentAudioCodecDecodeContext_t *)DecodeContext)->TranscodeBufferIndex = CurrentTranscodeBufferIndex;
     }
 
@@ -366,31 +369,31 @@ void Codec_MmeAudioSilence_c::SetCommandIO( void )
 //      Function to obtain a new decode buffer.
 //
 
-CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodeBuffer( void )
+CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodeBuffer(void)
 {
     PlayerStatus_t           Status;
     BufferPool_t             Tfp;
     //Buffer        Structure_t        BufferStructure;
-    
+
     //
     // Get a buffer
     //
-    
-    Status = GetTranscodedFrameBufferPool( &Tfp );
-    
-    if( Status != CodecNoError )
+
+    Status = GetTranscodedFrameBufferPool(&Tfp);
+
+    if (Status != CodecNoError)
     {
-        CODEC_ERROR("GetTranscodeBuffer(%s) - Failed to obtain the transcoded buffer pool instance.\n", Configuration.CodecName );
+        CODEC_ERROR("GetTranscodeBuffer(%s) - Failed to obtain the transcoded buffer pool instance.\n", Configuration.CodecName);
         return Status;
     }
-    
+
     Status  = Tfp->GetBuffer(&CurrentTranscodeBuffer, IdentifierCodec, DTSHD_FRAME_MAX_SIZE, false);
-    
-    if( Status != BufferNoError )
+
+    if (Status != BufferNoError)
     {
-        CODEC_ERROR("GetTranscodeBuffer(%s) - Failed to obtain a transcode buffer from the transcoded buffer pool.\n", Configuration.CodecName );
+        CODEC_ERROR("GetTranscodeBuffer(%s) - Failed to obtain a transcode buffer from the transcoded buffer pool.\n", Configuration.CodecName);
         Tfp->Dump(DumpPoolStates | DumpBufferStates);
-        
+
         return Status;
     }
 
@@ -398,25 +401,25 @@ CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodeBuffer( void )
     // Map it and initialize the mapped entry.
     //
 
-    CurrentTranscodeBuffer->GetIndex( &CurrentTranscodeBufferIndex );
+    CurrentTranscodeBuffer->GetIndex(&CurrentTranscodeBufferIndex);
 
-    if( CurrentTranscodeBufferIndex >= DTSHD_TRANSCODE_BUFFER_COUNT )
-        CODEC_ERROR("GetTranscodeBuffer(%s) - Transcode buffer index >= DTSHD_TRANSCODE_BUFFER_COUNT - Implementation error.\n", Configuration.CodecName );
-    
-    memset( &TranscodedBuffers[CurrentTranscodeBufferIndex], 0x00, sizeof(CodecBufferState_t) );
-    
+    if (CurrentTranscodeBufferIndex >= DTSHD_TRANSCODE_BUFFER_COUNT)
+        CODEC_ERROR("GetTranscodeBuffer(%s) - Transcode buffer index >= DTSHD_TRANSCODE_BUFFER_COUNT - Implementation error.\n", Configuration.CodecName);
+
+    memset(&TranscodedBuffers[CurrentTranscodeBufferIndex], 0x00, sizeof(CodecBufferState_t));
+
     TranscodedBuffers[CurrentTranscodeBufferIndex].Buffer                        = CurrentTranscodeBuffer;
     TranscodedBuffers[CurrentTranscodeBufferIndex].OutputOnDecodesComplete       = false;
     TranscodedBuffers[CurrentTranscodeBufferIndex].DecodesInProgress             = 0;
-    
+
     //
     // Obtain the interesting references to the buffer
     //
-    
-    CurrentTranscodeBuffer->ObtainDataReference( &TranscodedBuffers[CurrentTranscodeBufferIndex].BufferLength,
-                                                 NULL,
-                                                 (void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
-                                                 Configuration.AddressingMode );
+
+    CurrentTranscodeBuffer->ObtainDataReference(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferLength,
+            NULL,
+            (void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
+            Configuration.AddressingMode);
 //
 
     return CodecNoError;
@@ -428,7 +431,7 @@ CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodeBuffer( void )
 /// In case of transcoding is required, attach also
 /// the transcoded buffer to the original coded buffer
 ///
-void Codec_MmeAudioSilence_c::AttachCodedFrameBuffer( void )
+void Codec_MmeAudioSilence_c::AttachCodedFrameBuffer(void)
 {
     Codec_MmeAudio_c::AttachCodedFrameBuffer();
 
@@ -436,16 +439,16 @@ void Codec_MmeAudioSilence_c::AttachCodedFrameBuffer( void )
     {
         Buffer_t CodedDataBuffer;
         BufferStatus_t Status;
-	
-        Status = CurrentDecodeBuffer->ObtainAttachedBufferReference( CodedFrameBufferType, &CodedDataBuffer );
-	
+
+        Status = CurrentDecodeBuffer->ObtainAttachedBufferReference(CodedFrameBufferType, &CodedDataBuffer);
+
         if (Status != BufferNoError)
         {
             CODEC_ERROR("Could not get the attached coded data buffer (%d)\n", Status);
             return;
         }
-        
-        CodedDataBuffer->AttachBuffer( CurrentTranscodeBuffer );
+
+        CodedDataBuffer->AttachBuffer(CurrentTranscodeBuffer);
         CurrentTranscodeBuffer->DecrementReferenceCount();
         // the transcoded buffer is now only referenced by its attachement to the coded buffer
     }
@@ -456,70 +459,73 @@ void Codec_MmeAudioSilence_c::AttachCodedFrameBuffer( void )
 //      The get coded frame buffer pool fn
 //
 
-CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodedFrameBufferPool( BufferPool_t * Tfp )
+CodecStatus_t   Codec_MmeAudioSilence_c::GetTranscodedFrameBufferPool(BufferPool_t * Tfp)
 {
-	PlayerStatus_t          Status;
+    PlayerStatus_t          Status;
 #ifdef __KERNEL__
-	allocator_status_t      AStatus;
+    allocator_status_t      AStatus;
 #endif
 
     //
     // If we haven't already created the buffer pool, do it now.
     //
 
-    if( TranscodedFramePool == NULL )
+    if (TranscodedFramePool == NULL)
     {
 
         //
         // Coded frame buffer type
-        //  
-        Status      = InitializeDataType( &InitialTranscodedFrameBufferDescriptor, &TranscodedFrameBufferType, &TranscodedFrameBufferDescriptor );
-        if( Status != PlayerNoError )
+        //
+        Status      = InitializeDataType(&InitialTranscodedFrameBufferDescriptor, &TranscodedFrameBufferType, &TranscodedFrameBufferDescriptor);
+
+        if (Status != PlayerNoError)
             return Status;
-         
+
         //
         // Get the memory and Create the pool with it
         //
-	
-        Player->GetBufferManager( &BufferManager );
-        
+
+        Player->GetBufferManager(&BufferManager);
+
 #if __KERNEL__
-        AStatus = PartitionAllocatorOpen( &TranscodedFrameMemoryDevice, Configuration.TranscodedMemoryPartitionName, DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT, true );
-        if( AStatus != allocator_ok )
+        AStatus = PartitionAllocatorOpen(&TranscodedFrameMemoryDevice, Configuration.TranscodedMemoryPartitionName, DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT, true);
+
+        if (AStatus != allocator_ok)
         {
-            CODEC_ERROR("Failed to allocate memory\n", Configuration.CodecName );
+            CODEC_ERROR("Failed to allocate memory\n", Configuration.CodecName);
             return PlayerInsufficientMemory;
         }
-	
-        TranscodedFrameMemory[CachedAddress]         = AllocatorUserAddress( TranscodedFrameMemoryDevice );
-        TranscodedFrameMemory[UnCachedAddress]       = AllocatorUncachedUserAddress( TranscodedFrameMemoryDevice );
-        TranscodedFrameMemory[PhysicalAddress]       = AllocatorPhysicalAddress( TranscodedFrameMemoryDevice );
+
+        TranscodedFrameMemory[CachedAddress]         = AllocatorUserAddress(TranscodedFrameMemoryDevice);
+        TranscodedFrameMemory[UnCachedAddress]       = AllocatorUncachedUserAddress(TranscodedFrameMemoryDevice);
+        TranscodedFrameMemory[PhysicalAddress]       = AllocatorPhysicalAddress(TranscodedFrameMemoryDevice);
 #else
-        static unsigned char    Memory[4*1024*1024];
-	
+        static unsigned char    Memory[4 * 1024 * 1024];
+
         TranscodedFrameMemory[CachedAddress]         = Memory;
         TranscodedFrameMemory[UnCachedAddress]       = NULL;
         TranscodedFrameMemory[PhysicalAddress]       = Memory;
 //        Configuration.CodedMemorySize           = 4*1024*1024;
 #endif
-        
+
         //
-        
-        Status  = BufferManager->CreatePool( &TranscodedFramePool, 
-                                             TranscodedFrameBufferType, 
-                                             DTSHD_TRANSCODE_BUFFER_COUNT, 
-                                             DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT, 
-                                             TranscodedFrameMemory );
-        if( Status != BufferNoError )
+
+        Status  = BufferManager->CreatePool(&TranscodedFramePool,
+                                            TranscodedFrameBufferType,
+                                            DTSHD_TRANSCODE_BUFFER_COUNT,
+                                            DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT,
+                                            TranscodedFrameMemory);
+
+        if (Status != BufferNoError)
         {
-            CODEC_ERROR( "GetTranscodedFrameBufferPool(%s) - Failed to create the pool.\n", Configuration.CodecName );
+            CODEC_ERROR("GetTranscodedFrameBufferPool(%s) - Failed to create the pool.\n", Configuration.CodecName);
             return PlayerInsufficientMemory;
         }
 
         ((PlayerStream_s *)Stream)->TranscodedFrameBufferType = TranscodedFrameBufferType;
     }
-    
+
     *Tfp = TranscodedFramePool;
-    
+
     return CodecNoError;
 }

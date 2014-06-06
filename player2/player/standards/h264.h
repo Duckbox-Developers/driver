@@ -225,15 +225,15 @@ Date        Modification                                    Name
 // Colour matrix coefficient codes
 //
 
-#define  H264_MATRIX_COEFFICIENTS_IDENTITY		0		// already in RGB
-#define  H264_MATRIX_COEFFICIENTS_BT709			1
-#define  H264_MATRIX_COEFFICIENTS_UNSPECIFIED		2
-#define  H264_MATRIX_COEFFICIENTS_RESERVED		3
-#define  H264_MATRIX_COEFFICIENTS_FCC			4
-#define  H264_MATRIX_COEFFICIENTS_BT470_BGI		5
-#define  H264_MATRIX_COEFFICIENTS_SMPTE_170M		6
-#define  H264_MATRIX_COEFFICIENTS_SMPTE_240M		7
-#define  H264_MATRIX_COEFFICIENTS_YCGCO			8
+#define  H264_MATRIX_COEFFICIENTS_IDENTITY      0       // already in RGB
+#define  H264_MATRIX_COEFFICIENTS_BT709         1
+#define  H264_MATRIX_COEFFICIENTS_UNSPECIFIED       2
+#define  H264_MATRIX_COEFFICIENTS_RESERVED      3
+#define  H264_MATRIX_COEFFICIENTS_FCC           4
+#define  H264_MATRIX_COEFFICIENTS_BT470_BGI     5
+#define  H264_MATRIX_COEFFICIENTS_SMPTE_170M        6
+#define  H264_MATRIX_COEFFICIENTS_SMPTE_240M        7
+#define  H264_MATRIX_COEFFICIENTS_YCGCO         8
 
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -566,8 +566,8 @@ typedef struct H264SliceHeader_s
     int                         PicOrderCntTop;
     int                         PicOrderCntBot;
     int                         PicOrderCnt;
-    unsigned long long          ExtendedPicOrderCnt;                            // Pic order count adjusted to be monotonically increasing 
-										// over multiples sequeneces.
+    unsigned long long          ExtendedPicOrderCnt;                            // Pic order count adjusted to be monotonically increasing
+    // over multiples sequeneces.
 
     unsigned int                EntryPicOrderCntMsb;                            // Values used in the derivation
     unsigned int                ExitPicOrderCntMsb;

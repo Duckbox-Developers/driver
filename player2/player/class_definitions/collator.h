@@ -29,7 +29,7 @@ Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
 31-Jul-09   Added GuaranteedNonBlockingWriteSpace()
-	    supported in reversing collator.		    Nick
+        supported in reversing collator.            Nick
 ************************************************************************/
 
 #ifndef H_COLLATOR
@@ -44,16 +44,16 @@ Date        Modification                                    Name
 
 enum
 {
-    CollatorNoError				= PlayerNoError,
-    CollatorError				= PlayerError,
+    CollatorNoError             = PlayerNoError,
+    CollatorError               = PlayerError,
 
-    CollatorWouldBlock				= BASE_COLLATOR,
+    CollatorWouldBlock              = BASE_COLLATOR,
     CollatorBufferOverflow,
     CollatorBufferUnderflow, ///< Primarily for internal use
     CollatorUnwindStack, ///< Reported to cause execution to unwind (to avoid recursion)
 };
 
-typedef PlayerStatus_t	CollatorStatus_t;
+typedef PlayerStatus_t  CollatorStatus_t;
 
 
 // ---------------------------------------------------------------------
@@ -63,26 +63,29 @@ typedef PlayerStatus_t	CollatorStatus_t;
 
 class Collator_c : public BaseComponentClass_c
 {
-public:
+    public:
 
-    virtual CollatorStatus_t   RegisterOutputBufferRing(	Ring_t			  Ring ) = 0;
+        virtual CollatorStatus_t   RegisterOutputBufferRing(Ring_t            Ring) = 0;
 
-    virtual CollatorStatus_t   InputJump(			bool			  SurplusDataInjected,
-								bool			  ContinuousReverseJump	) = 0;
+        virtual CollatorStatus_t   InputJump(bool             SurplusDataInjected,
+                                             bool              ContinuousReverseJump) = 0;
 
-    virtual CollatorStatus_t   InputGlitch(			void ) = 0;
+        virtual CollatorStatus_t   InputGlitch(void) = 0;
 
-    virtual CollatorStatus_t   Input(				PlayerInputDescriptor_t	 *Input,
-								unsigned int		  DataLength,
-								void			 *Data,
-								bool			  NonBlocking = false,
-								unsigned int		 *DataLengthRemaining = NULL ) = 0;
+        virtual CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
+                                         unsigned int          DataLength,
+                                         void             *Data,
+                                         bool              NonBlocking = false,
+                                         unsigned int         *DataLengthRemaining = NULL) = 0;
 
-    virtual CollatorStatus_t   FrameFlush(			void ) = 0;
+        virtual CollatorStatus_t   FrameFlush(void) = 0;
 
-    virtual CollatorStatus_t   DiscardAccumulatedData(		void ) = 0;
+        virtual CollatorStatus_t   DiscardAccumulatedData(void) = 0;
 
-    virtual CollatorStatus_t   NonBlockingWriteSpace( unsigned int		 *Size ) { return PlayerNotSupported; }
+        virtual CollatorStatus_t   NonBlockingWriteSpace(unsigned int        *Size)
+        {
+            return PlayerNotSupported;
+        }
 };
 
 // ---------------------------------------------------------------------
@@ -138,7 +141,7 @@ For more information on discontinuous streams see <b>InputGlitch</b> on \ref inp
 \return Collator status code, CollatorNoError indicates success.
 */
 
-/*! \fn CollatorStatus_t Collator_c::Input(PlayerInputDescriptor_t *Input, unsigned int	DataLength, void *Data, bool NonBlocking, unsigned int *DataLengthRemaining )
+/*! \fn CollatorStatus_t Collator_c::Input(PlayerInputDescriptor_t *Input, unsigned int DataLength, void *Data, bool NonBlocking, unsigned int *DataLengthRemaining )
 \brief Accept demultiplexed data for collation.
 
 <b>TODO: This method is not adequately documented.</b>

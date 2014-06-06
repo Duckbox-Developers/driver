@@ -87,7 +87,7 @@ static BufferDataDescriptor_t            AvsAudioCodecDecodeContextDescriptor = 
 ///
 /// Fill in the configuration parameters used by the super-class and reset everything.
 ///
-Codec_MmeAudioAvs_c::Codec_MmeAudioAvs_c( void )
+Codec_MmeAudioAvs_c::Codec_MmeAudioAvs_c(void)
 {
     Configuration.CodecName                             = "AVS audio";
 
@@ -109,10 +109,10 @@ Codec_MmeAudioAvs_c::Codec_MmeAudioAvs_c( void )
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor function, ensures a full halt and reset 
+///     Destructor function, ensures a full halt and reset
 ///     are executed for all levels of the class.
 ///
-Codec_MmeAudioAvs_c::~Codec_MmeAudioAvs_c( void )
+Codec_MmeAudioAvs_c::~Codec_MmeAudioAvs_c(void)
 {
     Halt();
     Reset();
@@ -126,7 +126,7 @@ Codec_MmeAudioAvs_c::~Codec_MmeAudioAvs_c( void )
 ///       to hide some bugs in the audio firmware. The problem was originally
 ///       observed in BL012_5 and may have long since been fixed...
 ///
-CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters( MME_LxAudioDecoderGlobalParams_t *GlobalParams_p )
+CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
 
 //
@@ -134,22 +134,23 @@ CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters( MME_LxAud
     CODEC_TRACE("Initializing AVS layer %s audio decoder\n",
                 (DecoderId == ACC_MP2A_ID ? "I/II" :
                  DecoderId == ACC_MP3_ID  ? "III" :
-                                            "unknown"));
+                 "unknown"));
 
-        // check for firmware decoder existence in case of SET_GLOBAL only
-        // (we don't know the frame type at init time)
+    // check for firmware decoder existence in case of SET_GLOBAL only
+    // (we don't know the frame type at init time)
 
     if (ParsedFrameParameters)
     {
         AvsAudioStreamParameters_t *Parsed = (AvsAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
+
         if (Parsed && Parsed->Layer)
-        {       
-            int mask = (DecoderId == ACC_MP2A_ID) ? ACC_MP2a:ACC_MP3;
+        {
+            int mask = (DecoderId == ACC_MP2A_ID) ? ACC_MP2a : ACC_MP3;
 
             if (!(AudioDecoderTransformCapability.DecoderCapabilityFlags & (1 << mask)))
             {
                 CODEC_ERROR("This type of AVS Layer is not supported by the firmware!\n");
-                Player->MarkStreamUnPlayable( Stream );
+                Player->MarkStreamUnPlayable(Stream);
                 return (CodecError);
             }
         }
@@ -182,7 +183,7 @@ CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters( MME_LxAud
 
 //
 
-    return Codec_MmeAudio_c::FillOutTransformerGlobalParameters( GlobalParams_p );
+    return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
 }
 
 
@@ -195,10 +196,10 @@ CodecStatus_t Codec_MmeAudioAvs_c::FillOutTransformerGlobalParameters( MME_LxAud
 /// AVS audio decoder (defaults to AVS Layer II but can be updated by new
 /// stream parameters).
 ///
-CodecStatus_t   Codec_MmeAudioAvs_c::FillOutTransformerInitializationParameters( void )
+CodecStatus_t   Codec_MmeAudioAvs_c::FillOutTransformerInitializationParameters(void)
 {
-CodecStatus_t Status;
-MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
+    CodecStatus_t Status;
+    MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
 
 //
 
@@ -208,12 +209,13 @@ MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
 //
 
     Status = Codec_MmeAudio_c::FillOutTransformerInitializationParameters();
+
     if (Status != CodecNoError)
         return Status;
 
 //
 
-    return FillOutTransformerGlobalParameters( &Params.GlobalParams );
+    return FillOutTransformerGlobalParameters(&Params.GlobalParams);
 }
 
 
@@ -221,11 +223,11 @@ MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
 ///
 /// Populate the AUDIO_DECODER's MME_SET_GLOBAL_TRANSFORMER_PARAMS parameters for AVS audio.
 ///
-CodecStatus_t   Codec_MmeAudioAvs_c::FillOutSetStreamParametersCommand( void )
+CodecStatus_t   Codec_MmeAudioAvs_c::FillOutSetStreamParametersCommand(void)
 {
-CodecStatus_t Status;
-AvsAudioStreamParameters_t *Parsed = (AvsAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
-AvsAudioCodecStreamParameterContext_t  *Context = (AvsAudioCodecStreamParameterContext_t *)StreamParameterContext;
+    CodecStatus_t Status;
+    AvsAudioStreamParameters_t *Parsed = (AvsAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
+    AvsAudioCodecStreamParameterContext_t  *Context = (AvsAudioCodecStreamParameterContext_t *)StreamParameterContext;
 
 //Parsed may be NULL if call to this function results from an ALSA parameter update.
     if (Parsed)
@@ -239,11 +241,12 @@ AvsAudioCodecStreamParameterContext_t  *Context = (AvsAudioCodecStreamParameterC
 
     //
     // Now fill out the actual structure
-    //     
+    //
 
-    memset( &(Context->StreamParameters), 0, sizeof(Context->StreamParameters) );
-    Status = FillOutTransformerGlobalParameters( &(Context->StreamParameters) );
-    if( Status != CodecNoError )
+    memset(&(Context->StreamParameters), 0, sizeof(Context->StreamParameters));
+    Status = FillOutTransformerGlobalParameters(&(Context->StreamParameters));
+
+    if (Status != CodecNoError)
         return Status;
 
     //
@@ -264,22 +267,22 @@ AvsAudioCodecStreamParameterContext_t  *Context = (AvsAudioCodecStreamParameterC
 ///
 /// Populate the AUDIO_DECODER's MME_TRANSFORM parameters for AVS audio.
 ///
-CodecStatus_t   Codec_MmeAudioAvs_c::FillOutDecodeCommand(       void )
+CodecStatus_t   Codec_MmeAudioAvs_c::FillOutDecodeCommand(void)
 {
-AvsAudioCodecDecodeContext_t   *Context        = (AvsAudioCodecDecodeContext_t *)DecodeContext;
+    AvsAudioCodecDecodeContext_t   *Context        = (AvsAudioCodecDecodeContext_t *)DecodeContext;
 //AvsAudioFrameParameters_t    *Parsed         = (AvsAudioFrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
 
     //
     // Initialize the frame parameters (we don't actually have much to say here)
     //
 
-    memset( &Context->DecodeParameters, 0, sizeof(Context->DecodeParameters) );
+    memset(&Context->DecodeParameters, 0, sizeof(Context->DecodeParameters));
 
     //
     // Zero the reply structure
     //
 
-    memset( &Context->DecodeStatus, 0, sizeof(Context->DecodeStatus) );
+    memset(&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
 
     //
     // Fill out the actual command
@@ -296,41 +299,45 @@ AvsAudioCodecDecodeContext_t   *Context        = (AvsAudioCodecDecodeContext_t *
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Validate the ACC status structure and squawk loudly if problems are found.
-/// 
+///
 /// Dispite the squawking this method unconditionally returns success. This is
 /// because the firmware will already have concealed the decode problems by
 /// performing a soft mute.
 ///
 /// \return CodecSuccess
 ///
-CodecStatus_t   Codec_MmeAudioAvs_c::ValidateDecodeContext( CodecBaseDecodeContext_t *Context )
+CodecStatus_t   Codec_MmeAudioAvs_c::ValidateDecodeContext(CodecBaseDecodeContext_t *Context)
 {
-AvsAudioCodecDecodeContext_t *DecodeContext = (AvsAudioCodecDecodeContext_t *) Context;
-MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
-ParsedAudioParameters_t *AudioParameters;
+    AvsAudioCodecDecodeContext_t *DecodeContext = (AvsAudioCodecDecodeContext_t *) Context;
+    MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
+    ParsedAudioParameters_t *AudioParameters;
 
 
     CODEC_DEBUG(">><<\n");
 
-    if (ENABLE_CODEC_DEBUG) {
+    if (ENABLE_CODEC_DEBUG)
+    {
         //DumpCommand(bufferIndex);
     }
 
-    if (Status.DecStatus != ACC_AVS2_OK && Status.DecStatus != ACC_AVS_MC_CRC_ERROR) {
+    if (Status.DecStatus != ACC_AVS2_OK && Status.DecStatus != ACC_AVS_MC_CRC_ERROR)
+    {
         CODEC_ERROR("AVS audio decode error (muted frame): %d\n", Status.DecStatus);
         //DumpCommand(bufferIndex);
         // don't report an error to the higher levels (because the frame is muted)
     }
 
-    if (Status.NbOutSamples != 1152 && Status.NbOutSamples != 576) { // TODO: manifest constant
+    if (Status.NbOutSamples != 1152 && Status.NbOutSamples != 576)   // TODO: manifest constant
+    {
         // 288/144 aren't valid values (but testing showed that it was emited for some
         // of the AVS2 streams for example WrenTesting/AVS2_LIII/AVS2_LIII_80kbps_24khz_s.mp3)
         // so we continue to output a message if this is observed but only if diagnostics are
         // enabled.
-        if( Status.NbOutSamples == 288 || Status.NbOutSamples == 144)
+        if (Status.NbOutSamples == 288 || Status.NbOutSamples == 144)
             CODEC_DEBUG("Unexpected number of output samples (%d)\n", Status.NbOutSamples);
         else
             CODEC_ERROR("Unexpected number of output samples (%d)\n", Status.NbOutSamples);
+
         //DumpCommand(bufferIndex);
     }
 
@@ -354,27 +361,27 @@ ParsedAudioParameters_t *AudioParameters;
     int SamplingFreqCode = Status.SamplingFreq;
 
     if (SamplingFreqCode < ACC_FS_reserved)
-        {
-                AudioParameters->Source.SampleRateHz = ACC_SamplingFreqLUT[SamplingFreqCode];
-        }
+    {
+        AudioParameters->Source.SampleRateHz = ACC_SamplingFreqLUT[SamplingFreqCode];
+    }
     else
-        {
-                AudioParameters->Source.SampleRateHz = 0;
+    {
+        AudioParameters->Source.SampleRateHz = 0;
         CODEC_ERROR("AVS audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
-        }
+    }
 
     return CodecNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to dump out the set stream 
+//      Function to dump out the set stream
 //      parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioAvs_c::DumpSetStreamParameters(          void    *Parameters )
+CodecStatus_t   Codec_MmeAudioAvs_c::DumpSetStreamParameters(void    *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");  
+    CODEC_ERROR("Not implemented\n");
     return CodecNoError;
 }
 
@@ -385,8 +392,8 @@ CodecStatus_t   Codec_MmeAudioAvs_c::DumpSetStreamParameters(          void    *
 //      parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioAvs_c::DumpDecodeParameters(             void    *Parameters )
+CodecStatus_t   Codec_MmeAudioAvs_c::DumpDecodeParameters(void    *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");  
+    CODEC_ERROR("Not implemented\n");
     return CodecNoError;
 }

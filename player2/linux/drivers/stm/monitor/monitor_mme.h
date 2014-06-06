@@ -63,10 +63,10 @@ struct MMEContext_s
 };
 
 
-int MonitorMMEInit                     (struct DeviceContext_s*         DeviceContext,
-                                        struct MMEContext_s*            Context,
-                                        unsigned int                    Id);
-int MonitorMMETerminate                (struct MMEContext_s*            Context);
+int MonitorMMEInit(struct DeviceContext_s*         DeviceContext,
+                   struct MMEContext_s*            Context,
+                   unsigned int                    Id);
+int MonitorMMETerminate(struct MMEContext_s*            Context);
 
 
 #endif

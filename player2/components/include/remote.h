@@ -76,7 +76,7 @@ typedef enum
     KeyUnknown
 } remote_control_key_t;
 
-remote_control_key_t HavanaReadKey (void);
+remote_control_key_t HavanaReadKey(void);
 
 #endif  /* #ifndef __REMOTE_H */
 

@@ -25,7 +25,7 @@
 #include <asm-sh/irq.h>
 #else /* STLinux 2.2 kernel */
 #define ILC_IRQ(x) (x + MUXED_IRQ_BASE)
-#endif 
+#endif
 
 
 

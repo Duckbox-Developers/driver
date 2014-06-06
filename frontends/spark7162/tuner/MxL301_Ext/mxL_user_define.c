@@ -36,7 +36,7 @@ Copyright(C) 2011 SHARP CORPORATION
 #else
 //#include <windows.h>
 #endif
-#include <unistd.h>
+//#include <unistd.h>
 
 #include "mxL_user_define.h"
 

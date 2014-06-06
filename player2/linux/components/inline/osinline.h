@@ -98,6 +98,7 @@ extern "C" {
 #define OS_ERROR                1
 #define OS_TIMED_OUT            2
 #define OS_NO_MESSAGE           3
+#define OS_INTERRUPTED          4
 
 //
 
@@ -124,7 +125,7 @@ typedef struct semaphore                *OS_Semaphore_t;
 typedef struct semaphore                *OS_Mutex_t;
 typedef struct OS_Event_s               *OS_Event_t;
 
-typedef void  *(*OS_TaskEntry_t)( void* Parameter );
+typedef void  *(*OS_TaskEntry_t)(void* Parameter);
 #define OS_TaskEntry( fn )   void  *fn( void* Parameter )
 
 /* --- Useful macro's --- */
@@ -154,19 +155,19 @@ typedef void  *(*OS_TaskEntry_t)( void* Parameter );
 
 #ifndef H_OSDEV_DEVICE
 
-static inline unsigned int      __swapbw( unsigned int a )      // ByteSwap
+static inline unsigned int      __swapbw(unsigned int a)        // ByteSwap
 {
-unsigned int tmp1 = (a << 8) & 0xFF00FF00;
-unsigned int tmp2 = (a >> 8) & 0x00FF00FF;
-unsigned int tmp3 = tmp1 | tmp2;
+    unsigned int tmp1 = (a << 8) & 0xFF00FF00;
+    unsigned int tmp2 = (a >> 8) & 0x00FF00FF;
+    unsigned int tmp3 = tmp1 | tmp2;
 
     return ((tmp3 >> 16) | (tmp3 << 16));
 }
 
-static inline unsigned int      __lzcntw( unsigned int a )      // CountLeadingZeros
+static inline unsigned int      __lzcntw(unsigned int a)        // CountLeadingZeros
 {
-unsigned int    i = 0;
-unsigned int    b;
+    unsigned int    i = 0;
+    unsigned int    b;
 
     i = (a ? 0 : 1);
 
@@ -194,14 +195,14 @@ unsigned int    b;
 
 //
 
-static inline unsigned int      __gethw( unsigned long long a )
+static inline unsigned int      __gethw(unsigned long long a)
 {
     return (unsigned int)(a >> 32);
 }
 
 //
 
-static inline unsigned int      __getlw( unsigned long long a )
+static inline unsigned int      __getlw(unsigned long long a)
 {
     return (unsigned int)(a & 0xffffffff);
 }
@@ -217,106 +218,106 @@ extern "C" {
 // --------------------------------------------------------------
 // Kernel BUG features
 
-void          OS_Warn(                          const char              *str );
-void          OS_WarnOn(                        unsigned long            condition );
-void          OS_Bug(                           void );
-void          OS_BugOn(                         unsigned long            condition );
+void          OS_Warn(const char              *str);
+void          OS_WarnOn(unsigned long            condition);
+void          OS_Bug(void);
+void          OS_BugOn(unsigned long            condition);
 
 // --------------------------------------------------------------
 //      The Memory functions
 
-void         *OS_Malloc(                        unsigned int             Size );
-OS_Status_t   OS_Free(                          void                    *Address );
+void         *OS_Malloc(unsigned int             Size);
+OS_Status_t   OS_Free(void                    *Address);
 
-void          OS_InvalidateCacheRange(          void                    *CPUAddress,
-						unsigned int             size );
-void          OS_FlushCacheAll(                 void );
-void          OS_FlushCacheRange(               void                    *CPUAddress,
-						unsigned int             size );
-void          OS_PurgeCacheRange(               void                    *CPUAddress,
-						unsigned int             size );
-void         *OS_PeripheralAddress(             void                    *CPUAddress );
+void          OS_InvalidateCacheRange(void                    *CPUAddress,
+                                      unsigned int             size);
+void          OS_FlushCacheAll(void);
+void          OS_FlushCacheRange(void                    *CPUAddress,
+                                 unsigned int             size);
+void          OS_PurgeCacheRange(void                    *CPUAddress,
+                                 unsigned int             size);
+void         *OS_PeripheralAddress(void                    *CPUAddress);
 
 // --------------------------------------------------------------
 //      The Semaphore functions
 
-OS_Status_t   OS_SemaphoreInitialize(           OS_Semaphore_t          *Semaphore,
-						unsigned int             InitialCount );
-OS_Status_t   OS_SemaphoreTerminate(            OS_Semaphore_t          *Semaphore );
-OS_Status_t   OS_SemaphoreWait(                 OS_Semaphore_t          *Semaphore );
-OS_Status_t   OS_SemaphoreSignal(               OS_Semaphore_t          *Semaphore );
+OS_Status_t   OS_SemaphoreInitialize(OS_Semaphore_t          *Semaphore,
+                                     unsigned int             InitialCount);
+OS_Status_t   OS_SemaphoreTerminate(OS_Semaphore_t          *Semaphore);
+OS_Status_t   OS_SemaphoreWait(OS_Semaphore_t          *Semaphore);
+OS_Status_t   OS_SemaphoreSignal(OS_Semaphore_t          *Semaphore);
 
 // --------------------------------------------------------------
 //      The Mutex functions
 
-OS_Status_t   OS_InitializeMutex(               OS_Mutex_t             *Mutex );
-OS_Status_t   OS_TerminateMutex(                OS_Mutex_t             *Mutex );
-OS_Status_t   OS_LockMutex(                     OS_Mutex_t             *Mutex );
+OS_Status_t   OS_InitializeMutex(OS_Mutex_t             *Mutex);
+OS_Status_t   OS_TerminateMutex(OS_Mutex_t             *Mutex);
+OS_Status_t   OS_LockMutex(OS_Mutex_t             *Mutex);
 #if defined(ADB_BOX)
-int           OS_LockMutex_trylock(             OS_Mutex_t             *Mutex );                                //Added by Duola
+int           OS_LockMutex_trylock(OS_Mutex_t             *Mutex);                                              //Added by Duola
 #endif
-OS_Status_t   OS_UnLockMutex(                   OS_Mutex_t             *Mutex );
-int           OS_MutexIsLocked(                 OS_Mutex_t             *Mutex );
+OS_Status_t   OS_UnLockMutex(OS_Mutex_t             *Mutex);
 
 // --------------------------------------------------------------
 //      The Event functions
 
-OS_Status_t   OS_InitializeEvent(               OS_Event_t             *Event );
-OS_Status_t   OS_WaitForEvent(                  OS_Event_t             *Event,
-						OS_Timeout_t            Timeout );
-OS_Status_t   OS_WaitForEventInterruptible(     OS_Event_t             *Event );
-bool          OS_TestEventSet(                  OS_Event_t             *Event );
-OS_Status_t   OS_SetEvent(                      OS_Event_t             *Event );
-OS_Status_t   OS_ResetEvent(                    OS_Event_t             *Event );
-OS_Status_t   OS_ReInitializeEvent(             OS_Event_t             *Event );
-OS_Status_t   OS_TerminateEvent(                OS_Event_t             *Event );
+OS_Status_t   OS_InitializeEvent(OS_Event_t             *Event);
+OS_Status_t   OS_WaitForEvent(OS_Event_t             *Event,
+                              OS_Timeout_t            Timeout);
+OS_Status_t   OS_WaitForEventInterruptible(OS_Event_t             *Event,
+        OS_Timeout_t            Timeout);
+bool          OS_TestEventSet(OS_Event_t             *Event);
+OS_Status_t   OS_SetEvent(OS_Event_t             *Event);
+OS_Status_t   OS_ResetEvent(OS_Event_t             *Event);
+OS_Status_t   OS_ReInitializeEvent(OS_Event_t             *Event);
+OS_Status_t   OS_TerminateEvent(OS_Event_t             *Event);
 
 // --------------------------------------------------------------
 //      The Thread functions
 
-OS_Status_t   OS_CreateThread(                  OS_Thread_t            *Thread,
-						OS_TaskEntry_t          TaskEntry,
-						OS_TaskParam_t          Parameter,
-						const char              *Name,
-						OS_TaskPriority_t       Priority );
-void          OS_TerminateThread(               void );
-OS_Status_t   OS_JoinThread(                    OS_Thread_t             Thread );
-char         *OS_ThreadName(                    void );
-OS_Status_t   OS_SetPriority(                   OS_TaskPriority_t       Priority );
+OS_Status_t   OS_CreateThread(OS_Thread_t            *Thread,
+                              OS_TaskEntry_t          TaskEntry,
+                              OS_TaskParam_t          Parameter,
+                              const char              *Name,
+                              OS_TaskPriority_t       Priority);
+void          OS_TerminateThread(void);
+OS_Status_t   OS_JoinThread(OS_Thread_t             Thread);
+char         *OS_ThreadName(void);
+OS_Status_t   OS_SetPriority(OS_TaskPriority_t       Priority);
 
 // --------------------------------------------------------------
 //      The Message Functions - not implemented
 
-OS_Status_t   OS_InitializeMessageQueue(        OS_MessageQueue_t      *Queue );
-OS_Status_t   OS_SendMessageCode(               OS_MessageQueue_t       Queue,
-						unsigned int            Code );
-OS_Status_t   OS_GetMessageCode(                OS_MessageQueue_t       Queue,
-						unsigned int           *Code,
-						bool                    Blocking );
-OS_Status_t   OS_GetMessage(                    OS_MessageQueue_t       Queue,
-						void                   *Message,
-						unsigned int            MaxSizeOfMessage,
-						bool                    Blocking );
+OS_Status_t   OS_InitializeMessageQueue(OS_MessageQueue_t      *Queue);
+OS_Status_t   OS_SendMessageCode(OS_MessageQueue_t       Queue,
+                                 unsigned int            Code);
+OS_Status_t   OS_GetMessageCode(OS_MessageQueue_t       Queue,
+                                unsigned int           *Code,
+                                bool                    Blocking);
+OS_Status_t   OS_GetMessage(OS_MessageQueue_t       Queue,
+                            void                   *Message,
+                            unsigned int            MaxSizeOfMessage,
+                            bool                    Blocking);
 
 // --------------------------------------------------------------
 //      The Miscellaneous functions
 
 
-void          OS_ReSchedule(                    void );
-unsigned int  OS_GetTimeInSeconds(              void );
-unsigned int  OS_GetTimeInMilliSeconds(         void );
-unsigned long long  OS_GetTimeInMicroSeconds(   void );
-void          OS_SleepMilliSeconds(             unsigned int            Value );
-void          OS_RegisterTuneable(              const char             *Name,
-                                                unsigned int           *Address );
+void          OS_ReSchedule(void);
+unsigned int  OS_GetTimeInSeconds(void);
+unsigned int  OS_GetTimeInMilliSeconds(void);
+unsigned long long  OS_GetTimeInMicroSeconds(void);
+void          OS_SleepMilliSeconds(unsigned int            Value);
+void          OS_RegisterTuneable(const char             *Name,
+                                  unsigned int           *Address);
 
 // ----------------------------------------------------------------------------------------
 //
 // Initialization function, sets up task deleter for terminated tasks
 
-OS_Status_t   OS_Initialize(                    void );
+OS_Status_t   OS_Initialize(void);
 
-char* strdup (const char* String);
+char* strdup(const char* String);
 void* __builtin_new(size_t size);
 void* __builtin_vec_new(size_t size);
 void __builtin_delete(void *ptr);
@@ -335,10 +336,10 @@ typedef enum
     OS_WatchAccess      = 3
 } OS_WatchAccessType_t;
 
-void OS_Add_Hardware_Watchpoint(                unsigned int*           WatchedAddress,
-						OS_WatchAccessType_t    AccessType );
-void OS_Disable_Hardware_Watchpoint(            void );
-void OS_Reenable_Hardware_Watchpoint(           void );
+void OS_Add_Hardware_Watchpoint(unsigned int*           WatchedAddress,
+                                OS_WatchAccessType_t    AccessType);
+void OS_Disable_Hardware_Watchpoint(void);
+void OS_Reenable_Hardware_Watchpoint(void);
 
 #ifdef __cplusplus
 }
@@ -357,11 +358,17 @@ void OS_Reenable_Hardware_Watchpoint(           void );
 ///
 class OS_AutoLockMutex
 {
-public:
-	inline OS_AutoLockMutex(OS_Mutex_t *M) : Mutex(M) { OS_LockMutex(M); }
-	inline ~OS_AutoLockMutex() { OS_UnLockMutex(Mutex); }
-private:
-	OS_Mutex_t *Mutex;
+    public:
+        inline OS_AutoLockMutex(OS_Mutex_t *M) : Mutex(M)
+        {
+            OS_LockMutex(M);
+        }
+        inline ~OS_AutoLockMutex()
+        {
+            OS_UnLockMutex(Mutex);
+        }
+    private:
+        OS_Mutex_t *Mutex;
 };
 
 #endif  // __cplusplus
