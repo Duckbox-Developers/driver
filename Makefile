@@ -137,6 +137,7 @@ obj-y += frontcontroller/
 ifdef WLANDRIVER
 obj-y += wireless/
 endif
+obj-y += cpu_frequ/
 
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
 obj-y += pti/
@@ -176,6 +177,10 @@ ifdef UFS922
 obj-y += ufs922_fan/
 endif
 
+ifdef UFC960
+obj-y += smartcard/
+endif
+
 ifdef HOMECAST5101
 obj-y += button_hs5101/
 obj-y += player2/linux/drivers/media/dvb/stm/dvb
@@ -183,55 +188,46 @@ endif
 
 ifdef UFS912
 obj-y += cec/
-obj-y += cpu_frequ/
 endif
 
 ifdef UFS913
 obj-y += cec/
-obj-y += cpu_frequ/
 endif
 
 ifdef ATEVIO7500
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 obj-y += sata_switch/
 endif
 
 ifdef HS7810A
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef HS7110
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef ATEMIO520
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef ATEMIO530
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef SPARK
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef SPARK7162
 obj-y += smartcard/
 obj-y += i2c_spi/
-obj-y += cpu_frequ/
 obj-y += cec/
 endif
 
@@ -248,25 +244,21 @@ obj-y += siinfo/
 obj-y += rmu/
 obj-y += ipbox99xx_fan/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef IPBOX99
 obj-y += siinfo/
 obj-y += ipbox99xx_fan/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef IPBOX55
 obj-y += siinfo/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 
 ifdef CUBEREVO
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 ifdef CUBEREVO_MINI2
 obj-y += smartcard/
@@ -283,12 +275,10 @@ endif
 ifdef VITAMIN_HD5000
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 endif
 ifdef SAGEMCOM88
 obj-y += cec/
 obj-y += smartcard/
-obj-y += cpu_frequ/
 obj-y += sagemcomtype/
 endif
 
