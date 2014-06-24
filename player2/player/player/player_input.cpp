@@ -25,7 +25,6 @@ Author :           Nick
 Implementation of the data input related functions of the
 generic class implementation of player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 06-Nov-06   Created                                         Nick
@@ -46,21 +45,20 @@ Date        Modification                                    Name
 
 PlayerStatus_t   Player_Generic_c::GetInjectBuffer(Buffer_t             *Buffer)
 {
-    PlayerStatus_t    Status;
+	PlayerStatus_t    Status;
 
 //
 
-    Status      = InputBufferPool->GetBuffer(Buffer, IdentifierGetInjectBuffer);
+	Status      = InputBufferPool->GetBuffer(Buffer, IdentifierGetInjectBuffer);
 
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Player_Generic_c::GetInjectBuffer - Failed to get an input buffer.\n");
-        return PlayerError;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Player_Generic_c::GetInjectBuffer - Failed to get an input buffer.\n");
+		return PlayerError;
+	}
 
-    return BufferNoError;
+	return BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -68,91 +66,90 @@ PlayerStatus_t   Player_Generic_c::GetInjectBuffer(Buffer_t             *Buffer)
 //
 
 PlayerStatus_t   Player_Generic_c::InjectData(PlayerPlayback_t          Playback,
-        Buffer_t                  Buffer)
+											  Buffer_t                  Buffer)
 {
-    unsigned int              i;
-    unsigned int              Length;
-    void                     *Data;
-    PlayerInputMuxType_t      MuxType;
-    PlayerStatus_t            Status;
+	unsigned int              i;
+	unsigned int              Length;
+	void                     *Data;
+	PlayerInputMuxType_t      MuxType;
+	PlayerStatus_t            Status;
 #ifdef __TDT__
-    DemultiplexorStatus_t     DemuxStatus;
+	DemultiplexorStatus_t     DemuxStatus;
 #endif
-    PlayerInputDescriptor_t  *Descriptor;
+	PlayerInputDescriptor_t  *Descriptor;
 
 //
 
-    Status      = Buffer->ObtainMetaDataReference(MetaDataInputDescriptorType, (void **)(&Descriptor));
+	Status      = Buffer->ObtainMetaDataReference(MetaDataInputDescriptorType, (void **)(&Descriptor));
 
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Player_Generic_c::InjectData - Unable to obtain the meta data input descriptor.\n");
-        return Status;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Player_Generic_c::InjectData - Unable to obtain the meta data input descriptor.\n");
+		return Status;
+	}
 
 //
 
-    if (Descriptor->MuxType == MuxTypeUnMuxed)
-    {
-        //
-        // Un muxed data, call the appropriate collator
-        //
+	if (Descriptor->MuxType == MuxTypeUnMuxed)
+	{
+		//
+		// Un muxed data, call the appropriate collator
+		//
 
-        Status  = Buffer->ObtainDataReference(NULL, &Length, &Data);
+		Status  = Buffer->ObtainDataReference(NULL, &Length, &Data);
 
-        if (Status != PlayerNoError)
-        {
-            report(severity_error, "Player_Generic_c::InjectData - unable to obtain data reference.\n");
-            return Status;
-        }
+		if (Status != PlayerNoError)
+		{
+			report(severity_error, "Player_Generic_c::InjectData - unable to obtain data reference.\n");
+			return Status;
+		}
 
-        Status  = Descriptor->UnMuxedStream->Collator->Input(Descriptor, Length, Data);
-    }
-    else
-    {
-        //
-        // Data is muxed - seek a demultiplexor and pass on the call
-        //
+		Status  = Descriptor->UnMuxedStream->Collator->Input(Descriptor, Length, Data);
+	}
+	else
+	{
+		//
+		// Data is muxed - seek a demultiplexor and pass on the call
+		//
 
-        for (i = 0; i < DemultiplexorCount; i++)
-        {
-            Demultiplexors[i]->GetHandledMuxType(&MuxType);
+		for (i = 0; i < DemultiplexorCount; i++)
+		{
+			Demultiplexors[i]->GetHandledMuxType(&MuxType);
 
-            if (MuxType == Descriptor->MuxType)
-                break;
-        }
+			if (MuxType == Descriptor->MuxType)
+				break;
+		}
 
-        if (i < DemultiplexorCount)
-        {
+		if (i < DemultiplexorCount)
+		{
 #ifdef __TDT__
-            DemuxStatus = Demultiplexors[i]->Demux(Playback, Descriptor->DemultiplexorContext, Buffer);
+			DemuxStatus = Demultiplexors[i]->Demux(Playback, Descriptor->DemultiplexorContext, Buffer);
 #else
-            Status = Demultiplexors[i]->Demux(Playback, Descriptor->DemultiplexorContext, Buffer);
+			Status = Demultiplexors[i]->Demux(Playback, Descriptor->DemultiplexorContext, Buffer);
 #endif
-        }
-        else
-        {
-            report(severity_error, "Player_Generic_c::InjectData - No suitable demultiplexor registerred for this MuxType (%d).\n", Descriptor->MuxType);
-            Status = PlayerUnknowMuxType;
-        }
-    }
+		}
+		else
+		{
+			report(severity_error, "Player_Generic_c::InjectData - No suitable demultiplexor registerred for this MuxType (%d).\n", Descriptor->MuxType);
+			Status = PlayerUnknowMuxType;
+		}
+	}
 
 #ifdef __TDT__
 
-    if (DemuxStatus == DemultiplexorBufferOverflow)
-        for (PlayerStream_t Stream = Playback->ListOfStreams; Stream != NULL; Stream = Stream->Next)
-            Stream->Collator->DiscardAccumulatedData();
+	if (DemuxStatus == DemultiplexorBufferOverflow)
+		for (PlayerStream_t Stream = Playback->ListOfStreams; Stream != NULL; Stream = Stream->Next)
+			Stream->Collator->DiscardAccumulatedData();
 
 #endif
 
-    //
-    // Release the buffer
-    //
+	//
+	// Release the buffer
+	//
 
-    Buffer->DecrementReferenceCount(IdentifierGetInjectBuffer);
-    return Status;
+	Buffer->DecrementReferenceCount(IdentifierGetInjectBuffer);
+	return Status;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -160,68 +157,67 @@ PlayerStatus_t   Player_Generic_c::InjectData(PlayerPlayback_t          Playback
 //
 
 PlayerStatus_t   Player_Generic_c::InputJump(PlayerPlayback_t          Playback,
-        PlayerStream_t            Stream,
-        bool                      SurplusDataInjected,
-        bool                      ContinuousReverseJump)
+											 PlayerStream_t            Stream,
+											 bool                      SurplusDataInjected,
+											 bool                      ContinuousReverseJump)
 {
-    PlayerStatus_t            Status;
-    PlayerStatus_t            CurrentStatus;
-    PlayerPlayback_t          SubPlayback;
-    PlayerStream_t            SubStream;
+	PlayerStatus_t            Status;
+	PlayerStatus_t            CurrentStatus;
+	PlayerPlayback_t          SubPlayback;
+	PlayerStream_t            SubStream;
 
-    //
-    // Check parameters
-    //
+	//
+	// Check parameters
+	//
 
-    if ((Playback               != PlayerAllPlaybacks) &&
-            (Stream                 != PlayerAllStreams) &&
-            (Stream->Playback       != Playback))
-    {
-        report(severity_error, "Player_Generic_c::InputJump - Attempt to signal input jump on specific stream, and differing specific playback.\n");
-        return PlayerError;
-    }
-
-//
-
-    if (Stream != PlayerAllStreams)
-        Playback        = Stream->Playback;
-
-    //
-    // Perform two nested loops over affected playbacks and streams.
-    // These should terminate appropriately for specific playbacks/streams
-    // During the loops we accumulate a global status.
-    //
-
-    Status      = PlayerNoError;
-
-    for (SubPlayback     = ((Playback == PlayerAllPlaybacks) ? ListOfPlaybacks : Playback);
-            ((Playback == PlayerAllPlaybacks) ? (SubPlayback != NULL) : (SubPlayback == Playback));
-            SubPlayback     = SubPlayback->Next)
-    {
-        for (SubStream   = ((Stream == PlayerAllStreams) ? SubPlayback->ListOfStreams : Stream);
-                ((Stream == PlayerAllStreams) ? (SubStream != NULL) : (SubStream == Stream));
-                SubStream   = SubStream->Next)
-        {
-            CurrentStatus       = SubStream->Collator->InputJump(SurplusDataInjected, ContinuousReverseJump);
-
-            if (CurrentStatus != PlayerNoError)
-                Status          = CurrentStatus;
-
-            if (SubStream->Demultiplexor != NULL)
-            {
-                CurrentStatus   = SubStream->Demultiplexor->InputJump(SubStream->DemultiplexorContext);
-
-                if (CurrentStatus != PlayerNoError)
-                    Status      = CurrentStatus;
-            }
-        }
-    }
+	if ((Playback               != PlayerAllPlaybacks) &&
+			(Stream                 != PlayerAllStreams) &&
+			(Stream->Playback       != Playback))
+	{
+		report(severity_error, "Player_Generic_c::InputJump - Attempt to signal input jump on specific stream, and differing specific playback.\n");
+		return PlayerError;
+	}
 
 //
 
-    return Status;
+	if (Stream != PlayerAllStreams)
+		Playback        = Stream->Playback;
+
+	//
+	// Perform two nested loops over affected playbacks and streams.
+	// These should terminate appropriately for specific playbacks/streams
+	// During the loops we accumulate a global status.
+	//
+
+	Status      = PlayerNoError;
+
+	for (SubPlayback     = ((Playback == PlayerAllPlaybacks) ? ListOfPlaybacks : Playback);
+			((Playback == PlayerAllPlaybacks) ? (SubPlayback != NULL) : (SubPlayback == Playback));
+			SubPlayback     = SubPlayback->Next)
+	{
+		for (SubStream   = ((Stream == PlayerAllStreams) ? SubPlayback->ListOfStreams : Stream);
+				((Stream == PlayerAllStreams) ? (SubStream != NULL) : (SubStream == Stream));
+				SubStream   = SubStream->Next)
+		{
+			CurrentStatus       = SubStream->Collator->InputJump(SurplusDataInjected, ContinuousReverseJump);
+
+			if (CurrentStatus != PlayerNoError)
+				Status          = CurrentStatus;
+
+			if (SubStream->Demultiplexor != NULL)
+			{
+				CurrentStatus   = SubStream->Demultiplexor->InputJump(SubStream->DemultiplexorContext);
+
+				if (CurrentStatus != PlayerNoError)
+					Status      = CurrentStatus;
+			}
+		}
+	}
+
+//
+
+	return Status;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -229,84 +225,82 @@ PlayerStatus_t   Player_Generic_c::InputJump(PlayerPlayback_t          Playback,
 //
 
 PlayerStatus_t   Player_Generic_c::InputGlitch(PlayerPlayback_t          Playback,
-        PlayerStream_t            Stream)
+											   PlayerStream_t            Stream)
 {
-    PlayerStatus_t            Status;
-    PlayerStatus_t            CurrentStatus;
-    PlayerPlayback_t          SubPlayback;
-    PlayerStream_t            SubStream;
+	PlayerStatus_t            Status;
+	PlayerStatus_t            CurrentStatus;
+	PlayerPlayback_t          SubPlayback;
+	PlayerStream_t            SubStream;
 
-    //
-    // Check parameters
-    //
+	//
+	// Check parameters
+	//
 
-    if ((Playback               != PlayerAllPlaybacks) &&
-            (Stream                 != PlayerAllStreams) &&
-            (Stream->Playback       != Playback))
-    {
-        report(severity_error, "Player_Generic_c::InputGlitch - Attempt to signal input jump on specific stream, and differing specific playback.\n");
-        return PlayerError;
-    }
-
-//
-
-    if (Stream != PlayerAllStreams)
-        Playback        = Stream->Playback;
-
-    //
-    // Perform two nested loops over affected playbacks and streams.
-    // These should terminate appropriately for specific playbacks/streams
-    // During the loops we accumulate a global status.
-    //
-
-    Status      = PlayerNoError;
-
-    for (SubPlayback     = ((Playback == PlayerAllPlaybacks) ? ListOfPlaybacks : Playback);
-            ((Playback == PlayerAllPlaybacks) ? (SubPlayback != NULL) : (SubPlayback == Playback));
-            SubPlayback     = SubPlayback->Next)
-    {
-        for (SubStream   = ((Stream == PlayerAllStreams) ? SubPlayback->ListOfStreams : Stream);
-                ((Stream == PlayerAllStreams) ? (SubStream != NULL) : (SubStream == Stream));
-                SubStream   = SubStream->Next)
-        {
-            CurrentStatus       = SubStream->Collator->InputGlitch();
-
-            if (CurrentStatus != PlayerNoError)
-                Status          = CurrentStatus;
-        }
-    }
+	if ((Playback               != PlayerAllPlaybacks) &&
+			(Stream                 != PlayerAllStreams) &&
+			(Stream->Playback       != Playback))
+	{
+		report(severity_error, "Player_Generic_c::InputGlitch - Attempt to signal input jump on specific stream, and differing specific playback.\n");
+		return PlayerError;
+	}
 
 //
 
-    return Status;
+	if (Stream != PlayerAllStreams)
+		Playback        = Stream->Playback;
+
+	//
+	// Perform two nested loops over affected playbacks and streams.
+	// These should terminate appropriately for specific playbacks/streams
+	// During the loops we accumulate a global status.
+	//
+
+	Status      = PlayerNoError;
+
+	for (SubPlayback     = ((Playback == PlayerAllPlaybacks) ? ListOfPlaybacks : Playback);
+			((Playback == PlayerAllPlaybacks) ? (SubPlayback != NULL) : (SubPlayback == Playback));
+			SubPlayback     = SubPlayback->Next)
+	{
+		for (SubStream   = ((Stream == PlayerAllStreams) ? SubPlayback->ListOfStreams : Stream);
+				((Stream == PlayerAllStreams) ? (SubStream != NULL) : (SubStream == Stream));
+				SubStream   = SubStream->Next)
+		{
+			CurrentStatus       = SubStream->Collator->InputGlitch();
+
+			if (CurrentStatus != PlayerNoError)
+				Status          = CurrentStatus;
+		}
+	}
+
+//
+
+	return Status;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //      Register/deregister demultiplexors with particular streams
 //
 
-
 PlayerStatus_t   Player_Generic_c::AttachDemultiplexor(
-    PlayerStream_t            Stream,
-    Demultiplexor_t           Demultiplexor,
-    DemultiplexorContext_t    Context)
+	PlayerStream_t            Stream,
+	Demultiplexor_t           Demultiplexor,
+	DemultiplexorContext_t    Context)
 {
-    Stream->Demultiplexor               = Demultiplexor;
-    Stream->DemultiplexorContext        = Context;
+	Stream->Demultiplexor               = Demultiplexor;
+	Stream->DemultiplexorContext        = Context;
 
-    return PlayerNoError;
+	return PlayerNoError;
 }
 
 //
 
 PlayerStatus_t   Player_Generic_c::DetachDemultiplexor(
-    PlayerStream_t            Stream)
+	PlayerStream_t            Stream)
 {
-    Stream->Demultiplexor               = NULL;
+	Stream->Demultiplexor               = NULL;
 
-    return PlayerNoError;
+	return PlayerNoError;
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -315,37 +309,35 @@ PlayerStatus_t   Player_Generic_c::DetachDemultiplexor(
 //  what is the status on other streams in the same multiplex.
 //
 
-
 PlayerStatus_t   Player_Generic_c::CheckForDemuxBufferMismatch(
-    PlayerPlayback_t          Playback,
-    PlayerStream_t            Stream)
+	PlayerPlayback_t          Playback,
+	PlayerStream_t            Stream)
 {
-    PlayerStream_t  OtherStream;
-    unsigned int    CodedFrameBufferCount;
-    unsigned int    CodedFrameBuffersInUse;
-    unsigned int    MemoryInPool;
-    unsigned int    MemoryAllocated;
+	PlayerStream_t  OtherStream;
+	unsigned int    CodedFrameBufferCount;
+	unsigned int    CodedFrameBuffersInUse;
+	unsigned int    MemoryInPool;
+	unsigned int    MemoryAllocated;
 
-    for (OtherStream = Playback->ListOfStreams;
-            OtherStream   != NULL;
-            OtherStream    = OtherStream->Next)
-        if (Stream != OtherStream)
-        {
-            OtherStream->CodedFrameBufferPool->GetPoolUsage(&CodedFrameBufferCount,
-                    &CodedFrameBuffersInUse,
-                    &MemoryInPool,
-                    &MemoryAllocated, NULL);
+	for (OtherStream = Playback->ListOfStreams;
+			OtherStream   != NULL;
+			OtherStream    = OtherStream->Next)
+		if (Stream != OtherStream)
+		{
+			OtherStream->CodedFrameBufferPool->GetPoolUsage(&CodedFrameBufferCount,
+															&CodedFrameBuffersInUse,
+															&MemoryInPool,
+															&MemoryAllocated, NULL);
 
-            if (((CodedFrameBuffersInUse * 10) >= (CodedFrameBufferCount * 9)) ||
-                    ((MemoryAllocated * 10) >= (MemoryInPool * 9)))
-            {
-                report(severity_info, "\t\tStream(%s) appears to have filled all it's input buffers,\n\t\tprobable inappropriate buffer sizing for the multiplexed stream.\n",
-                       ToString(OtherStream->StreamType));
-                break;
-            }
-        }
+			if (((CodedFrameBuffersInUse * 10) >= (CodedFrameBufferCount * 9)) ||
+					((MemoryAllocated * 10) >= (MemoryInPool * 9)))
+			{
+				report(severity_info, "\t\tStream(%s) appears to have filled all it's input buffers,\n\t\tprobable inappropriate buffer sizing for the multiplexed stream.\n",
+					   ToString(OtherStream->StreamType));
+				break;
+			}
+		}
 
-    return PlayerNoError;
+	return PlayerNoError;
 }
-
 

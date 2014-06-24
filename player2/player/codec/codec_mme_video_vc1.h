@@ -24,7 +24,6 @@ Author :           Mark C
 
 Definition of the stream specific codec implementation for VC-1 video in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 06-Mar-07   Created                                         Mark C
@@ -45,7 +44,6 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -59,50 +57,50 @@ Date        Modification                                    Name
 /// The VC1 video codec proxy.
 class Codec_MmeVideoVc1_c : public Codec_MmeVideo_c
 {
-    private:
+	private:
 
-        // Data
+		// Data
 
-        VC9_TransformerCapability_t         Vc1TransformCapability;
-        VC9_InitTransformerParam_fmw_t      Vc1InitializationParameters;
+		VC9_TransformerCapability_t         Vc1TransformCapability;
+		VC9_InitTransformerParam_fmw_t      Vc1InitializationParameters;
 
-        BufferDataDescriptor_t*             Vc1MbStructDescriptor;
-        BufferType_t                        Vc1MbStructType;
-        BufferPool_t                        Vc1MbStructPool;
+		BufferDataDescriptor_t*             Vc1MbStructDescriptor;
+		BufferType_t                        Vc1MbStructType;
+		BufferPool_t                        Vc1MbStructPool;
 
-        // Functions
+		// Functions
 
-        void                SaveIntensityCompensationData(unsigned int            RefBufferIndex,
-                VC9_IntensityComp_t*    Intensity);
-        void                GetForwardIntensityCompensationData(unsigned int            RefBufferIndex,
-                VC9_IntensityComp_t*    Intensity);
-        void                GetBackwardIntensityCompensationData(unsigned int            RefBufferIndex,
-                VC9_IntensityComp_t*    Intensity);
+		void                SaveIntensityCompensationData(unsigned int            RefBufferIndex,
+														  VC9_IntensityComp_t*    Intensity);
+		void                GetForwardIntensityCompensationData(unsigned int            RefBufferIndex,
+				VC9_IntensityComp_t*    Intensity);
+		void                GetBackwardIntensityCompensationData(unsigned int            RefBufferIndex,
+				VC9_IntensityComp_t*    Intensity);
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeVideoVc1_c(void);
-        ~Codec_MmeVideoVc1_c(void);
+		Codec_MmeVideoVc1_c(void);
+		~Codec_MmeVideoVc1_c(void);
 
-        //
-        // Stream specific functions
-        //
+		//
+		// Stream specific functions
+		//
 
-    protected:
+	protected:
 
-        CodecStatus_t   Reset(void);
-        CodecStatus_t   HandleCapabilities(void);
-        CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
-        CodecStatus_t   CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   Reset(void);
+		CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t   CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
 };
 #endif

@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the dvp extension to the basic packet input
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 08-Jul-08   Created                     Nick
@@ -52,19 +51,19 @@ Date        Modification                                    Name
 
 class Collator_PacketDvp_c : public Collator_Packet_c
 {
-    protected:
+	protected:
 
-    public:
+	public:
 
-        //
-        // Collator class functions
-        //
+		//
+		// Collator class functions
+		//
 
-        CollatorStatus_t   Input(PlayerInputDescriptor_t  *Input,
-                                 unsigned int          DataLength,
-                                 void                     *Data,
-                                 bool              NonBlocking = false,
-                                 unsigned int         *DataLengthRemaining = NULL);
+		CollatorStatus_t   Input(PlayerInputDescriptor_t  *Input,
+								 unsigned int          DataLength,
+								 void                     *Data,
+								 bool              NonBlocking = false,
+								 unsigned int         *DataLengthRemaining = NULL);
 };
 
 #endif

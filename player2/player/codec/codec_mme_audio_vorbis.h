@@ -24,7 +24,6 @@ Author :           Adam
 
 Definition of the stream specific codec implementation for Real Media Audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 28-Jan-09   Created                                         Julian
@@ -47,56 +46,52 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
 //
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
 // The class definition
 //
 
-
 class Codec_MmeAudioVorbis_c : public Codec_MmeAudioStream_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        // Constructor/Destructor methods
+		// Constructor/Destructor methods
 
-        Codec_MmeAudioVorbis_c(void);
-        ~Codec_MmeAudioVorbis_c(void);
+		Codec_MmeAudioVorbis_c(void);
+		~Codec_MmeAudioVorbis_c(void);
 
-        // Stream specific functions
+		// Stream specific functions
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
 
 #if 0
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
 
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   FillOutSendBuffersCommand(void);
+		CodecStatus_t   FillOutDecodeContext(void);
 
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   FillOutSendBuffersCommand(void);
-        CodecStatus_t   FillOutDecodeContext(void);
+		CodecStatus_t   SendMMEDecodeCommand(void);
 
-        CodecStatus_t   SendMMEDecodeCommand(void);
-
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
-        void            CallbackFromMME(MME_Event_t     Event,
-                                        MME_Command_t  *CallbackData);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		void            CallbackFromMME(MME_Event_t     Event,
+										MME_Command_t  *CallbackData);
 #endif
 
 };

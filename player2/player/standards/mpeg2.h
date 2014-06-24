@@ -25,7 +25,6 @@ Author ;           Nick
 Definition of the constants/macros that define useful things associated with
 Mpeg2 streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 05-Sep-05   Created                                         Nick
@@ -113,178 +112,177 @@ typedef unsigned char   QuantiserMatrix_t[QUANTISER_MATRIX_SIZE];
 
 typedef struct Mpeg2VideoSequence_s
 {
-    unsigned int        horizontal_size_value;                           /*   12 bits */
-    unsigned int        vertical_size_value;                             /*   12 bits */
-    unsigned int        aspect_ratio_information;                        /*    4 bits */
-    unsigned int        frame_rate_code;                                 /*    4 bits */
-    unsigned int        bit_rate_value;                                  /*   18 bits */
-    //unsigned int      marker_bit;                                      /*    1 bit  */
-    unsigned int        vbv_buffer_size_value;                           /*   10 bits */
-    unsigned int        constrained_parameters_flag;  /* 0 in MPEG2 */   /*    1 bit  */
-    unsigned int        load_intra_quantizer_matrix;                     /*    1 bit  */
-    QuantiserMatrix_t   intra_quantizer_matrix;                          /* 64*8 bits */
-    unsigned int        load_non_intra_quantizer_matrix;                 /*    1 bit  */
-    QuantiserMatrix_t   non_intra_quantizer_matrix;                      /* 64*8 bits */
+	unsigned int        horizontal_size_value;                           /*   12 bits */
+	unsigned int        vertical_size_value;                             /*   12 bits */
+	unsigned int        aspect_ratio_information;                        /*    4 bits */
+	unsigned int        frame_rate_code;                                 /*    4 bits */
+	unsigned int        bit_rate_value;                                  /*   18 bits */
+	//unsigned int      marker_bit;                                      /*    1 bit  */
+	unsigned int        vbv_buffer_size_value;                           /*   10 bits */
+	unsigned int        constrained_parameters_flag;  /* 0 in MPEG2 */   /*    1 bit  */
+	unsigned int        load_intra_quantizer_matrix;                     /*    1 bit  */
+	QuantiserMatrix_t   intra_quantizer_matrix;                          /* 64*8 bits */
+	unsigned int        load_non_intra_quantizer_matrix;                 /*    1 bit  */
+	QuantiserMatrix_t   non_intra_quantizer_matrix;                      /* 64*8 bits */
 } Mpeg2VideoSequence_t;
 
 //
 
 typedef struct Mpeg2VideoSequenceExtension_s
 {
-    unsigned int        profile_and_level_indication;                   /*  8 bits */
-    unsigned int        progressive_sequence;                           /*  1 bit  */
-    unsigned int        chroma_format;                                  /*  2 bits */
-    unsigned int        horizontal_size_extension;                      /*  2 bits */
-    unsigned int        vertical_size_extension;                        /*  2 bits */
-    unsigned int        bit_rate_extension;                             /* 12 bits */
-    //unsigned int      marker_bit;                                     /*  1 bit  */
-    unsigned int        vbv_buffer_size_extension;                      /*  8 bits */
-    unsigned int        low_delay;                                      /*  1 bit  */
-    unsigned int        frame_rate_extension_n;                         /*  2 bits */
-    unsigned int        frame_rate_extension_d;                         /*  5 bits */
+	unsigned int        profile_and_level_indication;                   /*  8 bits */
+	unsigned int        progressive_sequence;                           /*  1 bit  */
+	unsigned int        chroma_format;                                  /*  2 bits */
+	unsigned int        horizontal_size_extension;                      /*  2 bits */
+	unsigned int        vertical_size_extension;                        /*  2 bits */
+	unsigned int        bit_rate_extension;                             /* 12 bits */
+	//unsigned int      marker_bit;                                     /*  1 bit  */
+	unsigned int        vbv_buffer_size_extension;                      /*  8 bits */
+	unsigned int        low_delay;                                      /*  1 bit  */
+	unsigned int        frame_rate_extension_n;                         /*  2 bits */
+	unsigned int        frame_rate_extension_d;                         /*  5 bits */
 } Mpeg2VideoSequenceExtension_t;
 
 //
 
 typedef struct Mpeg2VideoSequenceDisplayExtension_s
 {
-    unsigned int        video_format;                                   /* 3 bits */
-    unsigned int        color_description;                              /* 1 bit */
-    unsigned int        color_primaries;                                /* 8 bits */
-    unsigned int        transfer_characteristics;                       /* 8 bits */
-    unsigned int        matrix_coefficients;                            /* 8 bits */
-    unsigned int        display_horizontal_size;                        /* 14 bits */
-    //unsigned int      marker_bit;                                     /*  1 bit  */
-    unsigned int        display_vertical_size;                          /* 14 bits */
+	unsigned int        video_format;                                   /* 3 bits */
+	unsigned int        color_description;                              /* 1 bit */
+	unsigned int        color_primaries;                                /* 8 bits */
+	unsigned int        transfer_characteristics;                       /* 8 bits */
+	unsigned int        matrix_coefficients;                            /* 8 bits */
+	unsigned int        display_horizontal_size;                        /* 14 bits */
+	//unsigned int      marker_bit;                                     /*  1 bit  */
+	unsigned int        display_vertical_size;                          /* 14 bits */
 } Mpeg2VideoSequenceDisplayExtension_t;
 
 //
 
 typedef struct Mpeg2VideoSequenceScalableExtension_s
 {
-    unsigned            scalable_mode;                                  /*  2 bits */
-    unsigned            layer_id;                                       /*  4 bits */
+	unsigned            scalable_mode;                                  /*  2 bits */
+	unsigned            layer_id;                                       /*  4 bits */
 
-    unsigned            lower_layer_prediction_horizontal_size;         /* 14 bits Optional if scalable_mode == 01 */
-    //unsigned          marker_bit;                                     /*  1 bit  Optional if scalable_mode == 01 */
-    unsigned            lower_layer_prediction_vertical_size;           /* 14 bits Optional if scalable_mode == 01 */
-    unsigned            horizontal_subsampling_factor_m;                /*  5 bits Optional if scalable_mode == 01 */
-    unsigned            horizontal_subsampling_factor_n;                /*  5 bits Optional if scalable_mode == 01 */
-    unsigned            vertical_subsampling_factor_m;                  /*  5 bits Optional if scalable_mode == 01 */
-    unsigned            vertical_subsampling_factor_n;                  /*  5 bits Optional if scalable_mode == 01 */
+	unsigned            lower_layer_prediction_horizontal_size;         /* 14 bits Optional if scalable_mode == 01 */
+	//unsigned          marker_bit;                                     /*  1 bit  Optional if scalable_mode == 01 */
+	unsigned            lower_layer_prediction_vertical_size;           /* 14 bits Optional if scalable_mode == 01 */
+	unsigned            horizontal_subsampling_factor_m;                /*  5 bits Optional if scalable_mode == 01 */
+	unsigned            horizontal_subsampling_factor_n;                /*  5 bits Optional if scalable_mode == 01 */
+	unsigned            vertical_subsampling_factor_m;                  /*  5 bits Optional if scalable_mode == 01 */
+	unsigned            vertical_subsampling_factor_n;                  /*  5 bits Optional if scalable_mode == 01 */
 
-    unsigned            picture_mux_enable;                             /*  1 bit  Optional if scalable_mode == 11 */
-    unsigned            mux_to_progressive_sequence;                    /*  1 bit  Optional if scalable_mode == 11 */
-    unsigned            picture_mux_order;                              /*  3 bits Optional if scalable_mode == 11 */
-    unsigned            picture_mux_factor;                             /*  3 bits Optional if scalable_mode == 11 */
+	unsigned            picture_mux_enable;                             /*  1 bit  Optional if scalable_mode == 11 */
+	unsigned            mux_to_progressive_sequence;                    /*  1 bit  Optional if scalable_mode == 11 */
+	unsigned            picture_mux_order;                              /*  3 bits Optional if scalable_mode == 11 */
+	unsigned            picture_mux_factor;                             /*  3 bits Optional if scalable_mode == 11 */
 } Mpeg2VideoSequenceScalableExtension_t;
 
 //
 
 typedef struct Mpeg2VideoGOP_s
 {
-    struct
-    {
-        unsigned        drop_frame_flag;                                /*  1 bit  */
-        unsigned        hours;                                          /*  5 bits */
-        unsigned        minutes;                                        /*  6 bits */
-        //unsigned      marker_bit;                                     /*  1 bit  */
-        unsigned        seconds;                                        /*  6 bits */
-        unsigned        pictures;                                       /*  6 bits */
-    }  time_code;
+	struct
+	{
+		unsigned        drop_frame_flag;                                /*  1 bit  */
+		unsigned        hours;                                          /*  5 bits */
+		unsigned        minutes;                                        /*  6 bits */
+		//unsigned      marker_bit;                                     /*  1 bit  */
+		unsigned        seconds;                                        /*  6 bits */
+		unsigned        pictures;                                       /*  6 bits */
+	}  time_code;
 
-    unsigned            closed_gop;                                     /*  1 bit  */
-    unsigned            broken_link;                                    /*  1 bit  */
+	unsigned            closed_gop;                                     /*  1 bit  */
+	unsigned            broken_link;                                    /*  1 bit  */
 } Mpeg2VideoGOP_t;
 
 //
 
 typedef struct Mpeg2VideoPicture_s
 {
-    unsigned            temporal_reference;                             /*  10 bits */
-    unsigned            picture_coding_type;                            /*   3 bits */ /* D pictures only allowed in MPEG1 */
-    unsigned            vbv_delay;                                      /*  16 bits */
-    unsigned            full_pel_forward_vector;                        /*   1 bit  */ /* 0   in MPEG2 */
-    unsigned            forward_f_code;                                 /*   3 bits */ /* 0x7 in MPEG2 */
-    unsigned            full_pel_backward_vector;                       /*   1 bit  */ /* 0   in MPEG2 */
-    unsigned            backward_f_code;                                /*   3 bits */ /* 0x7 in MPEG2 */
+	unsigned            temporal_reference;                             /*  10 bits */
+	unsigned            picture_coding_type;                            /*   3 bits */ /* D pictures only allowed in MPEG1 */
+	unsigned            vbv_delay;                                      /*  16 bits */
+	unsigned            full_pel_forward_vector;                        /*   1 bit  */ /* 0   in MPEG2 */
+	unsigned            forward_f_code;                                 /*   3 bits */ /* 0x7 in MPEG2 */
+	unsigned            full_pel_backward_vector;                       /*   1 bit  */ /* 0   in MPEG2 */
+	unsigned            backward_f_code;                                /*   3 bits */ /* 0x7 in MPEG2 */
 } Mpeg2VideoPicture_t;
 
 //
 
 typedef struct Mpeg2VideoPictureCodingExtension_s
 {
-    unsigned            f_code[2][2];                                   /* 4*4 bits */
-    unsigned            intra_dc_precision;                             /*  2 bits */
-    unsigned            picture_structure;                              /*  2 bits */
-    unsigned            top_field_first;                                /*  1 bit  */
-    unsigned            frame_pred_frame_dct;                           /*  1 bit  */
-    unsigned            concealment_motion_vectors;                     /*  1 bit  */
-    unsigned            q_scale_type;                                   /*  1 bit  */
-    unsigned            intra_vlc_format;                               /*  1 bit  */
-    unsigned            alternate_scan;                                 /*  1 bit  */
-    unsigned            repeat_first_field;                             /*  1 bit  */
-    unsigned            chroma_420_type;                                /*  1 bit  */
-    unsigned            progressive_frame;                              /*  1 bit  */
-    unsigned            composite_display_flag;                         /*  1 bit  */
-    unsigned            v_axis;                                         /*  1 bit  */
-    unsigned            field_sequence;                                 /*  3 bits */
-    unsigned            sub_carrier;                                    /*  1 bit  */
-    unsigned            burst_amplitude;                                /*  7 bits */
-    unsigned            sub_carrier_phase;                              /*  8 bits */
+	unsigned            f_code[2][2];                                   /* 4*4 bits */
+	unsigned            intra_dc_precision;                             /*  2 bits */
+	unsigned            picture_structure;                              /*  2 bits */
+	unsigned            top_field_first;                                /*  1 bit  */
+	unsigned            frame_pred_frame_dct;                           /*  1 bit  */
+	unsigned            concealment_motion_vectors;                     /*  1 bit  */
+	unsigned            q_scale_type;                                   /*  1 bit  */
+	unsigned            intra_vlc_format;                               /*  1 bit  */
+	unsigned            alternate_scan;                                 /*  1 bit  */
+	unsigned            repeat_first_field;                             /*  1 bit  */
+	unsigned            chroma_420_type;                                /*  1 bit  */
+	unsigned            progressive_frame;                              /*  1 bit  */
+	unsigned            composite_display_flag;                         /*  1 bit  */
+	unsigned            v_axis;                                         /*  1 bit  */
+	unsigned            field_sequence;                                 /*  3 bits */
+	unsigned            sub_carrier;                                    /*  1 bit  */
+	unsigned            burst_amplitude;                                /*  7 bits */
+	unsigned            sub_carrier_phase;                              /*  8 bits */
 } Mpeg2VideoPictureCodingExtension_t;
 
 //
 
 typedef struct Mpeg2VideoQuantMatrixExtension_s
 {
-    unsigned            load_intra_quantizer_matrix;                    /*    1 bit  */
-    QuantiserMatrix_t   intra_quantizer_matrix;                         /* 64*8 bits */
-    unsigned            load_non_intra_quantizer_matrix;                /*    1 bit  */
-    QuantiserMatrix_t   non_intra_quantizer_matrix;                     /* 64*8 bits */
-    unsigned            load_chroma_intra_quantizer_matrix;             /*    1 bit  */
-    QuantiserMatrix_t   chroma_intra_quantizer_matrix;                  /* 64*8 bits */
-    unsigned            load_chroma_non_intra_quantizer_matrix;         /*    1 bit  */
-    QuantiserMatrix_t   chroma_non_intra_quantizer_matrix;              /* 64*8 bits */
+	unsigned            load_intra_quantizer_matrix;                    /*    1 bit  */
+	QuantiserMatrix_t   intra_quantizer_matrix;                         /* 64*8 bits */
+	unsigned            load_non_intra_quantizer_matrix;                /*    1 bit  */
+	QuantiserMatrix_t   non_intra_quantizer_matrix;                     /* 64*8 bits */
+	unsigned            load_chroma_intra_quantizer_matrix;             /*    1 bit  */
+	QuantiserMatrix_t   chroma_intra_quantizer_matrix;                  /* 64*8 bits */
+	unsigned            load_chroma_non_intra_quantizer_matrix;         /*    1 bit  */
+	QuantiserMatrix_t   chroma_non_intra_quantizer_matrix;              /* 64*8 bits */
 } Mpeg2VideoQuantMatrixExtension_t;
 
 //
 
 typedef struct Mpeg2VideoPictureDisplayExtension_s
 {
-    struct
-    {
-        int             horizontal_offset;                              /* 16 bits */
-        //unsigned      marker_bit;                                     /*  1 bit  */
-        int             vertical_offset;                                /* 16 bits */
-        //unsigned      marker_bit;                                     /*  1 bit  */
-    } frame_centre[3];
+	struct
+	{
+		int             horizontal_offset;                              /* 16 bits */
+		//unsigned      marker_bit;                                     /*  1 bit  */
+		int             vertical_offset;                                /* 16 bits */
+		//unsigned      marker_bit;                                     /*  1 bit  */
+	} frame_centre[3];
 } Mpeg2VideoPictureDisplayExtension_t;
 
 //
 
 typedef struct Mpeg2VideoPictureTemporalScalableExtension_s
 {
-    unsigned            reference_select_code;                          /*  2 bits */
-    unsigned            forward_temporal_reference;                     /* 10 bits */
-    //unsigned          marker_bit;                                     /*  1 bit  */
-    unsigned            backward_temporal_reference;                    /* 10 bits */
+	unsigned            reference_select_code;                          /*  2 bits */
+	unsigned            forward_temporal_reference;                     /* 10 bits */
+	//unsigned          marker_bit;                                     /*  1 bit  */
+	unsigned            backward_temporal_reference;                    /* 10 bits */
 } Mpeg2VideoPictureTemporalScalableExtension_t;
 
 //
 
 typedef struct Mpeg2VideoPictureSpatialScalableExtension_s
 {
-    unsigned            lower_layer_temporal_reference;                 /* 10 bits */
-    //unsigned          marker_bit;                                     /*  1 bit  */
-    unsigned            lower_layer_horizontal_offset;                  /* 15 bits */
-    //unsigned          marker_bit;                                     /*  1 bit  */
-    unsigned            lower_layer_vertical_offset;                    /* 15 bits */
-    unsigned            spatial_temporal_weight_code_table_index;       /*  2 bits */
-    unsigned            lower_layer_progressive_frame;                  /*  1 bit  */
-    unsigned            lower_layer_deinterlaced_field_select;          /*  1 bit  */
+	unsigned            lower_layer_temporal_reference;                 /* 10 bits */
+	//unsigned          marker_bit;                                     /*  1 bit  */
+	unsigned            lower_layer_horizontal_offset;                  /* 15 bits */
+	//unsigned          marker_bit;                                     /*  1 bit  */
+	unsigned            lower_layer_vertical_offset;                    /* 15 bits */
+	unsigned            spatial_temporal_weight_code_table_index;       /*  2 bits */
+	unsigned            lower_layer_progressive_frame;                  /*  1 bit  */
+	unsigned            lower_layer_deinterlaced_field_select;          /*  1 bit  */
 } Mpeg2VideoPictureSpatialScalableExtension_t;
-
 
 // ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -293,30 +291,30 @@ typedef struct Mpeg2VideoPictureSpatialScalableExtension_s
 
 typedef enum MpegStreamType_e
 {
-    MpegStreamTypeMpeg1 = 0,
-    MpegStreamTypeMpeg2 = 1
+	MpegStreamTypeMpeg1 = 0,
+	MpegStreamTypeMpeg2 = 1
 } MpegStreamType_t;
 
 //
 
 typedef struct Mpeg2StreamParameters_s
 {
-    bool                                        UpdatedSinceLastFrame;
+	bool                                        UpdatedSinceLastFrame;
 
-    bool                                        SequenceHeaderPresent;
-    bool                                        SequenceExtensionHeaderPresent;
-    bool                                        SequenceDisplayExtensionHeaderPresent;
-    bool                                        SequenceScalableExtensionHeaderPresent;
-    bool                                        QuantMatrixExtensionHeaderPresent;
+	bool                                        SequenceHeaderPresent;
+	bool                                        SequenceExtensionHeaderPresent;
+	bool                                        SequenceDisplayExtensionHeaderPresent;
+	bool                                        SequenceScalableExtensionHeaderPresent;
+	bool                                        QuantMatrixExtensionHeaderPresent;
 
-    MpegStreamType_t                            StreamType;
+	MpegStreamType_t                            StreamType;
 
-    Mpeg2VideoSequence_t                        SequenceHeader;
-    Mpeg2VideoSequenceExtension_t               SequenceExtensionHeader;
-    Mpeg2VideoSequenceDisplayExtension_t        SequenceDisplayExtensionHeader;
-    Mpeg2VideoSequenceScalableExtension_t       SequenceScalableExtensionHeader;
-    Mpeg2VideoQuantMatrixExtension_t            QuantMatrixExtensionHeader;
-    Mpeg2VideoQuantMatrixExtension_t            CumulativeQuantMatrices;
+	Mpeg2VideoSequence_t                        SequenceHeader;
+	Mpeg2VideoSequenceExtension_t               SequenceExtensionHeader;
+	Mpeg2VideoSequenceDisplayExtension_t        SequenceDisplayExtensionHeader;
+	Mpeg2VideoSequenceScalableExtension_t       SequenceScalableExtensionHeader;
+	Mpeg2VideoQuantMatrixExtension_t            QuantMatrixExtensionHeader;
+	Mpeg2VideoQuantMatrixExtension_t            CumulativeQuantMatrices;
 } Mpeg2StreamParameters_t;
 
 #define BUFFER_MPEG2_STREAM_PARAMETERS        "Mpeg2StreamParameters"
@@ -326,19 +324,19 @@ typedef struct Mpeg2StreamParameters_s
 
 typedef struct Mpeg2FrameParameters_s
 {
-    bool                                        GroupOfPicturesHeaderPresent;
-    bool                                        PictureHeaderPresent;
-    bool                                        PictureCodingExtensionHeaderPresent;
-    bool                                        PictureDisplayExtensionHeaderPresent;
-    bool                                        PictureTemporalScalableExtensionHeaderPresent;
-    bool                                        PictureSpatialScalableExtensionHeaderPresent;
+	bool                                        GroupOfPicturesHeaderPresent;
+	bool                                        PictureHeaderPresent;
+	bool                                        PictureCodingExtensionHeaderPresent;
+	bool                                        PictureDisplayExtensionHeaderPresent;
+	bool                                        PictureTemporalScalableExtensionHeaderPresent;
+	bool                                        PictureSpatialScalableExtensionHeaderPresent;
 
-    Mpeg2VideoGOP_t                             GroupOfPicturesHeader;
-    Mpeg2VideoPicture_t                         PictureHeader;
-    Mpeg2VideoPictureCodingExtension_t          PictureCodingExtensionHeader;
-    Mpeg2VideoPictureDisplayExtension_t         PictureDisplayExtensionHeader;
-    Mpeg2VideoPictureTemporalScalableExtension_t PictureTemporalScalableExtensionHeader;
-    Mpeg2VideoPictureSpatialScalableExtension_t PictureSpatialScalableExtensionHeader;
+	Mpeg2VideoGOP_t                             GroupOfPicturesHeader;
+	Mpeg2VideoPicture_t                         PictureHeader;
+	Mpeg2VideoPictureCodingExtension_t          PictureCodingExtensionHeader;
+	Mpeg2VideoPictureDisplayExtension_t         PictureDisplayExtensionHeader;
+	Mpeg2VideoPictureTemporalScalableExtension_t PictureTemporalScalableExtensionHeader;
+	Mpeg2VideoPictureSpatialScalableExtension_t PictureSpatialScalableExtensionHeader;
 } Mpeg2FrameParameters_t;
 
 #define BUFFER_MPEG2_FRAME_PARAMETERS        "Mpeg2FrameParameters"

@@ -24,7 +24,6 @@ Author :           Adam
 
 Implementation of the pes collator class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 05-Jul-07   Created (from collator_pes_audio_mpeg.cpp)      Adam
@@ -67,10 +66,10 @@ Date        Modification                                    Name
 ///
 Collator_PesAudioAac_c::Collator_PesAudioAac_c(void)
 {
-    if (InitializationStatus != CollatorNoError)
-        return;
+	if (InitializationStatus != CollatorNoError)
+		return;
 
-    Collator_PesAudioAac_c::Reset();
+	Collator_PesAudioAac_c::Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -88,46 +87,46 @@ Collator_PesAudioAac_c::Collator_PesAudioAac_c(void)
 ///
 CollatorStatus_t Collator_PesAudioAac_c::FindNextSyncWord(int *CodeOffset)
 {
-    int i;
-    unsigned char aacHeader[AAC_HEADER_SIZE];
-    AacAudioParsedFrameHeader_t ParsedFrameHeader;
-    int RemainingInPotential = PotentialFrameHeaderLength;
-    unsigned char * PotentialFramePtr = PotentialFrameHeader;
-    unsigned char * ElementaryPtr;
+	int i;
+	unsigned char aacHeader[AAC_HEADER_SIZE];
+	AacAudioParsedFrameHeader_t ParsedFrameHeader;
+	int RemainingInPotential = PotentialFrameHeaderLength;
+	unsigned char * PotentialFramePtr = PotentialFrameHeader;
+	unsigned char * ElementaryPtr;
 
-    // do the most naive possible search. there is no obvious need for performance here
-    for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - AAC_HEADER_SIZE); i++)
-    {
-        if (RemainingInPotential > 0)
-        {
-            /* we need at least 16 bytes to verify a few items in the stream header...*/
-            int size =  min(RemainingInPotential, AAC_HEADER_SIZE);
-            memcpy(&aacHeader[0], PotentialFramePtr, size);
-            memcpy(&aacHeader[size], &RemainingElementaryData[0], AAC_HEADER_SIZE - size);
-            ElementaryPtr = aacHeader;
-        }
-        else
-        {
-            ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
-        }
+	// do the most naive possible search. there is no obvious need for performance here
+	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - AAC_HEADER_SIZE); i++)
+	{
+		if (RemainingInPotential > 0)
+		{
+			/* we need at least 16 bytes to verify a few items in the stream header...*/
+			int size =  min(RemainingInPotential, AAC_HEADER_SIZE);
+			memcpy(&aacHeader[0], PotentialFramePtr, size);
+			memcpy(&aacHeader[size], &RemainingElementaryData[0], AAC_HEADER_SIZE - size);
+			ElementaryPtr = aacHeader;
+		}
+		else
+		{
+			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
+		}
 
-        FrameParserStatus_t FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(ElementaryPtr,
-                                       &ParsedFrameHeader,
-                                       AAC_HEADER_SIZE,
-                                       AAC_GET_SYNCHRO);
+		FrameParserStatus_t FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(ElementaryPtr,
+									   &ParsedFrameHeader,
+									   AAC_HEADER_SIZE,
+									   AAC_GET_SYNCHRO);
 
-        if (FPStatus == FrameParserNoError)
-        {
-            // it seems like we got a synchonization...
-            *CodeOffset = (RemainingInPotential > 0) ? (-RemainingInPotential) : (i - PotentialFrameHeaderLength);;
-            return CollatorNoError;
-        }
+		if (FPStatus == FrameParserNoError)
+		{
+			// it seems like we got a synchonization...
+			*CodeOffset = (RemainingInPotential > 0) ? (-RemainingInPotential) : (i - PotentialFrameHeaderLength);;
+			return CollatorNoError;
+		}
 
-        RemainingInPotential--;
-        PotentialFramePtr++;
-    }
+		RemainingInPotential--;
+		PotentialFramePtr++;
+	}
 
-    return CollatorError;
+	return CollatorError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -139,44 +138,43 @@ CollatorStatus_t Collator_PesAudioAac_c::FindNextSyncWord(int *CodeOffset)
 ///
 CollatorStatus_t Collator_PesAudioAac_c::DecideCollatorNextStateAndGetLength(unsigned int *FrameLength)
 {
-    FrameParserStatus_t FPStatus;
-    CollatorStatus_t Status;
-    AacAudioParsedFrameHeader_t ParsedFrameHeader;
+	FrameParserStatus_t FPStatus;
+	CollatorStatus_t Status;
+	AacAudioParsedFrameHeader_t ParsedFrameHeader;
 
-    //
+	//
 
-    FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(StoredFrameHeader,
-               &ParsedFrameHeader,
-               FrameHeaderLength,
-               AAC_GET_LENGTH);
+	FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(StoredFrameHeader,
+			   &ParsedFrameHeader,
+			   FrameHeaderLength,
+			   AAC_GET_LENGTH);
 
-    if (FPStatus == FrameParserNoError)
-    {
-        if (FormatType == AAC_AUDIO_UNDEFINED)
-        {
-            FormatType = ParsedFrameHeader.Type;
-        }
-        else if (ParsedFrameHeader.Type != FormatType)
-        {
-            // this is a change of format type in the same stream, so we surely have synchronized on a wrong sync...
-            FormatType = AAC_AUDIO_UNDEFINED;
-            return CollatorError;
-        }
+	if (FPStatus == FrameParserNoError)
+	{
+		if (FormatType == AAC_AUDIO_UNDEFINED)
+		{
+			FormatType = ParsedFrameHeader.Type;
+		}
+		else if (ParsedFrameHeader.Type != FormatType)
+		{
+			// this is a change of format type in the same stream, so we surely have synchronized on a wrong sync...
+			FormatType = AAC_AUDIO_UNDEFINED;
+			return CollatorError;
+		}
 
-        *FrameLength     = ParsedFrameHeader.Length;
+		*FrameLength     = ParsedFrameHeader.Length;
 
-        CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
+		CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
 
-        Status = CollatorNoError;
-    }
-    else
-    {
-        Status = CollatorError;
-    }
+		Status = CollatorNoError;
+	}
+	else
+	{
+		Status = CollatorError;
+	}
 
-    return Status;
+	return Status;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -186,38 +184,37 @@ CollatorStatus_t Collator_PesAudioAac_c::DecideCollatorNextStateAndGetLength(uns
 ///
 void  Collator_PesAudioAac_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
-    /* do nothing, configuration already set to the right value... */
+	/* do nothing, configuration already set to the right value... */
 }
-
 
 CollatorStatus_t Collator_PesAudioAac_c::Reset(void)
 {
-    CollatorStatus_t Status;
+	CollatorStatus_t Status;
 
 //
 
-    COLLATOR_DEBUG(">><<\n");
+	COLLATOR_DEBUG(">><<\n");
 
-    Status = Collator_PesAudio_c::Reset();
+	Status = Collator_PesAudio_c::Reset();
 
-    if (Status != CollatorNoError)
-        return Status;
+	if (Status != CollatorNoError)
+		return Status;
 
-    // FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
-    FrameHeaderLength = AAC_HEADER_SIZE;
+	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
+	FrameHeaderLength = AAC_HEADER_SIZE;
 
-    Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-    Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
-    Configuration.BlockTerminateMask         = 0xff;         // Picture
-    Configuration.BlockTerminateCode         = 0x00;
-    Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-    Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_AUDIO - 1;
-    Configuration.InsertFrameTerminateCode   = false;
-    Configuration.TerminalCode               = 0;
-    Configuration.ExtendedHeaderLength       = 0;
-    Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
+	Configuration.BlockTerminateMask         = 0xff;         // Picture
+	Configuration.BlockTerminateCode         = 0x00;
+	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_AUDIO - 1;
+	Configuration.InsertFrameTerminateCode   = false;
+	Configuration.TerminalCode               = 0;
+	Configuration.ExtendedHeaderLength       = 0;
+	Configuration.DeferredTerminateFlag      = false;
 
-    FormatType                               = AAC_AUDIO_UNDEFINED;
+	FormatType                               = AAC_AUDIO_UNDEFINED;
 
-    return CollatorNoError;
+	return CollatorNoError;
 }

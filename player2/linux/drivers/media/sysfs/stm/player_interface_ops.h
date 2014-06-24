@@ -73,38 +73,38 @@ typedef void           *player_stream_handle_t;
 
 struct player_event_s
 {
-    unsigned int                code;
-    unsigned long long          timestamp;
-    player_component_handle_t   component;
-    player_playback_handle_t    playback;
-    player_stream_handle_t      stream;
+	unsigned int                code;
+	unsigned long long          timestamp;
+	player_component_handle_t   component;
+	player_playback_handle_t    playback;
+	player_stream_handle_t      stream;
 };
 
 union attribute_descriptor_u
 {
-    const char*                 ConstCharPointer;
-    int                         Int;
-    unsigned long long int      UnsignedLongLongInt;
-    int                         Bool;
+	const char*                 ConstCharPointer;
+	int                         Int;
+	unsigned long long int      UnsignedLongLongInt;
+	int                         Bool;
 };
 
 typedef int (*player_event_signal_callback)(struct player_event_s* event);
 
 struct player_interface_operations
 {
-    struct module                      *owner;
+	struct module                      *owner;
 
-    int (*component_get_attribute)(player_component_handle_t       Component,
-                                   const char*                     Attribute,
-                                   union attribute_descriptor_u*   Value);
-    int (*component_set_attribute)(player_component_handle_t       Component,
-                                   const char*                     Attribute,
-                                   union attribute_descriptor_u*   Value);
+	int (*component_get_attribute)(player_component_handle_t       Component,
+								   const char*                     Attribute,
+								   union attribute_descriptor_u*   Value);
+	int (*component_set_attribute)(player_component_handle_t       Component,
+								   const char*                     Attribute,
+								   union attribute_descriptor_u*   Value);
 
-    player_event_signal_callback(*player_register_event_signal_callback)(player_event_signal_callback    Callback);
+	player_event_signal_callback(*player_register_event_signal_callback)(player_event_signal_callback    Callback);
 
 };
 
 int register_player_interface(char                                   *name,
-                              struct player_interface_operations     *player_ops);
+							  struct player_interface_operations     *player_ops);
 #endif

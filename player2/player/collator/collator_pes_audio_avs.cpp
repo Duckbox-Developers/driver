@@ -24,7 +24,6 @@ Author :           Daniel
 
 Implementation of the pes collator class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 19-Apr-07   Created                                         Daniel
@@ -67,10 +66,10 @@ Date        Modification                                    Name
 ///
 Collator_PesAudioAvs_c::Collator_PesAudioAvs_c(void)
 {
-    if (InitializationStatus != CollatorNoError)
-        return;
+	if (InitializationStatus != CollatorNoError)
+		return;
 
-    Collator_PesAudioAvs_c::Reset();
+	Collator_PesAudioAvs_c::Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -87,32 +86,32 @@ Collator_PesAudioAvs_c::Collator_PesAudioAvs_c(void)
 ///
 CollatorStatus_t Collator_PesAudioAvs_c::FindNextSyncWord(int *CodeOffset)
 {
-    unsigned int i;
+	unsigned int i;
 
-    // check the last byte of any previous blocks
-    if (PotentialFrameHeaderLength)
-    {
-        if (PotentialFrameHeader[PotentialFrameHeaderLength - 1] == 0xff &&
-                (RemainingElementaryData[0] & 0xe0) == 0xe0)
-        {
-            *CodeOffset = -1;
-            return CollatorNoError;
+	// check the last byte of any previous blocks
+	if (PotentialFrameHeaderLength)
+	{
+		if (PotentialFrameHeader[PotentialFrameHeaderLength - 1] == 0xff &&
+				(RemainingElementaryData[0] & 0xe0) == 0xe0)
+		{
+			*CodeOffset = -1;
+			return CollatorNoError;
 
-        }
-    }
+		}
+	}
 
-    // do the most naive possible search. there is no obvious need for performance here
-    for (i = 0; i < RemainingElementaryLength - 1; i++)
-    {
-        if (RemainingElementaryData[i] == 0xff &&
-                (RemainingElementaryData[i + 1] & 0xe0) == 0xe0)
-        {
-            *CodeOffset = i;
-            return CollatorNoError;
-        }
-    }
+	// do the most naive possible search. there is no obvious need for performance here
+	for (i = 0; i < RemainingElementaryLength - 1; i++)
+	{
+		if (RemainingElementaryData[i] == 0xff &&
+				(RemainingElementaryData[i + 1] & 0xe0) == 0xe0)
+		{
+			*CodeOffset = i;
+			return CollatorNoError;
+		}
+	}
 
-    return CollatorError;
+	return CollatorError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -124,52 +123,51 @@ CollatorStatus_t Collator_PesAudioAvs_c::FindNextSyncWord(int *CodeOffset)
 ///
 CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(unsigned int *FrameLength)
 {
-    FrameParserStatus_t FPStatus;
-    CollatorStatus_t Status;
-    unsigned int ExtensionLength;
-    AvsAudioParsedFrameHeader_t ParsedFrameHeader;
+	FrameParserStatus_t FPStatus;
+	CollatorStatus_t Status;
+	unsigned int ExtensionLength;
+	AvsAudioParsedFrameHeader_t ParsedFrameHeader;
 
-    //
-    // Check to see if the frame has a valid extension header
-    //
+	//
+	// Check to see if the frame has a valid extension header
+	//
 
-    if (CollatorState == SeekingFrameEnd)
-    {
-        FPStatus = FrameParser_AudioAvs_c::ParseExtensionHeader(StoredFrameHeader, &ExtensionLength);
+	if (CollatorState == SeekingFrameEnd)
+	{
+		FPStatus = FrameParser_AudioAvs_c::ParseExtensionHeader(StoredFrameHeader, &ExtensionLength);
 
-        if (FPStatus == FrameParserNoError)
-        {
-            *FrameLength = ExtensionLength;
+		if (FPStatus == FrameParserNoError)
+		{
+			*FrameLength = ExtensionLength;
 
-            CollatorState = ReadSubFrame;
+			CollatorState = ReadSubFrame;
 
-            return CollatorNoError;
-        }
-    }
+			return CollatorNoError;
+		}
+	}
 
-    //
-    // Having handled extension headers we can handle headers.
-    //
+	//
+	// Having handled extension headers we can handle headers.
+	//
 
-    FPStatus = FrameParser_AudioAvs_c::ParseFrameHeader(StoredFrameHeader,
-               &ParsedFrameHeader);
+	FPStatus = FrameParser_AudioAvs_c::ParseFrameHeader(StoredFrameHeader,
+			   &ParsedFrameHeader);
 
-    if (FPStatus == FrameParserNoError)
-    {
-        *FrameLength     = ParsedFrameHeader.Length;
+	if (FPStatus == FrameParserNoError)
+	{
+		*FrameLength     = ParsedFrameHeader.Length;
 
-        CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
+		CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
 
-        Status = CollatorNoError;
-    }
-    else
-    {
-        Status = CollatorError;
-    }
+		Status = CollatorNoError;
+	}
+	else
+	{
+		Status = CollatorError;
+	}
 
-    return Status;
+	return Status;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -179,36 +177,35 @@ CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(uns
 ///
 void  Collator_PesAudioAvs_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
-    /* do nothing, configuration already set to the right value... */
+	/* do nothing, configuration already set to the right value... */
 }
-
 
 CollatorStatus_t Collator_PesAudioAvs_c::Reset(void)
 {
-    CollatorStatus_t Status;
+	CollatorStatus_t Status;
 
 //
 
-    COLLATOR_DEBUG(">><<\n");
+	COLLATOR_DEBUG(">><<\n");
 
-    Status = Collator_PesAudio_c::Reset();
+	Status = Collator_PesAudio_c::Reset();
 
-    if (Status != CollatorNoError)
-        return Status;
+	if (Status != CollatorNoError)
+		return Status;
 
-    // FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
-    FrameHeaderLength = AVS_HEADER_SIZE;
+	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
+	FrameHeaderLength = AVS_HEADER_SIZE;
 
-    Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-    Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
-    Configuration.BlockTerminateMask         = 0xff;         // Picture
-    Configuration.BlockTerminateCode         = 0x00;
-    Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-    Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_AUDIO - 1;
-    Configuration.InsertFrameTerminateCode   = false;
-    Configuration.TerminalCode               = 0;
-    Configuration.ExtendedHeaderLength       = 0;
-    Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
+	Configuration.BlockTerminateMask         = 0xff;         // Picture
+	Configuration.BlockTerminateCode         = 0x00;
+	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_AUDIO - 1;
+	Configuration.InsertFrameTerminateCode   = false;
+	Configuration.TerminalCode               = 0;
+	Configuration.ExtendedHeaderLength       = 0;
+	Configuration.DeferredTerminateFlag      = false;
 
-    return CollatorNoError;
+	return CollatorNoError;
 }

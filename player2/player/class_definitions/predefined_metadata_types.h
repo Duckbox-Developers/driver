@@ -24,8 +24,6 @@ Author :           Nick
 
 Definition of the pre-defined meta data types for player 2.
 
-
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
@@ -42,23 +40,22 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    MuxTypeUnMuxed           = 0,
-    MuxTypeTransportStream
+	MuxTypeUnMuxed           = 0,
+	MuxTypeTransportStream
 } PlayerInputMuxType_t;
-
 
 typedef struct PlayerInputDescriptor_s
 {
-    PlayerInputMuxType_t    MuxType;
-    DemultiplexorContext_t  DemultiplexorContext;       // To be set for multiplexed streams
-    PlayerStream_t          UnMuxedStream;              // To be set for data destined for a specific stream.
+	PlayerInputMuxType_t    MuxType;
+	DemultiplexorContext_t  DemultiplexorContext;       // To be set for multiplexed streams
+	PlayerStream_t          UnMuxedStream;              // To be set for data destined for a specific stream.
 
-    bool                    PlaybackTimeValid;
-    bool                    DecodeTimeValid;
-    unsigned long long      PlaybackTime;
-    unsigned long long      DecodeTime;
+	bool                    PlaybackTimeValid;
+	bool                    DecodeTimeValid;
+	unsigned long long      PlaybackTime;
+	unsigned long long      DecodeTime;
 
-    unsigned int            DataSpecificFlags;
+	unsigned int            DataSpecificFlags;
 } PlayerInputDescriptor_t;
 
 //
@@ -73,17 +70,17 @@ typedef struct PlayerInputDescriptor_s
 
 typedef struct CodedFrameParameters_s
 {
-    bool                    StreamDiscontinuity;
-    bool                    FlushBeforeDiscontinuity;
-    bool                    ContinuousReverseJump;
-    bool                    FollowedByStreamTerminate;
+	bool                    StreamDiscontinuity;
+	bool                    FlushBeforeDiscontinuity;
+	bool                    ContinuousReverseJump;
+	bool                    FollowedByStreamTerminate;
 
-    bool                    PlaybackTimeValid;
-    bool                    DecodeTimeValid;
-    unsigned long long      PlaybackTime;
-    unsigned long long      DecodeTime;
+	bool                    PlaybackTimeValid;
+	bool                    DecodeTimeValid;
+	unsigned long long      PlaybackTime;
+	unsigned long long      DecodeTime;
 
-    unsigned int            DataSpecificFlags;
+	unsigned int            DataSpecificFlags;
 } CodedFrameParameters_t;
 
 //
@@ -105,8 +102,8 @@ typedef unsigned long long PackedStartCode_t;
 
 typedef struct StartCodeList_s
 {
-    unsigned int         NumberOfStartCodes;
-    PackedStartCode_t    StartCodes[1];
+	unsigned int         NumberOfStartCodes;
+	PackedStartCode_t    StartCodes[1];
 } StartCodeList_t;
 
 //
@@ -114,7 +111,6 @@ typedef struct StartCodeList_s
 #define SizeofStartCodeList(Entries)            (sizeof(StartCodeList_t) + ((Entries-1) * sizeof(PackedStartCode_t)))
 #define METADATA_START_CODE_LIST                "StartCodeList"
 #define METADATA_START_CODE_LIST_TYPE           {METADATA_START_CODE_LIST, MetaDataTypeBase, AllocateFromOSMemory, 4, 0, false, false, 0}
-
 
 // //////////////////////////////////////////////////////////////////////
 //
@@ -128,50 +124,50 @@ typedef struct StartCodeList_s
 
 typedef struct ReferenceFrameList_s
 {
-    unsigned int                EntryCount;
-    unsigned int                EntryIndicies[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];
-    H264ReferenceDetails_t      H264ReferenceDetails[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];      // Added to support H264
+	unsigned int                EntryCount;
+	unsigned int                EntryIndicies[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];
+	H264ReferenceDetails_t      H264ReferenceDetails[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];      // Added to support H264
 } ReferenceFrameList_t;
 
 //
 
 typedef struct ParsedFrameParameters_s
 {
-    unsigned int            DecodeFrameIndex;
-    unsigned int            DisplayFrameIndex;
-    unsigned long long      NativePlaybackTime;
-    unsigned long long      NormalizedPlaybackTime;
-    unsigned long long      NativeDecodeTime;
-    unsigned long long      NormalizedDecodeTime;
+	unsigned int            DecodeFrameIndex;
+	unsigned int            DisplayFrameIndex;
+	unsigned long long      NativePlaybackTime;
+	unsigned long long      NormalizedPlaybackTime;
+	unsigned long long      NativeDecodeTime;
+	unsigned long long      NormalizedDecodeTime;
 
-    unsigned int            DataOffset;
-    bool                    CollapseHolesInDisplayIndices;
-    bool                    FirstParsedParametersForOutputFrame;
-    bool                    FirstParsedParametersAfterInputJump;
-    bool                    SurplusDataInjected;
-    bool                    ContinuousReverseJump;
-    bool                    KeyFrame;
-    bool                    IndependentFrame;
-    bool                    ReferenceFrame;
-    unsigned int            NumberOfReferenceFrameLists;
-    ReferenceFrameList_t    ReferenceFrameList[MAX_REFERENCE_FRAME_LISTS];
+	unsigned int            DataOffset;
+	bool                    CollapseHolesInDisplayIndices;
+	bool                    FirstParsedParametersForOutputFrame;
+	bool                    FirstParsedParametersAfterInputJump;
+	bool                    SurplusDataInjected;
+	bool                    ContinuousReverseJump;
+	bool                    KeyFrame;
+	bool                    IndependentFrame;
+	bool                    ReferenceFrame;
+	unsigned int            NumberOfReferenceFrameLists;
+	ReferenceFrameList_t    ReferenceFrameList[MAX_REFERENCE_FRAME_LISTS];
 
-    bool                    NewStreamParameters;
-    unsigned int            SizeofStreamParameterStructure;
-    void                   *StreamParameterStructure;
+	bool                    NewStreamParameters;
+	unsigned int            SizeofStreamParameterStructure;
+	void                   *StreamParameterStructure;
 
-    bool                    NewFrameParameters;
-    bool                    ApplySubstandardDecode;
-    unsigned int            SizeofFrameParameterStructure;
-    void                   *FrameParameterStructure;
+	bool                    NewFrameParameters;
+	bool                    ApplySubstandardDecode;
+	unsigned int            SizeofFrameParameterStructure;
+	void                   *FrameParameterStructure;
 } ParsedFrameParameters_t;
 
 static inline void DumpParsedFrameParameters(ParsedFrameParameters_t *ParsedFrameParameters, const char *tag)
 {
-    report(severity_note, "%s: ParsedFrameParameters @ %p\n", tag, ParsedFrameParameters);
-    report(severity_note, "\tDisplayFrameIndex                      %d\n", (int) ParsedFrameParameters->DisplayFrameIndex);
-    report(severity_note, "\tNewStreamParameters                    %s\n", ParsedFrameParameters->NewStreamParameters ? "true" : "false");
-    report(severity_note, "\tNewFrameParameters                     %s\n", ParsedFrameParameters->NewFrameParameters ? "true" : "false");
+	report(severity_note, "%s: ParsedFrameParameters @ %p\n", tag, ParsedFrameParameters);
+	report(severity_note, "\tDisplayFrameIndex                      %d\n", (int) ParsedFrameParameters->DisplayFrameIndex);
+	report(severity_note, "\tNewStreamParameters                    %s\n", ParsedFrameParameters->NewStreamParameters ? "true" : "false");
+	report(severity_note, "\tNewFrameParameters                     %s\n", ParsedFrameParameters->NewFrameParameters ? "true" : "false");
 }
 
 //
@@ -223,40 +219,40 @@ typedef unsigned int MatrixCoefficientsType_t;
 
 typedef struct VideoDisplayParameters_s
 {
-    unsigned int                Width;
-    unsigned int                Height;
-    unsigned int                DisplayWidth;
-    unsigned int                DisplayHeight;
-    bool                        Progressive;
-    bool                        OverscanAppropriate;
-    bool                        VideoFullRange;                         // Indicate black level and range of colour values.
-    MatrixCoefficientsType_t    ColourMatrixCoefficients;               // Define the standard used in RGB <=> YCbCr inter-convertion
-    Rational_t                  PixelAspectRatio;
-    Rational_t                  FrameRate;
+	unsigned int                Width;
+	unsigned int                Height;
+	unsigned int                DisplayWidth;
+	unsigned int                DisplayHeight;
+	bool                        Progressive;
+	bool                        OverscanAppropriate;
+	bool                        VideoFullRange;                         // Indicate black level and range of colour values.
+	MatrixCoefficientsType_t    ColourMatrixCoefficients;               // Define the standard used in RGB <=> YCbCr inter-convertion
+	Rational_t                  PixelAspectRatio;
+	Rational_t                  FrameRate;
 } VideoDisplayParameters_t;
 
 //
 
 typedef struct PanScan_s
 {
-    unsigned int                Count;
-    unsigned int                DisplayCount[MAX_PAN_SCAN_VALUES];      // In fields or frames depending on the progressive nature of the sequence
-    int                         HorizontalOffset[MAX_PAN_SCAN_VALUES];
-    int                         VerticalOffset[MAX_PAN_SCAN_VALUES];
+	unsigned int                Count;
+	unsigned int                DisplayCount[MAX_PAN_SCAN_VALUES];      // In fields or frames depending on the progressive nature of the sequence
+	int                         HorizontalOffset[MAX_PAN_SCAN_VALUES];
+	int                         VerticalOffset[MAX_PAN_SCAN_VALUES];
 } PanScan_t;
 
 //
 
 typedef struct ParsedVideoParameters_s
 {
-    VideoDisplayParameters_t    Content;
-    SliceType_t                 SliceType;
-    PictureStructure_t          PictureStructure;
-    bool                        FirstSlice;             // Always true for a non-slice based decode
-    bool                        InterlacedFrame;        // Note can have non-interlaced frame from a non-progressive source
-    bool                        TopFieldFirst;          // Interlaced frames only
-    unsigned int                DisplayCount[2];        // First/second field count or frame count for progressive content
-    PanScan_t                   PanScan;
+	VideoDisplayParameters_t    Content;
+	SliceType_t                 SliceType;
+	PictureStructure_t          PictureStructure;
+	bool                        FirstSlice;             // Always true for a non-slice based decode
+	bool                        InterlacedFrame;        // Note can have non-interlaced frame from a non-progressive source
+	bool                        TopFieldFirst;          // Interlaced frames only
+	unsigned int                DisplayCount[2];        // First/second field count or frame count for progressive content
+	PanScan_t                   PanScan;
 } ParsedVideoParameters_t;
 
 //
@@ -269,32 +265,31 @@ typedef struct ParsedVideoParameters_s
 //      Additional parsed frame parameters for an audio stream
 //
 
-
 /// A pretty meaningless structure. I'm still trying to figure out if its useful.
 typedef struct AudioDisplayParameters_s
 {
-    unsigned int Unused;
+	unsigned int Unused;
 } AudioDisplayParameters_t;
 
 typedef struct AudioSurfaceParameters_s
 {
-    unsigned int                BitsPerSample;
-    unsigned int                ChannelCount; ///< Number of interleaved channels in the raw buffer
+	unsigned int                BitsPerSample;
+	unsigned int                ChannelCount; ///< Number of interleaved channels in the raw buffer
 
-    /// Sampling frequency (in Hz).
-    ///
-    /// \todo The sample rate is not a intrinsic of the display surface, rather it is a transient stream
-    ///       parameter.
-    unsigned int                SampleRateHz;
+	/// Sampling frequency (in Hz).
+	///
+	/// \todo The sample rate is not a intrinsic of the display surface, rather it is a transient stream
+	///       parameter.
+	unsigned int                SampleRateHz;
 } AudioSurfaceParameters_t;
 
 typedef struct StreamMetadata_s
 {
-    unsigned int                FrontMatrixEncoded;
-    unsigned int                RearMatrixEncoded;
-    unsigned int                MixLevel;
-    unsigned int                DialogNorm;
-    unsigned int                LfeGain;
+	unsigned int                FrontMatrixEncoded;
+	unsigned int                RearMatrixEncoded;
+	unsigned int                MixLevel;
+	unsigned int                DialogNorm;
+	unsigned int                LfeGain;
 } StreamMetadata_t;
 
 #define MAX_MIXING_OUTPUT_CONFIGURATION 3
@@ -303,49 +298,48 @@ typedef struct StreamMetadata_s
 // The following structures shall be used if the decoded audio stream contains some mixing metadata (Blu Ray case)
 typedef struct MixingOutputConfiguration_s
 {
-    int                 AudioMode;                                    //< Primary Channel Audio Mode
-    unsigned short      PrimaryAudioGain[MAX_NB_CHANNEL_COEFF];        //< unsigned Q3.13 gain to be applied to each channel of primary stream
-    unsigned short      SecondaryAudioPanCoeff[MAX_NB_CHANNEL_COEFF]; //< unsigned Q3.13 panning coefficients to be applied to secondary mono stream
+	int                 AudioMode;                                    //< Primary Channel Audio Mode
+	unsigned short      PrimaryAudioGain[MAX_NB_CHANNEL_COEFF];        //< unsigned Q3.13 gain to be applied to each channel of primary stream
+	unsigned short      SecondaryAudioPanCoeff[MAX_NB_CHANNEL_COEFF]; //< unsigned Q3.13 panning coefficients to be applied to secondary mono stream
 } MixingOutputConfiguration_t;
 
 typedef struct MixingMetadata_s
 {
-    bool                               IsMixingMetadataPresent;                       //< does the stream embedd some mixing metadata?
-    unsigned short                     PostMixGain;                                   //< unsigned Q3.13 gain to be applied to output of mixed primary and secondary
-    unsigned short                     NbOutMixConfig;                                //< Number of mix output configurations
-    MixingOutputConfiguration_t        MixOutConfig[MAX_MIXING_OUTPUT_CONFIGURATION];//< This array is extensible according to NbOutMixConfig
+	bool                               IsMixingMetadataPresent;                       //< does the stream embedd some mixing metadata?
+	unsigned short                     PostMixGain;                                   //< unsigned Q3.13 gain to be applied to output of mixed primary and secondary
+	unsigned short                     NbOutMixConfig;                                //< Number of mix output configurations
+	MixingOutputConfiguration_t        MixOutConfig[MAX_MIXING_OUTPUT_CONFIGURATION];//< This array is extensible according to NbOutMixConfig
 } MixingMetadata_t;
 
 typedef enum
 {
-    AudioOriginalEncodingUnknown = 0,
-    AudioOriginalEncodingAc3,     ///< Indicates AC3 is present in CodedDataBuffer
-    AudioOriginalEncodingDdplus,  ///< Indicates DD+ is present in CodedDataBuffer, and AC3 in TranscodedDatabuffer
-    AudioOriginalEncodingDts,     ///< Indicates DTS is present in CodedDataBuffer
-    AudioOriginalEncodingDtshd,   ///< Indicates DTSHD is present in CodedDataBuffer, and DTS in TranscodedDatabuffer
-    AudioOriginalEncodingDtshdMA, ///< Indicates DTSHD Master Audio is present in CodedDataBuffer, and DTS in TranscodedDatabuffer
-    AudioOriginalEncodingDtshdLBR,///< Indicates DTSHD LBR is present in CodedDataBuffer, and TranscodedDatabuffer is void
-    AudioOriginalEncodingTrueHD   ///< Indicates Dolby TrueHD is present in CodedDataBuffer, and TranscodedDatabuffer is void
+	AudioOriginalEncodingUnknown = 0,
+	AudioOriginalEncodingAc3,     ///< Indicates AC3 is present in CodedDataBuffer
+	AudioOriginalEncodingDdplus,  ///< Indicates DD+ is present in CodedDataBuffer, and AC3 in TranscodedDatabuffer
+	AudioOriginalEncodingDts,     ///< Indicates DTS is present in CodedDataBuffer
+	AudioOriginalEncodingDtshd,   ///< Indicates DTSHD is present in CodedDataBuffer, and DTS in TranscodedDatabuffer
+	AudioOriginalEncodingDtshdMA, ///< Indicates DTSHD Master Audio is present in CodedDataBuffer, and DTS in TranscodedDatabuffer
+	AudioOriginalEncodingDtshdLBR,///< Indicates DTSHD LBR is present in CodedDataBuffer, and TranscodedDatabuffer is void
+	AudioOriginalEncodingTrueHD   ///< Indicates Dolby TrueHD is present in CodedDataBuffer, and TranscodedDatabuffer is void
 } AudioOriginalEncoding_t;
 
 // This structure keeps track of a backward compatible part of a
 // stream (e.g DTS core part of DTS-HD stream)
 typedef struct BackwardCompatibleProperties_s
 {
-    unsigned int                SampleRateHz;
-    unsigned int                SampleCount;
+	unsigned int                SampleRateHz;
+	unsigned int                SampleCount;
 } BackwardCompatibleProperties_t;
-
 
 typedef struct ParsedAudioParameters_s
 {
-    AudioSurfaceParameters_t       Source;
-    unsigned int                   SampleCount;
-    int                            Organisation;     ///< Indicates the organisation of the channels (e.g. 5.1, 2.0)
-    AudioOriginalEncoding_t        OriginalEncoding;
-    StreamMetadata_t               StreamMetadata;   ///< Stream metadata mainly used by fatpipe
-    MixingMetadata_t               MixingMetadata;   ///< Mixing metadata used by BD Mixer (present in secondary streams)
-    BackwardCompatibleProperties_t BackwardCompatibleProperties; // Properties of the backaward compatible part of a stream
+	AudioSurfaceParameters_t       Source;
+	unsigned int                   SampleCount;
+	int                            Organisation;     ///< Indicates the organisation of the channels (e.g. 5.1, 2.0)
+	AudioOriginalEncoding_t        OriginalEncoding;
+	StreamMetadata_t               StreamMetadata;   ///< Stream metadata mainly used by fatpipe
+	MixingMetadata_t               MixingMetadata;   ///< Mixing metadata used by BD Mixer (present in secondary streams)
+	BackwardCompatibleProperties_t BackwardCompatibleProperties; // Properties of the backaward compatible part of a stream
 } ParsedAudioParameters_t;
 
 //
@@ -360,23 +354,23 @@ typedef struct ParsedAudioParameters_s
 //
 
 #define OUTPUT_TIMING_COMMON                                    \
-    unsigned long long      SystemPlaybackTime;             \
-    unsigned long long      ExpectedDurationTime;           \
-    unsigned long long      ActualSystemPlaybackTime;       \
-    \
-    Rational_t              OutputRateAdjustment;           \
-    Rational_t              SystemClockAdjustment;          \
-    \
-    bool                    TimingGenerated;
+	unsigned long long      SystemPlaybackTime;             \
+	unsigned long long      ExpectedDurationTime;           \
+	unsigned long long      ActualSystemPlaybackTime;       \
+	\
+	Rational_t              OutputRateAdjustment;           \
+	Rational_t              SystemClockAdjustment;          \
+	\
+	bool                    TimingGenerated;
 
 typedef struct VideoOutputTiming_s
 {
-    OUTPUT_TIMING_COMMON
+	OUTPUT_TIMING_COMMON
 
-    bool                        Interlaced;
-    bool                        TopFieldFirst;     // Interlaced frames only
-    unsigned int                DisplayCount[2];     // Non-interlaced use [0] only
-    PanScan_t                   PanScan;
+	bool                        Interlaced;
+	bool                        TopFieldFirst;     // Interlaced frames only
+	unsigned int                DisplayCount[2];     // Non-interlaced use [0] only
+	PanScan_t                   PanScan;
 } VideoOutputTiming_t;
 
 //
@@ -392,9 +386,9 @@ typedef struct VideoOutputTiming_s
 
 typedef struct AudioOutputTiming_s
 {
-    OUTPUT_TIMING_COMMON
+	OUTPUT_TIMING_COMMON
 
-    unsigned int                DisplayCount;
+	unsigned int                DisplayCount;
 } AudioOutputTiming_t;
 
 //
@@ -410,10 +404,10 @@ typedef struct AudioOutputTiming_s
 
 typedef struct VideoOutputSurfaceDescriptor_s
 {
-    unsigned int                DisplayWidth;
-    unsigned int                DisplayHeight;
-    bool                        Progressive;
-    Rational_t                  FrameRate;
+	unsigned int                DisplayWidth;
+	unsigned int                DisplayHeight;
+	bool                        Progressive;
+	Rational_t                  FrameRate;
 } VideoOutputSurfaceDescriptor_t;
 
 //
@@ -429,9 +423,9 @@ typedef struct VideoOutputSurfaceDescriptor_s
 
 typedef struct AudioOutputSurfaceDescriptor_s
 {
-    unsigned int                BitsPerSample;
-    unsigned int                ChannelCount;
-    unsigned int                SampleRateHz;
+	unsigned int                BitsPerSample;
+	unsigned int                ChannelCount;
+	unsigned int                SampleRateHz;
 } AudioOutputSurfaceDescriptor_t;
 
 //
@@ -449,37 +443,37 @@ typedef struct AudioOutputSurfaceDescriptor_s
 
 typedef enum
 {
-    FormatUnknown                       = 0,
-    FormatMarkerFrame,
-    FormatAudio,
-    FormatVideo420_MacroBlock,
-    FormatVideo420_PairedMacroBlock,
+	FormatUnknown                       = 0,
+	FormatMarkerFrame,
+	FormatAudio,
+	FormatVideo420_MacroBlock,
+	FormatVideo420_PairedMacroBlock,
 //    FormatVideo420_Raster_Y_CbCr,
 //    FormatVideo420_Raster_Y_Cb_Cr,
-    FormatVideo422_Raster,
-    FormatVideo420_Planar,
-    FormatVideo420_PlanarAligned,
-    FormatVideo422_Planar,
-    FormatVideo8888_ARGB,
-    FormatVideo888_RGB,
-    FormatVideo565_RGB,
-    FormatVideo422_YUYV
+	FormatVideo422_Raster,
+	FormatVideo420_Planar,
+	FormatVideo420_PlanarAligned,
+	FormatVideo422_Planar,
+	FormatVideo8888_ARGB,
+	FormatVideo888_RGB,
+	FormatVideo565_RGB,
+	FormatVideo422_YUYV
 } BufferFormat_t;
 
 //
 
 typedef struct BufferStructure_s
 {
-    BufferFormat_t      Format;
-    unsigned int        DimensionCount;
-    unsigned int        Dimension[MAX_BUFFER_DIMENSIONS];
-    unsigned int        ComponentCount;
-    unsigned int        ComponentOffset[MAX_BUFFER_COMPONENTS];
-    unsigned int        ComponentBorder[MAX_BUFFER_DIMENSIONS];
-    unsigned int        Strides[MAX_BUFFER_DIMENSIONS - 1][MAX_BUFFER_COMPONENTS];
-    unsigned int        Size;
-    unsigned int        DecimatedSize;
-    bool                DecimationRequired;
+	BufferFormat_t      Format;
+	unsigned int        DimensionCount;
+	unsigned int        Dimension[MAX_BUFFER_DIMENSIONS];
+	unsigned int        ComponentCount;
+	unsigned int        ComponentOffset[MAX_BUFFER_COMPONENTS];
+	unsigned int        ComponentBorder[MAX_BUFFER_DIMENSIONS];
+	unsigned int        Strides[MAX_BUFFER_DIMENSIONS - 1][MAX_BUFFER_COMPONENTS];
+	unsigned int        Size;
+	unsigned int        DecimatedSize;
+	bool                DecimationRequired;
 } BufferStructure_t;
 
 //
@@ -495,14 +489,14 @@ typedef struct BufferStructure_s
 
 typedef struct CodecTrickModeParameters_s
 {
-    Rational_t                  EmpiricalMaximumDecodeFrameRateShortIntegration;        // Observed values out of the transformer
-    Rational_t                  EmpiricalMaximumDecodeFrameRateLongIntegration;         // Observed values out of the transformer
+	Rational_t                  EmpiricalMaximumDecodeFrameRateShortIntegration;        // Observed values out of the transformer
+	Rational_t                  EmpiricalMaximumDecodeFrameRateLongIntegration;         // Observed values out of the transformer
 
-    bool                        SubstandardDecodeSupported;
-    Rational_t                  SubstandardDecodeRateIncrease;
+	bool                        SubstandardDecodeSupported;
+	Rational_t                  SubstandardDecodeRateIncrease;
 
-    unsigned int                DefaultGroupSize;
-    unsigned int                DefaultGroupReferenceFrameCount;        // Including the key frame
+	unsigned int                DefaultGroupSize;
+	unsigned int                DefaultGroupReferenceFrameCount;        // Including the key frame
 
 } CodecTrickModeParameters_t;
 
@@ -518,10 +512,10 @@ typedef struct CodecTrickModeParameters_s
 
 typedef struct VideoPostProcessingControl_s
 {
-    bool                        RangeMapLumaPresent;            // Range mapping
-    unsigned int                RangeMapLuma;
-    bool                        RangeMapChromaPresent;          // Range mapping
-    unsigned int                RangeMapChroma;
+	bool                        RangeMapLumaPresent;            // Range mapping
+	unsigned int                RangeMapLuma;
+	bool                        RangeMapChromaPresent;          // Range mapping
+	unsigned int                RangeMapChroma;
 } VideoPostProcessingControl_t;
 
 //
@@ -536,7 +530,7 @@ typedef struct VideoPostProcessingControl_s
 
 typedef struct AudioPostProcessingControl_s
 {
-    bool                        NoneDefined;
+	bool                        NoneDefined;
 } AudioPostProcessingControl_t;
 
 //
@@ -547,5 +541,4 @@ typedef struct AudioPostProcessingControl_s
 //
 
 #endif
-
 

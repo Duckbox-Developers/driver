@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of some common defines and structures used in more than one class
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 19-Sep-06   Created                                         Julian

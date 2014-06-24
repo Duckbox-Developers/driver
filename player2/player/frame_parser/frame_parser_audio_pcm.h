@@ -24,7 +24,6 @@ Author :
 
 Definition of the frame parser PCM Audio class implementation for player 2.
 
-
 Date        Modification                                Name
 ----        ------------                                --------
 12-Aug-09   Created                                     Julian
@@ -41,12 +40,10 @@ Date        Modification                                Name
 #include "pcm_audio.h"
 #include "frame_parser_audio.h"
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
 //
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -61,53 +58,53 @@ Date        Modification                                Name
 /// Frame parser for Ogg Pcm audio
 class FrameParser_AudioPcm_c : public FrameParser_Audio_c
 {
-    private:
+	private:
 
-        // Data
+		// Data
 
-        PcmAudioParsedFrameHeader_t         ParsedFrameHeader;
+		PcmAudioParsedFrameHeader_t         ParsedFrameHeader;
 
-        PcmAudioStreamParameters_t*         StreamParameters;
-        PcmAudioStreamParameters_t          CurrentStreamParameters;
-        PcmAudioFrameParameters_t*          FrameParameters;
+		PcmAudioStreamParameters_t*         StreamParameters;
+		PcmAudioStreamParameters_t          CurrentStreamParameters;
+		PcmAudioFrameParameters_t*          FrameParameters;
 
-        bool                                StreamDataValid;
+		bool                                StreamDataValid;
 
-        // Functions
+		// Functions
 
-        FrameParserStatus_t                 ReadStreamHeader(void);
+		FrameParserStatus_t                 ReadStreamHeader(void);
 
-    public:
+	public:
 
-        // Constructor function
+		// Constructor function
 
-        FrameParser_AudioPcm_c(void);
-        ~FrameParser_AudioPcm_c(void);
+		FrameParser_AudioPcm_c(void);
+		~FrameParser_AudioPcm_c(void);
 
-        // Overrides for component base class functions
+		// Overrides for component base class functions
 
-        FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t   Reset(void);
 
-        // FrameParser class functions
+		// FrameParser class functions
 
-        FrameParserStatus_t   RegisterOutputBufferRing(Ring_t          Ring);
+		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t          Ring);
 
-        // Stream specific functions
+		// Stream specific functions
 
-        FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t   ReadHeaders(void);
 
-        FrameParserStatus_t   ResetReferenceFrameList(void);
-        FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
-        FrameParserStatus_t   PrepareReferenceFrameList(void);
-        FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
-        FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
-        FrameParserStatus_t   UpdateReferenceFrameList(void);
+		FrameParserStatus_t   ResetReferenceFrameList(void);
+		FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t   PrepareReferenceFrameList(void);
+		FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t   UpdateReferenceFrameList(void);
 
-        FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
-        FrameParserStatus_t   ProcessReverseDecodeStack(void);
-        FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
-        FrameParserStatus_t   PurgeReverseDecodeStack(void);
-        FrameParserStatus_t   TestForTrickModeFrameDrop(void);
+		FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t   ProcessReverseDecodeStack(void);
+		FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t   PurgeReverseDecodeStack(void);
+		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
 };
 
 #endif

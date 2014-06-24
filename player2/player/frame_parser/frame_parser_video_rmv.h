@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the frame parser video Real Media Video class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 24-Oct-08   Created                                         Julian
@@ -41,12 +40,10 @@ Date        Modification                                    Name
 #include "rmv.h"
 #include "frame_parser_video.h"
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
 //
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -61,70 +58,69 @@ Date        Modification                                    Name
 /// Frame parser for RMV video.
 class FrameParser_VideoRmv_c : public FrameParser_Video_c
 {
-    private:
+	private:
 
-        // Data
+		// Data
 
-        RmvStreamParameters_t      *StreamParameters;
-        RmvFrameParameters_t       *FrameParameters;
+		RmvStreamParameters_t      *StreamParameters;
+		RmvFrameParameters_t       *FrameParameters;
 
-        RmvStreamParameters_t       CopyOfStreamParameters;
+		RmvStreamParameters_t       CopyOfStreamParameters;
 
-        bool                        StreamFormatInfoValid;
-        Rational_t                  FrameRate;
+		bool                        StreamFormatInfoValid;
+		Rational_t                  FrameRate;
 
-        unsigned int                LastTemporalReference;
-        unsigned int                TemporalReferenceBase;
-        unsigned long long          FramePTS;
-        unsigned int                FrameNumber;
+		unsigned int                LastTemporalReference;
+		unsigned int                TemporalReferenceBase;
+		unsigned long long          FramePTS;
+		unsigned int                FrameNumber;
 #if defined (RECALCULATE_FRAMERATE)
-        unsigned int                InitialTemporalReference;
-        unsigned int                PCount;
-        Rational_t                  CalculatedFrameRate;
+		unsigned int                InitialTemporalReference;
+		unsigned int                PCount;
+		Rational_t                  CalculatedFrameRate;
 #endif
 
-        // Functions
+		// Functions
 
-        FrameParserStatus_t         ReadStreamFormatInfo(void);
-        FrameParserStatus_t         ReadPictureHeader(void);
+		FrameParserStatus_t         ReadStreamFormatInfo(void);
+		FrameParserStatus_t         ReadPictureHeader(void);
 
-        bool                        NewStreamParametersCheck(void);
-        FrameParserStatus_t         CommitFrameForDecode(void);
+		bool                        NewStreamParametersCheck(void);
+		FrameParserStatus_t         CommitFrameForDecode(void);
 
+	public:
 
-    public:
+		//
+		// Constructor function
+		//
 
-        //
-        // Constructor function
-        //
+		FrameParser_VideoRmv_c(void);
+		~FrameParser_VideoRmv_c(void);
 
-        FrameParser_VideoRmv_c(void);
-        ~FrameParser_VideoRmv_c(void);
+		//
+		// Overrides for component base class functions
+		//
 
-        //
-        // Overrides for component base class functions
-        //
+		FrameParserStatus_t   Reset(void);
 
-        FrameParserStatus_t   Reset(void);
+		//
+		// FrameParser class functions
+		//
 
-        //
-        // FrameParser class functions
-        //
+		FrameParserStatus_t         RegisterOutputBufferRing(Ring_t          Ring);
 
-        FrameParserStatus_t         RegisterOutputBufferRing(Ring_t          Ring);
+		//
+		// Stream specific functions
+		//
 
-        //
-        // Stream specific functions
-        //
+		FrameParserStatus_t   ReadHeaders(void);
 
-        FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t   ResetReferenceFrameList(void);
+		FrameParserStatus_t   PrepareReferenceFrameList(void);
 
-        FrameParserStatus_t   ResetReferenceFrameList(void);
-        FrameParserStatus_t   PrepareReferenceFrameList(void);
+		FrameParserStatus_t   ForPlayUpdateReferenceFrameList(void);
 
-        FrameParserStatus_t   ForPlayUpdateReferenceFrameList(void);
-
-        FrameParserStatus_t   RevPlayProcessDecodeStacks(void);
+		FrameParserStatus_t   RevPlayProcessDecodeStacks(void);
 };
 
 #endif

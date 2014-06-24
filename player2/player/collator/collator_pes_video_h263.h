@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the h263 collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 20-May-08   Created from existing collator_pes_video_wmv.h  Julian

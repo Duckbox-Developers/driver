@@ -32,7 +32,6 @@ Note Allocations are returned as offsets from the base of the buffer
 Note this implementation will not return a block of memory that crosses a 64Mb
      physical address boundary
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 29-Jun-05   Created                                         Nick
@@ -55,59 +54,59 @@ Date        Modification                                    Name
 
 typedef struct AllocatorSimpleBlock_s
 {
-    bool         InUse;
-    unsigned int     Size;
-    unsigned char   *Base;
+	bool         InUse;
+	unsigned int     Size;
+	unsigned char   *Base;
 } AllocatorSimpleBlock_t;
 
 //
 
 class AllocatorSimple_c : public Allocator_c
 {
-    private:
+	private:
 
-        bool             BeingDeleted;
-        bool             InAllocate;
+		bool             BeingDeleted;
+		bool             InAllocate;
 
-        unsigned int         BufferSize;
-        unsigned int         SegmentSize;
-        unsigned char       *PhysicalAddress;
-        unsigned int         HighestUsedBlockIndex;
-        AllocatorSimpleBlock_t   Blocks[ALLOCATOR_SIMPLE_MAX_BLOCKS];
+		unsigned int         BufferSize;
+		unsigned int         SegmentSize;
+		unsigned char       *PhysicalAddress;
+		unsigned int         HighestUsedBlockIndex;
+		AllocatorSimpleBlock_t   Blocks[ALLOCATOR_SIMPLE_MAX_BLOCKS];
 
-        OS_Mutex_t           Lock;
-        OS_Event_t           EntryFreed;
+		OS_Mutex_t           Lock;
+		OS_Event_t           EntryFreed;
 
-        int              LargestFreeBlock(void);
+		int              LargestFreeBlock(void);
 
-    public:
+	public:
 
-        AllocatorSimple_c(unsigned int   BufferSize,
-                          unsigned int     SegmentSize,
-                          unsigned char   *PhysicalAddress);
-        ~AllocatorSimple_c(void);
+		AllocatorSimple_c(unsigned int   BufferSize,
+						  unsigned int     SegmentSize,
+						  unsigned char   *PhysicalAddress);
+		~AllocatorSimple_c(void);
 
-        AllocatorStatus_t Allocate(unsigned int   Size,
-                                   unsigned char   **Block,
-                                   bool          NonBlocking   = false);
+		AllocatorStatus_t Allocate(unsigned int   Size,
+								   unsigned char   **Block,
+								   bool          NonBlocking   = false);
 
-        AllocatorStatus_t AllocateLargest(
-            unsigned int     *Size,
-            unsigned char   **Block,
-            bool              NonBlocking   = false);
+		AllocatorStatus_t AllocateLargest(
+			unsigned int     *Size,
+			unsigned char   **Block,
+			bool              NonBlocking   = false);
 
-        AllocatorStatus_t ExtendToLargest(
-            unsigned int     *Size,
-            unsigned char   **Block,
-            bool          ExtendUpwards = true);
+		AllocatorStatus_t ExtendToLargest(
+			unsigned int     *Size,
+			unsigned char   **Block,
+			bool          ExtendUpwards = true);
 
-        AllocatorStatus_t Free(void);
+		AllocatorStatus_t Free(void);
 
-        AllocatorStatus_t Free(unsigned int   Size,
-                               unsigned char    *Block);
+		AllocatorStatus_t Free(unsigned int   Size,
+							   unsigned char    *Block);
 
-        AllocatorStatus_t LargestFreeBlock(
-            unsigned int     *Size);
+		AllocatorStatus_t LargestFreeBlock(
+			unsigned int     *Size);
 };
 #endif
 

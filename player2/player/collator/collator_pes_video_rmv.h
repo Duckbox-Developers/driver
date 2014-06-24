@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the Real Media video collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 24-Oct-08   Created from existing collator_pes_video_wmv.h  Julian

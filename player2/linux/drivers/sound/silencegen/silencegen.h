@@ -6,7 +6,6 @@
  * Header file for the silence generating transformer.
  */
 
-
 #ifndef SILENCEGEN_H_
 #define SILENCEGEN_H_
 

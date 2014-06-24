@@ -7,7 +7,6 @@ Author :           Nick
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 23-Sep-04   Created                                         Nick
@@ -21,14 +20,14 @@ Date        Modification                                    Name
 
 RingBlocking_c::RingBlocking_c(unsigned int MaxEntries)
 {
-    OS_InitializeEvent(&Signal);
+	OS_InitializeEvent(&Signal);
 
-    Limit       = MaxEntries + 1;
-    NextExtract = 0;
-    NextInsert  = 0;
-    Storage     = new uintptr_t[Limit];
+	Limit       = MaxEntries + 1;
+	NextExtract = 0;
+	NextInsert  = 0;
+	Storage     = new uintptr_t[Limit];
 
-    InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
+	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -36,11 +35,11 @@ RingBlocking_c::RingBlocking_c(unsigned int MaxEntries)
 
 RingBlocking_c::~RingBlocking_c(void)
 {
-    OS_SetEvent(&Signal);
-    OS_TerminateEvent(&Signal);
+	OS_SetEvent(&Signal);
+	OS_TerminateEvent(&Signal);
 
-    if (Storage != NULL)
-        delete [] Storage;
+	if (Storage != NULL)
+		delete [] Storage;
 }
 
 // ------------------------------------------------------------------------
@@ -48,24 +47,24 @@ RingBlocking_c::~RingBlocking_c(void)
 
 RingStatus_t   RingBlocking_c::Insert(uintptr_t         Value)
 {
-    unsigned int OldNextInsert;
+	unsigned int OldNextInsert;
 
-    OldNextInsert       = NextInsert;
-    Storage[NextInsert] = Value;
+	OldNextInsert       = NextInsert;
+	Storage[NextInsert] = Value;
 
-    NextInsert++;
+	NextInsert++;
 
-    if (NextInsert == Limit)
-        NextInsert = 0;
+	if (NextInsert == Limit)
+		NextInsert = 0;
 
-    if (NextInsert == NextExtract)
-    {
-        NextInsert      = OldNextInsert;
-        return RingTooManyEntries;
-    }
+	if (NextInsert == NextExtract)
+	{
+		NextInsert      = OldNextInsert;
+		return RingTooManyEntries;
+	}
 
-    OS_SetEvent(&Signal);
-    return RingNoError;
+	OS_SetEvent(&Signal);
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -74,26 +73,26 @@ RingStatus_t   RingBlocking_c::Insert(uintptr_t         Value)
 RingStatus_t   RingBlocking_c::Extract(uintptr_t       *Value)
 {
 
-    while (true)
-    {
-        OS_ResetEvent(&Signal);
+	while (true)
+	{
+		OS_ResetEvent(&Signal);
 
-        if (NextExtract != NextInsert)
-        {
-            *Value = Storage[NextExtract];
+		if (NextExtract != NextInsert)
+		{
+			*Value = Storage[NextExtract];
 
-            NextExtract++;
+			NextExtract++;
 
-            if (NextExtract == Limit)
-                NextExtract = 0;
+			if (NextExtract == Limit)
+				NextExtract = 0;
 
-            return RingNoError;
-        }
+			return RingNoError;
+		}
 
-        OS_WaitForEvent(&Signal, OS_INFINITE);
-    }
+		OS_WaitForEvent(&Signal, OS_INFINITE);
+	}
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -101,9 +100,9 @@ RingStatus_t   RingBlocking_c::Extract(uintptr_t       *Value)
 
 RingStatus_t   RingBlocking_c::Flush(void)
 {
-    NextExtract = 0;
-    NextInsert  = 0;
-    return RingNoError;
+	NextExtract = 0;
+	NextInsert  = 0;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -111,6 +110,6 @@ RingStatus_t   RingBlocking_c::Flush(void)
 
 bool   RingBlocking_c::NonEmpty(void)
 {
-    return (NextExtract != NextInsert);
+	return (NextExtract != NextInsert);
 }
 

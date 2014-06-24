@@ -24,7 +24,6 @@ Author :           Daniel
 
 Implementation of the mpeg audio frame parser class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 30-Mar-07   Created (from frame_parser_video_mpeg2.cpp)     Daniel
@@ -46,7 +45,6 @@ Date        Modification                                    Name
 
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -64,16 +62,16 @@ static BufferDataDescriptor_t     MpegAudioFrameParametersBuffer = BUFFER_MPEG_A
 
 static unsigned int Mpeg1BitRateLookup[3][16] =
 {
-    { 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 0 },  /* Layer I */
-    { 0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, 0 },  /* Layer II */
-    { 0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 0 }   /* Layer III */
+	{ 0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 0 },  /* Layer I */
+	{ 0, 32, 48, 56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 384, 0 },  /* Layer II */
+	{ 0, 32, 40, 48,  56,  64,  80,  96, 112, 128, 160, 192, 224, 256, 320, 0 }   /* Layer III */
 };
 
 static unsigned int Mpeg2BitRateLookup[3][16] =
 {
-    { 0, 32, 48, 56,  64,  80,  96, 112, 128, 144, 160, 176, 192, 224, 256, 0 },  /* Layer I */
-    { 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0 },  /* Layer II */
-    { 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0 }   /* Layer III */
+	{ 0, 32, 48, 56,  64,  80,  96, 112, 128, 144, 160, 176, 192, 224, 256, 0 },  /* Layer I */
+	{ 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0 },  /* Layer II */
+	{ 0,  8, 16, 24,  32,  40,  48,  56,  64,  80,  96, 112, 128, 144, 160, 0 }   /* Layer III */
 };
 
 //
@@ -82,17 +80,16 @@ static unsigned int Mpeg2BitRateLookup[3][16] =
 
 static unsigned int SamplingFrequencyLookup[3][4] =
 {
-    { 44100, 48000, 32000, 0 }, /* MPEG-1 */
-    { 22050, 24000, 16000, 0 }, /* MPEG-2 */
-    { 11025, 12000,  8000, 0 }  /* MPEG-2.5 */
-    //    { 96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 0, 0, 0};
+	{ 44100, 48000, 32000, 0 }, /* MPEG-1 */
+	{ 22050, 24000, 16000, 0 }, /* MPEG-2 */
+	{ 11025, 12000,  8000, 0 }  /* MPEG-2.5 */
+	//    { 96000, 88200, 64000, 48000, 44100, 32000, 24000, 22050, 16000, 12000, 11025, 8000, 0, 0, 0};
 };
 
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined macros
 //
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -173,137 +170,135 @@ static unsigned int SamplingFrequencyLookup[3][4] =
 ///
 FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *FrameHeaderBytes, MpegAudioParsedFrameHeader_t *ParsedFrameHeader)
 {
-    unsigned int    FrameHeader;
-    int             LayerIndex;
-    int             MpegIndex;
-    unsigned int    BitRateIndex;
-    unsigned int    BitRate;
-    unsigned int    SamplingFrequencyIndex;
-    unsigned int    SamplingFrequency;
-    unsigned int    Padding;
-    unsigned int    FrameSlots;
+	unsigned int    FrameHeader;
+	int             LayerIndex;
+	int             MpegIndex;
+	unsigned int    BitRateIndex;
+	unsigned int    BitRate;
+	unsigned int    SamplingFrequencyIndex;
+	unsigned int    SamplingFrequency;
+	unsigned int    Padding;
+	unsigned int    FrameSlots;
 
 // these are former members of the Player1 MPEG frame analyser class
-    unsigned int    FrameSize;
-    unsigned int    NumSamplesPerChannel;
+	unsigned int    FrameSize;
+	unsigned int    NumSamplesPerChannel;
 
 //
 
-    FrameHeader = FrameHeaderBytes[0] << 24 | FrameHeaderBytes[1] << 16 |
-                  FrameHeaderBytes[2] <<  8 | FrameHeaderBytes[3];
+	FrameHeader = FrameHeaderBytes[0] << 24 | FrameHeaderBytes[1] << 16 |
+				  FrameHeaderBytes[2] <<  8 | FrameHeaderBytes[3];
 
-    if ((FrameHeader & MPEG_AUDIO_START_CODE_MASK) != MPEG_AUDIO_START_CODE)
-    {
-        FRAME_ERROR("Invalid start code %x\n", FrameHeader & MPEG_AUDIO_START_CODE_MASK);
-        return FrameParserError;
-    }
+	if ((FrameHeader & MPEG_AUDIO_START_CODE_MASK) != MPEG_AUDIO_START_CODE)
+	{
+		FRAME_ERROR("Invalid start code %x\n", FrameHeader & MPEG_AUDIO_START_CODE_MASK);
+		return FrameParserError;
+	}
 
-    switch ((FrameHeader & MPEG_AUDIO_LAYER_MASK))
-    {
-        case MPEG_AUDIO_LAYER_I:   LayerIndex = 0;
-            break;
+	switch ((FrameHeader & MPEG_AUDIO_LAYER_MASK))
+	{
+		case MPEG_AUDIO_LAYER_I:   LayerIndex = 0;
+			break;
 
-        case MPEG_AUDIO_LAYER_II:  LayerIndex = 1;
-            break;
+		case MPEG_AUDIO_LAYER_II:  LayerIndex = 1;
+			break;
 
-        case MPEG_AUDIO_LAYER_III: LayerIndex = 2;
-            break;
+		case MPEG_AUDIO_LAYER_III: LayerIndex = 2;
+			break;
 
-        default:        FRAME_ERROR("Invalid layer %d\n",  FrameHeader & MPEG_AUDIO_LAYER_MASK);
-            return FrameParserError;
-            break;
-    }
+		default:        FRAME_ERROR("Invalid layer %d\n",  FrameHeader & MPEG_AUDIO_LAYER_MASK);
+			return FrameParserError;
+			break;
+	}
 
-    switch ((FrameHeader & MPEG_AUDIO_MPEG_MASK))
-    {
-        case MPEG_AUDIO_MPEG_1:    MpegIndex = 0;
-            break;
+	switch ((FrameHeader & MPEG_AUDIO_MPEG_MASK))
+	{
+		case MPEG_AUDIO_MPEG_1:    MpegIndex = 0;
+			break;
 
-        case MPEG_AUDIO_MPEG_2:    MpegIndex = 1;
-            break;
+		case MPEG_AUDIO_MPEG_2:    MpegIndex = 1;
+			break;
 
-        case MPEG_AUDIO_MPEG_2_5:  MpegIndex = 2;
-            break;
+		case MPEG_AUDIO_MPEG_2_5:  MpegIndex = 2;
+			break;
 
-        default:        FRAME_ERROR("Bad MPEG selection\n");
-            return FrameParserError;
-            break;
-    }
+		default:        FRAME_ERROR("Bad MPEG selection\n");
+			return FrameParserError;
+			break;
+	}
 
-    BitRateIndex                = (FrameHeader & MPEG_AUDIO_BIT_RATE_MASK) >> MPEG_AUDIO_BIT_RATE_SHIFT;
-    SamplingFrequencyIndex      = (FrameHeader & MPEG_AUDIO_SAMPLING_FREQUENCY_MASK) >> MPEG_AUDIO_SAMPLING_FREQUENCY_SHIFT;
-    Padding                     = (FrameHeader & MPEG_AUDIO_PADDING_MASK) >> MPEG_AUDIO_PADDING_SHIFT;
+	BitRateIndex                = (FrameHeader & MPEG_AUDIO_BIT_RATE_MASK) >> MPEG_AUDIO_BIT_RATE_SHIFT;
+	SamplingFrequencyIndex      = (FrameHeader & MPEG_AUDIO_SAMPLING_FREQUENCY_MASK) >> MPEG_AUDIO_SAMPLING_FREQUENCY_SHIFT;
+	Padding                     = (FrameHeader & MPEG_AUDIO_PADDING_MASK) >> MPEG_AUDIO_PADDING_SHIFT;
 
-    BitRate                     = (MpegIndex == 0) ? Mpeg1BitRateLookup[LayerIndex][BitRateIndex] :
-                                  Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
+	BitRate                     = (MpegIndex == 0) ? Mpeg1BitRateLookup[LayerIndex][BitRateIndex] :
+								  Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
 
-    if (BitRate == 0)
-    {
-        FRAME_ERROR("Invalid bit rate, %x, %x, %x, %x\n",
-                    FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
-        return FrameParserError;
-    }
+	if (BitRate == 0)
+	{
+		FRAME_ERROR("Invalid bit rate, %x, %x, %x, %x\n",
+					FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
+		return FrameParserError;
+	}
 
-    SamplingFrequency           = SamplingFrequencyLookup[MpegIndex][SamplingFrequencyIndex];
+	SamplingFrequency           = SamplingFrequencyLookup[MpegIndex][SamplingFrequencyIndex];
 
-    if (SamplingFrequency == 0)
-    {
-        FRAME_ERROR("Invalid frequency, %x, %x, %x\n",
-                    FrameHeader, MpegIndex, SamplingFrequencyIndex);
-        return FrameParserError;
-    }
+	if (SamplingFrequency == 0)
+	{
+		FRAME_ERROR("Invalid frequency, %x, %x, %x\n",
+					FrameHeader, MpegIndex, SamplingFrequencyIndex);
+		return FrameParserError;
+	}
 
-    //
-    //    Duration calculated as :-
-    //      Layer I = 384 samples per frame
-    //      Layer II or III = 1152 samples per frame
-    //
-    //      e.g. Layer II @ 48kHz, is (1152 / 48000) seconds (times 1000000 to convert to microseconds)
-    //
-    //    FrameSize calculated as ISO 11172-3 2.4.3.1
+	//
+	//    Duration calculated as :-
+	//      Layer I = 384 samples per frame
+	//      Layer II or III = 1152 samples per frame
+	//
+	//      e.g. Layer II @ 48kHz, is (1152 / 48000) seconds (times 1000000 to convert to microseconds)
+	//
+	//    FrameSize calculated as ISO 11172-3 2.4.3.1
 
+	if (LayerIndex == 0)
+	{
+		/* Layer I */
+		FrameSlots              = ((12000 * BitRate) / SamplingFrequency) + Padding;
+		FrameSize               = 4 * FrameSlots;
+		NumSamplesPerChannel    = 384;
+	}
+	else if ((LayerIndex == 2) && (MpegIndex == 1 || MpegIndex == 2))
+	{
+		/* Special case for MPEG2-LSF Layer III */
+		FrameSize               = ((72000 * BitRate) / SamplingFrequency) + Padding;
+		NumSamplesPerChannel    = 576;
+	}
+	else
+	{
+		/* Layer II or Layer III without LSF */
+		FrameSize               = ((144000 * BitRate) / SamplingFrequency) + Padding;
+		NumSamplesPerChannel    = 1152;
+	}
 
-    if (LayerIndex == 0)
-    {
-        /* Layer I */
-        FrameSlots              = ((12000 * BitRate) / SamplingFrequency) + Padding;
-        FrameSize               = 4 * FrameSlots;
-        NumSamplesPerChannel    = 384;
-    }
-    else if ((LayerIndex == 2) && (MpegIndex == 1 || MpegIndex == 2))
-    {
-        /* Special case for MPEG2-LSF Layer III */
-        FrameSize               = ((72000 * BitRate) / SamplingFrequency) + Padding;
-        NumSamplesPerChannel    = 576;
-    }
-    else
-    {
-        /* Layer II or Layer III without LSF */
-        FrameSize               = ((144000 * BitRate) / SamplingFrequency) + Padding;
-        NumSamplesPerChannel    = 1152;
-    }
+	//
 
-    //
+	FRAME_DEBUG("Header %8x, MPEG%dL%d, BitRate %3d, Frequency %5d, FrameSize %d, Padding %d\n",
+				FrameHeader, MpegIndex + 1, LayerIndex + 1, BitRate, SamplingFrequency, FrameSize, Padding);
 
-    FRAME_DEBUG("Header %8x, MPEG%dL%d, BitRate %3d, Frequency %5d, FrameSize %d, Padding %d\n",
-                FrameHeader, MpegIndex + 1, LayerIndex + 1, BitRate, SamplingFrequency, FrameSize, Padding);
+	//
 
-    //
+	ParsedFrameHeader->Header = FrameHeader;
 
-    ParsedFrameHeader->Header = FrameHeader;
+	ParsedFrameHeader->Layer = LayerIndex + 1;
+	ParsedFrameHeader->MpegStandard = (MpegIndex == 2 ? 25 : MpegIndex + 1);
+	ParsedFrameHeader->BitRate = BitRate;
+	ParsedFrameHeader->SamplingFrequency = SamplingFrequency;
+	ParsedFrameHeader->PaddedFrame = Padding;
 
-    ParsedFrameHeader->Layer = LayerIndex + 1;
-    ParsedFrameHeader->MpegStandard = (MpegIndex == 2 ? 25 : MpegIndex + 1);
-    ParsedFrameHeader->BitRate = BitRate;
-    ParsedFrameHeader->SamplingFrequency = SamplingFrequency;
-    ParsedFrameHeader->PaddedFrame = Padding;
+	ParsedFrameHeader->NumberOfSamples = NumSamplesPerChannel;
+	ParsedFrameHeader->Length = FrameSize;
 
-    ParsedFrameHeader->NumberOfSamples = NumSamplesPerChannel;
-    ParsedFrameHeader->Length = FrameSize;
-
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -332,37 +327,36 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *Fra
 ///
 FrameParserStatus_t FrameParser_AudioMpeg_c::ParseExtensionHeader(unsigned char *ExtensionHeader, unsigned int *ExtensionLength)
 {
-    BitStreamClass_c       Bits;
+	BitStreamClass_c       Bits;
 
-    Bits.SetPointer(ExtensionHeader);
+	Bits.SetPointer(ExtensionHeader);
 
-    unsigned int frameSync = Bits.Get(12);
+	unsigned int frameSync = Bits.Get(12);
 
-    if (0x7ff != frameSync)
-    {
-        // not an printk error because this method is called speculatively
-        FRAME_DEBUG("Invalid start code %x\n", frameSync);
-        return FrameParserError;
-    }
+	if (0x7ff != frameSync)
+	{
+		// not an printk error because this method is called speculatively
+		FRAME_DEBUG("Invalid start code %x\n", frameSync);
+		return FrameParserError;
+	}
 
-    unsigned int crc = Bits.Get(16);
+	unsigned int crc = Bits.Get(16);
 
-    unsigned int lengthInBytes = Bits.Get(11);
+	unsigned int lengthInBytes = Bits.Get(11);
 
-    unsigned int id = Bits.Get(1);
+	unsigned int id = Bits.Get(1);
 
-    if (0 != id)
-    {
-        FRAME_ERROR("Invalid (reserved) ID %x\n", id);
-        return FrameParserError;
-    }
+	if (0 != id)
+	{
+		FRAME_ERROR("Invalid (reserved) ID %x\n", id);
+		return FrameParserError;
+	}
 
-    FRAME_DEBUG("FrameSync %03x  CRC %04x  FrameSize %d  ID %d\n", frameSync, crc, lengthInBytes, id);
+	FRAME_DEBUG("FrameSync %03x  CRC %04x  FrameSize %d  ID %d\n", frameSync, crc, lengthInBytes, id);
 
-    *ExtensionLength = lengthInBytes;
-    return FrameParserNoError;
+	*ExtensionLength = lengthInBytes;
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -370,17 +364,17 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseExtensionHeader(unsigned char 
 ///
 FrameParser_AudioMpeg_c::FrameParser_AudioMpeg_c(void)
 {
-    Configuration.FrameParserName       = "AudioMpeg";
+	Configuration.FrameParserName       = "AudioMpeg";
 
-    Configuration.StreamParametersCount     = 32;
-    Configuration.StreamParametersDescriptor    = &MpegAudioStreamParametersBuffer;
+	Configuration.StreamParametersCount     = 32;
+	Configuration.StreamParametersDescriptor    = &MpegAudioStreamParametersBuffer;
 
-    Configuration.FrameParametersCount      = 32;
-    Configuration.FrameParametersDescriptor = &MpegAudioFrameParametersBuffer;
+	Configuration.FrameParametersCount      = 32;
+	Configuration.FrameParametersDescriptor = &MpegAudioFrameParametersBuffer;
 
 //
 
-    Reset();
+	Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -389,8 +383,8 @@ FrameParser_AudioMpeg_c::FrameParser_AudioMpeg_c(void)
 ///
 FrameParser_AudioMpeg_c::~FrameParser_AudioMpeg_c(void)
 {
-    Halt();
-    Reset();
+	Halt();
+	Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -399,11 +393,10 @@ FrameParser_AudioMpeg_c::~FrameParser_AudioMpeg_c(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::Reset(void)
 {
-    // CurrentStreamParameters is initialized in RegisterOutputBufferRing()
+	// CurrentStreamParameters is initialized in RegisterOutputBufferRing()
 
-    return FrameParser_Audio_c::Reset();
+	return FrameParser_Audio_c::Reset();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -411,27 +404,26 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::Reset(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::RegisterOutputBufferRing(Ring_t          Ring)
 {
-    //
-    // Clear our parameter pointers
-    //
+	//
+	// Clear our parameter pointers
+	//
 
-    StreamParameters                    = NULL;
-    FrameParameters                     = NULL;
+	StreamParameters                    = NULL;
+	FrameParameters                     = NULL;
 
-    //
-    // Set illegal state forcing a parameter update on the first frame
-    //
+	//
+	// Set illegal state forcing a parameter update on the first frame
+	//
 
-    memset(&CurrentStreamParameters, 0, sizeof(CurrentStreamParameters));
-    CurrentStreamParameters.Layer = 0; // illegal layer... force frames a parameters update
+	memset(&CurrentStreamParameters, 0, sizeof(CurrentStreamParameters));
+	CurrentStreamParameters.Layer = 0; // illegal layer... force frames a parameters update
 
-    //
-    // Pass the call down the line
-    //
+	//
+	// Pass the call down the line
+	//
 
-    return FrameParser_Audio_c::RegisterOutputBufferRing(Ring);
+	return FrameParser_Audio_c::RegisterOutputBufferRing(Ring);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -439,91 +431,90 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::RegisterOutputBufferRing(Ring_t  
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::ReadHeaders(void)
 {
-    FrameParserStatus_t Status;
-    unsigned int ExtensionLength;
+	FrameParserStatus_t Status;
+	unsigned int ExtensionLength;
 
-    //
-    // Perform the common portion of the read headers function
-    //
+	//
+	// Perform the common portion of the read headers function
+	//
 
-    FrameParser_Audio_c::ReadHeaders();
+	FrameParser_Audio_c::ReadHeaders();
 
 //
 
-    Status = ParseFrameHeader(BufferData, &ParsedFrameHeader);
+	Status = ParseFrameHeader(BufferData, &ParsedFrameHeader);
 
-    if (Status != FrameParserNoError)
-    {
-        FRAME_ERROR("Failed to parse frame header, bad collator selected?\n");
-        return Status;
-    }
+	if (Status != FrameParserNoError)
+	{
+		FRAME_ERROR("Failed to parse frame header, bad collator selected?\n");
+		return Status;
+	}
 
-    if (ParsedFrameHeader.Length != BufferLength)
-    {
-        // if the length is wrong that might be because we haven't considered any extensions
-        Status = ParseExtensionHeader(BufferData + ParsedFrameHeader.Length, &ExtensionLength);
+	if (ParsedFrameHeader.Length != BufferLength)
+	{
+		// if the length is wrong that might be because we haven't considered any extensions
+		Status = ParseExtensionHeader(BufferData + ParsedFrameHeader.Length, &ExtensionLength);
 
-        if ((Status != FrameParserNoError) ||
-                (ParsedFrameHeader.Length + ExtensionLength != BufferLength))
-        {
-            FRAME_ERROR("Buffer length is inconsistent with frame header, bad collator selected?\n");
-            return FrameParserError;
-        }
+		if ((Status != FrameParserNoError) ||
+				(ParsedFrameHeader.Length + ExtensionLength != BufferLength))
+		{
+			FRAME_ERROR("Buffer length is inconsistent with frame header, bad collator selected?\n");
+			return FrameParserError;
+		}
 
-        // that was it, adjust the recorded frame length accordingly
-        ParsedFrameHeader.Length += ExtensionLength;
-    }
+		// that was it, adjust the recorded frame length accordingly
+		ParsedFrameHeader.Length += ExtensionLength;
+	}
 
-    FrameToDecode = true;
+	FrameToDecode = true;
 
-    if (CurrentStreamParameters.Layer != ParsedFrameHeader.Layer)
-    {
-        Status = GetNewStreamParameters((void **) &StreamParameters);
+	if (CurrentStreamParameters.Layer != ParsedFrameHeader.Layer)
+	{
+		Status = GetNewStreamParameters((void **) &StreamParameters);
 
-        if (Status != FrameParserNoError)
-        {
-            FRAME_ERROR("Cannot get new stream parameters\n");
-            return Status;
-        }
+		if (Status != FrameParserNoError)
+		{
+			FRAME_ERROR("Cannot get new stream parameters\n");
+			return Status;
+		}
 
-        StreamParameters->Layer = CurrentStreamParameters.Layer = ParsedFrameHeader.Layer;
+		StreamParameters->Layer = CurrentStreamParameters.Layer = ParsedFrameHeader.Layer;
 
-        UpdateStreamParameters = true;
-    }
+		UpdateStreamParameters = true;
+	}
 
-    Status = GetNewFrameParameters((void **) &FrameParameters);
+	Status = GetNewFrameParameters((void **) &FrameParameters);
 
-    if (Status != FrameParserNoError)
-    {
-        FRAME_ERROR("Cannot get new frame parameters\n");
-        return Status;
-    }
+	if (Status != FrameParserNoError)
+	{
+		FRAME_ERROR("Cannot get new frame parameters\n");
+		return Status;
+	}
 
-    // Nick inserted some default values here
-    ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
-    ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
-    ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
-    ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
-    ParsedFrameParameters->KeyFrame                                     = true;
-    ParsedFrameParameters->ReferenceFrame                               = false;
+	// Nick inserted some default values here
+	ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
+	ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
+	ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
+	ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
+	ParsedFrameParameters->KeyFrame                                     = true;
+	ParsedFrameParameters->ReferenceFrame                               = false;
 
-    ParsedFrameParameters->NewFrameParameters        = true;
-    ParsedFrameParameters->SizeofFrameParameterStructure = sizeof(MpegAudioFrameParameters_t);
-    ParsedFrameParameters->FrameParameterStructure       = FrameParameters;
+	ParsedFrameParameters->NewFrameParameters        = true;
+	ParsedFrameParameters->SizeofFrameParameterStructure = sizeof(MpegAudioFrameParameters_t);
+	ParsedFrameParameters->FrameParameterStructure       = FrameParameters;
 
-    // this does look a little pointless but I don't want to trash it until we
-    // have got a few more audio formats supported (see \todo in mpeg_audio.h).
-    FrameParameters->BitRate = ParsedFrameHeader.BitRate;
-    FrameParameters->FrameSize = ParsedFrameHeader.Length;
+	// this does look a little pointless but I don't want to trash it until we
+	// have got a few more audio formats supported (see \todo in mpeg_audio.h).
+	FrameParameters->BitRate = ParsedFrameHeader.BitRate;
+	FrameParameters->FrameSize = ParsedFrameHeader.Length;
 
-    ParsedAudioParameters->Source.BitsPerSample = 0; // filled in by codec
-    ParsedAudioParameters->Source.ChannelCount = 0;  // filled in by codec
-    ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
-    ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
-    ParsedAudioParameters->Organisation = 0; // filled in by codec
-    return FrameParserNoError;
+	ParsedAudioParameters->Source.BitsPerSample = 0; // filled in by codec
+	ParsedAudioParameters->Source.ChannelCount = 0;  // filled in by codec
+	ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
+	ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
+	ParsedAudioParameters->Organisation = 0; // filled in by codec
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -531,12 +522,11 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::ReadHeaders(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::ResetReferenceFrameList(void)
 {
-    FRAME_DEBUG(">><<");
-    Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
+	FRAME_DEBUG(">><<");
+	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 ///
@@ -546,9 +536,8 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::ResetReferenceFrameList(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeQueuedPostDecodeParameterSettings(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 ///
@@ -558,9 +547,8 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeQueuedPostDecodeParameterSet
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessQueuedPostDecodeParameterSettings(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -571,67 +559,66 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessQueuedPostDecodeParameterS
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::GeneratePostDecodeParameterSettings(void)
 {
-    FrameParserStatus_t Status;
+	FrameParserStatus_t Status;
 
 //
 
-    //
-    // Default setting
-    //
+	//
+	// Default setting
+	//
 
-    ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
-    ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
-    ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
-    ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
-    ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
+	ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
+	ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
+	ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
+	ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
+	ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
 
-    //
-    // Record in the structure the decode and presentation times if specified
-    //
+	//
+	// Record in the structure the decode and presentation times if specified
+	//
 
-    if (CodedFrameParameters->PlaybackTimeValid)
-    {
-        ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
-        TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
-    }
+	if (CodedFrameParameters->PlaybackTimeValid)
+	{
+		ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
+		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
+	}
 
-    if (CodedFrameParameters->DecodeTimeValid)
-    {
-        ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
-        TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
-    }
+	if (CodedFrameParameters->DecodeTimeValid)
+	{
+		ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
+		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
+	}
 
-    //
-    // Synthesize the presentation time if required
-    //
+	//
+	// Synthesize the presentation time if required
+	//
 
-    Status = HandleCurrentFrameNormalizedPlaybackTime();
+	Status = HandleCurrentFrameNormalizedPlaybackTime();
 
-    if (Status != FrameParserNoError)
-    {
-        return Status;
-    }
+	if (Status != FrameParserNoError)
+	{
+		return Status;
+	}
 
-    //
-    // We can't fail after this point so this is a good time to provide a display frame index
-    //
+	//
+	// We can't fail after this point so this is a good time to provide a display frame index
+	//
 
-    ParsedFrameParameters->DisplayFrameIndex         = NextDisplayFrameIndex++;
+	ParsedFrameParameters->DisplayFrameIndex         = NextDisplayFrameIndex++;
 
-    //
-    // Use the super-class utilities to complete our housekeeping chores
-    //
+	//
+	// Use the super-class utilities to complete our housekeeping chores
+	//
 
-    HandleUpdateStreamParameters();
+	HandleUpdateStreamParameters();
 
-    GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-                                            ParsedFrameHeader.SamplingFrequency);
+	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
+											ParsedFrameHeader.SamplingFrequency);
 
 //
-    //DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
-    return FrameParserNoError;
+	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -639,9 +626,8 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::GeneratePostDecodeParameterSettin
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::PrepareReferenceFrameList(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -649,7 +635,7 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::PrepareReferenceFrameList(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::UpdateReferenceFrameList(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -658,7 +644,7 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::UpdateReferenceFrameList(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -667,7 +653,7 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessReverseDecodeUnsatisfiedRe
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessReverseDecodeStack(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -677,7 +663,7 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::ProcessReverseDecodeStack(void)
 FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
 {
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -686,7 +672,7 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeReverseDecodeUnsatisfiedRefe
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeReverseDecodeStack(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -695,7 +681,6 @@ FrameParserStatus_t   FrameParser_AudioMpeg_c::PurgeReverseDecodeStack(void)
 ///
 FrameParserStatus_t   FrameParser_AudioMpeg_c::TestForTrickModeFrameDrop(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
-
 

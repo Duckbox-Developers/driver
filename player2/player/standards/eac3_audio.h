@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the types and constants that are used by several components
 dealing with ac3 audio decode/display for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 08-Jan-03   Created                                         Nick
@@ -66,12 +65,11 @@ Date        Modification                                    Name
 ///
 typedef enum
 {
-    TypeEac3Ind,  ///< frame is an e-ac3 independant substream
-    TypeAc3,      ///< frame is an ac3 frame
-    TypeEac3Dep,  ///< frame is an e-ac3 dependant substream
-    TypeNotSynch  ///< frame is not eac3 nor ac3
+	TypeEac3Ind,  ///< frame is an e-ac3 independant substream
+	TypeAc3,      ///< frame is an ac3 frame
+	TypeEac3Dep,  ///< frame is an e-ac3 dependant substream
+	TypeNotSynch  ///< frame is not eac3 nor ac3
 } Ac3StreamType_t;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
@@ -79,15 +77,15 @@ typedef enum
 ///
 typedef struct EAc3AudioParsedFrameHeader_s
 {
-    // Directly interpretted values
-    Ac3StreamType_t Type;
-    unsigned char   SubStreamId;
-    unsigned int    SamplingFrequency; ///< Sampling frequency in Hz.
+	// Directly interpretted values
+	Ac3StreamType_t Type;
+	unsigned char   SubStreamId;
+	unsigned int    SamplingFrequency; ///< Sampling frequency in Hz.
 
-    // Derived values
-    unsigned int    NumberOfSamples; ///< Number of samples per channel within the frame.
-    unsigned int    Length; ///< Length of frame in bytes (including header).
-    bool            FirstBlockForTranscoding; ///< indicates if the subframe is the first block (out of six for transcoding)
+	// Derived values
+	unsigned int    NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int    Length; ///< Length of frame in bytes (including header).
+	bool            FirstBlockForTranscoding; ///< indicates if the subframe is the first block (out of six for transcoding)
 
 } EAc3AudioParsedFrameHeader_t;
 
@@ -95,7 +93,7 @@ typedef struct EAc3AudioParsedFrameHeader_s
 
 typedef struct EAc3AudioStreamParameters_s
 {
-    unsigned int Unused;
+	unsigned int Unused;
 } EAc3AudioStreamParameters_t;
 
 #define BUFFER_EAC3_AUDIO_STREAM_PARAMETERS        "EAc3AudioStreamParameters"
@@ -113,11 +111,11 @@ typedef struct EAc3AudioStreamParameters_s
 ///
 typedef struct EAc3AudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int BitRate;
+	/// The bit rate of the frame
+	unsigned int BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int FrameSize;
 } EAc3AudioFrameParameters_t;
 
 #define BUFFER_EAC3_AUDIO_FRAME_PARAMETERS        "EAc3AudioFrameParameters"

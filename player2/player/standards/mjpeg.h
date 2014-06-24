@@ -25,7 +25,6 @@ Author ;           Julian
 Definition of the constants/macros that define useful things associated with
 AVS streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 28-Jul-09   Created                                         Julian
@@ -112,7 +111,6 @@ Date        Modification                                    Name
 #define MJPEG_NULL                              0x00
 #define MJPEG_MARKER                            0xff
 
-
 // ////////////////////////////////////////////////////////////////////////////////////
 //
 //  Definitions of types matching mjpeg headers
@@ -124,52 +122,52 @@ typedef unsigned short int MjpegQuantizationMatrix_t[MJPEG_QUANTIZATION_MATRIX_S
 
 typedef struct MjpegFrameComponentInfo_s
 {
-    unsigned int                id;                             // 1=Y, 2=Cb, 3=Cr, 4=L, 5=Q
-    unsigned int                horizontal_sampling_factor;
-    unsigned int                vertical_sampling_factor;
-    unsigned int                quantization_table_index;
+	unsigned int                id;                             // 1=Y, 2=Cb, 3=Cr, 4=L, 5=Q
+	unsigned int                horizontal_sampling_factor;
+	unsigned int                vertical_sampling_factor;
+	unsigned int                quantization_table_index;
 } MjpegFrameComponentInfo_t;
 
 //
 
 typedef struct MjpegStartOfFrame_s
 {
-    unsigned int                Precision;
-    unsigned int                FrameHeight;
-    unsigned int                FrameWidth;
-    unsigned int                NumberOfComponents;
-    MjpegFrameComponentInfo_t   Components[MJPEG_MAX_COMPONENTS];
+	unsigned int                Precision;
+	unsigned int                FrameHeight;
+	unsigned int                FrameWidth;
+	unsigned int                NumberOfComponents;
+	MjpegFrameComponentInfo_t   Components[MJPEG_MAX_COMPONENTS];
 } MjpegStartOfFrame_t;
 
 //
 
 typedef struct MjpegHuffmanTable_s
 {
-    unsigned int                Id;
-    unsigned int                DataSize;
-    unsigned char               BitsTable[MJPEG_SIZEOF_HUFFMAN_BITS_FIELD];
-    unsigned char               DataTable[MJPEG_MAX_HUFFMAN_DATA];
+	unsigned int                Id;
+	unsigned int                DataSize;
+	unsigned char               BitsTable[MJPEG_SIZEOF_HUFFMAN_BITS_FIELD];
+	unsigned char               DataTable[MJPEG_MAX_HUFFMAN_DATA];
 } MjpegHuffmanTable_t;
 
 //
 
 typedef struct MjpegScanComponentInfo_s
 {
-    unsigned int                Id;                             // 1=Y, 2=Cb, 3=Cr, 4=L, 5=Q
-    unsigned int                HuffmanDCIndex;
-    unsigned int                HuffmanACIndex;
+	unsigned int                Id;                             // 1=Y, 2=Cb, 3=Cr, 4=L, 5=Q
+	unsigned int                HuffmanDCIndex;
+	unsigned int                HuffmanACIndex;
 } MjpegScanComponentInfo_t;
 
 //
 
 typedef struct MjpegStartOfScan_s
 {
-    unsigned int                NumberOfComponents;
-    MjpegScanComponentInfo_t    Components[MJPEG_MAX_COMPONENTS];
-    unsigned int                StartOfSpectralSelection;
-    unsigned int                EndOfSpectralSelection;
-    unsigned int                ApproximationBitPositionHigh;
-    unsigned int                ApproximationBitPositionLow;
+	unsigned int                NumberOfComponents;
+	MjpegScanComponentInfo_t    Components[MJPEG_MAX_COMPONENTS];
+	unsigned int                StartOfSpectralSelection;
+	unsigned int                EndOfSpectralSelection;
+	unsigned int                ApproximationBitPositionHigh;
+	unsigned int                ApproximationBitPositionLow;
 } MjpegStartOfScan_t;
 
 // ////////////////////////////////////////////////////////////////////////////
@@ -180,14 +178,14 @@ typedef struct MjpegStartOfScan_s
 #ifdef DEFINE_MJPEG_NATURAL_COEFFICIENT_ORDER_MATRIX
 static int MjpegCoefficientMatrixNaturalOrder[MJPEG_QUANTIZATION_MATRIX_SIZE] =
 {
-    0,   1,  8, 16,  9,  2,  3, 10,                              // This translates zigzag matrix indices,
-    17, 24, 32, 25, 18, 11,  4,  5,                              // used in coefficient transmission,
-    12, 19, 26, 33, 40, 48, 41, 34,                              // to natural order indices.
-    27, 20, 13,  6,  7, 14, 21, 28,
-    35, 42, 49, 56, 57, 50, 43, 36,
-    29, 22, 15, 23, 30, 37, 44, 51,
-    58, 59, 52, 45, 38, 31, 39, 46,
-    53, 60, 61, 54, 47, 55, 62, 63,
+	0,   1,  8, 16,  9,  2,  3, 10,                              // This translates zigzag matrix indices,
+	17, 24, 32, 25, 18, 11,  4,  5,                              // used in coefficient transmission,
+	12, 19, 26, 33, 40, 48, 41, 34,                              // to natural order indices.
+	27, 20, 13,  6,  7, 14, 21, 28,
+	35, 42, 49, 56, 57, 50, 43, 36,
+	29, 22, 15, 23, 30, 37, 44, 51,
+	58, 59, 52, 45, 38, 31, 39, 46,
+	53, 60, 61, 54, 47, 55, 62, 63,
 };
 #endif
 
@@ -196,23 +194,21 @@ static int MjpegCoefficientMatrixNaturalOrder[MJPEG_QUANTIZATION_MATRIX_SIZE] =
 // The header definitions
 //
 
-
 typedef struct MjpegVideoSequence_s
 {
-    unsigned int                time_scale;
-    unsigned int                time_delta;
+	unsigned int                time_scale;
+	unsigned int                time_delta;
 } MjpegVideoSequence_t;
 
 typedef struct MjpegVideoPictureHeader_s
 {
-    unsigned int                length;
-    unsigned int                sample_precision;
-    unsigned int                frame_height;
-    unsigned int                frame_width;
-    unsigned int                number_of_components;
-    MjpegFrameComponentInfo_t   components[MJPEG_MAX_COMPONENTS];
+	unsigned int                length;
+	unsigned int                sample_precision;
+	unsigned int                frame_height;
+	unsigned int                frame_width;
+	unsigned int                number_of_components;
+	MjpegFrameComponentInfo_t   components[MJPEG_MAX_COMPONENTS];
 } MjpegVideoPictureHeader_t;
-
 
 // ////////////////////////////////////////////////////////////////////////////////////
 //
@@ -223,11 +219,11 @@ typedef struct MjpegVideoPictureHeader_s
 
 typedef struct MjpegStreamParameters_s
 {
-    bool                                UpdatedSinceLastFrame;
+	bool                                UpdatedSinceLastFrame;
 
-    bool                                SequenceHeaderPresent;
+	bool                                SequenceHeaderPresent;
 
-    MjpegVideoSequence_t                SequenceHeader;
+	MjpegVideoSequence_t                SequenceHeader;
 } MjpegStreamParameters_t;
 
 #define BUFFER_MJPEG_STREAM_PARAMETERS          "MjpegStreamParameters"
@@ -235,14 +231,13 @@ typedef struct MjpegStreamParameters_s
 
 typedef struct MjpegFrameParameters_s
 {
-    bool                                    PictureHeaderPresent;
+	bool                                    PictureHeaderPresent;
 
-    MjpegVideoPictureHeader_t               PictureHeader;
+	MjpegVideoPictureHeader_t               PictureHeader;
 } MjpegFrameParameters_t;
 
 #define BUFFER_MJPEG_FRAME_PARAMETERS           "MjpegFrameParameters"
 #define BUFFER_MJPEG_FRAME_PARAMETERS_TYPE      {BUFFER_MJPEG_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(MjpegFrameParameters_t)}
-
 
 #endif
 

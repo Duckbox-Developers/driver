@@ -21,7 +21,6 @@
 
 #endif // _ACC_WRAPP_MME_
 
-
 #include "mme.h"
 
 #ifdef __cplusplus
@@ -35,8 +34,5 @@ _EXTERN_C_ MME_ERROR acc_MME_GetTransformerCapability(const char * TransformerNa
 _EXTERN_C_ MME_ERROR acc_MME_SendCommand(MME_TransformerHandle_t Handle, MME_Command_t * CmdInfo_p);
 _EXTERN_C_ MME_ERROR acc_MME_TermTransformer(MME_TransformerHandle_t handle);
 
-
-
 #endif // _ACC_MME_H_
-
 

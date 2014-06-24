@@ -24,7 +24,6 @@ Author :           Daniel
 
 Definition of the stream specific codec implementation for avs audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 26-Apr-07   Created (from codec_mme_video_avs2.h)          Daniel
@@ -45,7 +44,6 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -58,35 +56,35 @@ Date        Modification                                    Name
 
 class Codec_MmeAudioAvs_c : public Codec_MmeAudio_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        eAccDecoderId DecoderId;
+		eAccDecoderId DecoderId;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeAudioAvs_c(void);
-        ~Codec_MmeAudioAvs_c(void);
+		Codec_MmeAudioAvs_c(void);
+		~Codec_MmeAudioAvs_c(void);
 
-        //
-        // Stream specific functions
-        //
+		//
+		// Stream specific functions
+		//
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
 };
 #endif

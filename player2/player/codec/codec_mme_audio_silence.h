@@ -24,7 +24,6 @@ Author :           Daniel
 
 Definition of the stream specific codec implementation for mpeg audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 26-Apr-07   Created (from codec_mme_video_mpeg2.h)          Daniel
@@ -46,7 +45,6 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -59,49 +57,49 @@ Date        Modification                                    Name
 
 class Codec_MmeAudioSilence_c : public Codec_MmeAudio_c
 {
-    protected:
+	protected:
 
-        // Data
-        unsigned int             CurrentTranscodeBufferIndex;
-        CodecBufferState_t       TranscodedBuffers[DTSHD_TRANSCODE_BUFFER_COUNT];
-        Buffer_c*                CurrentTranscodeBuffer;
-        bool                     TranscodeEnable;
+		// Data
+		unsigned int             CurrentTranscodeBufferIndex;
+		CodecBufferState_t       TranscodedBuffers[DTSHD_TRANSCODE_BUFFER_COUNT];
+		Buffer_c*                CurrentTranscodeBuffer;
+		bool                     TranscodeEnable;
 
-        allocator_device_t       TranscodedFrameMemoryDevice;
-        BufferPool_t             TranscodedFramePool;
-        void                    *TranscodedFrameMemory[3];
+		allocator_device_t       TranscodedFrameMemoryDevice;
+		BufferPool_t             TranscodedFramePool;
+		void                    *TranscodedFrameMemory[3];
 
-        BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
-        BufferType_t             TranscodedFrameBufferType;
-        // Functions
+		BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
+		BufferType_t             TranscodedFrameBufferType;
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeAudioSilence_c(void);
-        ~Codec_MmeAudioSilence_c(void);
+		Codec_MmeAudioSilence_c(void);
+		~Codec_MmeAudioSilence_c(void);
 
-        //
-        // Extension to base functions
-        //
+		//
+		// Extension to base functions
+		//
 
-        CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t   HandleCapabilities(void);
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        void            SetCommandIO(void);
-        CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
-        CodecStatus_t   GetTranscodeBuffer(void);
-        void            AttachCodedFrameBuffer(void);
-        CodecStatus_t   DumpDecodeParameters(void   *Parameters);
-        CodecStatus_t   Reset(void);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		void            SetCommandIO(void);
+		CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
+		CodecStatus_t   GetTranscodeBuffer(void);
+		void            AttachCodedFrameBuffer(void);
+		CodecStatus_t   DumpDecodeParameters(void   *Parameters);
+		CodecStatus_t   Reset(void);
 };
 #endif /* H_CODEC_MME_AUDIO_SILENCE */

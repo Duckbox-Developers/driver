@@ -39,9 +39,9 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    BufferLocationSystemMemory  = 0x01,
-    BufferLocationVideoMemory   = 0x02,
-    BufferLocationEither        = 0x03,
+	BufferLocationSystemMemory  = 0x01,
+	BufferLocationVideoMemory   = 0x02,
+	BufferLocationEither        = 0x03,
 } BufferLocation_t;
 
 #ifdef __cplusplus
@@ -50,10 +50,10 @@ extern "C" {
 
 int             DisplayInit(void);
 int             GetDisplayInfo(unsigned int           Id,
-                               DeviceHandle_t*        DisplayDevice,
-                               unsigned int*          PlaneId,
-                               unsigned int*          OutputId,
-                               BufferLocation_t*      BufferLocation);
+							   DeviceHandle_t*        DisplayDevice,
+							   unsigned int*          PlaneId,
+							   unsigned int*          OutputId,
+							   BufferLocation_t*      BufferLocation);
 
 #ifdef __cplusplus
 }

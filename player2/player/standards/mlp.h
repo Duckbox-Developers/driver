@@ -25,7 +25,6 @@ Author :           Sylvain
 Definition of the types and constants that are used by several components
 dealing with lpcm audio decode/display for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Oct-07   Creation                                        Sylvain
@@ -67,21 +66,21 @@ Date        Modification                                    Name
 ///
 typedef enum
 {
-    MlpWordSize16,       ///< sample is 16-bit long
-    MlpWordSize20,       ///< sample is 20-bit long
-    MlpWordSize24,       ///< sample is 24-bit long
-    MlpWordSizeNone      ///< undefined sample size
+	MlpWordSize16,       ///< sample is 16-bit long
+	MlpWordSize20,       ///< sample is 20-bit long
+	MlpWordSize24,       ///< sample is 24-bit long
+	MlpWordSizeNone      ///< undefined sample size
 } MlpWordSize_t;
 
 typedef enum
 {
-    MlpSamplingFreq48,       ///< 48 kHz
-    MlpSamplingFreq96,       ///< 96 kHz
-    MlpSamplingFreq192,      ///< 192 kHz
-    MlpSamplingFreq44p1 = 8, ///< 44.1 kHz
-    MlpSamplingFreq88p2,     ///< 88.2 kHz
-    MlpSamplingFreq176p4,    ///< 176.4 kHz
-    MlpSamplingFreqNone      ///< undefined sampling frequncy
+	MlpSamplingFreq48,       ///< 48 kHz
+	MlpSamplingFreq96,       ///< 96 kHz
+	MlpSamplingFreq192,      ///< 192 kHz
+	MlpSamplingFreq44p1 = 8, ///< 44.1 kHz
+	MlpSamplingFreq88p2,     ///< 88.2 kHz
+	MlpSamplingFreq176p4,    ///< 176.4 kHz
+	MlpSamplingFreqNone      ///< undefined sampling frequncy
 } MlpSamplingFreq_t;
 
 ////////////////////////////////////////////////////////////////////
@@ -90,19 +89,19 @@ typedef enum
 ///
 typedef struct MlpAudioParsedFrameHeader_s
 {
-    // These fields contain all these required by the audio mme codec
-    bool                IsMajorSync;              ///< if true, this frame holds a major sync
-    MlpSamplingFreq_t   SamplingFrequency;        ///< Sampling frequency identifier.
-    unsigned int        NumberOfSamples;          ///< Number of samples per channel within the frame.
-    unsigned int        Length;                   ///< Length of frame in bytes (including header).
-    unsigned int        AudioFrameNumber;         ///< Number of audio frames accumulated
+	// These fields contain all these required by the audio mme codec
+	bool                IsMajorSync;              ///< if true, this frame holds a major sync
+	MlpSamplingFreq_t   SamplingFrequency;        ///< Sampling frequency identifier.
+	unsigned int        NumberOfSamples;          ///< Number of samples per channel within the frame.
+	unsigned int        Length;                   ///< Length of frame in bytes (including header).
+	unsigned int        AudioFrameNumber;         ///< Number of audio frames accumulated
 } MlpAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
 
 typedef struct MlpAudioStreamParameters_s
 {
-    unsigned int AccumulatedFrameNumber;
+	unsigned int AccumulatedFrameNumber;
 } MlpAudioStreamParameters_t;
 
 #define BUFFER_MLP_AUDIO_STREAM_PARAMETERS        "MlpAudioStreamParameters"
@@ -116,8 +115,8 @@ typedef struct MlpAudioStreamParameters_s
 ///
 typedef struct MlpAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int Unsused;
+	/// The bit rate of the frame
+	unsigned int Unsused;
 } MlpAudioFrameParameters_t;
 
 #define BUFFER_MLP_AUDIO_FRAME_PARAMETERS        "MlpAudioFrameParameters"

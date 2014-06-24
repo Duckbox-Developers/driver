@@ -25,7 +25,6 @@ Author :           Nick
 Implementation of the data extraction related functions of the
 generic class implementation of player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 06-Nov-06   Created                                         Nick
@@ -45,13 +44,12 @@ Date        Modification                                    Name
 //
 
 PlayerStatus_t   Player_Generic_c::RequestDecodeBufferReference(
-    PlayerStream_t        Stream,
-    unsigned long long    NativeTime,
-    void             *EventUserData)
+	PlayerStream_t        Stream,
+	unsigned long long    NativeTime,
+	void             *EventUserData)
 {
-    return PlayerNoError;
+	return PlayerNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -59,12 +57,8 @@ PlayerStatus_t   Player_Generic_c::RequestDecodeBufferReference(
 //
 
 PlayerStatus_t   Player_Generic_c::ReleaseDecodeBufferReference(
-    PlayerEventRecord_t  *Record)
+	PlayerEventRecord_t  *Record)
 {
-    return PlayerNoError;
+	return PlayerNoError;
 }
-
-
-
-
 

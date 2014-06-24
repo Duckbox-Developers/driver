@@ -31,10 +31,11 @@ extern "C" {
 /* MME_AllocationFlags_t:
  * Used to qualify memory allocation
  */
-typedef enum MME_AllocationFlags_t {
-    MME_ALLOCATION_PHYSICAL = 1,
-    MME_ALLOCATION_CACHED = 2,
-    MME_ALLOCATION_UNCACHED = 4
+typedef enum MME_AllocationFlags_t
+{
+	MME_ALLOCATION_PHYSICAL = 1,
+	MME_ALLOCATION_CACHED = 2,
+	MME_ALLOCATION_UNCACHED = 4
 } MME_AllocationFlags_t;
 
 /* MME_CommandCode_t:
@@ -42,9 +43,9 @@ typedef enum MME_AllocationFlags_t {
  */
 typedef enum MME_CommandCode_t
 {
-    MME_SET_GLOBAL_TRANSFORM_PARAMS,
-    MME_TRANSFORM,
-    MME_SEND_BUFFERS
+	MME_SET_GLOBAL_TRANSFORM_PARAMS,
+	MME_TRANSFORM,
+	MME_SEND_BUFFERS
 } MME_CommandCode_t;
 
 /* MME_CommandState_t:
@@ -52,11 +53,11 @@ typedef enum MME_CommandCode_t
  */
 typedef enum MME_CommandState_t
 {
-    MME_COMMAND_IDLE,
-    MME_COMMAND_PENDING,
-    MME_COMMAND_EXECUTING,
-    MME_COMMAND_COMPLETED,
-    MME_COMMAND_FAILED
+	MME_COMMAND_IDLE,
+	MME_COMMAND_PENDING,
+	MME_COMMAND_EXECUTING,
+	MME_COMMAND_COMPLETED,
+	MME_COMMAND_FAILED
 } MME_CommandState_t;
 
 /* MME_CommandEndType_t:
@@ -65,8 +66,8 @@ typedef enum MME_CommandState_t
  */
 typedef enum MME_CommandEndType_t
 {
-    MME_COMMAND_END_RETURN_NO_INFO,
-    MME_COMMAND_END_RETURN_NOTIFY
+	MME_COMMAND_END_RETURN_NO_INFO,
+	MME_COMMAND_END_RETURN_NOTIFY
 } MME_CommandEndType_t;
 
 /* MME_Event_t:
@@ -74,12 +75,11 @@ typedef enum MME_CommandEndType_t
  */
 typedef enum MME_Event_t
 {
-    MME_COMMAND_COMPLETED_EVT,
-    MME_DATA_UNDERFLOW_EVT,
-    MME_NOT_ENOUGH_MEMORY_EVT,
-    MME_NEW_COMMAND_EVT
+	MME_COMMAND_COMPLETED_EVT,
+	MME_DATA_UNDERFLOW_EVT,
+	MME_NOT_ENOUGH_MEMORY_EVT,
+	MME_NEW_COMMAND_EVT
 } MME_Event_t;
-
 
 /* MME_ERROR:
  * The errors that may be returned by MME API functions or by
@@ -87,25 +87,25 @@ typedef enum MME_Event_t
  */
 typedef enum MME_ERROR
 {
-    MME_SUCCESS = 0,
-    MME_DRIVER_NOT_INITIALIZED,
-    MME_DRIVER_ALREADY_INITIALIZED,
-    MME_NOMEM,
-    MME_INVALID_TRANSPORT,
-    MME_INVALID_HANDLE,
-    MME_INVALID_ARGUMENT,
-    MME_UNKNOWN_TRANSFORMER,
-    MME_TRANSFORMER_NOT_RESPONDING,
-    MME_HANDLES_STILL_OPEN,
-    MME_COMMAND_STILL_EXECUTING,
-    MME_COMMAND_ABORTED,
-    MME_DATA_UNDERFLOW,
-    MME_DATA_OVERFLOW,
-    MME_TRANSFORM_DEFERRED,
-    MME_SYSTEM_INTERRUPT,
-    MME_EMBX_ERROR,
-    MME_INTERNAL_ERROR,
-    MME_NOT_IMPLEMENTED
+	MME_SUCCESS = 0,
+	MME_DRIVER_NOT_INITIALIZED,
+	MME_DRIVER_ALREADY_INITIALIZED,
+	MME_NOMEM,
+	MME_INVALID_TRANSPORT,
+	MME_INVALID_HANDLE,
+	MME_INVALID_ARGUMENT,
+	MME_UNKNOWN_TRANSFORMER,
+	MME_TRANSFORMER_NOT_RESPONDING,
+	MME_HANDLES_STILL_OPEN,
+	MME_COMMAND_STILL_EXECUTING,
+	MME_COMMAND_ABORTED,
+	MME_DATA_UNDERFLOW,
+	MME_DATA_OVERFLOW,
+	MME_TRANSFORM_DEFERRED,
+	MME_SYSTEM_INTERRUPT,
+	MME_EMBX_ERROR,
+	MME_INTERNAL_ERROR,
+	MME_NOT_IMPLEMENTED
 } MME_ERROR;
 
 /* MME_CacheFlags_t
@@ -113,9 +113,9 @@ typedef enum MME_ERROR
  */
 typedef enum MME_CacheFlags_t
 {
-    MME_DATA_CACHE_COHERENT = (int)((unsigned) 1 << 31),
-    MME_DATA_TRANSIENT = (1 << 30),
-    MME_REMOTE_CACHE_COHERENT = (1 << 29)
+	MME_DATA_CACHE_COHERENT = (int)((unsigned) 1 << 31),
+	MME_DATA_TRANSIENT = (1 << 30),
+	MME_REMOTE_CACHE_COHERENT = (1 << 29)
 } MME_CacheFlags_t;
 
 /* MME_Tuneable_t:
@@ -123,16 +123,16 @@ typedef enum MME_CacheFlags_t
  */
 typedef enum
 {
-    /* no need to MME_THREAD_STACK_SIZE, this is managed by the EMBX call */
-    MME_TUNEABLE_MANAGER_THREAD_PRIORITY,
-    MME_TUNEABLE_TRANSFORMER_THREAD_PRIORITY,
-    MME_TUNEABLE_EXECUTION_LOOP_HIGHEST_PRIORITY,
-    MME_TUNEABLE_EXECUTION_LOOP_ABOVE_NORMAL_PRIORITY,
-    MME_TUNEABLE_EXECUTION_LOOP_NORMAL_PRIORITY,
-    MME_TUNEABLE_EXECUTION_LOOP_BELOW_NORMAL_PRIORITY,
-    MME_TUNEABLE_EXECUTION_LOOP_LOWEST_PRIORITY,
+	/* no need to MME_THREAD_STACK_SIZE, this is managed by the EMBX call */
+	MME_TUNEABLE_MANAGER_THREAD_PRIORITY,
+	MME_TUNEABLE_TRANSFORMER_THREAD_PRIORITY,
+	MME_TUNEABLE_EXECUTION_LOOP_HIGHEST_PRIORITY,
+	MME_TUNEABLE_EXECUTION_LOOP_ABOVE_NORMAL_PRIORITY,
+	MME_TUNEABLE_EXECUTION_LOOP_NORMAL_PRIORITY,
+	MME_TUNEABLE_EXECUTION_LOOP_BELOW_NORMAL_PRIORITY,
+	MME_TUNEABLE_EXECUTION_LOOP_LOWEST_PRIORITY,
 
-    MME_TUNEABLE_MAX
+	MME_TUNEABLE_MAX
 } MME_Tuneable_t;
 
 /* MME_Priority_t:
@@ -140,11 +140,11 @@ typedef enum
  */
 typedef enum MME_Priority_t
 {
-    MME_PRIORITY_HIGHEST = 5000,
-    MME_PRIORITY_ABOVE_NORMAL = 4000,
-    MME_PRIORITY_NORMAL = 3000,
-    MME_PRIORITY_BELOW_NORMAL = 2000,
-    MME_PRIORITY_LOWEST = 1000
+	MME_PRIORITY_HIGHEST = 5000,
+	MME_PRIORITY_ABOVE_NORMAL = 4000,
+	MME_PRIORITY_NORMAL = 3000,
+	MME_PRIORITY_BELOW_NORMAL = 2000,
+	MME_PRIORITY_LOWEST = 1000
 } MME_Priority_t;
 
 /* Types: simple */
@@ -202,12 +202,12 @@ typedef MME_UINT MME_TransformerHandle_t;
  */
 typedef struct MME_CommandStatus_t
 {
-    MME_CommandId_t      CmdId;
-    MME_CommandState_t   State;
-    MME_Time_t           ProcessedTime;
-    MME_ERROR            Error;
-    MME_UINT             AdditionalInfoSize;
-    MME_GenericParams_t  AdditionalInfo_p;
+	MME_CommandId_t      CmdId;
+	MME_CommandState_t   State;
+	MME_Time_t           ProcessedTime;
+	MME_ERROR            Error;
+	MME_UINT             AdditionalInfoSize;
+	MME_GenericParams_t  AdditionalInfo_p;
 } MME_CommandStatus_t;
 
 /* MME_ScatterPage_t:
@@ -215,11 +215,11 @@ typedef struct MME_CommandStatus_t
  */
 typedef struct MME_ScatterPage_t
 {
-    void*    Page_p;
-    MME_UINT Size;
-    MME_UINT BytesUsed;
-    MME_UINT FlagsIn;
-    MME_UINT FlagsOut;
+	void*    Page_p;
+	MME_UINT Size;
+	MME_UINT BytesUsed;
+	MME_UINT FlagsIn;
+	MME_UINT FlagsOut;
 } MME_ScatterPage_t;
 
 /* MME_DataBuffer_t:
@@ -227,14 +227,14 @@ typedef struct MME_ScatterPage_t
  */
 typedef struct MME_DataBuffer_t
 {
-    MME_UINT              StructSize;
-    void*                 UserData_p;
-    MME_UINT              Flags;
-    MME_UINT              StreamNumber;
-    MME_UINT              NumberOfScatterPages;
-    MME_ScatterPage_t*    ScatterPages_p;
-    MME_UINT              TotalSize;
-    MME_UINT              StartOffset;
+	MME_UINT              StructSize;
+	void*                 UserData_p;
+	MME_UINT              Flags;
+	MME_UINT              StreamNumber;
+	MME_UINT              NumberOfScatterPages;
+	MME_ScatterPage_t*    ScatterPages_p;
+	MME_UINT              TotalSize;
+	MME_UINT              StartOffset;
 } MME_DataBuffer_t;
 
 /* MME_Command_t:
@@ -242,16 +242,16 @@ typedef struct MME_DataBuffer_t
  */
 typedef struct MME_Command_t
 {
-    MME_UINT                  StructSize;
-    MME_CommandCode_t         CmdCode;
-    MME_CommandEndType_t      CmdEnd;
-    MME_Time_t                DueTime;
-    MME_UINT                  NumberInputBuffers;
-    MME_UINT                  NumberOutputBuffers;
-    MME_DataBuffer_t**        DataBuffers_p;
-    MME_CommandStatus_t   CmdStatus;
-    MME_UINT                  ParamSize;
-    MME_GenericParams_t       Param_p;
+	MME_UINT                  StructSize;
+	MME_CommandCode_t         CmdCode;
+	MME_CommandEndType_t      CmdEnd;
+	MME_Time_t                DueTime;
+	MME_UINT                  NumberInputBuffers;
+	MME_UINT                  NumberOutputBuffers;
+	MME_DataBuffer_t**        DataBuffers_p;
+	MME_CommandStatus_t   CmdStatus;
+	MME_UINT                  ParamSize;
+	MME_GenericParams_t       Param_p;
 } MME_Command_t;
 
 /* MME_DataFormat_t:
@@ -259,23 +259,21 @@ typedef struct MME_Command_t
  */
 typedef struct MME_DataFormat_t
 {
-    unsigned char FourCC[4];
+	unsigned char FourCC[4];
 } MME_DataFormat_t;
-
 
 /* MME_TransformerCapability_t:
  * Structure containg information pertaining to a transformers capability
  */
 typedef struct MME_TransformerCapability_t
 {
-    MME_UINT             StructSize;
-    MME_UINT             Version;
-    MME_DataFormat_t     InputType;
-    MME_DataFormat_t     OutputType;
-    MME_UINT             TransformerInfoSize;
-    MME_GenericParams_t  TransformerInfo_p;
+	MME_UINT             StructSize;
+	MME_UINT             Version;
+	MME_DataFormat_t     InputType;
+	MME_DataFormat_t     OutputType;
+	MME_UINT             TransformerInfoSize;
+	MME_GenericParams_t  TransformerInfo_p;
 } MME_TransformerCapability_t;
-
 
 /* Host callback function */
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t * CallbackData, void *UserData);
@@ -285,12 +283,12 @@ typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t * Callbac
  */
 typedef struct MME_TransformerInitParams_t
 {
-    MME_UINT        StructSize;
-    MME_Priority_t      Priority;
-    MME_GenericCallback_t   Callback;
-    void*           CallbackUserData;
-    MME_UINT        TransformerInitParamsSize;
-    MME_GenericParams_t TransformerInitParams_p;
+	MME_UINT        StructSize;
+	MME_Priority_t      Priority;
+	MME_GenericCallback_t   Callback;
+	void*           CallbackUserData;
+	MME_UINT        TransformerInitParamsSize;
+	MME_GenericParams_t TransformerInitParams_p;
 } MME_TransformerInitParams_t;
 
 /* Types: functions */
@@ -330,7 +328,7 @@ typedef MME_ERROR(*MME_TermTransformer_t)(void *context);
 #else
 /* this is the definition of MME_PARAM for big endian machines */
 #define _MME_PARAM_ADDRESS(p, f)   \
-    ((MME_TYPE_##f *)(((char *)((MME_GENERIC64*)p+MME_OFFSET_##f))+(sizeof(MME_GENERIC64)-sizeof(MME_TYPE_##f))))
+	((MME_TYPE_##f *)(((char *)((MME_GENERIC64*)p+MME_OFFSET_##f))+(sizeof(MME_GENERIC64)-sizeof(MME_TYPE_##f))))
 
 /* At the moment we do not support BE machines */
 #error Unsupported CPU type
@@ -363,9 +361,9 @@ MME_ERROR MME_AbortCommand(MME_TransformerHandle_t Handle, MME_CommandId_t CmdId
  * to pass between a host and companion
  */
 MME_ERROR MME_AllocDataBuffer(MME_TransformerHandle_t handle,
-                              MME_UINT size,
-                              MME_AllocationFlags_t flags,
-                              MME_DataBuffer_t ** dataBuffer_p);
+							  MME_UINT size,
+							  MME_AllocationFlags_t flags,
+							  MME_DataBuffer_t ** dataBuffer_p);
 
 /* MME_DeregisterTransformer()
  * Deregister a transformer that has been registered
@@ -386,7 +384,7 @@ MME_ERROR MME_FreeDataBuffer(MME_DataBuffer_t * DataBuffer_p);
  * Obtain the capabilities of a transformer
  */
 MME_ERROR MME_GetTransformerCapability(const char *TransformerName,
-                                       MME_TransformerCapability_t * TransformerCapability_p);
+									   MME_TransformerCapability_t * TransformerCapability_p);
 
 /* MME_Init()
  * Initialize MME
@@ -397,8 +395,8 @@ MME_ERROR MME_Init(void);
  * Create a transformer instance on a companion
  */
 MME_ERROR MME_InitTransformer(const char *Name,
-                              MME_TransformerInitParams_t * Params_p,
-                              MME_TransformerHandle_t * Handle_p);
+							  MME_TransformerInitParams_t * Params_p,
+							  MME_TransformerHandle_t * Handle_p);
 
 /* MME_ModifyTuneable()
  * Modify system wide configuration parameters such as thread priority.
@@ -414,11 +412,11 @@ MME_ERROR MME_NotifyHost(MME_Event_t event, MME_Command_t * commandInfo, MME_ERR
  * Register a transformer after which intantiations may be made
  */
 MME_ERROR MME_RegisterTransformer(const char *name,
-                                  MME_AbortCommand_t abortFunc,
-                                  MME_GetTransformerCapability_t getTransformerCapabilityFunc,
-                                  MME_InitTransformer_t initTransformerFunc,
-                                  MME_ProcessCommand_t processCommandFunc,
-                                  MME_TermTransformer_t termTransformerFunc);
+								  MME_AbortCommand_t abortFunc,
+								  MME_GetTransformerCapability_t getTransformerCapabilityFunc,
+								  MME_InitTransformer_t initTransformerFunc,
+								  MME_ProcessCommand_t processCommandFunc,
+								  MME_TermTransformer_t termTransformerFunc);
 
 /* MME_RegisterTransport()
  * Register an existing EMBX transport for use by MME

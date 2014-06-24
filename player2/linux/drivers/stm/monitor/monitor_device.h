@@ -41,54 +41,52 @@ Date        Modification                                    Name
 
 struct EventRecord_s
 {
-    unsigned int                        RecordLength;                   /*! Length of record */
-    monitor_event_t                     EventString;                    /*! External event record */
+	unsigned int                        RecordLength;                   /*! Length of record */
+	monitor_event_t                     EventString;                    /*! External event record */
 };
 
 struct EventQueue_s
 {
-    struct EventRecord_s                Event[MAX_MONITOR_EVENT];       /*! Event record */
-    unsigned int                        Write;                          /*! Pointer to next event location to write by capture */
-    unsigned int                        Read;                           /*! Pointer to next event location to read by user */
-    unsigned int                        LostCount;                      /*! Events lost since last read */
-    wait_queue_head_t                   EventReceived;                  /*! Queue to wake up readers */
-    wait_queue_head_t                   BufferReleased;                 /*! Queue to wake up writers */
-    spinlock_t                          Lock;                           /*! Protection for access to Read and Write pointers */
+	struct EventRecord_s                Event[MAX_MONITOR_EVENT];       /*! Event record */
+	unsigned int                        Write;                          /*! Pointer to next event location to write by capture */
+	unsigned int                        Read;                           /*! Pointer to next event location to read by user */
+	unsigned int                        LostCount;                      /*! Events lost since last read */
+	wait_queue_head_t                   EventReceived;                  /*! Queue to wake up readers */
+	wait_queue_head_t                   BufferReleased;                 /*! Queue to wake up writers */
+	spinlock_t                          Lock;                           /*! Protection for access to Read and Write pointers */
 };
 
 struct EventValue_s
 {
-    unsigned int                        Parameters[MONITOR_PARAMETER_COUNT];
-    unsigned int                        Count;
+	unsigned int                        Parameters[MONITOR_PARAMETER_COUNT];
+	unsigned int                        Count;
 };
-
 
 struct DeviceContext_s
 {
-    struct device*                      Device;
-    struct cdev                         CDev;
+	struct device*                      Device;
+	struct cdev                         CDev;
 
-    unsigned int                        Id;
-    unsigned int                        OpenCount;
-    struct monitor_status_s             Status;
-    struct EventQueue_s                 EventQueue;
-    struct EventValue_s                 StoredEventValues[MAX_MONITOR_EVENT_CODE + 1];
+	unsigned int                        Id;
+	unsigned int                        OpenCount;
+	struct monitor_status_s             Status;
+	struct EventQueue_s                 EventQueue;
+	struct EventValue_s                 StoredEventValues[MAX_MONITOR_EVENT_CODE + 1];
 
-    struct MMEContext_s                 MMEContext[MONITOR_MAX_MME_DEVICES];
+	struct MMEContext_s                 MMEContext[MONITOR_MAX_MME_DEVICES];
 
-    struct ModuleContext_s*             ModuleContext;
+	struct ModuleContext_s*             ModuleContext;
 
-    unsigned int                       *Timer;
-    unsigned int                        TimerPhysical;
+	unsigned int                       *Timer;
+	unsigned int                        TimerPhysical;
 };
-
 
 struct file_operations*                 MonitorInit(struct DeviceContext_s*         Context);
 
 void                                    MonitorRecordEvent(struct DeviceContext_s*         Context,
-        unsigned int                    SourceId,
-        monitor_event_code_t            EventCode,
-        unsigned long long              TimeCode,
-        unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
-        const char*                     Description);
+		unsigned int                    SourceId,
+		monitor_event_code_t            EventCode,
+		unsigned long long              TimeCode,
+		unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
+		const char*                     Description);
 #endif

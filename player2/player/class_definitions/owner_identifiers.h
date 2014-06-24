@@ -24,8 +24,6 @@ Author :           Nick
 
 A list of pre-defined owner identifiers used to record the placement of buffers
 
-
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 17-Nov-06   Created                                         Nick
@@ -37,32 +35,30 @@ Date        Modification                                    Name
 
 enum
 {
-    IdentifierGetInjectBuffer   = 1,
-    IdentifierInSequenceCall,
-    IdentifierDrain,
+	IdentifierGetInjectBuffer   = 1,
+	IdentifierInSequenceCall,
+	IdentifierDrain,
 
-    IdentifierCollator,
-    IdentifierFrameParser,
-    IdentifierCodec,
-    IdentifierManifestor,
+	IdentifierCollator,
+	IdentifierFrameParser,
+	IdentifierCodec,
+	IdentifierManifestor,
 
-    IdentifierProcessCollateToParse,
-    IdentifierProcessParseToDecode,
-    IdentifierProcessDecodeToManifest,
-    IdentifierProcessPostManifest,
+	IdentifierProcessCollateToParse,
+	IdentifierProcessParseToDecode,
+	IdentifierProcessDecodeToManifest,
+	IdentifierProcessPostManifest,
 
-    IdentifierAttachedToOtherBuffer,
-    IdentifierReverseDecodeStack,
-    IdentifierFrameParserMarkerFrame,
-    IdentifierNonDecodedFrameList,
+	IdentifierAttachedToOtherBuffer,
+	IdentifierReverseDecodeStack,
+	IdentifierFrameParserMarkerFrame,
+	IdentifierNonDecodedFrameList,
 
-    IdentifierH264Intermediate,
-    IdentifierExternal,
+	IdentifierH264Intermediate,
+	IdentifierExternal,
 
-    IdentifierManifestorClone
+	IdentifierManifestorClone
 };
 
 #endif
-
-
 

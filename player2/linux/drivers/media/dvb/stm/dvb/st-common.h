@@ -30,42 +30,42 @@ extern int debug ;
 
 struct stfe
 {
-    struct dvb_demux        dvb_demux;
-    struct dmxdev           dmxdev;
+	struct dvb_demux        dvb_demux;
+	struct dmxdev           dmxdev;
 
-    struct dmx_frontend     hw_frontend;
-    struct dmx_frontend     mem_frontend;
+	struct dmx_frontend     hw_frontend;
+	struct dmx_frontend     mem_frontend;
 
-    int mapping;
+	int mapping;
 
-    //struct dvb_net dvbnet;
+	//struct dvb_net dvbnet;
 
-    /* our semaphore, for channel allocation/deallocation */
-    struct semaphore sem;
+	/* our semaphore, for channel allocation/deallocation */
+	struct semaphore sem;
 
-    struct dvb_adapter adapter;
+	struct dvb_adapter adapter;
 
-    struct stfe_channel
-    {
-        void                  *havana_id;  // Havana_id must be the first as havana does not have access to this structure
-        struct stfe           *stfe;
-        struct dvb_demux_feed *dvbdmxfeed;
+	struct stfe_channel
+	{
+		void                  *havana_id;  // Havana_id must be the first as havana does not have access to this structure
+		struct stfe           *stfe;
+		struct dvb_demux_feed *dvbdmxfeed;
 
-        int active;
-        int id;
-        int pid;
-        int type;       /* 1 - TS, 2 - Filter */
-    } channel[STFE_MAXCHANNEL];
+		int active;
+		int id;
+		int pid;
+		int type;       /* 1 - TS, 2 - Filter */
+	} channel[STFE_MAXCHANNEL];
 
-    //spinlock_t timer_lock;
-    //struct timer_list timer;        /* timer interrupts for outputs */
+	//spinlock_t timer_lock;
+	//struct timer_list timer;        /* timer interrupts for outputs */
 
-    struct dvb_frontend* fe;
+	struct dvb_frontend* fe;
 
-    int running_feed_count;
+	int running_feed_count;
 
-    void *tuner_data;
-    void *driver_data;
+	void *tuner_data;
+	void *driver_data;
 };
 
 struct stfe_channel *stfe_channel_allocate(struct stfe *stfe);

@@ -70,7 +70,7 @@ struct DeviceContext_s;
 #endif
 
 #define DVB_DEBUG(fmt, args...)         ((void) (ENABLE_DVB_DEBUG && \
-        (printk(KERN_INFO "%s: " fmt, __FUNCTION__,##args), 0)))
+												 (printk(KERN_INFO "%s: " fmt, __FUNCTION__,##args), 0)))
 
 /* Output trace information off the critical path */
 #define DVB_TRACE(fmt, args...)         (printk(KERN_NOTICE "%s: " fmt, __FUNCTION__, ##args))
@@ -78,108 +78,107 @@ struct DeviceContext_s;
 #define DVB_ERROR(fmt, args...)         (printk(KERN_CRIT "ERROR in %s: " fmt, __FUNCTION__, ##args))
 
 #define DVB_ASSERT(x) do if(!(x)) printk(KERN_CRIT "%s: Assertion '%s' failed at %s:%d\n", \
-                __FUNCTION__, #x, __FILE__, __LINE__); while(0)
+												 __FUNCTION__, #x, __FILE__, __LINE__); while(0)
 
 #define DVB_MAX_DEVICES_PER_ADAPTER     4
 
 struct DemuxBuffer_s
 {
-    unsigned int                OutPtr;
-    unsigned int                InPtr;
-    struct task_struct*         InjectionThread;
-    unsigned int                DemuxInjecting;
+	unsigned int                OutPtr;
+	unsigned int                InPtr;
+	struct task_struct*         InjectionThread;
+	unsigned int                DemuxInjecting;
 };
 
 struct Rectangle_s
 {
-    unsigned int                X;
-    unsigned int                Y;
-    unsigned int                Width;
-    unsigned int                Height;
+	unsigned int                X;
+	unsigned int                Y;
+	unsigned int                Width;
+	unsigned int                Height;
 };
 
 struct DeviceContext_s
 {
-    unsigned int                Id;
-    int                         numRunningFeeds;
+	unsigned int                Id;
+	int                         numRunningFeeds;
 
-    struct dvb_device*          AudioDevice;
-    struct device               AudioClassDevice;
-    struct audio_status         AudioState;
-    unsigned int                AudioId;
-    audio_encoding_t            AudioEncoding;
-    struct StreamContext_s*     AudioStream;
-    unsigned int                AudioOpenWrite;
-    struct mutex                AudioWriteLock;
-    struct mutex*               ActiveAudioWriteLock;
-    unsigned int                AudioCaptureStatus;
-    audio_play_interval_t       AudioPlayInterval;
+	struct dvb_device*          AudioDevice;
+	struct device               AudioClassDevice;
+	struct audio_status         AudioState;
+	unsigned int                AudioId;
+	audio_encoding_t            AudioEncoding;
+	struct StreamContext_s*     AudioStream;
+	unsigned int                AudioOpenWrite;
+	struct mutex                AudioWriteLock;
+	struct mutex*               ActiveAudioWriteLock;
+	unsigned int                AudioCaptureStatus;
+	audio_play_interval_t       AudioPlayInterval;
 
-    struct dvb_device*          VideoDevice;
-    struct device               VideoClassDevice;
-    struct video_status         VideoState;
-    unsigned int                VideoId;
-    video_encoding_t            VideoEncoding;
-    video_size_t                VideoSize;
-    unsigned int                FrameRate;
-    struct StreamContext_s*     VideoStream;
-    unsigned int                VideoOpenWrite;
-    struct VideoEvent_s         VideoEvents;
-    struct mutex                VideoWriteLock;
-    struct mutex*               ActiveVideoWriteLock;
-    unsigned int                VideoCaptureStatus;
-    video_play_interval_t       VideoPlayInterval;
+	struct dvb_device*          VideoDevice;
+	struct device               VideoClassDevice;
+	struct video_status         VideoState;
+	unsigned int                VideoId;
+	video_encoding_t            VideoEncoding;
+	video_size_t                VideoSize;
+	unsigned int                FrameRate;
+	struct StreamContext_s*     VideoStream;
+	unsigned int                VideoOpenWrite;
+	struct VideoEvent_s         VideoEvents;
+	struct mutex                VideoWriteLock;
+	struct mutex*               ActiveVideoWriteLock;
+	unsigned int                VideoCaptureStatus;
+	video_play_interval_t       VideoPlayInterval;
 
-    unsigned int                PlayOption[DVB_OPTION_MAX];
-    unsigned int                PlayValue[DVB_OPTION_MAX];
-    struct Rectangle_s          VideoOutputWindow;
-    struct Rectangle_s          VideoInputWindow;
-    struct Ratio_s              PixelAspectRatio;
+	unsigned int                PlayOption[DVB_OPTION_MAX];
+	unsigned int                PlayValue[DVB_OPTION_MAX];
+	struct Rectangle_s          VideoOutputWindow;
+	struct Rectangle_s          VideoInputWindow;
+	struct Ratio_s              PixelAspectRatio;
 
+	struct DeviceContext_s*     DemuxContext;           /* av can be wired to different demux - default is self */
+	struct DeviceContext_s*     SyncContext;            /* av can be synchronised to a different device - default is self */
 
-    struct DeviceContext_s*     DemuxContext;           /* av can be wired to different demux - default is self */
-    struct DeviceContext_s*     SyncContext;            /* av can be synchronised to a different device - default is self */
+	struct dvb_demux            DvbDemux;
+	struct dmxdev               DmxDevice;
+	struct dmx_frontend         MemoryFrontend;
 
-    struct dvb_demux            DvbDemux;
-    struct dmxdev               DmxDevice;
-    struct dmx_frontend         MemoryFrontend;
+	struct StreamContext_s*     DemuxStream;
 
-    struct StreamContext_s*     DemuxStream;
+	struct PlaybackContext_s*   Playback;
+	stream_type_t               StreamType;
+	int                         PlaySpeed;
 
-    struct PlaybackContext_s*   Playback;
-    stream_type_t               StreamType;
-    int                         PlaySpeed;
+	struct dvb_device*          CaDevice;
+	unsigned char *dvr_in;
+	unsigned char *dvr_out;
+	unsigned int EncryptionOn;
 
-    struct dvb_device*          CaDevice;
-    unsigned char *dvr_in;
-    unsigned char *dvr_out;
-    unsigned int EncryptionOn;
+	unsigned int StartOffset;
+	unsigned int EndOffset;
 
-    unsigned int StartOffset;
-    unsigned int EndOffset;
-
-    struct DvbContext_s*        DvbContext;
+	struct DvbContext_s*        DvbContext;
 
 #ifdef __TDT__
-    struct PtiSession*          pPtiSession;
-    int                         dvr_write;
-    int                         VideoPlaySpeed;
-    int                         provideToDecoder;
-    int                         feedPesType;
-    struct mutex                injectMutex;
+	struct PtiSession*          pPtiSession;
+	int                         dvr_write;
+	int                         VideoPlaySpeed;
+	int                         provideToDecoder;
+	int                         feedPesType;
+	struct mutex                injectMutex;
 #endif
 };
 
 struct DvbContext_s
 {
-    void*                       PtiPrivate;
+	void*                       PtiPrivate;
 
-    struct dvb_device           DvbDevice;
-    struct dvb_adapter          DvbAdapter;
+	struct dvb_device           DvbDevice;
+	struct dvb_adapter          DvbAdapter;
 
-    struct mutex                Lock;
+	struct mutex                Lock;
 
-    struct DeviceContext_s      DeviceContext[DVB_MAX_DEVICES_PER_ADAPTER];
+	struct DeviceContext_s      DeviceContext[DVB_MAX_DEVICES_PER_ADAPTER];
 
 };
 

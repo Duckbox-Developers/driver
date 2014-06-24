@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the demultiplexor class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
@@ -43,13 +42,13 @@ Date        Modification                                    Name
 
 enum
 {
-    DemultiplexorNoError            = PlayerNoError,
-    DemultiplexorError              = PlayerError,
+	DemultiplexorNoError            = PlayerNoError,
+	DemultiplexorError              = PlayerError,
 #ifdef __TDT__
-    DemultiplexorBufferOverflow,
+	DemultiplexorBufferOverflow,
 #endif
 
-    // GetBuffer
+	// GetBuffer
 //    Demultiplexor...              = BASE_DEMULTIPLEXOR
 };
 
@@ -62,29 +61,29 @@ typedef PlayerStatus_t  DemultiplexorStatus_t;
 
 class Demultiplexor_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual DemultiplexorStatus_t    GetHandledMuxType(PlayerInputMuxType_t  *HandledType) = 0;
+		virtual DemultiplexorStatus_t    GetHandledMuxType(PlayerInputMuxType_t  *HandledType) = 0;
 
-        virtual DemultiplexorStatus_t    CreateContext(DemultiplexorContext_t    *Context) = 0;
+		virtual DemultiplexorStatus_t    CreateContext(DemultiplexorContext_t    *Context) = 0;
 
-        virtual DemultiplexorStatus_t    DestroyContext(DemultiplexorContext_t    Context) = 0;
+		virtual DemultiplexorStatus_t    DestroyContext(DemultiplexorContext_t    Context) = 0;
 
-        virtual DemultiplexorStatus_t    AddStream(DemultiplexorContext_t     Context,
-                PlayerStream_t        Stream,
-                unsigned int          StreamIdentifier) = 0;
+		virtual DemultiplexorStatus_t    AddStream(DemultiplexorContext_t     Context,
+												   PlayerStream_t        Stream,
+												   unsigned int          StreamIdentifier) = 0;
 
-        virtual DemultiplexorStatus_t    RemoveStream(DemultiplexorContext_t      Context,
-                unsigned int          StreamIdentifier) = 0;
+		virtual DemultiplexorStatus_t    RemoveStream(DemultiplexorContext_t      Context,
+													  unsigned int          StreamIdentifier) = 0;
 
-        virtual DemultiplexorStatus_t    SwitchStream(DemultiplexorContext_t      Context,
-                PlayerStream_t        Stream) = 0;
+		virtual DemultiplexorStatus_t    SwitchStream(DemultiplexorContext_t      Context,
+													  PlayerStream_t        Stream) = 0;
 
-        virtual DemultiplexorStatus_t    InputJump(DemultiplexorContext_t     Context) = 0;
+		virtual DemultiplexorStatus_t    InputJump(DemultiplexorContext_t     Context) = 0;
 
-        virtual DemultiplexorStatus_t    Demux(PlayerPlayback_t   Playback,
-                                               DemultiplexorContext_t    Context,
-                                               Buffer_t          Buffer) = 0;
+		virtual DemultiplexorStatus_t    Demux(PlayerPlayback_t   Playback,
+											   DemultiplexorContext_t    Context,
+											   Buffer_t          Buffer) = 0;
 };
 
 // ---------------------------------------------------------------------

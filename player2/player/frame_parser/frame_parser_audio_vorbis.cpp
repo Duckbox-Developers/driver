@@ -24,13 +24,11 @@ Author :           Julian
 
 Implementation of the Ogg Voprbis Audio frame parser class for player 2.
 
-
 Date        Modification                                Name
 ----        ------------                                --------
 10-Mar-2009 Created                                     Julian
 
 ************************************************************************/
-
 
 // /////////////////////////////////////////////////////////////////////
 //
@@ -52,7 +50,7 @@ static BufferDataDescriptor_t     VorbisAudioFrameParametersBuffer        = BUFF
 
 static inline unsigned int BE2LE(unsigned int Value)
 {
-    return (((Value & 0xff) << 24) | ((Value & 0xff00) << 8) | ((Value >> 8) & 0xff00) | ((Value >> 24) & 0xff));
+	return (((Value & 0xff) << 24) | ((Value & 0xff00) << 8) | ((Value >> 8) & 0xff00) | ((Value >> 24) & 0xff));
 }
 //}}}
 
@@ -64,17 +62,17 @@ static inline unsigned int BE2LE(unsigned int Value)
 
 FrameParser_AudioVorbis_c::FrameParser_AudioVorbis_c(void)
 {
-    Configuration.FrameParserName               = "AudioVorbis";
+	Configuration.FrameParserName               = "AudioVorbis";
 
-    Configuration.StreamParametersCount         = 32;
-    Configuration.StreamParametersDescriptor    = &VorbisAudioStreamParametersBuffer;
+	Configuration.StreamParametersCount         = 32;
+	Configuration.StreamParametersDescriptor    = &VorbisAudioStreamParametersBuffer;
 
-    Configuration.FrameParametersCount          = 32;
-    Configuration.FrameParametersDescriptor     = &VorbisAudioFrameParametersBuffer;
+	Configuration.FrameParametersCount          = 32;
+	Configuration.FrameParametersDescriptor     = &VorbisAudioFrameParametersBuffer;
 
-    StreamHeadersRead                           = VorbisNoHeaders;
+	StreamHeadersRead                           = VorbisNoHeaders;
 
-    Reset();
+	Reset();
 }
 //}}}
 //{{{  Destructor
@@ -85,8 +83,8 @@ FrameParser_AudioVorbis_c::FrameParser_AudioVorbis_c(void)
 
 FrameParser_AudioVorbis_c::~FrameParser_AudioVorbis_c(void)
 {
-    Halt();
-    Reset();
+	Halt();
+	Reset();
 }
 //}}}
 
@@ -99,7 +97,7 @@ FrameParser_AudioVorbis_c::~FrameParser_AudioVorbis_c(void)
 
 FrameParserStatus_t   FrameParser_AudioVorbis_c::Reset(void)
 {
-    return FrameParser_Audio_c::Reset();
+	return FrameParser_Audio_c::Reset();
 }
 //}}}
 //{{{  RegisterOutputBufferRing
@@ -109,15 +107,15 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::Reset(void)
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::RegisterOutputBufferRing(Ring_t          Ring)
 {
-    // Clear our parameter pointers
-    StreamParameters                    = NULL;
-    FrameParameters                     = NULL;
+	// Clear our parameter pointers
+	StreamParameters                    = NULL;
+	FrameParameters                     = NULL;
 
-    // Set illegal state forcing a parameter update on the first frame
-    memset(&CurrentStreamParameters, 0, sizeof(CurrentStreamParameters));
+	// Set illegal state forcing a parameter update on the first frame
+	memset(&CurrentStreamParameters, 0, sizeof(CurrentStreamParameters));
 
-    // Pass the call down the line
-    return FrameParser_Audio_c::RegisterOutputBufferRing(Ring);
+	// Pass the call down the line
+	return FrameParser_Audio_c::RegisterOutputBufferRing(Ring);
 }
 //}}}
 
@@ -128,11 +126,11 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::RegisterOutputBufferRing(Ring_t
 //
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ResetReferenceFrameList(void)
 {
-    FRAME_DEBUG(">><<");
+	FRAME_DEBUG(">><<");
 
-    Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
+	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  PrepareReferenceFrameList
@@ -142,7 +140,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ResetReferenceFrameList(void)
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::PrepareReferenceFrameList(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  UpdateReferenceFrameList
@@ -152,7 +150,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PrepareReferenceFrameList(void)
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::UpdateReferenceFrameList(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 
@@ -164,7 +162,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::UpdateReferenceFrameList(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeStack(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  ProcessReverseDecodeUnsatisfiedReferenceStack
@@ -174,7 +172,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeStack(void)
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  PurgeReverseDecodeUnsatisfiedReferenceStack
@@ -185,7 +183,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessReverseDecodeUnsatisfied
 FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
 {
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  PurgeReverseDecodeStack
@@ -196,7 +194,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeUnsatisfiedRe
 FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeStack(void)
 {
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 
@@ -209,7 +207,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeReverseDecodeStack(void)
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeQueuedPostDecodeParameterSettings(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  ProcessQueuedPostDecodeParameterSettings
@@ -221,7 +219,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::PurgeQueuedPostDecodeParameterS
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessQueuedPostDecodeParameterSettings(void)
 {
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  GeneratePostDecodeParameterSettings
@@ -234,82 +232,82 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ProcessQueuedPostDecodeParamete
 ///
 FrameParserStatus_t   FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSettings(void)
 {
-    FrameParserStatus_t Status;
+	FrameParserStatus_t Status;
 
-    //
-    // Default setting
-    //
+	//
+	// Default setting
+	//
 
-    ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
-    ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
-    ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
-    ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
-    ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
+	ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
+	ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
+	ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
+	ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
+	ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
 
-    //
-    // Record in the structure the decode and presentation times if specified
-    //
+	//
+	// Record in the structure the decode and presentation times if specified
+	//
 
-    if (CodedFrameParameters->PlaybackTimeValid)
-    {
-        ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
-        TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
-    }
+	if (CodedFrameParameters->PlaybackTimeValid)
+	{
+		ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
+		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
+	}
 
-    if (CodedFrameParameters->DecodeTimeValid)
-    {
-        ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
-        TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
-    }
+	if (CodedFrameParameters->DecodeTimeValid)
+	{
+		ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
+		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
+	}
 
-    //FRAME_TRACE("%s:%llx, %llx\n", __FUNCTION__, ParsedFrameParameters->NormalizedPlaybackTime, ParsedFrameParameters->NativePlaybackTime);
-    // Synthesize the presentation time if required
-    Status                                              = HandleCurrentFrameNormalizedPlaybackTime();
+	//FRAME_TRACE("%s:%llx, %llx\n", __FUNCTION__, ParsedFrameParameters->NormalizedPlaybackTime, ParsedFrameParameters->NativePlaybackTime);
+	// Synthesize the presentation time if required
+	Status                                              = HandleCurrentFrameNormalizedPlaybackTime();
 
-    if (Status != FrameParserNoError)
-        return Status;
+	if (Status != FrameParserNoError)
+		return Status;
 
-    // We can't fail after this point so this is a good time to provide a display frame index
-    ParsedFrameParameters->DisplayFrameIndex             = NextDisplayFrameIndex++;
+	// We can't fail after this point so this is a good time to provide a display frame index
+	ParsedFrameParameters->DisplayFrameIndex             = NextDisplayFrameIndex++;
 
 #if 0
-    //
-    // Manipulate the DTS to account for Vorbis decoder latency.
-    //
-    // To avoid underflow the Vorbis decoder needs a generous 'float' of data
-    // before it attempts to decode a frame. The magnitude of this float
-    // must be encoded into the DTS otherwise the output timer will delay
-    // issuing data for decode.
-    //
+	//
+	// Manipulate the DTS to account for Vorbis decoder latency.
+	//
+	// To avoid underflow the Vorbis decoder needs a generous 'float' of data
+	// before it attempts to decode a frame. The magnitude of this float
+	// must be encoded into the DTS otherwise the output timer will delay
+	// issuing data for decode.
+	//
 
-    const unsigned long long VeryEarlyDecodePorch = 250000;
+	const unsigned long long VeryEarlyDecodePorch = 250000;
 
-    if (ParsedFrameParameters->NormalizedDecodeTime == INVALID_TIME)
-        ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
+	if (ParsedFrameParameters->NormalizedDecodeTime == INVALID_TIME)
+		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
 
-    if (ParsedFrameParameters->NormalizedDecodeTime > ParsedFrameParameters->NormalizedPlaybackTime)
-    {
-        FRAME_ERROR("DTS(%lldus) > PTS(%lldus)!!!\n",
-                    ParsedFrameParameters->NormalizedDecodeTime,
-                    ParsedFrameParameters->NormalizedPlaybackTime);
-        ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
-    }
+	if (ParsedFrameParameters->NormalizedDecodeTime > ParsedFrameParameters->NormalizedPlaybackTime)
+	{
+		FRAME_ERROR("DTS(%lldus) > PTS(%lldus)!!!\n",
+					ParsedFrameParameters->NormalizedDecodeTime,
+					ParsedFrameParameters->NormalizedPlaybackTime);
+		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
+	}
 
-    if (ParsedFrameParameters->NormalizedDecodeTime != INVALID_TIME)
-    {
-        if (ParsedFrameParameters->NormalizedDecodeTime > VeryEarlyDecodePorch)
-            ParsedFrameParameters->NormalizedDecodeTime -= VeryEarlyDecodePorch;
-        else
-            ParsedFrameParameters->NormalizedDecodeTime = 0;
-    }
+	if (ParsedFrameParameters->NormalizedDecodeTime != INVALID_TIME)
+	{
+		if (ParsedFrameParameters->NormalizedDecodeTime > VeryEarlyDecodePorch)
+			ParsedFrameParameters->NormalizedDecodeTime -= VeryEarlyDecodePorch;
+		else
+			ParsedFrameParameters->NormalizedDecodeTime = 0;
+	}
 
 #endif
 
-    // Use the super-class utilities to complete our housekeeping chores
-    HandleUpdateStreamParameters();
-    //GenerateNextFrameNormalizedPlaybackTime (CurrentStreamParameters.SamplesPerFrame,  CurrentStreamParameters.SampleRate);
+	// Use the super-class utilities to complete our housekeeping chores
+	HandleUpdateStreamParameters();
+	//GenerateNextFrameNormalizedPlaybackTime (CurrentStreamParameters.SamplesPerFrame,  CurrentStreamParameters.SampleRate);
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 
@@ -321,7 +319,7 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSett
 FrameParserStatus_t   FrameParser_AudioVorbis_c::TestForTrickModeFrameDrop(void)
 {
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 
@@ -333,67 +331,66 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::TestForTrickModeFrameDrop(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadHeaders(void)
 {
-    FrameParserStatus_t         Status;
+	FrameParserStatus_t         Status;
 
 #if 0
-    unsigned int                i;
-    report(severity_info, "Buffer (%d) :", BufferLength);
+	unsigned int                i;
+	report(severity_info, "Buffer (%d) :", BufferLength);
 
-    for (i = 0; i < BufferLength; i++)
-    {
-        report(severity_info, "%02x ", BufferData[i]);
+	for (i = 0; i < BufferLength; i++)
+	{
+		report(severity_info, "%02x ", BufferData[i]);
 
-        if (((i + 1) & 0x1f) == 0)
-            report(severity_info, "\n");
-    }
+		if (((i + 1) & 0x1f) == 0)
+			report(severity_info, "\n");
+	}
 
-    report(severity_info, "\n");
+	report(severity_info, "\n");
 #endif
 
-    Bits.SetPointer(BufferData);
+	Bits.SetPointer(BufferData);
 
-    // Perform the common portion of the read headers function
-    FrameParser_Audio_c::ReadHeaders();
+	// Perform the common portion of the read headers function
+	FrameParser_Audio_c::ReadHeaders();
 
-    Status = GetNewFrameParameters((void**)&FrameParameters);
+	Status = GetNewFrameParameters((void**)&FrameParameters);
 
-    if (Status != FrameParserNoError)
-    {
-        FRAME_ERROR("Cannot get new frame parameters\n");
-        return Status;
-    }
+	if (Status != FrameParserNoError)
+	{
+		FRAME_ERROR("Cannot get new frame parameters\n");
+		return Status;
+	}
 
-    // Nick inserted some default values here
-    ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
-    ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
-    ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
-    ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
-    ParsedFrameParameters->KeyFrame                                     = true;
-    ParsedFrameParameters->ReferenceFrame                               = false;
+	// Nick inserted some default values here
+	ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
+	ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
+	ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
+	ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
+	ParsedFrameParameters->KeyFrame                                     = true;
+	ParsedFrameParameters->ReferenceFrame                               = false;
 
-    ParsedFrameParameters->NewFrameParameters                           = true;
-    ParsedFrameParameters->SizeofFrameParameterStructure                = sizeof(VorbisAudioFrameParameters_t);
-    ParsedFrameParameters->FrameParameterStructure                      = FrameParameters;
+	ParsedFrameParameters->NewFrameParameters                           = true;
+	ParsedFrameParameters->SizeofFrameParameterStructure                = sizeof(VorbisAudioFrameParameters_t);
+	ParsedFrameParameters->FrameParameterStructure                      = FrameParameters;
 
-    // If all header information has not been read assume this is a header frame.
-    if (StreamHeadersRead != VorbisAllHeaders)
-        return ReadStreamHeaders();
+	// If all header information has not been read assume this is a header frame.
+	if (StreamHeadersRead != VorbisAllHeaders)
+		return ReadStreamHeaders();
 
-    FrameParameters->FrameSize                                          = CurrentStreamParameters.BlockSize0;
-    FrameParameters->BitRate                                            = (CurrentStreamParameters.BlockSize0 * CurrentStreamParameters.SampleRate * 8);
-    FrameParameters->SamplesPresent                                     = true;
+	FrameParameters->FrameSize                                          = CurrentStreamParameters.BlockSize0;
+	FrameParameters->BitRate                                            = (CurrentStreamParameters.BlockSize0 * CurrentStreamParameters.SampleRate * 8);
+	FrameParameters->SamplesPresent                                     = true;
 
-    ParsedAudioParameters->Source.BitsPerSample                         = CurrentStreamParameters.SampleSize;
-    ParsedAudioParameters->Source.ChannelCount                          = CurrentStreamParameters.ChannelCount;
-    ParsedAudioParameters->Source.SampleRateHz                          = CurrentStreamParameters.SampleRate;
-    ParsedAudioParameters->SampleCount                                  = CurrentStreamParameters.SamplesPerFrame;
+	ParsedAudioParameters->Source.BitsPerSample                         = CurrentStreamParameters.SampleSize;
+	ParsedAudioParameters->Source.ChannelCount                          = CurrentStreamParameters.ChannelCount;
+	ParsedAudioParameters->Source.SampleRateHz                          = CurrentStreamParameters.SampleRate;
+	ParsedAudioParameters->SampleCount                                  = CurrentStreamParameters.SamplesPerFrame;
 
-    ParsedFrameParameters->DataOffset                                   = 0;
+	ParsedFrameParameters->DataOffset                                   = 0;
 
-    FrameToDecode                                                       = true;
+	FrameToDecode                                                       = true;
 
-
-    return FrameParserNoError;
+	return FrameParserNoError;
 
 }
 //}}}
@@ -406,126 +403,126 @@ FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadHeaders(void)
 
 FrameParserStatus_t   FrameParser_AudioVorbis_c::ReadStreamHeaders(void)
 {
-    unsigned int                HeaderType;
-    char                        HeaderName[8];
-    FrameParserStatus_t         Status;
-    unsigned int                i;
+	unsigned int                HeaderType;
+	char                        HeaderName[8];
+	FrameParserStatus_t         Status;
+	unsigned int                i;
 
-    FRAME_DEBUG("\n");
+	FRAME_DEBUG("\n");
 
-    FRAME_TRACE("BufferLength %d :\n", BufferLength);
+	FRAME_TRACE("BufferLength %d :\n", BufferLength);
 #if 0
-    unsigned int               Checksum = 0;
+	unsigned int               Checksum = 0;
 
-    for (i = 0; i < BufferLength; i++)
-    {
-        if ((i & 0x0f) == 0)
-            report(severity_info, "\n%06x", i);
+	for (i = 0; i < BufferLength; i++)
+	{
+		if ((i & 0x0f) == 0)
+			report(severity_info, "\n%06x", i);
 
-        report(severity_info, " %02x", BufferData[i]);
-        Checksum       += BufferData[i];
-    }
+		report(severity_info, " %02x", BufferData[i]);
+		Checksum       += BufferData[i];
+	}
 
-    report(severity_info, "\nChecksum %08x\n", Checksum);
+	report(severity_info, "\nChecksum %08x\n", Checksum);
 #endif
 
-    if (StreamParameters == NULL)
-    {
-        Status                                          = GetNewStreamParameters((void **)&StreamParameters);
+	if (StreamParameters == NULL)
+	{
+		Status                                          = GetNewStreamParameters((void **)&StreamParameters);
 
-        if (Status != FrameParserNoError)
-            return Status;
-    }
+		if (Status != FrameParserNoError)
+			return Status;
+	}
 
-    HeaderType                                          = Bits.Get(8);
-    memset(HeaderName, 0, sizeof(HeaderName));
+	HeaderType                                          = Bits.Get(8);
+	memset(HeaderName, 0, sizeof(HeaderName));
 
-    for (i = 0; i < 6; i++)
-        HeaderName[i]                                   = Bits.Get(8);
+	for (i = 0; i < 6; i++)
+		HeaderName[i]                                   = Bits.Get(8);
 
-    if (strcmp(HeaderName, "vorbis") != 0)
-    {
-        FRAME_ERROR("Stream is not a valid Vorbis stream\n");
-        Player->MarkStreamUnPlayable(Stream);
-        return FrameParserError;
-    }
+	if (strcmp(HeaderName, "vorbis") != 0)
+	{
+		FRAME_ERROR("Stream is not a valid Vorbis stream\n");
+		Player->MarkStreamUnPlayable(Stream);
+		return FrameParserError;
+	}
 
-    if (HeaderType == VORBIS_IDENTIFICATION_HEADER)
-    {
-        unsigned int    BlockSize;
-        unsigned int    FramingFlag;
+	if (HeaderType == VORBIS_IDENTIFICATION_HEADER)
+	{
+		unsigned int    BlockSize;
+		unsigned int    FramingFlag;
 
-        StreamParameters->VorbisVersion                 = Bits.Get(32);
+		StreamParameters->VorbisVersion                 = Bits.Get(32);
 
-        if (StreamParameters->VorbisVersion != 0)
-        {
-            FRAME_ERROR("Invalid Vorbis version numbers should be 0 is %x\n", StreamParameters->VorbisVersion);
-            Player->MarkStreamUnPlayable(Stream);
-            return FrameParserError;
-        }
+		if (StreamParameters->VorbisVersion != 0)
+		{
+			FRAME_ERROR("Invalid Vorbis version numbers should be 0 is %x\n", StreamParameters->VorbisVersion);
+			Player->MarkStreamUnPlayable(Stream);
+			return FrameParserError;
+		}
 
-        StreamParameters->ChannelCount                  = Bits.Get(8);
-        StreamParameters->SampleRate                    = BE2LE(Bits.Get(32));
+		StreamParameters->ChannelCount                  = Bits.Get(8);
+		StreamParameters->SampleRate                    = BE2LE(Bits.Get(32));
 
-        if ((StreamParameters->ChannelCount == 0) || (StreamParameters->SampleRate == 0))
-        {
-            FRAME_ERROR("Invalid Vorbis channel count %d or Sample Rate %d\n", StreamParameters->VorbisVersion);
-            Player->MarkStreamUnPlayable(Stream);
-            return FrameParserError;
-        }
+		if ((StreamParameters->ChannelCount == 0) || (StreamParameters->SampleRate == 0))
+		{
+			FRAME_ERROR("Invalid Vorbis channel count %d or Sample Rate %d\n", StreamParameters->VorbisVersion);
+			Player->MarkStreamUnPlayable(Stream);
+			return FrameParserError;
+		}
 
-        Bits.FlushUnseen(32);
-        Bits.FlushUnseen(32);
-        Bits.FlushUnseen(32);
+		Bits.FlushUnseen(32);
+		Bits.FlushUnseen(32);
+		Bits.FlushUnseen(32);
 
-        BlockSize                                       = Bits.Get(8);
-        StreamParameters->BlockSize0                    = 1 << (BlockSize & 0x0f);
-        StreamParameters->BlockSize1                    = 1 << ((BlockSize & 0xf0) >> 4);
+		BlockSize                                       = Bits.Get(8);
+		StreamParameters->BlockSize0                    = 1 << (BlockSize & 0x0f);
+		StreamParameters->BlockSize1                    = 1 << ((BlockSize & 0xf0) >> 4);
 
-        FramingFlag                                     = Bits.Get(8) & 0x01;
+		FramingFlag                                     = Bits.Get(8) & 0x01;
 
-        if (FramingFlag != 1)
-        {
-            FRAME_ERROR("Invalid Vorbis framing flag %d\n", FramingFlag);
-            Player->MarkStreamUnPlayable(Stream);
-            return FrameParserError;
-        }
+		if (FramingFlag != 1)
+		{
+			FRAME_ERROR("Invalid Vorbis framing flag %d\n", FramingFlag);
+			Player->MarkStreamUnPlayable(Stream);
+			return FrameParserError;
+		}
 
-        StreamHeadersRead                              |= VorbisIdentificationHeader;
-    }
-    else if (HeaderType == VORBIS_COMMENT_HEADER)
-    {
-        StreamHeadersRead                              |= VorbisCommentHeader;
-    }
-    else if (HeaderType == VORBIS_SETUP_HEADER)
-    {
-        StreamHeadersRead                              |= VorbisSetupHeader;
-    }
-    else
-    {
-        FRAME_ERROR("Unrecognised header (Not Identification, Comment or Setup) (%x)\n", HeaderType);
-        Player->MarkStreamUnPlayable(Stream);
-        return FrameParserError;
-    }
+		StreamHeadersRead                              |= VorbisIdentificationHeader;
+	}
+	else if (HeaderType == VORBIS_COMMENT_HEADER)
+	{
+		StreamHeadersRead                              |= VorbisCommentHeader;
+	}
+	else if (HeaderType == VORBIS_SETUP_HEADER)
+	{
+		StreamHeadersRead                              |= VorbisSetupHeader;
+	}
+	else
+	{
+		FRAME_ERROR("Unrecognised header (Not Identification, Comment or Setup) (%x)\n", HeaderType);
+		Player->MarkStreamUnPlayable(Stream);
+		return FrameParserError;
+	}
 
-    // Fill in frame details so codec knows this is a header only frame
-    FrameParameters->FrameSize                                          = 0;
-    FrameParameters->BitRate                                            = 0;
-    FrameParameters->SamplesPresent                                     = false;
-    FrameToDecode                                                       = true;
+	// Fill in frame details so codec knows this is a header only frame
+	FrameParameters->FrameSize                                          = 0;
+	FrameParameters->BitRate                                            = 0;
+	FrameParameters->SamplesPresent                                     = false;
+	FrameToDecode                                                       = true;
 
 #ifdef DUMP_HEADERS
-    report(severity_info, "StreamFormatInfo :- \n");
-    report(severity_info, "SampleRate                  %6u\n", StreamParameters->SampleRate);
-    report(severity_info, "SampleSize                  %6u\n", StreamParameters->SampleSize);
-    report(severity_info, "ChannelCount                %6u\n", StreamParameters->ChannelCount);
-    report(severity_info, "SamplesPerFrame             %6u\n", StreamParameters->SamplesPerFrame);
-    report(severity_info, "BlockSize0                  %6u\n", StreamParameters->BlockSize0);
-    report(severity_info, "BlockSize1                  %6u\n", StreamParameters->BlockSize1);
+	report(severity_info, "StreamFormatInfo :- \n");
+	report(severity_info, "SampleRate                  %6u\n", StreamParameters->SampleRate);
+	report(severity_info, "SampleSize                  %6u\n", StreamParameters->SampleSize);
+	report(severity_info, "ChannelCount                %6u\n", StreamParameters->ChannelCount);
+	report(severity_info, "SamplesPerFrame             %6u\n", StreamParameters->SamplesPerFrame);
+	report(severity_info, "BlockSize0                  %6u\n", StreamParameters->BlockSize0);
+	report(severity_info, "BlockSize1                  %6u\n", StreamParameters->BlockSize1);
 
 #endif
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 

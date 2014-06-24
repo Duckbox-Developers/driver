@@ -24,7 +24,6 @@ Author :           Sylvain
 
 Definition of the frame parser audio lpcm class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Jul-07   Created                                         Sylvain
@@ -53,66 +52,66 @@ Date        Modification                                    Name
 
 class FrameParser_AudioLpcm_c : public FrameParser_Audio_c
 {
-    private:
+	private:
 
-        // Data
+		// Data
 
-        LpcmAudioStreamParameters_t *StreamParameters;
-        LpcmAudioStreamParameters_t CurrentStreamParameters;
-        LpcmAudioFrameParameters_t *FrameParameters;
+		LpcmAudioStreamParameters_t *StreamParameters;
+		LpcmAudioStreamParameters_t CurrentStreamParameters;
+		LpcmAudioFrameParameters_t *FrameParameters;
 
-        /// LPCM variant we are required to operate with. Copied from the collator during registration.
-        LpcmStreamType_t StreamType;
+		/// LPCM variant we are required to operate with. Copied from the collator during registration.
+		LpcmStreamType_t StreamType;
 
-        /// Number of samples of instrinic latency in the decoder.
-        /// The output timer assumes that the decode latency any decode is smaller than the length of time that the
-        /// frame will be displayed for. Decoders such as SPDIF have additional latency that the output time must be made
-        /// aware of in the decode time stamp. This value contains that latency.
-        unsigned int IndirectDecodeLatencyInSamples;
+		/// Number of samples of instrinic latency in the decoder.
+		/// The output timer assumes that the decode latency any decode is smaller than the length of time that the
+		/// frame will be displayed for. Decoders such as SPDIF have additional latency that the output time must be made
+		/// aware of in the decode time stamp. This value contains that latency.
+		unsigned int IndirectDecodeLatencyInSamples;
 
-        // Functions
-    public:
+		// Functions
+	public:
 
-        //
-        // Constructor function
-        //
+		//
+		// Constructor function
+		//
 
-        FrameParser_AudioLpcm_c(unsigned int DecodeLatencyInSamples = 0);
-        ~FrameParser_AudioLpcm_c(void);
+		FrameParser_AudioLpcm_c(unsigned int DecodeLatencyInSamples = 0);
+		~FrameParser_AudioLpcm_c(void);
 
-        //
-        // Overrides for component base class functions
-        //
+		//
+		// Overrides for component base class functions
+		//
 
-        FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t   Reset(void);
 
-        //
-        // FrameParser class functions
-        //
+		//
+		// FrameParser class functions
+		//
 
-        FrameParserStatus_t   RegisterOutputBufferRing(Ring_t       Ring);
+		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t       Ring);
 
-        //
-        // Stream specific functions
-        //
+		//
+		// Stream specific functions
+		//
 
-        FrameParserStatus_t   ReadHeaders(void);
-        FrameParserStatus_t   ResetReferenceFrameList(void);
-        FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
-        FrameParserStatus_t   PrepareReferenceFrameList(void);
-        FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
-        FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
-        FrameParserStatus_t   UpdateReferenceFrameList(void);
+		FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t   ResetReferenceFrameList(void);
+		FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t   PrepareReferenceFrameList(void);
+		FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t   UpdateReferenceFrameList(void);
 
-        FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
-        FrameParserStatus_t   ProcessReverseDecodeStack(void);
-        FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
-        FrameParserStatus_t   PurgeReverseDecodeStack(void);
-        FrameParserStatus_t   TestForTrickModeFrameDrop(void);
+		FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t   ProcessReverseDecodeStack(void);
+		FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t   PurgeReverseDecodeStack(void);
+		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
 
-        static FrameParserStatus_t  ParseFrameHeader(unsigned char *FrameHeader,
-                LpcmAudioParsedFrameHeader_t *ParsedFrameHeader,
-                int RemainingElementaryLength);
+		static FrameParserStatus_t  ParseFrameHeader(unsigned char *FrameHeader,
+													 LpcmAudioParsedFrameHeader_t *ParsedFrameHeader,
+													 int RemainingElementaryLength);
 
 };
 

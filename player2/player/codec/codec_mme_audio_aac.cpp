@@ -24,7 +24,6 @@ Author :           Adam
 
 Implementation of the mpeg2 audio codec class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 06-Jul-07   Created (from codec_mme_audio_mpeg.cpp)         Adam
@@ -56,9 +55,9 @@ Date        Modification                                    Name
 
 typedef struct AacAudioCodecStreamParameterContext_s
 {
-    CodecBaseStreamParameterContext_t   BaseContext;
+	CodecBaseStreamParameterContext_t   BaseContext;
 
-    MME_LxAudioDecoderGlobalParams_t StreamParameters;
+	MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } AacAudioCodecStreamParameterContext_t;
 
 //#if __KERNEL__
@@ -76,10 +75,10 @@ static BufferDataDescriptor_t        AacAudioCodecStreamParameterContextDescript
 
 typedef struct AacAudioCodecDecodeContext_s
 {
-    CodecBaseDecodeContext_t        BaseContext;
+	CodecBaseDecodeContext_t        BaseContext;
 
-    MME_LxAudioDecoderFrameParams_t     DecodeParameters;
-    MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
+	MME_LxAudioDecoderFrameParams_t     DecodeParameters;
+	MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
 } AacAudioCodecDecodeContext_t;
 
 #define BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT   "AacAudioCodecDecodeContext"
@@ -87,31 +86,28 @@ typedef struct AacAudioCodecDecodeContext_s
 
 static BufferDataDescriptor_t        AacAudioCodecDecodeContextDescriptor = BUFFER_AAC_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
-
-
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Fill in the configuration parameters used by the super-class and reset everything.
 ///
 Codec_MmeAudioAac_c::Codec_MmeAudioAac_c(void)
 {
-    Configuration.CodecName             = "AAC audio";
+	Configuration.CodecName             = "AAC audio";
 
-    Configuration.StreamParameterContextCount       = 1;
-    Configuration.StreamParameterContextDescriptor  = &AacAudioCodecStreamParameterContextDescriptor;
+	Configuration.StreamParameterContextCount       = 1;
+	Configuration.StreamParameterContextDescriptor  = &AacAudioCodecStreamParameterContextDescriptor;
 
-    Configuration.DecodeContextCount            = 4;
-    Configuration.DecodeContextDescriptor       = &AacAudioCodecDecodeContextDescriptor;
+	Configuration.DecodeContextCount            = 4;
+	Configuration.DecodeContextDescriptor       = &AacAudioCodecDecodeContextDescriptor;
 
 //
 
-    AudioDecoderTransformCapabilityMask.DecoderCapabilityFlags = (1 << ACC_MP4a_AAC);
+	AudioDecoderTransformCapabilityMask.DecoderCapabilityFlags = (1 << ACC_MP4a_AAC);
 
-    DecoderId                                           = ACC_MP4A_AAC_ID;
+	DecoderId                                           = ACC_MP4A_AAC_ID;
 
-    Reset();
+	Reset();
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -120,8 +116,8 @@ Codec_MmeAudioAac_c::Codec_MmeAudioAac_c(void)
 ///
 Codec_MmeAudioAac_c::~Codec_MmeAudioAac_c(void)
 {
-    Halt();
-    Reset();
+	Halt();
+	Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -132,32 +128,30 @@ Codec_MmeAudioAac_c::~Codec_MmeAudioAac_c(void)
 CodecStatus_t Codec_MmeAudioAac_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
 
-    CODEC_TRACE("Initializing AAC audio decoder\n");
+	CODEC_TRACE("Initializing AAC audio decoder\n");
 
-
-    MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
-    GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
+	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
+	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
 
 //
-    MME_LxMp2aConfig_t &Config = *((MME_LxMp2aConfig_t *) GlobalParams.DecConfig);
-    Config.DecoderId = DecoderId;
-    Config.StructSize = sizeof(Config);
-    Config.Config[AAC_CRC_ENABLE] = ACC_MME_TRUE;
-    Config.Config[AAC_DRC_ENABLE] = ACC_MME_FALSE;// dynamic range compression
-    Config.Config[AAC_SBR_ENABLE] = ACC_MME_TRUE; // interpret sbr when possible
+	MME_LxMp2aConfig_t &Config = *((MME_LxMp2aConfig_t *) GlobalParams.DecConfig);
+	Config.DecoderId = DecoderId;
+	Config.StructSize = sizeof(Config);
+	Config.Config[AAC_CRC_ENABLE] = ACC_MME_TRUE;
+	Config.Config[AAC_DRC_ENABLE] = ACC_MME_FALSE;// dynamic range compression
+	Config.Config[AAC_SBR_ENABLE] = ACC_MME_TRUE; // interpret sbr when possible
 
-    if (ParsedFrameParameters != NULL)
-    {
-        Config.Config[AAC_FORMAT_TYPE] = ((AacAudioFrameParameters_s *)ParsedFrameParameters->FrameParameterStructure)->Type;
-    }
-    else
-    {
-        Config.Config[AAC_FORMAT_TYPE] = AAC_ADTS_FORMAT;
-    }
+	if (ParsedFrameParameters != NULL)
+	{
+		Config.Config[AAC_FORMAT_TYPE] = ((AacAudioFrameParameters_s *)ParsedFrameParameters->FrameParameterStructure)->Type;
+	}
+	else
+	{
+		Config.Config[AAC_FORMAT_TYPE] = AAC_ADTS_FORMAT;
+	}
 
-    return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
+	return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -170,26 +164,25 @@ CodecStatus_t Codec_MmeAudioAac_c::FillOutTransformerGlobalParameters(MME_LxAudi
 ///
 CodecStatus_t   Codec_MmeAudioAac_c::FillOutTransformerInitializationParameters(void)
 {
-    CodecStatus_t Status;
-    MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
+	CodecStatus_t Status;
+	MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
 
 //
 
-    MMEInitializationParameters.TransformerInitParamsSize = sizeof(Params);
-    MMEInitializationParameters.TransformerInitParams_p = &Params;
+	MMEInitializationParameters.TransformerInitParamsSize = sizeof(Params);
+	MMEInitializationParameters.TransformerInitParams_p = &Params;
 
 //
 
-    Status = Codec_MmeAudio_c::FillOutTransformerInitializationParameters();
+	Status = Codec_MmeAudio_c::FillOutTransformerInitializationParameters();
 
-    if (Status != CodecNoError)
-        return Status;
+	if (Status != CodecNoError)
+		return Status;
 
 //
 
-    return FillOutTransformerGlobalParameters(&Params.GlobalParams);
+	return FillOutTransformerGlobalParameters(&Params.GlobalParams);
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -197,38 +190,38 @@ CodecStatus_t   Codec_MmeAudioAac_c::FillOutTransformerInitializationParameters(
 ///
 CodecStatus_t   Codec_MmeAudioAac_c::FillOutSetStreamParametersCommand(void)
 {
-    CodecStatus_t Status;
-    AacAudioCodecStreamParameterContext_t   *Context = (AacAudioCodecStreamParameterContext_t *)StreamParameterContext;
+	CodecStatus_t Status;
+	AacAudioCodecStreamParameterContext_t   *Context = (AacAudioCodecStreamParameterContext_t *)StreamParameterContext;
 //AacAudioStreamParameters_t *Parsed = (AacAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 
-    //
-    // Examine the parsed stream parameters and determine what type of codec to instanciate
-    //
+	//
+	// Examine the parsed stream parameters and determine what type of codec to instanciate
+	//
 
-    DecoderId = ACC_MP4A_AAC_ID;
+	DecoderId = ACC_MP4A_AAC_ID;
 
-    //
-    // Now fill out the actual structure
-    //
+	//
+	// Now fill out the actual structure
+	//
 
-    memset(&(Context->StreamParameters), 0, sizeof(Context->StreamParameters));
-    Status = FillOutTransformerGlobalParameters(&(Context->StreamParameters));
+	memset(&(Context->StreamParameters), 0, sizeof(Context->StreamParameters));
+	Status = FillOutTransformerGlobalParameters(&(Context->StreamParameters));
 
-    if (Status != CodecNoError)
-        return Status;
+	if (Status != CodecNoError)
+		return Status;
 
-    //
-    // Fill out the actual command
-    //
+	//
+	// Fill out the actual command
+	//
 
-    Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = 0;
-    Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p      = NULL;
-    Context->BaseContext.MMECommand.ParamSize               = sizeof(Context->StreamParameters);
-    Context->BaseContext.MMECommand.Param_p             = (MME_GenericParams_t)(&Context->StreamParameters);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = 0;
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p      = NULL;
+	Context->BaseContext.MMECommand.ParamSize               = sizeof(Context->StreamParameters);
+	Context->BaseContext.MMECommand.Param_p             = (MME_GenericParams_t)(&Context->StreamParameters);
 
 //
 
-    return CodecNoError;
+	return CodecNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -237,31 +230,31 @@ CodecStatus_t   Codec_MmeAudioAac_c::FillOutSetStreamParametersCommand(void)
 ///
 CodecStatus_t   Codec_MmeAudioAac_c::FillOutDecodeCommand(void)
 {
-    AacAudioCodecDecodeContext_t    *Context    = (AacAudioCodecDecodeContext_t *)DecodeContext;
+	AacAudioCodecDecodeContext_t    *Context    = (AacAudioCodecDecodeContext_t *)DecodeContext;
 //AacAudioFrameParameters_t *Parsed     = (AacAudioFrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
 
-    //
-    // Initialize the frame parameters (we don't actually have much to say here)
-    //
+	//
+	// Initialize the frame parameters (we don't actually have much to say here)
+	//
 
-    memset(&Context->DecodeParameters, 0, sizeof(Context->DecodeParameters));
+	memset(&Context->DecodeParameters, 0, sizeof(Context->DecodeParameters));
 
-    //
-    // Zero the reply structure
-    //
+	//
+	// Zero the reply structure
+	//
 
-    memset(&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
+	memset(&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
 
-    //
-    // Fill out the actual command
-    //
+	//
+	// Fill out the actual command
+	//
 
-    Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = sizeof(Context->DecodeStatus);
-    Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p      = (MME_GenericParams_t)(&Context->DecodeStatus);
-    Context->BaseContext.MMECommand.ParamSize               = sizeof(Context->DecodeParameters);
-    Context->BaseContext.MMECommand.Param_p             = (MME_GenericParams_t)(&Context->DecodeParameters);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = sizeof(Context->DecodeStatus);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p      = (MME_GenericParams_t)(&Context->DecodeStatus);
+	Context->BaseContext.MMECommand.ParamSize               = sizeof(Context->DecodeParameters);
+	Context->BaseContext.MMECommand.Param_p             = (MME_GenericParams_t)(&Context->DecodeParameters);
 
-    return CodecNoError;
+	return CodecNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -276,56 +269,54 @@ CodecStatus_t   Codec_MmeAudioAac_c::FillOutDecodeCommand(void)
 ///
 CodecStatus_t   Codec_MmeAudioAac_c::ValidateDecodeContext(CodecBaseDecodeContext_t *Context)
 {
-    AacAudioCodecDecodeContext_t *DecodeContext = (AacAudioCodecDecodeContext_t *) Context;
-    MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
-    ParsedAudioParameters_t *AudioParameters;
+	AacAudioCodecDecodeContext_t *DecodeContext = (AacAudioCodecDecodeContext_t *) Context;
+	MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
+	ParsedAudioParameters_t *AudioParameters;
 
+	CODEC_DEBUG(">><<\n");
 
-    CODEC_DEBUG(">><<\n");
+	if (ENABLE_CODEC_DEBUG)
+	{
+		//DumpCommand(bufferIndex);
+	}
 
-    if (ENABLE_CODEC_DEBUG)
-    {
-        //DumpCommand(bufferIndex);
-    }
+	if (Status.DecStatus != ACC_MPEG2_OK)
+	{
+		CODEC_ERROR("AAC audio decode error (muted frame): %d\n", Status.DecStatus);
+		//DumpCommand(bufferIndex);
+		// don't report an error to the higher levels (because the frame is muted)
+	}
 
-    if (Status.DecStatus != ACC_MPEG2_OK)
-    {
-        CODEC_ERROR("AAC audio decode error (muted frame): %d\n", Status.DecStatus);
-        //DumpCommand(bufferIndex);
-        // don't report an error to the higher levels (because the frame is muted)
-    }
+	// SYSFS
+	AudioDecoderStatus = Status;
 
-    // SYSFS
-    AudioDecoderStatus = Status;
+	//
+	// Attach any codec derived metadata to the output buffer (or verify the
+	// frame analysis if the frame analyser already filled everything in for
+	// us).
+	//
 
-    //
-    // Attach any codec derived metadata to the output buffer (or verify the
-    // frame analysis if the frame analyser already filled everything in for
-    // us).
-    //
+	AudioParameters = BufferState[DecodeContext->BaseContext.BufferIndex].ParsedAudioParameters;
 
-    AudioParameters = BufferState[DecodeContext->BaseContext.BufferIndex].ParsedAudioParameters;
+	AudioParameters->Source.BitsPerSample = AudioOutputSurface->BitsPerSample;
+	AudioParameters->Source.ChannelCount = AudioOutputSurface->ChannelCount;
+	AudioParameters->Organisation = Status.AudioMode;
 
-    AudioParameters->Source.BitsPerSample = AudioOutputSurface->BitsPerSample;
-    AudioParameters->Source.ChannelCount = AudioOutputSurface->ChannelCount;
-    AudioParameters->Organisation = Status.AudioMode;
+	AudioParameters->SampleCount = Status.NbOutSamples;
 
-    AudioParameters->SampleCount = Status.NbOutSamples;
+	int SamplingFreqCode = Status.SamplingFreq;
 
-    int SamplingFreqCode = Status.SamplingFreq;
+	if (SamplingFreqCode < ACC_FS_reserved)
+	{
+		AudioParameters->Source.SampleRateHz = ACC_SamplingFreqLUT[SamplingFreqCode];
+	}
+	else
+	{
+		AudioParameters->Source.SampleRateHz = 0;
+		CODEC_ERROR("AAC audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
+	}
 
-    if (SamplingFreqCode < ACC_FS_reserved)
-    {
-        AudioParameters->Source.SampleRateHz = ACC_SamplingFreqLUT[SamplingFreqCode];
-    }
-    else
-    {
-        AudioParameters->Source.SampleRateHz = 0;
-        CODEC_ERROR("AAC audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
-    }
-
-
-    return CodecNoError;
+	return CodecNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
@@ -336,10 +327,9 @@ CodecStatus_t   Codec_MmeAudioAac_c::ValidateDecodeContext(CodecBaseDecodeContex
 
 CodecStatus_t   Codec_MmeAudioAac_c::DumpSetStreamParameters(void   *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");
-    return CodecNoError;
+	CODEC_ERROR("Not implemented\n");
+	return CodecNoError;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -349,6 +339,6 @@ CodecStatus_t   Codec_MmeAudioAac_c::DumpSetStreamParameters(void   *Parameters)
 
 CodecStatus_t   Codec_MmeAudioAac_c::DumpDecodeParameters(void  *Parameters)
 {
-    CODEC_ERROR("Not implemented\n");
-    return CodecNoError;
+	CODEC_ERROR("Not implemented\n");
+	return CodecNoError;
 }

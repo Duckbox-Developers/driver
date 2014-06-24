@@ -25,7 +25,6 @@ Author :           Daniel
 Definition of the asf demux implementation of the demux pure virtual class
 module for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 17-Nov-05   Cloned from demux_avi.h                         Daniel

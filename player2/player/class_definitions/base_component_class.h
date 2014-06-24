@@ -25,13 +25,11 @@ Author :           Nick
 Definition of the base class for all of the component classes in player 2
 module.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Oct-06   Created                                         Nick
 
 ************************************************************************/
-
 
 #ifndef H_BASE_COMPONENT_CLASS
 #define H_BASE_COMPONENT_CLASS
@@ -42,20 +40,20 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    ComponentReset      = 1,
-    ComponentRunning,
-    ComponentHalted,
-    ComponentInError
+	ComponentReset      = 1,
+	ComponentRunning,
+	ComponentHalted,
+	ComponentInError
 } PlayerComponentState_t;
 
 //
 
 #define AssertComponentState( f, s )            \
-    if( ComponentState != s )                   \
-    {                                           \
-        report( severity_error, "%s - Component not in required state (in %d, required %d).\n", f, ComponentState, s ); \
-        return PlayerError;                     \
-    }
+	if( ComponentState != s )                   \
+	{                                           \
+		report( severity_error, "%s - Component not in required state (in %d, required %d).\n", f, ComponentState, s ); \
+		return PlayerError;                     \
+	}
 
 #define TestComponentState( s )                 (ComponentState == s)
 #define SetComponentState( s )                  ComponentState = s
@@ -66,145 +64,145 @@ typedef enum
 
 class BaseComponentClass_c
 {
-    protected:
+	protected:
 
-        Player_t                      Player;
-        PlayerPlayback_t              Playback;
-        PlayerStream_t                Stream;
-        PlayerComponentState_t        ComponentState;
-        PlayerEventMask_t             EventMask;
-        void                         *EventUserData;
+		Player_t                      Player;
+		PlayerPlayback_t              Playback;
+		PlayerStream_t                Stream;
+		PlayerComponentState_t        ComponentState;
+		PlayerEventMask_t             EventMask;
+		void                         *EventUserData;
 
-        Collator_t                    Collator;
-        FrameParser_t                 FrameParser;
-        Codec_t                       Codec;
-        OutputTimer_t                 OutputTimer;
-        Manifestor_t                  Manifestor;
-
-//
-
-    public:
-
-        PlayerStatus_t              InitializationStatus;
+		Collator_t                    Collator;
+		FrameParser_t                 FrameParser;
+		Codec_t                       Codec;
+		OutputTimer_t                 OutputTimer;
+		Manifestor_t                  Manifestor;
 
 //
 
-        BaseComponentClass_c(void)
-        {
-            InitializationStatus    = PlayerNoError;
-            BaseComponentClass_c::Reset();
-        }
+	public:
+
+		PlayerStatus_t              InitializationStatus;
 
 //
 
-        virtual ~BaseComponentClass_c(void) {};
+		BaseComponentClass_c(void)
+		{
+			InitializationStatus    = PlayerNoError;
+			BaseComponentClass_c::Reset();
+		}
 
 //
 
-        virtual PlayerStatus_t      Halt(void)
-        {
-            SetComponentState(ComponentHalted);
-            return  PlayerNoError;
-        }
+		virtual ~BaseComponentClass_c(void) {};
 
 //
 
-        virtual PlayerStatus_t      Reset(void)
-        {
-            Player          = NULL;
-            Playback        = PlayerAllPlaybacks;
-            Stream          = PlayerAllStreams;
-            EventMask       = 0;
-            EventUserData   = NULL;
-
-            Collator        = NULL;
-            FrameParser     = NULL;
-            Codec           = NULL;
-            OutputTimer     = NULL;
-            Manifestor      = NULL;
-
-            SetComponentState(ComponentReset);
-            return  PlayerNoError;
-        }
+		virtual PlayerStatus_t      Halt(void)
+		{
+			SetComponentState(ComponentHalted);
+			return  PlayerNoError;
+		}
 
 //
 
-        virtual PlayerStatus_t      RegisterPlayer(
-            Player_t                 Player,
-            PlayerPlayback_t         Playback,
-            PlayerStream_t           Stream,
-            Collator_t       Collator   = NULL,
-            FrameParser_t        FrameParser    = NULL,
-            Codec_t          Codec      = NULL,
-            OutputTimer_t        OutputTimer    = NULL,
-            Manifestor_t         Manifestor = NULL)
-        {
-            //
-            // In order to provide this data for early use, there is an assumption
-            // that this registratory function does no real work, and cannot fail.
-            //
+		virtual PlayerStatus_t      Reset(void)
+		{
+			Player          = NULL;
+			Playback        = PlayerAllPlaybacks;
+			Stream          = PlayerAllStreams;
+			EventMask       = 0;
+			EventUserData   = NULL;
 
-            this->Player    = Player;
-            this->Playback  = Playback;
-            this->Stream    = Stream;
+			Collator        = NULL;
+			FrameParser     = NULL;
+			Codec           = NULL;
+			OutputTimer     = NULL;
+			Manifestor      = NULL;
 
-            if (Collator != NULL)
-                this->Collator  = Collator;
-
-            if (FrameParser != NULL)
-                this->FrameParser   = FrameParser;
-
-            if (Codec != NULL)
-                this->Codec     = Codec;
-
-            if (OutputTimer != NULL)
-                this->OutputTimer   = OutputTimer;
-
-            if (Manifestor != NULL)
-                this->Manifestor    = Manifestor;
-
-            return  PlayerNoError;
-        }
+			SetComponentState(ComponentReset);
+			return  PlayerNoError;
+		}
 
 //
 
-        virtual PlayerStatus_t      SpecifySignalledEvents(
-            PlayerEventMask_t        EventMask,
-            void                    *EventUserData)
-        {
-            this->EventMask         = EventMask;
-            this->EventUserData     = EventUserData;
+		virtual PlayerStatus_t      RegisterPlayer(
+			Player_t                 Player,
+			PlayerPlayback_t         Playback,
+			PlayerStream_t           Stream,
+			Collator_t       Collator   = NULL,
+			FrameParser_t        FrameParser    = NULL,
+			Codec_t          Codec      = NULL,
+			OutputTimer_t        OutputTimer    = NULL,
+			Manifestor_t         Manifestor = NULL)
+		{
+			//
+			// In order to provide this data for early use, there is an assumption
+			// that this registratory function does no real work, and cannot fail.
+			//
 
-            return  PlayerNoError;
-        }
+			this->Player    = Player;
+			this->Playback  = Playback;
+			this->Stream    = Stream;
+
+			if (Collator != NULL)
+				this->Collator  = Collator;
+
+			if (FrameParser != NULL)
+				this->FrameParser   = FrameParser;
+
+			if (Codec != NULL)
+				this->Codec     = Codec;
+
+			if (OutputTimer != NULL)
+				this->OutputTimer   = OutputTimer;
+
+			if (Manifestor != NULL)
+				this->Manifestor    = Manifestor;
+
+			return  PlayerNoError;
+		}
 
 //
 
-        virtual PlayerStatus_t      SetModuleParameters(
-            unsigned int             ParameterBlockSize,
-            void                    *ParameterBlock)
-        {
-            return  PlayerNotSupported;
-        }
+		virtual PlayerStatus_t      SpecifySignalledEvents(
+			PlayerEventMask_t        EventMask,
+			void                    *EventUserData)
+		{
+			this->EventMask         = EventMask;
+			this->EventUserData     = EventUserData;
 
-        virtual PlayerStatus_t      CreateAttributeEvents(void)
-        {
-            return  PlayerNoError;
-        }
+			return  PlayerNoError;
+		}
 
-        virtual PlayerStatus_t      GetAttribute(
-            const char                      *Attribute,
-            PlayerAttributeDescriptor_t     *Value)
-        {
-            return  PlayerNoError;
-        }
+//
 
-        virtual PlayerStatus_t      SetAttribute(
-            const char                      *Attribute,
-            PlayerAttributeDescriptor_t     *Value)
-        {
-            return  PlayerNoError;
-        }
+		virtual PlayerStatus_t      SetModuleParameters(
+			unsigned int             ParameterBlockSize,
+			void                    *ParameterBlock)
+		{
+			return  PlayerNotSupported;
+		}
+
+		virtual PlayerStatus_t      CreateAttributeEvents(void)
+		{
+			return  PlayerNoError;
+		}
+
+		virtual PlayerStatus_t      GetAttribute(
+			const char                      *Attribute,
+			PlayerAttributeDescriptor_t     *Value)
+		{
+			return  PlayerNoError;
+		}
+
+		virtual PlayerStatus_t      SetAttribute(
+			const char                      *Attribute,
+			PlayerAttributeDescriptor_t     *Value)
+		{
+			return  PlayerNoError;
+		}
 };
 
 // ---------------------------------------------------------------------

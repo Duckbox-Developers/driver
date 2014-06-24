@@ -22,7 +22,6 @@ license from ST.
  * to be exported to the user level.
 ************************************************************************/
 
-
 #ifndef DVB_V4L2_EXPORT_H_
 #define DVB_V4L2_EXPORT_H_
 
@@ -45,15 +44,14 @@ license from ST.
  */
 enum
 {
-    V4L2_CID_STM_DVBV4L2_FIRST = (V4L2_CID_PRIVATE_BASE + 300),
+	V4L2_CID_STM_DVBV4L2_FIRST = (V4L2_CID_PRIVATE_BASE + 300),
 
-    V4L2_CID_STM_BLANK,
+	V4L2_CID_STM_BLANK,
 
-    V4L2_CID_STM_AUDIO_O_FIRST,
-    V4L2_CID_STM_AUDIO_O_LAST,
+	V4L2_CID_STM_AUDIO_O_FIRST,
+	V4L2_CID_STM_AUDIO_O_LAST,
 
-    V4L2_CID_STM_DVBV4L2_LAST
+	V4L2_CID_STM_DVBV4L2_LAST
 };
-
 
 #endif /*DVB_V4L2_EXPORT_H_ */

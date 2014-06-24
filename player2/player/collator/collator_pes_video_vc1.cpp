@@ -24,7 +24,6 @@ Author :           Julian
 
 Implementation of the pes collator class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Jun-07   Created                                         Julian
@@ -66,10 +65,10 @@ Date        Modification                                    Name
 ///
 Collator_PesVideoVc1_c::Collator_PesVideoVc1_c(void)
 {
-    if (InitializationStatus != CollatorNoError)
-        return;
+	if (InitializationStatus != CollatorNoError)
+		return;
 
-    Collator_PesVideoVc1_c::Reset();
+	Collator_PesVideoVc1_c::Reset();
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -80,30 +79,30 @@ Collator_PesVideoVc1_c::Collator_PesVideoVc1_c(void)
 ///
 CollatorStatus_t Collator_PesVideoVc1_c::Reset(void)
 {
-    CollatorStatus_t Status;
+	CollatorStatus_t Status;
 
 //
 
-    COLLATOR_DEBUG(">><<\n");
+	COLLATOR_DEBUG(">><<\n");
 
-    Status = Collator_PesVideo_c::Reset();
+	Status = Collator_PesVideo_c::Reset();
 
-    if (Status != CollatorNoError)
-        return Status;
+	if (Status != CollatorNoError)
+		return Status;
 
-    Configuration.GenerateStartCodeList      = true;
-    Configuration.MaxStartCodes              = 256;
+	Configuration.GenerateStartCodeList      = true;
+	Configuration.MaxStartCodes              = 256;
 
-    Configuration.StreamIdentifierMask       = 0xff;                            // Video
-    Configuration.StreamIdentifierCode       = 0xfd;
-    Configuration.BlockTerminateMask         = 0xfe;                            // allows frame or field
-    Configuration.BlockTerminateCode         = VC1_FIELD_START_CODE;
-    Configuration.IgnoreCodesRangeStart      = MPEG2_FIRST_SLICE_START_CODE + 1; // Slice codes other than first
-    Configuration.IgnoreCodesRangeEnd        = MPEG2_FIRST_SLICE_START_CODE;
-    Configuration.InsertFrameTerminateCode   = true;                            // Add code to force the mme decode to terminate
-    Configuration.TerminalCode               = VC1_FRAME_START_CODE;            // Configuration.BlockTerminateCode
-    Configuration.ExtendedHeaderLength       = 0;
-    Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask       = 0xff;                            // Video
+	Configuration.StreamIdentifierCode       = 0xfd;
+	Configuration.BlockTerminateMask         = 0xfe;                            // allows frame or field
+	Configuration.BlockTerminateCode         = VC1_FIELD_START_CODE;
+	Configuration.IgnoreCodesRangeStart      = MPEG2_FIRST_SLICE_START_CODE + 1; // Slice codes other than first
+	Configuration.IgnoreCodesRangeEnd        = MPEG2_FIRST_SLICE_START_CODE;
+	Configuration.InsertFrameTerminateCode   = true;                            // Add code to force the mme decode to terminate
+	Configuration.TerminalCode               = VC1_FRAME_START_CODE;            // Configuration.BlockTerminateCode
+	Configuration.ExtendedHeaderLength       = 0;
+	Configuration.DeferredTerminateFlag      = false;
 
-    return CollatorNoError;
+	return CollatorNoError;
 }

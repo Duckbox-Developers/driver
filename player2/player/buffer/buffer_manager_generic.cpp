@@ -24,7 +24,6 @@ Author :           Nick
 
 Implementation of the buffer manager generic class for use in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 14-Jul-06   Created                                         Nick
@@ -47,20 +46,19 @@ Date        Modification                                    Name
 
 BufferManager_Generic_c::BufferManager_Generic_c(void)
 {
-    InitializationStatus    = BufferError;
+	InitializationStatus    = BufferError;
 
 //
 
-    OS_InitializeMutex(&Lock);
+	OS_InitializeMutex(&Lock);
 
-    TypeDescriptorCount     = 0;
-    ListOfBufferPools       = NULL;
+	TypeDescriptorCount     = 0;
+	ListOfBufferPools       = NULL;
 
 //
 
-    InitializationStatus    = BufferNoError;
+	InitializationStatus    = BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -69,12 +67,11 @@ BufferManager_Generic_c::BufferManager_Generic_c(void)
 
 BufferManager_Generic_c::~BufferManager_Generic_c(void)
 {
-    while (ListOfBufferPools != NULL)
-        DestroyPool(ListOfBufferPools);
+	while (ListOfBufferPools != NULL)
+		DestroyPool(ListOfBufferPools);
 
-    OS_TerminateMutex(&Lock);
+	OS_TerminateMutex(&Lock);
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -82,88 +79,86 @@ BufferManager_Generic_c::~BufferManager_Generic_c(void)
 //
 
 BufferStatus_t   BufferManager_Generic_c::CreateBufferDataType(
-    BufferDataDescriptor_t   *Descriptor,
-    BufferType_t         *Type)
+	BufferDataDescriptor_t   *Descriptor,
+	BufferType_t         *Type)
 {
-    //
-    // Initialize the return parameter
-    //
+	//
+	// Initialize the return parameter
+	//
 
-    *Type   = 0xffffffff;
+	*Type   = 0xffffffff;
 
-    //
-    // Are we ok with this
-    //
+	//
+	// Are we ok with this
+	//
 
-    if (Descriptor->Type == MetaDataTypeBase)
-    {
-        if (Descriptor->AllocationSource == AllocateIndividualSuppliedBlocks)
-        {
-            report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Cannot allocate meta data from supplied block list.\n");
-            return BufferUnsupportedAllocationSource;
-        }
+	if (Descriptor->Type == MetaDataTypeBase)
+	{
+		if (Descriptor->AllocationSource == AllocateIndividualSuppliedBlocks)
+		{
+			report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Cannot allocate meta data from supplied block list.\n");
+			return BufferUnsupportedAllocationSource;
+		}
 
-        if (Descriptor->AllocateOnPoolCreation)
-        {
-            report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Cannot allocate meta data on pool creation.\n");
-            return BufferUnsupportedAllocationSource;
-        }
-    }
-    else if (Descriptor->Type != BufferDataTypeBase)
-    {
-        report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Invalid type value.\n");
-        return BufferInvalidDescriptor;
-    }
-
-//
-
-    if (Descriptor->HasFixedSize && (Descriptor->FixedSize == NOT_SPECIFIED))
-    {
-        report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Fixed size not specified.\n");
-        return BufferInvalidDescriptor;
-    }
-
-    //
-    // From here on in we need to lock access to the data structure, since we are now allocating an entry
-    //
-
-    OS_LockMutex(&Lock);
-
-    if (TypeDescriptorCount >= MAX_BUFFER_DATA_TYPES)
-    {
-        report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Insufficient space to hold new data type descriptor.\n");
-        OS_UnLockMutex(&Lock);
-        return BufferTooManyDataTypes;
-    }
+		if (Descriptor->AllocateOnPoolCreation)
+		{
+			report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Cannot allocate meta data on pool creation.\n");
+			return BufferUnsupportedAllocationSource;
+		}
+	}
+	else if (Descriptor->Type != BufferDataTypeBase)
+	{
+		report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Invalid type value.\n");
+		return BufferInvalidDescriptor;
+	}
 
 //
 
-    memcpy(&TypeDescriptors[TypeDescriptorCount], Descriptor, sizeof(BufferDataDescriptor_t));
+	if (Descriptor->HasFixedSize && (Descriptor->FixedSize == NOT_SPECIFIED))
+	{
+		report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Fixed size not specified.\n");
+		return BufferInvalidDescriptor;
+	}
 
-    if (Descriptor->TypeName != NULL)
-    {
-        TypeDescriptors[TypeDescriptorCount].TypeName   = strdup(Descriptor->TypeName);
+	//
+	// From here on in we need to lock access to the data structure, since we are now allocating an entry
+	//
 
-        if (TypeDescriptors[TypeDescriptorCount].TypeName == NULL)
-        {
-            report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Insufficient memory to copy type name.\n");
-            OS_UnLockMutex(&Lock);
-            return BufferInsufficientMemoryGeneral;
-        }
-    }
+	OS_LockMutex(&Lock);
 
-    TypeDescriptors[TypeDescriptorCount].Type   = Descriptor->Type | TypeDescriptorCount;
-    *Type                   = TypeDescriptors[TypeDescriptorCount].Type;
-
+	if (TypeDescriptorCount >= MAX_BUFFER_DATA_TYPES)
+	{
+		report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Insufficient space to hold new data type descriptor.\n");
+		OS_UnLockMutex(&Lock);
+		return BufferTooManyDataTypes;
+	}
 
 //
 
-    TypeDescriptorCount++;
-    OS_UnLockMutex(&Lock);
+	memcpy(&TypeDescriptors[TypeDescriptorCount], Descriptor, sizeof(BufferDataDescriptor_t));
 
-    return BufferNoError;
+	if (Descriptor->TypeName != NULL)
+	{
+		TypeDescriptors[TypeDescriptorCount].TypeName   = strdup(Descriptor->TypeName);
+
+		if (TypeDescriptors[TypeDescriptorCount].TypeName == NULL)
+		{
+			report(severity_error, "BufferManager_Generic_c::CreateBufferDataType - Insufficient memory to copy type name.\n");
+			OS_UnLockMutex(&Lock);
+			return BufferInsufficientMemoryGeneral;
+		}
+	}
+
+	TypeDescriptors[TypeDescriptorCount].Type   = Descriptor->Type | TypeDescriptorCount;
+	*Type                   = TypeDescriptors[TypeDescriptorCount].Type;
+
+//
+
+	TypeDescriptorCount++;
+	OS_UnLockMutex(&Lock);
+
+	return BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -171,36 +166,35 @@ BufferStatus_t   BufferManager_Generic_c::CreateBufferDataType(
 //
 
 BufferStatus_t   BufferManager_Generic_c::FindBufferDataType(
-    const char       *TypeName,
-    BufferType_t         *Type)
+	const char       *TypeName,
+	BufferType_t         *Type)
 {
-    unsigned int    i;
+	unsigned int    i;
 
-    //
-    // Initialize the return parameter
-    //
+	//
+	// Initialize the return parameter
+	//
 
-    if (TypeName == NULL)
-    {
-        report(severity_error, "BufferManager_Generic_c::FindBufferDataType - Cannot find an unnamed type.\n");
-        return BufferDataTypeNotFound;
-    }
-
-//
-
-    for (i = 0; i < TypeDescriptorCount; i++)
-        if ((TypeDescriptors[i].TypeName != NULL) &&
-                (strcmp(TypeDescriptors[i].TypeName, TypeName) == 0))
-        {
-            *Type   = TypeDescriptors[i].Type;
-            return BufferNoError;
-        }
+	if (TypeName == NULL)
+	{
+		report(severity_error, "BufferManager_Generic_c::FindBufferDataType - Cannot find an unnamed type.\n");
+		return BufferDataTypeNotFound;
+	}
 
 //
 
-    return BufferDataTypeNotFound;
+	for (i = 0; i < TypeDescriptorCount; i++)
+		if ((TypeDescriptors[i].TypeName != NULL) &&
+				(strcmp(TypeDescriptors[i].TypeName, TypeName) == 0))
+		{
+			*Type   = TypeDescriptors[i].Type;
+			return BufferNoError;
+		}
+
+//
+
+	return BufferDataTypeNotFound;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -208,32 +202,31 @@ BufferStatus_t   BufferManager_Generic_c::FindBufferDataType(
 //
 
 BufferStatus_t   BufferManager_Generic_c::GetDescriptor(BufferType_t          Type,
-        BufferPredefinedType_t   RequiredKind,
-        BufferDataDescriptor_t **Descriptor)
+		BufferPredefinedType_t   RequiredKind,
+		BufferDataDescriptor_t **Descriptor)
 {
-    if ((Type & TYPE_TYPE_MASK) != (unsigned int)RequiredKind)
-    {
-        report(severity_error, "BufferManager_Generic_c::GetDescriptor - Wrong kind of data type (%08x).\n", RequiredKind);
-        return BufferDataTypeNotFound;
-    }
+	if ((Type & TYPE_TYPE_MASK) != (unsigned int)RequiredKind)
+	{
+		report(severity_error, "BufferManager_Generic_c::GetDescriptor - Wrong kind of data type (%08x).\n", RequiredKind);
+		return BufferDataTypeNotFound;
+	}
 
-    if ((Type & TYPE_INDEX_MASK) > TypeDescriptorCount)
-    {
-        report(severity_error, "BufferManager_Generic_c::GetDescriptor - Attempt to create buffer with unregisted type (%08x).\n", Type);
-        return BufferDataTypeNotFound;
-    }
+	if ((Type & TYPE_INDEX_MASK) > TypeDescriptorCount)
+	{
+		report(severity_error, "BufferManager_Generic_c::GetDescriptor - Attempt to create buffer with unregisted type (%08x).\n", Type);
+		return BufferDataTypeNotFound;
+	}
 
-    *Descriptor = &TypeDescriptors[Type & TYPE_INDEX_MASK];
+	*Descriptor = &TypeDescriptors[Type & TYPE_INDEX_MASK];
 
-    if ((*Descriptor)->Type != Type)
-    {
-        report(severity_error, "BufferManager_Generic_c::GetDescriptor - Type descriptor does not match type.\n");
-        return BufferInvalidDescriptor;
-    }
+	if ((*Descriptor)->Type != Type)
+	{
+		report(severity_error, "BufferManager_Generic_c::GetDescriptor - Type descriptor does not match type.\n");
+		return BufferInvalidDescriptor;
+	}
 
-    return BufferNoError;
+	return BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -241,86 +234,85 @@ BufferStatus_t   BufferManager_Generic_c::GetDescriptor(BufferType_t          Ty
 //
 
 BufferStatus_t   BufferManager_Generic_c::CreatePool(
-    BufferPool_t     *Pool,
-    BufferType_t      Type,
-    unsigned int      NumberOfBuffers,
-    unsigned int      Size,
-    void         *MemoryPool[3],
-    void         *ArrayOfMemoryBlocks[][3],
-    char         *DeviceMemoryPartitionName)
+	BufferPool_t     *Pool,
+	BufferType_t      Type,
+	unsigned int      NumberOfBuffers,
+	unsigned int      Size,
+	void         *MemoryPool[3],
+	void         *ArrayOfMemoryBlocks[][3],
+	char         *DeviceMemoryPartitionName)
 {
-    BufferStatus_t       Status;
-    BufferDataDescriptor_t  *Descriptor;
-    BufferPool_Generic_t     NewPool;
+	BufferStatus_t       Status;
+	BufferDataDescriptor_t  *Descriptor;
+	BufferPool_Generic_t     NewPool;
 
-    //
-    // Initialize the return parameter
-    //
+	//
+	// Initialize the return parameter
+	//
 
-    if (Pool == NULL)
-    {
-        report(severity_error, "BufferManager_Generic_c::CreatePool - Null supplied as place to return Pool pointer.\n");
-        return BufferError;
-    }
+	if (Pool == NULL)
+	{
+		report(severity_error, "BufferManager_Generic_c::CreatePool - Null supplied as place to return Pool pointer.\n");
+		return BufferError;
+	}
 
-    *Pool   = NULL;
+	*Pool   = NULL;
 
-    //
-    // Get the descriptor
-    //
+	//
+	// Get the descriptor
+	//
 
-    Status  = GetDescriptor(Type, BufferDataTypeBase, &Descriptor);
+	Status  = GetDescriptor(Type, BufferDataTypeBase, &Descriptor);
 
-    if (Status != BufferNoError)
-        return Status;
+	if (Status != BufferNoError)
+		return Status;
 
-    //
-    // Perform simple parameter checks
-    //
+	//
+	// Perform simple parameter checks
+	//
 
-    if (Descriptor->AllocateOnPoolCreation &&
-            (NumberOfBuffers == NOT_SPECIFIED))
-    {
-        report(severity_error, "BufferManager_Generic_c::CreatePool - Unable to allocate on creation, NumberOfBuffers not specified.\n");
-        return BufferParametersIncompatibleWithAllocationSource;
-    }
+	if (Descriptor->AllocateOnPoolCreation &&
+			(NumberOfBuffers == NOT_SPECIFIED))
+	{
+		report(severity_error, "BufferManager_Generic_c::CreatePool - Unable to allocate on creation, NumberOfBuffers not specified.\n");
+		return BufferParametersIncompatibleWithAllocationSource;
+	}
 
-    //
-    // Perform the creation
-    //
+	//
+	// Perform the creation
+	//
 
-    NewPool = new BufferPool_Generic_c(this, Descriptor, NumberOfBuffers, Size, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName);
+	NewPool = new BufferPool_Generic_c(this, Descriptor, NumberOfBuffers, Size, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName);
 
-    if ((NewPool == NULL) || (NewPool->InitializationStatus != BufferNoError))
-    {
-        BufferStatus_t  Status;
+	if ((NewPool == NULL) || (NewPool->InitializationStatus != BufferNoError))
+	{
+		BufferStatus_t  Status;
 
-        Status      = BufferInsufficientMemoryForPool;
+		Status      = BufferInsufficientMemoryForPool;
 
-        if (NewPool != NULL)
-            Status  = NewPool->InitializationStatus;
+		if (NewPool != NULL)
+			Status  = NewPool->InitializationStatus;
 
-        report(severity_error, "BufferManager_Generic_c::CreatePool - Failed to create pool (%08x).\n", Status);
-        return Status;
-    }
+		report(severity_error, "BufferManager_Generic_c::CreatePool - Failed to create pool (%08x).\n", Status);
+		return Status;
+	}
 
-    //
-    // Insert the pool into our list
-    //
+	//
+	// Insert the pool into our list
+	//
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    NewPool->Next   = ListOfBufferPools;
-    ListOfBufferPools   = NewPool;
+	NewPool->Next   = ListOfBufferPools;
+	ListOfBufferPools   = NewPool;
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
 //
 
-    *Pool   = NewPool;
-    return BufferNoError;
+	*Pool   = NewPool;
+	return BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -329,40 +321,39 @@ BufferStatus_t   BufferManager_Generic_c::CreatePool(
 
 BufferStatus_t   BufferManager_Generic_c::DestroyPool(BufferPool_t    Pool)
 {
-    BufferPool_Generic_t     LocalPool  = (BufferPool_Generic_t)Pool;
-    BufferPool_Generic_t    *LocationOfPointer;
+	BufferPool_Generic_t     LocalPool  = (BufferPool_Generic_t)Pool;
+	BufferPool_Generic_t    *LocationOfPointer;
 
-    //
-    // First find and remove the pool from our list
-    //
+	//
+	// First find and remove the pool from our list
+	//
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    for (LocationOfPointer    = &ListOfBufferPools;
-            *LocationOfPointer != NULL;
-            LocationOfPointer   = &((*LocationOfPointer)->Next))
-        if (*LocationOfPointer == LocalPool)
-            break;
+	for (LocationOfPointer    = &ListOfBufferPools;
+			*LocationOfPointer != NULL;
+			LocationOfPointer   = &((*LocationOfPointer)->Next))
+		if (*LocationOfPointer == LocalPool)
+			break;
 
-    if (*LocationOfPointer == NULL)
-    {
-        report(severity_error, "BufferManager_Generic_c::DestroyPool - Pool not found.\n");
-        OS_UnLockMutex(&Lock);
-        return BufferPoolNotFound;
-    }
+	if (*LocationOfPointer == NULL)
+	{
+		report(severity_error, "BufferManager_Generic_c::DestroyPool - Pool not found.\n");
+		OS_UnLockMutex(&Lock);
+		return BufferPoolNotFound;
+	}
 
-    *LocationOfPointer  = LocalPool->Next;
-    OS_UnLockMutex(&Lock);
+	*LocationOfPointer  = LocalPool->Next;
+	OS_UnLockMutex(&Lock);
 
-    //
-    // Then destroy the actual pool
-    //
+	//
+	// Then destroy the actual pool
+	//
 
-    delete LocalPool;
+	delete LocalPool;
 
-    return BufferNoError;
+	return BufferNoError;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -371,90 +362,90 @@ BufferStatus_t   BufferManager_Generic_c::DestroyPool(BufferPool_t    Pool)
 
 static const char *AllocationSources[] =
 {
-    "NoAllocation",
-    "AllocateFromOSMemory",
-    "AllocateFromDeviceMemory",
-    "AllocateFromDeviceVideoLMIMemory",
-    "AllocateFromSuppliedBlock",
-    "AllocateIndividualSuppliedBlocks",
-    "AllocateFromNamedDeviceMemory"
+	"NoAllocation",
+	"AllocateFromOSMemory",
+	"AllocateFromDeviceMemory",
+	"AllocateFromDeviceVideoLMIMemory",
+	"AllocateFromSuppliedBlock",
+	"AllocateIndividualSuppliedBlocks",
+	"AllocateFromNamedDeviceMemory"
 };
 
 //
 
 void   BufferManager_Generic_c::Dump(unsigned int     Flags)
 {
-    unsigned int        i;
-    BufferPool_Generic_t    Pool;
+	unsigned int        i;
+	BufferPool_Generic_t    Pool;
 
 //
 
-    if ((Flags & DumpBufferTypes) != 0)
-    {
-        report(severity_info, "Dump of Buffer Types\n");
+	if ((Flags & DumpBufferTypes) != 0)
+	{
+		report(severity_info, "Dump of Buffer Types\n");
 
-        for (i = 0; i < TypeDescriptorCount; i++)
-            if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == BufferDataTypeBase)
-            {
-                report(severity_info, "    Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
-                       (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
+		for (i = 0; i < TypeDescriptorCount; i++)
+			if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == BufferDataTypeBase)
+			{
+				report(severity_info, "    Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
+					   (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
 
-                report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
-                       AllocationSources[TypeDescriptors[i].AllocationSource] :
-                       "Invalid");
+				report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
+					   AllocationSources[TypeDescriptors[i].AllocationSource] :
+					   "Invalid");
 
-                report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
-                       TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
+				report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
+					   TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
 
-                report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
-                       TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
-            }
+				report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
+					   TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
+			}
 
-        report(severity_info, "\n");
-    }
-
-//
-
-    if ((Flags & DumpMetaDataTypes) != 0)
-    {
-        report(severity_info, "Dump of Meta Data Types\n");
-
-        for (i = 0; i < TypeDescriptorCount; i++)
-            if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == MetaDataTypeBase)
-            {
-                report(severity_info, "    Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
-                       (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
-
-                report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
-                       AllocationSources[TypeDescriptors[i].AllocationSource] :
-                       "Invalid");
-
-                report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
-                       TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
-
-                report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
-                       TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
-            }
-
-        report(severity_info, "\n");
-    }
+		report(severity_info, "\n");
+	}
 
 //
 
-    if ((Flags & DumpListPools) != 0)
-    {
-        report(severity_info, "Dump of Buffer Pools\n");
+	if ((Flags & DumpMetaDataTypes) != 0)
+	{
+		report(severity_info, "Dump of Meta Data Types\n");
 
-        OS_LockMutex(&Lock);
+		for (i = 0; i < TypeDescriptorCount; i++)
+			if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == MetaDataTypeBase)
+			{
+				report(severity_info, "    Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
+					   (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
 
-        for (Pool  = ListOfBufferPools;
-                Pool != NULL;
-                Pool  = Pool->Next)
-        {
-            Pool->Dump(Flags);
-        }
+				report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
+					   AllocationSources[TypeDescriptors[i].AllocationSource] :
+					   "Invalid");
 
-        OS_UnLockMutex(&Lock);
-    }
+				report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
+					   TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
+
+				report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
+					   TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
+			}
+
+		report(severity_info, "\n");
+	}
+
+//
+
+	if ((Flags & DumpListPools) != 0)
+	{
+		report(severity_info, "Dump of Buffer Pools\n");
+
+		OS_LockMutex(&Lock);
+
+		for (Pool  = ListOfBufferPools;
+				Pool != NULL;
+				Pool  = Pool->Next)
+		{
+			Pool->Dump(Flags);
+		}
+
+		OS_UnLockMutex(&Lock);
+	}
 }
 

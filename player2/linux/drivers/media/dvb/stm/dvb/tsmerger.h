@@ -91,7 +91,6 @@
 #define TSM_PTI_ALT_OUT_PACE(cycle)  (cycle & 0xffff)
 #define TSM_PTI_ALT_OUT_AUTO_PACE    (1 << 16)
 
-
 /* TSM 1394 configuration registers */
 #if defined(ST5100) || defined(ST5301) //|| defined(CPU_SUBTYPE_STB7100)
 #define TSM_1394_CFG(x)   (0x338)

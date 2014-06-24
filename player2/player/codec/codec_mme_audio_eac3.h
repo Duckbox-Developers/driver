@@ -24,7 +24,6 @@ Author :           Sylvain Barge
 
 Definition of the stream specific codec implementation for mpeg audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 24-May-07   Created (from codec_mme_audio_ac3.h)           Sylvain Barge
@@ -62,57 +61,57 @@ Date        Modification                                    Name
 
 class Codec_MmeAudioEAc3_c : public Codec_MmeAudio_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        eAccDecoderId            DecoderId;
-        unsigned int             CurrentTranscodeBufferIndex;
-        CodecBufferState_t       TranscodedBuffers[EAC3_TRANSCODE_BUFFER_COUNT];
-        Buffer_c*                CurrentTranscodeBuffer;
-        bool                     TranscodeEnable;
+		eAccDecoderId            DecoderId;
+		unsigned int             CurrentTranscodeBufferIndex;
+		CodecBufferState_t       TranscodedBuffers[EAC3_TRANSCODE_BUFFER_COUNT];
+		Buffer_c*                CurrentTranscodeBuffer;
+		bool                     TranscodeEnable;
 
-        allocator_device_t       TranscodedFrameMemoryDevice;
-        BufferPool_t             TranscodedFramePool;
-        void                    *TranscodedFrameMemory[3];
+		allocator_device_t       TranscodedFrameMemoryDevice;
+		BufferPool_t             TranscodedFramePool;
+		void                    *TranscodedFrameMemory[3];
 
-        BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
-        BufferType_t             TranscodedFrameBufferType;
-        bool isFwEac3Capable; // moved to an instance variable since it will be useful for transcoding...
+		BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
+		BufferType_t             TranscodedFrameBufferType;
+		bool isFwEac3Capable; // moved to an instance variable since it will be useful for transcoding...
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeAudioEAc3_c(void);
-        ~Codec_MmeAudioEAc3_c(void);
+		Codec_MmeAudioEAc3_c(void);
+		~Codec_MmeAudioEAc3_c(void);
 
-        //
-        // Stream specific functions
-        //
-        static void     FillStreamMetadata(ParsedAudioParameters_t * AudioParameters, MME_LxAudioDecoderFrameStatus_t * Status);
+		//
+		// Stream specific functions
+		//
+		static void     FillStreamMetadata(ParsedAudioParameters_t * AudioParameters, MME_LxAudioDecoderFrameStatus_t * Status);
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-                                             MME_PcmProcessingStatusTemplate_t *PcmStatus);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void   *Parameters);
-        void            SetCommandIO(void);
-        void            PresetIOBuffers(void);
-        CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
-        CodecStatus_t   GetTranscodeBuffer(void);
-        void            AttachCodedFrameBuffer(void);
-        CodecStatus_t   Reset(void);
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
+											 MME_PcmProcessingStatusTemplate_t *PcmStatus);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void   *Parameters);
+		void            SetCommandIO(void);
+		void            PresetIOBuffers(void);
+		CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
+		CodecStatus_t   GetTranscodeBuffer(void);
+		void            AttachCodedFrameBuffer(void);
+		CodecStatus_t   Reset(void);
 
 };
 #endif //H_CODEC_MME_AUDIO_EAC3

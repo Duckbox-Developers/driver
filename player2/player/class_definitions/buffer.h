@@ -25,13 +25,11 @@ Author :           Nick
 Common header file bringing together the buffer headers, note the sub-includes
 are order dependent, at least that is the plan.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 04-Jul-06   Created                                         Nick
 
 ************************************************************************/
-
 
 #ifndef H_BUFFER
 #define H_BUFFER
@@ -55,41 +53,41 @@ Date        Modification                                    Name
 
 enum
 {
-    BufferNoError               = PlayerNoError,
-    BufferError                 = PlayerError,
+	BufferNoError               = PlayerNoError,
+	BufferError                 = PlayerError,
 
-    // GetBuffer
-    BufferBlockingCallAborted           = BASE_BUFFER,
+	// GetBuffer
+	BufferBlockingCallAborted           = BASE_BUFFER,
 
-    BufferInsufficientMemoryGeneral,
-    BufferInsufficientMemoryForPool,
-    BufferInsufficientMemoryForBuffer,
-    BufferInsufficientMemoryForMetaData,
+	BufferInsufficientMemoryGeneral,
+	BufferInsufficientMemoryForPool,
+	BufferInsufficientMemoryForBuffer,
+	BufferInsufficientMemoryForMetaData,
 
-    BufferUnsupportedAllocationSource,      // CreateBufferDataType
-    BufferInvalidDescriptor,            // CreateBufferDataType
+	BufferUnsupportedAllocationSource,      // CreateBufferDataType
+	BufferInvalidDescriptor,            // CreateBufferDataType
 
-    BufferNoDataAttached,           // ObtainDataReference
+	BufferNoDataAttached,           // ObtainDataReference
 
-    BufferTooManyDataTypes,         // CreateBufferDataType
-    BufferDataTypeNotFound,         // FindBufferDataType - CreatePool
-    BufferMetaDataTypeNotFound,         // AttachMetaData - DetachMetaData - ObtainMetaDataReference
+	BufferTooManyDataTypes,         // CreateBufferDataType
+	BufferDataTypeNotFound,         // FindBufferDataType - CreatePool
+	BufferMetaDataTypeNotFound,         // AttachMetaData - DetachMetaData - ObtainMetaDataReference
 
-    BufferParametersIncompatibleWithAllocationSource,
-    BufferOperationNotSupportedByThisDescriptor,
+	BufferParametersIncompatibleWithAllocationSource,
+	BufferOperationNotSupportedByThisDescriptor,
 
-    BufferSizeIncompatibleWithDescriptor,   // CreatePool - AttachMetaData - GetBuffer - ShrinkBuffer - ExpandBuffer
-    BufferPoolNotFound,             // DestroyPool
+	BufferSizeIncompatibleWithDescriptor,   // CreatePool - AttachMetaData - GetBuffer - ShrinkBuffer - ExpandBuffer
+	BufferPoolNotFound,             // DestroyPool
 
-    BufferFailedToCreateBuffer,         // GetBuffer - PartitionBuffer
-    BufferNoFreeBufferAvailable,        // GetBuffer - PartitionBuffer
+	BufferFailedToCreateBuffer,         // GetBuffer - PartitionBuffer
+	BufferNoFreeBufferAvailable,        // GetBuffer - PartitionBuffer
 
-    BufferNonZeroReferenceCount,        // ReleaseBuffer
+	BufferNonZeroReferenceCount,        // ReleaseBuffer
 
-    BufferNotInUse,             // AttachMetaData - DetachMetaData - ShrinkBuffer - ExpandBuffer - PartitionBuffer - ObtainDataReference - IncrementReferenceCount - DecrementReferenceCount
+	BufferNotInUse,             // AttachMetaData - DetachMetaData - ShrinkBuffer - ExpandBuffer - PartitionBuffer - ObtainDataReference - IncrementReferenceCount - DecrementReferenceCount
 
-    BufferTooManyAttachments,           // AttachBuffer
-    BufferAttachmentNotFound            // DetachBuffer
+	BufferTooManyAttachments,           // AttachBuffer
+	BufferAttachmentNotFound            // DetachBuffer
 };
 
 typedef PlayerStatus_t  BufferStatus_t;
@@ -98,20 +96,20 @@ typedef PlayerStatus_t  BufferStatus_t;
 
 typedef enum
 {
-    CachedAddress   = 0,
-    UnCachedAddress = 1,
-    PhysicalAddress = 2
+	CachedAddress   = 0,
+	UnCachedAddress = 1,
+	PhysicalAddress = 2
 } AddressType_t;
 
 //
 
 typedef enum
 {
-    DumpBufferTypes = 1,
-    DumpMetaDataTypes   = 2,
-    DumpListPools   = 4,
-    DumpPoolStates  = 8,
-    DumpBufferStates    = 16
+	DumpBufferTypes = 1,
+	DumpMetaDataTypes   = 2,
+	DumpListPools   = 4,
+	DumpPoolStates  = 8,
+	DumpBufferStates    = 16
 } DumpTypeMask_t;
 
 #define DumpAll     0xffffffff

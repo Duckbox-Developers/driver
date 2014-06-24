@@ -26,13 +26,11 @@ Common header file bringing together the buffer headers for the generic
 implementation, note the sub-includes are order dependent, at least that
 is the plan.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 14-Jul-06   Created                                         Nick
 
 ************************************************************************/
-
 
 #ifndef H_BUFFER_GENERIC
 #define H_BUFFER_GENERIC

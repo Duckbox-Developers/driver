@@ -12,7 +12,6 @@ Copyright (C) 1999 STMicroelectronics
 #ifndef __VC9_STDDEFS_H
 #define __VC9_STDDEFS_H
 
-
 /* Includes ---------------------------------------------------------------- */
 
 #ifdef __cplusplus
@@ -78,5 +77,4 @@ typedef int BOOL;
 #endif  /* #ifndef __STDDEFS_H */
 
 /* End of stddefs.h  ------------------------------------------------------- */
-
 

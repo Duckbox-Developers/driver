@@ -38,28 +38,28 @@ extern exitcall_t  __exitcall_stm_start[], __exitcall_stm_end[];
 
 static __init int stm_load_player2_unified(void)
 {
-    initcall_t *call;
+	initcall_t *call;
 
-    for (call = __initcall_stm_start6; call < __initcall_stm_end6; call++)
-    {
-        int ret;
-        ret = (*call)();
+	for (call = __initcall_stm_start6; call < __initcall_stm_end6; call++)
+	{
+		int ret;
+		ret = (*call)();
 
-        if (ret)
-            printk("The modules at %p failed to load\n", call);
-    }
+		if (ret)
+			printk("The modules at %p failed to load\n", call);
+	}
 
-    return 0;
+	return 0;
 }
 
 static __init void stm_unload_player2_unified(void)
 {
-    exitcall_t *call;
+	exitcall_t *call;
 
-    for (call = __exitcall_stm_end; call >= __exitcall_stm_start; call--)
-    {
-        (*call)();
-    }
+	for (call = __exitcall_stm_end; call >= __exitcall_stm_start; call--)
+	{
+		(*call)();
+	}
 }
 
 module_init(stm_load_player2_unified);

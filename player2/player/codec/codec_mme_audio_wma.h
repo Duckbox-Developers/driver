@@ -24,7 +24,6 @@ Author :           Adam
 
 Definition of the stream specific codec implementation for wma audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Sep-07   Created (from codec_mme_audio_mpeg.h)           Adam
@@ -62,25 +61,24 @@ Date        Modification                                    Name
 class Codec_MmeAudioWma_c : public Codec_MmeAudioStream_c
 {
 
-    private:
+	private:
 
+	protected:
 
-    protected:
+		// Data
 
-        // Data
+		// Functions
 
-        // Functions
+	public:
 
-    public:
+		// Constructor/Destructor methods
+		Codec_MmeAudioWma_c(void);
+		~Codec_MmeAudioWma_c(void);
 
-        // Constructor/Destructor methods
-        Codec_MmeAudioWma_c(void);
-        ~Codec_MmeAudioWma_c(void);
+	protected:
 
-    protected:
-
-        // Stream specific functions
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		// Stream specific functions
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
 
 };
 #endif

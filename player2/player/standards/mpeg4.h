@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the types and constants that are used by several components
 dealing with mpeg4 video decode/display for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Nov-02   Created                                         Nick
@@ -67,7 +66,6 @@ Date        Modification                                    Name
 // An end of list code that we append
 #define END_OF_START_CODE_LIST          GREATEST_SYSTEM_START_CODE
 
-
 /* Definition of prediction_type values */
 
 #define PREDICTION_TYPE_I               0
@@ -99,35 +97,34 @@ Date        Modification                                    Name
 /* Definition of macro function to calculate bit field size for time increments */
 
 #define INCREMENT_BITS(N)               ((N >  0x100) ?                                 \
-        ((N > 0x1000) ?                             \
-         ((N > 0x4000) ?                         \
-          (( N > 0x8000) ? 16 : 15)          \
-              :                         \
-              (( N > 0x2000) ? 14 : 13)          \
-             )                                       \
-             :                             \
-             ((N >  0x400) ?                         \
-              (( N >  0x800) ? 12 : 11)          \
-              :                         \
-              (( N >  0x200) ? 10 :  9)          \
-             )                                       \
-            )                                           \
-            :                                 \
-            ((N >   0x10) ?                             \
-             ((N >   0x40) ?                         \
-              (( N >   0x80) ?  8 :  7)          \
-              :                         \
-              (( N >   0x20) ?  6 :  5)          \
-             )                                       \
-             :                             \
-             ((N >    0x4) ?                         \
-              (( N >    0x8) ?  4 :  3)          \
-              :                         \
-              (( N >    0x2) ?  2 :  1)          \
-             )                                       \
-            )                                           \
-                                            )
-
+										 ((N > 0x1000) ?                             \
+										  ((N > 0x4000) ?                         \
+										   (( N > 0x8000) ? 16 : 15)          \
+										   :                         \
+										   (( N > 0x2000) ? 14 : 13)          \
+										  )                                       \
+										  :                             \
+										  ((N >  0x400) ?                         \
+										   (( N >  0x800) ? 12 : 11)          \
+										   :                         \
+										   (( N >  0x200) ? 10 :  9)          \
+										  )                                       \
+										 )                                           \
+										 :                                 \
+										 ((N >   0x10) ?                             \
+										  ((N >   0x40) ?                         \
+										   (( N >   0x80) ?  8 :  7)          \
+										   :                         \
+										   (( N >   0x20) ?  6 :  5)          \
+										  )                                       \
+										  :                             \
+										  ((N >    0x4) ?                         \
+										   (( N >    0x8) ?  4 :  3)          \
+										   :                         \
+										   (( N >    0x2) ?  2 :  1)          \
+										  )                                       \
+										 )                                           \
+										)
 
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -136,62 +133,62 @@ Date        Modification                                    Name
 
 typedef struct Mpeg4VolHeader_s
 {
-    // Bits         Needed for decode
-    unsigned int        random_accessible_vol;                  //  1                   No
-    unsigned int        type_indication;                        //  8                   No
-    unsigned int        is_object_layer_identifier;             //  1                   No
-    unsigned int        visual_object_layer_verid;              //  4                   Yes
-    unsigned int        visual_object_layer_priority;           //  3                   Yes
-    unsigned int        aspect_ratio_info;                      //  4                   No
-    unsigned int        par_width;                              //  8                   No
-    unsigned int        par_height;                             //  8                   No
+	// Bits         Needed for decode
+	unsigned int        random_accessible_vol;                  //  1                   No
+	unsigned int        type_indication;                        //  8                   No
+	unsigned int        is_object_layer_identifier;             //  1                   No
+	unsigned int        visual_object_layer_verid;              //  4                   Yes
+	unsigned int        visual_object_layer_priority;           //  3                   Yes
+	unsigned int        aspect_ratio_info;                      //  4                   No
+	unsigned int        par_width;                              //  8                   No
+	unsigned int        par_height;                             //  8                   No
 
-    unsigned int        version;
+	unsigned int        version;
 
-    unsigned int        vol_control_parameters;                 //  1                   No
-    unsigned int        chroma_format;                          //  2                   No
-    unsigned int        low_delay;                              //  1                   No
-    unsigned int        vbv_parameters;                         //  1                   No
-    unsigned int        first_half_bit_rate;                    //  15                  No
-    unsigned int        latter_half_bit_rate;                   //  15                  No
-    unsigned int        first_half_vbv_buffer_size;             //  15                  No
-    unsigned int        latter_half_vbv_buffer_size;            //  3                   No
-    unsigned int        first_half_vbv_occupancy;               //  11                  No
-    unsigned int        latter_half_vbv_occupancy;              //  15                  No
-    unsigned int        shape;                                  //  2                   Yes
-    unsigned int        sprite_warping_accuracy;
-    unsigned int        no_of_sprite_warping_points;            //  6
-    unsigned int        sprite_brightness_change;               //  2
+	unsigned int        vol_control_parameters;                 //  1                   No
+	unsigned int        chroma_format;                          //  2                   No
+	unsigned int        low_delay;                              //  1                   No
+	unsigned int        vbv_parameters;                         //  1                   No
+	unsigned int        first_half_bit_rate;                    //  15                  No
+	unsigned int        latter_half_bit_rate;                   //  15                  No
+	unsigned int        first_half_vbv_buffer_size;             //  15                  No
+	unsigned int        latter_half_vbv_buffer_size;            //  3                   No
+	unsigned int        first_half_vbv_occupancy;               //  11                  No
+	unsigned int        latter_half_vbv_occupancy;              //  15                  No
+	unsigned int        shape;                                  //  2                   Yes
+	unsigned int        sprite_warping_accuracy;
+	unsigned int        no_of_sprite_warping_points;            //  6
+	unsigned int        sprite_brightness_change;               //  2
 
-    unsigned int        time_increment_resolution;              //  16                  No
-    unsigned int        fixed_vop_rate;                         //  1                   No
-    unsigned int        fixed_vop_time_increment;               // Variable             No
-    // Only of fixed_vop_rate, N bits where
-    // N is the number of bits needed to represent
-    // a number modulo time_increment_resolution
-    unsigned int        width;                                  //  13                  Yes
-    unsigned int        height;                                 //  13                  Yes
-    unsigned int        interlaced;                             //  1                   Yes
-    unsigned int        obmc_disable;                           //  1                   No
-    unsigned int        sprite_usage;                           //  1 or 2              Yes
-    unsigned int        not_8_bit;                              //  1                   No
-    unsigned int        quant_precision;                        //  4                   Yes
-    unsigned int        bits_per_pixel;                         //  4                   No
-    unsigned int        quant_type;                             //  1                   Yes
-    unsigned int        load_intra_quant_matrix;                //  1                   No
-    QuantiserMatrix_t   intra_quant_matrix;                     //  64*8                Yes
-    unsigned int        load_non_intra_quant_matrix;            //  1                   No
-    QuantiserMatrix_t   non_intra_quant_matrix;                 //  64*8                Yes
-    unsigned int        quarter_pixel;                          //  1                   No
-    unsigned int        complexity_estimation_disable;          //  1                   No
-    unsigned int        resync_marker_disable;                  //  1                   Yes
-    unsigned int        data_partitioning;                      //  1                   No
-    unsigned int        reversible_vlc;                         //  1                   Yes
-    unsigned int        intra_acdc_pred_disable;                //  1                   No
-    unsigned int        request_upstream_message_type;          //  1                   No
-    unsigned int        newpred_segment_type;                   //  1                   No
-    unsigned int        reduced_resolution_vop_enable;          //  1                   No
-    unsigned int        scalability;                            //  1                   Yes
+	unsigned int        time_increment_resolution;              //  16                  No
+	unsigned int        fixed_vop_rate;                         //  1                   No
+	unsigned int        fixed_vop_time_increment;               // Variable             No
+	// Only of fixed_vop_rate, N bits where
+	// N is the number of bits needed to represent
+	// a number modulo time_increment_resolution
+	unsigned int        width;                                  //  13                  Yes
+	unsigned int        height;                                 //  13                  Yes
+	unsigned int        interlaced;                             //  1                   Yes
+	unsigned int        obmc_disable;                           //  1                   No
+	unsigned int        sprite_usage;                           //  1 or 2              Yes
+	unsigned int        not_8_bit;                              //  1                   No
+	unsigned int        quant_precision;                        //  4                   Yes
+	unsigned int        bits_per_pixel;                         //  4                   No
+	unsigned int        quant_type;                             //  1                   Yes
+	unsigned int        load_intra_quant_matrix;                //  1                   No
+	QuantiserMatrix_t   intra_quant_matrix;                     //  64*8                Yes
+	unsigned int        load_non_intra_quant_matrix;            //  1                   No
+	QuantiserMatrix_t   non_intra_quant_matrix;                 //  64*8                Yes
+	unsigned int        quarter_pixel;                          //  1                   No
+	unsigned int        complexity_estimation_disable;          //  1                   No
+	unsigned int        resync_marker_disable;                  //  1                   Yes
+	unsigned int        data_partitioning;                      //  1                   No
+	unsigned int        reversible_vlc;                         //  1                   Yes
+	unsigned int        intra_acdc_pred_disable;                //  1                   No
+	unsigned int        request_upstream_message_type;          //  1                   No
+	unsigned int        newpred_segment_type;                   //  1                   No
+	unsigned int        reduced_resolution_vop_enable;          //  1                   No
+	unsigned int        scalability;                            //  1                   Yes
 
 } Mpeg4VolHeader_t;
 
@@ -207,42 +204,38 @@ typedef struct Mpeg4VolHeader_s
     unsigned int vop_coded;
     unsigned int use_intra_dc_vlc;
 
-
 */
-
-
 
 // --------------------------------------------------
 
 typedef struct Mpeg4VopHeader_s
 {
-    // Bits         Needed for decode
-    unsigned int        prediction_type;                        //  2                   Yes
-    unsigned int        time_base;                              //  Variable            No
-    unsigned int        time_inc;                               //  Variable            No
-    unsigned int        vop_coded;                              //  1                   Yes
-    unsigned int        rounding_type;                          //  0..1                Yes
-    unsigned int        intra_dc_vlc_thr;                       //  3                   Yes
-    unsigned int        top_field_first;                        //  1                   Yes
-    unsigned int        alternate_vertical_scan_flag;           //  0                   No
-    unsigned int        quantizer;                              // Variable             Yes
-    unsigned int        fcode_forward;                          //  3                   Yes
-    unsigned int        fcode_backward;                         //  3                   Yes
-    unsigned int        divx_nvop;                              //  0                   No (calculated in frame parser)
+	// Bits         Needed for decode
+	unsigned int        prediction_type;                        //  2                   Yes
+	unsigned int        time_base;                              //  Variable            No
+	unsigned int        time_inc;                               //  Variable            No
+	unsigned int        vop_coded;                              //  1                   Yes
+	unsigned int        rounding_type;                          //  0..1                Yes
+	unsigned int        intra_dc_vlc_thr;                       //  3                   Yes
+	unsigned int        top_field_first;                        //  1                   Yes
+	unsigned int        alternate_vertical_scan_flag;           //  0                   No
+	unsigned int        quantizer;                              // Variable             Yes
+	unsigned int        fcode_forward;                          //  3                   Yes
+	unsigned int        fcode_backward;                         //  3                   Yes
+	unsigned int        divx_nvop;                              //  0                   No (calculated in frame parser)
 
+	int trbi;
+	int trdi;
+	int trb_trd;
+	int trb_trd_trd;
+	int trd; // temporal diff. between current B-VOP and previous reference VOP
+	int trb; // temporal diff. between next and previous reference VOP
+	unsigned int bit_skip_no;
 
-    int trbi;
-    int trdi;
-    int trb_trd;
-    int trb_trd_trd;
-    int trd; // temporal diff. between current B-VOP and previous reference VOP
-    int trb; // temporal diff. between next and previous reference VOP
-    unsigned int bit_skip_no;
-
-    unsigned int display_time_prev;
-    unsigned int display_time_next;
-    unsigned int time_increment_resolution;
-    int tframe;
+	unsigned int display_time_prev;
+	unsigned int display_time_next;
+	unsigned int time_increment_resolution;
+	int tframe;
 
 } Mpeg4VopHeader_t;
 
@@ -255,8 +248,8 @@ typedef struct Mpeg4VopHeader_s
 
 typedef struct Mpeg4VideoStreamParameters_s
 {
-    unsigned int                          MicroSecondsPerFrame;                 // propegated from the AVI
-    Mpeg4VolHeader_t                      VolHeader;
+	unsigned int                          MicroSecondsPerFrame;                 // propegated from the AVI
+	Mpeg4VolHeader_t                      VolHeader;
 } Mpeg4VideoStreamParameters_t;
 
 #define BUFFER_MPEG4_STREAM_PARAMETERS        "Mpeg4StreamParameters"
@@ -272,14 +265,12 @@ typedef struct Mpeg4VideoFrameParameters_s
 //    unsigned int                          ForwardReferenceIndex;                // generic codec to translate them to buffer indices
 //    unsigned int                          top_field_first;                      // used in the manifester
 //    unsigned int                          prediction_type;
-    unsigned int                          bit_skip_no;
-    Mpeg4VopHeader_t                      VopHeader;
+	unsigned int                          bit_skip_no;
+	Mpeg4VopHeader_t                      VopHeader;
 } Mpeg4VideoFrameParameters_t;
 
 #define BUFFER_MPEG4_FRAME_PARAMETERS        "Mpeg4FrameParameters"
 #define BUFFER_MPEG4_FRAME_PARAMETERS_TYPE   {BUFFER_MPEG4_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(Mpeg4VideoFrameParameters_t)}
-
-
 
 // offsets for transfer of parameters
 

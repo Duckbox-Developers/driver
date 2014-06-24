@@ -25,7 +25,6 @@ Author :           Gael
 Definition of the types and constants that are used by several components
 dealing with spdifin audio decode/display for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 18-July-07  built from eac3_audio.h                          Gael
@@ -60,10 +59,9 @@ Date        Modification                                    Name
 ///
 typedef enum
 {
-    TypeSpdifIn,  ///< frame is coming from SPDIF-IN
-    TypeHdmiIn,   ///< frame is coming from HDMI-IN
+	TypeSpdifIn,  ///< frame is coming from SPDIF-IN
+	TypeHdmiIn,   ///< frame is coming from HDMI-IN
 } SpdifinStreamType_t;
-
 
 ///////////////////////////////////////////////////////////////////////////////
 ///
@@ -71,28 +69,27 @@ typedef enum
 ///
 typedef struct SpdifinAudioParsedFrameHeader_s
 {
-    // Directly interpretted values
-    SpdifinStreamType_t Type;
-    unsigned char   SubStreamId;
-    unsigned int    SamplingFrequency; ///< Sampling frequency in Hz.
+	// Directly interpretted values
+	SpdifinStreamType_t Type;
+	unsigned char   SubStreamId;
+	unsigned int    SamplingFrequency; ///< Sampling frequency in Hz.
 
-    // Derived values
-    unsigned int    NumberOfSamples; ///< Number of samples per channel within the frame.
-    unsigned int    Length; ///< Length of frame in bytes (including header).
+	// Derived values
+	unsigned int    NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int    Length; ///< Length of frame in bytes (including header).
 } SpdifinAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
 
 typedef struct SpdifinAudioStreamParameters_s
 {
-    /// SPDIFIN to be decoded.
-    ///
-    /// The ACC firmware requires different configuration parameters information extracted from the
-    /// PES headers to properly process the spdifin input buffers.
-    unsigned int SamplingFreq;
-    unsigned int NbSamples;
+	/// SPDIFIN to be decoded.
+	///
+	/// The ACC firmware requires different configuration parameters information extracted from the
+	/// PES headers to properly process the spdifin input buffers.
+	unsigned int SamplingFreq;
+	unsigned int NbSamples;
 } SpdifinAudioStreamParameters_t;
-
 
 #define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS        "SpdifinAudioStreamParameters"
 #define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS_TYPE   {BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(SpdifinAudioStreamParameters_t)}

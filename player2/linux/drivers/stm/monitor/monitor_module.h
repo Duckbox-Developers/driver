@@ -50,18 +50,16 @@ Date        Modification                                    Name
 /* Output errors, should never be output in 'normal' operation */
 #define MONITOR_ERROR(fmt, args...)     (printk("ERROR:%s: " fmt, __FUNCTION__, ##args))
 
-
 #define MONITOR_MAX_DEVICES             1
 
 struct ModuleContext_s
 {
-    struct mutex                Lock;
-    struct class*               DeviceClass;
-    struct DeviceContext_s      DeviceContext[MONITOR_MAX_DEVICES];
+	struct mutex                Lock;
+	struct class*               DeviceClass;
+	struct DeviceContext_s      DeviceContext[MONITOR_MAX_DEVICES];
 
 };
 
 struct DeviceContext_s* GetDeviceContext(unsigned int    DeviceId);
-
 
 #endif

@@ -7,7 +7,6 @@ Author :           Nick
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 23-Sep-04   Created                                         Nick
@@ -21,15 +20,15 @@ Date        Modification                                    Name
 
 RingGeneric_c::RingGeneric_c(unsigned int MaxEntries)
 {
-    OS_InitializeMutex(&Lock);
-    OS_InitializeEvent(&Signal);
+	OS_InitializeMutex(&Lock);
+	OS_InitializeEvent(&Signal);
 
-    Limit       = MaxEntries + 1;
-    NextExtract = 0;
-    NextInsert  = 0;
-    Storage     = new uintptr_t[Limit];
+	Limit       = MaxEntries + 1;
+	NextExtract = 0;
+	NextInsert  = 0;
+	Storage     = new uintptr_t[Limit];
 
-    InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
+	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -37,14 +36,14 @@ RingGeneric_c::RingGeneric_c(unsigned int MaxEntries)
 
 RingGeneric_c::~RingGeneric_c(void)
 {
-    OS_SetEvent(&Signal);
-    OS_SleepMilliSeconds(1);
+	OS_SetEvent(&Signal);
+	OS_SleepMilliSeconds(1);
 
-    OS_TerminateMutex(&Lock);
-    OS_TerminateEvent(&Signal);
+	OS_TerminateMutex(&Lock);
+	OS_TerminateEvent(&Signal);
 
-    if (Storage != NULL)
-        delete [] Storage;
+	if (Storage != NULL)
+		delete [] Storage;
 }
 
 // ------------------------------------------------------------------------
@@ -52,63 +51,63 @@ RingGeneric_c::~RingGeneric_c(void)
 
 RingStatus_t   RingGeneric_c::Insert(uintptr_t      Value)
 {
-    unsigned int OldNextInsert;
+	unsigned int OldNextInsert;
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    OldNextInsert       = NextInsert;
-    Storage[NextInsert] = Value;
+	OldNextInsert       = NextInsert;
+	Storage[NextInsert] = Value;
 
-    NextInsert++;
+	NextInsert++;
 
-    if (NextInsert == Limit)
-        NextInsert = 0;
+	if (NextInsert == Limit)
+		NextInsert = 0;
 
-    if (NextInsert == NextExtract)
-    {
-        NextInsert      = OldNextInsert;
-        OS_UnLockMutex(&Lock);
-        return RingTooManyEntries;
-    }
+	if (NextInsert == NextExtract)
+	{
+		NextInsert      = OldNextInsert;
+		OS_UnLockMutex(&Lock);
+		return RingTooManyEntries;
+	}
 
-    OS_UnLockMutex(&Lock);
-    OS_SetEvent(&Signal);
+	OS_UnLockMutex(&Lock);
+	OS_SetEvent(&Signal);
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
 // Extract function
 
 RingStatus_t   RingGeneric_c::Extract(uintptr_t       *Value,
-                                      unsigned int     BlockingPeriod)
+									  unsigned int     BlockingPeriod)
 {
-    //
-    // If there is nothing in the ring we wait for up to the specified period.
-    //
+	//
+	// If there is nothing in the ring we wait for up to the specified period.
+	//
 
-    OS_ResetEvent(&Signal);
+	OS_ResetEvent(&Signal);
 
-    if ((NextExtract == NextInsert) && (BlockingPeriod != RING_NONE_BLOCKING))
-        OS_WaitForEvent(&Signal, BlockingPeriod);
+	if ((NextExtract == NextInsert) && (BlockingPeriod != RING_NONE_BLOCKING))
+		OS_WaitForEvent(&Signal, BlockingPeriod);
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    if (NextExtract != NextInsert)
-    {
-        *Value = Storage[NextExtract];
+	if (NextExtract != NextInsert)
+	{
+		*Value = Storage[NextExtract];
 
-        NextExtract++;
+		NextExtract++;
 
-        if (NextExtract == Limit)
-            NextExtract = 0;
+		if (NextExtract == Limit)
+			NextExtract = 0;
 
-        OS_UnLockMutex(&Lock);
-        return RingNoError;
-    }
+		OS_UnLockMutex(&Lock);
+		return RingNoError;
+	}
 
-    OS_UnLockMutex(&Lock);
-    return RingNothingToGet;
+	OS_UnLockMutex(&Lock);
+	return RingNothingToGet;
 }
 
 // ------------------------------------------------------------------------
@@ -116,12 +115,12 @@ RingStatus_t   RingGeneric_c::Extract(uintptr_t       *Value,
 
 RingStatus_t   RingGeneric_c::Flush(void)
 {
-    OS_LockMutex(&Lock);
-    NextExtract = 0;
-    NextInsert  = 0;
-    OS_UnLockMutex(&Lock);
+	OS_LockMutex(&Lock);
+	NextExtract = 0;
+	NextInsert  = 0;
+	OS_UnLockMutex(&Lock);
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -129,13 +128,13 @@ RingStatus_t   RingGeneric_c::Flush(void)
 
 bool   RingGeneric_c::NonEmpty(void)
 {
-    bool result;
-    OS_LockMutex(&Lock);
+	bool result;
+	OS_LockMutex(&Lock);
 
-    result = (NextExtract != NextInsert);
+	result = (NextExtract != NextInsert);
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
-    return result;
+	return result;
 }
 

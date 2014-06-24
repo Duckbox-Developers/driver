@@ -25,7 +25,6 @@ Author :           Adam
 Definition of the constants/macros that define useful things associated with
 LPCM audio streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 10-Jul-07   Created                                         Adam
@@ -48,23 +47,21 @@ Date        Modification                                    Name
 
 enum
 {
-    LPCM_QUANTIZATION_16_BIT,
-    LPCM_QUANTIZATION_20_BIT,
-    LPCM_QUANTIZATION_24_BIT
+	LPCM_QUANTIZATION_16_BIT,
+	LPCM_QUANTIZATION_20_BIT,
+	LPCM_QUANTIZATION_24_BIT
 };
 
 enum
 {
-    LPCM_SAMPLING_FREQ_48KHZ,
-    LPCM_SAMPLING_FREQ_96KHZ
+	LPCM_SAMPLING_FREQ_48KHZ,
+	LPCM_SAMPLING_FREQ_96KHZ
 };
 
 #define LPCM_BITS_PER_SAMPLE(x)         (16 + ((x)*4))
 #define LPCM_SAMPLES_PER_FRAME(x)       (80 * ((x)+1))
 #define LPCM_SAMPLING_FREQ(x)           (48 * ((x)+1))
 #define LPCM_NUM_CHANNELS(x)            ((x)+1)
-
-
 
 // ////////////////////////////////////////////////////////////////////////////
 //
@@ -77,10 +74,10 @@ enum
 ///
 typedef struct LpcmAudioParsedFrameHeader_s
 {
-    // Raw value
+	// Raw value
 //    unsigned int Header; ///< Original header (big endian)
 
-    // Directly interpretted values
+	// Directly interpretted values
 //    unsigned char Layer; ///< MPEG audio layer. Either 1, 2 or 3.
 //    unsigned char MpegStandard; ///< MPEG standard (sample rate grouping). Either 1, 2 or 25 (unofficial MPEG 2.5 standard)
 //    unsigned short BitRate; ///< MPEG bit rate in kbits/sec.
@@ -89,37 +86,36 @@ typedef struct LpcmAudioParsedFrameHeader_s
 
 //    unsigned long long                    Pts;
 //    unsigned int                          PtsValid;
-    // see [1], Table 5.3.3-1
-    unsigned int NumberOfFrameHeaders;
-    unsigned int FirstAccessUnitPointer;
-    bool         AudioEmphasisFlag;
-    bool         AudioMuteFlag;
-    bool         ReservedFlag0;
-    unsigned int AudioFrameNumber;
-    unsigned int QuantizationWordLength;
-    unsigned int AudioSamplingFrequency;
-    unsigned int NumberOfAudioChannels;
-    unsigned int DynamicRangeControl;
+	// see [1], Table 5.3.3-1
+	unsigned int NumberOfFrameHeaders;
+	unsigned int FirstAccessUnitPointer;
+	bool         AudioEmphasisFlag;
+	bool         AudioMuteFlag;
+	bool         ReservedFlag0;
+	unsigned int AudioFrameNumber;
+	unsigned int QuantizationWordLength;
+	unsigned int AudioSamplingFrequency;
+	unsigned int NumberOfAudioChannels;
+	unsigned int DynamicRangeControl;
 
-    // Derived values
-    unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
-    unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
-    unsigned int Length; ///< Length of frame in bytes (including header).
+	// Derived values
+	unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
+	unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int Length; ///< Length of frame in bytes (including header).
 } LpcmAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
 
-
 typedef struct LpcmAudioStreamParameters_s
 {
 //    unsigned int Unused;
-    unsigned int NumberOfFrameHeaders;
-    bool         AudioEmphasisFlag;
-    bool         AudioMuteFlag;
-    unsigned int QuantizationWordLength;
-    unsigned int AudioSamplingFrequency;
-    unsigned int NumberOfAudioChannels;
-    unsigned int DynamicRangeControl;
+	unsigned int NumberOfFrameHeaders;
+	bool         AudioEmphasisFlag;
+	bool         AudioMuteFlag;
+	unsigned int QuantizationWordLength;
+	unsigned int AudioSamplingFrequency;
+	unsigned int NumberOfAudioChannels;
+	unsigned int DynamicRangeControl;
 } LpcmAudioStreamParameters_t;
 
 #define BUFFER_LPCM_AUDIO_STREAM_PARAMETERS        "LpcmAudioStreamParameters"
@@ -135,11 +131,11 @@ typedef struct LpcmAudioStreamParameters_s
 ///
 typedef struct LpcmAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int BitRate;
+	/// The bit rate of the frame
+	unsigned int BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int FrameSize;
 } LpcmAudioFrameParameters_t;
 
 #define BUFFER_LPCM_AUDIO_FRAME_PARAMETERS        "LpcmAudioFrameParameters"

@@ -112,12 +112,12 @@ license from ST.
  */
 typedef struct
 {
-    ULONG           FrameRate;
-    stm_scan_type_t ScanType;
-    ULONG           ActiveAreaWidth;
-    ULONG           ActiveAreaHeight;
-    ULONG           ActiveAreaXStart;
-    ULONG           FullVBIHeight;
+	ULONG           FrameRate;
+	stm_scan_type_t ScanType;
+	ULONG           ActiveAreaWidth;
+	ULONG           ActiveAreaHeight;
+	ULONG           ActiveAreaXStart;
+	ULONG           FullVBIHeight;
 //  ULONG           OutputStandards;
 //  BOOL            SquarePixel;
 //  ULONG           HDMIVideoCodes[HDMI_CODE_COUNT];
@@ -128,8 +128,8 @@ typedef struct
  */
 typedef struct
 {
-    BOOL           HSyncPolarity;
-    BOOL           VSyncPolarity;
+	BOOL           HSyncPolarity;
+	BOOL           VSyncPolarity;
 //  ULONG          PixelsPerLine;
 //  ULONG          LinesByFrame;
 //  ULONG          ulPixelClock;
@@ -142,253 +142,252 @@ typedef struct
  */
 typedef struct
 {
-    dvp_v4l2_video_mode_t       Mode;
-    dvp_v4l2_video_mode_params_t    ModeParams;
-    dvp_v4l2_video_timing_params_t  TimingParams;
+	dvp_v4l2_video_mode_t       Mode;
+	dvp_v4l2_video_mode_params_t    ModeParams;
+	dvp_v4l2_video_timing_params_t  TimingParams;
 } dvp_v4l2_video_mode_line_t;
 
 typedef enum
 {
-    DvpInactive     = 0,
-    DvpStarting,                // Enterred by user level, awaiting first interrupt
-    DvpWarmingUp,               // Enterred by Interrupt, Got first interrupt, collecting data to establish timing baseline
-    DvpStarted,                 // Enterred by Interrupt, baseline established
-    DvpMovingToRun,             // Enterred by user level, awaiting first collection
-    DvpRunning,                 // Enterred by Interrupt, running freely
-    DvpMovingToInactive             // Enterred by user level, shutting down
+	DvpInactive     = 0,
+	DvpStarting,                // Enterred by user level, awaiting first interrupt
+	DvpWarmingUp,               // Enterred by Interrupt, Got first interrupt, collecting data to establish timing baseline
+	DvpStarted,                 // Enterred by Interrupt, baseline established
+	DvpMovingToRun,             // Enterred by user level, awaiting first collection
+	DvpRunning,                 // Enterred by Interrupt, running freely
+	DvpMovingToInactive             // Enterred by user level, shutting down
 } DvpState_t;
 
 //
 
 typedef struct DvpBufferStack_s
 {
-    buffer_handle_t      Buffer;
-    unsigned char       *Data;
-    unsigned long long       ExpectedFillTime;
-    unsigned int         Width;                 // Recorded buffer width/height
-    unsigned int         Height;
-    unsigned int         RegisterCVS;               // Calculated captured window size register
-    unsigned int         RegisterVMP;               // Pitch (in a field)
-    unsigned int         RegisterVBPminusVTP;           // Offset borrom field from top field in memory
-    unsigned int         RegisterHSRC;
-    unsigned int         RegisterVSRC;
-    DvpRectangle_t       InputWindow;
-    DvpRectangle_t       OutputWindow;
+	buffer_handle_t      Buffer;
+	unsigned char       *Data;
+	unsigned long long       ExpectedFillTime;
+	unsigned int         Width;                 // Recorded buffer width/height
+	unsigned int         Height;
+	unsigned int         RegisterCVS;               // Calculated captured window size register
+	unsigned int         RegisterVMP;               // Pitch (in a field)
+	unsigned int         RegisterVBPminusVTP;           // Offset borrom field from top field in memory
+	unsigned int         RegisterHSRC;
+	unsigned int         RegisterVSRC;
+	DvpRectangle_t       InputWindow;
+	DvpRectangle_t       OutputWindow;
 } DvpBufferStack_t;
 
 //
 
 typedef struct AncillaryBufferState_s
 {
-    unsigned char   *PhysicalAddress;
-    unsigned char   *UnCachedAddress;
-    bool         Queued;
-    bool         Done;
-    unsigned int     Bytes;
-    unsigned long long   FillTime;
+	unsigned char   *PhysicalAddress;
+	unsigned char   *UnCachedAddress;
+	bool         Queued;
+	bool         Done;
+	unsigned int     Bytes;
+	unsigned long long   FillTime;
 
-    bool         Mapped;        // External V4L2 flag
+	bool         Mapped;        // External V4L2 flag
 } AncillaryBufferState_t;
 
 //
 
 typedef struct dvp_v4l2_video_handle_s
 {
-    avr_v4l2_shared_handle_t    *SharedContext;
-    struct DeviceContext_s  *DeviceContext;
-    volatile int        *DvpRegs;
-    unsigned int         DvpIrq;
-    unsigned long long       DvpLatency;
-    unsigned long long       AppliedLatency;
+	avr_v4l2_shared_handle_t    *SharedContext;
+	struct DeviceContext_s  *DeviceContext;
+	volatile int        *DvpRegs;
+	unsigned int         DvpIrq;
+	unsigned long long       DvpLatency;
+	unsigned long long       AppliedLatency;
 
-    stm_display_mode_t       inputmode;
-    unsigned int         BytesPerLine;              // Obtained when we get a buffer
-    StreamInfo_t         StreamInfo;                // Derived values supplied to player
+	stm_display_mode_t       inputmode;
+	unsigned int         BytesPerLine;              // Obtained when we get a buffer
+	StreamInfo_t         StreamInfo;                // Derived values supplied to player
 
-    unsigned int         RegisterTFO;               // Calculated top field offset register
-    unsigned int         RegisterTFS;               // Calculated top field stop register
-    unsigned int         RegisterBFO;
-    unsigned int         RegisterBFS;
-    unsigned int         RegisterHLL;               // Half line length
-    unsigned int         RegisterCTL;               // Calculated control register value
+	unsigned int         RegisterTFO;               // Calculated top field offset register
+	unsigned int         RegisterTFS;               // Calculated top field stop register
+	unsigned int         RegisterBFO;
+	unsigned int         RegisterBFS;
+	unsigned int         RegisterHLL;               // Half line length
+	unsigned int         RegisterCTL;               // Calculated control register value
 
-    DvpRectangle_t       InputCrop;             // Cropping data
-    DvpRectangle_t       ScaledInputCrop;
-    DvpRectangle_t       OutputCropStart;
-    DvpRectangle_t       OutputCropTarget;
-    DvpRectangle_t       OutputCrop;
-    bool             OutputCropStepping;            // Smooth change of output scaling parameters
-    bool             OutputCropTargetReached;
-    unsigned int         OutputCropSteps;
-    unsigned int         OutputCropCurrentStep;
+	DvpRectangle_t       InputCrop;             // Cropping data
+	DvpRectangle_t       ScaledInputCrop;
+	DvpRectangle_t       OutputCropStart;
+	DvpRectangle_t       OutputCropTarget;
+	DvpRectangle_t       OutputCrop;
+	bool             OutputCropStepping;            // Smooth change of output scaling parameters
+	bool             OutputCropTargetReached;
+	unsigned int         OutputCropSteps;
+	unsigned int         OutputCropCurrentStep;
 
-    unsigned int         NextWidth;             // These are buffer specific, these will be used with future buffers
-    unsigned int         NextHeight;
-    DvpRectangle_t       NextInputWindow;
-    DvpRectangle_t       NextOutputWindow;
-    unsigned int         NextRegisterCVS;
-    unsigned int         NextRegisterVMP;
-    unsigned int         NextRegisterVBPminusVTP;
-    unsigned int         NextRegisterHSRC;
-    unsigned int         NextRegisterVSRC;
-    unsigned int         LastRegisterHSRC;          // These are buffer specific, remembered so as not to reload the filter constants
-    unsigned int         LastRegisterVSRC;
+	unsigned int         NextWidth;             // These are buffer specific, these will be used with future buffers
+	unsigned int         NextHeight;
+	DvpRectangle_t       NextInputWindow;
+	DvpRectangle_t       NextOutputWindow;
+	unsigned int         NextRegisterCVS;
+	unsigned int         NextRegisterVMP;
+	unsigned int         NextRegisterVBPminusVTP;
+	unsigned int         NextRegisterHSRC;
+	unsigned int         NextRegisterVSRC;
+	unsigned int         LastRegisterHSRC;          // These are buffer specific, remembered so as not to reload the filter constants
+	unsigned int         LastRegisterVSRC;
 
-    unsigned int         DvpWarmUpVideoFrames;          // These vary with input mode to allow similar times
-    unsigned int         DvpLeadInVideoFrames;
+	unsigned int         DvpWarmUpVideoFrames;          // These vary with input mode to allow similar times
+	unsigned int         DvpLeadInVideoFrames;
 
-    struct semaphore         DvpVideoInterruptSem;
-    struct semaphore         DvpSynchronizerWakeSem;
-    struct semaphore         DvpAncillaryBufferDoneSem;
-    struct semaphore         DvpPreInjectBufferSem;
-    struct semaphore         DvpScalingStateLock;
+	struct semaphore         DvpVideoInterruptSem;
+	struct semaphore         DvpSynchronizerWakeSem;
+	struct semaphore         DvpAncillaryBufferDoneSem;
+	struct semaphore         DvpPreInjectBufferSem;
+	struct semaphore         DvpScalingStateLock;
 
-    bool             VideoRunning;              // Indicates video process is running
-    bool             FastModeSwitch;            // Indicates that a fast mode switch is in progress
+	bool             VideoRunning;              // Indicates video process is running
+	bool             FastModeSwitch;            // Indicates that a fast mode switch is in progress
 
-    bool             SynchronizerRunning;           // Indicates synchronizer process is running
-    bool             SynchronizeEnabled;            // Indicates to synchronizer the state of the user control allowing vsync locking
-    bool             Synchronize;               // Indicates to synchronizer to synchronize
+	bool             SynchronizerRunning;           // Indicates synchronizer process is running
+	bool             SynchronizeEnabled;            // Indicates to synchronizer the state of the user control allowing vsync locking
+	bool             Synchronize;               // Indicates to synchronizer to synchronize
 
-    DvpState_t           DvpState;
+	DvpState_t           DvpState;
 
-    const dvp_v4l2_video_mode_line_t    *DvpCaptureMode;
-    unsigned int         ModeWidth;
-    unsigned int         ModeHeight;
+	const dvp_v4l2_video_mode_line_t    *DvpCaptureMode;
+	unsigned int         ModeWidth;
+	unsigned int         ModeHeight;
 
-    unsigned int         DvpBuffersRequiredToInjectAhead;
-    unsigned int         DvpNextBufferToGet;
-    unsigned int         DvpNextBufferToInject;
-    unsigned int         DvpNextBufferToFill;
-    int              DvpFrameCount;
+	unsigned int         DvpBuffersRequiredToInjectAhead;
+	unsigned int         DvpNextBufferToGet;
+	unsigned int         DvpNextBufferToInject;
+	unsigned int         DvpNextBufferToFill;
+	int              DvpFrameCount;
 
-    unsigned int             BufferBytesPerPixel;
+	unsigned int             BufferBytesPerPixel;
 
-    unsigned int         DvpMissedFramesInARow;
+	unsigned int         DvpMissedFramesInARow;
 
-    // SYSfs variables, those signalled from interrupt also need an associated boolean to inform the synchronizer that this one needs notifying
-    struct class_device     *DvpSysfsClassDevice;
-    bool             DvpMicroSecondsPerFrameNotify;
-    atomic_t             DvpMicroSecondsPerFrame;
-    bool             DvpFrameCaptureNotificationNotify;
-    atomic_t             DvpFrameCaptureNotification;
-    bool             DvpFrameCountingNotificationNotify;
-    atomic_t                     DvpFrameCountingNotification;
-    atomic_t                     DvpOutputCropTargetReachedNotification;
-    bool             DvpPostMortemNotify;
-    atomic_t                     DvpPostMortem;
+	// SYSfs variables, those signalled from interrupt also need an associated boolean to inform the synchronizer that this one needs notifying
+	struct class_device     *DvpSysfsClassDevice;
+	bool             DvpMicroSecondsPerFrameNotify;
+	atomic_t             DvpMicroSecondsPerFrame;
+	bool             DvpFrameCaptureNotificationNotify;
+	atomic_t             DvpFrameCaptureNotification;
+	bool             DvpFrameCountingNotificationNotify;
+	atomic_t                     DvpFrameCountingNotification;
+	atomic_t                     DvpOutputCropTargetReachedNotification;
+	bool             DvpPostMortemNotify;
+	atomic_t                     DvpPostMortem;
 
-    DvpBufferStack_t         DvpBufferStack[DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+	DvpBufferStack_t         DvpBufferStack[DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 
-    unsigned int         DvpIntegrateForAtLeastNFrames;
-    unsigned int         DvpInterruptFrameCount;
-    unsigned int         DvpwarmUpSynchronizationAttempts;
-    unsigned long long       DvpTimeAtZeroInterruptFrameCount;
-    unsigned long long       DvpTimeOfLastFrameInterrupt;
-    bool             StandardFrameRate;
+	unsigned int         DvpIntegrateForAtLeastNFrames;
+	unsigned int         DvpInterruptFrameCount;
+	unsigned int         DvpwarmUpSynchronizationAttempts;
+	unsigned long long       DvpTimeAtZeroInterruptFrameCount;
+	unsigned long long       DvpTimeOfLastFrameInterrupt;
+	bool             StandardFrameRate;
 
-    bool             DvpCalculatingFrameTime;           // Boolean set by process, to tell interrupt to avoid manipulating base times
-    long long            DvpLastDriftCorrection;
-    long long            DvpLastFrameDriftError;
-    long long            DvpCurrentDriftError;
-    unsigned int         DvpDriftFrameCount;
+	bool             DvpCalculatingFrameTime;           // Boolean set by process, to tell interrupt to avoid manipulating base times
+	long long            DvpLastDriftCorrection;
+	long long            DvpLastFrameDriftError;
+	long long            DvpCurrentDriftError;
+	unsigned int         DvpDriftFrameCount;
 
-    unsigned long long       DvpBaseTime;
-    unsigned long long       DvpRunFromTime;
-    unsigned long long       DvpFrameDurationCorrection;            // Fixed point 2^DVP_CORRECTION_FIXED_POINT_BITS is one.
-    unsigned long long       DvpTotalElapsedCaptureTime;
-    unsigned int         DvpTotalCapturedFrameCount;
-    unsigned int         DvpNextIntegrationRecord;
-    unsigned int         DvpFirstIntegrationRecord;
-    unsigned long long       DvpElapsedCaptureTimeRecord[DVP_MAX_RECORDED_INTEGRATIONS];
-    unsigned int         DvpCapturedFrameCountRecord[DVP_MAX_RECORDED_INTEGRATIONS];
+	unsigned long long       DvpBaseTime;
+	unsigned long long       DvpRunFromTime;
+	unsigned long long       DvpFrameDurationCorrection;            // Fixed point 2^DVP_CORRECTION_FIXED_POINT_BITS is one.
+	unsigned long long       DvpTotalElapsedCaptureTime;
+	unsigned int         DvpTotalCapturedFrameCount;
+	unsigned int         DvpNextIntegrationRecord;
+	unsigned int         DvpFirstIntegrationRecord;
+	unsigned long long       DvpElapsedCaptureTimeRecord[DVP_MAX_RECORDED_INTEGRATIONS];
+	unsigned int         DvpCapturedFrameCountRecord[DVP_MAX_RECORDED_INTEGRATIONS];
 
-    bool             AncillaryStreamOn;
-    bool             AncillaryCaptureInProgress;
-    unsigned char       *AncillaryInputBufferUnCachedAddress;       // The actual hardware buffer
-    unsigned char       *AncillaryInputBufferPhysicalAddress;
-    unsigned char       *AncillaryInputBufferInputPointer;
-    unsigned int         AncillaryInputBufferSize;
-    unsigned int         AncillaryPageSizeSpecified;
-    unsigned int         AncillaryPageSize;
+	bool             AncillaryStreamOn;
+	bool             AncillaryCaptureInProgress;
+	unsigned char       *AncillaryInputBufferUnCachedAddress;       // The actual hardware buffer
+	unsigned char       *AncillaryInputBufferPhysicalAddress;
+	unsigned char       *AncillaryInputBufferInputPointer;
+	unsigned int         AncillaryInputBufferSize;
+	unsigned int         AncillaryPageSizeSpecified;
+	unsigned int         AncillaryPageSize;
 
-    unsigned int         AncillaryBufferCount;              // Ancillary buffer information
-    unsigned int         AncillaryBufferSize;
-    unsigned char       *AncillaryBufferUnCachedAddress;        // Base pointers rather than individual buffers
-    unsigned char       *AncillaryBufferPhysicalAddress;
-    unsigned int         AncillaryBufferNextQueueIndex;
-    unsigned int         AncillaryBufferNextFillIndex;
-    unsigned int         AncillaryBufferNextDeQueueIndex;
-    unsigned int         AncillaryBufferQueue[DVP_MAX_ANCILLARY_BUFFERS];
-    AncillaryBufferState_t   AncillaryBufferState[DVP_MAX_ANCILLARY_BUFFERS];
+	unsigned int         AncillaryBufferCount;              // Ancillary buffer information
+	unsigned int         AncillaryBufferSize;
+	unsigned char       *AncillaryBufferUnCachedAddress;        // Base pointers rather than individual buffers
+	unsigned char       *AncillaryBufferPhysicalAddress;
+	unsigned int         AncillaryBufferNextQueueIndex;
+	unsigned int         AncillaryBufferNextFillIndex;
+	unsigned int         AncillaryBufferNextDeQueueIndex;
+	unsigned int         AncillaryBufferQueue[DVP_MAX_ANCILLARY_BUFFERS];
+	AncillaryBufferState_t   AncillaryBufferState[DVP_MAX_ANCILLARY_BUFFERS];
 
-    // The current values of all the controls
+	// The current values of all the controls
 
-    int          DvpControl16Bit;
-    int          DvpControlBigEndian;
-    int          DvpControlFullRange;
-    int          DvpControlIncompleteFirstPixel;
-    int          DvpControlOddPixelCount;
-    int          DvpControlVsyncBottomHalfLineEnable;
-    int          DvpControlExternalSync;
-    int          DvpControlExternalSyncPolarity;
-    int          DvpControlExternalSynchroOutOfPhase;
-    int          DvpControlExternalVRefOddEven;
-    int          DvpControlExternalVRefPolarityPositive;
-    int          DvpControlHRefPolarityPositive;
-    int          DvpControlActiveAreaAdjustHorizontalOffset;
-    int          DvpControlActiveAreaAdjustVerticalOffset;
-    int          DvpControlActiveAreaAdjustWidth;
-    int          DvpControlActiveAreaAdjustHeight;
-    int          DvpControlColourMode;              // 0 => Default, 1 => 601, 2 => 709
-    int          DvpControlVideoLatency;
-    int          DvpControlBlank;
-    int          DvpControlAncPageSizeSpecified;
-    int          DvpControlAncPageSize;
-    int          DvpControlAncInputBufferSize;
-    int          DvpControlHorizontalResizeEnable;
-    int          DvpControlVerticalResizeEnable;
-    int          DvpControlTopFieldFirst;
-    int          DvpControlVsyncLockEnable;
-    int          DvpControlOutputCropTransitionMode;
-    int          DvpControlOutputCropTransitionModeParameter0;
+	int          DvpControl16Bit;
+	int          DvpControlBigEndian;
+	int          DvpControlFullRange;
+	int          DvpControlIncompleteFirstPixel;
+	int          DvpControlOddPixelCount;
+	int          DvpControlVsyncBottomHalfLineEnable;
+	int          DvpControlExternalSync;
+	int          DvpControlExternalSyncPolarity;
+	int          DvpControlExternalSynchroOutOfPhase;
+	int          DvpControlExternalVRefOddEven;
+	int          DvpControlExternalVRefPolarityPositive;
+	int          DvpControlHRefPolarityPositive;
+	int          DvpControlActiveAreaAdjustHorizontalOffset;
+	int          DvpControlActiveAreaAdjustVerticalOffset;
+	int          DvpControlActiveAreaAdjustWidth;
+	int          DvpControlActiveAreaAdjustHeight;
+	int          DvpControlColourMode;              // 0 => Default, 1 => 601, 2 => 709
+	int          DvpControlVideoLatency;
+	int          DvpControlBlank;
+	int          DvpControlAncPageSizeSpecified;
+	int          DvpControlAncPageSize;
+	int          DvpControlAncInputBufferSize;
+	int          DvpControlHorizontalResizeEnable;
+	int          DvpControlVerticalResizeEnable;
+	int          DvpControlTopFieldFirst;
+	int          DvpControlVsyncLockEnable;
+	int          DvpControlOutputCropTransitionMode;
+	int          DvpControlOutputCropTransitionModeParameter0;
 
-    int          DvpControlPixelAspectRatioCorrection;
-    int          DvpControlPictureAspectRatio;
+	int          DvpControlPixelAspectRatioCorrection;
+	int          DvpControlPictureAspectRatio;
 
-    int          DvpControlDefault16Bit;
-    int          DvpControlDefaultBigEndian;
-    int          DvpControlDefaultFullRange;
-    int          DvpControlDefaultIncompleteFirstPixel;
-    int          DvpControlDefaultOddPixelCount;
-    int          DvpControlDefaultVsyncBottomHalfLineEnable;
-    int          DvpControlDefaultExternalSync;
-    int          DvpControlDefaultExternalSyncPolarity;
-    int          DvpControlDefaultExternalSynchroOutOfPhase;
-    int          DvpControlDefaultExternalVRefOddEven;
-    int          DvpControlDefaultExternalVRefPolarityPositive;
-    int          DvpControlDefaultHRefPolarityPositive;
-    int          DvpControlDefaultActiveAreaAdjustHorizontalOffset;
-    int          DvpControlDefaultActiveAreaAdjustVerticalOffset;
-    int          DvpControlDefaultActiveAreaAdjustWidth;
-    int          DvpControlDefaultActiveAreaAdjustHeight;
-    int          DvpControlDefaultColourMode;
-    int          DvpControlDefaultVideoLatency;
-    int          DvpControlDefaultBlank;
-    int          DvpControlDefaultAncPageSizeSpecified;
-    int          DvpControlDefaultAncPageSize;
-    int          DvpControlDefaultAncInputBufferSize;
-    int          DvpControlDefaultHorizontalResizeEnable;
-    int          DvpControlDefaultVerticalResizeEnable;
-    int          DvpControlDefaultTopFieldFirst;
-    int          DvpControlDefaultVsyncLockEnable;
-    int          DvpControlDefaultOutputCropTransitionMode;
-    int          DvpControlDefaultOutputCropTransitionModeParameter0;
-    int          DvpControlDefaultPixelAspectRatioCorrection;
-    int          DvpControlDefaultPictureAspectRatio;
+	int          DvpControlDefault16Bit;
+	int          DvpControlDefaultBigEndian;
+	int          DvpControlDefaultFullRange;
+	int          DvpControlDefaultIncompleteFirstPixel;
+	int          DvpControlDefaultOddPixelCount;
+	int          DvpControlDefaultVsyncBottomHalfLineEnable;
+	int          DvpControlDefaultExternalSync;
+	int          DvpControlDefaultExternalSyncPolarity;
+	int          DvpControlDefaultExternalSynchroOutOfPhase;
+	int          DvpControlDefaultExternalVRefOddEven;
+	int          DvpControlDefaultExternalVRefPolarityPositive;
+	int          DvpControlDefaultHRefPolarityPositive;
+	int          DvpControlDefaultActiveAreaAdjustHorizontalOffset;
+	int          DvpControlDefaultActiveAreaAdjustVerticalOffset;
+	int          DvpControlDefaultActiveAreaAdjustWidth;
+	int          DvpControlDefaultActiveAreaAdjustHeight;
+	int          DvpControlDefaultColourMode;
+	int          DvpControlDefaultVideoLatency;
+	int          DvpControlDefaultBlank;
+	int          DvpControlDefaultAncPageSizeSpecified;
+	int          DvpControlDefaultAncPageSize;
+	int          DvpControlDefaultAncInputBufferSize;
+	int          DvpControlDefaultHorizontalResizeEnable;
+	int          DvpControlDefaultVerticalResizeEnable;
+	int          DvpControlDefaultTopFieldFirst;
+	int          DvpControlDefaultVsyncLockEnable;
+	int          DvpControlDefaultOutputCropTransitionMode;
+	int          DvpControlDefaultOutputCropTransitionModeParameter0;
+	int          DvpControlDefaultPixelAspectRatioCorrection;
+	int          DvpControlDefaultPictureAspectRatio;
 
 } dvp_v4l2_video_handle_t;
-
 
 /******************************
  * Function prototypes of
@@ -407,55 +406,54 @@ int DvpVideoClose(dvp_v4l2_video_handle_t   *Context);
 int DvpVideoThreadHandle(void           *Data);
 
 int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
-                                unsigned int         Width,
-                                unsigned int         Height,
-                                unsigned int         BytesPerLine,
-                                unsigned int         Control);
+								unsigned int         Width,
+								unsigned int         Height,
+								unsigned int         BytesPerLine,
+								unsigned int         Control);
 
 int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t    *Context,
-                             v4l2_std_id      Id);
+							 v4l2_std_id      Id);
 
 int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context);
 
 int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t   *Context,
-                      struct v4l2_crop    *Crop);
+					  struct v4l2_crop    *Crop);
 
 int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
-                            unsigned int         Control,
-                            unsigned int         Value);
+							unsigned int         Control,
+							unsigned int         Value);
 
 int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
-                            unsigned int         Control,
-                            unsigned int        *Value);
+							unsigned int         Control,
+							unsigned int        *Value);
 
 // ////////////////////////////
 
 int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
-        unsigned int         DesiredCount,
-        unsigned int         DesiredSize,
-        unsigned int        *ActualCount,
-        unsigned int        *ActualSize);
+										 unsigned int         DesiredCount,
+										 unsigned int         DesiredSize,
+										 unsigned int        *ActualCount,
+										 unsigned int        *ActualSize);
 
 int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
-                                      unsigned int          Index,
-                                      bool             *Queued,
-                                      bool             *Done,
-                                      unsigned char       **PhysicalAddress,
-                                      unsigned char       **UnCachedAddress,
-                                      unsigned long long   *CaptureTime,
-                                      unsigned int         *Bytes,
-                                      unsigned int         *Size);
+									  unsigned int          Index,
+									  bool             *Queued,
+									  bool             *Done,
+									  unsigned char       **PhysicalAddress,
+									  unsigned char       **UnCachedAddress,
+									  unsigned long long   *CaptureTime,
+									  unsigned int         *Bytes,
+									  unsigned int         *Size);
 
 int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
-                                      unsigned int         Index);
+									  unsigned int         Index);
 
 int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
-                                        unsigned int        *Index,
-                                        bool             Blocking);
+										unsigned int        *Index,
+										bool             Blocking);
 
 int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t  *Context);
 int DvpVideoIoctlAncillaryStreamOff(dvp_v4l2_video_handle_t *Context);
-
 
 #endif /*STMDVPVIDEO_H_*/
 

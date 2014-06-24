@@ -24,7 +24,6 @@ Author :           Daniel
 
 Definition of the manifestor audio class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 14-May-07   Created (from manifestor_video.h)               Daniel
@@ -40,9 +39,9 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    AudioBufferStateAvailable,
-    AudioBufferStateQueued,
-    AudioBufferStateNotQueued
+	AudioBufferStateAvailable,
+	AudioBufferStateQueued,
+	AudioBufferStateNotQueued
 } AudioBufferState_t;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -51,38 +50,36 @@ typedef enum
 ///
 struct AudioStreamBuffer_s
 {
-    unsigned int BufferIndex;
-    unsigned int QueueCount;
-    unsigned int TimeOfGoingOnDisplay;
-    bool EventPending;
+	unsigned int BufferIndex;
+	unsigned int QueueCount;
+	unsigned int TimeOfGoingOnDisplay;
+	bool EventPending;
 
-    AudioBufferState_t BufferState;
+	AudioBufferState_t BufferState;
 
-    class Buffer_c* Buffer;
+	class Buffer_c* Buffer;
 
-    unsigned char* Data; ///< Pointer to the data buffer (a cached address)
-    ParsedFrameParameters_t *FrameParameters; ///< Frame parameters for the buffer.
-    bool UpdateAudioParameters; ///< True, if this buffer has a significant change in audio parameters.
-    ParsedAudioParameters_t *AudioParameters; ///< Audio parameters for the buffer.
-    AudioOutputTiming_t *AudioOutputTiming; ///< Audio output timing of the buffer.
+	unsigned char* Data; ///< Pointer to the data buffer (a cached address)
+	ParsedFrameParameters_t *FrameParameters; ///< Frame parameters for the buffer.
+	bool UpdateAudioParameters; ///< True, if this buffer has a significant change in audio parameters.
+	ParsedAudioParameters_t *AudioParameters; ///< Audio parameters for the buffer.
+	AudioOutputTiming_t *AudioOutputTiming; ///< Audio output timing of the buffer.
 
-    bool QueueAsCodedData; ///< True if the encoded buffer should be enqueued for display.
+	bool QueueAsCodedData; ///< True if the encoded buffer should be enqueued for display.
 
-    unsigned int NextIndex; ///< Index of the next buffer to be displayed or -1 if no such buffer exists.
+	unsigned int NextIndex; ///< Index of the next buffer to be displayed or -1 if no such buffer exists.
 };
-
 
 typedef struct ManifestorAudioParameterBlock_s
 {
-    ManifestorParameterBlockType_t      ParameterType;
+	ManifestorParameterBlockType_t      ParameterType;
 
-    union
-    {
-        void                            *Mixer;
-        bool                EmergencyMute;
-    };
+	union
+	{
+		void                            *Mixer;
+		bool                EmergencyMute;
+	};
 } ManifestorAudioParameterBlock_t;
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -90,70 +87,70 @@ typedef struct ManifestorAudioParameterBlock_s
 ///
 class Manifestor_Audio_c : public Manifestor_Base_c
 {
-    private:
+	private:
 
-        unsigned int RelayfsIndex; //stores id from relayfs to differentiate the manifestor instance
+		unsigned int RelayfsIndex; //stores id from relayfs to differentiate the manifestor instance
 
-        /* Generic stream information*/
+		/* Generic stream information*/
 
-    protected:
+	protected:
 
-        bool                                Visible;
-        bool                                DisplayUpdatePending;
+		bool                                Visible;
+		bool                                DisplayUpdatePending;
 
-        /* Display Information */
-        struct AudioOutputSurfaceDescriptor_s       SurfaceDescriptor;
+		/* Display Information */
+		struct AudioOutputSurfaceDescriptor_s       SurfaceDescriptor;
 
-        /* Buffer information */
-        struct AudioStreamBuffer_s          StreamBuffer[MAXIMUM_NUMBER_OF_DECODE_BUFFERS];
-        unsigned int                        BufferQueueHead;
-        unsigned int                        BufferQueueTail;
-        OS_Mutex_t                          BufferQueueLock;
-        OS_Event_t                          BufferQueueUpdated;
-        unsigned int                        QueuedBufferCount;
-        unsigned int                        NotQueuedBufferCount;
+		/* Buffer information */
+		struct AudioStreamBuffer_s          StreamBuffer[MAXIMUM_NUMBER_OF_DECODE_BUFFERS];
+		unsigned int                        BufferQueueHead;
+		unsigned int                        BufferQueueTail;
+		OS_Mutex_t                          BufferQueueLock;
+		OS_Event_t                          BufferQueueUpdated;
+		unsigned int                        QueuedBufferCount;
+		unsigned int                        NotQueuedBufferCount;
 
-        bool                                DestroySyncrhonizationPrimatives;
+		bool                                DestroySyncrhonizationPrimatives;
 
-        /// The audio parameters of the most recently \b enqueued buffer.
-        ParsedAudioParameters_t             LastSeenAudioParameters;
+		/// The audio parameters of the most recently \b enqueued buffer.
+		ParsedAudioParameters_t             LastSeenAudioParameters;
 
-        /* Data shared with buffer release process */
-        bool                                ForcedUnblock;
+		/* Data shared with buffer release process */
+		bool                                ForcedUnblock;
 
-        virtual ManifestorStatus_t  QueueBuffer(unsigned int                    BufferIndex) = 0;
-        virtual ManifestorStatus_t  ReleaseBuffer(unsigned int                    BufferIndex) = 0;
-        ManifestorStatus_t DequeueBuffer(unsigned int *BufferIndexPtr, bool NonBlock = true);
-        void               PushBackBuffer(unsigned int BufferInex);
+		virtual ManifestorStatus_t  QueueBuffer(unsigned int                    BufferIndex) = 0;
+		virtual ManifestorStatus_t  ReleaseBuffer(unsigned int                    BufferIndex) = 0;
+		ManifestorStatus_t DequeueBuffer(unsigned int *BufferIndexPtr, bool NonBlock = true);
+		void               PushBackBuffer(unsigned int BufferInex);
 
-    public:
+	public:
 
-        /* Constructor / Destructor */
-        Manifestor_Audio_c(void);
-        ~Manifestor_Audio_c(void);
+		/* Constructor / Destructor */
+		Manifestor_Audio_c(void);
+		~Manifestor_Audio_c(void);
 
-        /* Overrides for component base class functions */
-        ManifestorStatus_t   Halt(void);
-        ManifestorStatus_t   Reset(void);
+		/* Overrides for component base class functions */
+		ManifestorStatus_t   Halt(void);
+		ManifestorStatus_t   Reset(void);
 
-        /* Manifestor class functions */
-        ManifestorStatus_t   GetDecodeBufferPool(class BufferPool_c**   Pool);
-        ManifestorStatus_t   GetSurfaceParameters(void**                 SurfaceParameters);
-        ManifestorStatus_t   GetNextQueuedManifestationTime(unsigned long long*    Time);
-        ManifestorStatus_t   ReleaseQueuedDecodeBuffers(void);
-        ManifestorStatus_t   InitialFrame(class Buffer_c*        Buffer);
-        ManifestorStatus_t   QueueDecodeBuffer(class Buffer_c*        Buffer);
-        ManifestorStatus_t   GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long*     Pts);
-        ManifestorStatus_t   GetFrameCount(unsigned long long*    FrameCount);
+		/* Manifestor class functions */
+		ManifestorStatus_t   GetDecodeBufferPool(class BufferPool_c**   Pool);
+		ManifestorStatus_t   GetSurfaceParameters(void**                 SurfaceParameters);
+		ManifestorStatus_t   GetNextQueuedManifestationTime(unsigned long long*    Time);
+		ManifestorStatus_t   ReleaseQueuedDecodeBuffers(void);
+		ManifestorStatus_t   InitialFrame(class Buffer_c*        Buffer);
+		ManifestorStatus_t   QueueDecodeBuffer(class Buffer_c*        Buffer);
+		ManifestorStatus_t   GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long*     Pts);
+		ManifestorStatus_t   GetFrameCount(unsigned long long*    FrameCount);
 
-        unsigned int         GetBufferId(void);
+		unsigned int         GetBufferId(void);
 
-        /* these virtual functions are implemented by the device specific part of the audio manifestor */
-        virtual ManifestorStatus_t  OpenOutputSurface(void) = 0;
-        virtual ManifestorStatus_t  CloseOutputSurface(void) = 0;
+		/* these virtual functions are implemented by the device specific part of the audio manifestor */
+		virtual ManifestorStatus_t  OpenOutputSurface(void) = 0;
+		virtual ManifestorStatus_t  CloseOutputSurface(void) = 0;
 
-        // Methods to be supplied by this derived classes
-        ManifestorStatus_t   FillOutBufferStructure(BufferStructure_t    *RequestedStructure);
+		// Methods to be supplied by this derived classes
+		ManifestorStatus_t   FillOutBufferStructure(BufferStructure_t    *RequestedStructure);
 
 };
 #endif

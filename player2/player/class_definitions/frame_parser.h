@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the frame parser class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 02-Nov-06   Created                                         Nick
@@ -43,22 +42,22 @@ Date        Modification                                    Name
 
 enum
 {
-    FrameParserNoError              = PlayerNoError,
-    FrameParserError                = PlayerError,
+	FrameParserNoError              = PlayerNoError,
+	FrameParserError                = PlayerError,
 
-    FrameParserNoStreamParameters       = BASE_FRAME_PARSER,
-    FrameParserPartialFrameParameters,
-    FrameParserUnhandledHeader,
-    FrameParserHeaderSyntaxError,
-    FrameParserHeaderUnplayable,
-    FrameParserStreamSyntaxError,
+	FrameParserNoStreamParameters       = BASE_FRAME_PARSER,
+	FrameParserPartialFrameParameters,
+	FrameParserUnhandledHeader,
+	FrameParserHeaderSyntaxError,
+	FrameParserHeaderUnplayable,
+	FrameParserStreamSyntaxError,
 
-    FrameParserFailedToCreateReversePlayStacks,
+	FrameParserFailedToCreateReversePlayStacks,
 
-    FrameParserFailedToAllocateBuffer,
+	FrameParserFailedToAllocateBuffer,
 
-    FrameParserReferenceListConstructionDeferred,
-    FrameParserInsufficientReferenceFrames
+	FrameParserReferenceListConstructionDeferred,
+	FrameParserInsufficientReferenceFrames
 };
 
 typedef PlayerStatus_t  FrameParserStatus_t;
@@ -67,22 +66,22 @@ typedef PlayerStatus_t  FrameParserStatus_t;
 
 enum
 {
-    FrameParserFnRegisterOutputBufferRing   = BASE_FRAME_PARSER,
-    FrameParserFnInput,
-    FrameParserFnTranslatePlaybackTimeNativeToNormalized,
-    FrameParserFnTranslatePlaybackTimeNormalizedToNative,
-    FrameParserFnApplyCorrectiveNativeTimeWrap,
+	FrameParserFnRegisterOutputBufferRing   = BASE_FRAME_PARSER,
+	FrameParserFnInput,
+	FrameParserFnTranslatePlaybackTimeNativeToNormalized,
+	FrameParserFnTranslatePlaybackTimeNormalizedToNative,
+	FrameParserFnApplyCorrectiveNativeTimeWrap,
 
-    FrameParserFnSetModuleParameters
+	FrameParserFnSetModuleParameters
 };
 
 //
 
 enum
 {
-    FrameParserHeaderFlagPartitionPoint         = 0x0001,
-    FrameParserHeaderFlagPossibleReversiblePoint    = 0x0002,
-    FrameParserHeaderFlagConfirmReversiblePoint     = 0x0004,
+	FrameParserHeaderFlagPartitionPoint         = 0x0001,
+	FrameParserHeaderFlagPossibleReversiblePoint    = 0x0002,
+	FrameParserHeaderFlagConfirmReversiblePoint     = 0x0004,
 };
 
 typedef unsigned int    FrameParserHeaderFlag_t;
@@ -94,31 +93,31 @@ typedef unsigned int    FrameParserHeaderFlag_t;
 
 class FrameParser_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual FrameParserStatus_t   RegisterOutputBufferRing(Ring_t             Ring) = 0;
+		virtual FrameParserStatus_t   RegisterOutputBufferRing(Ring_t             Ring) = 0;
 
-        virtual FrameParserStatus_t   Input(Buffer_t          CodedBuffer) = 0;
+		virtual FrameParserStatus_t   Input(Buffer_t          CodedBuffer) = 0;
 
-        virtual FrameParserStatus_t   TranslatePlaybackTimeNativeToNormalized(
-            unsigned long long    NativeTime,
-            unsigned long long   *NormalizedTime) = 0;
+		virtual FrameParserStatus_t   TranslatePlaybackTimeNativeToNormalized(
+			unsigned long long    NativeTime,
+			unsigned long long   *NormalizedTime) = 0;
 
-        virtual FrameParserStatus_t   TranslatePlaybackTimeNormalizedToNative(
-            unsigned long long    NormalizedTime,
-            unsigned long long   *NativeTime) = 0;
+		virtual FrameParserStatus_t   TranslatePlaybackTimeNormalizedToNative(
+			unsigned long long    NormalizedTime,
+			unsigned long long   *NativeTime) = 0;
 
-        virtual FrameParserStatus_t   ApplyCorrectiveNativeTimeWrap(void) = 0;
+		virtual FrameParserStatus_t   ApplyCorrectiveNativeTimeWrap(void) = 0;
 
-        //
-        // Additions to support H264 framedecode (rather than slice), and reverible collation
-        //
+		//
+		// Additions to support H264 framedecode (rather than slice), and reverible collation
+		//
 
-        virtual FrameParserStatus_t   ResetCollatedHeaderState(void) = 0;
-        virtual unsigned int      RequiredPresentationLength(unsigned char        StartCode) = 0;
-        virtual FrameParserStatus_t   PresentCollatedHeader(unsigned char         StartCode,
-                unsigned char        *HeaderBytes,
-                FrameParserHeaderFlag_t  *Flags) = 0;
+		virtual FrameParserStatus_t   ResetCollatedHeaderState(void) = 0;
+		virtual unsigned int      RequiredPresentationLength(unsigned char        StartCode) = 0;
+		virtual FrameParserStatus_t   PresentCollatedHeader(unsigned char         StartCode,
+				unsigned char        *HeaderBytes,
+				FrameParserHeaderFlag_t  *Flags) = 0;
 };
 
 // ---------------------------------------------------------------------
@@ -196,7 +195,6 @@ Takes as parameters a long long normalized playback time and a pointer to a long
 This function translates a 'normalized' player internal time value (in
 microseconds) to 'native' stream time (e.g. in STC/PTS units for PES).
 See \ref time for more information.
-
 
 \param NormalizedTime Normalized player internal time.
 \param NativeTime     Pointer to a variable to hold the native time.

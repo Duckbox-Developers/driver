@@ -24,7 +24,6 @@ Author :           Nick
 
 Implementation of the mpeg2 video codec class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 26-Apr-07   Created (from output_timer_video.cpp)           Daniel
@@ -63,9 +62,8 @@ extern int noaudiosync;
 
 OutputTimer_Audio_c::OutputTimer_Audio_c(void)
 {
-    Reset();
+	Reset();
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -75,10 +73,9 @@ OutputTimer_Audio_c::OutputTimer_Audio_c(void)
 
 OutputTimer_Audio_c::~OutputTimer_Audio_c(void)
 {
-    Halt();
-    Reset();
+	Halt();
+	Reset();
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -88,9 +85,8 @@ OutputTimer_Audio_c::~OutputTimer_Audio_c(void)
 OutputTimerStatus_t   OutputTimer_Audio_c::Halt(void)
 {
 
-    return OutputTimer_Base_c::Halt();
+	return OutputTimer_Base_c::Halt();
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -100,18 +96,17 @@ OutputTimerStatus_t   OutputTimer_Audio_c::Halt(void)
 OutputTimerStatus_t   OutputTimer_Audio_c::Reset(void)
 {
 
-    ExtendSamplesForSynchronization     = false;
-    SynchronizationCorrectionUnits      = 0;
-    SynchronizationOneTenthCorrectionUnits  = 0;
+	ExtendSamplesForSynchronization     = false;
+	SynchronizationCorrectionUnits      = 0;
+	SynchronizationOneTenthCorrectionUnits  = 0;
 
-    LastSeenDecodeIndex             = INVALID_INDEX;
-    LastSeenDisplayIndex            = INVALID_INDEX;
-    DecodeFrameCount                = 0;
-    DisplayFrameCount               = 0;
+	LastSeenDecodeIndex             = INVALID_INDEX;
+	LastSeenDisplayIndex            = INVALID_INDEX;
+	DecodeFrameCount                = 0;
+	DisplayFrameCount               = 0;
 
-    return OutputTimer_Base_c::Reset();
+	return OutputTimer_Base_c::Reset();
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -121,73 +116,72 @@ OutputTimerStatus_t   OutputTimer_Audio_c::Reset(void)
 
 OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(void)
 {
-    memset(&Configuration, 0x00, sizeof(OutputTimerConfiguration_t));
+	memset(&Configuration, 0x00, sizeof(OutputTimerConfiguration_t));
 
-    Configuration.OutputTimerName               = "Audio";
-    Configuration.StreamType                    = StreamTypeAudio;
+	Configuration.OutputTimerName               = "Audio";
+	Configuration.StreamType                    = StreamTypeAudio;
 
-    Configuration.AudioVideoDataParsedParametersType        = Player->MetaDataParsedAudioParametersType;
-    Configuration.SizeOfAudioVideoDataParsedParameters      = sizeof(ParsedAudioParameters_t);
+	Configuration.AudioVideoDataParsedParametersType        = Player->MetaDataParsedAudioParametersType;
+	Configuration.SizeOfAudioVideoDataParsedParameters      = sizeof(ParsedAudioParameters_t);
 
-    Configuration.AudioVideoDataOutputTimingType        = Player->MetaDataAudioOutputTimingType;
-    Configuration.SizeOfAudioVideoDataOutputTiming      = sizeof(AudioOutputTiming_t);
+	Configuration.AudioVideoDataOutputTimingType        = Player->MetaDataAudioOutputTimingType;
+	Configuration.SizeOfAudioVideoDataOutputTiming      = sizeof(AudioOutputTiming_t);
 
-    Configuration.AudioVideoDataOutputSurfaceDescriptorPointer  = (void**)(&AudioOutputSurfaceDescriptor);
+	Configuration.AudioVideoDataOutputSurfaceDescriptorPointer  = (void**)(&AudioOutputSurfaceDescriptor);
 
-    //
-    // Decode window controls, we assume that the
-    // frame decode time is the maximum frame duration.
-    // If it were greater than this we could not decode
-    // a stream. We start with zero and increase this.
-    // The Early decode porch, is a value representing
-    // much we are willing to stretch the decode time
-    // requirements to allow us to have some decoding
-    // time in hand, this fairly 'wet finger in air'.
-    // Both time values are in micro seconds.
-    // Finally a value indicating the maximum wait for
-    // entry into the decode window, this number is taken,
-    // multiplied by the frame decode time, and then scaled
-    // by the speed factor to get an actual maximum wait time.
-    //
+	//
+	// Decode window controls, we assume that the
+	// frame decode time is the maximum frame duration.
+	// If it were greater than this we could not decode
+	// a stream. We start with zero and increase this.
+	// The Early decode porch, is a value representing
+	// much we are willing to stretch the decode time
+	// requirements to allow us to have some decoding
+	// time in hand, this fairly 'wet finger in air'.
+	// Both time values are in micro seconds.
+	// Finally a value indicating the maximum wait for
+	// entry into the decode window, this number is taken,
+	// multiplied by the frame decode time, and then scaled
+	// by the speed factor to get an actual maximum wait time.
+	//
 
-    AudioConfiguration.MinimumManifestorLatencyInSamples        = 2 * 1536; // we really ought to ask the manifestor for this number
-    AudioConfiguration.MinimumManifestorSamplingFrequency       = 32000; // manifestor deploys resampler to assure this
+	AudioConfiguration.MinimumManifestorLatencyInSamples        = 2 * 1536; // we really ought to ask the manifestor for this number
+	AudioConfiguration.MinimumManifestorSamplingFrequency       = 32000; // manifestor deploys resampler to assure this
 
-    Configuration.FrameDecodeTime               = 0;
-    Configuration.MinimumManifestorLatency                      = LookupMinimumManifestorLatency(AudioConfiguration.MinimumManifestorSamplingFrequency);
-    Configuration.EarlyDecodePorch              = 100 * 1000;
+	Configuration.FrameDecodeTime               = 0;
+	Configuration.MinimumManifestorLatency                      = LookupMinimumManifestorLatency(AudioConfiguration.MinimumManifestorSamplingFrequency);
+	Configuration.EarlyDecodePorch              = 100 * 1000;
 
-    Configuration.MaximumDecodeTimesToWait          = 4;
+	Configuration.MaximumDecodeTimesToWait          = 4;
 
-    //
-    // Synchronization controls
-    //      A threshold error in micro seconds (needs to be low if we are aiming for 3ms tolerance)
-    //      A count of frames to integrate the error over
-    //      A count of frames to be ignored to allow any correction to work through
-    //
+	//
+	// Synchronization controls
+	//      A threshold error in micro seconds (needs to be low if we are aiming for 3ms tolerance)
+	//      A count of frames to integrate the error over
+	//      A count of frames to be ignored to allow any correction to work through
+	//
 
 #ifdef __TDT__
-    Configuration.SynchronizationErrorThreshold         = 200000;
+	Configuration.SynchronizationErrorThreshold         = 200000;
 #else
-    Configuration.SynchronizationErrorThreshold         = 1000;
+	Configuration.SynchronizationErrorThreshold         = 1000;
 #endif
-    Configuration.SynchronizationErrorThresholdForExternalSync  = 1000;         // Unchanged for audio
-    Configuration.SynchronizationIntegrationCount       = 8;
-    Configuration.SynchronizationWorkthroughCount       = 64;           // Never need be greater than the number of decode buffers
+	Configuration.SynchronizationErrorThresholdForExternalSync  = 1000;         // Unchanged for audio
+	Configuration.SynchronizationIntegrationCount       = 8;
+	Configuration.SynchronizationWorkthroughCount       = 64;           // Never need be greater than the number of decode buffers
 
-    //
-    // Trick mode controls in general audio supports only a
-    // limited range of trick modes, these values
-    // specify those limitations
-    //
+	//
+	// Trick mode controls in general audio supports only a
+	// limited range of trick modes, these values
+	// specify those limitations
+	//
 
-    Configuration.ReversePlaySupported              = false;
-    Configuration.MinimumSpeedSupported             = 1;            // Rational_t( 75,100);
-    Configuration.MaximumSpeedSupported             = 1;            // Rational_t(125,100);
+	Configuration.ReversePlaySupported              = false;
+	Configuration.MinimumSpeedSupported             = 1;            // Rational_t( 75,100);
+	Configuration.MaximumSpeedSupported             = 1;            // Rational_t(125,100);
 
-    return OutputTimerNoError;
+	return OutputTimerNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -198,20 +192,19 @@ OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(void)
 /// true value due to rounding.
 ///
 OutputTimerStatus_t   OutputTimer_Audio_c::FrameDuration(void             *ParsedAudioVideoDataParameters,
-        unsigned long long    *Duration)
+		unsigned long long    *Duration)
 {
-    ParsedAudioParameters_t      *ParsedAudioParameters = (ParsedAudioParameters_t *)ParsedAudioVideoDataParameters;
+	ParsedAudioParameters_t      *ParsedAudioParameters = (ParsedAudioParameters_t *)ParsedAudioVideoDataParameters;
 
 //
 
-    *Duration = ((unsigned long long) ParsedAudioParameters->SampleCount * 1000000ull) /
-                (unsigned long long) ParsedAudioParameters->Source.SampleRateHz;
+	*Duration = ((unsigned long long) ParsedAudioParameters->SampleCount * 1000000ull) /
+				(unsigned long long) ParsedAudioParameters->Source.SampleRateHz;
 
 //
 
-    return OutputTimerNoError;
+	return OutputTimerNoError;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -225,162 +218,161 @@ OutputTimerStatus_t   OutputTimer_Audio_c::FrameDuration(void             *Parse
 /// correct.
 ///
 OutputTimerStatus_t   OutputTimer_Audio_c::FillOutFrameTimingRecord(
-    unsigned long long    SystemTime,
-    void             *ParsedAudioVideoDataParameters,
-    void             *AudioVideoDataOutputTiming)
+	unsigned long long    SystemTime,
+	void             *ParsedAudioVideoDataParameters,
+	void             *AudioVideoDataOutputTiming)
 {
-    ParsedFrameParameters_t      *ParsedFrameParameters = PostDecodeParsedFrameParameters;
-    ParsedAudioParameters_t      *ParsedAudioParameters = (ParsedAudioParameters_t *)ParsedAudioVideoDataParameters;
-    AudioOutputTiming_t      *AudioOutputTiming = (AudioOutputTiming_t *)AudioVideoDataOutputTiming;
-    Rational_t            Duration;
-    unsigned long long            BlockDecodeTime;
-    Rational_t            SampleCount;
-    Rational_t            SystemTimeError;
-    unsigned int              MaxAdjust;
-    unsigned int              Adjust;
+	ParsedFrameParameters_t      *ParsedFrameParameters = PostDecodeParsedFrameParameters;
+	ParsedAudioParameters_t      *ParsedAudioParameters = (ParsedAudioParameters_t *)ParsedAudioVideoDataParameters;
+	AudioOutputTiming_t      *AudioOutputTiming = (AudioOutputTiming_t *)AudioVideoDataOutputTiming;
+	Rational_t            Duration;
+	unsigned long long            BlockDecodeTime;
+	Rational_t            SampleCount;
+	Rational_t            SystemTimeError;
+	unsigned int              MaxAdjust;
+	unsigned int              Adjust;
 
 //
 
-    AudioOutputTiming->SystemPlaybackTime   = SystemTime;
-    AudioOutputTiming->ExpectedDurationTime     = INVALID_TIME;
-    AudioOutputTiming->ActualSystemPlaybackTime = INVALID_TIME;
+	AudioOutputTiming->SystemPlaybackTime   = SystemTime;
+	AudioOutputTiming->ExpectedDurationTime     = INVALID_TIME;
+	AudioOutputTiming->ActualSystemPlaybackTime = INVALID_TIME;
 
-    //
-    // Set the duration of the frame in samples,
-    // and record values for use in avsync corrections
-    //
+	//
+	// Set the duration of the frame in samples,
+	// and record values for use in avsync corrections
+	//
 
-    AudioOutputTiming->DisplayCount = ParsedAudioParameters->SampleCount;
-    SamplesInLastFrame          = ParsedAudioParameters->SampleCount;
+	AudioOutputTiming->DisplayCount = ParsedAudioParameters->SampleCount;
+	SamplesInLastFrame          = ParsedAudioParameters->SampleCount;
 
-    //
-    // Do we need to re-calculate the sample count multiplier
-    //
+	//
+	// Do we need to re-calculate the sample count multiplier
+	//
 
-    if ((AdjustedSpeedAfterFrameDrop != LastAdjustedSpeedAfterFrameDrop) ||
-            (ParsedAudioParameters->Source.SampleRateHz != LastSampleRate))
-    {
-        //
-        // Re-calculate count multiplier
-        // NOTE we do not reset the accumulated error, we
-        // leave it accumulating, except when we transit to a mode
-        // where there is no error IE when the multiplier is 1.
-        //
+	if ((AdjustedSpeedAfterFrameDrop != LastAdjustedSpeedAfterFrameDrop) ||
+			(ParsedAudioParameters->Source.SampleRateHz != LastSampleRate))
+	{
+		//
+		// Re-calculate count multiplier
+		// NOTE we do not reset the accumulated error, we
+		// leave it accumulating, except when we transit to a mode
+		// where there is no error IE when the multiplier is 1.
+		//
 
-        CountMultiplier         = 1 / AdjustedSpeedAfterFrameDrop;
+		CountMultiplier         = 1 / AdjustedSpeedAfterFrameDrop;
 
-        if (CountMultiplier == 1)
-            AccumulatedError        = 0;
+		if (CountMultiplier == 1)
+			AccumulatedError        = 0;
 
-        SampleDurationTime      = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz);
+		SampleDurationTime      = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz);
 
-        LastAdjustedSpeedAfterFrameDrop = AdjustedSpeedAfterFrameDrop;
-        LastSampleRate          = ParsedAudioParameters->Source.SampleRateHz;
-        CodedFrameRate          = Rational_t((1000000ULL * ParsedAudioParameters->SampleCount), ParsedAudioParameters->Source.SampleRateHz);
-        Configuration.MinimumManifestorLatency = LookupMinimumManifestorLatency(LastSampleRate);
+		LastAdjustedSpeedAfterFrameDrop = AdjustedSpeedAfterFrameDrop;
+		LastSampleRate          = ParsedAudioParameters->Source.SampleRateHz;
+		CodedFrameRate          = Rational_t((1000000ULL * ParsedAudioParameters->SampleCount), ParsedAudioParameters->Source.SampleRateHz);
+		Configuration.MinimumManifestorLatency = LookupMinimumManifestorLatency(LastSampleRate);
 
 #if 0
-        report(severity_info, "OutputTimer_Audio_c::FillOutFrameTimingRecord - SampleRate = %d, CountMultiplier %d.%06d, CodedFrameRate  %d.%06d\n",
-               LastSampleRate,
-               CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal(),
-               CodedFrameRate.IntegerPart(), CodedFrameRate.RemainderDecimal());
+		report(severity_info, "OutputTimer_Audio_c::FillOutFrameTimingRecord - SampleRate = %d, CountMultiplier %d.%06d, CodedFrameRate  %d.%06d\n",
+			   LastSampleRate,
+			   CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal(),
+			   CodedFrameRate.IntegerPart(), CodedFrameRate.RemainderDecimal());
 #endif
-    }
+	}
 
-    //
-    // Jitter the output time by the accumulated error
-    //
+	//
+	// Jitter the output time by the accumulated error
+	//
 
-    if (SystemTime != UNSPECIFIED_TIME)
-    {
-        SystemTimeError         = AccumulatedError * SampleDurationTime;
-        SystemTime          = SystemTime - SystemTimeError.LongLongIntegerPart();
-    }
+	if (SystemTime != UNSPECIFIED_TIME)
+	{
+		SystemTimeError         = AccumulatedError * SampleDurationTime;
+		SystemTime          = SystemTime - SystemTimeError.LongLongIntegerPart();
+	}
 
-    //
-    // Calculate the sample count
-    //
+	//
+	// Calculate the sample count
+	//
 
-    SampleCount             = (CountMultiplier * AudioOutputTiming->DisplayCount) + AccumulatedError;
-    AudioOutputTiming->DisplayCount = SampleCount.IntegerPart();
-    AccumulatedError            = SampleCount.Remainder();
+	SampleCount             = (CountMultiplier * AudioOutputTiming->DisplayCount) + AccumulatedError;
+	AudioOutputTiming->DisplayCount = SampleCount.IntegerPart();
+	AccumulatedError            = SampleCount.Remainder();
 
-    //
-    // Here we have avsync corrections, if we are starting up just go for it,
-    // if not we adjust by a maximum of 10% (sounds ok on pitch correction)
-    //
+	//
+	// Here we have avsync corrections, if we are starting up just go for it,
+	// if not we adjust by a maximum of 10% (sounds ok on pitch correction)
+	//
 
-    if (SynchronizationCorrectionUnits != 0)
-    {
-        MaxAdjust               = SynchronizationAtStartup ?
-                                  SamplesInLastFrame :
-                                  min((SamplesInLastFrame / 10), SynchronizationOneTenthCorrectionUnits);
+	if (SynchronizationCorrectionUnits != 0)
+	{
+		MaxAdjust               = SynchronizationAtStartup ?
+								  SamplesInLastFrame :
+								  min((SamplesInLastFrame / 10), SynchronizationOneTenthCorrectionUnits);
 
-        Adjust                  = min(MaxAdjust, SynchronizationCorrectionUnits);
+		Adjust                  = min(MaxAdjust, SynchronizationCorrectionUnits);
 
-        AudioOutputTiming->DisplayCount     += ExtendSamplesForSynchronization ? Adjust : -Adjust;
-        SynchronizationCorrectionUnits      -= Adjust;
-    }
+		AudioOutputTiming->DisplayCount     += ExtendSamplesForSynchronization ? Adjust : -Adjust;
+		SynchronizationCorrectionUnits      -= Adjust;
+	}
 
 //
 
 #if 0
 
-    if (SamplesInLastFrame != AudioOutputTiming->DisplayCount)
-        report(severity_info, "Timing  - ORA = %d.%06d - Samples = %4d - DisplayCount = %4d\n",
-               AudioOutputTiming->OutputRateAdjustment.IntegerPart(), AudioOutputTiming->OutputRateAdjustment.RemainderDecimal(),
-               SamplesInLastFrame, AudioOutputTiming->DisplayCount);
+	if (SamplesInLastFrame != AudioOutputTiming->DisplayCount)
+		report(severity_info, "Timing  - ORA = %d.%06d - Samples = %4d - DisplayCount = %4d\n",
+			   AudioOutputTiming->OutputRateAdjustment.IntegerPart(), AudioOutputTiming->OutputRateAdjustment.RemainderDecimal(),
+			   SamplesInLastFrame, AudioOutputTiming->DisplayCount);
 
 #endif
 
-    //
-    // Update derived timings, adjusting the decode time (for decode window porch control).
-    //
+	//
+	// Update derived timings, adjusting the decode time (for decode window porch control).
+	//
 
-    Duration                    = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz) * AudioOutputTiming->DisplayCount;
-    AudioOutputTiming->ExpectedDurationTime = Duration.RoundedLongLongIntegerPart();
+	Duration                    = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz) * AudioOutputTiming->DisplayCount;
+	AudioOutputTiming->ExpectedDurationTime = Duration.RoundedLongLongIntegerPart();
 
-    //
-    // Update the count of coded and decoded frames
-    //
+	//
+	// Update the count of coded and decoded frames
+	//
 
-    if (LastSeenDecodeIndex != ParsedFrameParameters->DecodeFrameIndex)
-        DecodeFrameCount++;
+	if (LastSeenDecodeIndex != ParsedFrameParameters->DecodeFrameIndex)
+		DecodeFrameCount++;
 
-    LastSeenDecodeIndex             = ParsedFrameParameters->DecodeFrameIndex;
-
-//
-
-    if (LastSeenDisplayIndex != ParsedFrameParameters->DisplayFrameIndex)
-        DisplayFrameCount++;
-
-    LastSeenDisplayIndex            = ParsedFrameParameters->DisplayFrameIndex;
-
-    //
-    // Apply an update to the frame decode time,
-    // based on the native decode duration,
-    // rather than the adjusted for speed decode duration
-    // NOTE this is now adjusted to take account the fact
-    //      that we decode a coded frame, which may contain
-    //      several decode frames in the case of streaming audio.
-    //
-
-    Duration                    = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz) * ParsedAudioParameters->SampleCount;
-    BlockDecodeTime             = (DisplayFrameCount > DecodeFrameCount) ?
-                                  RoundedLongLongIntegerPart(Duration * Rational_t(DisplayFrameCount, DecodeFrameCount)) :
-                                  RoundedLongLongIntegerPart(Duration);
-    Configuration.FrameDecodeTime       = max(BlockDecodeTime, Configuration.FrameDecodeTime);
-
-    //
-    // Apply an update to the next expected playback time, used to spot PTS jumps
-    //
-
-    PlaybackTimeIncrement           = Duration.RoundedLongLongIntegerPart();
+	LastSeenDecodeIndex             = ParsedFrameParameters->DecodeFrameIndex;
 
 //
-    return OutputTimerNoError;
+
+	if (LastSeenDisplayIndex != ParsedFrameParameters->DisplayFrameIndex)
+		DisplayFrameCount++;
+
+	LastSeenDisplayIndex            = ParsedFrameParameters->DisplayFrameIndex;
+
+	//
+	// Apply an update to the frame decode time,
+	// based on the native decode duration,
+	// rather than the adjusted for speed decode duration
+	// NOTE this is now adjusted to take account the fact
+	//      that we decode a coded frame, which may contain
+	//      several decode frames in the case of streaming audio.
+	//
+
+	Duration                    = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz) * ParsedAudioParameters->SampleCount;
+	BlockDecodeTime             = (DisplayFrameCount > DecodeFrameCount) ?
+								  RoundedLongLongIntegerPart(Duration * Rational_t(DisplayFrameCount, DecodeFrameCount)) :
+								  RoundedLongLongIntegerPart(Duration);
+	Configuration.FrameDecodeTime       = max(BlockDecodeTime, Configuration.FrameDecodeTime);
+
+	//
+	// Apply an update to the next expected playback time, used to spot PTS jumps
+	//
+
+	PlaybackTimeIncrement           = Duration.RoundedLongLongIntegerPart();
+
+//
+	return OutputTimerNoError;
 }
-
 
 ///////////////////////////////////////////////////////////////////////////
 ///
@@ -394,58 +386,58 @@ OutputTimerStatus_t   OutputTimer_Audio_c::FillOutFrameTimingRecord(
 ///
 OutputTimerStatus_t   OutputTimer_Audio_c::CorrectSynchronizationError(void)
 {
-    long long   ErrorSign;
-    long long   CorrectionUnitSize;
-    long long   CorrectionUnits;
+	long long   ErrorSign;
+	long long   CorrectionUnitSize;
+	long long   CorrectionUnits;
 
 //
 
 #ifdef __TDT__
 
-    if (noaudiosync == 1)
-    {
-        report(severity_info, "no audio sync correction (noaudiosync is aktiv)\n");
-        return OutputTimerNoError;
-    }
+	if (noaudiosync == 1)
+	{
+		report(severity_info, "no audio sync correction (noaudiosync is aktiv)\n");
+		return OutputTimerNoError;
+	}
 
 #endif
 
-    ErrorSign       = (SynchronizationError < 0) ? -1 : 1;
+	ErrorSign       = (SynchronizationError < 0) ? -1 : 1;
 
-    //
-    // We can correct in units of a single sample.
-    //
+	//
+	// We can correct in units of a single sample.
+	//
 
-    CorrectionUnitSize  = (1000000 + (LastSampleRate / 2)) / LastSampleRate;
+	CorrectionUnitSize  = (1000000 + (LastSampleRate / 2)) / LastSampleRate;
 
-    CorrectionUnits = (SynchronizationError + (ErrorSign * (CorrectionUnitSize / 2))) / CorrectionUnitSize;
+	CorrectionUnits = (SynchronizationError + (ErrorSign * (CorrectionUnitSize / 2))) / CorrectionUnitSize;
 
-    //
-    // Now, if we need to gain samples at a level greater than the trigger delay
-    // level (where the manifestor will just wait for a while), we ignore the
-    // correction, alternatively we either gain or lose samples.
-    //
+	//
+	// Now, if we need to gain samples at a level greater than the trigger delay
+	// level (where the manifestor will just wait for a while), we ignore the
+	// correction, alternatively we either gain or lose samples.
+	//
 
-    SynchronizationCorrectionUnits      = 0;
+	SynchronizationCorrectionUnits      = 0;
 
-    if ((CorrectionUnitSize * CorrectionUnits) > THRESHOLD_FOR_AUDIO_MANIFESTOR_INTERVENTION)
-    {
-        ExtendSamplesForSynchronization     = CorrectionUnits < 0;
-        SynchronizationCorrectionUnits      = ExtendSamplesForSynchronization ? -CorrectionUnits : CorrectionUnits;
+	if ((CorrectionUnitSize * CorrectionUnits) > THRESHOLD_FOR_AUDIO_MANIFESTOR_INTERVENTION)
+	{
+		ExtendSamplesForSynchronization     = CorrectionUnits < 0;
+		SynchronizationCorrectionUnits      = ExtendSamplesForSynchronization ? -CorrectionUnits : CorrectionUnits;
 
-        //
-        // Now we limit the counts when we are not in startup mode
-        //
+		//
+		// Now we limit the counts when we are not in startup mode
+		//
 
-        if (!SynchronizationAtStartup)
-            SynchronizationCorrectionUnits  = min(SamplesInLastFrame, SynchronizationCorrectionUnits);
+		if (!SynchronizationAtStartup)
+			SynchronizationCorrectionUnits  = min(SamplesInLastFrame, SynchronizationCorrectionUnits);
 
-        SynchronizationOneTenthCorrectionUnits  = (SynchronizationCorrectionUnits + 9) / 10;
-    }
+		SynchronizationOneTenthCorrectionUnits  = (SynchronizationCorrectionUnits + 9) / 10;
+	}
 
 //
 
-    return OutputTimerNoError;
+	return OutputTimerNoError;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -464,15 +456,15 @@ OutputTimerStatus_t   OutputTimer_Audio_c::CorrectSynchronizationError(void)
 ///
 unsigned int OutputTimer_Audio_c::LookupMinimumManifestorLatency(unsigned int SamplingFrequency)
 {
-    const int no_overflow = 4;
-    unsigned int numerator, denominator;
+	const int no_overflow = 4;
+	unsigned int numerator, denominator;
 
-    // keep doubling the sampling rate until it is above the minimum
-    while (SamplingFrequency && SamplingFrequency < AudioConfiguration.MinimumManifestorSamplingFrequency)
-        SamplingFrequency *= 2;
+	// keep doubling the sampling rate until it is above the minimum
+	while (SamplingFrequency && SamplingFrequency < AudioConfiguration.MinimumManifestorSamplingFrequency)
+		SamplingFrequency *= 2;
 
-    numerator =  AudioConfiguration.MinimumManifestorLatencyInSamples * (1000000 >> no_overflow);
-    denominator = SamplingFrequency >> no_overflow;
+	numerator =  AudioConfiguration.MinimumManifestorLatencyInSamples * (1000000 >> no_overflow);
+	denominator = SamplingFrequency >> no_overflow;
 
-    return numerator / denominator;
+	return numerator / denominator;
 }

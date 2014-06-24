@@ -70,26 +70,26 @@ static char report_log[REPORT_LOG_SZ + 1], *report_log_ptr = report_log;
 
 void report_init(void)
 {
-    severity_restriction_lower  = 0;
-    severity_restriction_upper  = 0x7fffffff;
-    OS_InitializeMutex(&report_lock);
+	severity_restriction_lower  = 0;
+	severity_restriction_upper  = 0x7fffffff;
+	OS_InitializeMutex(&report_lock);
 
 #if defined(REPORT_UART)
-    UartInit();
+	UartInit();
 #endif
 
-    OS_RegisterTuneable("min_trace_level", (unsigned int *) &severity_restriction_lower);
+	OS_RegisterTuneable("min_trace_level", (unsigned int *) &severity_restriction_lower);
 
-    return;
+	return;
 }
 
 /* --- */
 
 void report_restricted_severity_levels(int lower_restriction,
-                                       int upper_restriction)
+									   int upper_restriction)
 {
-    severity_restriction_lower  = lower_restriction;
-    severity_restriction_upper  = upper_restriction;
+	severity_restriction_lower  = lower_restriction;
+	severity_restriction_upper  = upper_restriction;
 }
 
 /* --- */
@@ -97,38 +97,38 @@ void report_restricted_severity_levels(int lower_restriction,
 static void report_output(void)
 {
 #if defined (REPORT_UART)
-    UartOutput(report_buffer);
+	UartOutput(report_buffer);
 #elif defined (REPORT_LOG)
-    char *p = report_buffer;
+	char *p = report_buffer;
 
-    while (0 != (*report_log_ptr++ = *p++))
-    {
+	while (0 != (*report_log_ptr++ = *p++))
+	{
 
 #ifdef __ST200__
-        __asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
+		__asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
 #endif
 
-        if (report_log_ptr >= (report_log + REPORT_LOG_SZ))
-        {
-            report_log_ptr = report_log;
-        }
-    }
+		if (report_log_ptr >= (report_log + REPORT_LOG_SZ))
+		{
+			report_log_ptr = report_log;
+		}
+	}
 
 #ifdef __ST200__
-    __asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
+	__asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
 #endif
 #else
 #if defined (__KERNEL__)
 #ifdef REPORT_KPTRACE
-    extern void kptrace_write_record(const char * rec);
-    kptrace_write_record(report_buffer);
+	extern void kptrace_write_record(const char * rec);
+	kptrace_write_record(report_buffer);
 #endif
 #ifdef REPORT_PRINTK
-    printk("%s", report_buffer);
+	printk("%s", report_buffer);
 #endif
 #else
-    printf("%s", report_buffer);
-    fflush(stdout);
+	printf("%s", report_buffer);
+	fflush(stdout);
 #endif
 #endif
 }
@@ -139,74 +139,73 @@ static void report_output(void)
 
 #if (!defined(__KERNEL__) || defined(CONFIG_PRINTK)) && defined(REPORT)
 void report(report_severity_t   report_severity,
-            const char         *format, ...)
+			const char         *format, ...)
 {
-    va_list      list;
+	va_list      list;
 
-    /* --- Should we report this message --- */
+	/* --- Should we report this message --- */
 
-    if (!inrange(report_severity, severity_restriction_lower, severity_restriction_upper) &&
-            (report_severity < severity_fatal)) return;
+	if (!inrange(report_severity, severity_restriction_lower, severity_restriction_upper) &&
+			(report_severity < severity_fatal)) return;
 
-    /* --- Perform the report --- */
+	/* --- Perform the report --- */
 
-    OS_LockMutex(&report_lock);
+	OS_LockMutex(&report_lock);
 
-    if (report_severity >= severity_error)
-    {
-        sprintf(report_buffer, "***** %s-%s: ",
-                ((report_severity >= severity_fatal) ? "Fatal" : "Error"),
-                OS_ThreadName());
+	if (report_severity >= severity_error)
+	{
+		sprintf(report_buffer, "***** %s-%s: ",
+				((report_severity >= severity_fatal) ? "Fatal" : "Error"),
+				OS_ThreadName());
 
-        report_output();
-    }
+		report_output();
+	}
 
-    va_start(list, format);
-    vsnprintf(report_buffer, REPORT_STRING_SIZE, format, list);
-    va_end(list);
+	va_start(list, format);
+	vsnprintf(report_buffer, REPORT_STRING_SIZE, format, list);
+	va_end(list);
 
-    report_output();
+	report_output();
 
-    if (report_severity == severity_fatal)
-    {
+	if (report_severity == severity_fatal)
+	{
 #ifdef __KERNEL__
-        dump_stack();
-        set_current_state(TASK_INTERRUPTIBLE);
-        schedule();
+		dump_stack();
+		set_current_state(TASK_INTERRUPTIBLE);
+		schedule();
 #endif
 
-        while (true);
-    }
+		while (true);
+	}
 
-    OS_UnLockMutex(&report_lock);
+	OS_UnLockMutex(&report_lock);
 }
 #endif
-
 
 #ifdef REPORT
 /* -----------------------------------------------------------
     A useful reporting hex function
 ----------------------------------------------------------- */
 void report_dump_hex(report_severity_t level,
-                     unsigned char    *data,
-                     int               length,
-                     int               width,
-                     void*             start)
+					 unsigned char    *data,
+					 int               length,
+					 int               width,
+					 void*             start)
 {
-    int n, i;
-    char str[256];
+	int n, i;
+	char str[256];
 
-    for (n = 0; n < length; n += width)
-    {
-        char *str2 = str;
-        str2 += sprintf(str2, "0x%08x:", (unsigned int)start + n);
+	for (n = 0; n < length; n += width)
+	{
+		char *str2 = str;
+		str2 += sprintf(str2, "0x%08x:", (unsigned int)start + n);
 
-        for (i = 0; i < ((length - n) < width ? (length - n) : width); i++)
-            str2 += sprintf(str2, " %02x", data[n + i] & 0x0ff);
+		for (i = 0; i < ((length - n) < width ? (length - n) : width); i++)
+			str2 += sprintf(str2, " %02x", data[n + i] & 0x0ff);
 
-        str2 += sprintf(str2, "\n");
-        report(level, str);
-    }
+		str2 += sprintf(str2, "\n");
+		report(level, str);
+	}
 }
 #endif
 
@@ -300,8 +299,8 @@ void report_dump_hex(report_severity_t level,
 //
 
 #define set_pio_pins()          os_register_write( PIO_C0(5), 0x00 ); \
-    os_register_write( PIO_C1(5), 0x99 ); \
-    os_register_write( PIO_C2(5), 0xff );
+	os_register_write( PIO_C1(5), 0x99 ); \
+	os_register_write( PIO_C2(5), 0xff );
 
 #define set_baudrate( rate )    os_register_write( ASC_BAUDRATE(1), (CPU_FREQUENCY / ( 16 * rate )) )
 #define set_interrupt_mask()    os_register_write( ASC_INT_ENABLE(1), 0 )
@@ -317,41 +316,40 @@ void         os_register_write(unsigned int address, unsigned int value);
 
 static void UartInit(void)
 {
-    set_pio_pins();
-    set_interrupt_mask();
-    set_baudrate(38400);
-    set_control();
-    reset_transmit();
+	set_pio_pins();
+	set_interrupt_mask();
+	set_baudrate(38400);
+	set_control();
+	reset_transmit();
 }
 
 //
 
 static void UartOutChar(char    c)
 {
-    if (transmit_buffer_full())
-    {
-        OS_SleepMilliSeconds(2);                        // 8 bytes at 38400
+	if (transmit_buffer_full())
+	{
+		OS_SleepMilliSeconds(2);                        // 8 bytes at 38400
 
-        if (transmit_buffer_full())
-            reset_transmit();                   // Should have clocked some by now
-    }
+		if (transmit_buffer_full())
+			reset_transmit();                   // Should have clocked some by now
+	}
 
-    transmit_char(c);
+	transmit_char(c);
 }
 
 //
 
 static void UartOutput(char    *String)
 {
-    while (*String != 0)
-    {
-        UartOutChar(*String);
+	while (*String != 0)
+	{
+		UartOutChar(*String);
 
-        if (*(String++) == '\n')
-            UartOutChar('\r');
-    }
+		if (*(String++) == '\n')
+			UartOutChar('\r');
+	}
 }
-
 
 #endif
 

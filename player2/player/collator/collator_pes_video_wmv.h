@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the wmv collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Sep-07   Created from existing collator_pes_audio_mpeg.h Julian

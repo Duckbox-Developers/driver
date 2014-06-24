@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the register addresses and bitfields for the mpeg2 decoder
 on the STM8000 as seen from the Audio Encoder LX
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 28-Nov-03   Created                                         Nick
@@ -56,13 +55,12 @@ static unsigned int              RegisterBase;
 
 static void inline MapRegisters(void)
 {
-    RegisterBase = (unsigned int)OSDEV_IOReMap(VIDEO_REGISTER_BASE, VIDEO_REGISTER_SIZE);
+	RegisterBase = (unsigned int)OSDEV_IOReMap(VIDEO_REGISTER_BASE, VIDEO_REGISTER_SIZE);
 }
 static void inline UnMapRegisters(void)
 {
-    OSDEV_IOUnMap(RegisterBase);
+	OSDEV_IOUnMap(RegisterBase);
 }
-
 
 #define VID0_EXE                0x0008                                  /* Execute decoding task */
 #define VID_IC_CFG              0x0010                                  /* Video decoder interconnect configuration */
@@ -105,11 +103,9 @@ static void inline UnMapRegisters(void)
 #define VID_SRFP(n)             (VIDEO_PIPELINE_BASE(n) + 0x04a4)       /* Secondary reconstructed luma frame pointer */
 #define VID_RCM(n)              (VIDEO_PIPELINE_BASE(n) + 0x04ac)       /* Reconstruction mode */
 
-
 //
 // Register field defines,
 //
-
 
 #define VID_EXE__EXE                            0x00000001              /* Execute */
 
@@ -129,12 +125,10 @@ static void inline UnMapRegisters(void)
 #define VID_MBEN__MBEX0_MASK                    0x00ff
 #define VID_MBEN__MBEX0_SHIFT                   0
 
-
 #define VID_TIS__RMM                            0x00000008              /* Reconstruct missing macroblock */
 #define VID_TIS__MVC                            0x00000004              /* Motion vector check */
 #define VID_TIS__SBD                            0x00000002              /* Simplified B picture decoding */
 #define VID_TIS__OVW                            0x00000001              /* Enable overwrite */
-
 
 #define VID_PPR__MP2_SHIFT                      30                      /* MPEG-2 mode */
 #define VID_PPR__FFN_MASK                       0x0003

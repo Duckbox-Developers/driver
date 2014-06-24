@@ -30,7 +30,6 @@ Linux headers (which are not C++ safe).
 Note that it is not possible to export all the OSDEV_ functions as
 functions since some will break quite badly when un-inlined.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 10-Oct-05   Created                                         Daniel

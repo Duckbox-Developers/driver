@@ -6,7 +6,6 @@ Author :           Julian
 
 Implementation of the playback module for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 14-Feb-07   Created                                         Julian
@@ -25,110 +24,110 @@ Date        Modification                                    Name
 //{{{  HavanaPlayback_c
 HavanaPlayback_c::HavanaPlayback_c(void)
 {
-    int i;
+	int i;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-        Stream[i]       = NULL;
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+		Stream[i]       = NULL;
 
-    for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
-        Demux[i]        = NULL;
+	for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
+		Demux[i]        = NULL;
 
-    PlayerPlayback      = NULL;
-    OutputCoordinator   = NULL;
+	PlayerPlayback      = NULL;
+	OutputCoordinator   = NULL;
 
-    LockInitialised     = false;
+	LockInitialised     = false;
 }
 //}}}
 //{{{  ~HavanaPlayback_c
 HavanaPlayback_c::~HavanaPlayback_c(void)
 {
-    int i;
+	int i;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-    {
-        if (Stream[i] != NULL)
-        {
-            delete Stream[i];
-            Stream[i]   = NULL;
-        }
-    }
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+	{
+		if (Stream[i] != NULL)
+		{
+			delete Stream[i];
+			Stream[i]   = NULL;
+		}
+	}
 
-    for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
-    {
-        if (Demux[i] != NULL)
-        {
-            delete Demux[i];
-            Demux[i]    = NULL;
-        }
-    }
+	for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
+	{
+		if (Demux[i] != NULL)
+		{
+			delete Demux[i];
+			Demux[i]    = NULL;
+		}
+	}
 
-    if (PlayerPlayback != NULL)
-    {
-        Player->TerminatePlayback(PlayerPlayback, true);
-        PlayerPlayback  = NULL;
-    }
+	if (PlayerPlayback != NULL)
+	{
+		Player->TerminatePlayback(PlayerPlayback, true);
+		PlayerPlayback  = NULL;
+	}
 
-    if (OutputCoordinator != NULL)
-        delete OutputCoordinator;
+	if (OutputCoordinator != NULL)
+		delete OutputCoordinator;
 
-    if (LockInitialised)
-    {
-        OS_TerminateMutex(&Lock);
-        LockInitialised         = false;
-    }
+	if (LockInitialised)
+	{
+		OS_TerminateMutex(&Lock);
+		LockInitialised         = false;
+	}
 }
 //}}}
 //{{{  Init
 HavanaStatus_t HavanaPlayback_c::Init(class HavanaPlayer_c*   HavanaPlayer,
-                                      class Player_c*         Player,
-                                      class BufferManager_c*  BufferManager)
+									  class Player_c*         Player,
+									  class BufferManager_c*  BufferManager)
 {
-    PlayerStatus_t      PlayerStatus    = PlayerNoError;
+	PlayerStatus_t      PlayerStatus    = PlayerNoError;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    this->HavanaPlayer          = HavanaPlayer;
-    this->Player                = Player;
-    this->BufferManager         = BufferManager;
+	this->HavanaPlayer          = HavanaPlayer;
+	this->Player                = Player;
+	this->BufferManager         = BufferManager;
 
-    if (!LockInitialised)
-    {
-        if (OS_InitializeMutex(&Lock) != OS_NO_ERROR)
-        {
-            PLAYBACK_ERROR("Failed to initialize InputLock mutex\n");
-            return HavanaNoMemory;
-        }
+	if (!LockInitialised)
+	{
+		if (OS_InitializeMutex(&Lock) != OS_NO_ERROR)
+		{
+			PLAYBACK_ERROR("Failed to initialize InputLock mutex\n");
+			return HavanaNoMemory;
+		}
 
-        LockInitialised         = true;
-    }
+		LockInitialised         = true;
+	}
 
-    if (OutputCoordinator == NULL)
-        OutputCoordinator   = new OutputCoordinator_Base_c();
+	if (OutputCoordinator == NULL)
+		OutputCoordinator   = new OutputCoordinator_Base_c();
 
-    if (OutputCoordinator == NULL)
-    {
-        PLAYBACK_ERROR("Unable to create output coordinator\n");
-        return HavanaNoMemory;
-    }
+	if (OutputCoordinator == NULL)
+	{
+		PLAYBACK_ERROR("Unable to create output coordinator\n");
+		return HavanaNoMemory;
+	}
 
-    if (PlayerPlayback == NULL)
-    {
-        PlayerStatus    = Player->CreatePlayback(OutputCoordinator, &PlayerPlayback, true);     // Indicate we want the creation event
+	if (PlayerPlayback == NULL)
+	{
+		PlayerStatus    = Player->CreatePlayback(OutputCoordinator, &PlayerPlayback, true);     // Indicate we want the creation event
 
-        if (PlayerStatus != PlayerNoError)
-        {
-            PLAYBACK_ERROR("Unable to create playback context %x\n", PlayerStatus);
-            return HavanaNoMemory;
-        }
-    }
+		if (PlayerStatus != PlayerNoError)
+		{
+			PLAYBACK_ERROR("Unable to create playback context %x\n", PlayerStatus);
+			return HavanaNoMemory;
+		}
+	}
 
-    //    PLAYBACK_DEBUG("%p\n", PlayerPlayback);
+	//    PLAYBACK_DEBUG("%p\n", PlayerPlayback);
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 
@@ -138,81 +137,81 @@ HavanaStatus_t HavanaPlayback_c::Init(class HavanaPlayer_c*   HavanaPlayer,
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayback_c::AddDemux(unsigned int                    DemuxId,
-        class HavanaDemux_c**           HavanaDemux)
+										  class HavanaDemux_c**           HavanaDemux)
 {
-    HavanaStatus_t              Status;
-    class Demultiplexor_c*      Demultiplexor;
-    DemultiplexorContext_t      DemuxContext;
+	HavanaStatus_t              Status;
+	class Demultiplexor_c*      Demultiplexor;
+	DemultiplexorContext_t      DemuxContext;
 
-    if (DemuxId >= MAX_DEMUX_CONTEXTS)
-        return HavanaError;
+	if (DemuxId >= MAX_DEMUX_CONTEXTS)
+		return HavanaError;
 
-    if (Demux[DemuxId] != NULL)
-    {
-        *HavanaDemux        = Demux[DemuxId];
-        return HavanaNoError;
-    }
+	if (Demux[DemuxId] != NULL)
+	{
+		*HavanaDemux        = Demux[DemuxId];
+		return HavanaNoError;
+	}
 
-    PLAYBACK_DEBUG("Getting demux context for Demux %d\n", DemuxId);
+	PLAYBACK_DEBUG("Getting demux context for Demux %d\n", DemuxId);
 
-    if (HavanaPlayer->GetDemuxContext(DemuxId, &Demultiplexor, &DemuxContext) != HavanaNoError)
-    {
-        PLAYBACK_ERROR("Unable to create demux context\n");
-        return HavanaNoMemory;
-    }
+	if (HavanaPlayer->GetDemuxContext(DemuxId, &Demultiplexor, &DemuxContext) != HavanaNoError)
+	{
+		PLAYBACK_ERROR("Unable to create demux context\n");
+		return HavanaNoMemory;
+	}
 
-    Demux[DemuxId]   = new HavanaDemux_c();
+	Demux[DemuxId]   = new HavanaDemux_c();
 
-    if (Demux[DemuxId] == NULL)
-    {
-        PLAYBACK_ERROR("Unable to create demux context - insufficient memory\n");
-        return HavanaNoMemory;
-    }
+	if (Demux[DemuxId] == NULL)
+	{
+		PLAYBACK_ERROR("Unable to create demux context - insufficient memory\n");
+		return HavanaNoMemory;
+	}
 
-    Status      = Demux[DemuxId]->Init(Player,
-                                       PlayerPlayback,
-                                       DemuxContext);
+	Status      = Demux[DemuxId]->Init(Player,
+									   PlayerPlayback,
+									   DemuxContext);
 
-    if (Status != HavanaNoError)
-    {
-        delete Demux[DemuxId];
-        Demux[DemuxId]          = NULL;
-        return Status;
-    }
+	if (Status != HavanaNoError)
+	{
+		delete Demux[DemuxId];
+		Demux[DemuxId]          = NULL;
+		return Status;
+	}
 
-    *HavanaDemux        = Demux[DemuxId];
-    PLAYBACK_DEBUG("%p\n", Demux[DemuxId]);
+	*HavanaDemux        = Demux[DemuxId];
+	PLAYBACK_DEBUG("%p\n", Demux[DemuxId]);
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  RemoveDemux
 HavanaStatus_t HavanaPlayback_c::RemoveDemux(class HavanaDemux_c*   HavanaDemux)
 {
-    int         i;
+	int         i;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    if (HavanaDemux == NULL)
-        return HavanaDemuxInvalid;
+	if (HavanaDemux == NULL)
+		return HavanaDemuxInvalid;
 
-    for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
-    {
-        if (Demux[i] == HavanaDemux)
-            break;
-    }
+	for (i = 0; i < MAX_DEMUX_CONTEXTS; i++)
+	{
+		if (Demux[i] == HavanaDemux)
+			break;
+	}
 
-    if (i == MAX_DEMUX_CONTEXTS)
-    {
-        PLAYBACK_ERROR("Unable to locate demux context for delete\n");
-        return HavanaDemuxInvalid;
-    }
+	if (i == MAX_DEMUX_CONTEXTS)
+	{
+		PLAYBACK_ERROR("Unable to locate demux context for delete\n");
+		return HavanaDemuxInvalid;
+	}
 
-    delete Demux[i];
-    PLAYBACK_DEBUG("%p\n", Demux[i]);
-    Demux[i]            = NULL;
+	delete Demux[i];
+	PLAYBACK_DEBUG("%p\n", Demux[i]);
+	Demux[i]            = NULL;
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 
@@ -224,17 +223,17 @@ HavanaStatus_t HavanaPlayback_c::RemoveDemux(class HavanaDemux_c*   HavanaDemux)
 //}}}
 HavanaStatus_t HavanaPlayback_c::Active(void)
 {
-    int                 i;
+	int                 i;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-    {
-        if (Stream[i] != NULL)
-            return HavanaPlaybackActive;
-    }
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+	{
+		if (Stream[i] != NULL)
+			return HavanaPlaybackActive;
+	}
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  AddStream
@@ -248,331 +247,331 @@ HavanaStatus_t HavanaPlayback_c::Active(void)
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayback_c::AddStream(char*                   Media,
-        char*                   Format,
-        char*                   Encoding,
-        unsigned int            SurfaceId,
-        class HavanaStream_c**  HavanaStream)
+										   char*                   Format,
+										   char*                   Encoding,
+										   unsigned int            SurfaceId,
+										   class HavanaStream_c**  HavanaStream)
 {
-    HavanaStatus_t      Status;
-    int                 i;
+	HavanaStatus_t      Status;
+	int                 i;
 
-    //if (*HavanaStream != NULL)                  // Device already has this stream
-    //    return HavanaStreamAlreadyExists;
+	//if (*HavanaStream != NULL)                  // Device already has this stream
+	//    return HavanaStreamAlreadyExists;
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-    {
-        if (Stream[i] == NULL)
-            break;
-    }
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+	{
+		if (Stream[i] == NULL)
+			break;
+	}
 
-    if (i == MAX_STREAMS_PER_PLAYBACK)
-    {
-        PLAYBACK_ERROR("Unable to create stream context - Too many streams\n");
-        OS_UnLockMutex(&Lock);
-        return HavanaTooManyStreams;
-    }
+	if (i == MAX_STREAMS_PER_PLAYBACK)
+	{
+		PLAYBACK_ERROR("Unable to create stream context - Too many streams\n");
+		OS_UnLockMutex(&Lock);
+		return HavanaTooManyStreams;
+	}
 
-    Stream[i]   = new HavanaStream_c();
+	Stream[i]   = new HavanaStream_c();
 
-    if (Stream[i] == NULL)
-    {
-        PLAYBACK_ERROR("Unable to create stream context - insufficient memory\n");
-        OS_UnLockMutex(&Lock);
-        return HavanaNoMemory;
-    }
+	if (Stream[i] == NULL)
+	{
+		PLAYBACK_ERROR("Unable to create stream context - insufficient memory\n");
+		OS_UnLockMutex(&Lock);
+		return HavanaNoMemory;
+	}
 
-    Status      = Stream[i]->Init(HavanaPlayer,
-                                  Player,
-                                  PlayerPlayback,
-                                  Media,
-                                  Format,
-                                  Encoding,
-                                  SurfaceId);
+	Status      = Stream[i]->Init(HavanaPlayer,
+								  Player,
+								  PlayerPlayback,
+								  Media,
+								  Format,
+								  Encoding,
+								  SurfaceId);
 
-    if (Status != HavanaNoError)
-    {
-        delete Stream[i];
-        Stream[i]       = NULL;
-        OS_UnLockMutex(&Lock);
-        return Status;
-    }
+	if (Status != HavanaNoError)
+	{
+		delete Stream[i];
+		Stream[i]       = NULL;
+		OS_UnLockMutex(&Lock);
+		return Status;
+	}
 
-    //PLAYBACK_DEBUG ("Adding stream %p, %d\n", Stream[i], i);
-    *HavanaStream       = Stream[i];
+	//PLAYBACK_DEBUG ("Adding stream %p, %d\n", Stream[i], i);
+	*HavanaStream       = Stream[i];
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  RemoveStream
 HavanaStatus_t HavanaPlayback_c::RemoveStream(class HavanaStream_c*   HavanaStream)
 {
-    int         i;
+	int         i;
 
-    PLAYBACK_DEBUG("\n");
+	PLAYBACK_DEBUG("\n");
 
-    if (HavanaStream == NULL)
-        return HavanaStreamInvalid;
+	if (HavanaStream == NULL)
+		return HavanaStreamInvalid;
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-    {
-        if (Stream[i] == HavanaStream)
-            break;
-    }
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+	{
+		if (Stream[i] == HavanaStream)
+			break;
+	}
 
-    if (i == MAX_STREAMS_PER_PLAYBACK)
-    {
-        PLAYBACK_ERROR("Unable to locate stream for delete\n");
-        OS_UnLockMutex(&Lock);
-        return HavanaStreamInvalid;
-    }
+	if (i == MAX_STREAMS_PER_PLAYBACK)
+	{
+		PLAYBACK_ERROR("Unable to locate stream for delete\n");
+		OS_UnLockMutex(&Lock);
+		return HavanaStreamInvalid;
+	}
 
-    //PLAYBACK_DEBUG ("Removing stream %p, %d\n", Stream[i], i);
-    delete Stream[i];
-    Stream[i]   = NULL;
+	//PLAYBACK_DEBUG ("Removing stream %p, %d\n", Stream[i], i);
+	delete Stream[i];
+	Stream[i]   = NULL;
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  SetSpeed
 HavanaStatus_t HavanaPlayback_c::SetSpeed(int        PlaySpeed)
 {
-    PlayerStatus_t      Status;
-    PlayDirection_t     Direction;
-    Rational_t          Speed;
+	PlayerStatus_t      Status;
+	PlayDirection_t     Direction;
+	Rational_t          Speed;
 
-    if ((unsigned int)PlaySpeed == PLAY_SPEED_REVERSE_STOPPED)
-    {
-        Direction       = PlayBackward;
-        PlaySpeed       = PLAY_SPEED_STOPPED;
-    }
-    else if (PlaySpeed >= 0)
-        Direction       = PlayForward;
-    else
-    {
-        Direction       = PlayBackward;
-        PlaySpeed       = -PlaySpeed;
-    }
+	if ((unsigned int)PlaySpeed == PLAY_SPEED_REVERSE_STOPPED)
+	{
+		Direction       = PlayBackward;
+		PlaySpeed       = PLAY_SPEED_STOPPED;
+	}
+	else if (PlaySpeed >= 0)
+		Direction       = PlayForward;
+	else
+	{
+		Direction       = PlayBackward;
+		PlaySpeed       = -PlaySpeed;
+	}
 
-    Speed               = Rational_t(PlaySpeed, PLAY_SPEED_NORMAL_PLAY);
+	Speed               = Rational_t(PlaySpeed, PLAY_SPEED_NORMAL_PLAY);
 
-    PLAYBACK_DEBUG("Setting speed to %d.%06d\n", Speed.IntegerPart(), Speed.RemainderDecimal());
-    Status      = Player->SetPlaybackSpeed(PlayerPlayback, Speed, Direction);
+	PLAYBACK_DEBUG("Setting speed to %d.%06d\n", Speed.IntegerPart(), Speed.RemainderDecimal());
+	Status      = Player->SetPlaybackSpeed(PlayerPlayback, Speed, Direction);
 
-    if (Status != PlayerNoError)
-    {
-        PLAYBACK_ERROR("Failed to set speed - Status = %x\n", Status);
-        return HavanaError;
-    }
+	if (Status != PlayerNoError)
+	{
+		PLAYBACK_ERROR("Failed to set speed - Status = %x\n", Status);
+		return HavanaError;
+	}
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  GetSpeed
 HavanaStatus_t HavanaPlayback_c::GetSpeed(int*       PlaySpeed)
 {
-    PlayerStatus_t      Status;
-    PlayDirection_t     Direction;
-    Rational_t          Speed;
+	PlayerStatus_t      Status;
+	PlayDirection_t     Direction;
+	Rational_t          Speed;
 
-    Status      = Player->GetPlaybackSpeed(PlayerPlayback, &Speed, &Direction);
+	Status      = Player->GetPlaybackSpeed(PlayerPlayback, &Speed, &Direction);
 
-    if (Status != PlayerNoError)
-    {
-        PLAYBACK_ERROR("Failed to get speed - Status = %x\n", Status);
-        return HavanaError;
-    }
+	if (Status != PlayerNoError)
+	{
+		PLAYBACK_ERROR("Failed to get speed - Status = %x\n", Status);
+		return HavanaError;
+	}
 
-    PLAYBACK_DEBUG("Getting speed of %d.%06d\n", Speed.IntegerPart(), Speed.RemainderDecimal());
+	PLAYBACK_DEBUG("Getting speed of %d.%06d\n", Speed.IntegerPart(), Speed.RemainderDecimal());
 
-    *PlaySpeed          = (int)IntegerPart(Speed * PLAY_SPEED_NORMAL_PLAY);
+	*PlaySpeed          = (int)IntegerPart(Speed * PLAY_SPEED_NORMAL_PLAY);
 
-    if (((*PlaySpeed) == PLAY_SPEED_STOPPED) && (Direction != PlayForward))
-        *PlaySpeed      = PLAY_SPEED_REVERSE_STOPPED;
-    else if (Direction != PlayForward)
-        *PlaySpeed      = -*PlaySpeed;
+	if (((*PlaySpeed) == PLAY_SPEED_STOPPED) && (Direction != PlayForward))
+		*PlaySpeed      = PLAY_SPEED_REVERSE_STOPPED;
+	else if (Direction != PlayForward)
+		*PlaySpeed      = -*PlaySpeed;
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  SetNativePlaybackTime
 HavanaStatus_t HavanaPlayback_c::SetNativePlaybackTime(unsigned long long      NativeTime,
-        unsigned long long      SystemTime)
+		unsigned long long      SystemTime)
 {
-    PlayerStatus_t      Status;
+	PlayerStatus_t      Status;
 
-    Status      = Player->SetNativePlaybackTime(PlayerPlayback,  NativeTime, SystemTime);
+	Status      = Player->SetNativePlaybackTime(PlayerPlayback,  NativeTime, SystemTime);
 
-    if (Status != PlayerNoError)
-    {
-        PLAYBACK_ERROR("Unable to SetNativePlaybackTime \n");
-        return HavanaError;
-    }
+	if (Status != PlayerNoError)
+	{
+		PLAYBACK_ERROR("Unable to SetNativePlaybackTime \n");
+		return HavanaError;
+	}
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  SetOption
 HavanaStatus_t HavanaPlayback_c::SetOption(play_option_t           Option,
-        unsigned int            Value)
+										   unsigned int            Value)
 {
-    unsigned char       PolicyValue     = 0;
-    PlayerPolicy_t      PlayerPolicy;
-    PlayerStatus_t      Status;
+	unsigned char       PolicyValue     = 0;
+	PlayerPolicy_t      PlayerPolicy;
+	PlayerStatus_t      Status;
 
-    switch (Option)
-    {
-        case PLAY_OPTION_MASTER_CLOCK:
-            PlayerPolicy        = PolicyMasterClock;
+	switch (Option)
+	{
+		case PLAY_OPTION_MASTER_CLOCK:
+			PlayerPolicy        = PolicyMasterClock;
 
-            switch (Value)
-            {
-                case PLAY_OPTION_VALUE_VIDEO_CLOCK_MASTER:
-                    PolicyValue = PolicyValueVideoClockMaster;
-                    break;
+			switch (Value)
+			{
+				case PLAY_OPTION_VALUE_VIDEO_CLOCK_MASTER:
+					PolicyValue = PolicyValueVideoClockMaster;
+					break;
 
-                case PLAY_OPTION_VALUE_AUDIO_CLOCK_MASTER:
-                    PolicyValue = PolicyValueAudioClockMaster;
-                    break;
+				case PLAY_OPTION_VALUE_AUDIO_CLOCK_MASTER:
+					PolicyValue = PolicyValueAudioClockMaster;
+					break;
 
-                default:
-                    PolicyValue = PolicyValueSystemClockMaster;
-                    break;
-            }
+				default:
+					PolicyValue = PolicyValueSystemClockMaster;
+					break;
+			}
 
-            break;
+			break;
 
-        case PLAY_OPTION_DISCARD_LATE_FRAMES:
-            PlayerPolicy        = PolicyDiscardLateFrames;
+		case PLAY_OPTION_DISCARD_LATE_FRAMES:
+			PlayerPolicy        = PolicyDiscardLateFrames;
 
-            switch (Value)
-            {
-                case PLAY_OPTION_VALUE_DISCARD_LATE_FRAMES_NEVER:
-                    PolicyValue = PolicyValueDiscardLateFramesNever;
-                    break;
+			switch (Value)
+			{
+				case PLAY_OPTION_VALUE_DISCARD_LATE_FRAMES_NEVER:
+					PolicyValue = PolicyValueDiscardLateFramesNever;
+					break;
 
-                case PLAY_OPTION_VALUE_DISCARD_LATE_FRAMES_ALWAYS:
-                    PolicyValue = PolicyValueDiscardLateFramesAlways;
-                    break;
+				case PLAY_OPTION_VALUE_DISCARD_LATE_FRAMES_ALWAYS:
+					PolicyValue = PolicyValueDiscardLateFramesAlways;
+					break;
 
-                default:
-                    PolicyValue = PolicyValueDiscardLateFramesAfterSynchronize;
-                    break;
-            }
+				default:
+					PolicyValue = PolicyValueDiscardLateFramesAfterSynchronize;
+					break;
+			}
 
-            break;
+			break;
 
-        case PLAY_OPTION_VIDEO_START_IMMEDIATE:
-            PlayerPolicy        = PolicyVideoStartImmediate;
-            PolicyValue         = (Value == PLAY_OPTION_VALUE_ENABLE) ? PolicyValueApply : PolicyValueDisapply;
-            break;
+		case PLAY_OPTION_VIDEO_START_IMMEDIATE:
+			PlayerPolicy        = PolicyVideoStartImmediate;
+			PolicyValue         = (Value == PLAY_OPTION_VALUE_ENABLE) ? PolicyValueApply : PolicyValueDisapply;
+			break;
 
-        case PLAY_OPTION_PTS_SYMMETRIC_JUMP_DETECTION:
-            PlayerPolicy        = PolicySymmetricJumpDetection;
-            PolicyValue         = Value;
-            break;
+		case PLAY_OPTION_PTS_SYMMETRIC_JUMP_DETECTION:
+			PlayerPolicy        = PolicySymmetricJumpDetection;
+			PolicyValue         = Value;
+			break;
 
-        case PLAY_OPTION_PTS_FORWARD_JUMP_DETECTION_THRESHOLD:
-            PlayerPolicy        = PolicyPtsForwardJumpDetectionThreshold;
-            PolicyValue         = Value;
-            break;
+		case PLAY_OPTION_PTS_FORWARD_JUMP_DETECTION_THRESHOLD:
+			PlayerPolicy        = PolicyPtsForwardJumpDetectionThreshold;
+			PolicyValue         = Value;
+			break;
 
-        case PLAY_OPTION_ALLOW_FRAME_DISCARD_AT_NORMAL_SPEED:
-            PlayerPolicy        = PolicyAllowFrameDiscardAtNormalSpeed;
-            PolicyValue         = Value;
-            break;
+		case PLAY_OPTION_ALLOW_FRAME_DISCARD_AT_NORMAL_SPEED:
+			PlayerPolicy        = PolicyAllowFrameDiscardAtNormalSpeed;
+			PolicyValue         = Value;
+			break;
 
-        case PLAY_OPTION_OPERATE_COLLATOR2_IN_REVERSIBLE_MODE:
-            PlayerPolicy        = PolicyOperateCollator2InReversibleMode;
-            PolicyValue         = Value;
-            break;
+		case PLAY_OPTION_OPERATE_COLLATOR2_IN_REVERSIBLE_MODE:
+			PlayerPolicy        = PolicyOperateCollator2InReversibleMode;
+			PolicyValue         = Value;
+			break;
 
-        case PLAY_OPTION_SYNC_START_IMMEDIATE:
-            PlayerPolicy        = PolicySyncStartImmediate;
-            PolicyValue         = Value;
-            break;
+		case PLAY_OPTION_SYNC_START_IMMEDIATE:
+			PlayerPolicy        = PolicySyncStartImmediate;
+			PolicyValue         = Value;
+			break;
 
-        default:
-            PLAYBACK_ERROR("Unknown option %d\n", Option);
-            return HavanaError;
-    }
+		default:
+			PLAYBACK_ERROR("Unknown option %d\n", Option);
+			return HavanaError;
+	}
 
-    Status  = Player->SetPolicy(PlayerPlayback, PlayerAllStreams, PlayerPolicy, PolicyValue);
+	Status  = Player->SetPolicy(PlayerPlayback, PlayerAllStreams, PlayerPolicy, PolicyValue);
 
-    if (Status != PlayerNoError)
-    {
-        PLAYBACK_ERROR("Unable to set playback option %x, %x\n", PlayerPolicy, PolicyValue);
-        return HavanaError;
-    }
+	if (Status != PlayerNoError)
+	{
+		PLAYBACK_ERROR("Unable to set playback option %x, %x\n", PlayerPolicy, PolicyValue);
+		return HavanaError;
+	}
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 //{{{  SetClockDataPoint
 HavanaStatus_t HavanaPlayback_c::SetClockDataPoint(clock_data_point_t*        DataPoint)
 {
-    PlayerStatus_t              Status;
-    PlayerTimeFormat_t          SourceTimeFormat        = (DataPoint->time_format == DVB_TIME_FORMAT_US) ? TimeFormatUs : TimeFormatPts;
+	PlayerStatus_t              Status;
+	PlayerTimeFormat_t          SourceTimeFormat        = (DataPoint->time_format == DVB_TIME_FORMAT_US) ? TimeFormatUs : TimeFormatPts;
 
-    Status      = Player->ClockRecoveryInitialize(PlayerPlayback, SourceTimeFormat);
+	Status      = Player->ClockRecoveryInitialize(PlayerPlayback, SourceTimeFormat);
 
-    Status      = Player->ClockRecoveryDataPoint(PlayerPlayback, DataPoint->source_time, DataPoint->system_time);
+	Status      = Player->ClockRecoveryDataPoint(PlayerPlayback, DataPoint->source_time, DataPoint->system_time);
 
-    if (Status != PlayerNoError)
-    {
-        PLAYBACK_ERROR("Unable to set clock data point\n");
-        return HavanaError;
-    }
+	if (Status != PlayerNoError)
+	{
+		PLAYBACK_ERROR("Unable to set clock data point\n");
+		return HavanaError;
+	}
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 
 //{{{  CheckEvent
 HavanaStatus_t HavanaPlayback_c::CheckEvent(struct PlayerEventRecord_s*     PlayerEvent)
 {
-    int                 i;
-    HavanaStatus_t      HavanaStatus    = HavanaError;
+	int                 i;
+	HavanaStatus_t      HavanaStatus    = HavanaError;
 
-    OS_LockMutex(&Lock);                        // Make certain we cannot delete stream while checking the event
+	OS_LockMutex(&Lock);                        // Make certain we cannot delete stream while checking the event
 
-    for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
-    {
-        if (Stream[i] != NULL)
-        {
-            HavanaStatus    = Stream[i]->CheckEvent(PlayerEvent);
+	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
+	{
+		if (Stream[i] != NULL)
+		{
+			HavanaStatus    = Stream[i]->CheckEvent(PlayerEvent);
 
-            if (HavanaStatus == HavanaNoError)
-                break;
-        }
-    }
+			if (HavanaStatus == HavanaNoError)
+				break;
+		}
+	}
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
-    return HavanaStatus;
+	return HavanaStatus;
 }
 //}}}
 //{{{  GetPlayerEnvironment
 HavanaStatus_t HavanaPlayback_c::GetPlayerEnvironment(PlayerPlayback_t*               PlayerPlayback)
 {
-    //STREAM_DEBUG("\n");
+	//STREAM_DEBUG("\n");
 
-    if ((this->PlayerPlayback == NULL))
-    {
-        STREAM_ERROR("PlayerPlayback parameter is null. (%p) \n", this->PlayerPlayback);
-        return HavanaError;
-    }
+	if ((this->PlayerPlayback == NULL))
+	{
+		STREAM_ERROR("PlayerPlayback parameter is null. (%p) \n", this->PlayerPlayback);
+		return HavanaError;
+	}
 
-    *PlayerPlayback     = this->PlayerPlayback;
+	*PlayerPlayback     = this->PlayerPlayback;
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 //}}}
 

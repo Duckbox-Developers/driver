@@ -27,8 +27,6 @@
 #define ILC_IRQ(x) (x + MUXED_IRQ_BASE)
 #endif
 
-
-
 #if defined(CONFIG_CPU_SUBTYPE_STB7100)
 #include "mb442.h"
 #include "hms1.h"

@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the constants/macros that define useful things associated with
 PES packets
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 20-Nov-06   Created                                         Nick
@@ -63,11 +62,10 @@ Date        Modification                                    Name
 #define PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE   0x60
 #define PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE_MASK (~0x1f)
 #define IS_PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE(x) (PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE == \
-        ((x) & PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE_MASK))
+		((x) & PRIVATE_STREAM_1_EXTENDED_SUB_PICTURE_MASK))
 #define PRIVATE_STREAM_1_AC3                    0x80
 #define PRIVATE_STREAM_1_AC3_MASK               (~0x7)
 #define IS_PRIVATE_STREAM_1_AC3(x)              (PRIVATE_STREAM_1_AC3 == ((x) & PRIVATE_STREAM_1_AC3_MASK))
-
 
 #define PRIVATE_STREAM_1_DTS                    0x88
 #define PRIVATE_STREAM_1_DTS_MASK               (~0x7)

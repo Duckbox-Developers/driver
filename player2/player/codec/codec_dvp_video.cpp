@@ -45,29 +45,28 @@ Date        Modification                                    Name
 
 Codec_DvpVideo_c::Codec_DvpVideo_c()
 {
-    //
-    // Initialize class variables
-    //
+	//
+	// Initialize class variables
+	//
 
-    DataTypesInitialized        = false;
+	DataTypesInitialized        = false;
 
-    //
-    // Setup the trick mode parameters
-    //
+	//
+	// Setup the trick mode parameters
+	//
 
-    DvpTrickModeParameters.EmpiricalMaximumDecodeFrameRateShortIntegration   = 120;
-    DvpTrickModeParameters.EmpiricalMaximumDecodeFrameRateLongIntegration    = 120;
-    DvpTrickModeParameters.SubstandardDecodeSupported        = false;
-    DvpTrickModeParameters.SubstandardDecodeRateIncrease     = 1;
+	DvpTrickModeParameters.EmpiricalMaximumDecodeFrameRateShortIntegration   = 120;
+	DvpTrickModeParameters.EmpiricalMaximumDecodeFrameRateLongIntegration    = 120;
+	DvpTrickModeParameters.SubstandardDecodeSupported        = false;
+	DvpTrickModeParameters.SubstandardDecodeRateIncrease     = 1;
 
-    DvpTrickModeParameters.DefaultGroupSize                  = 1;
-    DvpTrickModeParameters.DefaultGroupReferenceFrameCount   = 1;
+	DvpTrickModeParameters.DefaultGroupSize                  = 1;
+	DvpTrickModeParameters.DefaultGroupReferenceFrameCount   = 1;
 
 //
 
-    InitializationStatus    = CodecNoError;
+	InitializationStatus    = CodecNoError;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -76,10 +75,9 @@ Codec_DvpVideo_c::Codec_DvpVideo_c()
 
 Codec_DvpVideo_c::~Codec_DvpVideo_c()
 {
-    BaseComponentClass_c::Reset();
-    BaseComponentClass_c::Halt();
+	BaseComponentClass_c::Reset();
+	BaseComponentClass_c::Halt();
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -88,57 +86,56 @@ Codec_DvpVideo_c::~Codec_DvpVideo_c()
 
 CodecStatus_t   Codec_DvpVideo_c::RegisterOutputBufferRing(Ring_t Ring)
 {
-    PlayerStatus_t          Status;
+	PlayerStatus_t          Status;
 
 //
 
-    OutputRing  = Ring;
+	OutputRing  = Ring;
 
-    //
-    // Obtain the buffer manager
-    //
+	//
+	// Obtain the buffer manager
+	//
 
-    Player->GetBufferManager(&BufferManager);
+	Player->GetBufferManager(&BufferManager);
 
-    if (Manifestor == NULL)
-    {
-        report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing - This implementation does not support no-output decoding.\n");
-        return PlayerNotSupported;
-    }
+	if (Manifestor == NULL)
+	{
+		report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing - This implementation does not support no-output decoding.\n");
+		return PlayerNotSupported;
+	}
 
-    //
-    // Obtain the decode buffer pool
-    //
+	//
+	// Obtain the decode buffer pool
+	//
 
-    Player->GetDecodeBufferPool(Stream, &DecodeBufferPool);
+	Player->GetDecodeBufferPool(Stream, &DecodeBufferPool);
 
-    if (DecodeBufferPool == NULL)
-    {
-        report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing(DVP) - This implementation does not support no-output decoding.\n");
-        return PlayerNotSupported;
-    }
+	if (DecodeBufferPool == NULL)
+	{
+		report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing(DVP) - This implementation does not support no-output decoding.\n");
+		return PlayerNotSupported;
+	}
 
-    //
-    // Attach the stream specific (audio|video|data)
-    // parsed frame parameters to the decode buffer pool.
-    //
+	//
+	// Attach the stream specific (audio|video|data)
+	// parsed frame parameters to the decode buffer pool.
+	//
 
-    Status      = DecodeBufferPool->AttachMetaData(Player->MetaDataParsedVideoParametersType);
+	Status      = DecodeBufferPool->AttachMetaData(Player->MetaDataParsedVideoParametersType);
 
-    if (Status != BufferNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing(DVP) - Failed to attach stream specific parsed parameters to all decode buffers.\n");
-        return Status;
-    }
+	if (Status != BufferNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::RegisterOutputBufferRing(DVP) - Failed to attach stream specific parsed parameters to all decode buffers.\n");
+		return Status;
+	}
 
-    //
-    // Go live
-    //
+	//
+	// Go live
+	//
 
-    SetComponentState(ComponentRunning);
-    return CodecNoError;
+	SetComponentState(ComponentRunning);
+	return CodecNoError;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -148,17 +145,16 @@ CodecStatus_t   Codec_DvpVideo_c::RegisterOutputBufferRing(Ring_t Ring)
 CodecStatus_t   Codec_DvpVideo_c::ReleaseDecodeBuffer(Buffer_t Buffer)
 {
 #if 0
-    unsigned int Length;
-    unsigned char     *Pointer;
+	unsigned int Length;
+	unsigned char     *Pointer;
 
-    Buffer->ObtainDataReference(&Length, NULL, (void **)(&Pointer), CachedAddress);
-    memset(Pointer, 0x10, 0xa8c00);
+	Buffer->ObtainDataReference(&Length, NULL, (void **)(&Pointer), CachedAddress);
+	memset(Pointer, 0x10, 0xa8c00);
 #endif
 
-    Buffer->DecrementReferenceCount();
-    return CodecNoError;
+	Buffer->DecrementReferenceCount();
+	return CodecNoError;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -167,150 +163,149 @@ CodecStatus_t   Codec_DvpVideo_c::ReleaseDecodeBuffer(Buffer_t Buffer)
 
 CodecStatus_t   Codec_DvpVideo_c::Input(Buffer_t CodedBuffer)
 {
-    CodecStatus_t            Status;
-    unsigned int             CodedDataLength;
-    StreamInfo_t            *StreamInfo;
-    Buffer_t             MarkerBuffer;
-    BufferStructure_t        BufferStructure;
-    ParsedFrameParameters_t     *ParsedFrameParameters;
-    ParsedVideoParameters_t     *ParsedVideoParameters;
-    Buffer_t             CapturedBuffer;
-    ParsedVideoParameters_t     *CapturedParsedVideoParameters;
+	CodecStatus_t            Status;
+	unsigned int             CodedDataLength;
+	StreamInfo_t            *StreamInfo;
+	Buffer_t             MarkerBuffer;
+	BufferStructure_t        BufferStructure;
+	ParsedFrameParameters_t     *ParsedFrameParameters;
+	ParsedVideoParameters_t     *ParsedVideoParameters;
+	Buffer_t             CapturedBuffer;
+	ParsedVideoParameters_t     *CapturedParsedVideoParameters;
 
-    //
-    // Extract the useful coded data information
-    //
+	//
+	// Extract the useful coded data information
+	//
 
-    Status      = CodedBuffer->ObtainDataReference(NULL, &CodedDataLength, (void **)(&StreamInfo), CachedAddress);
+	Status      = CodedBuffer->ObtainDataReference(NULL, &CodedDataLength, (void **)(&StreamInfo), CachedAddress);
 
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain data reference.\n");
-        return Status;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain data reference.\n");
+		return Status;
+	}
 
-    Status      = CodedBuffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersType, (void **)(&ParsedFrameParameters));
+	Status      = CodedBuffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersType, (void **)(&ParsedFrameParameters));
 
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedFrameParameters\".\n");
-        return Status;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedFrameParameters\".\n");
+		return Status;
+	}
 
-    Status      = CodedBuffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void**)&ParsedVideoParameters);
+	Status      = CodedBuffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void**)&ParsedVideoParameters);
 
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedVideoParameters\".\n");
-        return Status;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedVideoParameters\".\n");
+		return Status;
+	}
 
-    //
-    // Handle the special case of a marker frame
-    //
+	//
+	// Handle the special case of a marker frame
+	//
 
-    if ((CodedDataLength == 0) && !ParsedFrameParameters->NewStreamParameters && !ParsedFrameParameters->NewFrameParameters)
-    {
-        //
-        // Get a marker buffer
-        //
+	if ((CodedDataLength == 0) && !ParsedFrameParameters->NewStreamParameters && !ParsedFrameParameters->NewFrameParameters)
+	{
+		//
+		// Get a marker buffer
+		//
 
-        memset(&BufferStructure, 0x00, sizeof(BufferStructure_t));
-        BufferStructure.Format  = FormatMarkerFrame;
+		memset(&BufferStructure, 0x00, sizeof(BufferStructure_t));
+		BufferStructure.Format  = FormatMarkerFrame;
 
-        Status      = Manifestor->GetDecodeBuffer(&BufferStructure, &MarkerBuffer);
+		Status      = Manifestor->GetDecodeBuffer(&BufferStructure, &MarkerBuffer);
 
-        if (Status != ManifestorNoError)
-        {
-            report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to get marker decode buffer from manifestor.\n");
-            return Status;
-        }
+		if (Status != ManifestorNoError)
+		{
+			report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to get marker decode buffer from manifestor.\n");
+			return Status;
+		}
 
-        MarkerBuffer->TransferOwnership(IdentifierCodec);
+		MarkerBuffer->TransferOwnership(IdentifierCodec);
 
-        Status      = MarkerBuffer->AttachMetaData(Player->MetaDataParsedFrameParametersReferenceType, UNSPECIFIED_SIZE, (void *)ParsedFrameParameters);
+		Status      = MarkerBuffer->AttachMetaData(Player->MetaDataParsedFrameParametersReferenceType, UNSPECIFIED_SIZE, (void *)ParsedFrameParameters);
 
-        if (Status != PlayerNoError)
-        {
-            report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to attach a reference to \"ParsedFrameParameters\" to the marker buffer.\n");
-            return Status;
-        }
+		if (Status != PlayerNoError)
+		{
+			report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to attach a reference to \"ParsedFrameParameters\" to the marker buffer.\n");
+			return Status;
+		}
 
-        MarkerBuffer->AttachBuffer(CodedBuffer);
+		MarkerBuffer->AttachBuffer(CodedBuffer);
 
-        //
-        // Queue/pass on the buffer
-        //
+		//
+		// Queue/pass on the buffer
+		//
 
-        OutputRing->Insert((unsigned int)MarkerBuffer);
-        return CodecNoError;
-    }
+		OutputRing->Insert((unsigned int)MarkerBuffer);
+		return CodecNoError;
+	}
 
-    //
-    // Attach the coded data fields to the decode/captured buffer
-    //
+	//
+	// Attach the coded data fields to the decode/captured buffer
+	//
 
-    CapturedBuffer  = (Buffer_t)StreamInfo->buffer_class;
+	CapturedBuffer  = (Buffer_t)StreamInfo->buffer_class;
 
-    if (CapturedBuffer == NULL)
-    {
-        report(severity_fatal, "Codec_DvpVideo_c::Input(DVP) - NULL Buffer\n");
-        return CodecNoError;
-    }
-
-//
-
-    Status      = CapturedBuffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void**)&CapturedParsedVideoParameters);
-
-    if (Status != PlayerNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedVideoParameters\" from the captured buffer.\n");
-        return Status;
-    }
-
-    memcpy(CapturedParsedVideoParameters, ParsedVideoParameters, sizeof(ParsedVideoParameters_t));
+	if (CapturedBuffer == NULL)
+	{
+		report(severity_fatal, "Codec_DvpVideo_c::Input(DVP) - NULL Buffer\n");
+		return CodecNoError;
+	}
 
 //
 
-    Status      = CapturedBuffer->AttachMetaData(Player->MetaDataParsedFrameParametersReferenceType, UNSPECIFIED_SIZE, (void *)ParsedFrameParameters);
+	Status      = CapturedBuffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void**)&CapturedParsedVideoParameters);
 
-    if (Status != BufferNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to attach Frame Parameters\n");
-        return Status;
-    }
+	if (Status != PlayerNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Unable to obtain the meta data \"ParsedVideoParameters\" from the captured buffer.\n");
+		return Status;
+	}
 
-    //
-    // Switch the ownership hierarchy, and allow the captured buffer to exist on it's own.
-    //
+	memcpy(CapturedParsedVideoParameters, ParsedVideoParameters, sizeof(ParsedVideoParameters_t));
 
-    CapturedBuffer->IncrementReferenceCount();
+//
 
-    Status  = CodedBuffer->DetachBuffer(CapturedBuffer);
+	Status      = CapturedBuffer->AttachMetaData(Player->MetaDataParsedFrameParametersReferenceType, UNSPECIFIED_SIZE, (void *)ParsedFrameParameters);
 
-    if (Status != BufferNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to detach captured buffer from coded frame buffer\n");
-        return Status;
-    }
+	if (Status != BufferNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to attach Frame Parameters\n");
+		return Status;
+	}
 
-    Status      = CapturedBuffer->AttachBuffer(CodedBuffer);
+	//
+	// Switch the ownership hierarchy, and allow the captured buffer to exist on it's own.
+	//
 
-    if (Status != BufferNoError)
-    {
-        report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to attach captured buffer to Coded Frame Buffer\n");
-        return Status;
-    }
+	CapturedBuffer->IncrementReferenceCount();
 
-    //
-    // Pass the captured buffer on
-    //
+	Status  = CodedBuffer->DetachBuffer(CapturedBuffer);
 
-    OutputRing->Insert((unsigned int)CapturedBuffer);
+	if (Status != BufferNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to detach captured buffer from coded frame buffer\n");
+		return Status;
+	}
 
-    return CodecNoError;
+	Status      = CapturedBuffer->AttachBuffer(CodedBuffer);
+
+	if (Status != BufferNoError)
+	{
+		report(severity_error, "Codec_DvpVideo_c::Input(DVP) - Failed to attach captured buffer to Coded Frame Buffer\n");
+		return Status;
+	}
+
+	//
+	// Pass the captured buffer on
+	//
+
+	OutputRing->Insert((unsigned int)CapturedBuffer);
+
+	return CodecNoError;
 }
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -319,8 +314,7 @@ CodecStatus_t   Codec_DvpVideo_c::Input(Buffer_t CodedBuffer)
 
 CodecStatus_t   Codec_DvpVideo_c::GetTrickModeParameters(CodecTrickModeParameters_t    *TrickModeParameters)
 {
-    *TrickModeParameters    = DvpTrickModeParameters;
-    return CodecNoError;
+	*TrickModeParameters    = DvpTrickModeParameters;
+	return CodecNoError;
 }
-
 

@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the pcm collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Aug-09   Created from collator_pes_audio_vorbis.h        Julian

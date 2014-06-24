@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the stream specific codec implementation for pcm audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 13-Aug-09   Created                                         Julian
@@ -47,7 +46,6 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -60,32 +58,32 @@ Date        Modification                                    Name
 
 class Codec_MmeAudioPcm_c : public Codec_MmeAudio_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        eAccBoolean         RestartTransformer;
+		eAccBoolean         RestartTransformer;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        // Constructor/Destructor methods
-        Codec_MmeAudioPcm_c(void);
-        ~Codec_MmeAudioPcm_c(void);
+		// Constructor/Destructor methods
+		Codec_MmeAudioPcm_c(void);
+		~Codec_MmeAudioPcm_c(void);
 
-        // Extension to base functions
-        CodecStatus_t   HandleCapabilities(void);
+		// Extension to base functions
+		CodecStatus_t   HandleCapabilities(void);
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
 
 };
 #endif /* H_CODEC_MME_AUDIO_PCM */

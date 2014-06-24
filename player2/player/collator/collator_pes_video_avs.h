@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the base collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Jun-07   Created from existing collator_pes_video.h      Julian
@@ -52,13 +51,13 @@ Date        Modification                                    Name
 
 class Collator_PesVideoAvs_c : public Collator_PesVideo_c
 {
-    protected:
+	protected:
 
-    public:
+	public:
 
-        Collator_PesVideoAvs_c();
+		Collator_PesVideoAvs_c();
 
-        CollatorStatus_t   Reset(void);
+		CollatorStatus_t   Reset(void);
 };
 
 #endif // H_COLLATOR_PES_VIDEO_AVS

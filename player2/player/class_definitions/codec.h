@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the codec class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 02-Nov-06   Created                                         Nick
@@ -43,10 +42,10 @@ Date        Modification                                    Name
 
 enum
 {
-    CodecNoError                = PlayerNoError,
-    CodecError                  = PlayerError,
+	CodecNoError                = PlayerNoError,
+	CodecError                  = PlayerError,
 
-    CodecUnknownFrame               = BASE_CODEC
+	CodecUnknownFrame               = BASE_CODEC
 };
 
 typedef PlayerStatus_t  CodecStatus_t;
@@ -55,15 +54,14 @@ typedef PlayerStatus_t  CodecStatus_t;
 
 enum
 {
-    CodecFnRegisterOutputBufferRing = BASE_CODEC,
-    CodecFnOutputPartialDecodeBuffers,
-    CodecFnReleaseReferenceFrame,
-    CodecFnReleaseDecodeBuffer,
-    CodecFnInput,
+	CodecFnRegisterOutputBufferRing = BASE_CODEC,
+	CodecFnOutputPartialDecodeBuffers,
+	CodecFnReleaseReferenceFrame,
+	CodecFnReleaseDecodeBuffer,
+	CodecFnInput,
 
-    CodecFnSetModuleParameters
+	CodecFnSetModuleParameters
 };
-
 
 // ---------------------------------------------------------------------
 //
@@ -74,24 +72,24 @@ enum
 
 class Codec_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t   *TrickModeParameters) = 0;
+		virtual CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t   *TrickModeParameters) = 0;
 
-        virtual CodecStatus_t   RegisterOutputBufferRing(Ring_t           Ring) = 0;
+		virtual CodecStatus_t   RegisterOutputBufferRing(Ring_t           Ring) = 0;
 
-        virtual CodecStatus_t   OutputPartialDecodeBuffers(void) = 0;
+		virtual CodecStatus_t   OutputPartialDecodeBuffers(void) = 0;
 
-        virtual CodecStatus_t   DiscardQueuedDecodes(void) = 0;
+		virtual CodecStatus_t   DiscardQueuedDecodes(void) = 0;
 
-        virtual CodecStatus_t   ReleaseReferenceFrame(unsigned int        ReferenceFrameDecodeIndex) = 0;
+		virtual CodecStatus_t   ReleaseReferenceFrame(unsigned int        ReferenceFrameDecodeIndex) = 0;
 
-        virtual CodecStatus_t   CheckReferenceFrameList(unsigned int          NumberOfReferenceFrameLists,
-                ReferenceFrameList_t      ReferenceFrameList[]) = 0;
+		virtual CodecStatus_t   CheckReferenceFrameList(unsigned int          NumberOfReferenceFrameLists,
+														ReferenceFrameList_t      ReferenceFrameList[]) = 0;
 
-        virtual CodecStatus_t   ReleaseDecodeBuffer(Buffer_t          Buffer) = 0;
+		virtual CodecStatus_t   ReleaseDecodeBuffer(Buffer_t          Buffer) = 0;
 
-        virtual CodecStatus_t   Input(Buffer_t        CodedBuffer) = 0;
+		virtual CodecStatus_t   Input(Buffer_t        CodedBuffer) = 0;
 };
 
 // ---------------------------------------------------------------------

@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the manifestor class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
@@ -43,12 +42,12 @@ Date        Modification                                    Name
 
 enum
 {
-    ManifestorNoError                           = PlayerNoError,
-    ManifestorError                             = PlayerError,
+	ManifestorNoError                           = PlayerNoError,
+	ManifestorError                             = PlayerError,
 
-    ManifestorUnplayable                       = BASE_MANIFESTOR,
-    ManifestorWouldBlock,
-    ManifestorNullQueued,
+	ManifestorUnplayable                       = BASE_MANIFESTOR,
+	ManifestorWouldBlock,
+	ManifestorNullQueued,
 };
 
 typedef PlayerStatus_t  ManifestorStatus_t;
@@ -57,20 +56,20 @@ typedef PlayerStatus_t  ManifestorStatus_t;
 
 enum
 {
-    ManifestorFnGetDecodeBufferPool             = BASE_MANIFESTOR,
-    ManifestorFnRegisterOutputBufferRing,
-    ManifestorFnSetSurface,
-    ManifestorFnGetManifestationDescriptor,
-    ManifestorFnGetNextQueuedManifestationTime,
-    ManifestorFnReleaseQueuedDecodeBuffers,
-    ManifestorFnQueueDecodeBuffer,
-    ManifestorFnQueueNullManifestation,
-    ManifestorFnQueueEventSignal,
+	ManifestorFnGetDecodeBufferPool             = BASE_MANIFESTOR,
+	ManifestorFnRegisterOutputBufferRing,
+	ManifestorFnSetSurface,
+	ManifestorFnGetManifestationDescriptor,
+	ManifestorFnGetNextQueuedManifestationTime,
+	ManifestorFnReleaseQueuedDecodeBuffers,
+	ManifestorFnQueueDecodeBuffer,
+	ManifestorFnQueueNullManifestation,
+	ManifestorFnQueueEventSignal,
 
-    ManifestorVideoFnSetOutputWindow,       // These are extensions in the video manifestor, that we need to support inline calling for
-    ManifestorVideoFnSetInputWindow,
+	ManifestorVideoFnSetOutputWindow,       // These are extensions in the video manifestor, that we need to support inline calling for
+	ManifestorVideoFnSetInputWindow,
 
-    ManifestorFnSetModuleParameters
+	ManifestorFnSetModuleParameters
 };
 
 // ---------------------------------------------------------------------
@@ -80,38 +79,38 @@ enum
 
 class Manifestor_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual ManifestorStatus_t   GetDecodeBufferPool(BufferPool_t             *Pool) = 0;
+		virtual ManifestorStatus_t   GetDecodeBufferPool(BufferPool_t             *Pool) = 0;
 
-        virtual ManifestorStatus_t   GetPostProcessControlBufferPool(BufferPool_t            *Pool) = 0;
+		virtual ManifestorStatus_t   GetPostProcessControlBufferPool(BufferPool_t            *Pool) = 0;
 
-        virtual ManifestorStatus_t   RegisterOutputBufferRing(Ring_t                    Ring) = 0;
+		virtual ManifestorStatus_t   RegisterOutputBufferRing(Ring_t                    Ring) = 0;
 
-        virtual ManifestorStatus_t   GetSurfaceParameters(void                    **SurfaceParameters) = 0;
+		virtual ManifestorStatus_t   GetSurfaceParameters(void                    **SurfaceParameters) = 0;
 
-        virtual ManifestorStatus_t   GetNextQueuedManifestationTime(unsigned long long       *Time) = 0;
+		virtual ManifestorStatus_t   GetNextQueuedManifestationTime(unsigned long long       *Time) = 0;
 
-        virtual ManifestorStatus_t   ReleaseQueuedDecodeBuffers(void) = 0;
+		virtual ManifestorStatus_t   ReleaseQueuedDecodeBuffers(void) = 0;
 
-        virtual ManifestorStatus_t   InitialFrame(Buffer_t                  Buffer) = 0;
+		virtual ManifestorStatus_t   InitialFrame(Buffer_t                  Buffer) = 0;
 
-        virtual ManifestorStatus_t   QueueDecodeBuffer(Buffer_t                  Buffer) = 0;
+		virtual ManifestorStatus_t   QueueDecodeBuffer(Buffer_t                  Buffer) = 0;
 
-        virtual ManifestorStatus_t   QueueNullManifestation(void) = 0;
+		virtual ManifestorStatus_t   QueueNullManifestation(void) = 0;
 
-        virtual ManifestorStatus_t   QueueEventSignal(PlayerEventRecord_t      *Event) = 0;
+		virtual ManifestorStatus_t   QueueEventSignal(PlayerEventRecord_t      *Event) = 0;
 
-        virtual ManifestorStatus_t   GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long *Time) = 0;
+		virtual ManifestorStatus_t   GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long *Time) = 0;
 
-        virtual ManifestorStatus_t   GetDecodeBuffer(BufferStructure_t        *RequestedStructure,
-                Buffer_t                 *Buffer) = 0;
+		virtual ManifestorStatus_t   GetDecodeBuffer(BufferStructure_t        *RequestedStructure,
+													 Buffer_t                 *Buffer) = 0;
 
-        virtual ManifestorStatus_t   GetDecodeBufferCount(unsigned int             *Count) = 0;
+		virtual ManifestorStatus_t   GetDecodeBufferCount(unsigned int             *Count) = 0;
 
-        virtual ManifestorStatus_t   SynchronizeOutput(void) = 0;
+		virtual ManifestorStatus_t   SynchronizeOutput(void) = 0;
 
-        virtual ManifestorStatus_t   GetFrameCount(unsigned long long       *FrameCount) = 0;
+		virtual ManifestorStatus_t   GetFrameCount(unsigned long long       *FrameCount) = 0;
 
 };
 
@@ -238,7 +237,6 @@ de-interlacing if necessary).
 is received by the normal route, at this point it should be forgotten, IT MUST
 NOT BE PLACED ON THE OUTPUT RING. Note it is very very likely that this buffer
 will be the first buffer to be submitted via the normal route.
-
 
     \param Buffer A pointer to an instance of a decode buffer, as output
        from a codec.

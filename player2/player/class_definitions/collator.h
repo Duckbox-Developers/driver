@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the collator class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
@@ -44,17 +43,16 @@ Date        Modification                                    Name
 
 enum
 {
-    CollatorNoError             = PlayerNoError,
-    CollatorError               = PlayerError,
+	CollatorNoError             = PlayerNoError,
+	CollatorError               = PlayerError,
 
-    CollatorWouldBlock              = BASE_COLLATOR,
-    CollatorBufferOverflow,
-    CollatorBufferUnderflow, ///< Primarily for internal use
-    CollatorUnwindStack, ///< Reported to cause execution to unwind (to avoid recursion)
+	CollatorWouldBlock              = BASE_COLLATOR,
+	CollatorBufferOverflow,
+	CollatorBufferUnderflow, ///< Primarily for internal use
+	CollatorUnwindStack, ///< Reported to cause execution to unwind (to avoid recursion)
 };
 
 typedef PlayerStatus_t  CollatorStatus_t;
-
 
 // ---------------------------------------------------------------------
 //
@@ -63,29 +61,29 @@ typedef PlayerStatus_t  CollatorStatus_t;
 
 class Collator_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual CollatorStatus_t   RegisterOutputBufferRing(Ring_t            Ring) = 0;
+		virtual CollatorStatus_t   RegisterOutputBufferRing(Ring_t            Ring) = 0;
 
-        virtual CollatorStatus_t   InputJump(bool             SurplusDataInjected,
-                                             bool              ContinuousReverseJump) = 0;
+		virtual CollatorStatus_t   InputJump(bool             SurplusDataInjected,
+											 bool              ContinuousReverseJump) = 0;
 
-        virtual CollatorStatus_t   InputGlitch(void) = 0;
+		virtual CollatorStatus_t   InputGlitch(void) = 0;
 
-        virtual CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-                                         unsigned int          DataLength,
-                                         void             *Data,
-                                         bool              NonBlocking = false,
-                                         unsigned int         *DataLengthRemaining = NULL) = 0;
+		virtual CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
+										 unsigned int          DataLength,
+										 void             *Data,
+										 bool              NonBlocking = false,
+										 unsigned int         *DataLengthRemaining = NULL) = 0;
 
-        virtual CollatorStatus_t   FrameFlush(void) = 0;
+		virtual CollatorStatus_t   FrameFlush(void) = 0;
 
-        virtual CollatorStatus_t   DiscardAccumulatedData(void) = 0;
+		virtual CollatorStatus_t   DiscardAccumulatedData(void) = 0;
 
-        virtual CollatorStatus_t   NonBlockingWriteSpace(unsigned int        *Size)
-        {
-            return PlayerNotSupported;
-        }
+		virtual CollatorStatus_t   NonBlockingWriteSpace(unsigned int        *Size)
+		{
+			return PlayerNotSupported;
+		}
 };
 
 // ---------------------------------------------------------------------

@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the stream specific codec implementation for mpeg2 video in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 25-Jan-07   Created                                         Nick
@@ -45,7 +44,6 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -59,38 +57,38 @@ Date        Modification                                    Name
 /// The MPEG video codec proxy.
 class Codec_MmeVideoMpeg2_c : public Codec_MmeVideo_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        MPEG2_TransformerCapability_t         Mpeg2TransformCapability;
-        MPEG2_InitTransformerParam_t          Mpeg2InitializationParameters;
+		MPEG2_TransformerCapability_t         Mpeg2TransformCapability;
+		MPEG2_InitTransformerParam_t          Mpeg2InitializationParameters;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeVideoMpeg2_c(void);
-        ~Codec_MmeVideoMpeg2_c(void);
+		Codec_MmeVideoMpeg2_c(void);
+		~Codec_MmeVideoMpeg2_c(void);
 
-        //
-        // Stream specific functions
-        //
+		//
+		// Stream specific functions
+		//
 
-    protected:
+	protected:
 
-        CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t   HandleCapabilities(void);
 
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
-        CodecStatus_t   CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t   CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
 };
 #endif

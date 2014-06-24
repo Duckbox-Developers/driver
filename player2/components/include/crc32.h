@@ -24,7 +24,6 @@ Author :           Daniel
 
 Simple 32-bit CRC implementation for debugging purpose.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 30-Aug-07   Created                                         Daniel

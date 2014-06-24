@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the implementation of havana player module for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 05-Sep-07   Created                                         Julian
@@ -57,38 +56,37 @@ Date        Modification                                    Name
 #endif
 
 #define DISPLAY_DEBUG(fmt, args...)      ((void) (ENABLE_DISPLAY_DEBUG && \
-        (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+												  (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define DISPLAY_TRACE(fmt, args...)     (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args))
 /* Output errors, should never be output in 'normal' operation */
 #define DISPLAY_ERROR(fmt, args...)     (report(severity_error, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args))
 
-
 /// Display wrapper class responsible for managing manifestors.
 class HavanaDisplay_c
 {
-    private:
-        DeviceHandle_t              DisplayDevice;
+	private:
+		DeviceHandle_t              DisplayDevice;
 
-        class Manifestor_c*         Manifestor;
-        PlayerStreamType_t          PlayerStreamType;
+		class Manifestor_c*         Manifestor;
+		PlayerStreamType_t          PlayerStreamType;
 
-    public:
+	public:
 
-        HavanaDisplay_c(void);
-        ~HavanaDisplay_c(void);
+		HavanaDisplay_c(void);
+		~HavanaDisplay_c(void);
 
-        HavanaStatus_t              GetManifestor(class HavanaPlayer_c*   HavanaPlayer,
-                char*                   Media,
-                char*                   Encoding,
-                unsigned int            SurfaceId,
-                class Manifestor_c**    Manifestor);
+		HavanaStatus_t              GetManifestor(class HavanaPlayer_c*   HavanaPlayer,
+												  char*                   Media,
+												  char*                   Encoding,
+												  unsigned int            SurfaceId,
+												  class Manifestor_c**    Manifestor);
 
-        class Manifestor_c*         ReferenceManifestor(void)
-        {
-                return Manifestor;
-        };
+		class Manifestor_c*         ReferenceManifestor(void)
+		{
+				return Manifestor;
+		};
 };
 
 /*{{{  doxynote*/
@@ -118,8 +116,6 @@ class HavanaDisplay_c
 
 \return a pointer to a manifestor class instance.
 */
-
-
 
 /*}}}*/
 

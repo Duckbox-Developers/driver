@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the base collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 19-Apr-07   Created from existing collator_pes_video.h      Daniel
@@ -52,27 +51,27 @@ Date        Modification                                    Name
 
 class Collator2_PesVideo_c : public Collator2_Pes_c
 {
-        unsigned char   CopyOfStoredPartialHeader[MINIMUM_ACCUMULATION_HEADROOM];
+		unsigned char   CopyOfStoredPartialHeader[MINIMUM_ACCUMULATION_HEADROOM];
 
-    public:
+	public:
 
-        //
-        // Functions provided to handle input
-        //
+		//
+		// Functions provided to handle input
+		//
 
-        CollatorStatus_t   ProcessInputForward(unsigned int       DataLength,
-                                               void             *Data,
-                                               unsigned int         *DataLengthRemaining);
+		CollatorStatus_t   ProcessInputForward(unsigned int       DataLength,
+											   void             *Data,
+											   unsigned int         *DataLengthRemaining);
 
-        CollatorStatus_t   ProcessInputBackward(unsigned int          DataLength,
-                                                void             *Data,
-                                                unsigned int         *DataLengthRemaining);
+		CollatorStatus_t   ProcessInputBackward(unsigned int          DataLength,
+												void             *Data,
+												unsigned int         *DataLengthRemaining);
 
-        //
-        // accumulate one partition oveload allows us to use pes pts on new partition
-        //
+		//
+		// accumulate one partition oveload allows us to use pes pts on new partition
+		//
 
-        void   AccumulateOnePartition(void);
+		void   AccumulateOnePartition(void);
 };
 
 #endif

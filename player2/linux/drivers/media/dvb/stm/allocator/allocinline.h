@@ -46,19 +46,19 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    allocator_ok                = 0,
-    allocator_error
+	allocator_ok                = 0,
+	allocator_error
 } allocator_status_t;
 
 //
 
 struct allocator_device_s
 {
-    OSDEV_DeviceIdentifier_t     UnderlyingDevice;
-    unsigned int                 BufferSize;
-    unsigned char               *CachedAddress;
-    unsigned char               *UnCachedAddress;
-    unsigned char               *PhysicalAddress;
+	OSDEV_DeviceIdentifier_t     UnderlyingDevice;
+	unsigned int                 BufferSize;
+	unsigned char               *CachedAddress;
+	unsigned char               *UnCachedAddress;
+	unsigned char               *PhysicalAddress;
 };
 
 typedef struct allocator_device_s       *allocator_device_t;
@@ -74,117 +74,116 @@ typedef struct allocator_device_s       *allocator_device_t;
 #endif
 #define VID_LMI_PARTITION       "BPA2_Region1"
 
-
 // ------------------------------------------------------------------------------------------------------------
 //   The open function
 
 static inline allocator_status_t   AllocatorOpenEx(
-    allocator_device_t    *Device,
-    unsigned int           Size,
-    bool                   UseCachedMemory,
-    const char        *PartitionName)
+	allocator_device_t    *Device,
+	unsigned int           Size,
+	bool                   UseCachedMemory,
+	const char        *PartitionName)
 {
-    OSDEV_Status_t                  Status;
-    allocator_ioctl_allocate_t      Parameters;
+	OSDEV_Status_t                  Status;
+	allocator_ioctl_allocate_t      Parameters;
 
 //
 //  Check the size of the partition name
 //
 
-    if (strlen(PartitionName) > (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1))
-    {
-        report(severity_error, "AllocatorOpenEx : Partition name too large ( %d > %d)\n", strlen(PartitionName), (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1));
-        *Device = ALLOCATOR_INVALID_DEVICE;
-        return allocator_error;
-    }
+	if (strlen(PartitionName) > (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1))
+	{
+		report(severity_error, "AllocatorOpenEx : Partition name too large ( %d > %d)\n", strlen(PartitionName), (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1));
+		*Device = ALLOCATOR_INVALID_DEVICE;
+		return allocator_error;
+	}
 
 //
 //  Malloc the device structure
 //
 
-    *Device = (allocator_device_t)OS_Malloc(sizeof(struct allocator_device_s));
+	*Device = (allocator_device_t)OS_Malloc(sizeof(struct allocator_device_s));
 
-    if (*Device == NULL)
-    {
-        report(severity_error, "AllocatorOpenEx : Failed to allocate memory for device context.\n");
-        return allocator_error;
-    }
+	if (*Device == NULL)
+	{
+		report(severity_error, "AllocatorOpenEx : Failed to allocate memory for device context.\n");
+		return allocator_error;
+	}
 
-    memset(*Device, 0, sizeof(struct allocator_device_s));
+	memset(*Device, 0, sizeof(struct allocator_device_s));
 
 //
 //  Open the device
 //
 
-    Status = OSDEV_Open(DEVICE_NAME, &((*Device)->UnderlyingDevice));
+	Status = OSDEV_Open(DEVICE_NAME, &((*Device)->UnderlyingDevice));
 
-    if (Status != OSDEV_NoError)
-    {
-        report(severity_error, "AllocatorOpenEx : Failed to open\n");
-        OS_Free(*Device);
-        *Device = ALLOCATOR_INVALID_DEVICE;
-        return allocator_error;
-    }
+	if (Status != OSDEV_NoError)
+	{
+		report(severity_error, "AllocatorOpenEx : Failed to open\n");
+		OS_Free(*Device);
+		*Device = ALLOCATOR_INVALID_DEVICE;
+		return allocator_error;
+	}
 
 //
 //  Allocate the memory
 //
 
-    Parameters.RequiredSize         = Size;
-    strcpy(Parameters.PartitionName, PartitionName);
+	Parameters.RequiredSize         = Size;
+	strcpy(Parameters.PartitionName, PartitionName);
 
-    Status = OSDEV_Ioctl((*Device)->UnderlyingDevice, ALLOCATOR_IOCTL_ALLOCATE_DATA,
-                         &Parameters, sizeof(allocator_ioctl_allocate_t));
+	Status = OSDEV_Ioctl((*Device)->UnderlyingDevice, ALLOCATOR_IOCTL_ALLOCATE_DATA,
+						 &Parameters, sizeof(allocator_ioctl_allocate_t));
 
-    if (Status != OSDEV_NoError)
-    {
-        report(severity_error, "AllocatorOpenEx : Failed to allocate memory (0x%08x from '%s')\n", Size, PartitionName);
-        OSDEV_Close((*Device)->UnderlyingDevice);
-        OS_Free(*Device);
-        *Device = ALLOCATOR_INVALID_DEVICE;
-        return allocator_error;
-    }
+	if (Status != OSDEV_NoError)
+	{
+		report(severity_error, "AllocatorOpenEx : Failed to allocate memory (0x%08x from '%s')\n", Size, PartitionName);
+		OSDEV_Close((*Device)->UnderlyingDevice);
+		OS_Free(*Device);
+		*Device = ALLOCATOR_INVALID_DEVICE;
+		return allocator_error;
+	}
 
-    (*Device)->BufferSize       = Size;
-    (*Device)->CachedAddress    = Parameters.CachedAddress;
-    (*Device)->UnCachedAddress  = Parameters.UnCachedAddress;
-    (*Device)->PhysicalAddress  = Parameters.PhysicalAddress;
+	(*Device)->BufferSize       = Size;
+	(*Device)->CachedAddress    = Parameters.CachedAddress;
+	(*Device)->UnCachedAddress  = Parameters.UnCachedAddress;
+	(*Device)->PhysicalAddress  = Parameters.PhysicalAddress;
 
 //
 
-    return allocator_ok;
+	return allocator_ok;
 }
 
 // ------------------------------------------------------------------------------------------------------------
 //   The open function
 
 static inline allocator_status_t   AllocatorOpen(allocator_device_t    *Device,
-        unsigned int           Size,
-        bool                   UseCachedMemory)
+												 unsigned int           Size,
+												 bool                   UseCachedMemory)
 {
-    return AllocatorOpenEx(Device, Size, UseCachedMemory, SYS_LMI_PARTITION);
+	return AllocatorOpenEx(Device, Size, UseCachedMemory, SYS_LMI_PARTITION);
 }
 
 // ------------------------------------------------------------------------------------------------------------
 //   The open function
 
 static inline allocator_status_t   LmiAllocatorOpen(allocator_device_t    *Device,
-        unsigned int           Size,
-        bool                   UseCachedMemory)
+		unsigned int           Size,
+		bool                   UseCachedMemory)
 {
-    return AllocatorOpenEx(Device, Size, UseCachedMemory, VID_LMI_PARTITION);
+	return AllocatorOpenEx(Device, Size, UseCachedMemory, VID_LMI_PARTITION);
 }
 
 // ------------------------------------------------------------------------------------------------------------
 //   The open function
 
 static inline allocator_status_t   PartitionAllocatorOpen(
-    allocator_device_t  *Device,
-    const char      *PartitionName,
-    unsigned int         Size,
-    bool             UseCachedMemory)
+	allocator_device_t  *Device,
+	const char      *PartitionName,
+	unsigned int         Size,
+	bool             UseCachedMemory)
 {
-    return AllocatorOpenEx(Device, Size, UseCachedMemory, PartitionName);
+	return AllocatorOpenEx(Device, Size, UseCachedMemory, PartitionName);
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -192,11 +191,11 @@ static inline allocator_status_t   PartitionAllocatorOpen(
 
 static inline void              AllocatorClose(allocator_device_t Device)
 {
-    if (Device != ALLOCATOR_INVALID_DEVICE)
-    {
-        OSDEV_Close(Device->UnderlyingDevice);
-        OS_Free(Device);
-    }
+	if (Device != ALLOCATOR_INVALID_DEVICE)
+	{
+		OSDEV_Close(Device->UnderlyingDevice);
+		OS_Free(Device);
+	}
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -205,10 +204,10 @@ static inline void              AllocatorClose(allocator_device_t Device)
 static inline   unsigned char *AllocatorKernelAddress(allocator_device_t Device)
 {
 // Deprecated call, we assume that kernel address only refers to the physical address
-    if (Device != ALLOCATOR_INVALID_DEVICE)
-        return Device->PhysicalAddress;
-    else
-        return NULL;
+	if (Device != ALLOCATOR_INVALID_DEVICE)
+		return Device->PhysicalAddress;
+	else
+		return NULL;
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -216,10 +215,10 @@ static inline   unsigned char *AllocatorKernelAddress(allocator_device_t Device)
 
 static inline   unsigned char *AllocatorUserAddress(allocator_device_t Device)
 {
-    if (Device != ALLOCATOR_INVALID_DEVICE)
-        return Device->CachedAddress;
-    else
-        return NULL;
+	if (Device != ALLOCATOR_INVALID_DEVICE)
+		return Device->CachedAddress;
+	else
+		return NULL;
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -227,10 +226,10 @@ static inline   unsigned char *AllocatorUserAddress(allocator_device_t Device)
 
 static inline   unsigned char *AllocatorUncachedUserAddress(allocator_device_t Device)
 {
-    if (Device != ALLOCATOR_INVALID_DEVICE)
-        return Device->UnCachedAddress;
-    else
-        return NULL;
+	if (Device != ALLOCATOR_INVALID_DEVICE)
+		return Device->UnCachedAddress;
+	else
+		return NULL;
 }
 
 // ------------------------------------------------------------------------------------------------------------
@@ -238,10 +237,10 @@ static inline   unsigned char *AllocatorUncachedUserAddress(allocator_device_t D
 
 static inline   unsigned char *AllocatorPhysicalAddress(allocator_device_t Device)
 {
-    if (Device != ALLOCATOR_INVALID_DEVICE)
-        return Device->PhysicalAddress;
-    else
-        return NULL;
+	if (Device != ALLOCATOR_INVALID_DEVICE)
+		return Device->PhysicalAddress;
+	else
+		return NULL;
 }
 
 #endif

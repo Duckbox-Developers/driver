@@ -24,7 +24,6 @@ Author :           Sylvain Barge
 
 Definition of the stream specific codec implementation for mpeg audio in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Jun-07   Ported to Player2 and added dtshd support       Sylvain Barge
@@ -57,40 +56,38 @@ Date        Modification                                    Name
 //
 typedef struct
 {
-    U32                             Id;                           //< Id of this processing structure: ACC_MIX_METADATA_ID
-    U32                             StructSize;                   //< Size of this structure
-    U16                             PrimaryAudioGain[ACC_MAIN_CSURR + 1];       //< unsigned Q3.13 gain to be applied to each channel of primary stream
-    U16                             PostMixGain;                  //< unsigned Q3.13 gain to be applied to output of mixed primary and secondary
-    U16                             NbOutMixConfig;               //< Number of mix output configurations
-    MME_MixingOutputConfiguration_t MixOutConfig[MAX_MIXING_OUTPUT_CONFIGURATION]; //< This array is extensible according to NbOutMixConfig
+	U32                             Id;                           //< Id of this processing structure: ACC_MIX_METADATA_ID
+	U32                             StructSize;                   //< Size of this structure
+	U16                             PrimaryAudioGain[ACC_MAIN_CSURR + 1];       //< unsigned Q3.13 gain to be applied to each channel of primary stream
+	U16                             PostMixGain;                  //< unsigned Q3.13 gain to be applied to output of mixed primary and secondary
+	U16                             NbOutMixConfig;               //< Number of mix output configurations
+	MME_MixingOutputConfiguration_t MixOutConfig[MAX_MIXING_OUTPUT_CONFIGURATION]; //< This array is extensible according to NbOutMixConfig
 } MME_LxAudioDecoderDtsMixingMetadata_t;
 
 /// Calculate the apparent size of the structure when NbOutMixConfig is zero.
 #define DTSHD_MIN_MIXING_METADATA_SIZE       (sizeof(MME_LxAudioDecoderDtsMixingMetadata_t) - (MAX_MIXING_OUTPUT_CONFIGURATION * sizeof(MME_MixingOutputConfiguration_t)))
 #define DTSHD_MIN_MIXING_METADATA_FIXED_SIZE (DTSHD_MIN_MIXING_METADATA_SIZE - (2 * sizeof(U32))) // same as above minus Id and StructSize
 
-
 typedef struct
 {
-    U32                                    BytesUsed;  // Amount of this structure already filled
-    MME_LxAudioDecoderDtsMixingMetadata_t  MixingMetadata;
+	U32                                    BytesUsed;  // Amount of this structure already filled
+	MME_LxAudioDecoderDtsMixingMetadata_t  MixingMetadata;
 } MME_MixMetadataDtsFrameStatus_t;
 
 typedef struct
 {
-    MME_LxAudioDecoderFrameStatus_t  DecStatus;
-    MME_MixMetadataDtsFrameStatus_t  PcmStatus;
+	MME_LxAudioDecoderFrameStatus_t  DecStatus;
+	MME_MixMetadataDtsFrameStatus_t  PcmStatus;
 } MME_LxAudioDecoderDtsFrameMixMetadataStatus_t;
-
 
 typedef struct DtshdAudioCodecDecodeContext_s
 {
-    CodecBaseDecodeContext_t            BaseContext;
+	CodecBaseDecodeContext_t            BaseContext;
 
-    MME_LxAudioDecoderFrameParams_t                DecodeParameters;
-    MME_LxAudioDecoderDtsFrameMixMetadataStatus_t  DecodeStatus;
-    unsigned int                                   TranscodeBufferIndex;
-    DtshdAudioFrameParameters_t                    ContextFrameParameters;
+	MME_LxAudioDecoderFrameParams_t                DecodeParameters;
+	MME_LxAudioDecoderDtsFrameMixMetadataStatus_t  DecodeStatus;
+	unsigned int                                   TranscodeBufferIndex;
+	DtshdAudioFrameParameters_t                    ContextFrameParameters;
 } DtshdAudioCodecDecodeContext_t;
 
 // /////////////////////////////////////////////////////////////////////////
@@ -100,59 +97,59 @@ typedef struct DtshdAudioCodecDecodeContext_s
 
 class Codec_MmeAudioDtshd_c : public Codec_MmeAudio_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        eAccDecoderId            DecoderId;
-        unsigned int             CurrentTranscodeBufferIndex;
-        CodecBufferState_t       TranscodedBuffers[DTSHD_TRANSCODE_BUFFER_COUNT];
-        Buffer_c*                CurrentTranscodeBuffer;
-        bool                     TranscodeEnable;
+		eAccDecoderId            DecoderId;
+		unsigned int             CurrentTranscodeBufferIndex;
+		CodecBufferState_t       TranscodedBuffers[DTSHD_TRANSCODE_BUFFER_COUNT];
+		Buffer_c*                CurrentTranscodeBuffer;
+		bool                     TranscodeEnable;
 
-        allocator_device_t       TranscodedFrameMemoryDevice;
-        BufferPool_t             TranscodedFramePool;
-        void                    *TranscodedFrameMemory[3];
+		allocator_device_t       TranscodedFrameMemoryDevice;
+		BufferPool_t             TranscodedFramePool;
+		void                    *TranscodedFrameMemory[3];
 
-        BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
-        BufferType_t             TranscodedFrameBufferType;
-        bool                     IsLbrStream;
+		BufferDataDescriptor_t  *TranscodedFrameBufferDescriptor;
+		BufferType_t             TranscodedFrameBufferType;
+		bool                     IsLbrStream;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeAudioDtshd_c(bool IsLbrStream);
-        ~Codec_MmeAudioDtshd_c(void);
+		Codec_MmeAudioDtshd_c(bool IsLbrStream);
+		~Codec_MmeAudioDtshd_c(void);
 
-        //
-        // Stream specific functions
-        //
-        static void     FillStreamMetadata(ParsedAudioParameters_t * AudioParameters, MME_LxAudioDecoderFrameStatus_t * Status);
-        static void     TranscodeDtshdToDts(CodecBaseDecodeContext_t    * BaseContext,
-                                            unsigned int                  TranscodeBufferIndex,
-                                            DtshdAudioFrameParameters_t * FrameParameters,
-                                            CodecBufferState_t *          TranscodedBuffers);
+		//
+		// Stream specific functions
+		//
+		static void     FillStreamMetadata(ParsedAudioParameters_t * AudioParameters, MME_LxAudioDecoderFrameStatus_t * Status);
+		static void     TranscodeDtshdToDts(CodecBaseDecodeContext_t    * BaseContext,
+											unsigned int                  TranscodeBufferIndex,
+											DtshdAudioFrameParameters_t * FrameParameters,
+											CodecBufferState_t *          TranscodedBuffers);
 
-    protected:
+	protected:
 
-        CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-                                             MME_PcmProcessingStatusTemplate_t *PcmStatus);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        void            SetCommandIO(void);
-        CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
-        CodecStatus_t   GetTranscodeBuffer(void);
-        void            AttachCodedFrameBuffer(void);
-        CodecStatus_t   DumpDecodeParameters(void   *Parameters);
-        CodecStatus_t   Reset(void);
+		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
+											 MME_PcmProcessingStatusTemplate_t *PcmStatus);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		void            SetCommandIO(void);
+		CodecStatus_t   GetTranscodedFrameBufferPool(BufferPool_t * Tfp);
+		CodecStatus_t   GetTranscodeBuffer(void);
+		void            AttachCodedFrameBuffer(void);
+		CodecStatus_t   DumpDecodeParameters(void   *Parameters);
+		CodecStatus_t   Reset(void);
 };
 #endif //H_CODEC_MME_AUDIO_DTSHD

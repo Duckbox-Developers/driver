@@ -30,7 +30,6 @@ Date        Modification                                    Name
 
 ************************************************************************/
 
-
 //{{{  Main page
 /*! \mainpage
 
@@ -184,7 +183,6 @@ The most important pure virtual classes are listed below:
   buffers is, when in real time playback. I expect there to be one
   generic implementation of this, and an instance for each playback and
   its associated streams.
-
 
 */
 //}}}
@@ -1055,7 +1053,6 @@ typedef struct AudioOutputSurfaceDescriptor_s
     streams to transition from one mapping to a new one in a phased
     manner. to allow seamless transition between clips.
 
-
 \section clocks_sec    Clocks
 
     This is possibly the most confusing part.
@@ -1107,7 +1104,6 @@ typedef struct AudioOutputSurfaceDescriptor_s
     at the bottom of this file, it involves integrating the actual
     and expected duration of frames (rejecting large jittered values)
     and calculating a rate adjustments based on those values.
-
 
 \section synchronization_sec A/V/D synchronization
 
@@ -1186,7 +1182,6 @@ typedef struct AudioOutputSurfaceDescriptor_s
       the ability to play 24fps content on a 50hz display without frame
       repeat).
 
-
 \section clock_pulling_scenarios_sec    Clock pulling scenarios - the real world
 
     Give the clock pulling descriptions above, it is probably worth
@@ -1252,7 +1247,6 @@ typedef struct AudioOutputSurfaceDescriptor_s
            never been connected.
 
     This will have to be a customer decision.
-
 
 \section video_frame_rate_conversion_sec    Video frame rate conversion
 

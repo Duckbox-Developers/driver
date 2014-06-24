@@ -32,7 +32,6 @@ Date        Modification                                    Name
 
 ************************************************************************/
 
-
 // /////////////////////////////////////////////////////////////////////////
 ///     \class Collator_PesFrame_c
 ///
@@ -46,7 +45,6 @@ Date        Modification                                    Name
 ///       Packet contains more data than remainder required
 ///       Packet contains private data area but still data to gather on previous frame.
 ///
-
 
 // /////////////////////////////////////////////////////////////////////
 //
@@ -73,10 +71,10 @@ Date        Modification                                    Name
 
 Collator_PesFrame_c::Collator_PesFrame_c(void)
 {
-    if (InitializationStatus != CollatorNoError)
-        return;
+	if (InitializationStatus != CollatorNoError)
+		return;
 
-    Collator_PesFrame_c::Reset();
+	Collator_PesFrame_c::Reset();
 }
 
 //}}}
@@ -88,30 +86,30 @@ Collator_PesFrame_c::Collator_PesFrame_c(void)
 
 CollatorStatus_t Collator_PesFrame_c::Reset(void)
 {
-    CollatorStatus_t Status;
+	CollatorStatus_t Status;
 
-    Status      = Collator_Base_c::Reset();
+	Status      = Collator_Base_c::Reset();
 
-    if (Status != CollatorNoError)
-        return Status;
+	if (Status != CollatorNoError)
+		return Status;
 
-    Configuration.GenerateStartCodeList         = true;
-    Configuration.MaxStartCodes                 = 128;
-    Configuration.StreamIdentifierMask          = 0x00;
-    Configuration.StreamIdentifierCode          = 0x00;
-    Configuration.BlockTerminateMask            = 0x00;
-    Configuration.BlockTerminateCode            = 0x00;
-    Configuration.IgnoreCodesRangeStart         = 0x00;
-    Configuration.IgnoreCodesRangeEnd           = 0x00;
-    Configuration.InsertFrameTerminateCode      = false;
-    Configuration.TerminalCode                  = 0x00;
-    Configuration.ExtendedHeaderLength          = 0;
-    Configuration.DeferredTerminateFlag         = false;
+	Configuration.GenerateStartCodeList         = true;
+	Configuration.MaxStartCodes                 = 128;
+	Configuration.StreamIdentifierMask          = 0x00;
+	Configuration.StreamIdentifierCode          = 0x00;
+	Configuration.BlockTerminateMask            = 0x00;
+	Configuration.BlockTerminateCode            = 0x00;
+	Configuration.IgnoreCodesRangeStart         = 0x00;
+	Configuration.IgnoreCodesRangeEnd           = 0x00;
+	Configuration.InsertFrameTerminateCode      = false;
+	Configuration.TerminalCode                  = 0x00;
+	Configuration.ExtendedHeaderLength          = 0;
+	Configuration.DeferredTerminateFlag         = false;
 
-    FrameSize                                   = 0;
-    RemainingDataLength                         = 0;
+	FrameSize                                   = 0;
+	RemainingDataLength                         = 0;
 
-    return CollatorNoError;
+	return CollatorNoError;
 }
 //}}}
 
@@ -123,164 +121,164 @@ CollatorStatus_t Collator_PesFrame_c::Reset(void)
 /// \return Collator status code, CollatorNoError indicates success.
 ///
 CollatorStatus_t   Collator_PesFrame_c::Input(PlayerInputDescriptor_t*        Input,
-        unsigned int                    DataLength,
-        void*                           Data,
-        bool                            NonBlocking,
-        unsigned int                   *DataLengthRemaining)
+											  unsigned int                    DataLength,
+											  void*                           Data,
+											  bool                            NonBlocking,
+											  unsigned int                   *DataLengthRemaining)
 {
-    CollatorStatus_t    Status                  = CollatorNoError;
-    bool                PrivateDataPresent;
-    unsigned char*      DataBlock               = (unsigned char*)Data;
-    unsigned char*      PesHeader;
-    unsigned char*      PayloadStart;
-    unsigned int        PayloadLength;
-    unsigned int        PesLength;
-    unsigned int        Offset;
+	CollatorStatus_t    Status                  = CollatorNoError;
+	bool                PrivateDataPresent;
+	unsigned char*      DataBlock               = (unsigned char*)Data;
+	unsigned char*      PesHeader;
+	unsigned char*      PayloadStart;
+	unsigned int        PayloadLength;
+	unsigned int        PesLength;
+	unsigned int        Offset;
 
-    COLLATOR_ASSERT(!NonBlocking);
-    AssertComponentState("Collator_PesFrame_c::Input", ComponentRunning);
-    InputEntry(Input, DataLength, Data, NonBlocking);
+	COLLATOR_ASSERT(!NonBlocking);
+	AssertComponentState("Collator_PesFrame_c::Input", ComponentRunning);
+	InputEntry(Input, DataLength, Data, NonBlocking);
 
-    Offset                      = 0;
+	Offset                      = 0;
 
-    while (Offset < DataLength)
-    {
-        // Read the length of the payload
-        PrivateDataPresent      = false;
-        PesHeader               = DataBlock + Offset;
-        PesLength               = (PesHeader[4] << 8) + PesHeader[5];
+	while (Offset < DataLength)
+	{
+		// Read the length of the payload
+		PrivateDataPresent      = false;
+		PesHeader               = DataBlock + Offset;
+		PesLength               = (PesHeader[4] << 8) + PesHeader[5];
 
-        if (PesLength != 0)
-            PayloadLength       = PesLength - PesHeader[8] - 3;
-        else
-            PayloadLength       = 0;
+		if (PesLength != 0)
+			PayloadLength       = PesLength - PesHeader[8] - 3;
+		else
+			PayloadLength       = 0;
 
-        COLLATOR_DEBUG("DataLength %d, PesLength %d; PayloadLength %d, Offset %d\n", DataLength, PesLength, PayloadLength, Offset);
-        Offset                 += PesLength + 6;        // PES packet is PesLength + 6 bytes long
+		COLLATOR_DEBUG("DataLength %d, PesLength %d; PayloadLength %d, Offset %d\n", DataLength, PesLength, PayloadLength, Offset);
+		Offset                 += PesLength + 6;        // PES packet is PesLength + 6 bytes long
 
-        Bits.SetPointer(PesHeader + 9);                 // Set bits pointer ready to process optional fields
+		Bits.SetPointer(PesHeader + 9);                 // Set bits pointer ready to process optional fields
 
-        if ((PesHeader[7] & 0x80) == 0x80)              // PTS present?
-            //{{{  read PTS
-        {
-            Bits.FlushUnseen(4);
-            PlaybackTime        = (unsigned long long)(Bits.Get(3)) << 30;
-            Bits.FlushUnseen(1);
-            PlaybackTime       |= Bits.Get(15) << 15;
-            Bits.FlushUnseen(1);
-            PlaybackTime       |= Bits.Get(15);
-            Bits.FlushUnseen(1);
-            PlaybackTimeValid   = true;
-            COLLATOR_DEBUG("PTS %llu.\n", PlaybackTime);
-        }
+		if ((PesHeader[7] & 0x80) == 0x80)              // PTS present?
+			//{{{  read PTS
+		{
+			Bits.FlushUnseen(4);
+			PlaybackTime        = (unsigned long long)(Bits.Get(3)) << 30;
+			Bits.FlushUnseen(1);
+			PlaybackTime       |= Bits.Get(15) << 15;
+			Bits.FlushUnseen(1);
+			PlaybackTime       |= Bits.Get(15);
+			Bits.FlushUnseen(1);
+			PlaybackTimeValid   = true;
+			COLLATOR_DEBUG("PTS %llu.\n", PlaybackTime);
+		}
 
-        //}}}
-        if ((PesHeader[7] & 0xC0) == 0xC0)              // DTS present?
-            //{{{  read DTS
-        {
-            Bits.FlushUnseen(4);
-            DecodeTime          = (unsigned long long)(Bits.Get(3)) << 30;
-            Bits.FlushUnseen(1);
-            DecodeTime         |= Bits.Get(15) << 15;
-            Bits.FlushUnseen(1);
-            DecodeTime         |= Bits.Get(15);
-            Bits.FlushUnseen(1);
+		//}}}
+		if ((PesHeader[7] & 0xC0) == 0xC0)              // DTS present?
+			//{{{  read DTS
+		{
+			Bits.FlushUnseen(4);
+			DecodeTime          = (unsigned long long)(Bits.Get(3)) << 30;
+			Bits.FlushUnseen(1);
+			DecodeTime         |= Bits.Get(15) << 15;
+			Bits.FlushUnseen(1);
+			DecodeTime         |= Bits.Get(15);
+			Bits.FlushUnseen(1);
 
-            DecodeTimeValid     = true;
-        }
-        //}}}
-        else if ((PesHeader[7] & 0xC0) == 0x40)
-        {
-            COLLATOR_ERROR("Malformed pes header contains DTS without PTS.\n");
-            DiscardAccumulatedData();                   // throw away previous frame as incomplete
-            InputExit();
-            return CollatorError;
-        }
+			DecodeTimeValid     = true;
+		}
+		//}}}
+		else if ((PesHeader[7] & 0xC0) == 0x40)
+		{
+			COLLATOR_ERROR("Malformed pes header contains DTS without PTS.\n");
+			DiscardAccumulatedData();                   // throw away previous frame as incomplete
+			InputExit();
+			return CollatorError;
+		}
 
-        //}}}
-        //{{{  walk down optional bits
-        if ((PesHeader[7] & 0x20) == 0x20)              // ESCR present
-            Bits.FlushUnseen(48);                       // Size of ESCR
+		//}}}
+		//{{{  walk down optional bits
+		if ((PesHeader[7] & 0x20) == 0x20)              // ESCR present
+			Bits.FlushUnseen(48);                       // Size of ESCR
 
-        if ((PesHeader[7] & 0x10) == 0x10)              // ES Rate present
-            Bits.FlushUnseen(24);                       // Size of ES Rate
+		if ((PesHeader[7] & 0x10) == 0x10)              // ES Rate present
+			Bits.FlushUnseen(24);                       // Size of ES Rate
 
-        if ((PesHeader[7] & 0x08) == 0x08)              // Trick mode control present
-            Bits.FlushUnseen(8);                        // Size of Trick mode control
+		if ((PesHeader[7] & 0x08) == 0x08)              // Trick mode control present
+			Bits.FlushUnseen(8);                        // Size of Trick mode control
 
-        if ((PesHeader[7] & 0x04) == 0x04)              // Additional copy info present
-            Bits.FlushUnseen(8);                        // Size of additional copy info
+		if ((PesHeader[7] & 0x04) == 0x04)              // Additional copy info present
+			Bits.FlushUnseen(8);                        // Size of additional copy info
 
-        if ((PesHeader[7] & 0x02) == 0x02)              // PES CRC present
-            Bits.FlushUnseen(16);                       // Size of previous packet CRC
+		if ((PesHeader[7] & 0x02) == 0x02)              // PES CRC present
+			Bits.FlushUnseen(16);                       // Size of previous packet CRC
 
-        if ((PesHeader[7] & 0x01) == 0x01)              // PES Extension flag
-        {
-            PrivateDataPresent  = Bits.Get(1);
-            Bits.FlushUnseen(7);                        // Size of Pes extension data
-        }
+		if ((PesHeader[7] & 0x01) == 0x01)              // PES Extension flag
+		{
+			PrivateDataPresent  = Bits.Get(1);
+			Bits.FlushUnseen(7);                        // Size of Pes extension data
+		}
 
-        //}}}
+		//}}}
 
-        if (PrivateDataPresent)
-        {
-            if (RemainingDataLength != 0)
-            {
-                COLLATOR_ERROR("%s: Warning new frame indicated but %d bytes missing\n", __FUNCTION__, RemainingDataLength);
-                DiscardAccumulatedData();               // throw away previous frame as incomplete
-            }
+		if (PrivateDataPresent)
+		{
+			if (RemainingDataLength != 0)
+			{
+				COLLATOR_ERROR("%s: Warning new frame indicated but %d bytes missing\n", __FUNCTION__, RemainingDataLength);
+				DiscardAccumulatedData();               // throw away previous frame as incomplete
+			}
 
-            FrameSize           = Bits.Get(8) + (Bits.Get(8) << 8) + (Bits.Get(8) << 16);
-            RemainingDataLength = FrameSize;
+			FrameSize           = Bits.Get(8) + (Bits.Get(8) << 8) + (Bits.Get(8) << 16);
+			RemainingDataLength = FrameSize;
 
-            COLLATOR_DEBUG("%s: PlaybackTimeValid %d, PlaybackTime %llx, FrameSize %d\n", __FUNCTION__, PlaybackTimeValid, PlaybackTime, FrameSize);
-        }
+			COLLATOR_DEBUG("%s: PlaybackTimeValid %d, PlaybackTime %llx, FrameSize %d\n", __FUNCTION__, PlaybackTimeValid, PlaybackTime, FrameSize);
+		}
 
-        if ((int)PayloadLength > RemainingDataLength)           // Too much data - have some packets been lost?
-        {
-            if (RemainingDataLength != 0)
-            {
-                COLLATOR_ERROR("%s: Warning packet contains more bytes than needed %d bytes missing?\n", __FUNCTION__, RemainingDataLength);
-                DiscardAccumulatedData();                       // throw away previous frame as incomplete
-                //RemainingDataLength     = 0;
-                //InputExit();
-                //return CollatorError;
-            }
+		if ((int)PayloadLength > RemainingDataLength)           // Too much data - have some packets been lost?
+		{
+			if (RemainingDataLength != 0)
+			{
+				COLLATOR_ERROR("%s: Warning packet contains more bytes than needed %d bytes missing?\n", __FUNCTION__, RemainingDataLength);
+				DiscardAccumulatedData();                       // throw away previous frame as incomplete
+				//RemainingDataLength     = 0;
+				//InputExit();
+				//return CollatorError;
+			}
 
-            RemainingDataLength = PayloadLength;        // assume new packet is stand alone frame
-        }
+			RemainingDataLength = PayloadLength;        // assume new packet is stand alone frame
+		}
 
-        AccumulateStartCode(PackStartCode(AccumulatedDataSize, 0x42));
+		AccumulateStartCode(PackStartCode(AccumulatedDataSize, 0x42));
 
-        PayloadStart            = PesHeader + (PesLength + 6 - PayloadLength);
-        Status                  = AccumulateData(PayloadLength, (unsigned char *)PayloadStart);
+		PayloadStart            = PesHeader + (PesLength + 6 - PayloadLength);
+		Status                  = AccumulateData(PayloadLength, (unsigned char *)PayloadStart);
 
-        if (Status != CollatorNoError)
-        {
-            InputExit();
-            return Status;
-        }
+		if (Status != CollatorNoError)
+		{
+			InputExit();
+			return Status;
+		}
 
-        RemainingDataLength     -= PayloadLength;
+		RemainingDataLength     -= PayloadLength;
 
-        if (RemainingDataLength <= 0)
-        {
-            Status              = InternalFrameFlush();         // flush out collected frame
+		if (RemainingDataLength <= 0)
+		{
+			Status              = InternalFrameFlush();         // flush out collected frame
 
-            if (Status != CollatorNoError)
-            {
-                InputExit();
-                return Status;
-            }
-        }
+			if (Status != CollatorNoError)
+			{
+				InputExit();
+				return Status;
+			}
+		}
 
-        COLLATOR_DEBUG("%s PrivateDataPresent %d, RemainingDataLength %d, PayloadLength %d\n",
-                       __FUNCTION__, PrivateDataPresent, RemainingDataLength, PayloadLength);
+		COLLATOR_DEBUG("%s PrivateDataPresent %d, RemainingDataLength %d, PayloadLength %d\n",
+					   __FUNCTION__, PrivateDataPresent, RemainingDataLength, PayloadLength);
 
-    }
+	}
 
-    InputExit();
-    return CollatorNoError;
+	InputExit();
+	return CollatorNoError;
 }
 //}}}
 //{{{  InternalFrameFlush
@@ -290,38 +288,37 @@ CollatorStatus_t   Collator_PesFrame_c::Input(PlayerInputDescriptor_t*        In
 //
 CollatorStatus_t   Collator_PesFrame_c::InternalFrameFlush(bool        FlushedByStreamTerminate)
 {
-    CodedFrameParameters->FollowedByStreamTerminate     = FlushedByStreamTerminate;
-    return InternalFrameFlush();
+	CodedFrameParameters->FollowedByStreamTerminate     = FlushedByStreamTerminate;
+	return InternalFrameFlush();
 }
 
 CollatorStatus_t   Collator_PesFrame_c::InternalFrameFlush(void)
 {
-    CollatorStatus_t        Status;
+	CollatorStatus_t        Status;
 
-    AssertComponentState("Collator_PesFrame_c::InternalFrameFlush", ComponentRunning);
+	AssertComponentState("Collator_PesFrame_c::InternalFrameFlush", ComponentRunning);
 
-    CodedFrameParameters->PlaybackTimeValid = PlaybackTimeValid;
-    CodedFrameParameters->PlaybackTime      = PlaybackTime;
-    PlaybackTimeValid                       = false;
+	CodedFrameParameters->PlaybackTimeValid = PlaybackTimeValid;
+	CodedFrameParameters->PlaybackTime      = PlaybackTime;
+	PlaybackTimeValid                       = false;
 
-    CodedFrameParameters->DecodeTimeValid   = DecodeTimeValid;
-    CodedFrameParameters->DecodeTime        = DecodeTime;
-    DecodeTimeValid                         = false;
+	CodedFrameParameters->DecodeTimeValid   = DecodeTimeValid;
+	CodedFrameParameters->DecodeTime        = DecodeTime;
+	DecodeTimeValid                         = false;
 
-    Status                                      = Collator_Pes_c::InternalFrameFlush();
+	Status                                      = Collator_Pes_c::InternalFrameFlush();
 
-    if (Status != CodecNoError)
-        return Status;
+	if (Status != CodecNoError)
+		return Status;
 
-    SeekingPesHeader                            = true;
-    GotPartialHeader                            = false;        // New style most video
-    GotPartialZeroHeader                        = false;        // Old style used by divx only
-    GotPartialPesHeader                         = false;
-    GotPartialPaddingHeader                     = false;
-    Skipping                                    = 0;
+	SeekingPesHeader                            = true;
+	GotPartialHeader                            = false;        // New style most video
+	GotPartialZeroHeader                        = false;        // Old style used by divx only
+	GotPartialPesHeader                         = false;
+	GotPartialPaddingHeader                     = false;
+	Skipping                                    = 0;
 
-    return CodecNoError;
+	return CodecNoError;
 }
 //}}}
-
 

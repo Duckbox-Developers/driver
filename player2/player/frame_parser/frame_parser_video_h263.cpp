@@ -24,7 +24,6 @@ Author :           Julian
 
 Implementation of the h263 -1 video frame parser class for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 19-May-08   Created                                         Julian
@@ -41,7 +40,6 @@ Date        Modification                                    Name
 #include "frame_parser_video_h263.h"
 #include "ring_generic.h"
 
-
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -57,25 +55,24 @@ static BufferDataDescriptor_t     H263FrameParametersBuffer     = BUFFER_H263_FR
 
 struct DisplaySize_s
 {
-    unsigned int        Width;
-    unsigned int        Height;
+	unsigned int        Width;
+	unsigned int        Height;
 };
 static struct DisplaySize_s H263DisplaySize[] =
 {
-    {    0,    0 },                     // H263_FORMAT_FORBIDDEN,
-    {  128,   96 },                     // H263_FORMAT_SUB_QCIF,
-    {  176,  144 },                     // H263_FORMAT_QCIF,
-    {  352,  288 },                     // H263_FORMAT_CIF,
-    {  704,  576 },                     // H263_FORMAT_4CIF,
-    { 1408, 1152 },                     // H263_FORMAT_16CIF,
-    {    0,    0 },                     // H263_FORMAT_RESERVED1,
-    {    0,    0 },                     // H263_FORMAT_RESERVED2,
+	{    0,    0 },                     // H263_FORMAT_FORBIDDEN,
+	{  128,   96 },                     // H263_FORMAT_SUB_QCIF,
+	{  176,  144 },                     // H263_FORMAT_QCIF,
+	{  352,  288 },                     // H263_FORMAT_CIF,
+	{  704,  576 },                     // H263_FORMAT_4CIF,
+	{ 1408, 1152 },                     // H263_FORMAT_16CIF,
+	{    0,    0 },                     // H263_FORMAT_RESERVED1,
+	{    0,    0 },                     // H263_FORMAT_RESERVED2,
 };
 
 #if defined (DUMP_HEADERS)
 static unsigned int PictureNo;
 #endif
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -85,24 +82,24 @@ static unsigned int PictureNo;
 FrameParser_VideoH263_c::FrameParser_VideoH263_c(void)
 {
 
-    // Our constructor is called after our subclass so the only change is to rename the frame parser
-    Configuration.FrameParserName               = "VideoH263";
+	// Our constructor is called after our subclass so the only change is to rename the frame parser
+	Configuration.FrameParserName               = "VideoH263";
 
-    Configuration.StreamParametersCount         = 32;
-    Configuration.StreamParametersDescriptor    = &H263StreamParametersBuffer;
+	Configuration.StreamParametersCount         = 32;
+	Configuration.StreamParametersDescriptor    = &H263StreamParametersBuffer;
 
-    Configuration.FrameParametersCount          = 32;
-    Configuration.FrameParametersDescriptor     = &H263FrameParametersBuffer;
+	Configuration.FrameParametersCount          = 32;
+	Configuration.FrameParametersDescriptor     = &H263FrameParametersBuffer;
 
-    memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
+	memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
 
-    TemporalReference                           = H263_TEMPORAL_REFERENCE_INVALID;
+	TemporalReference                           = H263_TEMPORAL_REFERENCE_INVALID;
 
 #if defined (DUMP_HEADERS)
-    PictureNo                                   = 0;
+	PictureNo                                   = 0;
 #endif
 
-    Reset();
+	Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
@@ -112,8 +109,8 @@ FrameParser_VideoH263_c::FrameParser_VideoH263_c(void)
 
 FrameParser_VideoH263_c::~FrameParser_VideoH263_c(void)
 {
-    Halt();
-    Reset();
+	Halt();
+	Reset();
 }
 //{{{  Reset
 /// /////////////////////////////////////////////////////////////////////////
@@ -123,18 +120,17 @@ FrameParser_VideoH263_c::~FrameParser_VideoH263_c(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::Reset(void)
 {
-    memset(&CopyOfStreamParameters, 0x00, sizeof(H263StreamParameters_t));
-    memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
+	memset(&CopyOfStreamParameters, 0x00, sizeof(H263StreamParameters_t));
+	memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
 
-    StreamParameters                            = NULL;
-    FrameParameters                             = NULL;
+	StreamParameters                            = NULL;
+	FrameParameters                             = NULL;
 
-    FirstDecodeOfFrame                          = true;
+	FirstDecodeOfFrame                          = true;
 
-    return FrameParser_Video_c::Reset();
+	return FrameParser_Video_c::Reset();
 }
 //}}}
-
 
 //{{{  RegisterOutputBufferRing
 /// /////////////////////////////////////////////////////////////////////////
@@ -145,20 +141,20 @@ FrameParserStatus_t   FrameParser_VideoH263_c::Reset(void)
 FrameParserStatus_t   FrameParser_VideoH263_c::RegisterOutputBufferRing(Ring_t          Ring)
 {
 
-    //
-    // Clear our parameter pointers
-    //
+	//
+	// Clear our parameter pointers
+	//
 
-    StreamParameters                    = NULL;
-    FrameParameters                     = NULL;
-    DeferredParsedFrameParameters       = NULL;
-    DeferredParsedVideoParameters       = NULL;
+	StreamParameters                    = NULL;
+	FrameParameters                     = NULL;
+	DeferredParsedFrameParameters       = NULL;
+	DeferredParsedVideoParameters       = NULL;
 
-    //
-    // Pass the call on down (we need the frame parameters count obtained by the lower level function).
-    //
+	//
+	// Pass the call on down (we need the frame parameters count obtained by the lower level function).
+	//
 
-    return FrameParser_Video_c::RegisterOutputBufferRing(Ring);
+	return FrameParser_Video_c::RegisterOutputBufferRing(Ring);
 }
 //}}}
 //{{{  ResetReferenceFrameList
@@ -169,11 +165,11 @@ FrameParserStatus_t   FrameParser_VideoH263_c::RegisterOutputBufferRing(Ring_t  
 
 FrameParserStatus_t   FrameParser_VideoH263_c::ResetReferenceFrameList(void)
 {
-    FrameParserStatus_t         Status  = FrameParser_Video_c::ResetReferenceFrameList();
+	FrameParserStatus_t         Status  = FrameParser_Video_c::ResetReferenceFrameList();
 
-    TemporalReference                   = H263_TEMPORAL_REFERENCE_INVALID;
+	TemporalReference                   = H263_TEMPORAL_REFERENCE_INVALID;
 
-    return Status;
+	return Status;
 }
 //}}}
 //{{{  PrepareReferenceFrameList
@@ -184,36 +180,36 @@ FrameParserStatus_t   FrameParser_VideoH263_c::ResetReferenceFrameList(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::PrepareReferenceFrameList(void)
 {
-    unsigned int               i;
-    unsigned int               ReferenceFramesNeeded;
-    unsigned int               PictureCodingType;
-    H263VideoPicture_t*        PictureHeader;
+	unsigned int               i;
+	unsigned int               ReferenceFramesNeeded;
+	unsigned int               PictureCodingType;
+	H263VideoPicture_t*        PictureHeader;
 
-    //
-    // Note we cannot use StreamParameters or FrameParameters to address data directly,
-    // as these may no longer apply to the frame we are dealing with.
-    // Particularly if we have seen a sequence header or group of pictures
-    // header which belong to the next frame.
-    //
+	//
+	// Note we cannot use StreamParameters or FrameParameters to address data directly,
+	// as these may no longer apply to the frame we are dealing with.
+	// Particularly if we have seen a sequence header or group of pictures
+	// header which belong to the next frame.
+	//
 
-    PictureHeader               = &(((H263FrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure))->PictureHeader);
-    PictureCodingType           = PictureHeader->ptype;
-    ReferenceFramesNeeded       = (PictureCodingType == H263_PICTURE_CODING_TYPE_P) ? 1 : 0;
+	PictureHeader               = &(((H263FrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure))->PictureHeader);
+	PictureCodingType           = PictureHeader->ptype;
+	ReferenceFramesNeeded       = (PictureCodingType == H263_PICTURE_CODING_TYPE_P) ? 1 : 0;
 
-    if (ReferenceFrameList.EntryCount < ReferenceFramesNeeded)
-        return FrameParserInsufficientReferenceFrames;
+	if (ReferenceFrameList.EntryCount < ReferenceFramesNeeded)
+		return FrameParserInsufficientReferenceFrames;
 
-    ParsedFrameParameters->NumberOfReferenceFrameLists                  = 1;
-    ParsedFrameParameters->ReferenceFrameList[0].EntryCount             = ReferenceFramesNeeded;
+	ParsedFrameParameters->NumberOfReferenceFrameLists                  = 1;
+	ParsedFrameParameters->ReferenceFrameList[0].EntryCount             = ReferenceFramesNeeded;
 
-    for (i = 0; i < ReferenceFramesNeeded; i++)
-        ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[i]   = ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount - ReferenceFramesNeeded + i];
+	for (i = 0; i < ReferenceFramesNeeded; i++)
+		ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[i]   = ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount - ReferenceFramesNeeded + i];
 
-    //report (severity_info, "Prepare Ref list %d %d - %d %d - %d %d %d\n", ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1],
-    //        ReferenceFrameList.EntryIndicies[0], ReferenceFrameList.EntryIndicies[1],
-    //        ReferenceFramesNeeded, ReferenceFrameList.EntryCount, ReferenceFrameList.EntryCount - ReferenceFramesNeeded );
+	//report (severity_info, "Prepare Ref list %d %d - %d %d - %d %d %d\n", ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1],
+	//        ReferenceFrameList.EntryIndicies[0], ReferenceFrameList.EntryIndicies[1],
+	//        ReferenceFramesNeeded, ReferenceFrameList.EntryCount, ReferenceFrameList.EntryCount - ReferenceFramesNeeded );
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  ForPlayUpdateReferenceFrameList
@@ -227,14 +223,14 @@ FrameParserStatus_t   FrameParser_VideoH263_c::PrepareReferenceFrameList(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::ForPlayUpdateReferenceFrameList(void)
 {
-    if (ReferenceFrameList.EntryCount == 1)
-        Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ReferenceFrameList.EntryIndicies[0]);
+	if (ReferenceFrameList.EntryCount == 1)
+		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ReferenceFrameList.EntryIndicies[0]);
 
-    ReferenceFrameList.EntryCount       = 1;
+	ReferenceFrameList.EntryCount       = 1;
 
-    ReferenceFrameList.EntryIndicies[0] = ParsedFrameParameters->DecodeFrameIndex;
+	ReferenceFrameList.EntryIndicies[0] = ParsedFrameParameters->DecodeFrameIndex;
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 
 }
 //}}}
@@ -249,9 +245,9 @@ FrameParserStatus_t   FrameParser_VideoH263_c::ForPlayUpdateReferenceFrameList(v
 
 FrameParserStatus_t   FrameParser_VideoH263_c::RevPlayProcessDecodeStacks(void)
 {
-    ReverseQueuedPostDecodeSettingsRing->Flush();
+	ReverseQueuedPostDecodeSettingsRing->Flush();
 
-    return FrameParser_Video_c::RevPlayProcessDecodeStacks();
+	return FrameParser_Video_c::RevPlayProcessDecodeStacks();
 }
 //}}}
 
@@ -263,35 +259,35 @@ FrameParserStatus_t   FrameParser_VideoH263_c::RevPlayProcessDecodeStacks(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::ReadHeaders(void)
 {
-    FrameParserStatus_t         Status  = FrameParserNoError;
-    unsigned int                StartCode;
+	FrameParserStatus_t         Status  = FrameParserNoError;
+	unsigned int                StartCode;
 
 #if 0
-    unsigned int                i;
-    report(severity_info, "First 32 bytes of %d :", BufferLength);
+	unsigned int                i;
+	report(severity_info, "First 32 bytes of %d :", BufferLength);
 
-    for (i = 0; i < 32; i++)
-        report(severity_info, " %02x", BufferData[i]);
+	for (i = 0; i < 32; i++)
+		report(severity_info, " %02x", BufferData[i]);
 
-    report(severity_info, "\n");
+	report(severity_info, "\n");
 #endif
 
-    Bits.SetPointer(BufferData);
+	Bits.SetPointer(BufferData);
 
-    StartCode                   = Bits.Get(17);
+	StartCode                   = Bits.Get(17);
 
-    if (StartCode == H263_PICTURE_START_CODE)
-        Status                  = H263ReadPictureHeader();
-    else
-    {
-        FRAME_ERROR("Not at the start of a picture - lost sync (%x).\n", StartCode);
-        return FrameParserError;
-    }
+	if (StartCode == H263_PICTURE_START_CODE)
+		Status                  = H263ReadPictureHeader();
+	else
+	{
+		FRAME_ERROR("Not at the start of a picture - lost sync (%x).\n", StartCode);
+		return FrameParserError;
+	}
 
-    if (Status == FrameParserNoError)
-        Status      = CommitFrameForDecode();
+	if (Status == FrameParserNoError)
+		Status      = CommitFrameForDecode();
 
-    return Status;
+	return Status;
 }
 //}}}
 //{{{  H263ReadPictureHeader
@@ -302,103 +298,102 @@ FrameParserStatus_t   FrameParser_VideoH263_c::ReadHeaders(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::H263ReadPictureHeader(void)
 {
-    FrameParserStatus_t         Status;
-    H263VideoPicture_t*         Header;
-    H263VideoSequence_t*        SequenceHeader;
-    unsigned int                Marker;
+	FrameParserStatus_t         Status;
+	H263VideoPicture_t*         Header;
+	H263VideoSequence_t*        SequenceHeader;
+	unsigned int                Marker;
 
-    if (FrameParameters == NULL)
-    {
-        Status                                  = GetNewFrameParameters((void **)&FrameParameters);
+	if (FrameParameters == NULL)
+	{
+		Status                                  = GetNewFrameParameters((void **)&FrameParameters);
 
-        if (Status != FrameParserNoError)
-            return Status;
-    }
+		if (Status != FrameParserNoError)
+			return Status;
+	}
 
-    Header                                      = &FrameParameters->PictureHeader;
-    memset(Header, 0x00, sizeof(H263VideoPicture_t));
+	Header                                      = &FrameParameters->PictureHeader;
+	memset(Header, 0x00, sizeof(H263VideoPicture_t));
 
-    Header->version                             = Bits.Get(5);
+	Header->version                             = Bits.Get(5);
 
-    if (Header->version != 0x00)
-    {
-        FRAME_ERROR("Version %02x incorrect - should be 0x00.\n", Header->version);
-        return FrameParserError;
-    }
+	if (Header->version != 0x00)
+	{
+		FRAME_ERROR("Version %02x incorrect - should be 0x00.\n", Header->version);
+		return FrameParserError;
+	}
 
+	Header->tref                                = Bits.Get(8);                         // temporal reference 5.1.2
+	Marker                                      = Bits.Get(2);
 
-    Header->tref                                = Bits.Get(8);                         // temporal reference 5.1.2
-    Marker                                      = Bits.Get(2);
+	if (Marker != 0x02)
+	{
+		FRAME_ERROR("Flags bytes %02x incorrect - should be 0x02.\n", Marker);
+		return FrameParserError;
+	}
 
-    if (Marker != 0x02)
-    {
-        FRAME_ERROR("Flags bytes %02x incorrect - should be 0x02.\n", Marker);
-        return FrameParserError;
-    }
+	// see 5.1.3
+	Header->ssi                                 = Bits.Get(1);                         // split screen indicator
+	Header->dci                                 = Bits.Get(1);                         // document camera indicator
+	Header->fpr                                 = Bits.Get(1);                         // freeze picture release
+	Header->format                              = Bits.Get(3);                         // source format
+	Header->ptype                               = Bits.Get(1);
+	Header->optional_bits                       = Bits.Get(4);
 
-    // see 5.1.3
-    Header->ssi                                 = Bits.Get(1);                         // split screen indicator
-    Header->dci                                 = Bits.Get(1);                         // document camera indicator
-    Header->fpr                                 = Bits.Get(1);                         // freeze picture release
-    Header->format                              = Bits.Get(3);                         // source format
-    Header->ptype                               = Bits.Get(1);
-    Header->optional_bits                       = Bits.Get(4);
+	// For H263 there is no sequence header so we create one whenever the picture size changes
+	if ((StreamParameters == NULL) || (!StreamParameters->SequenceHeaderPresent) ||
+			(Header->format != StreamParameters->SequenceHeader.format))
+	{
+		Status                                  = GetNewStreamParameters((void **)&StreamParameters);
 
-    // For H263 there is no sequence header so we create one whenever the picture size changes
-    if ((StreamParameters == NULL) || (!StreamParameters->SequenceHeaderPresent) ||
-            (Header->format != StreamParameters->SequenceHeader.format))
-    {
-        Status                                  = GetNewStreamParameters((void **)&StreamParameters);
+		if (Status != FrameParserNoError)
+			return Status;
 
-        if (Status != FrameParserNoError)
-            return Status;
+		StreamParameters->UpdatedSinceLastFrame = true;
 
-        StreamParameters->UpdatedSinceLastFrame = true;
+		SequenceHeader                          = &StreamParameters->SequenceHeader;
+		memset(SequenceHeader, 0x00, sizeof(H263VideoSequence_t));
+		StreamParameters->SequenceHeaderPresent = true;
 
-        SequenceHeader                          = &StreamParameters->SequenceHeader;
-        memset(SequenceHeader, 0x00, sizeof(H263VideoSequence_t));
-        StreamParameters->SequenceHeaderPresent = true;
+		Header->ptype                           = H263_PICTURE_CODING_TYPE_I;           // New sequence - set picture type to I (5.1.3)
+	}
+	else
+		SequenceHeader                          = &StreamParameters->SequenceHeader;
 
-        Header->ptype                           = H263_PICTURE_CODING_TYPE_I;           // New sequence - set picture type to I (5.1.3)
-    }
-    else
-        SequenceHeader                          = &StreamParameters->SequenceHeader;
+	SequenceHeader->format                      = Header->format;
+	SequenceHeader->width                       = H263DisplaySize[Header->format].Width;
+	SequenceHeader->height                      = H263DisplaySize[Header->format].Height;
 
-    SequenceHeader->format                      = Header->format;
-    SequenceHeader->width                       = H263DisplaySize[Header->format].Width;
-    SequenceHeader->height                      = H263DisplaySize[Header->format].Height;
+	Header->pquant                              = Bits.Get(5);                          // quantizer 5.1.4
+	Header->cpm                                 = Bits.Get(1);                          // continuous presence multipoint 5.1.5
+	Header->psbi                                = Bits.Get(2);                          // picture sub bitstream 5.1.6
+	Header->trb                                 = Bits.Get(3);                          // temporal ref for b pictures 5.1.7
+	Header->dbquant                             = Bits.Get(2);                          // quantization for b pictures 5.1.8
 
-    Header->pquant                              = Bits.Get(5);                          // quantizer 5.1.4
-    Header->cpm                                 = Bits.Get(1);                          // continuous presence multipoint 5.1.5
-    Header->psbi                                = Bits.Get(2);                          // picture sub bitstream 5.1.6
-    Header->trb                                 = Bits.Get(3);                          // temporal ref for b pictures 5.1.7
-    Header->dbquant                             = Bits.Get(2);                          // quantization for b pictures 5.1.8
+	while (Bits.Get(1))                                                                 // extra insertion info (pei) 5.1.9
+		Bits.Get(8);                                                                    // spare info (pspare) 5.1.10
 
-    while (Bits.Get(1))                                                                 // extra insertion info (pei) 5.1.9
-        Bits.Get(8);                                                                    // spare info (pspare) 5.1.10
-
-    FrameParameters->PictureHeaderPresent       = true;
+	FrameParameters->PictureHeaderPresent       = true;
 
 #ifdef DUMP_HEADERS
-    {
-        report(severity_note, "Picture header (%d):- \n", PictureNo++);
-        report(severity_info, "    tref          : %6d\n", Header->tref);
-        report(severity_info, "    ssi           : %6d\n", Header->ssi);
-        report(severity_info, "    dci           : %6d\n", Header->dci);
-        report(severity_info, "    fpr           : %6d\n", Header->fpr);
-        report(severity_info, "    format        : %6d\n", Header->format);
-        report(severity_info, "    width         : %6d\n", SequenceHeader->width);
-        report(severity_info, "    height        : %6d\n", SequenceHeader->height);
-        report(severity_info, "    ptype         : %6d\n", Header->ptype);
-        report(severity_info, "    pquant        : %6d\n", Header->pquant);
-        report(severity_info, "    cpm           : %6d\n", Header->cpm);
-        report(severity_info, "    psbi          : %6d\n", Header->psbi);
-        report(severity_info, "    trb           : %6d\n", Header->trb);
-        report(severity_info, "    dbquant       : %6d\n", Header->dbquant);
-    }
+	{
+		report(severity_note, "Picture header (%d):- \n", PictureNo++);
+		report(severity_info, "    tref          : %6d\n", Header->tref);
+		report(severity_info, "    ssi           : %6d\n", Header->ssi);
+		report(severity_info, "    dci           : %6d\n", Header->dci);
+		report(severity_info, "    fpr           : %6d\n", Header->fpr);
+		report(severity_info, "    format        : %6d\n", Header->format);
+		report(severity_info, "    width         : %6d\n", SequenceHeader->width);
+		report(severity_info, "    height        : %6d\n", SequenceHeader->height);
+		report(severity_info, "    ptype         : %6d\n", Header->ptype);
+		report(severity_info, "    pquant        : %6d\n", Header->pquant);
+		report(severity_info, "    cpm           : %6d\n", Header->cpm);
+		report(severity_info, "    psbi          : %6d\n", Header->psbi);
+		report(severity_info, "    trb           : %6d\n", Header->trb);
+		report(severity_info, "    dbquant       : %6d\n", Header->dbquant);
+	}
 #endif
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 
@@ -410,90 +405,90 @@ FrameParserStatus_t   FrameParser_VideoH263_c::H263ReadPictureHeader(void)
 /// /////////////////////////////////////////////////////////////////////////
 FrameParserStatus_t   FrameParser_VideoH263_c::CommitFrameForDecode(void)
 {
-    H263VideoPicture_t*                 PictureHeader;
-    H263VideoSequence_t*                SequenceHeader;
+	H263VideoPicture_t*                 PictureHeader;
+	H263VideoSequence_t*                SequenceHeader;
 
-    //
-    // Check we have the headers we need
-    //
-    if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
-    {
-        report(severity_error, "FrameParser_VideoH263_c::CommitFrameForDecode - Stream parameters unavailable for decode.\n");
-        return FrameParserNoStreamParameters;
-    }
+	//
+	// Check we have the headers we need
+	//
+	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
+	{
+		report(severity_error, "FrameParser_VideoH263_c::CommitFrameForDecode - Stream parameters unavailable for decode.\n");
+		return FrameParserNoStreamParameters;
+	}
 
-    if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
-    {
-        report(severity_error, "FrameParser_VideoH263_c::CommitFrameForDecode - Frame parameters unavailable for decode (%p).\n", FrameParameters);
-        return FrameParserPartialFrameParameters;
-    }
+	if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
+	{
+		report(severity_error, "FrameParser_VideoH263_c::CommitFrameForDecode - Frame parameters unavailable for decode (%p).\n", FrameParameters);
+		return FrameParserPartialFrameParameters;
+	}
 
-    SequenceHeader                      = &StreamParameters->SequenceHeader;
-    PictureHeader                       = &FrameParameters->PictureHeader;
+	SequenceHeader                      = &StreamParameters->SequenceHeader;
+	PictureHeader                       = &FrameParameters->PictureHeader;
 
-    // Record the stream and frame parameters into the appropriate structure
+	// Record the stream and frame parameters into the appropriate structure
 
-    // Parsed frame parameters
-    ParsedFrameParameters->FirstParsedParametersForOutputFrame  = true;  //FirstDecodeOfFrame;
-    ParsedFrameParameters->FirstParsedParametersAfterInputJump  = FirstDecodeAfterInputJump;
-    ParsedFrameParameters->SurplusDataInjected                  = SurplusDataInjected;
-    ParsedFrameParameters->ContinuousReverseJump                = ContinuousReverseJump;
+	// Parsed frame parameters
+	ParsedFrameParameters->FirstParsedParametersForOutputFrame  = true;  //FirstDecodeOfFrame;
+	ParsedFrameParameters->FirstParsedParametersAfterInputJump  = FirstDecodeAfterInputJump;
+	ParsedFrameParameters->SurplusDataInjected                  = SurplusDataInjected;
+	ParsedFrameParameters->ContinuousReverseJump                = ContinuousReverseJump;
 
-    ParsedFrameParameters->KeyFrame                             = PictureHeader->ptype == H263_PICTURE_CODING_TYPE_I;
-    ParsedFrameParameters->ReferenceFrame                       = true;
+	ParsedFrameParameters->KeyFrame                             = PictureHeader->ptype == H263_PICTURE_CODING_TYPE_I;
+	ParsedFrameParameters->ReferenceFrame                       = true;
 
-    ParsedFrameParameters->IndependentFrame                     = ParsedFrameParameters->KeyFrame;
-    ParsedFrameParameters->NumberOfReferenceFrameLists          = 1;
+	ParsedFrameParameters->IndependentFrame                     = ParsedFrameParameters->KeyFrame;
+	ParsedFrameParameters->NumberOfReferenceFrameLists          = 1;
 
-    ParsedFrameParameters->NewStreamParameters                  = NewStreamParametersCheck();
-    ParsedFrameParameters->SizeofStreamParameterStructure       = sizeof(H263StreamParameters_t);
-    ParsedFrameParameters->StreamParameterStructure             = StreamParameters;
+	ParsedFrameParameters->NewStreamParameters                  = NewStreamParametersCheck();
+	ParsedFrameParameters->SizeofStreamParameterStructure       = sizeof(H263StreamParameters_t);
+	ParsedFrameParameters->StreamParameterStructure             = StreamParameters;
 
-    ParsedFrameParameters->NewFrameParameters                   = true;
-    ParsedFrameParameters->SizeofFrameParameterStructure        = sizeof(H263FrameParameters_t);
-    ParsedFrameParameters->FrameParameterStructure              = FrameParameters;
+	ParsedFrameParameters->NewFrameParameters                   = true;
+	ParsedFrameParameters->SizeofFrameParameterStructure        = sizeof(H263FrameParameters_t);
+	ParsedFrameParameters->FrameParameterStructure              = FrameParameters;
 
-    // Parsed video parameters
-    ParsedVideoParameters->Content.Width                        = SequenceHeader->width;
-    ParsedVideoParameters->Content.Height                       = SequenceHeader->height;
+	// Parsed video parameters
+	ParsedVideoParameters->Content.Width                        = SequenceHeader->width;
+	ParsedVideoParameters->Content.Height                       = SequenceHeader->height;
 
-    ParsedVideoParameters->Content.Progressive                  = true;
-    ParsedVideoParameters->Content.OverscanAppropriate          = false;
+	ParsedVideoParameters->Content.Progressive                  = true;
+	ParsedVideoParameters->Content.OverscanAppropriate          = false;
 
-    ParsedVideoParameters->Content.VideoFullRange               = false;                                // H263 conforms to ITU_R_BT601 for source
-    ParsedVideoParameters->Content.ColourMatrixCoefficients     = MatrixCoefficients_ITU_R_BT601;
+	ParsedVideoParameters->Content.VideoFullRange               = false;                                // H263 conforms to ITU_R_BT601 for source
+	ParsedVideoParameters->Content.ColourMatrixCoefficients     = MatrixCoefficients_ITU_R_BT601;
 
-    // Frame rate is always derived from 29.976
-    ParsedVideoParameters->Content.FrameRate                    = Rational_t (30000, 1001);
-    // Picture header cycles 0-255 with gaps - see 5.1.2
-    ParsedVideoParameters->DisplayCount[0]                      = (TemporalReference == H263_TEMPORAL_REFERENCE_INVALID) ? 1 :
-            (TemporalReference > PictureHeader->tref)              ? PictureHeader->tref + 256 - TemporalReference :
-            PictureHeader->tref - TemporalReference;
-    ParsedVideoParameters->DisplayCount[1]                      = 0;
-    TemporalReference                                           = PictureHeader->tref;
+	// Frame rate is always derived from 29.976
+	ParsedVideoParameters->Content.FrameRate                    = Rational_t (30000, 1001);
+	// Picture header cycles 0-255 with gaps - see 5.1.2
+	ParsedVideoParameters->DisplayCount[0]                      = (TemporalReference == H263_TEMPORAL_REFERENCE_INVALID) ? 1 :
+			(TemporalReference > PictureHeader->tref)              ? PictureHeader->tref + 256 - TemporalReference :
+			PictureHeader->tref - TemporalReference;
+	ParsedVideoParameters->DisplayCount[1]                      = 0;
+	TemporalReference                                           = PictureHeader->tref;
 
-    ParsedVideoParameters->Content.PixelAspectRatio             = 1;
+	ParsedVideoParameters->Content.PixelAspectRatio             = 1;
 
-    ParsedVideoParameters->PictureStructure                     = StructureFrame;
-    ParsedVideoParameters->InterlacedFrame                      = false;
-    ParsedVideoParameters->TopFieldFirst                        = true;
+	ParsedVideoParameters->PictureStructure                     = StructureFrame;
+	ParsedVideoParameters->InterlacedFrame                      = false;
+	ParsedVideoParameters->TopFieldFirst                        = true;
 
-    ParsedVideoParameters->PanScan.Count                        = 0;
+	ParsedVideoParameters->PanScan.Count                        = 0;
 
-    // Record our claim on both the frame and stream parameters
-    Buffer->AttachBuffer(StreamParametersBuffer);
-    Buffer->AttachBuffer(FrameParametersBuffer);
+	// Record our claim on both the frame and stream parameters
+	Buffer->AttachBuffer(StreamParametersBuffer);
+	Buffer->AttachBuffer(FrameParametersBuffer);
 
-    // We clear the FrameParameters pointer, a new one will be obtained
-    // before/if we read in headers pertaining to the next frame. This
-    // will generate an error should I accidentally write code that
-    // accesses this data when it should not.
-    FrameParameters                                             = NULL;
+	// We clear the FrameParameters pointer, a new one will be obtained
+	// before/if we read in headers pertaining to the next frame. This
+	// will generate an error should I accidentally write code that
+	// accesses this data when it should not.
+	FrameParameters                                             = NULL;
 
-    // Finally set the appropriate flag and return
-    FrameToDecode                                               = true;
+	// Finally set the appropriate flag and return
+	FrameToDecode                                               = true;
 
-    return FrameParserNoError;
+	return FrameParserNoError;
 }
 //}}}
 //{{{  NewStreamParametersCheck
@@ -505,33 +500,33 @@ FrameParserStatus_t   FrameParser_VideoH263_c::CommitFrameForDecode(void)
 /// /////////////////////////////////////////////////////////////////////////
 bool   FrameParser_VideoH263_c::NewStreamParametersCheck(void)
 {
-    bool            Different;
+	bool            Different;
 
-    //
-    // The parameters cannot be new if they have been used before.
-    //
+	//
+	// The parameters cannot be new if they have been used before.
+	//
 
-    if (!StreamParameters->UpdatedSinceLastFrame)
-        return false;
+	if (!StreamParameters->UpdatedSinceLastFrame)
+		return false;
 
-    StreamParameters->UpdatedSinceLastFrame     = false;
+	StreamParameters->UpdatedSinceLastFrame     = false;
 
-    //
-    // Check for difference using a straightforward comparison to see if the
-    // stream parameters have changed. (since we zero on allocation simple
-    // memcmp should be sufficient).
-    //
+	//
+	// Check for difference using a straightforward comparison to see if the
+	// stream parameters have changed. (since we zero on allocation simple
+	// memcmp should be sufficient).
+	//
 
-    Different   = memcmp(&CopyOfStreamParameters, StreamParameters, sizeof(H263StreamParameters_t)) != 0;
+	Different   = memcmp(&CopyOfStreamParameters, StreamParameters, sizeof(H263StreamParameters_t)) != 0;
 
-    if (Different)
-    {
-        memcpy(&CopyOfStreamParameters, StreamParameters, sizeof(H263StreamParameters_t));
-        return true;
-    }
+	if (Different)
+	{
+		memcpy(&CopyOfStreamParameters, StreamParameters, sizeof(H263StreamParameters_t));
+		return true;
+	}
 
 //
 
-    return false;
+	return false;
 }
 //}}}

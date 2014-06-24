@@ -25,7 +25,6 @@ Author :           Andy
 Definition of the constants/macros that define useful things associated with
 AVS audio streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 
@@ -79,31 +78,31 @@ Date        Modification                                    Name
 ///
 typedef struct AvsAudioParsedFrameHeader_s
 {
-    // Raw value
-    unsigned int Header; ///< Original header (big endian)
+	// Raw value
+	unsigned int Header; ///< Original header (big endian)
 
-    // Directly interpretted values
-    unsigned char Layer; ///< AVS audio layer. Either 1, 2 or 3.
-    unsigned char Standard; ///< AVS standard (sample rate grouping). Either 1, 2 or 25 (unofficial AVS 2.5 standard)
-    unsigned short BitRate; ///< AVS bit rate in kbits/sec.
-    unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
-    bool PaddedFrame; ///< True if the padding bit is set.
+	// Directly interpretted values
+	unsigned char Layer; ///< AVS audio layer. Either 1, 2 or 3.
+	unsigned char Standard; ///< AVS standard (sample rate grouping). Either 1, 2 or 25 (unofficial AVS 2.5 standard)
+	unsigned short BitRate; ///< AVS bit rate in kbits/sec.
+	unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
+	bool PaddedFrame; ///< True if the padding bit is set.
 
-    // Derived values
-    unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
-    unsigned int Length; ///< Length of frame in bytes (including header).
+	// Derived values
+	unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int Length; ///< Length of frame in bytes (including header).
 } AvsAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
 
 typedef struct AvsAudioStreamParameters_s
 {
-    /// Avs Layer to be decoded.
-    ///
-    /// The ACC firmware requires different configuration parameters for Layer III audio.
-    /// This makes the Layer a stream parameters (since the layer can only be changed
-    /// by issuing a MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS command).
-    unsigned int Layer;
+	/// Avs Layer to be decoded.
+	///
+	/// The ACC firmware requires different configuration parameters for Layer III audio.
+	/// This makes the Layer a stream parameters (since the layer can only be changed
+	/// by issuing a MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS command).
+	unsigned int Layer;
 } AvsAudioStreamParameters_t;
 
 #define BUFFER_AVS_AUDIO_STREAM_PARAMETERS        "AvsAudioStreamParameters"
@@ -121,11 +120,11 @@ typedef struct AvsAudioStreamParameters_s
 ///
 typedef struct AvsAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int BitRate;
+	/// The bit rate of the frame
+	unsigned int BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int FrameSize;
 } AvsAudioFrameParameters_t;
 
 #define BUFFER_AVS_AUDIO_FRAME_PARAMETERS        "AvsAudioFrameParameters"

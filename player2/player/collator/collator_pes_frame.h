@@ -24,7 +24,6 @@ Author :           Julian
 
 Definition of the wmv collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Sep-07   Created from existing collator_pes_audio_mpeg.h Julian
@@ -52,27 +51,26 @@ Date        Modification                                    Name
 
 class Collator_PesFrame_c : public Collator_Pes_c
 {
-    private:
+	private:
 
-        int         RemainingDataLength;
-        int         FrameSize;
+		int         RemainingDataLength;
+		int         FrameSize;
 
-    protected:
+	protected:
 
-    public:
-        Collator_PesFrame_c();
+	public:
+		Collator_PesFrame_c();
 
-        CollatorStatus_t    Input(PlayerInputDescriptor_t  *Input,
-                                  unsigned int              DataLength,
-                                  void                     *Data,
-                                  bool                      NonBlocking = false,
-                                  unsigned int             *DataLengthRemaining = NULL);
+		CollatorStatus_t    Input(PlayerInputDescriptor_t  *Input,
+								  unsigned int              DataLength,
+								  void                     *Data,
+								  bool                      NonBlocking = false,
+								  unsigned int             *DataLengthRemaining = NULL);
 
-        CollatorStatus_t    InternalFrameFlush(bool                   FlushedByStreamTerminate);
-        CollatorStatus_t    InternalFrameFlush(void);
+		CollatorStatus_t    InternalFrameFlush(bool                   FlushedByStreamTerminate);
+		CollatorStatus_t    InternalFrameFlush(void);
 
-
-        CollatorStatus_t    Reset(void);
+		CollatorStatus_t    Reset(void);
 };
 
 #endif /* H_COLLATOR_PES_FRAME */

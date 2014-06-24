@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the output coordinator class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Mar-07   Created                                         Nick
@@ -43,14 +42,14 @@ Date        Modification                                    Name
 
 enum
 {
-    OutputCoordinatorNoError                = PlayerNoError,
-    OutputCoordinatorError              = PlayerError,
+	OutputCoordinatorNoError                = PlayerNoError,
+	OutputCoordinatorError              = PlayerError,
 
 //
 
-    OutputCoordinatorMappingNotEstablished      = BASE_OUTPUT_COORDINATOR,
-    OutputCoordinatorAbandonedWait,
-    OutputCoordinatorMappingAdjusted
+	OutputCoordinatorMappingNotEstablished      = BASE_OUTPUT_COORDINATOR,
+	OutputCoordinatorAbandonedWait,
+	OutputCoordinatorMappingAdjusted
 };
 
 typedef PlayerStatus_t  OutputCoordinatorStatus_t;
@@ -59,21 +58,21 @@ typedef PlayerStatus_t  OutputCoordinatorStatus_t;
 
 enum
 {
-    OutputCoordinatorFnRegisterStream           = BASE_OUTPUT_COORDINATOR,
-    OutputCoordinatorFnDeRegisterStream,
-    OutputCoordinatorFnSetPlaybackSpeed,
-    OutputCoordinatorFnResetTimeMapping,
-    OutputCoordinatorFnEstablishTimeMapping,
-    OutputCoordinatorFnTranslatePlaybackTimeToSystem,
-    OutputCoordinatorFnTranslateSystemTimeToPlayback,
-    OutputCoordinatorFnSynchronizeStreams,
-    OutputCoordinatorFnPerformEntryIntoDecodeWindowWait,
-    OutputCoordinatorFnHandlePlaybackTimeDeltas,
-    OutputCoordinatorFnCalculateOutputRateAdjustment,
-    OutputCoordinatorFnAdjustMappingBase,
-    OutputCoordinatorFnMappingBaseAdjustmentApplied,
+	OutputCoordinatorFnRegisterStream           = BASE_OUTPUT_COORDINATOR,
+	OutputCoordinatorFnDeRegisterStream,
+	OutputCoordinatorFnSetPlaybackSpeed,
+	OutputCoordinatorFnResetTimeMapping,
+	OutputCoordinatorFnEstablishTimeMapping,
+	OutputCoordinatorFnTranslatePlaybackTimeToSystem,
+	OutputCoordinatorFnTranslateSystemTimeToPlayback,
+	OutputCoordinatorFnSynchronizeStreams,
+	OutputCoordinatorFnPerformEntryIntoDecodeWindowWait,
+	OutputCoordinatorFnHandlePlaybackTimeDeltas,
+	OutputCoordinatorFnCalculateOutputRateAdjustment,
+	OutputCoordinatorFnAdjustMappingBase,
+	OutputCoordinatorFnMappingBaseAdjustmentApplied,
 
-    OutputCoordinatorFnSetModuleParameters
+	OutputCoordinatorFnSetModuleParameters
 };
 
 // ---------------------------------------------------------------------
@@ -93,82 +92,82 @@ typedef struct OutputCoordinatorContext_s           *OutputCoordinatorContext_t;
 
 class OutputCoordinator_c : public BaseComponentClass_c
 {
-    public:
+	public:
 
-        virtual OutputCoordinatorStatus_t   RegisterStream(PlayerStream_t             Stream,
-                PlayerStreamType_t        StreamType,
-                OutputCoordinatorContext_t   *Context) = 0;
+		virtual OutputCoordinatorStatus_t   RegisterStream(PlayerStream_t             Stream,
+				PlayerStreamType_t        StreamType,
+				OutputCoordinatorContext_t   *Context) = 0;
 
-        virtual OutputCoordinatorStatus_t   DeRegisterStream(OutputCoordinatorContext_t   Context) = 0;
+		virtual OutputCoordinatorStatus_t   DeRegisterStream(OutputCoordinatorContext_t   Context) = 0;
 
-        virtual OutputCoordinatorStatus_t   SetPlaybackSpeed(OutputCoordinatorContext_t   Context,
-                Rational_t            Speed,
-                PlayDirection_t           Direction) = 0;
+		virtual OutputCoordinatorStatus_t   SetPlaybackSpeed(OutputCoordinatorContext_t   Context,
+				Rational_t            Speed,
+				PlayDirection_t           Direction) = 0;
 
-        virtual OutputCoordinatorStatus_t   ResetTimeMapping(OutputCoordinatorContext_t   Context) = 0;
+		virtual OutputCoordinatorStatus_t   ResetTimeMapping(OutputCoordinatorContext_t   Context) = 0;
 
-        virtual OutputCoordinatorStatus_t   EstablishTimeMapping(OutputCoordinatorContext_t   Context,
-                unsigned long long        NormalizedPlaybackTime,
-                unsigned long long        SystemTime = INVALID_TIME) = 0;
+		virtual OutputCoordinatorStatus_t   EstablishTimeMapping(OutputCoordinatorContext_t   Context,
+				unsigned long long        NormalizedPlaybackTime,
+				unsigned long long        SystemTime = INVALID_TIME) = 0;
 
-        virtual OutputCoordinatorStatus_t   TranslatePlaybackTimeToSystem(
-            OutputCoordinatorContext_t    Context,
-            unsigned long long        NormalizedPlaybackTime,
-            unsigned long long       *SystemTime) = 0;
+		virtual OutputCoordinatorStatus_t   TranslatePlaybackTimeToSystem(
+			OutputCoordinatorContext_t    Context,
+			unsigned long long        NormalizedPlaybackTime,
+			unsigned long long       *SystemTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   TranslateSystemTimeToPlayback(
-            OutputCoordinatorContext_t    Context,
-            unsigned long long        SystemTime,
-            unsigned long long       *NormalizedPlaybackTime) = 0;
+		virtual OutputCoordinatorStatus_t   TranslateSystemTimeToPlayback(
+			OutputCoordinatorContext_t    Context,
+			unsigned long long        SystemTime,
+			unsigned long long       *NormalizedPlaybackTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   SynchronizeStreams(OutputCoordinatorContext_t     Context,
-                unsigned long long        NormalizedPlaybackTime,
-                unsigned long long        NormalizedDecodeTime,
-                unsigned long long       *SystemTime) = 0;
+		virtual OutputCoordinatorStatus_t   SynchronizeStreams(OutputCoordinatorContext_t     Context,
+				unsigned long long        NormalizedPlaybackTime,
+				unsigned long long        NormalizedDecodeTime,
+				unsigned long long       *SystemTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   PerformEntryIntoDecodeWindowWait(
-            OutputCoordinatorContext_t    Context,
-            unsigned long long        NormalizedDecodeTime,
-            unsigned long long        DecodeWindowPorch,
-            unsigned long long        MaximumAllowedSleepTime) = 0;
+		virtual OutputCoordinatorStatus_t   PerformEntryIntoDecodeWindowWait(
+			OutputCoordinatorContext_t    Context,
+			unsigned long long        NormalizedDecodeTime,
+			unsigned long long        DecodeWindowPorch,
+			unsigned long long        MaximumAllowedSleepTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   HandlePlaybackTimeDeltas(
-            OutputCoordinatorContext_t    Context,
-            bool                  KnownJump,
-            unsigned long long        ExpectedPlaybackTime,
-            unsigned long long        ActualPlaybackTime) = 0;
+		virtual OutputCoordinatorStatus_t   HandlePlaybackTimeDeltas(
+			OutputCoordinatorContext_t    Context,
+			bool                  KnownJump,
+			unsigned long long        ExpectedPlaybackTime,
+			unsigned long long        ActualPlaybackTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   CalculateOutputRateAdjustment(
-            OutputCoordinatorContext_t    Context,
-            unsigned long long        ExpectedDuration,
-            unsigned long long        ActualDuration,
-            long long             CurrentError,
-            Rational_t           *OutputRateAdjustment,
-            Rational_t           *SystemClockAdjustment) = 0;
+		virtual OutputCoordinatorStatus_t   CalculateOutputRateAdjustment(
+			OutputCoordinatorContext_t    Context,
+			unsigned long long        ExpectedDuration,
+			unsigned long long        ActualDuration,
+			long long             CurrentError,
+			Rational_t           *OutputRateAdjustment,
+			Rational_t           *SystemClockAdjustment) = 0;
 
-        virtual OutputCoordinatorStatus_t   RestartOutputRateIntegration(
-            OutputCoordinatorContext_t    Context) = 0;
+		virtual OutputCoordinatorStatus_t   RestartOutputRateIntegration(
+			OutputCoordinatorContext_t    Context) = 0;
 
-        virtual OutputCoordinatorStatus_t   AdjustMappingBase(OutputCoordinatorContext_t      Context,
-                long long             Adjustment) = 0;
+		virtual OutputCoordinatorStatus_t   AdjustMappingBase(OutputCoordinatorContext_t      Context,
+				long long             Adjustment) = 0;
 
-        virtual OutputCoordinatorStatus_t   MappingBaseAdjustmentApplied(
-            OutputCoordinatorContext_t    Context) = 0;
+		virtual OutputCoordinatorStatus_t   MappingBaseAdjustmentApplied(
+			OutputCoordinatorContext_t    Context) = 0;
 
-        virtual OutputCoordinatorStatus_t   GetStreamStartDelay(OutputCoordinatorContext_t    Context,
-                unsigned long long       *Delay) = 0;
+		virtual OutputCoordinatorStatus_t   GetStreamStartDelay(OutputCoordinatorContext_t    Context,
+				unsigned long long       *Delay) = 0;
 
-        virtual OutputCoordinatorStatus_t   MonitorVsyncOffset(OutputCoordinatorContext_t     Context,
-                unsigned long long        RequestedOutputTime,
-                unsigned long long        ActualOutputTime) = 0;
+		virtual OutputCoordinatorStatus_t   MonitorVsyncOffset(OutputCoordinatorContext_t     Context,
+				unsigned long long        RequestedOutputTime,
+				unsigned long long        ActualOutputTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   ClockRecoveryInitialize(PlayerTimeFormat_t        SourceTimeFormat) = 0;
+		virtual OutputCoordinatorStatus_t   ClockRecoveryInitialize(PlayerTimeFormat_t        SourceTimeFormat) = 0;
 
-        virtual OutputCoordinatorStatus_t   ClockRecoveryDataPoint(unsigned long long         SourceTime,
-                unsigned long long        LocalTime) = 0;
+		virtual OutputCoordinatorStatus_t   ClockRecoveryDataPoint(unsigned long long         SourceTime,
+				unsigned long long        LocalTime) = 0;
 
-        virtual OutputCoordinatorStatus_t   ClockRecoveryEstimate(unsigned long long         *SourceTime,
-                unsigned long long       *LocalTime) = 0;
+		virtual OutputCoordinatorStatus_t   ClockRecoveryEstimate(unsigned long long         *SourceTime,
+				unsigned long long       *LocalTime) = 0;
 
 };
 

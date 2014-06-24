@@ -33,7 +33,7 @@ Date        Modification                                    Name
 
 static __init int stm_init(void)
 {
-    return 0;
+	return 0;
 }
 
 static __exit void stm_exit(void)

@@ -24,7 +24,6 @@ Author :           Julian
 
 Access to all platform specific display information etc
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 05-Apr-07   Created                                         Julian
@@ -55,63 +54,63 @@ static unsigned int                             Pipelines;
 /*{{{  DisplayInit*/
 int DisplayInit(void)
 {
-    int i;
+	int i;
 
-    Pipelines   = 0;
+	Pipelines   = 0;
 
-    for (i = 0; i < MAX_PIPELINES; i++)
-    {
-        if (stmcore_get_display_pipeline(i, &PipelineData[i]) == 0)
-            PLAYER_TRACE("Pipeline %d Device %p, Name = %s, Preferred video plane = %x\n", i, PipelineData[i].device, PipelineData[i].name, PipelineData[i].preferred_video_plane);
-        else
-            break;
-    }
+	for (i = 0; i < MAX_PIPELINES; i++)
+	{
+		if (stmcore_get_display_pipeline(i, &PipelineData[i]) == 0)
+			PLAYER_TRACE("Pipeline %d Device %p, Name = %s, Preferred video plane = %x\n", i, PipelineData[i].device, PipelineData[i].name, PipelineData[i].preferred_video_plane);
+		else
+			break;
+	}
 
-    Pipelines   = i;
-    return 0;
+	Pipelines   = i;
+	return 0;
 }
 /*}}}*/
 /*{{{  GetDisplayInfo*/
 int GetDisplayInfo(unsigned int            Id,
-                   DeviceHandle_t*         Device,
-                   unsigned int*           DisplayPlaneId,
-                   unsigned int*           OutputId,
-                   BufferLocation_t*       BufferLocation)
+				   DeviceHandle_t*         Device,
+				   unsigned int*           DisplayPlaneId,
+				   unsigned int*           OutputId,
+				   BufferLocation_t*       BufferLocation)
 {
-    int                                         i;
-    struct stmcore_display_pipeline_data*       Pipeline;
+	int                                         i;
+	struct stmcore_display_pipeline_data*       Pipeline;
 
-    *DisplayPlaneId     = PlaneId[Id];
+	*DisplayPlaneId     = PlaneId[Id];
 #if defined (CONFIG_DUAL_DISPLAY)
-    Pipeline            = &PipelineData[Id];
+	Pipeline            = &PipelineData[Id];
 #else
 
-    if (Id == DISPLAY_ID_PIP)
-        Pipeline        = &PipelineData[DISPLAY_ID_MAIN];
-    else
-        Pipeline        = &PipelineData[Id];
+	if (Id == DISPLAY_ID_PIP)
+		Pipeline        = &PipelineData[DISPLAY_ID_MAIN];
+	else
+		Pipeline        = &PipelineData[Id];
 
 #endif
 
-    for (i = 0; i < STMCORE_MAX_PLANES; i++)
-    {
-        if (Pipeline->planes[i].id == *DisplayPlaneId)
-        {
-            PLAYER_TRACE("PlaneList %d, Plane %x, Flags %x\n", i, *DisplayPlaneId, Pipeline->planes[i].flags);
+	for (i = 0; i < STMCORE_MAX_PLANES; i++)
+	{
+		if (Pipeline->planes[i].id == *DisplayPlaneId)
+		{
+			PLAYER_TRACE("PlaneList %d, Plane %x, Flags %x\n", i, *DisplayPlaneId, Pipeline->planes[i].flags);
 
-            if ((Pipeline->planes[i].flags & STMCORE_PLANE_MEM_ANY) == STMCORE_PLANE_MEM_ANY)
-                *BufferLocation = BufferLocationEither;
-            else if ((Pipeline->planes[i].flags & STMCORE_PLANE_MEM_SYS) == STMCORE_PLANE_MEM_SYS)
-                *BufferLocation = BufferLocationSystemMemory;
+			if ((Pipeline->planes[i].flags & STMCORE_PLANE_MEM_ANY) == STMCORE_PLANE_MEM_ANY)
+				*BufferLocation = BufferLocationEither;
+			else if ((Pipeline->planes[i].flags & STMCORE_PLANE_MEM_SYS) == STMCORE_PLANE_MEM_SYS)
+				*BufferLocation = BufferLocationSystemMemory;
 
-            break;
-        }
-    }
+			break;
+		}
+	}
 
-    *Device     = Pipeline->device;
-    *OutputId   = Pipeline->main_output_id;
-    PLAYER_TRACE("Device %p, DisplayPlaneId %x, OutputId %d, Pipeline %d\n", *Device, *DisplayPlaneId, *OutputId, Id);
+	*Device     = Pipeline->device;
+	*OutputId   = Pipeline->main_output_id;
+	PLAYER_TRACE("Device %p, DisplayPlaneId %x, OutputId %d, Pipeline %d\n", *Device, *DisplayPlaneId, *OutputId, Id);
 
-    return  0;
+	return  0;
 }
 /*}}}*/

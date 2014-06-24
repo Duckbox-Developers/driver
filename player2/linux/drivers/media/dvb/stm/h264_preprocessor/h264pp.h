@@ -63,7 +63,6 @@ license from ST.
 #define PP_SRS(N)                     (PP_BASE(N) + 0x0044)
 #define PP_DFV_OUTCTRL(N)             (PP_BASE(N) + 0x0048)
 
-
 /* PP bit fields/shift values */
 
 #define PP_CFG__CONTROL_MODE__START_STOP        0x00000000
@@ -105,7 +104,7 @@ license from ST.
 
 struct h264pp_platform_data
 {
-    unsigned int ApplyWorkAroundForGnbvd42331;
+	unsigned int ApplyWorkAroundForGnbvd42331;
 };
 
 #endif // _H264PP_H_

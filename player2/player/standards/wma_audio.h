@@ -25,7 +25,6 @@ Author :           Sylvain
 Definition of the types and constants that are used by several components
 dealing with wma audio decode/display for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 24-Apr-06   Created                                         Mark
@@ -60,23 +59,22 @@ typedef struct WmaAudioStreamParameters_s
 {
 //    unsigned int Unused;
 
-    unsigned int        StreamNumber;
-    unsigned int        FormatTag;
-    unsigned int        NumberOfChannels;
-    unsigned int        SamplesPerSecond;
-    unsigned int        AverageNumberOfBytesPerSecond;
-    unsigned int        BlockAlignment;
-    unsigned int        BitsPerSample;
-    unsigned int        ValidBitsPerSample;
-    unsigned int        ChannelMask;
-    unsigned int        SamplesPerBlock;
-    unsigned int        EncodeOptions;
-    unsigned int        SuperBlockAlign;
-    // calculated parameters
-    unsigned int        SamplesPerFrame;
-    unsigned int        SamplingFrequency;
+	unsigned int        StreamNumber;
+	unsigned int        FormatTag;
+	unsigned int        NumberOfChannels;
+	unsigned int        SamplesPerSecond;
+	unsigned int        AverageNumberOfBytesPerSecond;
+	unsigned int        BlockAlignment;
+	unsigned int        BitsPerSample;
+	unsigned int        ValidBitsPerSample;
+	unsigned int        ChannelMask;
+	unsigned int        SamplesPerBlock;
+	unsigned int        EncodeOptions;
+	unsigned int        SuperBlockAlign;
+	// calculated parameters
+	unsigned int        SamplesPerFrame;
+	unsigned int        SamplingFrequency;
 //
-
 
 } WmaAudioStreamParameters_t;
 
@@ -93,15 +91,14 @@ typedef struct WmaAudioStreamParameters_s
 ///
 typedef struct WmaAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int BitRate;
+	/// The bit rate of the frame
+	unsigned int BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int FrameSize;
 } WmaAudioFrameParameters_t;
 
 #define BUFFER_WMA_AUDIO_FRAME_PARAMETERS        "WmaAudioFrameParameters"
 #define BUFFER_WMA_AUDIO_FRAME_PARAMETERS_TYPE   {BUFFER_WMA_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(WmaAudioFrameParameters_t)}
-
 
 #endif /* H_WMA_ */

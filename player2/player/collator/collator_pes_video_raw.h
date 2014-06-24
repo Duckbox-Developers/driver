@@ -6,7 +6,6 @@ Author :           Julian
 
 Definition of the raw collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 23-Feb-10   Created from existing collator_pes_video_wmv.h  Julian
@@ -42,27 +41,27 @@ structure in the pes header.
 
 class Collator_PesVideoRaw_c : public Collator_PesVideo_c
 {
-    private:
-        int                         DataRemaining;
-        unsigned int                DataCopied;
-        unsigned int*               DecodeBuffer;
-        StreamInfo_t                StreamInfo;
-    protected:
+	private:
+		int                         DataRemaining;
+		unsigned int                DataCopied;
+		unsigned int*               DecodeBuffer;
+		StreamInfo_t                StreamInfo;
+	protected:
 
-    public:
+	public:
 
-        // Constructor/Destructor methods
-        Collator_PesVideoRaw_c(void);
+		// Constructor/Destructor methods
+		Collator_PesVideoRaw_c(void);
 
-        // Base class overrides
-        CollatorStatus_t    Reset(void);
+		// Base class overrides
+		CollatorStatus_t    Reset(void);
 
-        // Collator class functions
-        CollatorStatus_t    Input(PlayerInputDescriptor_t  *Input,
-                                  unsigned int              DataLength,
-                                  void                     *Data,
-                                  bool                      NonBlocking = false,
-                                  unsigned int             *DataLengthRemaining = NULL);
+		// Collator class functions
+		CollatorStatus_t    Input(PlayerInputDescriptor_t  *Input,
+								  unsigned int              DataLength,
+								  void                     *Data,
+								  bool                      NonBlocking = false,
+								  unsigned int             *DataLengthRemaining = NULL);
 
 };
 

@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the constants/macros that define useful things associated with
 MPEG audio streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 08-Jan-03   Created                                         Nick
@@ -81,31 +80,31 @@ Date        Modification                                    Name
 ///
 typedef struct MpegAudioParsedFrameHeader_s
 {
-    // Raw value
-    unsigned int Header; ///< Original header (big endian)
+	// Raw value
+	unsigned int Header; ///< Original header (big endian)
 
-    // Directly interpretted values
-    unsigned char Layer; ///< MPEG audio layer. Either 1, 2 or 3.
-    unsigned char MpegStandard; ///< MPEG standard (sample rate grouping). Either 1, 2 or 25 (unofficial MPEG 2.5 standard)
-    unsigned short BitRate; ///< MPEG bit rate in kbits/sec.
-    unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
-    bool PaddedFrame; ///< True if the padding bit is set.
+	// Directly interpretted values
+	unsigned char Layer; ///< MPEG audio layer. Either 1, 2 or 3.
+	unsigned char MpegStandard; ///< MPEG standard (sample rate grouping). Either 1, 2 or 25 (unofficial MPEG 2.5 standard)
+	unsigned short BitRate; ///< MPEG bit rate in kbits/sec.
+	unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
+	bool PaddedFrame; ///< True if the padding bit is set.
 
-    // Derived values
-    unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
-    unsigned int Length; ///< Length of frame in bytes (including header).
+	// Derived values
+	unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int Length; ///< Length of frame in bytes (including header).
 } MpegAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
 
 typedef struct MpegAudioStreamParameters_s
 {
-    /// MPEG Layer to be decoded.
-    ///
-    /// The ACC firmware requires different configuration parameters for Layer III audio.
-    /// This makes the Layer a stream parameters (since the layer can only be changed
-    /// by issuing a MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS command).
-    unsigned int Layer;
+	/// MPEG Layer to be decoded.
+	///
+	/// The ACC firmware requires different configuration parameters for Layer III audio.
+	/// This makes the Layer a stream parameters (since the layer can only be changed
+	/// by issuing a MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS command).
+	unsigned int Layer;
 } MpegAudioStreamParameters_t;
 
 #define BUFFER_MPEG_AUDIO_STREAM_PARAMETERS        "MpegAudioStreamParameters"
@@ -123,11 +122,11 @@ typedef struct MpegAudioStreamParameters_s
 ///
 typedef struct MpegAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int BitRate;
+	/// The bit rate of the frame
+	unsigned int BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int FrameSize;
 } MpegAudioFrameParameters_t;
 
 #define BUFFER_MPEG_AUDIO_FRAME_PARAMETERS        "MpegAudioFrameParameters"

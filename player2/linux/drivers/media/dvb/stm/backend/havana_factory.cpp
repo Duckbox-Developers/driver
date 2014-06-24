@@ -6,7 +6,6 @@ Author :           Julian
 
 Implementation of the class factory module for havana.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 16-Feb-07   Created                                         Julian
@@ -19,37 +18,37 @@ Date        Modification                                    Name
 
 HavanaFactory_c::HavanaFactory_c(void)
 {
-    //HAVANA_DEBUG("\n");
+	//HAVANA_DEBUG("\n");
 }
 HavanaFactory_c::~HavanaFactory_c(void)
 {
-    //HAVANA_DEBUG("\n");
+	//HAVANA_DEBUG("\n");
 }
 HavanaStatus_t HavanaFactory_c::Init(class HavanaFactory_c*  FactoryList,
-                                     const char*             Id,
-                                     const char*             SubId,
-                                     PlayerStreamType_t      StreamType,
-                                     PlayerComponent_t       Component,
-                                     unsigned int            Version,
-                                     void * (*NewFactory)(void))
+									 const char*             Id,
+									 const char*             SubId,
+									 PlayerStreamType_t      StreamType,
+									 PlayerComponent_t       Component,
+									 unsigned int            Version,
+									 void * (*NewFactory)(void))
 {
-    //HAVANA_DEBUG("\n");
+	//HAVANA_DEBUG("\n");
 
-    NextFactory         = FactoryList;
-    this->Id            = Id;
-    this->SubId         = SubId;
-    PlayerStreamType    = StreamType;
-    PlayerComponent     = Component;
-    FactoryVersion      = Version;
-    Factory             = NewFactory;
+	NextFactory         = FactoryList;
+	this->Id            = Id;
+	this->SubId         = SubId;
+	PlayerStreamType    = StreamType;
+	PlayerComponent     = Component;
+	FactoryVersion      = Version;
+	Factory             = NewFactory;
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 HavanaStatus_t HavanaFactory_c::ReLink(class HavanaFactory_c*  Next)
 {
-    HAVANA_DEBUG("\n");
-    NextFactory         = Next;
-    return HavanaNoError;
+	HAVANA_DEBUG("\n");
+	NextFactory         = Next;
+	return HavanaNoError;
 }
 //{{{  doxynote
 /// \brief Determine whether we are able to build a component of the required type
@@ -62,38 +61,38 @@ HavanaStatus_t HavanaFactory_c::ReLink(class HavanaFactory_c*  Next)
 /// \return             true if can build the component, false if not
 //}}}
 bool HavanaFactory_c::CanBuild(const char*             Id,
-                               const char*             SubId,
-                               PlayerStreamType_t      StreamType,
-                               PlayerComponent_t       Component)
+							   const char*             SubId,
+							   PlayerStreamType_t      StreamType,
+							   PlayerComponent_t       Component)
 {
 //    HAVANA_ERROR("I am %s, %s, %x, %x - Looking for %s, %s, %x, %x\n", this->Id, this->SubId, PlayerStreamType, PlayerComponent,
 //                                                                       Id, SubId, StreamType, Component);
 
-    if ((StreamType == PlayerStreamType) && (Component == PlayerComponent) && (strcmp(Id, this->Id) == 0))
-        return ((strcmp(SubId, this->SubId) == 0) ||
-                (strcmp(SubId, FACTORY_ANY_ID) == 0) ||
-                (strcmp(FACTORY_ANY_ID, this->SubId) == 0));
-    else
-        return false;
+	if ((StreamType == PlayerStreamType) && (Component == PlayerComponent) && (strcmp(Id, this->Id) == 0))
+		return ((strcmp(SubId, this->SubId) == 0) ||
+				(strcmp(SubId, FACTORY_ANY_ID) == 0) ||
+				(strcmp(FACTORY_ANY_ID, this->SubId) == 0));
+	else
+		return false;
 }
 HavanaStatus_t HavanaFactory_c::Build(void**  Class)
 {
-    //HAVANA_DEBUG("\n");
-    *Class     = Factory();
+	//HAVANA_DEBUG("\n");
+	*Class     = Factory();
 
-    if (*Class == NULL)
-        return HavanaNoMemory;
+	if (*Class == NULL)
+		return HavanaNoMemory;
 
-    return HavanaNoError;
+	return HavanaNoError;
 }
 class HavanaFactory_c* HavanaFactory_c::Next(void)
 {
-        //HAVANA_DEBUG("\n");
-        return NextFactory;
+		//HAVANA_DEBUG("\n");
+		return NextFactory;
 }
 unsigned int HavanaFactory_c::Version(void)
 {
-    HAVANA_DEBUG("\n");
-    return FactoryVersion;
+	HAVANA_DEBUG("\n");
+	return FactoryVersion;
 }
 

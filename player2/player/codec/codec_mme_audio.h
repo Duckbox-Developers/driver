@@ -24,7 +24,6 @@ Author :           Daniel
 
 Definition of the codec audio class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 26-Apr-07   Created (from codec_mme_video.h)                Daniel
@@ -81,12 +80,12 @@ extern const int ACC_SamplingFreqLUT[];
 //{{{  MME_LxPcmProcessingGlobalParams_Subset_t
 typedef struct
 {
-    U16                        StructSize;
-    U8                         DigSplit;
-    U8                         AuxSplit;
-    MME_CMCGlobalParams_t      CMC;
-    MME_DMixGlobalParams_t     DMix;
-    MME_Resamplex2GlobalParams_t Resamplex2;
+	U16                        StructSize;
+	U8                         DigSplit;
+	U8                         AuxSplit;
+	MME_CMCGlobalParams_t      CMC;
+	MME_DMixGlobalParams_t     DMix;
+	MME_Resamplex2GlobalParams_t Resamplex2;
 } MME_LxPcmProcessingGlobalParams_Subset_t;
 
 #define ACC_PCM_PROCESSING_GLOBAL_PARAMS_SIZE sizeof(MME_LxPcmProcessingGlobalParams_Subset_t)
@@ -96,8 +95,8 @@ typedef struct
 //{{{  MME_PcmProcessingFrameExtStatus_Concrete_t
 typedef struct
 {
-    MME_PcmProcessingFrameExtStatus_t PcmStatus;
-    char Padding[256 - sizeof(MME_PcmProcessingFrameExtStatus_t)]; // additional padding...
+	MME_PcmProcessingFrameExtStatus_t PcmStatus;
+	char Padding[256 - sizeof(MME_PcmProcessingFrameExtStatus_t)]; // additional padding...
 } MME_PcmProcessingFrameExtStatus_Concrete_t;
 //}}}
 
@@ -108,91 +107,91 @@ typedef struct
 
 class Codec_MmeAudio_c : public Codec_MmeBase_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        AudioOutputSurfaceDescriptor_t       *AudioOutputSurface;
-        ParsedAudioParameters_t              *ParsedAudioParameters;
+		AudioOutputSurfaceDescriptor_t       *AudioOutputSurface;
+		ParsedAudioParameters_t              *ParsedAudioParameters;
 
-        PlayerChannelSelect_t                 SelectedChannel;
-        DRCParams_t                           DRC;
-        eAccAcMode                            OutmodeMain;
+		PlayerChannelSelect_t                 SelectedChannel;
+		DRCParams_t                           DRC;
+		eAccAcMode                            OutmodeMain;
 
-        /// If true the TransformName is immutable.
-        bool                                  ProtectTransformName;
-        char                                  TransformName[CODEC_MAX_TRANSFORMERS][MME_MAX_TRANSFORMER_NAME];
+		/// If true the TransformName is immutable.
+		bool                                  ProtectTransformName;
+		char                                  TransformName[CODEC_MAX_TRANSFORMERS][MME_MAX_TRANSFORMER_NAME];
 
-        /// Data structure providing information about the configuration of the AUDIO_DECODER.
-        MME_LxAudioDecoderInfo_t              AudioDecoderTransformCapability;
-        MME_LxAudioDecoderInfo_t              AudioDecoderTransformCapabilityMask;
+		/// Data structure providing information about the configuration of the AUDIO_DECODER.
+		MME_LxAudioDecoderInfo_t              AudioDecoderTransformCapability;
+		MME_LxAudioDecoderInfo_t              AudioDecoderTransformCapabilityMask;
 
-        /// Data structure used to initialized the AUDIO_DECODER.
-        MME_LxAudioDecoderInitParams_t        AudioDecoderInitializationParameters;
+		/// Data structure used to initialized the AUDIO_DECODER.
+		MME_LxAudioDecoderInitParams_t        AudioDecoderInitializationParameters;
 
-        // Functions
-        void                    PresetIOBuffers(void);
-        virtual void            SetCommandIO(void);
-        virtual CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-        virtual CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        virtual CodecStatus_t   ValidatePcmProcessingExtendedStatus(CodecBaseDecodeContext_t *Context,
-                MME_PcmProcessingFrameExtStatus_t *PcmStatus);
-        virtual void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-                MME_PcmProcessingStatusTemplate_t *PcmStatus);
+		// Functions
+		void                    PresetIOBuffers(void);
+		virtual void            SetCommandIO(void);
+		virtual CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		virtual CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		virtual CodecStatus_t   ValidatePcmProcessingExtendedStatus(CodecBaseDecodeContext_t *Context,
+				MME_PcmProcessingFrameExtStatus_t *PcmStatus);
+		virtual void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
+													 MME_PcmProcessingStatusTemplate_t *PcmStatus);
 //! AWTODO - add virtual function for DecodeContext that WMA codec can over-ride for different buffers and MME command
-        virtual CodecStatus_t   FillOutDecodeContext(void);
-        virtual void            FinishedDecode(void);
-        virtual void            AttachCodedFrameBuffer(void);
+		virtual CodecStatus_t   FillOutDecodeContext(void);
+		virtual void            FinishedDecode(void);
+		virtual void            AttachCodedFrameBuffer(void);
 //!
 
-        // Externally useful information
-        MME_LxAudioDecoderFrameStatus_t AudioDecoderStatus;
+		// Externally useful information
+		MME_LxAudioDecoderFrameStatus_t AudioDecoderStatus;
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_MmeAudio_c(void);
+		Codec_MmeAudio_c(void);
 
-        //
-        // Overrides for component base class functions
-        //
+		//
+		// Overrides for component base class functions
+		//
 
-        CodecStatus_t   Halt(void);
-        CodecStatus_t   Reset(void);
-        CodecStatus_t   SetModuleParameters(unsigned int      ParameterBlockSize,
-                                            void             *ParameterBlock);
-        CodecStatus_t   CreateAttributeEvents(void);
-        CodecStatus_t   GetAttribute(const char                     *Attribute,
-                                     PlayerAttributeDescriptor_t    *Value);
+		CodecStatus_t   Halt(void);
+		CodecStatus_t   Reset(void);
+		CodecStatus_t   SetModuleParameters(unsigned int      ParameterBlockSize,
+											void             *ParameterBlock);
+		CodecStatus_t   CreateAttributeEvents(void);
+		CodecStatus_t   GetAttribute(const char                     *Attribute,
+									 PlayerAttributeDescriptor_t    *Value);
 
-        //
-        // Codec class functions
-        //
+		//
+		// Codec class functions
+		//
 
-        CodecStatus_t   RegisterOutputBufferRing(Ring_t            Ring);
-        CodecStatus_t   Input(Buffer_t          CodedBuffer);
+		CodecStatus_t   RegisterOutputBufferRing(Ring_t            Ring);
+		CodecStatus_t   Input(Buffer_t          CodedBuffer);
 
-        //
-        // Extension to base functions
-        //
+		//
+		// Extension to base functions
+		//
 
-        CodecStatus_t   InitializeDataTypes(void);
-        CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t   InitializeDataTypes(void);
+		CodecStatus_t   HandleCapabilities(void);
 
-        //
-        // Implementation of fill out function for generic video,
-        // may be overridden if necessary.
-        //
+		//
+		// Implementation of fill out function for generic video,
+		// may be overridden if necessary.
+		//
 
-        virtual CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t        *Request);
+		virtual CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t        *Request);
 
-        // utility functions
+		// utility functions
 
-        static int      ConvertCodecSamplingFreq(enum eAccFsCode Code);
-        static unsigned char GetNumberOfChannelsFromAudioConfiguration(enum eAccAcMode Mode);
+		static int      ConvertCodecSamplingFreq(enum eAccFsCode Code);
+		static unsigned char GetNumberOfChannelsFromAudioConfiguration(enum eAccAcMode Mode);
 
 };
 #endif

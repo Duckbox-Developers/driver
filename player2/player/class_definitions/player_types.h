@@ -25,7 +25,6 @@ Author :           Nick
 Definition of the player types for player 2
 module.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 12-Oct-06   Created                                         Nick
@@ -98,17 +97,17 @@ Date        Modification                                    Name
 
 enum
 {
-    PlayerNoError               = BASE_PLAYER,
-    PlayerError,
-    PlayerImplementationError,
-    PlayerNotSupported,
-    PlayerInsufficientMemory,
-    PlayerToMany,
-    PlayerUnknownStream,
-    PlayerMatchNotFound,
-    PlayerNoEventRecords,
-    PlayerUnknowMuxType,
-    PlayerTimedOut
+	PlayerNoError               = BASE_PLAYER,
+	PlayerError,
+	PlayerImplementationError,
+	PlayerNotSupported,
+	PlayerInsufficientMemory,
+	PlayerToMany,
+	PlayerUnknownStream,
+	PlayerMatchNotFound,
+	PlayerNoEventRecords,
+	PlayerUnknowMuxType,
+	PlayerTimedOut
 };
 
 typedef unsigned int    PlayerStatus_t;
@@ -119,15 +118,15 @@ typedef unsigned int    PlayerStatus_t;
 
 typedef enum
 {
-    ComponentPlayer             = BASE_PLAYER,
-    ComponentDemultiplexor      = BASE_DEMULTIPLEXOR,
-    ComponentCollator           = BASE_COLLATOR,
-    ComponentFrameParser        = BASE_FRAME_PARSER,
-    ComponentCodec              = BASE_CODEC,
-    ComponentManifestor         = BASE_MANIFESTOR,
-    ComponentOutputTimer        = BASE_OUTPUT_TIMER,
-    ComponentOutputCoordinator  = BASE_OUTPUT_COORDINATOR,
-    ComponentExternal           = BASE_EXTERNAL
+	ComponentPlayer             = BASE_PLAYER,
+	ComponentDemultiplexor      = BASE_DEMULTIPLEXOR,
+	ComponentCollator           = BASE_COLLATOR,
+	ComponentFrameParser        = BASE_FRAME_PARSER,
+	ComponentCodec              = BASE_CODEC,
+	ComponentManifestor         = BASE_MANIFESTOR,
+	ComponentOutputTimer        = BASE_OUTPUT_TIMER,
+	ComponentOutputCoordinator  = BASE_OUTPUT_COORDINATOR,
+	ComponentExternal           = BASE_EXTERNAL
 } PlayerComponent_t;
 
 //
@@ -136,43 +135,43 @@ typedef enum
 
 enum
 {
-    PlayerFnRegisterBufferManager       = BASE_PLAYER,
-    PlayerFnRegisterDemultiplexor,
-    PlayerFnSpecifySignalledEvents,
-    PlayerFnSetEventSignal,
-    PlayerFnGetEventRecord,
-    PlayerFnSetPolicy,
-    PlayerFnCreatePlayback,
-    PlayerFnTerminatePlayback,
-    PlayerFnAddStream,
-    PlayerFnRemoveStream,
-    PlayerFnSwitchStream,
-    PlayerFnDrainStream,
-    PlayerFnSetPlaybackSpeed,
-    PlayerFnStreamStep,
-    PlayerFnSetNativePlaybackTime,
-    PlayerFnRetrieveNativePlaybackTime,
-    PlayerFnTranslateNativePlaybackTime,
-    PlayerFnRequestTimeNotification,
-    PlayerFnGetInjectBuffer,
-    PlayerFnInjectData,
-    PlayerFnInputJump,
-    PlayerFnRequestDecodeBufferReference,
-    PlayerFnReleaseDecodeBufferReference,
-    PlayerFnSetModuleParameters,
-    PlayerFnGetBufferManager,
-    PlayerFnGetClassList,
-    PlayerFnGetCodedFrameBufferPool,
-    PlayerFnGetDecodeBufferPool,
-    PlayerFnGetPostProcessControlBufferPool,
-    PlayerFnCallInSequence,
-    PlayerFnGetPlaybackSpeed,
-    PlayerFnGetPresentationInterval,
-    PlayerFnPolicyValue,
-    PlayerFnSignalEvent,
-    PlayerFnAttachDemultiplexor,
-    PlayerFnDetachDemultiplexor,
-    PlayerFnMarkStreamUnPlayable
+	PlayerFnRegisterBufferManager       = BASE_PLAYER,
+	PlayerFnRegisterDemultiplexor,
+	PlayerFnSpecifySignalledEvents,
+	PlayerFnSetEventSignal,
+	PlayerFnGetEventRecord,
+	PlayerFnSetPolicy,
+	PlayerFnCreatePlayback,
+	PlayerFnTerminatePlayback,
+	PlayerFnAddStream,
+	PlayerFnRemoveStream,
+	PlayerFnSwitchStream,
+	PlayerFnDrainStream,
+	PlayerFnSetPlaybackSpeed,
+	PlayerFnStreamStep,
+	PlayerFnSetNativePlaybackTime,
+	PlayerFnRetrieveNativePlaybackTime,
+	PlayerFnTranslateNativePlaybackTime,
+	PlayerFnRequestTimeNotification,
+	PlayerFnGetInjectBuffer,
+	PlayerFnInjectData,
+	PlayerFnInputJump,
+	PlayerFnRequestDecodeBufferReference,
+	PlayerFnReleaseDecodeBufferReference,
+	PlayerFnSetModuleParameters,
+	PlayerFnGetBufferManager,
+	PlayerFnGetClassList,
+	PlayerFnGetCodedFrameBufferPool,
+	PlayerFnGetDecodeBufferPool,
+	PlayerFnGetPostProcessControlBufferPool,
+	PlayerFnCallInSequence,
+	PlayerFnGetPlaybackSpeed,
+	PlayerFnGetPresentationInterval,
+	PlayerFnPolicyValue,
+	PlayerFnSignalEvent,
+	PlayerFnAttachDemultiplexor,
+	PlayerFnDetachDemultiplexor,
+	PlayerFnMarkStreamUnPlayable
 };
 
 typedef unsigned int PlayerComponentFunction_t;
@@ -189,87 +188,87 @@ typedef unsigned int PlayerComponentFunction_t;
 
 typedef enum
 {
-    //
-    // These are here as placeholders, neither of them are implemented at this time
-    //
+	//
+	// These are here as placeholders, neither of them are implemented at this time
+	//
 
-    PolicyTrickModeAudio               = 0,             // Discard/ManifestSampleRateConvert/ManifestPitchCorrected
-    PolicyPlay24FPSVideoAt25FPS,                        // Enable/Disable
+	PolicyTrickModeAudio               = 0,             // Discard/ManifestSampleRateConvert/ManifestPitchCorrected
+	PolicyPlay24FPSVideoAt25FPS,                        // Enable/Disable
 
-    //
-    // Master clock mechanisms, define which clock is going to be used
-    // to master mappings between system time and playback time
-    //
+	//
+	// Master clock mechanisms, define which clock is going to be used
+	// to master mappings between system time and playback time
+	//
 
 #define PolicyValueVideoClockMaster             0
 #define PolicyValueAudioClockMaster             1
 #define PolicyValueSystemClockMaster            2
 
-    PolicyMasterClock,
+	PolicyMasterClock,
 
-    //
-    // Use externally specified mapping between playback time and system time (use for AVR fixed offset).
-    //
+	//
+	// Use externally specified mapping between playback time and system time (use for AVR fixed offset).
+	//
 
-    PolicyExternalTimeMapping,                          // Apply/Disapply
-    PolicyExternalTimeMappingVsyncLocked,               // Apply/Disapply - only relevant if external mapping applied
+	PolicyExternalTimeMapping,                          // Apply/Disapply
+	PolicyExternalTimeMappingVsyncLocked,               // Apply/Disapply - only relevant if external mapping applied
 
-    //
-    // Enable/disable stream synchronization
-    //
+	//
+	// Enable/disable stream synchronization
+	//
 
-    PolicyAVDSynchronization,                           // Apply/Disapply
+	PolicyAVDSynchronization,                           // Apply/Disapply
 
-    //
-    // Policy to set the value of the number of iterations to wait for synchronization.
-    //
+	//
+	// Policy to set the value of the number of iterations to wait for synchronization.
+	//
 
-    PolicySyncStartImmediate,
+	PolicySyncStartImmediate,
 
-    //
-    // Policy to allow manifestation of the first frame decoded early.
-    //
+	//
+	// Policy to allow manifestation of the first frame decoded early.
+	//
 
-    PolicyManifestFirstFrameEarly,                      // Apply/Disapply
+	PolicyManifestFirstFrameEarly,                      // Apply/Disapply
 
-    //
-    // Policy to force a null manifestation on shutdown for video
-    // audio must always mute.
-    //
+	//
+	// Policy to force a null manifestation on shutdown for video
+	// audio must always mute.
+	//
 
 #define PolicyValueLeaveLastFrameOnScreen       0
 #define PolicyValueBlankScreen                  1
 
-    PolicyVideoBlankOnShutdown,                         // Apply/Disapply
+	PolicyVideoBlankOnShutdown,                         // Apply/Disapply
 
-    //
-    // Trick mode decode controls, to allow Key frames
-    // only, and only one group between discontinuities.
-    //
+	//
+	// Trick mode decode controls, to allow Key frames
+	// only, and only one group between discontinuities.
+	//
 
-    PolicyStreamOnlyKeyFrames,                          // Apply/Disapply
-    PolicyStreamSingleGroupBetweenDiscontinuities,
-    PolicyClampPlaybackIntervalOnPlaybackDirectionChange,
+	PolicyStreamOnlyKeyFrames,                          // Apply/Disapply
+	PolicyStreamSingleGroupBetweenDiscontinuities,
+	PolicyClampPlaybackIntervalOnPlaybackDirectionChange,
 
-    //
-    // Playout policies for terminate/switch/drain stream
-    //
+	//
+	// Playout policies for terminate/switch/drain stream
+	//
 
 #define PolicyValuePlayout              0
 #define PolicyValueDiscard              1
 
-    PolicyPlayoutOnTerminate,                           // PolicyValuePlayout/PolicyValueDiscard
-    PolicyPlayoutOnSwitch,
-    PolicyPlayoutOnDrain,
+	PolicyPlayoutOnTerminate,                           // PolicyValuePlayout/PolicyValueDiscard
+	PolicyPlayoutOnSwitch,
+	PolicyPlayoutOnDrain,
 
-    //
-    // Display policies
-    //
+	//
+	// Display policies
+	//
 
 #define PolicyValue4x3                  0
 #define PolicyValue16x9                 1
 
-    PolicyDisplayAspectRatio,                           // PolicyValue4x3/PolicyValue16x9
+	PolicyDisplayAspectRatio,                           // PolicyValue4x3/PolicyValue16x9
 
 //
 
@@ -278,13 +277,13 @@ typedef enum
 #define PolicyValuePanScan              2
 #define PolicyValueFullScreen           3
 
-    PolicyDisplayFormat,
+	PolicyDisplayFormat,
 
-    //
-    // Trick mode policy defining fast (forward or reverse) domains
-    // Note these are ordered values do NOT change the order
-    // code may well use greater than comparisons.
-    //
+	//
+	// Trick mode policy defining fast (forward or reverse) domains
+	// Note these are ordered values do NOT change the order
+	// code may well use greater than comparisons.
+	//
 
 #define PolicyValueTrickModeAuto                                        0
 #define PolicyValueTrickModeDecodeAll                                   1
@@ -294,177 +293,177 @@ typedef enum
 #define PolicyValueTrickModeDecodeKeyFrames                             5
 #define PolicyValueTrickModeDiscontinuousKeyFrames                      6
 
-    PolicyTrickModeDomain,
+	PolicyTrickModeDomain,
 
-    //
-    // Policy controlling the discard of late frames,
-    // if not set then late frames will be manifested,
-    // and avd synchronization will be responsible for pulling the
-    // stream back into line. If this is set, then any frame that
-    // is too late for its manifestation time will be unceremoniously
-    // junked. Changed to have a range of possibilities.
-    // Never, always, and only after a synchronize until the first
-    // frame arrives in time.
-    //
+	//
+	// Policy controlling the discard of late frames,
+	// if not set then late frames will be manifested,
+	// and avd synchronization will be responsible for pulling the
+	// stream back into line. If this is set, then any frame that
+	// is too late for its manifestation time will be unceremoniously
+	// junked. Changed to have a range of possibilities.
+	// Never, always, and only after a synchronize until the first
+	// frame arrives in time.
+	//
 
 #define PolicyValueDiscardLateFramesNever                               0
 #define PolicyValueDiscardLateFramesAlways                              1
 #define PolicyValueDiscardLateFramesAfterSynchronize                    2
 
-    PolicyDiscardLateFrames,
+	PolicyDiscardLateFrames,
 
-    //
-    // Policy forcing the startup synchronization to work on
-    // the basis of starting at the first video frame and
-    // letting audio join in appropriately. this has particular
-    // effect in some transport streams where there may be a
-    // lead in time of up to 1 second of audio. Should only be set
-    // if using the aggressive "PolicyDiscardLateFrames" policy.
-    //
+	//
+	// Policy forcing the startup synchronization to work on
+	// the basis of starting at the first video frame and
+	// letting audio join in appropriately. this has particular
+	// effect in some transport streams where there may be a
+	// lead in time of up to 1 second of audio. Should only be set
+	// if using the aggressive "PolicyDiscardLateFrames" policy.
+	//
 
-    PolicyVideoStartImmediate,
+	PolicyVideoStartImmediate,
 
-    //
-    // Two policies allowing the rebasing of the system clock
-    // when we are struggling to decode or feed data in time.
-    //
+	//
+	// Two policies allowing the rebasing of the system clock
+	// when we are struggling to decode or feed data in time.
+	//
 
-    PolicyRebaseOnFailureToDeliverDataInTime,
-    PolicyRebaseOnFailureToDecodeInTime,
+	PolicyRebaseOnFailureToDeliverDataInTime,
+	PolicyRebaseOnFailureToDecodeInTime,
 
-    //
-    // Policy controlling the allowed H264 streams. Standard
-    // streams contain IDR frames as re-synchronization points
-    // jumps need to be to an IDR to guarantee reference frame
-    // integrity. BBC broadcasts do not incorporate IDRs and use
-    // I frames to indicate re-synchronization points.
-    //
+	//
+	// Policy controlling the allowed H264 streams. Standard
+	// streams contain IDR frames as re-synchronization points
+	// jumps need to be to an IDR to guarantee reference frame
+	// integrity. BBC broadcasts do not incorporate IDRs and use
+	// I frames to indicate re-synchronization points.
+	//
 
-    PolicyH264AllowNonIDRResynchronization,
+	PolicyH264AllowNonIDRResynchronization,
 
-    //
-    // Policy controlling whether or not we allow frames that fail the
-    // pre-processor to be decoded.
-    //
+	//
+	// Policy controlling whether or not we allow frames that fail the
+	// pre-processor to be decoded.
+	//
 
-    PolicyH264AllowBadPreProcessedFrames,
+	PolicyH264AllowBadPreProcessedFrames,
 
-    //
-    // Policy controlling whether or not we respect the progressive_frame
-    // flag in an mpeg2 picture coding extension header. Some streams
-    // from a french broadcaster lie in this field, and this causes
-    // interlaced frames to be incorrectly treated as progressive.
-    // This policy is quite dangerous since many streams (DVD, VCD and
-    // any using 3:2 pulldown) depend on the progressive_frame flag
-    // being honoured.
-    //
+	//
+	// Policy controlling whether or not we respect the progressive_frame
+	// flag in an mpeg2 picture coding extension header. Some streams
+	// from a french broadcaster lie in this field, and this causes
+	// interlaced frames to be incorrectly treated as progressive.
+	// This policy is quite dangerous since many streams (DVD, VCD and
+	// any using 3:2 pulldown) depend on the progressive_frame flag
+	// being honoured.
+	//
 
-    PolicyMPEG2DoNotHonourProgressiveFrameFlag,
+	PolicyMPEG2DoNotHonourProgressiveFrameFlag,
 
-    //
-    // Policy controlling the limit at which we can pull the clocks rates
-    // this policy is used to restrict the clock pulling software from
-    // going crazy. The value N will force clock rate pulling to be limitted to
-    // 2^N parts per million.
-    //
+	//
+	// Policy controlling the limit at which we can pull the clocks rates
+	// this policy is used to restrict the clock pulling software from
+	// going crazy. The value N will force clock rate pulling to be limitted to
+	// 2^N parts per million.
+	//
 
-    PolicyClockPullingLimit2ToTheNPartsPerMillion,
+	PolicyClockPullingLimit2ToTheNPartsPerMillion,
 
-    //
-    // Policy enables a limiting mechanism for injecting data ahead of time
-    // this forces the collator to only inject a limited amount of data ahead of time.
-    //
+	//
+	// Policy enables a limiting mechanism for injecting data ahead of time
+	// this forces the collator to only inject a limited amount of data ahead of time.
+	//
 
-    PolicyLimitInputInjectAhead,
+	PolicyLimitInputInjectAhead,
 
-    //
-    // Specify the application for mpeg2 decoding, this affects default values for
-    // colour matrices.
-    //
+	//
+	// Specify the application for mpeg2 decoding, this affects default values for
+	// colour matrices.
+	//
 
 #define PolicyValueMPEG2ApplicationMpeg2                        0
 #define PolicyValueMPEG2ApplicationAtsc                         1
 #define PolicyValueMPEG2ApplicationDvb                          2
 
-    PolicyMPEG2ApplicationType,
+	PolicyMPEG2ApplicationType,
 
-    //
-    // Allow the manifestor to display decimated decoded output
-    // Value equals decimation amount
-    //
+	//
+	// Allow the manifestor to display decimated decoded output
+	// Value equals decimation amount
+	//
 
 #define PolicyValueDecimateDecoderOutputDisabled                        0
 #define PolicyValueDecimateDecoderOutputHalf                            1
 #define PolicyValueDecimateDecoderOutputQuarter                         2
 
-    PolicyDecimateDecoderOutput,
+	PolicyDecimateDecoderOutput,
 
-    //
-    // set the forward jump threshold for the PTS jump detector as 2^N seconds
-    //
+	//
+	// set the forward jump threshold for the PTS jump detector as 2^N seconds
+	//
 
-    PolicySymmetricJumpDetection,
-    PolicyPtsForwardJumpDetectionThreshold,
+	PolicySymmetricJumpDetection,
+	PolicyPtsForwardJumpDetectionThreshold,
 
-    //
-    // Policies enabling workarounds for badly coded dpb values
-    //
+	//
+	// Policies enabling workarounds for badly coded dpb values
+	//
 
-    PolicyH264TreatDuplicateDpbValuesAsNonReferenceFrameFirst,
-    PolicyH264ForcePicOrderCntIgnoreDpbDisplayFrameOrdering,
+	PolicyH264TreatDuplicateDpbValuesAsNonReferenceFrameFirst,
+	PolicyH264ForcePicOrderCntIgnoreDpbDisplayFrameOrdering,
 
-    //
-    // Policy to treat top bottom, and bottom top picture structures as
-    // being interlaced
-    //
+	//
+	// Policy to treat top bottom, and bottom top picture structures as
+	// being interlaced
+	//
 
-    PolicyH264TreatTopBottomPictureStructAsInterlaced,
+	PolicyH264TreatTopBottomPictureStructAsInterlaced,
 
-    //
-    // Allow the manifestor to know which is the pixel aspect ratio correction requested
-    //
+	//
+	// Allow the manifestor to know which is the pixel aspect ratio correction requested
+	//
 
 #define PolicyValuePixelAspectRatioCorrectionDisabled   100
 
-    PolicyPixelAspectRatioCorrection,
+	PolicyPixelAspectRatioCorrection,
 
-    //
-    // Allow the discard of B frames when running at normal speed, if the decode cannot keep up.
-    //
+	//
+	// Allow the discard of B frames when running at normal speed, if the decode cannot keep up.
+	//
 
-    PolicyAllowFrameDiscardAtNormalSpeed,
+	PolicyAllowFrameDiscardAtNormalSpeed,
 
-    //
-    // Operate collator 2 in reversible mode
-    //
+	//
+	// Operate collator 2 in reversible mode
+	//
 
-    PolicyOperateCollator2InReversibleMode,
+	PolicyOperateCollator2InReversibleMode,
 
-    //
-    // Smooth display window resize.
-    // The value N specifies the number of steps.
-    //
+	//
+	// Smooth display window resize.
+	// The value N specifies the number of steps.
+	//
 
-    PolicyVideoOutputWindowResizeSteps,
+	PolicyVideoOutputWindowResizeSteps,
 
-    //
-    // Policy to ignore requests to mark a stream as unplayable
-    //
+	//
+	// Policy to ignore requests to mark a stream as unplayable
+	//
 
-    PolicyIgnoreStreamUnPlayableCalls,
+	PolicyIgnoreStreamUnPlayableCalls,
 
-    //
-    // Policy to allow the use (as a default) of video frame rates deduced from incoming PTS values
-    // NOTE any specified frame rate will override the deduced values.
-    //      Implementation of this policy is done only by H264 at the
-    //      time of writing.
-    //
+	//
+	// Policy to allow the use (as a default) of video frame rates deduced from incoming PTS values
+	// NOTE any specified frame rate will override the deduced values.
+	//      Implementation of this policy is done only by H264 at the
+	//      time of writing.
+	//
 
-    PolicyUsePTSDeducedDefaultFrameRates,
+	PolicyUsePTSDeducedDefaultFrameRates,
 
 //
 
-    PolicyMaxPolicy
+	PolicyMaxPolicy
 } PlayerPolicy_t;
 
 //
@@ -528,10 +527,10 @@ typedef unsigned long long                      PlayerEventMask_t;
 
 typedef enum
 {
-    StreamTypeNone                      = 0,
-    StreamTypeAudio,
-    StreamTypeVideo,
-    StreamTypeOther
+	StreamTypeNone                      = 0,
+	StreamTypeAudio,
+	StreamTypeVideo,
+	StreamTypeOther
 } PlayerStreamType_t;
 
 const char *ToString(PlayerStreamType_t StreamType);
@@ -542,8 +541,8 @@ const char *ToString(PlayerStreamType_t StreamType);
 
 typedef enum
 {
-    PlayForward = 0,
-    PlayBackward
+	PlayForward = 0,
+	PlayBackward
 } PlayDirection_t;
 
 //
@@ -552,11 +551,11 @@ typedef enum
 
 typedef enum
 {
-    SequenceTypeImmediate               = 0,
-    SequenceTypeBeforeSequenceNumber,
-    SequenceTypeAfterSequenceNumber,
-    SequenceTypeBeforePlaybackTime,
-    SequenceTypeAfterPlaybackTime
+	SequenceTypeImmediate               = 0,
+	SequenceTypeBeforeSequenceNumber,
+	SequenceTypeAfterSequenceNumber,
+	SequenceTypeBeforePlaybackTime,
+	SequenceTypeAfterPlaybackTime
 } PlayerSequenceType_t;
 
 typedef unsigned long long PlayerSequenceValue_t;
@@ -567,16 +566,15 @@ typedef unsigned long long PlayerSequenceValue_t;
 
 typedef enum
 {
-    TimeFormatUs            = 0,
-    TimeFormatPts
+	TimeFormatUs            = 0,
+	TimeFormatPts
 } PlayerTimeFormat_t;
-
 
 typedef enum
 {
-    ChannelSelectStereo                 = 0,
-    ChannelSelectLeft,
-    ChannelSelectRight
+	ChannelSelectStereo                 = 0,
+	ChannelSelectLeft,
+	ChannelSelectRight
 } PlayerChannelSelect_t;
 
 //
@@ -617,25 +615,25 @@ typedef struct PlayerStream_s           *PlayerStream_t;
 #ifdef __cplusplus
 typedef struct PlayerEventRecord_s
 {
-    PlayerEventIdentifier_t        Code;
-    PlayerPlayback_t               Playback;
-    PlayerStream_t                 Stream;
-    unsigned long long             PlaybackTime;
+	PlayerEventIdentifier_t        Code;
+	PlayerPlayback_t               Playback;
+	PlayerStream_t                 Stream;
+	unsigned long long             PlaybackTime;
 
-    union
-    {
-        unsigned int               UnsignedInt;
-        unsigned long long         LongLong;
-        void                      *Pointer;
-    } Value[4];
+	union
+	{
+		unsigned int               UnsignedInt;
+		unsigned long long         LongLong;
+		void                      *Pointer;
+	} Value[4];
 
-    //
-    // Since rationals are a class, we need to separate them from the union and make them specific
-    //
+	//
+	// Since rationals are a class, we need to separate them from the union and make them specific
+	//
 
-    Rational_t                     Rational;
+	Rational_t                     Rational;
 
-    void                          *UserData;
+	void                          *UserData;
 } PlayerEventRecord_t;
 #endif //cplusplus
 
@@ -652,15 +650,15 @@ typedef struct PlayerEventRecord_s
 
 typedef struct PlayerAttributeDescriptor_s
 {
-    int                                 Id;
+	int                                 Id;
 
-    union
-    {
-        const char                     *ConstCharPointer;
-        int                             Int;
-        unsigned long long int          UnsignedLongLongInt;
-        bool                            Bool;
-    } u;
+	union
+	{
+		const char                     *ConstCharPointer;
+		int                             Int;
+		unsigned long long int          UnsignedLongLongInt;
+		bool                            Bool;
+	} u;
 
 } PlayerAttributeDescriptor_t;
 

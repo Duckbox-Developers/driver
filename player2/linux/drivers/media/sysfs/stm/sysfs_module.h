@@ -44,17 +44,16 @@ Date        Modification                                    Name
 #endif
 
 #define SYSFS_DEBUG(fmt, args...)       ((void) (ENABLE_SYSFS_DEBUG && \
-        (printk("%s: " fmt, __FUNCTION__, ##args), 0)))
+												 (printk("%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define SYSFS_TRACE(fmt, args...)       (printk("%s: " fmt, __FUNCTION__, ##args))
 /* Output errors, should never be output in 'normal' operation */
 #define SYSFS_ERROR(fmt, args...)       (printk("ERROR:%s: " fmt, __FUNCTION__, ##args))
 
-
 struct SysfsContext_s
 {
-    unsigned int        Something;
+	unsigned int        Something;
 };
 
 #endif

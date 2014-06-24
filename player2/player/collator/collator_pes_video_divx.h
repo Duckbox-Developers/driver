@@ -24,7 +24,6 @@ Author :           Chris
 
 Definition of the base collator pes class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Jul-07   Created from existing collator_pes_video.h      Chris
@@ -52,24 +51,24 @@ Date        Modification                                    Name
 
 class Collator_PesVideoDivx_c : public Collator_PesVideo_c
 {
-    private:
+	private:
 
-        bool                IgnoreCodes;
-        unsigned char       Version;
+		bool                IgnoreCodes;
+		unsigned char       Version;
 
-    protected:
+	protected:
 
-    public:
+	public:
 
-        Collator_PesVideoDivx_c();
+		Collator_PesVideoDivx_c();
 
-        CollatorStatus_t   Reset(void);
+		CollatorStatus_t   Reset(void);
 
-        CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-                                 unsigned int          DataLength,
-                                 void             *Data,
-                                 bool              NonBlocking = false,
-                                 unsigned int         *DataLengthRemaining = NULL);
+		CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
+								 unsigned int          DataLength,
+								 void             *Data,
+								 bool              NonBlocking = false,
+								 unsigned int         *DataLengthRemaining = NULL);
 };
 
 #endif // H_COLLATOR_PES_VIDEO_DIVX

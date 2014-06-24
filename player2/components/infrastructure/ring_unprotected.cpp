@@ -7,7 +7,6 @@ Author :           Nick
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 11-Dec-03   Created                                         Nick
@@ -21,12 +20,12 @@ Date        Modification                                    Name
 
 RingUnprotected_c::RingUnprotected_c(unsigned int MaxEntries)
 {
-    Limit       = MaxEntries + 1;
-    NextExtract = 0;
-    NextInsert  = 0;
-    Storage     = new uintptr_t[Limit];
+	Limit       = MaxEntries + 1;
+	NextExtract = 0;
+	NextInsert  = 0;
+	Storage     = new uintptr_t[Limit];
 
-    InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
+	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -34,8 +33,8 @@ RingUnprotected_c::RingUnprotected_c(unsigned int MaxEntries)
 
 RingUnprotected_c::~RingUnprotected_c(void)
 {
-    if (Storage != NULL)
-        delete [] Storage;
+	if (Storage != NULL)
+		delete [] Storage;
 }
 
 // ------------------------------------------------------------------------
@@ -43,23 +42,23 @@ RingUnprotected_c::~RingUnprotected_c(void)
 
 RingStatus_t   RingUnprotected_c::Insert(uintptr_t   Value)
 {
-    unsigned int OldNextInsert;
+	unsigned int OldNextInsert;
 
-    OldNextInsert       = NextInsert;
-    Storage[NextInsert] = Value;
+	OldNextInsert       = NextInsert;
+	Storage[NextInsert] = Value;
 
-    NextInsert++;
+	NextInsert++;
 
-    if (NextInsert == Limit)
-        NextInsert = 0;
+	if (NextInsert == Limit)
+		NextInsert = 0;
 
-    if (NextInsert == NextExtract)
-    {
-        NextInsert      = OldNextInsert;
-        return RingTooManyEntries;
-    }
+	if (NextInsert == NextExtract)
+	{
+		NextInsert      = OldNextInsert;
+		return RingTooManyEntries;
+	}
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -67,17 +66,17 @@ RingStatus_t   RingUnprotected_c::Insert(uintptr_t   Value)
 
 RingStatus_t   RingUnprotected_c::Extract(uintptr_t *Value)
 {
-    if (NextExtract == NextInsert)
-        return RingNothingToGet;
+	if (NextExtract == NextInsert)
+		return RingNothingToGet;
 
-    *Value = Storage[NextExtract];
+	*Value = Storage[NextExtract];
 
-    NextExtract++;
+	NextExtract++;
 
-    if (NextExtract == Limit)
-        NextExtract = 0;
+	if (NextExtract == Limit)
+		NextExtract = 0;
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -85,10 +84,10 @@ RingStatus_t   RingUnprotected_c::Extract(uintptr_t *Value)
 
 RingStatus_t   RingUnprotected_c::Flush(void)
 {
-    NextExtract = 0;
-    NextInsert  = 0;
+	NextExtract = 0;
+	NextInsert  = 0;
 
-    return RingNoError;
+	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -96,7 +95,6 @@ RingStatus_t   RingUnprotected_c::Flush(void)
 
 bool   RingUnprotected_c::NonEmpty(void)
 {
-    return (NextExtract != NextInsert);
+	return (NextExtract != NextInsert);
 }
-
 

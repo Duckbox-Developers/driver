@@ -25,7 +25,6 @@ Author :           Julian
 Definition of the constants/macros that define useful things associated with
 pcm audio streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 13-Aug-09   Created                                         Julian
@@ -59,13 +58,13 @@ typedef struct PcmAudioParsedFrameHeader_s
 
 typedef struct PcmAudioStreamParameters_s
 {
-    unsigned int        CompressionCode;
-    unsigned int        ChannelCount;
-    unsigned int        SampleRate;
-    unsigned int        BytesPerSecond;
-    unsigned int        BlockAlign;
-    unsigned int        BitsPerSample;
-    unsigned int        DataEndianness;
+	unsigned int        CompressionCode;
+	unsigned int        ChannelCount;
+	unsigned int        SampleRate;
+	unsigned int        BytesPerSecond;
+	unsigned int        BlockAlign;
+	unsigned int        BitsPerSample;
+	unsigned int        DataEndianness;
 } PcmAudioStreamParameters_t;
 
 #define BUFFER_PCM_AUDIO_STREAM_PARAMETERS              "PcmAudioStreamParameters"
@@ -77,16 +76,15 @@ typedef struct PcmAudioStreamParameters_s
 ///
 typedef struct PcmAudioFrameParameters_s
 {
-    /// The bit rate of the frame
-    unsigned int        BitRate;
+	/// The bit rate of the frame
+	unsigned int        BitRate;
 
-    /// Size of the compressed frame (in bytes)
-    unsigned int        FrameSize;
+	/// Size of the compressed frame (in bytes)
+	unsigned int        FrameSize;
 
 } PcmAudioFrameParameters_t;
 
 #define BUFFER_PCM_AUDIO_FRAME_PARAMETERS            "PcmAudioFrameParameters"
 #define BUFFER_PCM_AUDIO_FRAME_PARAMETERS_TYPE       {BUFFER_PCM_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(PcmAudioFrameParameters_t)}
-
 
 #endif /* H_PCM_AUDIO_ */

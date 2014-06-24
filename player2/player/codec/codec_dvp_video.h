@@ -24,7 +24,6 @@ Author :           Chris
 
 Definition of the DVP null codec class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 07-Aug-07   Created                                         Chris
@@ -38,73 +37,73 @@ Date        Modification                                    Name
 
 class Codec_DvpVideo_c : public Codec_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        BufferManager_t                       BufferManager;
-        bool                                  DataTypesInitialized;
+		BufferManager_t                       BufferManager;
+		bool                                  DataTypesInitialized;
 
-        CodecTrickModeParameters_t        DvpTrickModeParameters;
+		CodecTrickModeParameters_t        DvpTrickModeParameters;
 
-        BufferPool_t                          DecodeBufferPool;
+		BufferPool_t                          DecodeBufferPool;
 
-        Ring_t                                OutputRing;
+		Ring_t                                OutputRing;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Constructor/Destructor methods
-        //
+		//
+		// Constructor/Destructor methods
+		//
 
-        Codec_DvpVideo_c(void);
-        ~Codec_DvpVideo_c(void);
+		Codec_DvpVideo_c(void);
+		~Codec_DvpVideo_c(void);
 
-        //
-        // Standard class functions.
-        //
+		//
+		// Standard class functions.
+		//
 
-        CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t      *TrickModeParameters);
+		CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t      *TrickModeParameters);
 
-        CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
+		CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
 
-        CodecStatus_t   ReleaseDecodeBuffer(Buffer_t                  Buffer);
+		CodecStatus_t   ReleaseDecodeBuffer(Buffer_t                  Buffer);
 
-        CodecStatus_t   Input(Buffer_t                  CodedBuffer);
+		CodecStatus_t   Input(Buffer_t                  CodedBuffer);
 
-        //
-        // Stubbed out functions that do nothing in a dvp situation
-        //
+		//
+		// Stubbed out functions that do nothing in a dvp situation
+		//
 
-        CodecStatus_t   OutputPartialDecodeBuffers(void)
-        {
-            return CodecNoError;
-        }
-        CodecStatus_t   DiscardQueuedDecodes(void)
-        {
-            return CodecNoError;
-        }
-        CodecStatus_t   ReleaseReferenceFrame(unsigned int      ReferenceFrameDecodeIndex)
-        {
-            return CodecNoError;
-        }
-        CodecStatus_t   CheckReferenceFrameList(unsigned int        NumberOfReferenceFrameLists,
-                                                ReferenceFrameList_t    ReferenceFrameList[])
-        {
-            return CodecNoError;
-        }
+		CodecStatus_t   OutputPartialDecodeBuffers(void)
+		{
+			return CodecNoError;
+		}
+		CodecStatus_t   DiscardQueuedDecodes(void)
+		{
+			return CodecNoError;
+		}
+		CodecStatus_t   ReleaseReferenceFrame(unsigned int      ReferenceFrameDecodeIndex)
+		{
+			return CodecNoError;
+		}
+		CodecStatus_t   CheckReferenceFrameList(unsigned int        NumberOfReferenceFrameLists,
+												ReferenceFrameList_t    ReferenceFrameList[])
+		{
+			return CodecNoError;
+		}
 
-        //
-        // Stubbed out base class function that wrapper expects me to have
-        //
+		//
+		// Stubbed out base class function that wrapper expects me to have
+		//
 
-        CodecStatus_t   SetModuleParameters(unsigned int         ParameterBlockSize,
-                                            void            *ParameterBlock)
-        {
-            return CodecNoError;
-        }
+		CodecStatus_t   SetModuleParameters(unsigned int         ParameterBlockSize,
+											void            *ParameterBlock)
+		{
+			return CodecNoError;
+		}
 
 };
 

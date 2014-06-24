@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the output timer class module for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 01-Nov-06   Created                                         Nick
@@ -43,27 +42,27 @@ Date        Modification                                    Name
 
 enum
 {
-    OutputTimerNoError              = PlayerNoError,
-    OutputTimerError                = PlayerError,
+	OutputTimerNoError              = PlayerNoError,
+	OutputTimerError                = PlayerError,
 
-    OutputTimerAlreadyPastDecodeWindow      = BASE_OUTPUT_TIMER,
-    OutputTimerDecodeWindowTooFarInFuture,
+	OutputTimerAlreadyPastDecodeWindow      = BASE_OUTPUT_TIMER,
+	OutputTimerDecodeWindowTooFarInFuture,
 
-    // Note this bunch must be at end, it is the generic code,
-    // if greater than this then drop the frame.
+	// Note this bunch must be at end, it is the generic code,
+	// if greater than this then drop the frame.
 
-    OutputTimerDropFrame            = (BASE_OUTPUT_TIMER + 0x800),
-    OutputTimerDropFrameSingleGroupPlayback,
-    OutputTimerDropFrameKeyFramesOnly,
-    OutputTimerDropFrameOutsidePresentationInterval,
-    OutputTimerDropFrameZeroDuration,
-    OutputTimerUntimedFrame,
+	OutputTimerDropFrame            = (BASE_OUTPUT_TIMER + 0x800),
+	OutputTimerDropFrameSingleGroupPlayback,
+	OutputTimerDropFrameKeyFramesOnly,
+	OutputTimerDropFrameOutsidePresentationInterval,
+	OutputTimerDropFrameZeroDuration,
+	OutputTimerUntimedFrame,
 
-    OutputTimerTrickModeNotSupportedDropFrame,
-    OutputTimerTrickModeDropFrame,
-    OutputTimerLateDropFrame,
+	OutputTimerTrickModeNotSupportedDropFrame,
+	OutputTimerTrickModeDropFrame,
+	OutputTimerLateDropFrame,
 
-    OutputTimerDropFrameTooLateForManifestation
+	OutputTimerDropFrameTooLateForManifestation
 };
 
 typedef PlayerStatus_t  OutputTimerStatus_t;
@@ -72,26 +71,25 @@ typedef PlayerStatus_t  OutputTimerStatus_t;
 
 enum
 {
-    OutputTimerFnRegisterOutputCoordinator  = BASE_OUTPUT_TIMER,
-    OutputTimerFnResetTimeMapping,
-    OutputTimerFnAwaitEntryIntoDecodeWindow,
-    OutputTimerFnTestForFrameDrop,
-    OutputTimerFnGenerateFrameTiming,
-    OutputTimerFnRecordActualFrameTiming,
+	OutputTimerFnRegisterOutputCoordinator  = BASE_OUTPUT_TIMER,
+	OutputTimerFnResetTimeMapping,
+	OutputTimerFnAwaitEntryIntoDecodeWindow,
+	OutputTimerFnTestForFrameDrop,
+	OutputTimerFnGenerateFrameTiming,
+	OutputTimerFnRecordActualFrameTiming,
 
-    OutputTimerFnSetModuleParameters
+	OutputTimerFnSetModuleParameters
 };
 
 //
 
 typedef enum
 {
-    OutputTimerBeforeDecodeWindow   = 0,
-    OutputTimerBeforeDecode,
-    OutputTimerBeforeOutputTiming,
-    OutputTimerBeforeManifestation
+	OutputTimerBeforeDecodeWindow   = 0,
+	OutputTimerBeforeDecode,
+	OutputTimerBeforeOutputTiming,
+	OutputTimerBeforeManifestation
 } OutputTimerTestPoint_t;
-
 
 // ---------------------------------------------------------------------
 //
@@ -100,21 +98,21 @@ typedef enum
 
 class OutputTimer_c : public BaseComponentClass_c
 {
-    public:
-        virtual OutputTimerStatus_t   RegisterOutputCoordinator(OutputCoordinator_t   OutputCoordinator) = 0;
+	public:
+		virtual OutputTimerStatus_t   RegisterOutputCoordinator(OutputCoordinator_t   OutputCoordinator) = 0;
 
-        virtual OutputTimerStatus_t   ResetTimeMapping(void) = 0;
+		virtual OutputTimerStatus_t   ResetTimeMapping(void) = 0;
 
-        virtual OutputTimerStatus_t   AwaitEntryIntoDecodeWindow(Buffer_t         Buffer) = 0;
+		virtual OutputTimerStatus_t   AwaitEntryIntoDecodeWindow(Buffer_t         Buffer) = 0;
 
-        virtual OutputTimerStatus_t   TestForFrameDrop(Buffer_t       Buffer,
-                OutputTimerTestPoint_t    TestPoint) = 0;
+		virtual OutputTimerStatus_t   TestForFrameDrop(Buffer_t       Buffer,
+													   OutputTimerTestPoint_t    TestPoint) = 0;
 
-        virtual OutputTimerStatus_t   GenerateFrameTiming(Buffer_t        Buffer) = 0;
+		virtual OutputTimerStatus_t   GenerateFrameTiming(Buffer_t        Buffer) = 0;
 
-        virtual OutputTimerStatus_t   RecordActualFrameTiming(Buffer_t        Buffer) = 0;
+		virtual OutputTimerStatus_t   RecordActualFrameTiming(Buffer_t        Buffer) = 0;
 
-        virtual OutputTimerStatus_t   GetStreamStartDelay(unsigned long long     *Delay) = 0;
+		virtual OutputTimerStatus_t   GetStreamStartDelay(unsigned long long     *Delay) = 0;
 };
 
 // ---------------------------------------------------------------------

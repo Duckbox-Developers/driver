@@ -25,7 +25,6 @@ Author ;           Julian
 Definition of the constants/macros that define useful things associated with
 VP6 streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 23-Jun-08   Created                                         Julian
@@ -35,16 +34,14 @@ Date        Modification                                    Name
 #ifndef H_VP6
 #define H_VP6
 
-
-
 //
 
 // Definition of picture_coding_type values
 typedef enum
 {
-    VP6_PICTURE_CODING_TYPE_I,
-    VP6_PICTURE_CODING_TYPE_P,
-    VP6_PICTURE_CODING_TYPE_NONE,
+	VP6_PICTURE_CODING_TYPE_I,
+	VP6_PICTURE_CODING_TYPE_P,
+	VP6_PICTURE_CODING_TYPE_NONE,
 } VP6PictureCodingType_t;
 
 //
@@ -57,42 +54,42 @@ typedef enum
 
 typedef struct Vp6VideoSequence_s
 {
-    unsigned int                version;
-    unsigned int                profile;
-    unsigned int                encoded_width;
-    unsigned int                encoded_height;
-    unsigned int                display_width;
-    unsigned int                display_height;
-    unsigned int                filter_mode;
-    unsigned int                variance_threshold;
-    unsigned int                max_vector_length;
-    unsigned int                filter_selection;
+	unsigned int                version;
+	unsigned int                profile;
+	unsigned int                encoded_width;
+	unsigned int                encoded_height;
+	unsigned int                display_width;
+	unsigned int                display_height;
+	unsigned int                filter_mode;
+	unsigned int                variance_threshold;
+	unsigned int                max_vector_length;
+	unsigned int                filter_selection;
 } Vp6VideoSequence_t;
 
 //
 
 typedef struct Vp6VideoPicture_s
 {
-    unsigned int                ptype;
-    unsigned int                pquant;
-    unsigned int                golden_frame;
-    unsigned int                deblock_filtering;
-    /* The following four items are the final values from the range decoder in the frame parser */
-    int                         high;
-    int                         bits;
-    unsigned long long          code_word;
-    unsigned int                offset;
+	unsigned int                ptype;
+	unsigned int                pquant;
+	unsigned int                golden_frame;
+	unsigned int                deblock_filtering;
+	/* The following four items are the final values from the range decoder in the frame parser */
+	int                         high;
+	int                         bits;
+	unsigned long long          code_word;
+	unsigned int                offset;
 } Vp6VideoPicture_t;
 
 //
 
 typedef struct Vp6StreamParameters_s
 {
-    bool                        UpdatedSinceLastFrame;
+	bool                        UpdatedSinceLastFrame;
 
-    bool                        SequenceHeaderPresent;
+	bool                        SequenceHeaderPresent;
 
-    Vp6VideoSequence_t          SequenceHeader;
+	Vp6VideoSequence_t          SequenceHeader;
 } Vp6StreamParameters_t;
 
 #define BUFFER_VP6_STREAM_PARAMETERS            "Vp6StreamParameters"
@@ -102,12 +99,12 @@ typedef struct Vp6StreamParameters_s
 
 typedef struct Vp6FrameParameters_s
 {
-    unsigned int                ForwardReferenceIndex;
-    unsigned int                BackwardReferenceIndex;
+	unsigned int                ForwardReferenceIndex;
+	unsigned int                BackwardReferenceIndex;
 
-    bool                        PictureHeaderPresent;
+	bool                        PictureHeaderPresent;
 
-    Vp6VideoPicture_t           PictureHeader;
+	Vp6VideoPicture_t           PictureHeader;
 
 } Vp6FrameParameters_t;
 
@@ -119,11 +116,11 @@ typedef struct Vp6FrameParameters_s
 /* The following structure is passed in by the application layer */
 typedef struct Vp6MetaData_s
 {
-    unsigned int         Codec;                  /* VP6, VP6A */
-    unsigned int         Width;
-    unsigned int         Height;
-    unsigned int         Duration;
-    unsigned int         FrameRate;              /* x1000000 */
+	unsigned int         Codec;                  /* VP6, VP6A */
+	unsigned int         Width;
+	unsigned int         Height;
+	unsigned int         Duration;
+	unsigned int         FrameRate;              /* x1000000 */
 } Vp6MetaData_t;
 
 #define CODEC_ID_VP6                            4

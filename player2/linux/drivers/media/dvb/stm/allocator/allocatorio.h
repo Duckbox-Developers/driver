@@ -45,11 +45,11 @@ Date        Modification                                    Name
 
 typedef struct allocator_ioctl_allocate_s
 {
-    unsigned int         RequiredSize;
-    char         PartitionName[ALLOCATOR_MAX_PARTITION_NAME_SIZE];
-    unsigned char   *CachedAddress;
-    unsigned char   *UnCachedAddress;
-    unsigned char       *PhysicalAddress;
+	unsigned int         RequiredSize;
+	char         PartitionName[ALLOCATOR_MAX_PARTITION_NAME_SIZE];
+	unsigned char   *CachedAddress;
+	unsigned char   *UnCachedAddress;
+	unsigned char       *PhysicalAddress;
 } allocator_ioctl_allocate_t;
 
 //

@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the stream specific codec implementation for mpeg2 video in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 25-Jan-07   Created                                         Nick
@@ -62,55 +61,55 @@ Date        Modification                                    Name
 
 class Codec_MmeVideoDivx_c : public Codec_MmeVideo_c
 {
-    protected:
+	protected:
 
-        // Data
-        MME_DivXVideoDecodeCapabilityParams_t DivxTransformCapability;
-        Divx_InitTransformerParam_t           DivxInitializationParameters;
+		// Data
+		MME_DivXVideoDecodeCapabilityParams_t DivxTransformCapability;
+		Divx_InitTransformerParam_t           DivxInitializationParameters;
 
-        MME_DivXVideoDecodeReturnParams_t ReturnParams;
-        MME_DivXVideoDecodeParams_t       AdditionalParams;
+		MME_DivXVideoDecodeReturnParams_t ReturnParams;
+		MME_DivXVideoDecodeParams_t       AdditionalParams;
 
-        BufferDataDescriptor_t  *DivxRasterStructDescriptor;
-        BufferType_t             DivxRasterStructType;
-        BufferPool_t             DivxRasterStructPool;
+		BufferDataDescriptor_t  *DivxRasterStructDescriptor;
+		BufferType_t             DivxRasterStructType;
+		BufferPool_t             DivxRasterStructPool;
 
-        unsigned int CurrentWidth;
-        unsigned int CurrentHeight;
-        unsigned int CurrentVersion;
+		unsigned int CurrentWidth;
+		unsigned int CurrentHeight;
+		unsigned int CurrentVersion;
 
-        unsigned int MaxBytesPerFrame;
+		unsigned int MaxBytesPerFrame;
 
-        bool restartTransformer;
+		bool restartTransformer;
 
-        bool DivxFirmware;
+		bool DivxFirmware;
 
-    public:
+	public:
 
-        // Constructor/Destructor methods
+		// Constructor/Destructor methods
 
-        Codec_MmeVideoDivx_c(void);
-        ~Codec_MmeVideoDivx_c(void);
+		Codec_MmeVideoDivx_c(void);
+		~Codec_MmeVideoDivx_c(void);
 
-        // Stream specific functions
+		// Stream specific functions
 
-    protected:
+	protected:
 
-        // Functions
-        CodecStatus_t   HandleCapabilities(void);
-        CodecStatus_t   Reset(void);
+		// Functions
+		CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t   Reset(void);
 
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
 
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
 
-        CodecStatus_t   DumpSetStreamParameters(void *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void *Parameters);
+		CodecStatus_t   DumpSetStreamParameters(void *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void *Parameters);
 
-        CodecStatus_t   InitializeMMETransformer(void);
-        CodecStatus_t   SendMMEStreamParameters(void);
+		CodecStatus_t   InitializeMMETransformer(void);
+		CodecStatus_t   SendMMEStreamParameters(void);
 
 };
 #endif

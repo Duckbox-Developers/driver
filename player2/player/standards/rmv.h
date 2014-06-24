@@ -25,7 +25,6 @@ Author ;           Julian
 Definition of the constants/macros that define useful things associated with
 Real Media video streams.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 24-Oct-2008 Created                                         Julian
@@ -34,7 +33,6 @@ Date        Modification                                    Name
 
 #ifndef H_RMV
 #define H_RMV
-
 
 #define RV20_BITSTREAM_VERSION                  2
 #define RV30_BITSTREAM_VERSION                  3
@@ -103,65 +101,63 @@ Date        Modification                                    Name
 // Definition of picture_coding_type values
 typedef enum
 {
-    RMV_PICTURE_CODING_TYPE_I,
-    RMV_PICTURE_CODING_TYPE_FORCED_I,
-    RMV_PICTURE_CODING_TYPE_P,
-    RMV_PICTURE_CODING_TYPE_B,
+	RMV_PICTURE_CODING_TYPE_I,
+	RMV_PICTURE_CODING_TYPE_FORCED_I,
+	RMV_PICTURE_CODING_TYPE_P,
+	RMV_PICTURE_CODING_TYPE_B,
 } RMVPictureCodingType_t;
-
 
 typedef struct RmvVideoSequence_s
 {
-    unsigned int                Length;
-    unsigned int                MOFTag;
-    unsigned int                SubMOFTag;
-    unsigned int                Width;
-    unsigned int                Height;
-    unsigned int                BitCount;
-    unsigned int                PadWidth;
-    unsigned int                PadHeight;
-    unsigned int                FramesPerSecond;        /* 32 bit fixed (16/16) */
-    unsigned int                OpaqueDataSize;
-    unsigned int                SPOFlags;
-    unsigned int                BitstreamVersion;
-    unsigned int                BitstreamMinorVersion;
-    unsigned int                NumRPRSizes;
-    unsigned int                RPRSize[18];            /* Same size as array in RV89Decode_Interface.h */
-    unsigned int                MaxWidth;
-    unsigned int                MaxHeight;
+	unsigned int                Length;
+	unsigned int                MOFTag;
+	unsigned int                SubMOFTag;
+	unsigned int                Width;
+	unsigned int                Height;
+	unsigned int                BitCount;
+	unsigned int                PadWidth;
+	unsigned int                PadHeight;
+	unsigned int                FramesPerSecond;        /* 32 bit fixed (16/16) */
+	unsigned int                OpaqueDataSize;
+	unsigned int                SPOFlags;
+	unsigned int                BitstreamVersion;
+	unsigned int                BitstreamMinorVersion;
+	unsigned int                NumRPRSizes;
+	unsigned int                RPRSize[18];            /* Same size as array in RV89Decode_Interface.h */
+	unsigned int                MaxWidth;
+	unsigned int                MaxHeight;
 } RmvVideoSequence_t;
-
 
 typedef struct RmvVideoPicture_s
 {
-    unsigned int                BitstreamVersion;
-    unsigned int                PictureCodingType;
-    unsigned int                ECC;
-    unsigned int                Quant;
-    unsigned int                Deblock;
-    unsigned int                RvTr;
-    unsigned int                PctSize;
-    unsigned int                Mba;
-    unsigned int                RType;
+	unsigned int                BitstreamVersion;
+	unsigned int                PictureCodingType;
+	unsigned int                ECC;
+	unsigned int                Quant;
+	unsigned int                Deblock;
+	unsigned int                RvTr;
+	unsigned int                PctSize;
+	unsigned int                Mba;
+	unsigned int                RType;
 } RmvVideoPicture_t;
 
 #if 0
 /* The following structure is passed in by the application layer */
 typedef struct RmfFormatInfo_s
 {
-    unsigned int                Length;
-    unsigned int                MOFTag;
-    unsigned int                SubMOFTag;
-    unsigned int                Width;
-    unsigned int                Height;
-    unsigned int                BitCount;
-    unsigned int                PadWidth;
-    unsigned int                PadHeight;
-    unsigned int                FramesPerSecond;        /* 32 bit fixed (16/16) */
-    unsigned int                OpaqueDataSize;
-    /*
-    unsigned char*              OpaqueData;
-    */
+	unsigned int                Length;
+	unsigned int                MOFTag;
+	unsigned int                SubMOFTag;
+	unsigned int                Width;
+	unsigned int                Height;
+	unsigned int                BitCount;
+	unsigned int                PadWidth;
+	unsigned int                PadHeight;
+	unsigned int                FramesPerSecond;        /* 32 bit fixed (16/16) */
+	unsigned int                OpaqueDataSize;
+	/*
+	unsigned char*              OpaqueData;
+	*/
 } RmfFormatInfo_t;
 #endif
 
@@ -169,11 +165,11 @@ typedef struct RmfFormatInfo_s
 
 typedef struct RmvStreamParameters_s
 {
-    bool                        UpdatedSinceLastFrame;
+	bool                        UpdatedSinceLastFrame;
 
-    bool                        SequenceHeaderPresent;
+	bool                        SequenceHeaderPresent;
 
-    RmvVideoSequence_t          SequenceHeader;
+	RmvVideoSequence_t          SequenceHeader;
 } RmvStreamParameters_t;
 
 #define BUFFER_RMV_STREAM_PARAMETERS            "RmvStreamParameters"
@@ -184,27 +180,26 @@ typedef struct RmvStreamParameters_s
 #define RMV_MAX_SEGMENTS                        128
 typedef struct RmvVideoSegment_s
 {
-    unsigned int    Valid;
-    unsigned int    Offset;
+	unsigned int    Valid;
+	unsigned int    Offset;
 } RmvVideoSegment_t;
 
 typedef struct RmvVideoSegmentList_s
 {
-    unsigned int            NumSegments;
-    RmvVideoSegment_t       Segment[RMV_MAX_SEGMENTS];
+	unsigned int            NumSegments;
+	RmvVideoSegment_t       Segment[RMV_MAX_SEGMENTS];
 } RmvVideoSegmentList_t;
-
 
 typedef struct RmvFrameParameters_s
 {
-    unsigned int                ForwardReferenceIndex;
-    unsigned int                BackwardReferenceIndex;
+	unsigned int                ForwardReferenceIndex;
+	unsigned int                BackwardReferenceIndex;
 
-    bool                        SegmentListPresent;
-    bool                        PictureHeaderPresent;
+	bool                        SegmentListPresent;
+	bool                        PictureHeaderPresent;
 
-    RmvVideoPicture_t           PictureHeader;
-    RmvVideoSegmentList_t       SegmentList;
+	RmvVideoPicture_t           PictureHeader;
+	RmvVideoSegmentList_t       SegmentList;
 
 } RmvFrameParameters_t;
 
@@ -212,7 +207,6 @@ typedef struct RmvFrameParameters_s
 #define BUFFER_RMV_FRAME_PARAMETERS_TYPE        {BUFFER_RMV_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(RmvFrameParameters_t)}
 
 //
-
 
 #endif
 

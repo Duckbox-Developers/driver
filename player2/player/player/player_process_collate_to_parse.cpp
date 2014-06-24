@@ -26,7 +26,6 @@ Implementation of the process handling data transfer
 between the collation phase and the frame parsers of
 the generic class implementation of player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 06-Nov-06   Created                                         Nick
@@ -47,14 +46,13 @@ Date        Modification                                    Name
 
 OS_TaskEntry(PlayerProcessCollateToParse)
 {
-    PlayerStream_t      Stream = (PlayerStream_t)Parameter;
+	PlayerStream_t      Stream = (PlayerStream_t)Parameter;
 
-    Stream->Player->ProcessCollateToParse(Stream);
+	Stream->Player->ProcessCollateToParse(Stream);
 
-    OS_TerminateThread();
-    return NULL;
+	OS_TerminateThread();
+	return NULL;
 }
-
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -63,201 +61,201 @@ OS_TaskEntry(PlayerProcessCollateToParse)
 
 void   Player_Generic_c::ProcessCollateToParse(PlayerStream_t         Stream)
 {
-    PlayerStatus_t            Status;
-    RingStatus_t              RingStatus;
-    Buffer_t              Buffer;
-    BufferType_t              BufferType;
-    unsigned int              BufferIndex;
-    PlayerControlStructure_t     *ControlStructure;
-    PlayerSequenceNumber_t       *SequenceNumberStructure;
-    unsigned long long        LastEntryTime;
-    unsigned long long        SequenceNumber;
-    unsigned long long                MaximumActualSequenceNumberSeen;
-    unsigned int              AccumulatedBeforeControlMessagesCount;
-    unsigned int              AccumulatedAfterControlMessagesCount;
-    bool                  ProcessNow;
-    unsigned int             *Count;
-    PlayerBufferRecord_t         *Table;
-    unsigned int              BufferLength;
-    bool                  DiscardBuffer;
+	PlayerStatus_t            Status;
+	RingStatus_t              RingStatus;
+	Buffer_t              Buffer;
+	BufferType_t              BufferType;
+	unsigned int              BufferIndex;
+	PlayerControlStructure_t     *ControlStructure;
+	PlayerSequenceNumber_t       *SequenceNumberStructure;
+	unsigned long long        LastEntryTime;
+	unsigned long long        SequenceNumber;
+	unsigned long long                MaximumActualSequenceNumberSeen;
+	unsigned int              AccumulatedBeforeControlMessagesCount;
+	unsigned int              AccumulatedAfterControlMessagesCount;
+	bool                  ProcessNow;
+	unsigned int             *Count;
+	PlayerBufferRecord_t         *Table;
+	unsigned int              BufferLength;
+	bool                  DiscardBuffer;
 
-    //
-    // Set parameters
-    //
+	//
+	// Set parameters
+	//
 
-    LastEntryTime               = OS_GetTimeInMicroSeconds();
-    SequenceNumber              = INVALID_SEQUENCE_VALUE;
-    MaximumActualSequenceNumberSeen             = 0;
-    AccumulatedBeforeControlMessagesCount   = 0;
-    AccumulatedAfterControlMessagesCount    = 0;
+	LastEntryTime               = OS_GetTimeInMicroSeconds();
+	SequenceNumber              = INVALID_SEQUENCE_VALUE;
+	MaximumActualSequenceNumberSeen             = 0;
+	AccumulatedBeforeControlMessagesCount   = 0;
+	AccumulatedAfterControlMessagesCount    = 0;
 
-    //
-    // Signal we have started
-    //
+	//
+	// Signal we have started
+	//
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    Stream->ProcessRunningCount++;
+	Stream->ProcessRunningCount++;
 
-    if (Stream->ProcessRunningCount == Stream->ExpectedProcessCount)
-        OS_SetEvent(&Stream->StartStopEvent);
+	if (Stream->ProcessRunningCount == Stream->ExpectedProcessCount)
+		OS_SetEvent(&Stream->StartStopEvent);
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 
-    //
-    // Main Loop
-    //
+	//
+	// Main Loop
+	//
 
-    while (!Stream->Terminating)
-    {
-        RingStatus  = Stream->CollatedFrameRing->Extract((uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT);
+	while (!Stream->Terminating)
+	{
+		RingStatus  = Stream->CollatedFrameRing->Extract((uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT);
 
-        if ((RingStatus == RingNothingToGet) || Stream->Terminating)
-            continue;
+		if ((RingStatus == RingNothingToGet) || Stream->Terminating)
+			continue;
 
-        Buffer->GetType(&BufferType);
-        Buffer->GetIndex(&BufferIndex);
-        Buffer->TransferOwnership(IdentifierProcessCollateToParse);
+		Buffer->GetType(&BufferType);
+		Buffer->GetIndex(&BufferIndex);
+		Buffer->TransferOwnership(IdentifierProcessCollateToParse);
 
-        //
-        // Deal with a coded frame buffer
-        //
+		//
+		// Deal with a coded frame buffer
+		//
 
-        if (BufferType == Stream->CodedFrameBufferType)
-        {
-            //
-            // Apply a sequence number to the buffer
-            //
+		if (BufferType == Stream->CodedFrameBufferType)
+		{
+			//
+			// Apply a sequence number to the buffer
+			//
 
-            Status  = Buffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
+			Status  = Buffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
 
-            if (Status != PlayerNoError)
-            {
-                report(severity_error, "Player_Generic_c::ProcessCollateToParse - Unable to obtain the meta data \"SequenceNumber\" - Implementation error\n");
-                Buffer->DecrementReferenceCount(IdentifierProcessCollateToParse);
-                continue;
-            }
+			if (Status != PlayerNoError)
+			{
+				report(severity_error, "Player_Generic_c::ProcessCollateToParse - Unable to obtain the meta data \"SequenceNumber\" - Implementation error\n");
+				Buffer->DecrementReferenceCount(IdentifierProcessCollateToParse);
+				continue;
+			}
 
-            SequenceNumberStructure->TimeEntryInProcess0    = OS_GetTimeInMicroSeconds();
-            SequenceNumberStructure->DeltaEntryInProcess0   = SequenceNumberStructure->TimeEntryInProcess0 - LastEntryTime;
-            LastEntryTime                   = SequenceNumberStructure->TimeEntryInProcess0;
-            SequenceNumberStructure->TimeEntryInProcess1    = INVALID_TIME;
-            SequenceNumberStructure->TimePassToCodec        = INVALID_TIME;
-            SequenceNumberStructure->TimeEntryInProcess2    = INVALID_TIME;
-            SequenceNumberStructure->TimePassToManifestor   = INVALID_TIME;
-            SequenceNumberStructure->TimeEntryInProcess3    = INVALID_TIME;
+			SequenceNumberStructure->TimeEntryInProcess0    = OS_GetTimeInMicroSeconds();
+			SequenceNumberStructure->DeltaEntryInProcess0   = SequenceNumberStructure->TimeEntryInProcess0 - LastEntryTime;
+			LastEntryTime                   = SequenceNumberStructure->TimeEntryInProcess0;
+			SequenceNumberStructure->TimeEntryInProcess1    = INVALID_TIME;
+			SequenceNumberStructure->TimePassToCodec        = INVALID_TIME;
+			SequenceNumberStructure->TimeEntryInProcess2    = INVALID_TIME;
+			SequenceNumberStructure->TimePassToManifestor   = INVALID_TIME;
+			SequenceNumberStructure->TimeEntryInProcess3    = INVALID_TIME;
 
-            if ((Stream->MarkerInCodedFrameIndex != INVALID_INDEX) &&
-                    (Stream->MarkerInCodedFrameIndex == BufferIndex))
-            {
-                // This is a marker frame
-                SequenceNumberStructure->MarkerFrame    = true;
+			if ((Stream->MarkerInCodedFrameIndex != INVALID_INDEX) &&
+					(Stream->MarkerInCodedFrameIndex == BufferIndex))
+			{
+				// This is a marker frame
+				SequenceNumberStructure->MarkerFrame    = true;
 
-                Stream->NextBufferSequenceNumber    = SequenceNumberStructure->Value + 1;
-                Stream->DiscardingUntilMarkerFrameCtoP  = false;
-                Stream->MarkerInCodedFrameIndex     = INVALID_INDEX;
-            }
-            else
-            {
-                SequenceNumberStructure->MarkerFrame    = false;
-                SequenceNumberStructure->Value      = Stream->NextBufferSequenceNumber++;
-            }
+				Stream->NextBufferSequenceNumber    = SequenceNumberStructure->Value + 1;
+				Stream->DiscardingUntilMarkerFrameCtoP  = false;
+				Stream->MarkerInCodedFrameIndex     = INVALID_INDEX;
+			}
+			else
+			{
+				SequenceNumberStructure->MarkerFrame    = false;
+				SequenceNumberStructure->Value      = Stream->NextBufferSequenceNumber++;
+			}
 
-            SequenceNumber              = SequenceNumberStructure->Value;
-            MaximumActualSequenceNumberSeen     = max(SequenceNumber, MaximumActualSequenceNumberSeen);
+			SequenceNumber              = SequenceNumberStructure->Value;
+			MaximumActualSequenceNumberSeen     = max(SequenceNumber, MaximumActualSequenceNumberSeen);
 
-            //
-            // Process any outstanding control messages to be applied before this buffer
-            //
+			//
+			// Process any outstanding control messages to be applied before this buffer
+			//
 
-            ProcessAccumulatedControlMessages(Stream,
-                                              &AccumulatedBeforeControlMessagesCount,
-                                              PLAYER_MAX_CTOP_MESSAGES,
-                                              Stream->AccumulatedBeforeCtoPControlMessages,
-                                              SequenceNumber, INVALID_TIME);
+			ProcessAccumulatedControlMessages(Stream,
+											  &AccumulatedBeforeControlMessagesCount,
+											  PLAYER_MAX_CTOP_MESSAGES,
+											  Stream->AccumulatedBeforeCtoPControlMessages,
+											  SequenceNumber, INVALID_TIME);
 
-            //
-            // Pass the buffer to the frame parser for processing
-            // then release our hold on this buffer. When discarding we
-            // do not pass on, unless we have a zero length buffer, used when
-            // signalling an input jump.
-            //
+			//
+			// Pass the buffer to the frame parser for processing
+			// then release our hold on this buffer. When discarding we
+			// do not pass on, unless we have a zero length buffer, used when
+			// signalling an input jump.
+			//
 
-            Buffer->ObtainDataReference(NULL, &BufferLength, NULL);
+			Buffer->ObtainDataReference(NULL, &BufferLength, NULL);
 
-            DiscardBuffer   = !SequenceNumberStructure->MarkerFrame &&
-                              (BufferLength != 0) &&
-                              (Stream->UnPlayable || Stream->DiscardingUntilMarkerFrameCtoP);
+			DiscardBuffer   = !SequenceNumberStructure->MarkerFrame &&
+							  (BufferLength != 0) &&
+							  (Stream->UnPlayable || Stream->DiscardingUntilMarkerFrameCtoP);
 
 //report( severity_error, "FP++\n" );
-            if (!DiscardBuffer)
-                Stream->FrameParser->Input(Buffer);
+			if (!DiscardBuffer)
+				Stream->FrameParser->Input(Buffer);
 
 //report( severity_error, "FP--\n" );
 
-            Buffer->DecrementReferenceCount(IdentifierProcessCollateToParse);
+			Buffer->DecrementReferenceCount(IdentifierProcessCollateToParse);
 
-            //
-            // Process any outstanding control messages to be applied after this buffer
-            //
+			//
+			// Process any outstanding control messages to be applied after this buffer
+			//
 
-            ProcessAccumulatedControlMessages(Stream,
-                                              &AccumulatedAfterControlMessagesCount,
-                                              PLAYER_MAX_CTOP_MESSAGES,
-                                              Stream->AccumulatedAfterCtoPControlMessages,
-                                              SequenceNumber, INVALID_TIME);
-        }
+			ProcessAccumulatedControlMessages(Stream,
+											  &AccumulatedAfterControlMessagesCount,
+											  PLAYER_MAX_CTOP_MESSAGES,
+											  Stream->AccumulatedAfterCtoPControlMessages,
+											  SequenceNumber, INVALID_TIME);
+		}
 
-        //
-        // Deal with a player control structure
-        //
+		//
+		// Deal with a player control structure
+		//
 
-        else if (BufferType == BufferPlayerControlStructureType)
-        {
-            Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
+		else if (BufferType == BufferPlayerControlStructureType)
+		{
+			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
 
-            ProcessNow  = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
-                          ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
+			ProcessNow  = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
+						  ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
 
-            if (ProcessNow)
-                ProcessControlMessage(Stream, Buffer, ControlStructure);
-            else
-            {
-                if ((ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
-                        (ControlStructure->SequenceType == SequenceTypeBeforePlaybackTime))
-                {
-                    Count   = &AccumulatedBeforeControlMessagesCount;
-                    Table   = Stream->AccumulatedBeforeCtoPControlMessages;
-                }
-                else
-                {
-                    Count   = &AccumulatedAfterControlMessagesCount;
-                    Table   = Stream->AccumulatedAfterCtoPControlMessages;
-                }
+			if (ProcessNow)
+				ProcessControlMessage(Stream, Buffer, ControlStructure);
+			else
+			{
+				if ((ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
+						(ControlStructure->SequenceType == SequenceTypeBeforePlaybackTime))
+				{
+					Count   = &AccumulatedBeforeControlMessagesCount;
+					Table   = Stream->AccumulatedBeforeCtoPControlMessages;
+				}
+				else
+				{
+					Count   = &AccumulatedAfterControlMessagesCount;
+					Table   = Stream->AccumulatedAfterCtoPControlMessages;
+				}
 
-                AccumulateControlMessage(Buffer, ControlStructure, Count, PLAYER_MAX_CTOP_MESSAGES, Table);
-            }
-        }
-        else
-        {
-            report(severity_error, "Player_Generic_c::ProcessCollateToParse - Unknown buffer type received - Implementation error.\n");
-            Buffer->DecrementReferenceCount();
-        }
-    }
+				AccumulateControlMessage(Buffer, ControlStructure, Count, PLAYER_MAX_CTOP_MESSAGES, Table);
+			}
+		}
+		else
+		{
+			report(severity_error, "Player_Generic_c::ProcessCollateToParse - Unknown buffer type received - Implementation error.\n");
+			Buffer->DecrementReferenceCount();
+		}
+	}
 
-    report(severity_info, "0000 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount);
+	report(severity_info, "0000 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount);
 
-    //
-    // Signal we have terminated
-    //
+	//
+	// Signal we have terminated
+	//
 
-    OS_LockMutex(&Lock);
+	OS_LockMutex(&Lock);
 
-    Stream->ProcessRunningCount--;
+	Stream->ProcessRunningCount--;
 
-    if (Stream->ProcessRunningCount == 0)
-        OS_SetEvent(&Stream->StartStopEvent);
+	if (Stream->ProcessRunningCount == 0)
+		OS_SetEvent(&Stream->StartStopEvent);
 
-    OS_UnLockMutex(&Lock);
+	OS_UnLockMutex(&Lock);
 }
 

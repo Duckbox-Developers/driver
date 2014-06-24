@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the codec video class implementation for player 2.
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 20-Jan-07   Created                                         Nick
@@ -58,44 +57,44 @@ Date        Modification                                    Name
 
 class Codec_MmeVideo_c : public Codec_MmeBase_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        VideoOutputSurfaceDescriptor_t       *VideoOutputSurface;
+		VideoOutputSurfaceDescriptor_t       *VideoOutputSurface;
 
-        ParsedVideoParameters_t              *ParsedVideoParameters;
-        bool                                  KnownLastSliceInFieldFrame;
+		ParsedVideoParameters_t              *ParsedVideoParameters;
+		bool                                  KnownLastSliceInFieldFrame;
 
-        // Functions
+		// Functions
 
-    public:
+	public:
 
-        //
-        // Overrides for component base class functions
-        //
+		//
+		// Overrides for component base class functions
+		//
 
-        CodecStatus_t   Halt(void);
-        CodecStatus_t   Reset(void);
+		CodecStatus_t   Halt(void);
+		CodecStatus_t   Reset(void);
 
-        //
-        // Codec class functions
-        //
+		//
+		// Codec class functions
+		//
 
-        CodecStatus_t   RegisterOutputBufferRing(Ring_t            Ring);
-        CodecStatus_t   Input(Buffer_t          CodedBuffer);
+		CodecStatus_t   RegisterOutputBufferRing(Ring_t            Ring);
+		CodecStatus_t   Input(Buffer_t          CodedBuffer);
 
-        //
-        // Extension to base functions
-        //
+		//
+		// Extension to base functions
+		//
 
-        CodecStatus_t   InitializeDataTypes(void);
+		CodecStatus_t   InitializeDataTypes(void);
 
-        //
-        // Implementation of fill out function for generic video,
-        // may be overridden if necessary.
-        //
+		//
+		// Implementation of fill out function for generic video,
+		// may be overridden if necessary.
+		//
 
-        virtual CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t     *Request);
+		virtual CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t     *Request);
 };
 #endif

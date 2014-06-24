@@ -55,37 +55,36 @@ MODULE_LICENSE("GPL");
 
 #define MODULE_NAME     "Player sysfs"
 
-
 struct SysfsContext_s*   SysfsContext;
 
 static int __init SysfsLoadModule(void)
 {
-    SysfsContext        = kmalloc(sizeof(struct SysfsContext_s),  GFP_KERNEL);
+	SysfsContext        = kmalloc(sizeof(struct SysfsContext_s),  GFP_KERNEL);
 
-    if (SysfsContext == NULL)
-    {
-        SYSFS_ERROR("Unable to allocate device memory\n");
-        return -ENOMEM;
-    }
+	if (SysfsContext == NULL)
+	{
+		SYSFS_ERROR("Unable to allocate device memory\n");
+		return -ENOMEM;
+	}
 
-    PlayerInterfaceInit();
+	PlayerInterfaceInit();
 
-    SYSFS_DEBUG("sysfs interface to stream device loaded\n");
+	SYSFS_DEBUG("sysfs interface to stream device loaded\n");
 
-    return 0;
+	return 0;
 }
 
 static void __exit SysfsUnloadModule(void)
 {
-    PlayerInterfaceDelete();
+	PlayerInterfaceDelete();
 
-    if (SysfsContext != NULL)
-        kfree(SysfsContext);
+	if (SysfsContext != NULL)
+		kfree(SysfsContext);
 
-    SysfsContext        = NULL;
+	SysfsContext        = NULL;
 
-    SYSFS_DEBUG("STM sysfs interface to stream device unloaded\n");
+	SYSFS_DEBUG("STM sysfs interface to stream device unloaded\n");
 
-    return;
+	return;
 }
 

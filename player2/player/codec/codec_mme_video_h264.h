@@ -24,7 +24,6 @@ Author :           Nick
 
 Definition of the stream specific codec implementation for H264 video in player 2
 
-
 Date        Modification                                    Name
 ----        ------------                                    --------
 25-Jan-07   Created                                         Nick
@@ -55,31 +54,30 @@ Date        Modification                                    Name
 
 typedef enum
 {
-    ActionNull                                  = 1,
-    ActionCallOutputPartialDecodeBuffers,
-    ActionCallDiscardQueuedDecodes,
-    ActionCallReleaseReferenceFrame,
-    ActionPassOnFrame,
-    ActionPassOnPreProcessedFrame,
+	ActionNull                                  = 1,
+	ActionCallOutputPartialDecodeBuffers,
+	ActionCallDiscardQueuedDecodes,
+	ActionCallReleaseReferenceFrame,
+	ActionPassOnFrame,
+	ActionPassOnPreProcessedFrame,
 } FramesInPreprocessorChainAction_t;
 
 //
 
 typedef struct FramesInPreprocessorChain_s
 {
-    bool                                 Used;
-    FramesInPreprocessorChainAction_t    Action;
-    bool                                 AbortedFrame;
-    Buffer_t                             CodedBuffer;
-    Buffer_t                             PreProcessorBuffer;
-    ParsedFrameParameters_t     *ParsedFrameParameters;
-    unsigned int                         DecodeFrameIndex;
-    void                                *InputBufferCachedAddress;
-    void                                *InputBufferPhysicalAddress;
-    void                                *OutputBufferCachedAddress;
-    void                                *OutputBufferPhysicalAddress;
+	bool                                 Used;
+	FramesInPreprocessorChainAction_t    Action;
+	bool                                 AbortedFrame;
+	Buffer_t                             CodedBuffer;
+	Buffer_t                             PreProcessorBuffer;
+	ParsedFrameParameters_t     *ParsedFrameParameters;
+	unsigned int                         DecodeFrameIndex;
+	void                                *InputBufferCachedAddress;
+	void                                *InputBufferPhysicalAddress;
+	void                                *OutputBufferCachedAddress;
+	void                                *OutputBufferPhysicalAddress;
 } FramesInPreprocessorChain_t;
-
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -87,7 +85,7 @@ typedef struct FramesInPreprocessorChain_s
 //
 
 extern "C" {
-    OS_TaskEntry(Codec_MmeVideoH264_IntermediateProcess);
+	OS_TaskEntry(Codec_MmeVideoH264_IntermediateProcess);
 }
 
 // /////////////////////////////////////////////////////////////////////////
@@ -97,100 +95,99 @@ extern "C" {
 
 class Codec_MmeVideoH264_c : public Codec_MmeVideo_c
 {
-    protected:
+	protected:
 
-        // Data
+		// Data
 
-        H264_TransformerCapability_fmw_t      H264TransformCapability;
-        H264_InitTransformerParam_fmw_t       H264InitializationParameters;
+		H264_TransformerCapability_fmw_t      H264TransformCapability;
+		H264_InitTransformerParam_fmw_t       H264InitializationParameters;
 
-        bool                                  Terminating;
-        unsigned int                          ProcessRunningCount;
-        OS_Event_t                            StartStopEvent;
+		bool                                  Terminating;
+		unsigned int                          ProcessRunningCount;
+		OS_Event_t                            StartStopEvent;
 
-        unsigned int                          SD_MaxMBStructureSize;            // Data items relating to macroblock structure buffers
-        unsigned int                          HD_MaxMBStructureSize;
-        allocator_device_t                    MacroBlockMemoryDevice;
-        void                                  *MacroBlockMemory[3];
-        BufferType_t                          MacroBlockStructureType;
-        BufferPool_t                          MacroBlockStructurePool;
+		unsigned int                          SD_MaxMBStructureSize;            // Data items relating to macroblock structure buffers
+		unsigned int                          HD_MaxMBStructureSize;
+		allocator_device_t                    MacroBlockMemoryDevice;
+		void                                  *MacroBlockMemory[3];
+		BufferType_t                          MacroBlockStructureType;
+		BufferPool_t                          MacroBlockStructurePool;
 
-        bool                                  DiscardFramesInPreprocessorChain;
-        FramesInPreprocessorChain_t           FramesInPreprocessorChain[H264_CODED_FRAME_COUNT];
-        OS_Mutex_t                            H264Lock;
-        Ring_t                                FramesInPreprocessorChainRing;
-        BufferType_t                          PreProcessorBufferType;
-        BufferPool_t                          PreProcessorBufferPool;
-        h264pp_device_t                       PreProcessorDevice;
+		bool                                  DiscardFramesInPreprocessorChain;
+		FramesInPreprocessorChain_t           FramesInPreprocessorChain[H264_CODED_FRAME_COUNT];
+		OS_Mutex_t                            H264Lock;
+		Ring_t                                FramesInPreprocessorChainRing;
+		BufferType_t                          PreProcessorBufferType;
+		BufferPool_t                          PreProcessorBufferPool;
+		h264pp_device_t                       PreProcessorDevice;
 
-        bool                  ReferenceFrameSlotUsed[H264_MAX_REFERENCE_FRAMES];    // A usage array for reference frame slots in the transform data
-        H264_HostData_t                       RecordedHostData[CODEC_MAX_DECODE_BUFFERS];           // A record of hostdata for each reference frame
-        unsigned int              OutstandingSlotAllocationRequest;
+		bool                  ReferenceFrameSlotUsed[H264_MAX_REFERENCE_FRAMES];    // A usage array for reference frame slots in the transform data
+		H264_HostData_t                       RecordedHostData[CODEC_MAX_DECODE_BUFFERS];           // A record of hostdata for each reference frame
+		unsigned int              OutstandingSlotAllocationRequest;
 
-        unsigned int                          NumberOfUsedDescriptors;                              // Map of used descriptors when constructing a reference list
-        unsigned char                         DescriptorIndices[3 * H264_MAX_REFERENCE_FRAMES];
+		unsigned int                          NumberOfUsedDescriptors;                              // Map of used descriptors when constructing a reference list
+		unsigned char                         DescriptorIndices[3 * H264_MAX_REFERENCE_FRAMES];
 
-        ReferenceFrameList_t                  LocalReferenceFrameList[H264_NUM_REF_FRAME_LISTS];
+		ReferenceFrameList_t                  LocalReferenceFrameList[H264_NUM_REF_FRAME_LISTS];
 
+		// Functions
 
-        // Functions
+		// Internal process functions called via C
 
-        // Internal process functions called via C
+		CodecStatus_t   FillOutDecodeCommandHostData(void);
+		CodecStatus_t   FillOutDecodeCommandRefPicList(void);
+		unsigned int    FillOutNewDescriptor(unsigned int             ReferenceId,
+											 unsigned int             BufferIndex,
+											 H264ReferenceDetails_t  *Details);
+		CodecStatus_t   H264ReleaseReferenceFrame(unsigned int       ReferenceFrameDecodeIndex);
 
-        CodecStatus_t   FillOutDecodeCommandHostData(void);
-        CodecStatus_t   FillOutDecodeCommandRefPicList(void);
-        unsigned int    FillOutNewDescriptor(unsigned int             ReferenceId,
-                                             unsigned int             BufferIndex,
-                                             H264ReferenceDetails_t  *Details);
-        CodecStatus_t   H264ReleaseReferenceFrame(unsigned int       ReferenceFrameDecodeIndex);
+		CodecStatus_t   ReferenceFrameSlotAllocate(unsigned int      BufferIndex);
 
-        CodecStatus_t   ReferenceFrameSlotAllocate(unsigned int      BufferIndex);
+	public:
 
-    public:
+		void IntermediateProcess(void);
 
-        void IntermediateProcess(void);
+	public:
 
-    public:
+		//
+		// Constructor/Destructor methods
+		//
 
-        //
-        // Constructor/Destructor methods
-        //
+		Codec_MmeVideoH264_c(void);
+		~Codec_MmeVideoH264_c(void);
 
-        Codec_MmeVideoH264_c(void);
-        ~Codec_MmeVideoH264_c(void);
+		//
+		// Overrides for component base class functions
+		//
 
-        //
-        // Overrides for component base class functions
-        //
+		CodecStatus_t   Halt(void);
+		CodecStatus_t   Reset(void);
 
-        CodecStatus_t   Halt(void);
-        CodecStatus_t   Reset(void);
+		//
+		// Superclass functions
+		//
 
-        //
-        // Superclass functions
-        //
+		CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
+		CodecStatus_t   OutputPartialDecodeBuffers(void);
+		CodecStatus_t   DiscardQueuedDecodes(void);
+		CodecStatus_t   ReleaseReferenceFrame(unsigned int              ReferenceFrameDecodeIndex);
+		CodecStatus_t   CheckReferenceFrameList(unsigned int              NumberOfReferenceFrameLists,
+												ReferenceFrameList_t      ReferenceFrameList[]);
+		CodecStatus_t   Input(Buffer_t                  CodedBuffer);
 
-        CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
-        CodecStatus_t   OutputPartialDecodeBuffers(void);
-        CodecStatus_t   DiscardQueuedDecodes(void);
-        CodecStatus_t   ReleaseReferenceFrame(unsigned int              ReferenceFrameDecodeIndex);
-        CodecStatus_t   CheckReferenceFrameList(unsigned int              NumberOfReferenceFrameLists,
-                                                ReferenceFrameList_t      ReferenceFrameList[]);
-        CodecStatus_t   Input(Buffer_t                  CodedBuffer);
+		//
+		// Stream specific functions
+		//
 
-        //
-        // Stream specific functions
-        //
+	protected:
 
-    protected:
+		CodecStatus_t   HandleCapabilities(void);
 
-        CodecStatus_t   HandleCapabilities(void);
-
-        CodecStatus_t   FillOutTransformerInitializationParameters(void);
-        CodecStatus_t   FillOutSetStreamParametersCommand(void);
-        CodecStatus_t   FillOutDecodeCommand(void);
-        CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-        CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-        CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t   FillOutTransformerInitializationParameters(void);
+		CodecStatus_t   FillOutSetStreamParametersCommand(void);
+		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
+		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
 };
 #endif
