@@ -308,6 +308,8 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "sagemcom88\n");
 #elif defined(UFS910)
 	int len = sprintf(page, "ufs910\n");
+#elif defined(ARIVALINK200)
+	int len = sprintf(page, "arivalink200\n");
 #else
 	int len = sprintf(page, "unknown\n");
 #endif
@@ -321,7 +323,7 @@ static int info_chipset_read(char *page, char **start, off_t off, int count, int
 	int len = sprintf(page, "STi7100\n");
 #elif defined(ATEVIO7500) || defined(UFS913) || defined(SAGEMCOM88)
 	int len = sprintf(page, "STi7105\n");
-#elif defined(FORTIS_HDBOX) || defined(HL101) || defined(OCTAGON1008) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_250HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#elif defined(FORTIS_HDBOX) || defined(HL101) || defined(OCTAGON1008) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_250HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ARIVALINK200)
 	int len = sprintf(page, "STi7109\n");
 #elif defined(UFS912) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK) || defined(VITAMIN_HD5000)
 	int len = sprintf(page, "STi7111\n");

@@ -86,6 +86,9 @@ obj-m += dummy_cic.o
 else ifdef VITAMIN_HD5000
 obj-m += starci.o
 starci-objs:= vitamin_hd5000/starci2win.o
+else ifdef ARIVALINK200
+dummy_cic-objs += dummy_cic/dummy_cic.o
+obj-m += dummy_cic.o
 else
 cimax-objs += cimax/cimax.o
 obj-m += cimax.o

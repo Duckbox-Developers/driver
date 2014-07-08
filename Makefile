@@ -281,5 +281,8 @@ obj-y += cec/
 obj-y += smartcard/
 obj-y += sagemcomtype/
 endif
+ifdef ARIVALINK200
+obj-y += smartcard/
+endif
 
 endif
