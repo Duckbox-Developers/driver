@@ -931,15 +931,18 @@ static int cx24116_set_voltage(struct dvb_frontend *fe,
 	switch(voltage)
 	{
 		case SEC_VOLTAGE_OFF:
+			dprintk("%s:SEC_VOLTAGE_OFF\n", __func__);
 			stpio_set_pin(state->lnb_enable_pin, !state->lnb_enable_act);
 			break;
 			
 		case SEC_VOLTAGE_13:
+			dprintk("%s:SEC_VOLTAGE_13\n", __func__);
 			stpio_set_pin(state->lnb_enable_pin, state->lnb_enable_act);
 			stpio_set_pin(state->lnb_vsel_pin, !state->lnb_vsel_act);
 			break;
 			
 		case SEC_VOLTAGE_18:
+			dprintk("%s:SEC_VOLTAGE_18\n", __func__);
 			stpio_set_pin(state->lnb_enable_pin, state->lnb_enable_act);
 			stpio_set_pin(state->lnb_vsel_pin, state->lnb_vsel_act);
 			break;
@@ -1220,6 +1223,15 @@ struct plat_tuner_config tuner_resources[] =
                 .lnb_enable = {1, 0, 1},
                 .lnb_vsel = {1, 3, 1}
         }
+#elif defined(ARIVALINK200)
+        [0] = {
+                .adapter = 0,
+                .i2c_bus = 1,
+                .i2c_addr = 0x55,
+                .tuner_enable 	= {-1, -1, -1}, //not used
+                .lnb_enable 	= {0, 6, 0}, //TR21 1-disabled,, 0-enabled
+                .lnb_vsel   	= {0, 2, 0}  //R22 1-H(18V), 0-V(13V)
+        }
 #else
 	/* UFS910 tuner resources */
         [0] = {
@@ -1274,8 +1286,11 @@ static int cx24116_probe(struct platform_device *pdev)
 				                 tuner_cfg->lnb_vsel[1],
 				                 "LNB vsel", STPIO_OUT);
 
-		if ((state->i2c == NULL) || (state->tuner_enable_pin == NULL) ||
-		    (state->lnb_enable_pin == NULL) || (state->lnb_vsel_pin == NULL))
+		if ((state->i2c == NULL) ||
+#if !defined(ARIVALINK200)
+			(state->tuner_enable_pin == NULL) ||
+#endif
+			(state->lnb_enable_pin == NULL) || (state->lnb_vsel_pin == NULL))
 		{
 			printk ("cx24116: failed to allocate resources\n");
 			goto error2;
