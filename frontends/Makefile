@@ -326,10 +326,9 @@ stv090x-objs += vitamin_hd5000/stv090x.o
 stv090x-objs += vitamin_hd5000/stv6110x.o
 stv090x-objs += vitamin_hd5000/core.o
 obj-m += stv090x.o
+endif
 
 ifdef ARIVALINK200
 cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
-endif
-
 endif
