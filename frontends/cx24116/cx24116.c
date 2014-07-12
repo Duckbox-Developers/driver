@@ -87,8 +87,11 @@ static short paramDebug = 0;
 if (paramDebug > level) printk(TAGDEBUG x); \
 } while (0)
 
+#if !defined(ARIVALINK200)
 extern int _12v_isON; //defined in e2_proc ->I will implement a better mechanism later
-
+#else
+static int _12v_isON = 0;
+#endif
 // Fast i2c delay (1ms ~ 1MHz) is only used to speed up the firmware
 // download. All other read/write operations are executed with the default
 // i2c bus speed (100kHz ~ 10ms).
@@ -2965,7 +2968,7 @@ init_cx24116_device (struct dvb_adapter *adapter,
 #endif
 
   if ((cfg->i2c_adap == NULL) || 
-#ifndef HOMECAST5101
+#if !defined(HOMECAST5101) && !defined(ARIVALINK200)
       (cfg->tuner_enable_pin == NULL) ||
 #endif
 #ifndef UFS922
@@ -3214,6 +3217,15 @@ struct plat_tuner_config tuner_resources[] = {
                 .lnb_enable = {5, 2, 0},   // port5,pin2, 1=Off(~0V), 0=On(vsel), sel_act->On
                 .lnb_vsel = {5, 0, 0},     // port5,pin0, 1=V(13.9V), 0=H(19.1V), sel_act->H
         }
+#elif defined(ARIVALINK200)
+        [0] = {
+                .adapter = 0,
+                .i2c_bus = 1,
+                .i2c_addr = 0x55,
+                .tuner_enable 	= {-1, -1, -1}, //not used
+                .lnb_enable 	= {0, 6, 0}, //TR21 1-disabled,, 0-enabled
+                .lnb_vsel   	= {0, 2, 0}  //R22 1-H(18V), 0-V(13V)
+        } 
 #elif defined(UFS922)
 	/* ufs922 tuner resources */
         [0] = {

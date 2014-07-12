@@ -117,6 +117,9 @@ endif
 ifdef SAGEMCOM88
 CCFLAGSY += -DSAGEMCOM88
 endif
+ifdef ARIVALINK200
+CCFLAGSY += -DARIVALINK200
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
