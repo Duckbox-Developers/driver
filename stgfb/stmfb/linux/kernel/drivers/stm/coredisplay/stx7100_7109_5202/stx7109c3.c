@@ -127,7 +127,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
     defined(CUBEREVO) || defined(CUBEREVO_MINI) || \
     defined(CUBEREVO_MINI2) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || \
     defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || \
-    defined(CONFIG_SH_IPBOX9900) || defined(CONFIG_SH_IPBOX99) || defined(CONFIG_SH_IPBOX55)
+    defined(CONFIG_SH_IPBOX9900) || defined(CONFIG_SH_IPBOX99) || defined(CONFIG_SH_IPBOX55) || defined(CONFIG_SH_ARIVALINK200)
     .hdmi_i2c_adapter_id      = 1,
 #elif defined(CONFIG_SH_STB7109E_REF) || defined(CONFIG_SH_ST_MB448)
     .hdmi_i2c_adapter_id      = 2,
@@ -264,7 +264,7 @@ static bool claimed_gpio_hotplug;
     defined(CONFIG_SH_CUBEREVO)         || defined(CONFIG_SH_CUBEREVO_MINI2)|| \
     defined(CONFIG_SH_CUBEREVO_MINI_FTA)|| \
     defined(CONFIG_SH_CUBEREVO_250HD)   || defined(CONFIG_SH_CUBEREVO_2000HD) || \
-    defined(CONFIG_SH_IPBOX9900)  ||  defined(CONFIG_SH_IPBOX99) || defined(CONFIG_SH_IPBOX55)
+    defined(CONFIG_SH_IPBOX9900)  ||  defined(CONFIG_SH_IPBOX99) || defined(CONFIG_SH_IPBOX55) || defined(CONFIG_SH_ARIVALINK200)
 #define SYSCONF_DEVICEID 0x19001000
 #else
 #define SYSCONF_DEVICEID 0
