@@ -9,7 +9,7 @@
 #undef  CUBEBOX
 #endif
 
-#if defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55)
+#if defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ARIVALINK200)
 #define IPBOX
 #else
 #undef IPBOX
