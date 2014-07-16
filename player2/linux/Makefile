@@ -55,6 +55,9 @@ endif
 ifdef IPBOX55
  PART1=1
 endif
+ifdef ARIVALINK200
+ PART1=1
+endif
 
 ifdef UFS912
  PART2=1
