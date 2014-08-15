@@ -810,13 +810,13 @@ BufferStatus_t   Buffer_Generic_c::GetOwnerList(unsigned int      ArraySize,
 
 BufferStatus_t       Buffer_Generic_c::FlushCache(void)
 {
-	OSDEV_FlushCacheRange((void*)BufferBlock->Address[CachedAddress], DataSize);
+	OS_FlushCacheRange((void*)BufferBlock->Address[CachedAddress], DataSize);
 	return BufferNoError;
 }
 
 BufferStatus_t       Buffer_Generic_c::PurgeCache(void)
 {
-	OSDEV_PurgeCacheRange((void*)BufferBlock->Address[CachedAddress], DataSize);
+	OS_PurgeCacheRange((void*)BufferBlock->Address[CachedAddress], DataSize);
 	return BufferNoError;
 }
 
