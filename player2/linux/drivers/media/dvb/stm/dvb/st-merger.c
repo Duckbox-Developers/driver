@@ -296,11 +296,9 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		len = len & ~SWTS_FDMA_ALIGNMENT;
 	}
 
-	nr_pages = (PAGE_ALIGN(start + len) -
-				(start & PAGE_MASK)) >> PAGE_SHIFT;
+	nr_pages = (PAGE_ALIGN(start + len) - (start & PAGE_MASK)) >> PAGE_SHIFT;
 	down_read(&current->mm->mmap_sem);
-	ret = get_user_pages(current, current->mm, start,
-						 nr_pages, READ, 0, handle->swts_pages, NULL);
+	ret = get_user_pages(current, current->mm, start, nr_pages, READ, 0, handle->swts_pages, NULL);
 	up_read(&current->mm->mmap_sem);
 
 	if (ret < nr_pages)
@@ -810,7 +808,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + PTI_ALT_OUT_CFG);
 		ctrl_outl(0x0, tsm_io + TS_1394_CFG);
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(0));
-#if  defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(IPBOX9900) || defined(VITAMIN_HD5000)
+#if defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(IPBOX9900) ||  defined(ARIVALINK200) || defined(VITAMIN_HD5000)
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(2));
 #endif
