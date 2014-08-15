@@ -407,13 +407,13 @@ inline int stv6419_get_vsw( int sw )
 	switch(sw)
 	{
 		case 0:
-			return; get_bits(regs, cReg2, 7, 1);
+			return get_bits(regs, cReg2, 7, 1);
 			break;
 		case 1:
-			return; get_bits(regs, cReg2, 5, 2);
+			return get_bits(regs, cReg2, 5, 2);
 			break;
 		case 2:
-			return; get_bits(regs, cReg2, 3, 2);
+			return get_bits(regs, cReg2, 3, 2);
 			break;
 		default:
 			return -EINVAL;
