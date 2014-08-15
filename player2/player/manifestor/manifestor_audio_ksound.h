@@ -171,14 +171,14 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 		unsigned int LookupCodedDataBufferLength(MME_DataBuffer_t *CodedDataBuffer);
 
 		ManifestorStatus_t FillOutCodedDataBuffer(MME_DataBuffer_t *PcmBuffer,
-												  tMixerFrameParams *PcmFrameParams,
-												  MME_DataBuffer_t *CodedDataBuffer,
-												  tMixerFrameParams *MixerFrameParams,
-												  PcmPlayer_c::OutputEncoding *OutputEncoding,
-												  BypassPhysicalChannel_t BypassChannel);
+				tMixerFrameParams *PcmFrameParams,
+				MME_DataBuffer_t *CodedDataBuffer,
+				tMixerFrameParams *MixerFrameParams,
+				PcmPlayer_c::OutputEncoding *OutputEncoding,
+				BypassPhysicalChannel_t BypassChannel);
 
 		ManifestorStatus_t UpdateCodedDataBuffer(MME_DataBuffer_t *CodedDataBuffer,
-												 MME_MixerInputStatus_t *CodedInputStatus);
+				MME_MixerInputStatus_t *CodedInputStatus);
 
 		ManifestorStatus_t FlushCodedDataBuffer(MME_DataBuffer_t *CodedDataBuffer);
 
@@ -212,10 +212,10 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 		ManifestorStatus_t   Halt(void);
 		ManifestorStatus_t   Reset(void);
 		ManifestorStatus_t   SetModuleParameters(unsigned int           ParameterBlockSize,
-												 void*                  ParameterBlock);
+				void*                  ParameterBlock);
 		ManifestorStatus_t   GetDecodeBufferPool(class BufferPool_c**   Pool);
 
-		/* Manifestor video class functions */
+	/* Manifestor audio class functions */
 		ManifestorStatus_t  OpenOutputSurface();
 		ManifestorStatus_t  CloseOutputSurface(void);
 		ManifestorStatus_t  CreateDecodeBuffers(unsigned int            Count,
@@ -261,7 +261,6 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 					E(STARVED);
 					E(PLAYING);
 #undef E
-
 				default:
 					return "INVALID";
 			}

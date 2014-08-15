@@ -41,14 +41,10 @@ FrameParserStatus_t  FrameParser_VideoDivxHd_c::ReadVopHeader(Mpeg4VopHeader_t  
 	unsigned char* ptr;
 	unsigned int bits;
 	FrameParserStatus_t Status;
-
 	Status = FrameParser_VideoDivx_c::ReadVopHeader(Vop);
-
 	if (Status == FrameParserNoError)
 	{
-
 		Bits.GetPosition(&ptr, &bits);
-
 		if (!bits)
 		{
 			report(severity_error, "FrameParser_VideoDivxHd_c::ReadVopHeader - A point in the code that should never be reached - Implementation error.\n");
@@ -61,60 +57,48 @@ FrameParserStatus_t  FrameParser_VideoDivxHd_c::ReadVopHeader(Mpeg4VopHeader_t  
 			bit_skip_no = 8 - bits;
 		}
 	}
-
 	return Status;
 }
 
 FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 {
 	unsigned int  Code;
-
 	ParsedFrameParameters->NewStreamParameters = false;
 	ParsedFrameParameters->NewFrameParameters = false;
 	ParsedFrameParameters->DataOffset = 0xafff0000;
-
 	/*
 	    report (severity_info, "Start Code List ");
 	    for (unsigned int j = 0 ; j < StartCodeList->NumberOfStartCodes; ++j)
 	        report(severity_info,"%x ",ExtractStartCodeCode(StartCodeList->StartCodes[j]));
 	    report (severity_info,"\n");
 	*/
-
 #ifdef DUMP_HEADERS
 	++inputCount;
 #endif
-
 	//      report( severity_error, "%d start codes found\n",StartCodeList->NumberOfStartCodes);
 	for (unsigned int i = 0; i < StartCodeList->NumberOfStartCodes; ++i)
 	{
-
 		Code = ExtractStartCodeCode(StartCodeList->StartCodes[i]);
 		//report ( severity_info, "Processing code: %x (%d of %d)\n",Code,i+1, StartCodeList->NumberOfStartCodes);
 		Bits.SetPointer(BufferData + ExtractStartCodeOffset(StartCodeList->StartCodes[i]) + 4);
-
 		if (Code == 0x31)
 		{
 			// Magic to pass version number around
 			DivXVersion = Bits.Get(8);
-
 			switch (DivXVersion)
 			{
 				case 3:
 					DivXVersion = 311;
 					break;
-
 				case 4:
 					DivXVersion = 412;
 					break;
-
 				case 5:
 					DivXVersion = 500;
 					break;
-
 				default:
 					DivXVersion = 100;
 			}
-
 			//report (severity_info, "DivX Version Number %d\n",DivXVersion);
 		}
 		else if (Code == DROPPED_FRAME_CODE)
@@ -126,7 +110,6 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 		else if ((Code & VOL_START_CODE_MASK) == VOL_START_CODE)
 		{
 			FrameParserStatus_t     Status = FrameParserNoError;
-
 			// report (severity_error,"%x VOL_START_CODE\n",VOL_START_CODE);
 			if (StreamParameters == NULL)
 			{
@@ -135,26 +118,21 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 				ParsedFrameParameters->SizeofStreamParameterStructure = sizeof(Mpeg4VideoStreamParameters_t);
 				ParsedFrameParameters->NewStreamParameters = true;
 			}
-
 			Status  = ReadVolHeader(&StreamParameters->VolHeader);
-
 			if (Status != FrameParserNoError)
 			{
 				ParsedFrameParameters->NewStreamParameters = false;
 				StreamParametersSet = false;
 				return Status;
 			}
-
 			// take some state which affects the decoding of VOP headers
 			QuantPrecision = StreamParameters->VolHeader.quant_precision;
 			Interlaced = StreamParameters->VolHeader.interlaced;
 			StreamParameters->MicroSecondsPerFrame = CurrentMicroSecondsPerFrame;
 			StreamParametersSet = true;
 			//report (severity_error,"Stream is %s\n",Interlaced?"Interlaced":"Progressive");
-
 			if (DivXVersion != 311)
 				ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
-
 		}
 		else if ((Code & VOP_START_CODE_MASK) == VOP_START_CODE)
 		{
@@ -164,7 +142,6 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			{
 				Mpeg4VopHeader_t Vop;
 				FrameParserStatus_t     Status = FrameParserNoError;
-
 				if (DivXVersion == 311)
 				{
 					unsigned char* ptr;
@@ -172,30 +149,24 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 					Vop.quantizer       = Bits.Get(5);
 					Bits.GetPosition(&ptr, &bit_skip_no);
 					ParsedFrameParameters->DataOffset = (unsigned int)(ptr - BufferData);
-
 				}
 				else
 				{
 					if (DivXVersion != 311 && (ParsedFrameParameters->DataOffset == 0xafff0000))
 						ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
-
 					Status  = ReadVopHeader(&Vop);
-
 					if (Status != FrameParserNoError)
 						return Status;
 				}
-
 				if (FrameParameters == NULL)
 				{
 					FrameParserStatus_t status  = GetNewFrameParameters((void **)&FrameParameters);
-
 					if (status != FrameParserNoError)
 					{
 						report(severity_error, "Failed to get new FrameParameters\n");
 						return status;
 					}
 				}
-
 				FrameParameters->VopHeader = Vop;
 				FrameParameters->bit_skip_no = bit_skip_no;
 				ParsedFrameParameters->FrameParameterStructure = FrameParameters;
@@ -205,9 +176,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 #ifdef DUMP_HEADERS
 				++vopCount;
 #endif
-
 				CommitFrameForDecode();
-
 			}
 			else
 			{
@@ -224,17 +193,14 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			// some avi files have real ones which upset things.... if it returns back 0
 			// which is from an unknown profile then use the last one, otherwise pick 25fps
 			unsigned int cnpf =  ReadVosHeader();
-
 			if (cnpf != 0)
 				CurrentMicroSecondsPerFrame = cnpf;
-
 			// Nick changed this to sanitize the frame rate (4..120)
 			if ((CurrentMicroSecondsPerFrame == 0) || !inrange(Rational_t(1000000, CurrentMicroSecondsPerFrame), 4, 120))
 			{
-				report(severity_error, "Current ms per frame not valid (%d) defaulting to 25fps\n");
+				report(severity_error, "Current ms per frame not valid (%u) defaulting to 25fps\n", CurrentMicroSecondsPerFrame);
 				CurrentMicroSecondsPerFrame = 40000;
 			}
-
 			//report (severity_error,"CurrentMicroSecondsPerFrame %d\n",CurrentMicroSecondsPerFrame);
 		}
 		else if ((Code & VO_START_CODE_MASK) == VO_START_CODE)
@@ -242,7 +208,6 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			report(severity_info, "%x VO_START_CODE\n", VO_START_CODE);
 			ReadVoHeader();
 		}
-
 		/*
 		                else if( (Code & USER_DATA_START_CODE_MASK) == USER_DATA_START_CODE )
 		                {
@@ -270,6 +235,5 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 		                }
 		*/
 	}
-
 	return FrameParserNoError;
 }

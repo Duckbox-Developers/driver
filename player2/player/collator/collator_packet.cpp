@@ -55,7 +55,6 @@ Collator_Packet_c::Collator_Packet_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_Packet_c::Reset();
 }
 
@@ -67,14 +66,10 @@ Collator_Packet_c::Collator_Packet_c(void)
 CollatorStatus_t Collator_Packet_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 //
-
 	Status = Collator_Base_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	Configuration.GenerateStartCodeList      = false;                   // Packets have no start codes
 	Configuration.MaxStartCodes              = 0;
 	Configuration.StreamIdentifierMask       = 0x00;
@@ -87,7 +82,6 @@ CollatorStatus_t Collator_Packet_c::Reset(void)
 	Configuration.TerminalCode               = 0x00;
 	Configuration.ExtendedHeaderLength       = 0;
 	Configuration.DeferredTerminateFlag      = false;
-
 	return CollatorNoError;
 }
 
@@ -97,35 +91,26 @@ CollatorStatus_t Collator_Packet_c::Reset(void)
 //
 
 CollatorStatus_t   Collator_Packet_c::Input(PlayerInputDescriptor_t  *Input,
-											unsigned int          DataLength,
-											void                     *Data,
-											bool              NonBlocking)
+		unsigned int          DataLength,
+		void                     *Data,
+		bool              NonBlocking)
 {
 	CollatorStatus_t Status;
-
 //
-
 	COLLATOR_ASSERT(!NonBlocking);
 	AssertComponentState("Collator_Packet_c::Input", ComponentRunning);
 	InputEntry(Input, DataLength, Data, NonBlocking);
-
 	//
 	// Extract the descriptor timing information
 	//
-
 	ActOnInputDescriptor(Input);
-
 	//
 	// Transfer the packet to the next coded data frame and pass on
 	//
-
 	Status  = AccumulateData(DataLength, (unsigned char *)Data);
-
 	if (Status == CollatorNoError)
 		Status  = InternalFrameFlush();
-
 //
-
 	InputExit();
 	return Status;
 }

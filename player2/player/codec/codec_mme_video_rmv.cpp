@@ -22,7 +22,7 @@ license from ST.
 Source file name : codec_mme_video_rmv.cpp
 Author :           Mark C
 
-Implementation of the VC-1 video codec class for player 2.
+Implementation of the Real Media video codec class for player 2.
 
 Date        Modification                                    Name
 ----        ------------                                    --------
@@ -88,7 +88,6 @@ static void MMECallbackStub(MME_Event_t      Event,
 							void            *UserData)
 {
 	Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
-
 	Self->CallbackFromMME(Event, CallbackData);
 	return;
 }
@@ -104,51 +103,38 @@ static void MMECallbackStub(MME_Event_t      Event,
 Codec_MmeVideoRmv_c::Codec_MmeVideoRmv_c(void)
 {
 	Configuration.CodecName                             = "Rmv video";
-
 	Configuration.DecodeOutputFormat                    = FormatVideo420_MacroBlock;
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &RmvCodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &RmvCodecDecodeContextDescriptor;
-
 	Configuration.MaxDecodeIndicesPerBuffer             = 2;
 	Configuration.SliceDecodePermitted                  = false;
 	Configuration.DecimatedDecodePermitted              = false;
-
 	Configuration.TransformName[0]                      = RV89DEC_MME_TRANSFORMER_NAME "0";
 	Configuration.TransformName[1]                      = RV89DEC_MME_TRANSFORMER_NAME "1";
 	Configuration.AvailableTransformers                 = 2;
-
 	// RV89Dec codec does not properly implement MME_GetTransformerCapability() and any attempt
 	// to do so results in a MME_NOT_IMPLEMENTED error. For this reason it is better not to
 	// ask.
 	Configuration.SizeOfTransformCapabilityStructure    = 0;
 	Configuration.TransformCapabilityStructurePointer   = NULL;
-
 	// The video firmware violates the MME spec. and passes data buffer addresses
 	// as parametric information. For this reason it requires physical addresses
 	// to be used.
 	Configuration.AddressingMode                        = PhysicalAddress;
-
 	// We do not need the coded data after decode is complete
 	Configuration.ShrinkCodedDataBuffersAfterDecode     = true;
-
 	InitializationParameters.MaxWidth                   = RMV_DEFAULT_PICTURE_WIDTH;
 	InitializationParameters.MaxHeight                  = RMV_DEFAULT_PICTURE_HEIGHT;
 	InitializationParameters.StreamFormatIdentifier     = RV89DEC_FID_REALVIDEO30;
 	InitializationParameters.isRV8                      = 1;            // default to RV8
 	InitializationParameters.NumRPRSizes                = 0;
-
 #if (RV89DEC_MME_VERSION > 11)
 	InitializationParameters.BFrameDeblockingMode   = RV89DEC_BFRAME_REGULAR_DEBLOCK;
 #endif
-
 	RestartTransformer                                  = false;
-
 	SegmentListPool                                     = NULL;
-
 	PictureNo                                           = 0;
 	Reset();
 }
@@ -180,7 +166,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::Reset(void)
 		BufferManager->DestroyPool(SegmentListPool);
 		SegmentListPool         = NULL;
 	}
-
 	return Codec_MmeVideo_c::Reset();
 }
 //}}}
@@ -197,43 +182,34 @@ CodecStatus_t   Codec_MmeVideoRmv_c::Reset(void)
 CodecStatus_t   Codec_MmeVideoRmv_c::RegisterOutputBufferRing(Ring_t                    Ring)
 {
 	CodecStatus_t Status;
-
 	Status = Codec_MmeVideo_c::RegisterOutputBufferRing(Ring);
-
 	if (Status != CodecNoError)
 		return Status;
-
 	//
 	// Create the buffer type for the segment list structure
 	//
 	// Find the type if it already exists
 	//
-
 	Status             = BufferManager->FindBufferDataType(BUFFER_RMV_SEGMENT_LIST, &SegmentListType);
-
 	if (Status != BufferNoError)
 	{
 		// It didn't already exist - create it
 		Status         = BufferManager->CreateBufferDataType(&RmvSegmentListInitialDescriptor, &SegmentListType);
-
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("Failed to create the %s buffer type.\n", RmvSegmentListInitialDescriptor.TypeName);
 			return Status;
 		}
 	}
-
 	// Now create the pool
 	Status              = BufferManager->CreatePool(&SegmentListPool, SegmentListType,
-													Configuration.DecodeContextCount, (sizeof(RV89Dec_Segment_Info)) * RMV_MAX_SEGMENTS,
-													NULL, NULL, Configuration.AncillaryMemoryPartitionName);
-
+						  Configuration.DecodeContextCount, (sizeof(RV89Dec_Segment_Info)) * RMV_MAX_SEGMENTS,
+						  NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		CODEC_ERROR("Failed to create segment list pool.\n");
 		return Status;
 	}
-
 	return CodecNoError;
 }
 //}}}
@@ -246,7 +222,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::RegisterOutputBufferRing(Ring_t            
 CodecStatus_t   Codec_MmeVideoRmv_c::HandleCapabilities(void)
 {
 	CODEC_TRACE("MME Transformer '%s' capabilities are :-\n", RV89DEC_MME_TRANSFORMER_NAME);
-
 	// Should never be called since we did not set the size of the capabilities structure.
 	return CodecError;
 }
@@ -263,20 +238,17 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutTransformerInitializationParameters(
 	// Fill out the actual command
 	MMEInitializationParameters.TransformerInitParamsSize      = sizeof(RV89Dec_InitTransformerParam_t);
 	MMEInitializationParameters.TransformerInitParams_p        = (MME_GenericParams_t)(&InitializationParameters);
-
 	CODEC_TRACE("FillOutTransformerInitializationParameters\n");
 	CODEC_TRACE("  MaxWidth              %6u\n", InitializationParameters.MaxWidth);
 	CODEC_TRACE("  MaxHeight             %6u\n", InitializationParameters.MaxHeight);
 	CODEC_TRACE("  FormatId              %6u\n", InitializationParameters.StreamFormatIdentifier);
 	CODEC_TRACE("  isRV8                 %6u\n", InitializationParameters.isRV8);
 	CODEC_TRACE("  NumRPRSizes           %6u\n", InitializationParameters.NumRPRSizes);
-
 	for (i = 0; i < (InitializationParameters.NumRPRSizes * 2); i += 2)
 	{
 		CODEC_DEBUG("  RPRSize[%d]           %6u\n", i, InitializationParameters.RPRSize[i]);
 		CODEC_DEBUG("  RPRSize[%d]           %6u\n", i + 1, InitializationParameters.RPRSize[i + 1]);
 	}
-
 	return CodecNoError;
 }
 //}}}
@@ -285,51 +257,38 @@ CodecStatus_t Codec_MmeVideoRmv_c::SendMMEStreamParameters(void)
 {
 	CodecStatus_t       CodecStatus     = CodecNoError;
 	unsigned int        MMEStatus       = MME_SUCCESS;
-
 	// There are no set stream parameters for Rmv decoder so the transformer is
 	// terminated and restarted when required (i.e. if width or height change).
-
 	if (RestartTransformer)
 	{
 		TerminateMMETransformer();
-
 		memset(&MMEInitializationParameters, 0x00, sizeof(MME_TransformerInitParams_t));
-
 		MMEInitializationParameters.Priority                    = MME_PRIORITY_NORMAL;
 		MMEInitializationParameters.StructSize                  = sizeof(MME_TransformerInitParams_t);
 		MMEInitializationParameters.Callback                    = &MMECallbackStub;
 		MMEInitializationParameters.CallbackUserData            = this;
-
 		FillOutTransformerInitializationParameters();
-
 		MMEStatus               = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-													  &MMEInitializationParameters, &MMEHandle);
-
+								  &MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus ==  MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", InitializationParameters.MaxWidth, InitializationParameters.MaxHeight);
 			CodecStatus                                         = CodecNoError;
 			RestartTransformer                                  = false;
 			ParsedFrameParameters->NewStreamParameters          = false;
-
 			MMEInitialized                                      = true;
 		}
 	}
-
 	//
 	// The base class has very helpfully acquired a stream
 	// parameters context for us which we must release.
 	// But only if everything went well, otherwise the callers
 	// will helpfully release it as well (Nick).
 	//
-
 	if (CodecStatus == CodecNoError)
 		StreamParameterContextBuffer->DecrementReferenceCount();
-
 //
-
 	return CodecStatus;
-
 }
 //}}}
 //{{{  FillOutSetStreamParametersCommand
@@ -348,10 +307,8 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 	int                         IsRV8           = 1;
 	unsigned int                NumRPRSizes;
 	unsigned int                i;
-
 	MaxWidth                    = SequenceHeader->MaxWidth;
 	MaxHeight                   = SequenceHeader->MaxHeight;
-
 	if ((SequenceHeader->BitstreamVersion == RV9_BITSTREAM_VERSION) &&
 			(SequenceHeader->BitstreamMinorVersion == RV9_BITSTREAM_MINOR_VERSION))
 	{
@@ -367,7 +324,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 	else if (SequenceHeader->BitstreamMinorVersion == RV89_RAW_BITSTREAM_MINOR_VERSION)
 	{
 		FormatId                = RV89DEC_FID_RV89COMBO;
-
 		if (SequenceHeader->BitstreamVersion == RV8_BITSTREAM_VERSION)
 			IsRV8               = 1;
 	}
@@ -377,11 +333,8 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 					SequenceHeader->BitstreamVersion, SequenceHeader->BitstreamMinorVersion);
 		return CodecError;
 	}
-
 	NumRPRSizes                 = IsRV8 ? SequenceHeader->NumRPRSizes : 0;
-
 #if 0
-
 	if ((MaxWidth    != InitializationParameters.MaxWidth)          ||
 			(MaxHeight   != InitializationParameters.MaxHeight)         ||
 			(FormatId    != InitializationParameters.StreamFormatIdentifier) ||
@@ -394,21 +347,15 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		InitializationParameters.StreamFormatIdentifier = FormatId;
 		InitializationParameters.isRV8                  = IsRV8;
 		InitializationParameters.NumRPRSizes            = NumRPRSizes;
-
 		for (i = 0; i < (NumRPRSizes * 2); i += 2)
 		{
 			InitializationParameters.RPRSize[i]         = SequenceHeader->RPRSize[i];
 			InitializationParameters.RPRSize[i + 1]       = SequenceHeader->RPRSize[i + 1];
 		}
-
 		InitializationParameters.pIntraMBInfo           = NULL;
-
 		RestartTransformer      = true;
-
 		return CodecNoError;
-
 	}
-
 //}}}
 //{{{  FillOutDecodeCommand
 // /////////////////////////////////////////////////////////////////////////
@@ -416,31 +363,24 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 //      Function to fill out the decode parameters
 //      structure for an rmv mme transformer.
 //
-
 //#define RV89_INTERFACE_V0_0_4
 	CodecStatus_t   Codec_MmeVideoRmv_c::FillOutDecodeCommand(void)
 	{
 		RmvCodecDecodeContext_t*            Context         = (RmvCodecDecodeContext_t*)DecodeContext;
 		RmvFrameParameters_t*               Frame           = (RmvFrameParameters_t*)ParsedFrameParameters->FrameParameterStructure;
-
 		RV89Dec_TransformParams_t*          Param;
 		RmvVideoSegmentList_t*              SegmentList;
 		Buffer_t                            SegmentInfoBuffer;
 		RV89Dec_Segment_Info*               SegmentInfo;
-
 		Buffer_t                            RasterBuffer;
 		BufferStructure_t                   RasterBufferStructure;
 		unsigned char*                      RasterBufferBase;
-
 		CodecStatus_t                       Status;
 		unsigned int                        i;
-
 		// For rmv we do not do slice decodes.
 		KnownLastSliceInFieldFrame                  = true;
-
 		Param                                       = &Context->DecodeParameters;
 		SegmentList                                 = &Frame->SegmentList;
-
 		// Fill out the straight forward command parameters
 #if defined (RV89_INTERFACE_V0_0_4)
 		Param->InBuffer.pCompressedData             = (unsigned char*)CodedData;
@@ -458,71 +398,56 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		Param->InBuffer.PictureOffset               = (unsigned int)CodedData;
 		Param->InBuffer.PictureSize                 = CodedDataLength;
 #endif
-
 		// Get the segment list buffer
 		Status                                      = SegmentListPool->GetBuffer(&SegmentInfoBuffer,
-													  (sizeof(RV89Dec_Segment_Info)) * (SegmentList->NumSegments + 1));
-
+				(sizeof(RV89Dec_Segment_Info)) * (SegmentList->NumSegments + 1));
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("Failed to get segment info buffer.\n");
 			return Status;
 		}
-
 		// Copy segment list
 		//Param->InBuffer.NumSegments                 = SegmentList->NumSegments;
 		Param->InBuffer.NumSegments                 = SegmentList->NumSegments;
 		SegmentInfoBuffer->ObtainDataReference(NULL, NULL, (void**)&SegmentInfo, UnCachedAddress);
-
 		for (i = 0; i < SegmentList->NumSegments; i++)
 		{
 			SegmentInfo[i].is_valid                 = 1;
 			SegmentInfo[i].offset                   = SegmentList->Segment[i].Offset;
 		}
-
 		SegmentInfo[i].is_valid                     = 0;
 		SegmentInfo[i].offset                       = CodedDataLength;
-
 		// Tell far side how to find list
 		SegmentInfoBuffer->ObtainDataReference(NULL, NULL, (void **)&Param->InBuffer.pSegmentInfo, PhysicalAddress);
-
 		// Attach allocated segment list buffer to decode context and let go of it
 		DecodeContextBuffer->AttachBuffer(SegmentInfoBuffer);
 		SegmentInfoBuffer->DecrementReferenceCount();
-
 		Status                                      = FillOutDecodeBufferRequest(&RasterBufferStructure);
-
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Codec_MmeVideoRmv_c::FillOutDecodeCommand - Failed to fill out a buffer request structure.\n");
 			return Status;
 		}
-
 		// Override the format so we get one sized for raster rather than macroblock
 		RasterBufferStructure.Format                = FormatVideo420_Planar;
 		RasterBufferStructure.ComponentBorder[0]    = 16;
 		RasterBufferStructure.ComponentBorder[1]    = 16;
 		// Ask the manifestor for a buffer of the new format
 		Status                                      = Manifestor->GetDecodeBuffer(&RasterBufferStructure, &RasterBuffer);
-
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Codec_MmeVideoRmv_c::FillOutDecodeCommand - Failed to obtain a decode buffer from the manifestor.\n");
 			return Status;
 		}
-
 		RasterBuffer->ObtainDataReference(NULL, NULL, (void **)&RasterBufferBase, PhysicalAddress);
-
 		// Fill in all buffer luma and chroma pointers
 		Param->Outbuffer.pLuma                      = (RV89Dec_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].BufferLumaPointer;
 		Param->Outbuffer.pChroma                    = (RV89Dec_ChromaAddress_t)BufferState[CurrentDecodeBufferIndex].BufferChromaPointer;
-
 #if defined (RV89_INTERFACE_V0_0_4)
 		// Move pointer to first byte inside border
 		RasterBufferStructure.ComponentOffset[0]    = RasterBufferStructure.Dimension[0] * 16 + 16;
 		RasterBufferStructure.ComponentOffset[1]   += RasterBufferStructure.Dimension[0] * 8 + 8;
 #endif
-
 #if 0
 		// Initialise decode buffers to bright pink
 		unsigned char*      LumaBuffer;
@@ -538,18 +463,14 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		memset(LumaBuffer,   0xff, LumaSize);
 		memset(ChromaBuffer, 0xff, LumaSize / 2);
 #endif
-
 		Param->CurrDecFrame.pLuma                   = (RV89Dec_LumaAddress_t)(RasterBufferBase + RasterBufferStructure.ComponentOffset[0]);
 		Param->CurrDecFrame.pChroma                 = (RV89Dec_ChromaAddress_t)(RasterBufferBase + RasterBufferStructure.ComponentOffset[1]);
-
 		// Attach planar buffer to decode buffer and let go of it
 		CurrentDecodeBuffer->AttachBuffer(RasterBuffer);
 		RasterBuffer->DecrementReferenceCount();
-
 		// Preserve raster buffer pointers for later use as reference frames
 		BufferState[CurrentDecodeBufferIndex].BufferRasterPointer                   = Param->CurrDecFrame.pLuma;
 		BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructurePointer      = Param->CurrDecFrame.pChroma;
-
 		// Fill out the reference frame lists - default to self if not present
 		if ((ParsedFrameParameters->NumberOfReferenceFrameLists == 0) || (DecodeContext->ReferenceFrameList[0].EntryCount == 0))
 		{
@@ -567,10 +488,8 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 			Param->PrevMinusOneRefFrame.pLuma       = (RV89Dec_LumaAddress_t)BufferState[i].BufferRasterPointer;
 			Param->PrevMinusOneRefFrame.pChroma     = (RV89Dec_ChromaAddress_t)BufferState[i].BufferMacroblockStructurePointer;
 		}
-
 		//{{{  DEBUG
 		{
-
 			report(severity_info,  "Codec Picture No %d, Picture type %d\n", PictureNo++, Frame->PictureHeader.PictureCodingType);
 #if 0
 			report(severity_info,  "Codec Picture No %d, Picture type %d\n", PictureNo++, Frame->PictureHeader.PictureCodingType);
@@ -578,12 +497,10 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 			report(severity_info,  "      InBuffer.CompressedDataBufferSize    = %d\n",   Param->InBuffer.CompressedDataBufferSize);
 			report(severity_info,  "      InBuffer.NumSegments                 = %d\n",   Param->InBuffer.NumSegments);
 			report(severity_info,  "      InBuffer.pSegmentInfo                = %08x\n", Param->InBuffer.pSegmentInfo);
-
 			for (i = 0; i < Param->InBuffer.NumSegments + 1; i++)
 			{
 				report(severity_info,  "      InBuffer.SegmentInfo[%d]             = %d, %d\n", i, SegmentInfo[i].is_valid, SegmentInfo[i].offset);
 			}
-
 			report(severity_info,  "      CurrDecFrame.pLuma                   = %08x\n", Param->CurrDecFrame.pLuma);
 			report(severity_info,  "      CurrDecFrame.pChroma                 = %08x\n", Param->CurrDecFrame.pChroma);
 			report(severity_info,  "      Outbuffer.pLuma                      = %08x\n", Param->Outbuffer.pLuma);
@@ -595,15 +512,12 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 #endif
 		}
 		//}}}
-
 		// Fill out the actual command
 		memset(&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));
-
 		Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize    = sizeof(RV89Dec_TransformStatusAdditionalInfo_t);
 		Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p      = (MME_GenericParams_t)(&Context->DecodeStatus);
 		Context->BaseContext.MMECommand.ParamSize                       = sizeof(RV89Dec_TransformParams_t);
 		Context->BaseContext.MMECommand.Param_p                         = (MME_GenericParams_t)(&Context->DecodeParameters);
-
 		return CodecNoError;
 	}
 //}}}
@@ -613,14 +527,11 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 //      The specific video function used to fill out a buffer structure
 //      request.
 //
-
 	CodecStatus_t   Codec_MmeVideoRmv_c::FillOutDecodeBufferRequest(BufferStructure_t        * Request)
 	{
 		Codec_MmeVideo_c::FillOutDecodeBufferRequest(Request);
-
 		//Request->ComponentBorder[0]         = 16;
 		//Request->ComponentBorder[1]         = 16;
-
 		return CodecNoError;
 	}
 //}}}
@@ -646,10 +557,8 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 //      Function to dump out the set stream
 //      parameters from an mme command.
 //
-
 	CodecStatus_t   Codec_MmeVideoRmv_c::DumpSetStreamParameters(void    * Parameters)
 	{
-
 		report(severity_info, "Stream Params:\n");
 		report(severity_info, "  MaxWidth              %6u\n", InitializationParameters.MaxWidth);
 		report(severity_info, "  MaxHeight             %6u\n", InitializationParameters.MaxHeight);
@@ -657,7 +566,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		report(severity_info, "  isRV8                 %6u\n", InitializationParameters.isRV8);
 		report(severity_info, "  NumRPRSizes           %6u\n", InitializationParameters.NumRPRSizes);
 		report(severity_info, "  RetsartTransformer    %6u\n", RestartTransformer);
-
 		return CodecNoError;
 	}
 //}}}
@@ -667,11 +575,9 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 //      Function to dump out the decode
 //      parameters from an mme command.
 //
-
 	CodecStatus_t   Codec_MmeVideoRmv_c::DumpDecodeParameters(void *   Parameters)
 	{
 		RV89Dec_TransformParams_t*  FrameParams     = (RV89Dec_TransformParams_t*)Parameters;
-
 		report(severity_info,  "Frame Params\n");
 #if defined (RV89_INTERFACE_V0_0_4)
 		report(severity_info,  "      InBuffer.pCompressedData             = %08x\n", FrameParams->InBuffer.pCompressedData);
@@ -688,7 +594,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		report(severity_info,  "      PrevRefFrame.pChroma                 = %08x\n", FrameParams->PrevRefFrame.pChroma);
 		report(severity_info,  "      PrevMinusOneRefFrame.pLuma           = %08x\n", FrameParams->PrevMinusOneRefFrame.pLuma);
 		report(severity_info,  "      PrevMinusOneRefFrame.pChroma         = %08x\n", FrameParams->PrevMinusOneRefFrame.pChroma);
-
 		return CodecNoError;
 	}
 //}}}
@@ -697,7 +602,6 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 	static const char* LookupError(unsigned int Error)
 	{
 #define E(e) case e: return #e
-
 		switch (Error)
 		{
 				E(RV89DEC_TIMEOUT_ERROR);
@@ -707,25 +611,21 @@ CodecStatus_t   Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 				E(RV89DEC_MEMORY_TRANSLATION_ERROR);
 				E(RV89DEC_TASK_CREATION_ERROR);
 				E(RV89DEC_UNKNOWN_ERROR);
-
-			default: return "RV89DEC_UNKNOWN_ERROR";
+			default:
+				return "RV89DEC_UNKNOWN_ERROR";
 		}
-
 #undef E
 	}
 	CodecStatus_t   Codec_MmeVideoRmv_c::CheckCodecReturnParameters(CodecBaseDecodeContext_t * Context)
 	{
-
 		MME_Command_t*                              MMECommand              = (MME_Command_t*)(&Context->MMECommand);
 		MME_CommandStatus_t*                        CmdStatus               = (MME_CommandStatus_t*)(&MMECommand->CmdStatus);
 		RV89Dec_TransformStatusAdditionalInfo_t*    AdditionalInfo_p        = (RV89Dec_TransformStatusAdditionalInfo_t*)CmdStatus->AdditionalInfo_p;
-
 		if (AdditionalInfo_p != NULL)
 		{
 			if (AdditionalInfo_p->ErrorCode != RV89DEC_NO_ERROR)
 				CODEC_TRACE("%s - %s  %x \n", __FUNCTION__, LookupError(AdditionalInfo_p->ErrorCode), AdditionalInfo_p->ErrorCode);
 		}
-
 		return CodecNoError;
 	}
 //}}}

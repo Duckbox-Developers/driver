@@ -122,7 +122,6 @@ static const char *LookupLpcmStreamType(LpcmStreamType_t t)
 			C(DVDBD);
 			C(SPDIFIN);
 #undef C
-
 		default:
 			return "INVALID";
 	}
@@ -139,17 +138,12 @@ static const char *LookupLpcmStreamType(LpcmStreamType_t t)
 Codec_MmeAudioLpcm_c::Codec_MmeAudioLpcm_c(void)
 {
 	Configuration.CodecName                             = "LPCM audio";
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &LpcmAudioCodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &LpcmAudioCodecDecodeContextDescriptor;
-
 //
-
 	DecoderId = ACC_LPCM_ID;
-
 	Reset();
 }
 
@@ -171,13 +165,10 @@ Codec_MmeAudioLpcm_c::~Codec_MmeAudioLpcm_c(void)
 CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
 	CodecStatus_t Status;
-
 //
-
 	LpcmAudioStreamParameters_t    *Parsed;
 	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
 	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
-
 	if (ParsedFrameParameters == NULL)
 	{
 		// At transformer init, stream properties might be unknown...
@@ -187,18 +178,14 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 	{
 		Parsed = (LpcmAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 	}
-
 	CODEC_TRACE("Init LPCM Decoder (as %s)\n", LookupLpcmStreamType(Parsed->Type));
-
 //
-
 	MME_LxLpcmConfig_t &Config = *((MME_LxLpcmConfig_t *) GlobalParams.DecConfig);
 	Config.DecoderId = ACC_LPCM_ID;
 	Config.StructSize = sizeof(MME_LxLpcmConfig_t);
 	Config.Config[LPCM_MODE] = LpcmModeLut[Parsed->Type];
 	Config.Config[LPCM_DRC_CODE] = Parsed->DrcCode;
 	bool DrcEnable;
-
 	if ((Parsed->Type == TypeLpcmDVDBD) || (Parsed->DrcCode == LPCM_DRC_VALUE_DISABLE))
 	{
 		DrcEnable = ACC_MME_FALSE;
@@ -207,7 +194,6 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 	{
 		DrcEnable = ACC_MME_TRUE;
 	}
-
 	Config.Config[LPCM_DRC_ENABLE] = DrcEnable;
 	Config.Config[LPCM_MUTE_FLAG] = Parsed->MuteFlag;
 	Config.Config[LPCM_EMPHASIS_FLAG] = Parsed->EmphasisFlag;
@@ -222,11 +208,9 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 	Config.Config[LPCM_NB_ACCESS_UNITS] = Parsed->NbAccessUnits;
 	// force resampling according to the manifestor target sampling frequency
 	unsigned char Resampling = ACC_LPCM_AUTO_RSPL;
-
 	if (Parsed->Type != TypeLpcmDVDAudio)
 	{
 		unsigned int StreamSamplingFreq = LpcmDVDSamplingFreq[Parsed->SamplingFrequency1];
-
 		if ((StreamSamplingFreq == 48000) &&
 				(AudioOutputSurface->SampleRateHz == 96000))
 		{
@@ -238,29 +222,21 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 			Resampling = ACC_LPCM_RSPL_96;
 		}
 	}
-
 	Config.Config[LPCM_OUT_RESAMPLING] = Resampling;
 	Config.Config[LPCM_NB_SAMPLES] = Parsed->NumberOfSamples;
-
 	//
-
 	Status = Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
-
 	if (Status != CodecNoError)
 	{
 		return Status;
 	}
-
 	//
-
 	unsigned char *PcmParams_p = ((unsigned char *) &Config) + Config.StructSize;
 	MME_LxPcmProcessingGlobalParams_Subset_t &PcmParams =
 		*((MME_LxPcmProcessingGlobalParams_Subset_t *) PcmParams_p);
-
 	// downmix must be disabled for LPCM
 	MME_DMixGlobalParams_t DMix = PcmParams.DMix;
 	DMix.Apply = ACC_MME_DISABLED;
-
 	return CodecNoError;
 }
 
@@ -276,21 +252,14 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutTransformerInitializationParameters
 {
 	CodecStatus_t Status;
 	MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
-
 //
-
 	MMEInitializationParameters.TransformerInitParamsSize = sizeof(Params);
 	MMEInitializationParameters.TransformerInitParams_p = &Params;
-
 //
-
 	Status = Codec_MmeAudio_c::FillOutTransformerInitializationParameters();
-
 	if (Status != CodecNoError)
 		return Status;
-
 //
-
 	return FillOutTransformerGlobalParameters(&Params.GlobalParams);
 }
 
@@ -303,34 +272,25 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutSetStreamParametersCommand(void)
 	CodecStatus_t Status;
 //LpcmAudioStreamParameters_t *Parsed = (LpcmAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 	LpcmAudioCodecStreamParameterContext_t  *Context = (LpcmAudioCodecStreamParameterContext_t *)StreamParameterContext;
-
 	//
 	// Examine the parsed stream parameters and determine what type of codec to instanciate
 	//
-
 	DecoderId = ACC_LPCM_ID;
-
 	//
 	// Now fill out the actual structure
 	//
-
 	memset(&(Context->StreamParameters), 0, sizeof(Context->StreamParameters));
 	Status = FillOutTransformerGlobalParameters(&(Context->StreamParameters));
-
 	if (Status != CodecNoError)
 		return Status;
-
 	//
 	// Fill out the actual command
 	//
-
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->StreamParameters);
-
 //
-
 	return CodecNoError;
 }
 
@@ -342,31 +302,23 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutDecodeCommand(void)
 {
 	LpcmAudioCodecDecodeContext_t   *Context        = (LpcmAudioCodecDecodeContext_t *)DecodeContext;
 	LpcmAudioFrameParameters_t    *Parsed         = (LpcmAudioFrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
-
 	//
 	// Initialize the frame parameters
 	//
-
 	memset(&Context->DecodeParameters, 0, sizeof(Context->DecodeParameters));
-
 	Context->DecodeParameters.FrameParams[ACC_LPCM_FRAME_PARAMS_NBSAMPLES_INDEX] = Parsed->NumberOfSamples;
 	Context->DecodeParameters.FrameParams[ACC_LPCM_FRAME_PARAMS_DRC_INDEX] = Parsed->DrcCode;
-
 	//
 	// Zero the reply structure
 	//
-
 	memset(&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
-
 	//
 	// Fill out the actual command
 	//
-
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->DecodeParameters);
-
 	return CodecNoError;
 }
 
@@ -385,43 +337,33 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeConte
 	LpcmAudioCodecDecodeContext_t *DecodeContext = (LpcmAudioCodecDecodeContext_t *) Context;
 	MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
 	ParsedAudioParameters_t *AudioParameters;
-
 	CODEC_DEBUG(">><<\n");
-
 	if (ENABLE_CODEC_DEBUG)
 	{
 		//DumpCommand(bufferIndex);
 	}
-
 	if (Status.DecStatus)
 	{
 		CODEC_ERROR("LPCM audio decode error (muted frame): %d\n", Status.DecStatus);
 		//DumpCommand(bufferIndex);
 		// don't report an error to the higher levels (because the frame is muted)
 	}
-
 	// SYSFS
 	AudioDecoderStatus = Status;
-
 	//
 	// Attach any codec derived metadata to the output buffer (or verify the
 	// frame analysis if the frame analyser already filled everything in for
 	// us).
 	//
-
 	AudioParameters = BufferState[DecodeContext->BaseContext.BufferIndex].ParsedAudioParameters;
-
 	// TODO: these values should be extracted from the codec's reply
 	AudioParameters->Source.BitsPerSample = /* AudioOutputSurface->BitsPerSample;*/ ((AUDIODEC_GET_OUTPUT_WS((&AudioDecoderInitializationParameters)) == ACC_WS32) ? 32 : 16);
 	AudioParameters->Source.ChannelCount =  AudioOutputSurface->ChannelCount;/*Codec_MmeAudio_c::GetNumberOfChannelsFromAudioConfiguration((enum eAccAcMode) Status.AudioMode);*/
 	AudioParameters->Organisation = Status.AudioMode;
-
 	// lpcm can be resampled directly in the codec to avoid having them resampled by the mixer
 	// so get the sampling frequency from the codec
 	AudioParameters->SampleCount = Status.NbOutSamples;
-
 	enum eAccFsCode SamplingFreqCode = (enum eAccFsCode) Status.SamplingFreq;
-
 	if (SamplingFreqCode < ACC_FS_reserved)
 	{
 		AudioParameters->Source.SampleRateHz = Codec_MmeAudio_c::ConvertCodecSamplingFreq(SamplingFreqCode);
@@ -431,7 +373,6 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeConte
 		AudioParameters->Source.SampleRateHz = 0;
 		CODEC_ERROR("LPCM audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
 	}
-
 	return CodecNoError;
 }
 

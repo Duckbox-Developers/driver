@@ -61,11 +61,11 @@ static struct file_operations   DvrFops;
 
 static struct dvb_device        DvrDevice =
 {
-priv:            NULL,
+	priv:            NULL,
 	users:           1,
 	readers:         1,
 	writers:         1,
-fops:            &DvrFops,
+	fops:            &DvrFops,
 };
 
 #ifdef __TDT__
@@ -81,12 +81,10 @@ struct dvb_device *DvrInit(const struct file_operations *KernelDvrFops)
 	 */
 	memcpy(&OriginalDvrFops, KernelDvrFops, sizeof(struct file_operations));
 	memcpy(&DvrFops, KernelDvrFops, sizeof(struct file_operations));
-
 	DvrFops.owner = THIS_MODULE;
 	DvrFops.open = DvrOpen;
 	DvrFops.release = DvrRelease;
 	DvrFops.write = DvrWrite;
-
 	return &DvrDevice;
 }
 
@@ -96,39 +94,28 @@ static int DvrOpen(struct inode *Inode, struct file *File)
 	struct dmxdev*              DmxDevice       = (struct dmxdev*)DvbDevice->priv;
 	struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
 	struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
-
 	DVB_DEBUG("\n");
 #if 0
-
 	if ((Context->Playback == NULL) && (Context->DemuxContext->Playback == NULL))
 	{
 		Result      = DvbPlaybackCreate(&Context->Playback);
-
 		if (Result < 0)
 			return Result;
-
 		Result      = DvbPlaybackSetSpeed(Context->Playback, Context->PlaySpeed);
-
 		if (Result < 0)
 			return Result;
-
 		if (Context != Context->DemuxContext)
 			Context->DemuxContext->Playback    = Context->Playback;
 	}
-
 	if ((Context->DemuxStream == NULL) && (Context->DemuxContext->DemuxStream == NULL))
 	{
 		Result      = DvbPlaybackAddDemux(Context->Playback, Context->DemuxContext->Id, &Context->DemuxStream);
-
 		if (Result < 0)
 			return Result;
-
 		if (Context != Context->DemuxContext)
 			Context->DemuxContext->DemuxStream  = Context->DemuxStream;
 	}
-
 #endif
-
 #ifdef __TDT__
 	//sylvester: wenn der stream vom user kommt soll WriteToDecoder nix
 	//tun, da das ja hier schon passiert. keine ahnung wie man das ansonsten
@@ -138,9 +125,7 @@ static int DvrOpen(struct inode *Inode, struct file *File)
 	Context->StartOffset = -1;
 	Context->EndOffset   = -1;
 #endif
-
-	return OriginalDvrFops.open(Inode, File);;
-
+	return OriginalDvrFops.open(Inode, File);
 }
 
 static int DvrRelease(struct inode *Inode, struct file *File)
@@ -150,29 +135,23 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 	struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
 	struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
 	int                         Result          = 0;
-
 #ifdef __TDT__
 	DVB_DEBUG("%p, %x\n", DvbDemux, File->f_flags & O_ACCMODE);
-
 //Dagobert: This is also responsible for the crash when ending timeshift.
 //Not sure if this is a good idea, must be tested
 #if 0
-
 	//dagobert: the dvr device can be opened for
 	//recording. so for this case it is a bad idea
 	//to destroy the live stream playback ;-)
 	if (Context->dvr_write == 1)
 	{
-
 		if (Context->DemuxStream != NULL)
 		{
 			Result      = PlaybackRemoveDemux(Context->Playback, Context->DemuxStream);
 			Context->DemuxStream                    = NULL;
-
 			if (Context != Context->DemuxContext)
 				Context->DemuxContext->DemuxStream  = NULL;
 		}
-
 		/* Check to see if audio and video have also finished so we can release the playback */
 		if ((Context->AudioStream == NULL) && (Context->VideoStream == NULL) && (Context->Playback != NULL))
 		{
@@ -180,7 +159,6 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 			   is still using it but we are done. */
 			if (PlaybackDelete(Context->Playback) == 0)
 				DVB_TRACE("Playback deleted successfully\n");
-
 			Context->Playback               = NULL;
 			Context->StreamType             = STREAM_TYPE_TRANSPORT;
 			Context->PlaySpeed              = DVB_SPEED_NORMAL_PLAY;
@@ -188,22 +166,17 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 			Context->PlayInterval.end       = DVB_TIME_NOT_BOUNDED;
 			Context->SyncContext            = Context;
 		}
-
 		Context->StreamType         = STREAM_TYPE_TRANSPORT;
 	}
-
 #endif
 	Result = OriginalDvrFops.release(Inode, File);
-
 	//sylvester: wenn der stream vom user kommt soll WriteToDecoder nix
 	//tun, da das ja hier schon passiert. keine ahnung wie man das ansonsten
 	//verhindern soll;-)
 	Context->dvr_write = 0;
-
 	return Result;
 #else
 	DVB_DEBUG("\n");
-
 	if (Context->DemuxStream != NULL)
 	{
 		Result      = DvbPlaybackRemoveDemux(Context->Playback, Context->DemuxStream);
@@ -213,7 +186,6 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 		    Context->DemuxContext->DemuxStream  = NULL;
 		*/
 	}
-
 	/* Check to see if audio and video have also finished so we can release the playback */
 	if ((Context->AudioStream == NULL) && (Context->VideoStream == NULL) && (Context->Playback != NULL))
 	{
@@ -225,7 +197,6 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 			if (DvbPlaybackDelete(Context->Playback) == 0)
 				DVB_TRACE("Playback deleted successfully\n");
 		}
-
 		Context->Playback                       = NULL;
 		Context->StreamType                     = STREAM_TYPE_TRANSPORT;
 		Context->PlaySpeed                      = DVB_SPEED_NORMAL_PLAY;
@@ -235,9 +206,7 @@ static int DvrRelease(struct inode *Inode, struct file *File)
 		Context->VideoPlayInterval.end          = DVB_TIME_NOT_BOUNDED;
 		Context->SyncContext                    = Context;
 	}
-
 	Context->StreamType         = STREAM_TYPE_TRANSPORT;
-
 	return OriginalDvrFops.release(Inode, File);
 #endif
 }
@@ -249,20 +218,15 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 	struct dvb_demux*           DvbDemux        = (struct dvb_demux*)DmxDevice->demux->priv;
 	struct DeviceContext_s*     Context         = (struct DeviceContext_s*)DvbDemux->priv;
 	int                         Result          = 0;
-
 #ifdef __TDT__
 	// attach to the video stream context
 	struct DeviceContext_s* Context0 = &Context->DvbContext->DeviceContext[0];
 #endif
-
 	if (!DmxDevice->demux->write)
 		return -EOPNOTSUPP;
-
 	if ((File->f_flags & O_ACCMODE) != O_WRONLY)
 		return -EINVAL;
-
 #ifdef __TDT__
-
 	while (1)
 	{
 		// Check whether a video stream is available and in FREEZED state.
@@ -277,10 +241,8 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 		{
 			int NumberOfBuffers = 0;
 			int BuffersInUse = 0;
-
 			DvbStreamGetDecodeBufferPoolStatus(Context0->VideoStream,
 											   &NumberOfBuffers, &BuffersInUse);
-
 			if (BuffersInUse > 5)
 			{
 				// 40 milliseconds corresponds to one full frame
@@ -298,26 +260,19 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 		else
 			break;
 	}
-
 #endif
-
 	if (mutex_lock_interruptible(&DmxDevice->mutex))
 		return -ERESTARTSYS;
-
 #if 0 // We should enable this for security reasons, just want to check the impact because it can be performed inline.
-
 	if (!access_ok(VERIFY_READ, Buffer, Count))
 		return -EINVAL;
-
 #endif
-
 #ifdef __TDT__
 	//sylvester: wenn der stream vom user kommt soll WriteToDecoder nix
 	//tun, da das ja hier schon passiert. keine ahnung wie man das ansonsten
 	//verhindern soll;-)
 	Context->dvr_write = 1;
 #endif
-
 	/*
 	 * Assume that we have a blueray packet if content size is divisible by 192 but not by 188
 	 * If ordinary ts call demux write function on whole lot.  If bdts give data to write function
@@ -326,7 +281,6 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 	if ((((Count % TRANSPORT_PACKET_SIZE) == 0) || ((Count % BLUERAY_PACKET_SIZE) != 0)) && !Context->EncryptionOn)
 	{
 #ifdef __TDT__
-
 		if (swts)
 		{
 			/* inject data through tsm */
@@ -334,74 +288,58 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 		}
 		else
 			demultiplexDvbPackets(DvbDemux, Buffer, Count / 188);
-
 		mutex_unlock(&DmxDevice->mutex);
-
 		//printk("Context %p, DvbDemux %p, DmxDevice %p\n",
 		//      Context, DvbDemux, DmxDevice);
-
 		//Dagobert: dvbtest does not care the return value but e2 does.
 		//StreamInject seems to return zero if it has injected all
 		//(must be investigate for further versions and maybe for this).
 		if (Result == 0)
 			Result = Count;
-
 #else
 		// Nicks modified version of chris's patch to reduce the injected size to chunks of a suitable size, and corectly accumulate the result as in blu-ray example below
 		size_t                  Transfer;
 		size_t                  RemainingSize   = Count;
 		const char __user*      BufferPointer   = Buffer;
-
 		while (RemainingSize != 0)
 		{
 			Transfer             = min(RemainingSize, (0x10000 - (0x10000 % TRANSPORT_PACKET_SIZE)));           // limit to whole number of packets less than 64kb
 			Result              += DmxDevice->demux->write(DmxDevice->demux, BufferPointer, Transfer);
-
 			RemainingSize       -= Transfer;
 			BufferPointer       += Transfer;
 		}
-
 		mutex_unlock(&DmxDevice->mutex);
-
 		if (Context->DemuxStream)
 		{
 			mutex_lock(&(Context->VideoWriteLock));
 			Result  = DvbStreamInject(Context->DemuxStream, Buffer, Count);
 			mutex_unlock(&(Context->VideoWriteLock));
 		}
-
 #endif
 		return Result;
-
 	}
 	else if ((Count % (192 * 32)) || (!Context->EncryptionOn))
 	{
 		int n;
-
 		for (n = 0; n < Count; n += 192)
 			Result += DmxDevice->demux->write(DmxDevice->demux, &Buffer[n + 4], TRANSPORT_PACKET_SIZE) + 4;
-
 		mutex_unlock(&DmxDevice->mutex);
-
 		if (Context->DemuxStream)
 		{
 			mutex_lock(&(Context->VideoWriteLock));
 			Result  = DvbStreamInject(Context->DemuxStream, Buffer, Count);
 			mutex_unlock(&(Context->VideoWriteLock));
 		}
-
 		return Result;
 	}
 	else
 	{
 		int n;
 		unsigned long ptr = (unsigned long)stm_v4l2_findbuffer((unsigned long)Buffer, Count, 0);
-
 		// We need to support partial injection, rather nastally unfortunatley
 		unsigned char *out = Context->dvr_out;
 		unsigned int Size  = Count;
 		int StartOffset = 0;
-
 		if (ptr && (ptr & ~31))
 		{
 			//tkdma_bluray_decrypt_data(&Context->dvr_out[0],(void*)ptr,Count / (32*192),0); // Need to do an interruptibility test
@@ -412,7 +350,6 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 			//copy_from_user(&Context->dvr_out[16],Buffer,16);
 			//tkdma_bluray_decrypt_data(&Context->dvr_out[0],Context->dvr_in,Count / (32*192),0); //Need to do an interruptibility test
 		}
-
 		if (Context->StartOffset > 0 && Context->StartOffset < Count)
 		{
 			out += Context->StartOffset;
@@ -420,29 +357,23 @@ static ssize_t DvrWrite(struct file *File, const char __user * Buffer, size_t Co
 			StartOffset = Context->StartOffset;
 			Context->StartOffset = -1;
 		}
-
 		if (Context->EndOffset > 0 && Context->EndOffset < Count && Context->EndOffset > StartOffset)
 		{
 			Size -= Context->EndOffset - StartOffset;
 			Context->EndOffset = -1;
 		}
-
 #if 1
-
 		for (n = 0; n < Size; n += 192)
 			Result += DmxDevice->demux->write(DmxDevice->demux, &out[n + 4], TRANSPORT_PACKET_SIZE) + 4;
-
 #endif
-
 		mutex_unlock(&DmxDevice->mutex);
-
 		if (Context->DemuxStream)
 		{
 			mutex_lock(&(Context->VideoWriteLock));
 			Result  = DvbStreamInject(Context->DemuxStream, &out[0], Size);
 			mutex_unlock(&(Context->VideoWriteLock));
 		}
-
 		return Result;
 	}
 }
+

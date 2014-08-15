@@ -160,7 +160,6 @@ static inline unsigned int      __swapbw(unsigned int a)        // ByteSwap
 	unsigned int tmp1 = (a << 8) & 0xFF00FF00;
 	unsigned int tmp2 = (a >> 8) & 0x00FF00FF;
 	unsigned int tmp3 = tmp1 | tmp2;
-
 	return ((tmp3 >> 16) | (tmp3 << 16));
 }
 
@@ -168,28 +167,21 @@ static inline unsigned int      __lzcntw(unsigned int a)        // CountLeadingZ
 {
 	unsigned int    i = 0;
 	unsigned int    b;
-
 	i = (a ? 0 : 1);
-
 	b  = a & 0xffff0000;
 	a  = (b ? b : a);
 	i += (b ? 0 : 16);
-
 	b  = a & 0xff00ff00;
 	a = (b ? b : a);
 	i += (b ? 0 : 8);
-
 	b  = a & 0xf0f0f0f0;
 	a  = (b ? b : a);
 	i += (b ? 0 : 4);
-
 	b  = a & 0xcccccccc;
 	a  = (b ? b : a);
 	i += (b ? 0 : 2);
-
 	b  = a & 0xaaaaaaaa;
 	i += (b ? 0 : 1);
-
 	return i;
 }
 
@@ -264,7 +256,7 @@ OS_Status_t   OS_InitializeEvent(OS_Event_t             *Event);
 OS_Status_t   OS_WaitForEvent(OS_Event_t             *Event,
 							  OS_Timeout_t            Timeout);
 OS_Status_t   OS_WaitForEventInterruptible(OS_Event_t             *Event,
-										   OS_Timeout_t            Timeout);
+		OS_Timeout_t            Timeout);
 bool          OS_TestEventSet(OS_Event_t             *Event);
 OS_Status_t   OS_SetEvent(OS_Event_t             *Event);
 OS_Status_t   OS_ResetEvent(OS_Event_t             *Event);

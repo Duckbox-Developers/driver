@@ -9,7 +9,6 @@ int proc_info_model_read(char *page, char **start, off_t off, int count, int *eo
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
-
 #if defined(CUBEREVO)
 	len = sprintf(page, "cuberevo\n");
 #elif defined(CUBEREVO_MINI)

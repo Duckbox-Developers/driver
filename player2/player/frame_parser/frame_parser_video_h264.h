@@ -310,12 +310,12 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 		void                  ProcessDeferredDFIandPTSUpto(unsigned long long        ExtendedPicOrderCnt);
 		void                  ProcessDeferredDFIandPTSDownto(unsigned long long        ExtendedPicOrderCnt);
 		void                  DeferDFIandPTSGeneration(Buffer_t                  Buffer,
-													   ParsedFrameParameters_t  *ParsedFrameParameters,
-													   ParsedVideoParameters_t  *ParsedVideoParameters,
-													   unsigned long long        ExtendedPicOrderCnt);
+				ParsedFrameParameters_t  *ParsedFrameParameters,
+				ParsedVideoParameters_t  *ParsedVideoParameters,
+				unsigned long long        ExtendedPicOrderCnt);
 
 		void                  SetupPanScanValues(ParsedFrameParameters_t  *ParsedFrameParameters,
-												 ParsedVideoParameters_t  *ParsedVideoParameters);
+				ParsedVideoParameters_t  *ParsedVideoParameters);
 		void                  CalculateCropUnits(void);
 	public:
 
@@ -341,8 +341,8 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 		FrameParserStatus_t   ResetCollatedHeaderState(void);
 		unsigned int      RequiredPresentationLength(unsigned char        StartCode);
 		FrameParserStatus_t   PresentCollatedHeader(unsigned char         StartCode,
-													unsigned char        *HeaderBytes,
-													FrameParserHeaderFlag_t  *Flags);
+				unsigned char        *HeaderBytes,
+				FrameParserHeaderFlag_t  *Flags);
 
 		//
 		// Stream specific functions

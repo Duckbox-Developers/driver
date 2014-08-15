@@ -44,7 +44,6 @@
 ./script.sh ./output_timer/output_timer_video.h
 ./script.sh ./output_timer/output_timer_audio.h
 ./script.sh ./output_timer/output_timer_base.h
-./script.sh ./output_timer/output_timer_dummy.h
 ./script.sh ./codec/codec_mme_video_flv1.h
 ./script.sh ./codec/codec_mme_base.h
 ./script.sh ./codec/codec_dvp_video.h

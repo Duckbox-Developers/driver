@@ -21,11 +21,9 @@ Date        Modification                                    Name
 StackGeneric_c::StackGeneric_c(unsigned int MaxEntries)
 {
 	OS_InitializeMutex(&Lock);
-
 	Limit       = MaxEntries;
 	Level       = 0;
 	Storage     = new unsigned int[Limit];
-
 	InitializationStatus = (Storage == NULL) ? StackNoMemory : StackNoError;
 }
 
@@ -35,7 +33,6 @@ StackGeneric_c::StackGeneric_c(unsigned int MaxEntries)
 StackGeneric_c::~StackGeneric_c(void)
 {
 	OS_TerminateMutex(&Lock);
-
 	if (Storage != NULL)
 		delete Storage;
 }
@@ -46,16 +43,13 @@ StackGeneric_c::~StackGeneric_c(void)
 StackStatus_t   StackGeneric_c::Push(unsigned int       Value)
 {
 	OS_LockMutex(&Lock);
-
 	if (Level == Limit)
 	{
 		OS_UnLockMutex(&Lock);
 		return StackTooManyEntries;
 	}
-
 	Storage[Level++]    = Value;
 	OS_UnLockMutex(&Lock);
-
 	return StackNoError;
 }
 
@@ -67,16 +61,13 @@ StackStatus_t   StackGeneric_c::Pop(unsigned int    *Value)
 	//
 	// If there is nothing in the Stack we return
 	//
-
 	if (Level != 0)
 	{
 		OS_LockMutex(&Lock);
 		*Value = Storage[--Level];
 		OS_UnLockMutex(&Lock);
-
 		return StackNoError;
 	}
-
 	return StackNothingToGet;
 }
 

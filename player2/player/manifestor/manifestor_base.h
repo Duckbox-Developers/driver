@@ -65,7 +65,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define MANIFESTOR_DEBUG(fmt, args...) ((void)(ENABLE_MANIFESTOR_DEBUG && \
-											   (report(severity_note, "%s%s: " fmt, MANIFESTOR_TAG, MANIFESTOR_FUNCTION, ##args), 0)))
+                                               (report(severity_note, "%s%s: " fmt, MANIFESTOR_TAG, MANIFESTOR_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define MANIFESTOR_TRACE(fmt, args...) (report(severity_note, "%s%s: " fmt, MANIFESTOR_TAG, MANIFESTOR_FUNCTION, ##args))
@@ -76,7 +76,7 @@ Date        Modification                                    Name
 #define MANIFESTOR_FATAL(fmt, args...) (report(severity_fatal, "%s%s: " fmt, MANIFESTOR_TAG, MANIFESTOR_FUNCTION, ##args))
 
 #define MANIFESTOR_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-														MANIFESTOR_FUNCTION, #x, __FILE__, __LINE__); while(0)
+                                                        MANIFESTOR_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // ---------------------------------------------------------------------
 //
@@ -203,7 +203,7 @@ class Manifestor_Base_c : public Manifestor_c
 		ManifestorStatus_t   Halt(void);
 		ManifestorStatus_t   Reset(void);
 		ManifestorStatus_t   SetModuleParameters(unsigned int           ParameterBlockSize,
-												 void*                  ParameterBlock);
+				void*                  ParameterBlock);
 
 		// Manifestor class functions
 		ManifestorStatus_t   GetDecodeBufferPool(BufferPool_t          *Pool);

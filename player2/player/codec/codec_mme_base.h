@@ -59,7 +59,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define CODEC_DEBUG(fmt, args...) ((void)(ENABLE_CODEC_DEBUG && \
-										  (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args), 0)))
+                                          (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define CODEC_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args))
@@ -67,7 +67,7 @@ Date        Modification                                    Name
 #define CODEC_ERROR(fmt, args...) (report(severity_error, "%s: " fmt, CODEC_FUNCTION, ##args))
 
 #define CODEC_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-												   CODEC_FUNCTION, #x, __FILE__, __LINE__); while(0)
+                                                   CODEC_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -75,9 +75,9 @@ Date        Modification                                    Name
 //
 
 #ifdef CONFIG_32BIT
-#define CODEC_MAX_DECODE_BUFFERS                        64
+#define MAX_DECODE_BUFFERS                        64
 #else
-#define CODEC_MAX_DECODE_BUFFERS                        32
+#define MAX_DECODE_BUFFERS                        32
 #endif
 
 #define CODEC_MAX_WAIT_FOR_MME_COMMAND_COMPLETION       100     /* Ms */
@@ -339,7 +339,7 @@ class Codec_MmeBase_c : public Codec_c
 		unsigned char                        *CodedData;
 		ParsedFrameParameters_t              *ParsedFrameParameters;
 
-		CodecBufferState_t                    BufferState[CODEC_MAX_DECODE_BUFFERS];
+		CodecBufferState_t                    BufferState[MAX_DECODE_BUFFERS];
 
 		unsigned int                          CurrentDecodeBufferIndex;
 		Buffer_t                              CurrentDecodeBuffer;
@@ -356,7 +356,7 @@ class Codec_MmeBase_c : public Codec_c
 		unsigned int              DecodeTimeLongIntegrationPeriod;
 		unsigned int              NextDecodeTime;
 		unsigned long long            LastDecodeCompletionTime;
-		unsigned long long            DecodeTimes[16 * CODEC_MAX_DECODE_BUFFERS];
+		unsigned long long            DecodeTimes[16 * MAX_DECODE_BUFFERS];
 		unsigned long long            ShortTotalDecodeTime;
 		unsigned long long            LongTotalDecodeTime;
 
@@ -447,7 +447,7 @@ class Codec_MmeBase_c : public Codec_c
 		CodecStatus_t   TranslateReferenceFrameLists(bool                      IncrementUseCountForReferenceFrame);
 
 		CodecStatus_t   SetOutputOnDecodesComplete(unsigned int              BufferIndex,
-												   bool                      TestForImmediateOutput);
+				bool                      TestForImmediateOutput);
 
 		virtual CodecStatus_t   SendMMEStreamParameters(void);              // DivX needs its own version
 		virtual CodecStatus_t   SendMMEDecodeCommand(void);                 // WMA/OGG need to enhance

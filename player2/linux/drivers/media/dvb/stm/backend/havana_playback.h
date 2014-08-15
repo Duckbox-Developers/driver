@@ -44,7 +44,7 @@ Date        Modification                                    Name
 #endif
 
 #define PLAYBACK_DEBUG(fmt, args...)      ((void) (ENABLE_PLAYBACK_DEBUG && \
-										   (report(severity_note, "HavanaPlayback_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+                                           (report(severity_note, "HavanaPlayback_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define PLAYBACK_TRACE(fmt, args...)      (report(severity_note, "HavanaPlayback_c::%s: " fmt, __FUNCTION__, ##args))
@@ -103,7 +103,7 @@ class HavanaPlayback_c
 		HavanaStatus_t              SetSpeed(int                             PlaySpeed);
 		HavanaStatus_t              GetSpeed(int*                            PlaySpeed);
 		HavanaStatus_t              SetNativePlaybackTime(unsigned long long              NativeTime,
-														  unsigned long long              SystemTime);
+				unsigned long long              SystemTime);
 		HavanaStatus_t              SetOption(play_option_t                   Option,
 											  unsigned int                    Value);
 		HavanaStatus_t              CheckEvent(struct PlayerEventRecord_s*     PlayerEvent);

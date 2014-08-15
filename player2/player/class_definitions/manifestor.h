@@ -104,7 +104,7 @@ class Manifestor_c : public BaseComponentClass_c
 		virtual ManifestorStatus_t   GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long *Time) = 0;
 
 		virtual ManifestorStatus_t   GetDecodeBuffer(BufferStructure_t        *RequestedStructure,
-													 Buffer_t                 *Buffer) = 0;
+				Buffer_t                 *Buffer) = 0;
 
 		virtual ManifestorStatus_t   GetDecodeBufferCount(unsigned int             *Count) = 0;
 

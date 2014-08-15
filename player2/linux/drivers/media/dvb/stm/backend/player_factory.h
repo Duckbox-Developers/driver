@@ -31,6 +31,19 @@ Date        Modification                                    Name
 #ifndef H_PLAYER_FACTORY
 #define H_PLAYER_FACTORY
 
+/*      Debug printing macros   */
+#ifndef ENABLE_FACTORY_DEBUG
+#define ENABLE_FACTORY_DEBUG            0
+#endif
+
+#define FACTORY_DEBUG(fmt, args...)     ((void) (ENABLE_FACTORY_DEBUG && \
+                                                 (report(severity_note, "Player factory:%s: " fmt, __FUNCTION__, ##args), 0)))
+
+/* Output trace information off the critical path */
+#define FACTORY_TRACE(fmt, args...)     (report(severity_note, "Player factory:%s: " fmt, __FUNCTION__, ##args))
+/* Output errors, should never be output in 'normal' operation */
+#define FACTORY_ERROR(fmt, args...)     (report(severity_error, "Player factory:%s: " fmt, __FUNCTION__, ##args))
+
 HavanaStatus_t RegisterBuiltInFactories(class   HavanaPlayer_c* HavanaPlayer);
 
 #endif

@@ -103,77 +103,60 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 	unsigned int            SpanningWord;
 	unsigned int            StartingWord;
 	unsigned int            SpanningCount;
-	unsigned int            CodeOffset;
 	unsigned char           Code;
+	unsigned int            CodeOffset;
 	bool            Loop;
 	bool            Exit;
 	bool            BlockTerminate;
 	FrameParserHeaderFlag_t HeaderFlags;
-
 //
-
 	st_relayfs_write(ST_RELAY_TYPE_PES_VIDEO_BUFFER, ST_RELAY_SOURCE_VIDEO_COLLATOR, (unsigned char *)Data, DataLength, 0);
-
 	//
 	// Initialize scan state
 	//
-
 	RemainingData       = (unsigned char *)Data;
 	RemainingLength     = DataLength;
 	Status      = CollatorNoError;
-
 	while (RemainingLength != 0)
 	{
 		//
 		// Allow any higher priority player processes in
 		// NOTE On entry we have the partition lock
 		//
-
 		OS_UnLockMutex(&PartitionLock);
 		OS_LockMutex(&PartitionLock);
-
 		//
 		// Do we have room to accumulate, if not we try passing on the
 		// accumulated partitions and extending the buffer we have.
 		//
-
 		MinimumHeadroom = GotPartialHeader ? max(MINIMUM_ACCUMULATION_HEADROOM, GotPartialDesiredSize) : MINIMUM_ACCUMULATION_HEADROOM;
-
 		if ((CodedFrameBufferFreeSpace < MinimumHeadroom) || (PartitionPointUsedCount >= (MAXIMUM_PARTITION_POINTS - 1)))
 		{
 			if (MinimumHeadroom > max(MINIMUM_ACCUMULATION_HEADROOM, (MaximumCodedFrameSize - 16)))
 				report(severity_fatal, "Collator2_PesVideo_c::ProcessInputForward - Required headroom too large (0x%08x bytes) - Probable implementation error.\n", MinimumHeadroom);
-
 			Status  = PartitionOutput();
-
 			if (Status != CollatorNoError)
 			{
 				report(severity_error, "Collator2_PesVideo_c::ProcessInputForward - Output of partitions failed.\n");
 				break;
 			}
-
 			if ((CodedFrameBufferFreeSpace < MinimumHeadroom) || (PartitionPointUsedCount >= (MAXIMUM_PARTITION_POINTS - 1)))
 			{
 				if (!NonBlockingInput)
-					report(severity_fatal, "Collator2_PesVideo_c::ProcessInputForward - About to return CollatorWouldBlock when it is ok to block - Probable implementation error.\n");
-
+					report(severity_fatal, "Collator2_PesVideo_c::ProcessInputForward - About to return CollatorWouldBlock when it is OK to block - Probable implementation error.\n");
 				Status  = CollatorWouldBlock;
 				break;
 			}
 		}
-
 		//
 		// Are we accumulating an extended header
 		//
-
 		if (GotPartialHeader)
 		{
 			if (GotPartialCurrentSize < GotPartialDesiredSize)
 			{
 				Transfer    =  min(RemainingLength, (GotPartialDesiredSize - GotPartialCurrentSize));
-
 				Status  = AccumulateData(Transfer, RemainingData);
-
 				if (Status != CollatorNoError)
 				{
 					EmptyCurrentPartition();               // Dump any collected data in the current partition
@@ -182,19 +165,15 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 					DiscardingData      = false;
 					break;
 				}
-
 				GotPartialCurrentSize   += Transfer;
 				RemainingData       += Transfer;
 				RemainingLength     -= Transfer;
 			}
-
 			if (GotPartialCurrentSize >= GotPartialDesiredSize)
 			{
 				Loop    = false;
 				Exit    = false;
-
 				StoredPartialHeader     = NextPartition->PartitionBase + NextPartition->PartitionSize - GotPartialCurrentSize;
-
 				switch (GotPartialType)
 				{
 					case HeaderZeroStartCode:
@@ -202,7 +181,6 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 						{
 							GotPartialType       = (StoredPartialHeader[6] == PES_PADDING_START_CODE) ? HeaderPaddingStartCode : HeaderPesStartCode;
 							GotPartialDesiredSize    = (StoredPartialHeader[6] == PES_PADDING_START_CODE) ? PES_PADDING_INITIAL_HEADER_SIZE : PES_INITIAL_HEADER_SIZE;
-
 							StoredPartialHeader     += 3;
 							GotPartialCurrentSize    = 4;
 						}
@@ -211,44 +189,35 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 							GotPartialDesiredSize    = 4 + FrameParser->RequiredPresentationLength(0x00);
 							GotPartialType       = HeaderGenericStartCode;
 						}
-
 						Loop                = true;
 						break;
-
 //
-
 					case HeaderPesStartCode:
 						if (GotPartialCurrentSize >= PES_INITIAL_HEADER_SIZE)
 							GotPartialDesiredSize   = PES_HEADER_SIZE(StoredPartialHeader);
-
 						if (GotPartialCurrentSize < GotPartialDesiredSize)
 						{
 							Loop            = true;
 							break;
 						}
-
 						DiscardingData          = false;
 						GotPartialHeader        = false;
 						MoveCurrentPartitionBoundary(-GotPartialCurrentSize);            // Wind the partition back to release the header
 						Status              = ReadPesHeader(StoredPartialHeader);
-
 						if (Status != CollatorNoError)
 						{
 							Exit            = true;
 							break;
 						}
-
 						if (DiscardingData)
 						{
 							EmptyCurrentPartition();               // Dump any collected data in the current partition
 							InitializePartition();
 							DiscardingData      = false;
 						}
-
 						//
 						// Do we need to write the pts into the current partition
 						//
-
 						if ((NextPartition->PartitionSize == 0) && PlaybackTimeValid)
 						{
 							NextPartition->CodedFrameParameters.PlaybackTimeValid   = PlaybackTimeValid;
@@ -258,50 +227,36 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 							NextPartition->CodedFrameParameters.DecodeTime          = DecodeTime;
 							DecodeTimeValid                                         = false;
 						}
-
 						break;
-
 //
-
 					case HeaderPaddingStartCode:
 						Skipping            = PES_PADDING_SKIP(StoredPartialHeader);
 						GotPartialHeader        = false;
 						MoveCurrentPartitionBoundary(-GotPartialCurrentSize);            // Wind the partition back to release the header
-
 						break;
-
 //
 					case HeaderGenericStartCode:
 						//
 						// Is it going to terminate a frame
 						//
-
 						Code                = StoredPartialHeader[3];
-
 						FrameParser->PresentCollatedHeader(Code, (StoredPartialHeader + 4), &HeaderFlags);
-
 						NextPartition->FrameFlags   |= HeaderFlags;
 						BlockTerminate      = ((HeaderFlags & FrameParserHeaderFlagPartitionPoint) != 0);
-
 						GotPartialHeader        = false;
-
 						if (BlockTerminate)
 						{
 							MoveCurrentPartitionBoundary(-GotPartialCurrentSize);            // Wind the partition back to release the header
 							memcpy(CopyOfStoredPartialHeader, StoredPartialHeader, GotPartialCurrentSize);
 							AccumulateOnePartition();
 							AccumulateData(GotPartialCurrentSize, CopyOfStoredPartialHeader);
-
 							PartitionPointSafeToOutputCount = PartitionPointUsedCount;
 							DiscardingData          = false;
 						}
-
 						//
 						// Accumulate it in any event
 						//
-
 						Status      = AccumulateStartCode(PackStartCode(NextPartition->PartitionSize - GotPartialCurrentSize, Code));
-
 						if (Status != CollatorNoError)
 						{
 							EmptyCurrentPartition();               // Dump any collected data in the current partition
@@ -309,17 +264,14 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 							Exit    = true;
 							break;
 						}
-
 						//
 						// If we had a block terminate, then we need to check that there is sufficient
 						// room to accumulate the new frame, or we may end up copying flipping great
 						// wodges of data later.
 						//
-
 						if (BlockTerminate && (CodedFrameBufferFreeSpace < (LargestFrameSeen + MINIMUM_ACCUMULATION_HEADROOM)))
 						{
 							Status  = PartitionOutput();
-
 							if (Status != CollatorNoError)
 							{
 								report(severity_error, "Collator2_PesVideo_c::ProcessInputForward - Output of partitions failed.\n");
@@ -327,50 +279,39 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 								break;
 							}
 						}
-
 						break;
 				}
-
 				if (Exit)
 					break;
-
 				if (Loop)
 					continue;
 			}
-
 			if (RemainingLength == 0)
 				break;
 		}
-
 		//
 		// Are we skipping padding
 		//
-
 		if (Skipping != 0)
 		{
 			Skip                 = min(Skipping, RemainingLength);
 			RemainingData       += Skip;
 			RemainingLength     -= Skip;
 			Skipping            -= Skip;
-
 			if (RemainingLength == 0)
 				break;
 		}
-
 		//
 		// Check for spanning header
 		//
-
 		SpanningWord             = 0xffffffff << (8 * min(NextPartition->PartitionSize, 3));
 		SpanningWord            |= NextPartition->PartitionBase[NextPartition->PartitionSize - 3] << 16;
 		SpanningWord            |= NextPartition->PartitionBase[NextPartition->PartitionSize - 2] << 8;
 		SpanningWord            |= NextPartition->PartitionBase[NextPartition->PartitionSize - 1];
-
 		StartingWord             = 0x00ffffff >> (8 * min((RemainingLength - 1), 3));
 		StartingWord            |= RemainingData[0] << 24;
 		StartingWord            |= RemainingData[1] << 16;
 		StartingWord            |= RemainingData[2] <<  8;
-
 		//
 		// Check for a start code spanning, or in the first word
 		// record the nature of the span in a counter indicating how many
@@ -378,9 +319,7 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 		// NOTE the 00 at the bottom indicates we have a byte for the code,
 		//      not what it is.
 		//
-
 		SpanningCount           = 0;
-
 		if ((SpanningWord << 8) == 0x00000100)
 		{
 			SpanningCount       = 1;
@@ -400,20 +339,14 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 			SpanningPlaybackTimeValid   = false;
 			SpanningDecodeTimeValid     = false;
 		}
-
 		//
 		// Check that if we have a spanning code, that the code is not to be ignored
 		//
-
 		if ((SpanningCount != 0) && inrange(RemainingData[SpanningCount - 1], Configuration.IgnoreCodesRangeStart, Configuration.IgnoreCodesRangeEnd))
-		{
 			SpanningCount       = 0;
-		}
-
 		//
 		// Handle a spanning start code
 		//
-
 		if (SpanningCount != 0)
 		{
 			//
@@ -423,11 +356,9 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 			RemainingData           += SpanningCount;
 			RemainingLength         -= SpanningCount;
 		}
-
 		//
 		// Handle search for next start code
 		//
-
 		else
 		{
 			//
@@ -435,7 +366,6 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 			// had no normal PTS for this frame, then copy the spanning time
 			// to the normal time.
 			//
-
 			if (!PlaybackTimeValid && SpanningPlaybackTimeValid)
 			{
 				PlaybackTimeValid       = SpanningPlaybackTimeValid;
@@ -446,58 +376,42 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 				SpanningPlaybackTimeValid   = false;
 				SpanningDecodeTimeValid     = false;
 			}
-
 			//
 			// Get a new start code
 			//
-
 			Status      = FindNextStartCode(&CodeOffset);
-
 			if (Status != CollatorNoError)
 			{
 				//
 				// No start code, copy remaining data into buffer, and exit
 				//
-
 				Status  = AccumulateData(RemainingLength, RemainingData);
-
 				if (Status != CollatorWouldBlock)
 					RemainingLength = 0;
-
 				if ((Status != CollatorNoError) && (Status != CollatorWouldBlock))
 					DiscardingData  = true;
-
 				break;
 			}
-
 			//
 			// Got a start code accumulate up to it, and process
 			//
-
 			Status      = AccumulateData(CodeOffset + 4, RemainingData);
-
 			if (Status != CollatorNoError)
 			{
 				if (Status != CollatorWouldBlock)
 					DiscardingData  = true;
-
 				break;
 			}
-
 			RemainingLength                     -= CodeOffset + 4;
 			RemainingData                       += CodeOffset + 4;
 		}
-
 		//
 		// Now process the code, whether from spanning, or from search
 		//
-
 		GotPartialHeader        = true;
 		GotPartialCurrentSize       = 4;
-
 		StoredPartialHeader     = NextPartition->PartitionBase + NextPartition->PartitionSize - GotPartialCurrentSize;
 		Code                        = StoredPartialHeader[3];
-
 		if (Code == 0x00)
 		{
 			GotPartialType      = HeaderZeroStartCode;
@@ -532,16 +446,12 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputForward(
 		{
 			// A generic start code
 			GotPartialType      = HeaderGenericStartCode;
-
 			GotPartialDesiredSize    = 4 + FrameParser->RequiredPresentationLength(Code);
 		}
 	}
-
 //
-
 	if (DataLengthRemaining != NULL)
 		*DataLengthRemaining    = RemainingLength;
-
 	return Status;
 }
 
@@ -565,68 +475,53 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 	unsigned int        AccumulationToCaptureCode;
 	bool            BlockTerminate;
 	FrameParserHeaderFlag_t HeaderFlags;
-
 //
-
 	st_relayfs_write(ST_RELAY_TYPE_PES_VIDEO_BUFFER, ST_RELAY_SOURCE_VIDEO_COLLATOR, (unsigned char *)Data, DataLength, 0);
-
 	//
 	// Initialize scan state
 	//
-
 	RemainingData       = (unsigned char *)Data;
 	RemainingLength     = DataLength;
 	Status      = CollatorNoError;
-
 	while (RemainingLength != 0)
 	{
 		//
 		// Allow any higher priority player processes in
 		// NOTE On entry we have the partition lock
 		//
-
 		OS_UnLockMutex(&PartitionLock);
 		OS_LockMutex(&PartitionLock);
-
 		//
 		// Do we have room to accumulate, if not we try passing on the
 		// accumulated partitions and extending the buffer we have.
 		//
-
 		if (CodedFrameBufferFreeSpace < MINIMUM_ACCUMULATION_HEADROOM)
 		{
 			Status  = PartitionOutput();
-
 			if (Status != CollatorNoError)
 			{
 				report(severity_error, "Collator2_PesVideo_c::ProcessInputBackward - Output of partitions failed.\n");
 				break;
 			}
-
 			if (CodedFrameBufferFreeSpace < MINIMUM_ACCUMULATION_HEADROOM)
 			{
 				if (!NonBlockingInput)
 					report(severity_fatal, "Collator2_PesVideo_c::ProcessInputBackward - About to return CollatorWouldBlock when it is ok to block - Probable implementation error.\n");
-
 				Status  = CollatorWouldBlock;
 				break;
 			}
 		}
-
 		//
 		// Check for spanning header
 		//
-
 		StartingWord             = 0xffffffff << (8 * min(RemainingLength, 3));
 		StartingWord            |= RemainingData[RemainingLength - 3] << 16;
 		StartingWord            |= RemainingData[RemainingLength - 2] <<  8;
 		StartingWord            |= RemainingData[RemainingLength - 1];
-
 		SpanningWord             = 0xffffffff >> (8 * min(NextPartition->PartitionSize, 3));
 		SpanningWord            |= NextPartition->PartitionBase[0] << 24;
 		SpanningWord            |= NextPartition->PartitionBase[1] << 16;
 		SpanningWord            |= NextPartition->PartitionBase[2] <<  8;
-
 		//
 		// Check for a start code spanning, or in the first word
 		// record the nature of the span in a counter indicating how many
@@ -634,9 +529,7 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 		// NOTE the 00 at the bottom indicates we have a byte for the code,
 		//      not what it is.
 		//
-
 		SpanningCount           = 0;
-
 		if ((StartingWord << 8) == 0x00000100)
 		{
 			SpanningCount       = 1;
@@ -649,127 +542,96 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 		{
 			SpanningCount       = 3;
 		}
-
 		SpanningCount   = min(SpanningCount, NextPartition->PartitionSize);
-
 		//
 		// Check that if we have a spanning code, that the code is not to be ignored
 		//
-
 		if ((SpanningCount != 0) &&
 				inrange(RemainingData[SpanningCount - 1], Configuration.IgnoreCodesRangeStart, Configuration.IgnoreCodesRangeEnd))
 		{
 			SpanningCount       = 0;
 		}
-
 		//
 		// Handle a spanning start code
 		//
-
 		if (SpanningCount != 0)
 		{
 			AccumulationToCaptureCode   = (4 - SpanningCount);
 		}
-
 		//
 		// Handle search for next start code
 		//
-
 		else
 		{
 			//
 			// Get a new start code
 			//
-
 			Status      = FindPreviousStartCode(&CodeOffset);
-
 			if (Status != CollatorNoError)
 			{
 				//
 				// No start code, copy remaining data into buffer, and exit
 				//
-
 				Status  = AccumulateData(RemainingLength, RemainingData);
-
 				if (Status != CollatorWouldBlock)
 					RemainingLength = 0;
-
 				if ((Status != CollatorNoError) && (Status != CollatorWouldBlock))
 					DiscardingData  = true;
-
 				break;
 			}
-
 			//
 			// Got a start code accumulate upto it, and process
 			//
-
 			AccumulationToCaptureCode   = (RemainingLength - CodeOffset);
 		}
-
 		//
 		// Now process the code, whether from spanning, or from search
 		//
-
 		Status  = AccumulateData(AccumulationToCaptureCode, RemainingData + RemainingLength - AccumulationToCaptureCode);
-
 		if (Status != CollatorNoError)
 		{
 			if (Status == CollatorWouldBlock)
 				break;
-
 			DiscardingData  = true;
 		}
-
 		RemainingLength     -= AccumulationToCaptureCode;
 		Code             = NextPartition->PartitionBase[3];
-
 		if (IS_PES_START_CODE_VIDEO(Code) ||
 				(Code == PES_PADDING_START_CODE))
 		{
 			DiscardingData  = (Code == PES_PADDING_START_CODE)                          ||  // It's a padding packet
 							  (NextPartition->PartitionSize < PES_INITIAL_HEADER_SIZE)              ||  // There isn't a full pes header
 							  (NextPartition->PartitionSize < PES_HEADER_SIZE(NextPartition->PartitionBase));
-
 			if (!DiscardingData)
 			{
 				Status      = ReadPesHeader(NextPartition->PartitionBase);
-
 				if (Status != CollatorNoError)
 					DiscardingData  = true;
 			}
-
 			if (!DiscardingData)
 			{
 				//
 				// Skip the packet header
 				//
-
 				MoveCurrentPartitionBoundary(-PES_HEADER_SIZE(NextPartition->PartitionBase));
-
 				//
 				// Do we have a PTS to write
 				//
-
 				if (PlaybackTimeValid &&
 						((PartitionPointUsedCount != PartitionPointMarkerCount) || (PartitionPointUsedCount == 0)))
 				{
 					NextPartition->CodedFrameParameters.PlaybackTimeValid               = false;        // Make sure the read header function did not pollute the new partition
 					NextPartition->CodedFrameParameters.DecodeTimeValid                 = false;
-
 					PartitionPoints[PartitionPointMarkerCount].CodedFrameParameters.PlaybackTimeValid   = PlaybackTimeValid;
 					PartitionPoints[PartitionPointMarkerCount].CodedFrameParameters.PlaybackTime    = PlaybackTime;
 					PartitionPoints[PartitionPointMarkerCount].CodedFrameParameters.DecodeTimeValid = DecodeTimeValid;
 					PartitionPoints[PartitionPointMarkerCount].CodedFrameParameters.DecodeTime      = DecodeTime;
-
 					PlaybackTimeValid                       = false;
 					DecodeTimeValid                     = false;
 				}
-
 				//
 				// Record the state
 				//
-
 				PartitionPointMarkerCount       = PartitionPointUsedCount;
 			}
 		}
@@ -778,53 +640,40 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 			//
 			// A generic start code
 			//
-
 			Status  = AccumulateStartCode(PackStartCode(NextPartition->PartitionSize, Code));
-
 			if (Status != CollatorNoError)
 			{
 				DiscardingData  = true;
-
 				EmptyCurrentPartition();               // Dump any collected data in the current partition
 				break;
 			}
-
 			//
 			// Is it going to terminate a frame
 			//
-
 			HeaderFlags         = 0;
-
 			if (NextPartition->PartitionSize > (4 + FrameParser->RequiredPresentationLength(Code)))
 				FrameParser->PresentCollatedHeader(Code, (NextPartition->PartitionBase + 4), &HeaderFlags);
-
 			NextPartition->FrameFlags   |= HeaderFlags;
 			BlockTerminate       = (HeaderFlags & FrameParserHeaderFlagPartitionPoint) != 0;
-
 			if (BlockTerminate)
 			{
 				//
 				// Adjust markers and accumulate the partition
 				//
-
 				PartitionPointSafeToOutputCount = PartitionPointMarkerCount;
 				PartitionPointMarkerCount   = PartitionPointUsedCount;
-
 				AccumulateOnePartition();
-
 				//
 				// We need to check that there is sufficient room to accumulate
 				// the new frame, or we may end up copying flipping great
 				// wodges of data later.
 				//
-
 				if (((HeaderFlags & FrameParserHeaderFlagConfirmReversiblePoint) != 0) ||
 						(CodedFrameBufferFreeSpace < (LargestFrameSeen + MINIMUM_ACCUMULATION_HEADROOM)))
 				{
 // Too fullness, how do we detect, and handle this ?
 // also too many partitions in the table
 					Status  = PartitionOutput();
-
 					if (Status != CollatorNoError)
 					{
 						report(severity_error, "Collator2_PesVideo_c::ProcessInputBackward - Output of partitions failed.\n");
@@ -834,12 +683,9 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 			}
 		}
 	}
-
 //
-
 	if (DataLengthRemaining != NULL)
 		*DataLengthRemaining    = RemainingLength;
-
 	return Status;
 }
 
@@ -852,11 +698,9 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 void   Collator2_PesVideo_c::AccumulateOnePartition(void)
 {
 	Collator2_Pes_c::AccumulateOnePartition();
-
 	DiscardingData  = false;
 	GotPartialHeader    = false;
 	Skipping        = 0;
-
 	//
 	// at this point we sit (approximately) between frames and should update the PTS/DTS with the values
 	// last extracted from the PES header. UseSpanningTime will (or at least should) be true when the

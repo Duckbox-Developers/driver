@@ -113,23 +113,23 @@ class FrameParser_AudioDtshd_c : public FrameParser_Audio_c
 											 int RemainingElementaryLength);
 
 		static FrameParserStatus_t ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-														  DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-														  BitStreamClass_c *Bits,
-														  unsigned int FrameHeaderLength,
-														  unsigned char * OtherFrameHeaderBytes,
-														  unsigned int RemainingFrameHeaderBytes,
-														  DtshdParseModel_t Model,
-														  unsigned char SelectedAudioPresentation);
+				DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+				BitStreamClass_c *Bits,
+				unsigned int FrameHeaderLength,
+				unsigned char * OtherFrameHeaderBytes,
+				unsigned int RemainingFrameHeaderBytes,
+				DtshdParseModel_t Model,
+				unsigned char SelectedAudioPresentation);
 
 		static FrameParserStatus_t ParseCoreHeader(BitStreamClass_c * Bits,
-												   DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-												   unsigned int SyncWord);
+				DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+				unsigned int SyncWord);
 
 		static void ParseExtensionSubstreamAssetHeader(BitStreamClass_c *Bits,
-													   unsigned int * SamplingFrequency,
-													   DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-													   unsigned int nuBits4ExSSFsize,
-													   unsigned char SelectedAudioPresentation);
+				unsigned int * SamplingFrequency,
+				DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+				unsigned int nuBits4ExSSFsize,
+				unsigned char SelectedAudioPresentation);
 
 		static unsigned short CrcUpdate4BitsFast(unsigned char val, unsigned short crc);
 
@@ -138,8 +138,8 @@ class FrameParser_AudioDtshd_c : public FrameParser_Audio_c
 		static unsigned int CountBitsSet_to_1(unsigned int ChannelMask);
 
 		static void GetSubstreamOnlyNumberOfSamples(BitStreamClass_c * Bits,
-													DtshdAudioParsedFrameHeader_t * ParsedFrameHeader,
-													unsigned char * FrameHeaderBytes);
+				DtshdAudioParsedFrameHeader_t * ParsedFrameHeader,
+				unsigned char * FrameHeaderBytes);
 
 };
 

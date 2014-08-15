@@ -77,7 +77,6 @@ static void MMECallbackStub(MME_Event_t      Event,
 							void            *UserData)
 {
 	Codec_MmeBase_c         *Self = (Codec_MmeBase_c *)UserData;
-
 	Self->CallbackFromMME(Event, CallbackData);
 	return;
 }
@@ -93,23 +92,17 @@ static void MMECallbackStub(MME_Event_t      Event,
 Codec_MmeVideoVp6_c::Codec_MmeVideoVp6_c(void)
 {
 	Configuration.CodecName                             = "Vp6 video";
-
 	Configuration.DecodeOutputFormat                    = FormatVideo420_Planar;
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &Vp6CodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &Vp6CodecDecodeContextDescriptor;
-
 	Configuration.MaxDecodeIndicesPerBuffer             = 2;
 	Configuration.SliceDecodePermitted                  = false;
 	Configuration.DecimatedDecodePermitted              = false;
-
 	Configuration.TransformName[0]                      = VP6_MME_TRANSFORMER_NAME "0";
 	Configuration.TransformName[1]                      = VP6_MME_TRANSFORMER_NAME "1";
 	Configuration.AvailableTransformers                 = 2;
-
 #if 0
 	// VP6 codec does not properly implement MME_GetTransformerCapability() and any attempt
 	// to do so results in a MME_NOT_IMPLEMENTED error. For this reason it is better not to
@@ -119,21 +112,16 @@ Codec_MmeVideoVp6_c::Codec_MmeVideoVp6_c(void)
 #endif
 	Configuration.SizeOfTransformCapabilityStructure    = sizeof(VP6_CapabilityParams_t);
 	Configuration.TransformCapabilityStructurePointer   = (void*)(&Vp6TransformCapability);
-
 	Configuration.AddressingMode                        = UnCachedAddress;
-
 	// We do not need the coded data after decode is complete
 	Configuration.ShrinkCodedDataBuffersAfterDecode     = true;
-
 	// To support the Unrestricted Motion Vector feature of the Vp6 codec the buffers must be allocated as follows
 	// For macroblock and planar buffers
 	// Luma         (width + 32) * (height + 32)
 	// Chroma       2 * ((width / 2) + 32) * ((height / 2) + 32)    = Luma / 2
 	DecodingWidth                                       = VP6_DEFAULT_PICTURE_WIDTH;
 	DecodingHeight                                      = VP6_DEFAULT_PICTURE_HEIGHT;
-
 	RestartTransformer                                  = true;
-
 	Reset();
 }
 //}}}
@@ -175,7 +163,6 @@ CodecStatus_t   Codec_MmeVideoVp6_c::HandleCapabilities(void)
 	CODEC_TRACE("    display_buffer_size       %d\n", Vp6TransformCapability.display_buffer_size);
 	CODEC_TRACE("    packed_buffer_size        %d\n", Vp6TransformCapability.packed_buffer_size);
 	CODEC_TRACE("    packed_buffer_total       %d\n", Vp6TransformCapability.packed_buffer_total);
-
 	return CodecNoError;
 }
 //}}}
@@ -191,15 +178,12 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutTransformerInitializationParameters(
 	Vp6InitializationParameters.CodedWidth                      = DecodingWidth;
 	Vp6InitializationParameters.CodedHeight                     = DecodingHeight;
 	Vp6InitializationParameters.CodecVersion                    = VP6f;
-
 	CODEC_TRACE("FillOutTransformerInitializationParameters\n");
 	CODEC_TRACE("  DecodingWidth              %6u\n", DecodingWidth);
 	CODEC_TRACE("  DecodingHeight             %6u\n", DecodingHeight);
-
 	// Fill out the actual command
 	MMEInitializationParameters.TransformerInitParamsSize       = sizeof(VP6_InitTransformerParam_t);
 	MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&Vp6InitializationParameters);
-
 	return CodecNoError;
 }
 //}}}
@@ -208,51 +192,38 @@ CodecStatus_t Codec_MmeVideoVp6_c::SendMMEStreamParameters(void)
 {
 	CodecStatus_t       CodecStatus     = CodecNoError;
 	unsigned int        MMEStatus       = MME_SUCCESS;
-
 	// There are no set stream parameters for Vp6 decoder so the transformer is
 	// terminated and restarted when required (i.e. if width or height change).
-
 	if (RestartTransformer)
 	{
 		TerminateMMETransformer();
-
 		memset(&MMEInitializationParameters, 0x00, sizeof(MME_TransformerInitParams_t));
-
 		MMEInitializationParameters.Priority                    = MME_PRIORITY_NORMAL;
 		MMEInitializationParameters.StructSize                  = sizeof(MME_TransformerInitParams_t);
 		MMEInitializationParameters.Callback                    = &MMECallbackStub;
 		MMEInitializationParameters.CallbackUserData            = this;
-
 		FillOutTransformerInitializationParameters();
-
 		MMEStatus               = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-													  &MMEInitializationParameters, &MMEHandle);
-
+								  &MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus ==  MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", DecodingWidth, DecodingHeight);
 			CodecStatus                                         = CodecNoError;
 			RestartTransformer                                  = false;
 			ParsedFrameParameters->NewStreamParameters          = false;
-
 			MMEInitialized                                      = true;
 		}
 	}
-
 	//
 	// The base class has very helpfully acquired a stream
 	// parameters context for us which we must release.
 	// But only if everything went well, otherwise the callers
 	// will helpfully release it as well (Nick).
 	//
-
 	if (CodecStatus == CodecNoError)
 		StreamParameterContextBuffer->DecrementReferenceCount();
-
 //
-
 	return CodecStatus;
-
 }
 //}}}
 //{{{  FillOutSetStreamParametersCommand
@@ -264,16 +235,13 @@ CodecStatus_t Codec_MmeVideoVp6_c::SendMMEStreamParameters(void)
 CodecStatus_t   Codec_MmeVideoVp6_c::FillOutSetStreamParametersCommand(void)
 {
 	Vp6StreamParameters_t*              Parsed  = (Vp6StreamParameters_t*)ParsedFrameParameters->StreamParameterStructure;
-
 	if ((Parsed->SequenceHeader.encoded_width != DecodingWidth) || (Parsed->SequenceHeader.encoded_height != DecodingHeight))
 	{
 		DecodingWidth           = Parsed->SequenceHeader.encoded_width;
 		DecodingHeight          = Parsed->SequenceHeader.encoded_height;
 		RestartTransformer      = true;
 	}
-
 	return CodecNoError;
-
 }
 //}}}
 //{{{  FillOutDecodeCommand
@@ -288,24 +256,18 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 	Vp6CodecDecodeContext_t*            Context        = (Vp6CodecDecodeContext_t*)DecodeContext;
 	Vp6FrameParameters_t*               Frame          = (Vp6FrameParameters_t*)ParsedFrameParameters->FrameParameterStructure;
 	Vp6StreamParameters_t*              Stream         = (Vp6StreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
-
 	VP6_TransformParam_t*               Param;
 	VP6_ParamPicture_t*                 Picture;
 	unsigned int                        i;
-
 	//
 	// For Vp6 we do not do slice decodes.
 	//
-
 	KnownLastSliceInFieldFrame                  = true;
-
 	//
 	// Fill out the straight forward command parameters
 	//
-
 	Param                                       = &Context->DecodeParameters;
 	Picture                                     = &Param->PictureParameters;
-
 	Picture->StructSize                         = sizeof(VP6_ParamPicture_t);
 	Picture->KeyFrame                           = Frame->PictureHeader.ptype == VP6_PICTURE_CODING_TYPE_I;
 	Picture->SampleVarianceThreshold            = Stream->SequenceHeader.variance_threshold;
@@ -314,21 +276,16 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 	Picture->MaxVectorLength                    = Stream->SequenceHeader.max_vector_length;
 	Picture->FilterMode                         = Stream->SequenceHeader.filter_mode;
 	Picture->FilterSelection                    = Stream->SequenceHeader.filter_selection;
-
 	// The following three items are retrieved directly from the range decoder in the frame parser
 	Picture->high                               = Frame->PictureHeader.high;
 	Picture->bits                               = Frame->PictureHeader.bits;
 	Picture->code_word                          = Frame->PictureHeader.code_word;
-
 	Picture->PictureStartOffset                 = Frame->PictureHeader.offset;
 	Picture->PictureStopOffset                  = CodedDataLength;
-
 	//
 	// Fill out the actual command
 	//
-
 	memset(&DecodeContext->MMECommand, 0x00, sizeof(MME_Command_t));
-
 	DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize      = sizeof(VP6_ReturnParams_t);
 	DecodeContext->MMECommand.CmdStatus.AdditionalInfo_p        = (MME_GenericParams_t*)&Context->DecodeStatus;
 	DecodeContext->MMECommand.StructSize                        = sizeof(MME_Command_t);
@@ -337,12 +294,9 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 	DecodeContext->MMECommand.DueTime                           = (MME_Time_t)0;
 	DecodeContext->MMECommand.NumberInputBuffers                = VP6_NUM_MME_INPUT_BUFFERS;
 	DecodeContext->MMECommand.NumberOutputBuffers               = VP6_NUM_MME_OUTPUT_BUFFERS;
-
 	DecodeContext->MMECommand.DataBuffers_p                     = (MME_DataBuffer_t**)DecodeContext->MMEBufferList;
-
 	DecodeContext->MMECommand.ParamSize                         = sizeof(VP6_TransformParam_t);
 	DecodeContext->MMECommand.Param_p                           = (MME_GenericParams_t)Param;
-
 	//{{{  Fill in details for all buffers
 	for (i = 0; i < VP6_NUM_MME_BUFFERS; i++)
 	{
@@ -355,9 +309,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 		DecodeContext->MMEBuffers[i].ScatterPages_p                 = &DecodeContext->MMEPages[i];
 		DecodeContext->MMEBuffers[i].StartOffset                    = 0;
 	}
-
 	//}}}
-
 	// Then overwrite bits specific to other buffers
 	//{{{  Input compressed data buffer - need pointer to coded data and its length
 	DecodeContext->MMEBuffers[VP6_MME_CODED_DATA_BUFFER].ScatterPages_p[0].Page_p              = (void*)CodedData;
@@ -366,29 +318,23 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 	//{{{  Current output decoded buffer
 	DecodeContext->MMEBuffers[VP6_MME_CURRENT_FRAME_BUFFER].ScatterPages_p[0].Page_p           = (void*)(void*)BufferState[CurrentDecodeBufferIndex].BufferLumaPointer;
 	DecodeContext->MMEBuffers[VP6_MME_CURRENT_FRAME_BUFFER].TotalSize                          = ((DecodingWidth + 32) * (DecodingHeight + 32) * 3) / 2;
-
 	//}}}
 	//{{{  Previous decoded buffer - get its planar buffer
 	if (DecodeContext->ReferenceFrameList[0].EntryCount > 0)
 	{
 		unsigned int    Entry   = DecodeContext->ReferenceFrameList[0].EntryIndicies[0];
-
 		DecodeContext->MMEBuffers[VP6_MME_REFERENCE_FRAME_BUFFER].ScatterPages_p[0].Page_p     = (void*)(void*)BufferState[Entry].BufferLumaPointer;
 		DecodeContext->MMEBuffers[VP6_MME_REFERENCE_FRAME_BUFFER].TotalSize                    = ((DecodingWidth + 32) * (DecodingHeight + 32) * 3) / 2;
 	}
-
 	//}}}
 	//{{{  Golden frame decoded buffer - get its planar buffer
 	if (DecodeContext->ReferenceFrameList[0].EntryCount == 2)
 	{
 		unsigned int    Entry   = DecodeContext->ReferenceFrameList[0].EntryIndicies[1];
-
 		DecodeContext->MMEBuffers[VP6_MME_GOLDEN_FRAME_BUFFER].ScatterPages_p[0].Page_p         = (void*)(void*)BufferState[Entry].BufferLumaPointer;
 		DecodeContext->MMEBuffers[VP6_MME_GOLDEN_FRAME_BUFFER].TotalSize                        = ((DecodingWidth + 32) * (DecodingHeight + 32) * 3) / 2;
 	}
-
 	//}}}
-
 	//{{{  Initialise remaining scatter page values
 	for (i = 0; i < VP6_NUM_MME_BUFFERS; i++)
 	{
@@ -398,9 +344,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsIn      = 0;
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsOut     = 0;
 	}
-
 	//}}}
-
 #if 0
 	// Initialise decode buffers to bright pink
 	unsigned int        LumaSize        = (DecodingWidth + 32) * (DecodingHeight + 32);
@@ -409,9 +353,7 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 	memset(LumaBuffer,   0xff, LumaSize);
 	memset(ChromaBuffer, 0xff, LumaSize / 2);
 #endif
-
 #if 0
-
 	for (i = 0; i < (VP6_NUM_MME_BUFFERS); i++)
 	{
 		CODEC_TRACE("Buffer List      (%d)  %x\n", i, DecodeContext->MMEBufferList[i]);
@@ -423,15 +365,12 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 		CODEC_TRACE("Scatter Pages p  (%d)  %x\n", i, DecodeContext->MMEBuffers[i].ScatterPages_p[0].Page_p);
 		CODEC_TRACE("Start Offset     (%d)  %x\n\n", i, DecodeContext->MMEBuffers[i].StartOffset);
 	}
-
 	CODEC_TRACE("Additional Size  %x\n", DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize);
 	CODEC_TRACE("Additional p     %x\n", DecodeContext->MMECommand.CmdStatus.AdditionalInfo_p);
 	CODEC_TRACE("Param Size       %x\n", DecodeContext->MMECommand.ParamSize);
 	CODEC_TRACE("Param p          %x\n", DecodeContext->MMECommand.Param_p);
 #endif
-
 	return CodecNoError;
-
 }
 //}}}
 //{{{  FillOutDecodeBufferRequest
@@ -444,10 +383,8 @@ CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeCommand(void)
 CodecStatus_t   Codec_MmeVideoVp6_c::FillOutDecodeBufferRequest(BufferStructure_t        *Request)
 {
 	Codec_MmeVideo_c::FillOutDecodeBufferRequest(Request);
-
 	Request->ComponentBorder[0]         = 32;
 	Request->ComponentBorder[1]         = 32;
-
 	return CodecNoError;
 }
 //}}}
@@ -489,13 +426,9 @@ unsigned int Vp6StaticPicture;
 CodecStatus_t   Codec_MmeVideoVp6_c::DumpDecodeParameters(void    *Parameters)
 {
 	VP6_TransformParam_t*               FrameParams;
-
 	FrameParams      = (VP6_TransformParam_t *)Parameters;
-
 	CODEC_DEBUG("********** Picture %d *********\n", Vp6StaticPicture);
-
 	Vp6StaticPicture++;
-
 	return CodecNoError;
 }
 //}}}

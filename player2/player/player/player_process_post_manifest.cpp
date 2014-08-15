@@ -46,9 +46,7 @@ Date        Modification                                    Name
 OS_TaskEntry(PlayerProcessPostManifest)
 {
 	PlayerStream_t      Stream = (PlayerStream_t)Parameter;
-
 	Stream->Player->ProcessPostManifest(Stream);
-
 	OS_TerminateThread();
 	return NULL;
 }
@@ -79,118 +77,88 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 	PlayerBufferRecord_t         *Table;
 	VideoOutputTiming_t      *OutputTiming;
 	unsigned long long        Now;
-
 //
-
 	LastEntryTime               = OS_GetTimeInMicroSeconds();
 	SequenceNumber              = INVALID_SEQUENCE_VALUE;
 	MaximumActualSequenceNumberSeen             = 0;
 	Time                    = INVALID_TIME;
 	AccumulatedBeforeControlMessagesCount   = 0;
 	AccumulatedAfterControlMessagesCount    = 0;
-
 	//
 	// Signal we have started
 	//
-
 	OS_LockMutex(&Lock);
-
 	Stream->ProcessRunningCount++;
-
 	if (Stream->ProcessRunningCount == Stream->ExpectedProcessCount)
 		OS_SetEvent(&Stream->StartStopEvent);
-
 	OS_UnLockMutex(&Lock);
-
 	//
 	// Main Loop
 	//
-
 	while (!Stream->Terminating)
 	{
 		RingStatus  = Stream->ManifestedBufferRing->Extract((uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT);
-
 		Now = OS_GetTimeInMicroSeconds();
-
 		if (Stream->ReTimeQueuedFrames && ((Now - Stream->ReTimeStart) > PLAYER_MAX_TIME_IN_RETIMING))
 			Stream->ReTimeQueuedFrames  = false;
-
 		if (RingStatus == RingNothingToGet)
 			continue;
-
 		Stream->BuffersComingOutOfManifestation = true;
-
 		Buffer->GetType(&BufferType);
 		Buffer->TransferOwnership(IdentifierProcessPostManifest);
-
 		//
 		// Deal with a coded frame buffer
 		//
-
 		if (BufferType == Stream->DecodeBufferType)
 		{
 			Stream->FramesFromManifestorCount++;
-
 #if 0
 			{
 				static unsigned long long     LastTime = 0;
 				static unsigned long long     LastActualTime = 0;
 				VideoOutputTiming_t          *OutputTiming;
-
 				Buffer->ObtainMetaDataReference(MetaDataVideoOutputTimingType, (void **)&OutputTiming);
-
 				report(severity_info, "Post Dn = %d %d, I = %d, TFF = %d, DS= %6lld, DAS = %6lld, S = %016llx, AS = %016llx\n",
 					   OutputTiming->DisplayCount[0], OutputTiming->DisplayCount[1],
 					   OutputTiming->Interlaced, OutputTiming->TopFieldFirst,
 					   OutputTiming->SystemPlaybackTime - LastTime,
 					   OutputTiming->ActualSystemPlaybackTime - LastActualTime,
 					   OutputTiming->SystemPlaybackTime, OutputTiming->ActualSystemPlaybackTime);
-
 				LastTime        = OutputTiming->SystemPlaybackTime;
 				LastActualTime  = OutputTiming->ActualSystemPlaybackTime;
 			}
 #endif
-
 			//
 			// Obtain a sequence number from the buffer
 			//
-
 			Status  = Buffer->ObtainAttachedBufferReference(Stream->CodedFrameBufferType, &OriginalCodedFrameBuffer);
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessPostManifest - Unable to obtain the the original coded frame buffer - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
 				continue;
 			}
-
 			Status  = OriginalCodedFrameBuffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessPostManifest - Unable to obtain the meta data \"SequenceNumber\" - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
 				continue;
 			}
-
 			Status  = Buffer->ObtainMetaDataReference(MetaDataParsedFrameParametersReferenceType, (void **)(&ParsedFrameParameters));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessPostManifest - Unable to obtain the meta data \"ParsedFrameParametersReference\" - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
 				continue;
 			}
-
 			//
 			// Check for whether or not we are in re-timing
 			//
-
 			if (Stream->ReTimeQueuedFrames && !SequenceNumberStructure->MarkerFrame)
 			{
 				Status  = Buffer->ObtainMetaDataReference((Stream->StreamType == StreamTypeVideo ? MetaDataVideoOutputTimingType : MetaDataAudioOutputTimingType),
-														  (void **)&OutputTiming);
-
+						  (void **)&OutputTiming);
 				if (Status != PlayerNoError)
 				{
 					report(severity_error, "Player_Generic_c::ProcessPostManifest - Unable to obtain the meta data \"%s\" - Implementation error\n",
@@ -198,7 +166,6 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 					Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
 					continue;
 				}
-
 				if (ValidTime(OutputTiming->ActualSystemPlaybackTime))
 				{
 					Stream->ReTimeQueuedFrames  = false;
@@ -207,7 +174,6 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 				{
 					Stream->OutputTimer->GenerateFrameTiming(Buffer);
 					Status  = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeManifestation);
-
 					if (!Stream->Terminating && (Status == OutputTimerNoError))
 					{
 						Stream->FramesToManifestorCount++;
@@ -216,75 +182,57 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 					}
 				}
 			}
-
 			//
 			// Extract the sequence number, and write the timing statistics
 			//
-
 //report( severity_info, "MQ Post Man %d - %d\n", Stream->StreamType, ParsedFrameParameters->DisplayFrameIndex );
-
 			SequenceNumberStructure->TimeEntryInProcess3    = OS_GetTimeInMicroSeconds();
 			SequenceNumberStructure->DeltaEntryInProcess3   = SequenceNumberStructure->TimeEntryInProcess3 - LastEntryTime;
 			LastEntryTime                   = SequenceNumberStructure->TimeEntryInProcess3;
 			SequenceNumber                  = SequenceNumberStructure->Value;
 			MaximumActualSequenceNumberSeen         = max(SequenceNumber, MaximumActualSequenceNumberSeen);
 			Time                        = ParsedFrameParameters->NativePlaybackTime;
-
-#ifndef __TDT__
 			ProcessStatistics(Stream, SequenceNumberStructure);
-#endif
-
 			if (SequenceNumberStructure->MarkerFrame)
 			{
 				Stream->DiscardingUntilMarkerFramePostM = false;
 				Time                    = INVALID_TIME;
 			}
-
 			//
 			// Process any outstanding control messages to be applied before this buffer
 			//
-
 			ProcessAccumulatedControlMessages(Stream,
 											  &AccumulatedBeforeControlMessagesCount,
 											  PLAYER_MAX_POSTM_MESSAGES,
 											  Stream->AccumulatedBeforePostMControlMessages,
 											  SequenceNumber, Time);
-
 			//
 			// Pass buffer back into output timer
 			// and release the buffer.
 			//
-
 			if (!SequenceNumberStructure->MarkerFrame)
 				Stream->OutputTimer->RecordActualFrameTiming(Buffer);
-
 			if (!SequenceNumberStructure->MarkerFrame && !Stream->CodecReset)
 				Stream->Codec->ReleaseDecodeBuffer(Buffer);
 			else
 				Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
-
 			//
 			// Process any outstanding control messages to be applied after this buffer
 			//
-
 			ProcessAccumulatedControlMessages(Stream,
 											  &AccumulatedAfterControlMessagesCount,
 											  PLAYER_MAX_POSTM_MESSAGES,
 											  Stream->AccumulatedAfterPostMControlMessages,
 											  SequenceNumber, Time);
 		}
-
 		//
 		// Deal with a player control structure
 		//
-
 		else if (BufferType == BufferPlayerControlStructureType)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
-
 			ProcessNow  = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
 						  ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
-
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
 			else
@@ -300,7 +248,6 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 					Count   = &AccumulatedAfterControlMessagesCount;
 					Table   = Stream->AccumulatedAfterPostMControlMessages;
 				}
-
 				AccumulateControlMessage(Buffer, ControlStructure, Count, PLAYER_MAX_POSTM_MESSAGES, Table);
 			}
 		}
@@ -310,26 +257,18 @@ void   Player_Generic_c::ProcessPostManifest(PlayerStream_t       Stream)
 			Buffer->DecrementReferenceCount();
 		}
 	}
-
 	report(severity_info, "3333 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount);
-
 	//
 	// Make sur no one will wait for these
 	//
-
 	Stream->ReTimeQueuedFrames  = false;
-
 	//
 	// Signal we have terminated
 	//
-
 	OS_LockMutex(&Lock);
-
 	Stream->ProcessRunningCount--;
-
 	if (Stream->ProcessRunningCount == 0)
 		OS_SetEvent(&Stream->StartStopEvent);
-
 	OS_UnLockMutex(&Lock);
 }
 

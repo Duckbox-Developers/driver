@@ -68,7 +68,6 @@ Collator_PesAudioAvs_c::Collator_PesAudioAvs_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_PesAudioAvs_c::Reset();
 }
 
@@ -87,7 +86,6 @@ Collator_PesAudioAvs_c::Collator_PesAudioAvs_c(void)
 CollatorStatus_t Collator_PesAudioAvs_c::FindNextSyncWord(int *CodeOffset)
 {
 	unsigned int i;
-
 	// check the last byte of any previous blocks
 	if (PotentialFrameHeaderLength)
 	{
@@ -96,10 +94,8 @@ CollatorStatus_t Collator_PesAudioAvs_c::FindNextSyncWord(int *CodeOffset)
 		{
 			*CodeOffset = -1;
 			return CollatorNoError;
-
 		}
 	}
-
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i < RemainingElementaryLength - 1; i++)
 	{
@@ -110,7 +106,6 @@ CollatorStatus_t Collator_PesAudioAvs_c::FindNextSyncWord(int *CodeOffset)
 			return CollatorNoError;
 		}
 	}
-
 	return CollatorError;
 }
 
@@ -127,45 +122,34 @@ CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(uns
 	CollatorStatus_t Status;
 	unsigned int ExtensionLength;
 	AvsAudioParsedFrameHeader_t ParsedFrameHeader;
-
 	//
 	// Check to see if the frame has a valid extension header
 	//
-
 	if (CollatorState == SeekingFrameEnd)
 	{
 		FPStatus = FrameParser_AudioAvs_c::ParseExtensionHeader(StoredFrameHeader, &ExtensionLength);
-
 		if (FPStatus == FrameParserNoError)
 		{
 			*FrameLength = ExtensionLength;
-
 			CollatorState = ReadSubFrame;
-
 			return CollatorNoError;
 		}
 	}
-
 	//
 	// Having handled extension headers we can handle headers.
 	//
-
 	FPStatus = FrameParser_AudioAvs_c::ParseFrameHeader(StoredFrameHeader,
 			   &ParsedFrameHeader);
-
 	if (FPStatus == FrameParserNoError)
 	{
 		*FrameLength     = ParsedFrameHeader.Length;
-
 		CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
-
 		Status = CollatorNoError;
 	}
 	else
 	{
 		Status = CollatorError;
 	}
-
 	return Status;
 }
 
@@ -183,19 +167,13 @@ void  Collator_PesAudioAvs_c::SetPesPrivateDataLength(unsigned char SpecificCode
 CollatorStatus_t Collator_PesAudioAvs_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 //
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesAudio_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = AVS_HEADER_SIZE;
-
 	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
 	Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
 	Configuration.BlockTerminateMask         = 0xff;         // Picture
@@ -206,6 +184,5 @@ CollatorStatus_t Collator_PesAudioAvs_c::Reset(void)
 	Configuration.TerminalCode               = 0;
 	Configuration.ExtendedHeaderLength       = 0;
 	Configuration.DeferredTerminateFlag      = false;
-
 	return CollatorNoError;
 }

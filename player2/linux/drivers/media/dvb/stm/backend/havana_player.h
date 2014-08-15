@@ -54,7 +54,7 @@ Date        Modification                                    Name
 #endif
 
 #define HAVANA_DEBUG(fmt, args...)      ((void) (ENABLE_HAVANA_DEBUG && \
-												 (report(severity_note, "HavanaPlayer_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+                                                 (report(severity_note, "HavanaPlayer_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define HAVANA_TRACE(fmt, args...)      (report(severity_note, "HavanaPlayer_c::%s: " fmt, __FUNCTION__, ##args))
@@ -121,38 +121,38 @@ class HavanaPlayer_c
 												PlayerComponent_t       Component,
 												void**                  Class);
 		HavanaStatus_t              RegisterFactory(const char*             Id,
-													const char*             SubId,
-													PlayerStreamType_t      StreamType,
-													PlayerComponent_t       Component,
-													unsigned int            Version,
-													bool                    Force,
-													void * (*NewFactory)(void));
+				const char*             SubId,
+				PlayerStreamType_t      StreamType,
+				PlayerComponent_t       Component,
+				unsigned int            Version,
+				bool                    Force,
+				void * (*NewFactory)(void));
 		HavanaStatus_t              DeRegisterFactory(const char*             Id,
-													  const char*             SubId,
-													  PlayerStreamType_t      StreamType,
-													  PlayerComponent_t       Component,
-													  unsigned int            Version);
+				const char*             SubId,
+				PlayerStreamType_t      StreamType,
+				PlayerComponent_t       Component,
+				unsigned int            Version);
 
 		HavanaStatus_t              GetManifestor(char*                   Media,
-												  char*                   Encoding,
-												  unsigned int            SurfaceId,
-												  class Manifestor_c**    Manifestor);
+				char*                   Encoding,
+				unsigned int            SurfaceId,
+				class Manifestor_c**    Manifestor);
 		HavanaStatus_t              GetDemuxContext(unsigned int            DemuxId,
-													class Demultiplexor_c** Demultiplexor,
-													DemultiplexorContext_t* DemultiplexorContext);
+				class Demultiplexor_c** Demultiplexor,
+				DemultiplexorContext_t* DemultiplexorContext);
 		HavanaStatus_t              CreatePlayback(HavanaPlayback_c**      HavanaPlayback);
 		HavanaStatus_t              DeletePlayback(HavanaPlayback_c*       HavanaPlayback);
 		HavanaStatus_t              CreateDisplay(char*                   Media,
-												  unsigned int            SurfaceId,
-												  HavanaDisplay_c**       HavanaDisplay);
+				unsigned int            SurfaceId,
+				HavanaDisplay_c**       HavanaDisplay);
 #ifdef __TDT__
 		int                         isDisplayCreated(char*                   Media,
-													 unsigned int            SurfaceId);
+				unsigned int            SurfaceId);
 #endif
 		HavanaStatus_t              DeleteDisplay(char*                   Media,
-												  unsigned int            SurfaceId);
+				unsigned int            SurfaceId);
 		HavanaStatus_t              SynchronizeDisplay(char*                   Media,
-													   unsigned int            SurfaceId);
+				unsigned int            SurfaceId);
 
 		player_event_signal_callback RegisterEventSignalCallback(player_event_signal_callback EventSignalCallback);
 		void                        EventSignalThread(void);

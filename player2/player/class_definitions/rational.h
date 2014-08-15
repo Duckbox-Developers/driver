@@ -82,13 +82,11 @@ class Rational_c
 			Negative    = Neg;
 			Numerator   = N;
 			Denominator = D;
-
 			//
 			// This is a cheat, whenever we do a calculation, we often
 			// have a value that may divide both top and bottom.
 			// Here we check it (note I provided three as a default possible.
 			//
-
 			if (R &&
 					(R * (Numerator / R) == Numerator) &&
 					(R * (Denominator / R) == Denominator))
@@ -110,11 +108,8 @@ class Rational_c
 			unsigned int        Shift       = 0;
 			unsigned int        SpareBitsForArithmetic;
 			unsigned long long  NewDenominator;
-
 //
-
 			Tmp = (Numerator | Denominator) >> 32;
-
 			if (Tmp != 0)
 			{
 				Shift   += ((Tmp & 0xffff0000) != 0) ? 16 : 0;
@@ -122,7 +117,6 @@ class Rational_c
 				Shift   += (((Tmp >> Shift) & 0x000000f0) != 0) ? 4 : 0;
 				Shift   += (((Tmp >> Shift) & 0x0000000c) != 0) ? 2 : 0;
 				Shift   += (((Tmp >> Shift) & 0x00000002) != 0) ? 1 : 0;
-
 				//
 				// We know how much we are going to shift, however we have a problem
 				// if the denominator is small and the numerator is large, we may well
@@ -131,22 +125,17 @@ class Rational_c
 				// accuracy (I know this sounds highly dubious, but it appears to work
 				// so there).
 				//
-
 				SpareBitsForArithmetic  = 31 - Shift;       // Careful we do not overflow doing this scale,
-
 				if (Denominator < (1ULL << SpareBitsForArithmetic))
 				{
 					NewDenominator  = Denominator & (0xffffffffULL << (Shift + 1));
 					Numerator   = (Numerator * NewDenominator) / Denominator;
 					Denominator = NewDenominator;
 				}
-
 //
-
 				Numerator       = (Numerator + (1ULL << Shift)) >> (Shift + 1);
 				Denominator     = (Denominator + (1ULL << Shift)) >> (Shift + 1);
 			}
-
 			//
 			// Empirically I noticed three oft repeated conditions
 			// which cause me to shift, and lose some accuracy.
@@ -156,7 +145,6 @@ class Rational_c
 			// both cases, and reduced the accuracy losing shift a
 			// great deal.
 			//
-
 			if ((Denominator != 1) && (Numerator != 1) && (Denominator != 0))
 			{
 				if ((Denominator * (Numerator / Denominator)) == Numerator)
@@ -323,7 +311,6 @@ class Rational_c
 			if (Negative ^ F.Negative)
 			{
 				bool    This_GT_F   = (Numerator * F.Denominator) > (F.Numerator * Denominator);
-
 				if (This_GT_F)
 				{
 					return Rational_c((Numerator * F.Denominator) - (F.Numerator * Denominator),
@@ -354,7 +341,6 @@ class Rational_c
 		{
 			Rational_c      Result = *this;
 			unsigned long long  AbsI = Abs(I);
-
 			if ((I < 0) == Negative)
 				Result.Numerator    += (AbsI * Denominator);
 			else if ((AbsI * Denominator) <= Numerator)
@@ -364,7 +350,6 @@ class Rational_c
 				Result.Numerator     = (AbsI * Denominator) - Numerator;
 				Result.Negative  = !Negative;
 			}
-
 			return Result;
 		}
 
@@ -396,7 +381,6 @@ class Rational_c
 			else
 			{
 				bool    This_GT_F   = (Numerator * F.Denominator) > (F.Numerator * Denominator);
-
 				if (This_GT_F)
 				{
 					return Rational_c((Numerator * F.Denominator) - (F.Numerator * Denominator),
@@ -420,7 +404,6 @@ class Rational_c
 		{
 			Rational_c      Result = *this;
 			unsigned long long  AbsI = Abs(I);
-
 			if ((I < 0) != Negative)
 				Result.Numerator    += (AbsI * Denominator);
 			else if ((AbsI * Denominator) <= Numerator)
@@ -430,7 +413,6 @@ class Rational_c
 				Result.Numerator     = (AbsI * Denominator) - Numerator;
 				Result.Negative  = !Negative;
 			}
-
 			return Result;
 		}
 
@@ -484,12 +466,10 @@ class Rational_c
 		Rational_c   operator/ (Rational_c  F)
 		{
 			long long Factor    = 10;
-
 			if (Numerator == F.Numerator)
 				Factor  = Numerator;
 			else if (Denominator == F.Denominator)
 				Factor  = Denominator;
-
 			return Rational_c(Numerator * F.Denominator, Denominator * F.Numerator, Factor, (Negative ^ F.Negative));
 		}
 
@@ -599,17 +579,19 @@ class Rational_c
 		int   RemainderDecimal(unsigned int Places = 6)
 		{
 			Rational_c  Tmp = Remainder();
-
 			switch (Places)
 			{
-				case    3:  Tmp.Numerator   *= 1000;                break;
-
-				case    6:  Tmp.Numerator   *= 1000000;             break;
-
+				case    3:
+					Tmp.Numerator   *= 1000;
+					break;
+				case    6:
+					Tmp.Numerator   *= 1000000;
+					break;
 				default:
-				case    9:  Tmp.Numerator   *= 1000000000;              break;
+				case    9:
+					Tmp.Numerator   *= 1000000000;
+					break;
 			}
-
 			return Tmp.Numerator / Tmp.Denominator;
 		}
 
@@ -711,7 +693,7 @@ static inline int   RemainderDecimal(Rational_c R)
 //
 
 static inline Rational_c   TruncateDenominator(Rational_c   R,
-											   unsigned int    N)
+		unsigned int    N)
 {
 	return R.TruncateDenominator(N);
 }

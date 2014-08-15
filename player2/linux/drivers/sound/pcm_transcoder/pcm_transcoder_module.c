@@ -24,26 +24,20 @@ MODULE_PARM_DESC(TransformerName, "Name to use for MME Transformer registration"
 static int __init pcm_transcoder_init(void)
 {
 	MME_ERROR   Status  = MME_SUCCESS;
-
 	Status              = PcmTranscoder_RegisterTransformer(TransformerName);
-
 	if (Status != MME_SUCCESS)
 	{
 		printk("Failed to register %s with MME (%x)\n", TransformerName, Status);
 		return -ENODEV;
 	}
-
 	printk("%s registered with MME successfully\n", TransformerName);
-
 	return 0;
 }
 
 static void __exit pcm_transcoder_exit(void)
 {
 	MME_ERROR   Status  = MME_SUCCESS;
-
 	Status              = MME_DeregisterTransformer(TransformerName);
-
 	if (Status != MME_SUCCESS)
 		printk("Failed to deregister %s with MME\n", TransformerName);
 }

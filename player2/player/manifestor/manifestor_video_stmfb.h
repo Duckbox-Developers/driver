@@ -41,7 +41,7 @@ Date        Modification                                    Name
 #undef  MANIFESTOR_TAG
 #define MANIFESTOR_TAG          "ManifestorVideoStmfb_c::"
 
-#define STMFB_BUFFER_HEADROOM   12              /* Number of buffers to wait after queue is full before we restart queueing buffers */
+#define STMFB_BUFFER_HEADROOM   12              /* Number of buffers to wait after queue is full before we restart queuing buffers */
 
 /// Video manifestor based on the stgfb core driver API.
 class Manifestor_VideoStmfb_c : public Manifestor_Video_c
@@ -109,7 +109,7 @@ class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 		ManifestorStatus_t  Disable(void);
 		ManifestorStatus_t  UpdateDisplayWindows(void);
 		ManifestorStatus_t  CheckInputDimensions(unsigned int                    Width,
-												 unsigned int                    Height);
+				unsigned int                    Height);
 
 		ManifestorStatus_t   SynchronizeOutput(void);
 
@@ -120,7 +120,7 @@ class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 		void                DisplayCallback(struct StreamBuffer_s*  Buffer,
 											TIME64                  VsyncTime);
 		void                InitialFrameDisplayCallback(struct StreamBuffer_s*  Buffer,
-														TIME64                  VsyncTime);
+				TIME64                  VsyncTime);
 		void                DoneCallback(struct StreamBuffer_s*  Buffer,
 										 TIME64                  VsyncTime,
 										 unsigned int            Status);
@@ -149,8 +149,8 @@ class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 #endif
 	protected:
 		void                SelectDisplayBufferPointers(struct BufferStructure_s*   BufferStructure,
-														struct StreamBuffer_s*       StreamBuff,
-														stm_display_buffer_t*       DisplayBuff);
+				struct StreamBuffer_s*       StreamBuff,
+				stm_display_buffer_t*       DisplayBuff);
 
 		void                ApplyPixelAspectRatioCorrection(stm_display_buffer_t*       DisplayBuff,
 				struct ParsedVideoParameters_s* VideoParameters);

@@ -25,7 +25,6 @@ static MME_ERROR SilenceGen_AbortCommand(void *ctx, MME_CommandId_t cmdId)
 	 * transform nor does it utilize deferred transforms. For this reason
 	 * there is nothing useful it can do here.
 	 */
-
 	return MME_INVALID_ARGUMENT;
 }
 
@@ -42,7 +41,6 @@ static MME_ERROR SilenceGen_InitTransformer(MME_UINT paramsSize, MME_GenericPara
 	{
 		return MME_INVALID_ARGUMENT;
 	}
-
 	/* supply the context pointer and return */
 	*pctx = NULL;
 	return MME_SUCCESS;
@@ -51,24 +49,20 @@ static MME_ERROR SilenceGen_InitTransformer(MME_UINT paramsSize, MME_GenericPara
 static MME_ERROR SilenceGen_Transform(void *ctx, MME_Command_t *cmd)
 {
 	int i, j;
-
 	for (i = 0; i < cmd->NumberOutputBuffers; i++)
 	{
 		MME_DataBuffer_t *dbuf = cmd->DataBuffers_p[cmd->NumberInputBuffers + i];
-
 		for (j = 0; j < dbuf->NumberOfScatterPages; j++)
 		{
 			MME_ScatterPage_t *page = dbuf->ScatterPages_p + j;
 			memset(page->Page_p, 0, page->Size);
 		}
 	}
-
 #ifdef __KERNEL__
 	// TODO: most of the Linux cache flush functions "don't do what you think they do". We take a
 	//       conservative approach here.
 	OSDEV_FlushCacheAll();
 #endif
-
 	return MME_SUCCESS;
 }
 
@@ -78,13 +72,11 @@ static MME_ERROR SilenceGen_ProcessCommand(void *ctx, MME_Command_t *cmd)
 	{
 		case MME_TRANSFORM:
 			return SilenceGen_Transform(ctx, cmd);
-
 		case MME_SET_GLOBAL_TRANSFORM_PARAMS:
 		case MME_SEND_BUFFERS: /* not supported by this transformer */
 		default:
 			break;
 	}
-
 	return MME_INVALID_ARGUMENT;
 }
 

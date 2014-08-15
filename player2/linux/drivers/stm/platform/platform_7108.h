@@ -30,8 +30,7 @@ struct platform_device cap_device_7108 =
 	.num_resources =  1,
 	.resource      = (struct resource[])
 	{
-		[0] =
-		{
+		[0] = {
 			.start = 0xFD545E00,
 			.end   = 0xFD545EFF,
 			.flags = IORESOURCE_MEM,
@@ -47,11 +46,9 @@ static struct platform_device *platform_7108[] __initdata =
 
 static __init int platform_init_7108(void)
 {
-
 	// H264 PP clock now on clockgen A.
 	// Recommended speed is 200 Mhz.
 	// CLK_DIV_HS[2] - PLL0 HS 1000/5 = 200 MHz
-
 	/*
 	    // iomap so memory available
 	    int *data = (int*)ioremap(0xfd546000,0x1000);

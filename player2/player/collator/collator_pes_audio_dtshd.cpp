@@ -70,7 +70,6 @@ Collator_PesAudioDtshd_c::Collator_PesAudioDtshd_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_PesAudioDtshd_c::Reset();
 }
 
@@ -84,17 +83,14 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 {
 	int i;
 	unsigned char DtshdHeader[DTSHD_FRAME_HEADER_SIZE];
-
 	int RemainingInPotential = PotentialFrameHeaderLength;
 	unsigned char * PotentialFramePtr = PotentialFrameHeader;
 	unsigned char * ElementaryPtr;
 	int Offset;
-
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - DTSHD_FRAME_HEADER_SIZE); i++)
 	{
 		unsigned int SyncWord;
-
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least DTSHD_FRAME_HEADER_SIZE bytes to get the stream type...*/
@@ -107,21 +103,16 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 		{
 			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
 		}
-
 		Bits.SetPointer(ElementaryPtr);
 		SyncWord = Bits.Get(32);
-
 		if (((SyncWord == DTSHD_START_CODE_CORE) && (Bits.Show(6) == DTSHD_START_CODE_CORE_EXT)) ||
 				(SyncWord == DTSHD_START_CODE_SUBSTREAM) ||
 				((SyncWord == DTSHD_START_CODE_CORE_14_1) && (Bits.Show(12) == DTSHD_START_CODE_CORE_14_2_EXT)))
 		{
 			Offset = (RemainingInPotential > 0) ? (-RemainingInPotential) : (i - PotentialFrameHeaderLength);
-
 			COLLATOR_DEBUG(">>Got Synchronization, i = %d, Offset = %d <<\n", i, Offset);
 			*CodeOffset = Offset;
-
 			VerifyDvdSyncWordPrediction(Offset);
-
 			if (SyncWord == DTSHD_START_CODE_SUBSTREAM)
 			{
 				GotCoreFrameSize = true;
@@ -130,21 +121,16 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 			{
 				GotCoreFrameSize = false;
 			}
-
 			// Getting disynchronized resets previous data...
 			CoreFrameSize = 0;
 			memset(&SyncFrameHeader, 0, sizeof(DtshdAudioSyncFrameHeader_t));
-
 			return CollatorNoError;
 		}
-
 		RemainingInPotential--;
 		PotentialFramePtr++;
 	}
-
 	/* means we searched unsuccessfully for any sync inside the private data area */
 	AdjustDvdSyncWordPredictionAfterConsumingData(-RemainingElementaryLength);
-
 	return CollatorError;
 }
 
@@ -158,23 +144,19 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindAnyNextSyncWord(int *CodeOffset, 
 {
 	int i, OffsetIntoHeader = 0;
 	unsigned char DtshdHeader[DTSHD_RAW_SYNCHRO_BYTES_NEEDED];
-
 	int             RemainingInPotential = FrameHeaderLength;
 	unsigned char * PotentialFramePtr = StoredFrameHeader;
 	unsigned char * ElementaryPtr;
-
 	// if we just got synchronized, skip the first synchro bytes
 	if (CollatorState == GotSynchronized)
 	{
 		OffsetIntoHeader = DTSHD_RAW_SYNCHRO_BYTES_NEEDED;
 		RemainingInPotential -= DTSHD_RAW_SYNCHRO_BYTES_NEEDED;
 	}
-
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = OffsetIntoHeader; i <= (int)(RemainingElementaryLength + FrameHeaderLength - DTSHD_RAW_SYNCHRO_BYTES_NEEDED); i++)
 	{
 		unsigned int SyncWord;
-
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least DTSHD_RAW_SYNCHRO_BYTES_NEEDED bytes to get the stream type...*/
@@ -187,25 +169,19 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindAnyNextSyncWord(int *CodeOffset, 
 		{
 			ElementaryPtr = &RemainingElementaryData[i - FrameHeaderLength];
 		}
-
 		Bits.SetPointer(ElementaryPtr);
 		SyncWord = Bits.Get(32);
-
 		if ((SyncWord == DTSHD_START_CODE_CORE) ||
 				(SyncWord == DTSHD_START_CODE_SUBSTREAM) ||
 				((SyncWord == DTSHD_START_CODE_CORE_14_1) && (Bits.Show(6) == DTSHD_START_CODE_CORE_14_2)))
 		{
 			*Type = (SyncWord == DTSHD_START_CODE_SUBSTREAM) ? TypeDtshdExt : TypeDtshdCore;
 			*CodeOffset = (RemainingInPotential > 0) ? (-RemainingInPotential) : (i - FrameHeaderLength);
-
 			COLLATOR_DEBUG(">>Got Synchronization, i = %d <<\n", *CodeOffset);
-
 			return CollatorNoError;
 		}
-
 		RemainingInPotential--;
 	}
-
 	return CollatorError;
 }
 
@@ -221,30 +197,23 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 	FrameParserStatus_t FPStatus;
 	CollatorStatus_t Status;
 	DtshdAudioParsedFrameHeader_t ParsedFrameHeader;
-
 	//
-
 	// first check if we know about the real frame size when it comes to dts core sync
 	if (!GotCoreFrameSize)
 	{
 		int CodeOffset;
 		DtshdStreamType_t Type;
-
 		// To determine frame length, search for a synchro in the provided buffer
 		Status = FindAnyNextSyncWord(&CodeOffset, &Type);
-
 		if (Status == CollatorNoError)
 		{
 			GotCoreFrameSize = true;
-
 			// CodeOffset may be negative, indicating the sync word has been found fully or
 			// paritally within the frame header we already accumulated. Given this
 			// meaning it is impossible for the FrameHeaderLength + CodeOffset to be
 			// negative.
 			COLLATOR_ASSERT(((int) FrameHeaderLength + CodeOffset) >= 0);
-
 			*FrameLength = FrameHeaderLength + CodeOffset;
-
 			if (0 == *FrameLength)
 			{
 				// The sync word is contained within the first byte of the StoredFrameHeader
@@ -260,7 +229,6 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 			// synchro not found, but frame is at least the size of the buffer we just searched
 			*FrameLength = RemainingElementaryLength + FrameHeaderLength - DTSHD_RAW_SYNCHRO_BYTES_NEEDED;
 		}
-
 		CollatorState = ReadSubFrame;
 		CoreFrameSize += *FrameLength;
 		Status = CollatorNoError;
@@ -268,7 +236,10 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 	else
 	{
 		DtshdParseModel_t ParseModel = {ParseForSynchro, 0, 0};
-
+		/* We have already calculated the CoreFrameSize so better to set CodedFrameParameters->DataSpecificFlags here instead of state "GotCompleteFrame".
+		   Because it is possible that InternalFrameFlush is called from the drain and so the frame_parser called for already parsed frame.
+		   And the frame parser require  DataSpecificFlags to see the core frame size. See the bz24622 */
+		CodedFrameParameters->DataSpecificFlags = CoreFrameSize;
 		FPStatus = FrameParser_AudioDtshd_c::ParseSingleFrameHeader(StoredFrameHeader,
 				   &ParsedFrameHeader,
 				   &Bits,
@@ -277,7 +248,6 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 				   RemainingElementaryLength,
 				   ParseModel,
 				   0);
-
 		if (FPStatus == FrameParserNoError)
 		{
 			if (CollatorState == GotSynchronized)
@@ -285,9 +255,7 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 				// remember the first synchronized substream properties
 				memcpy(&SyncFrameHeader, &ParsedFrameHeader, sizeof(DtshdAudioSyncFrameHeader_t));
 			}
-
 			Status = CollatorNoError;
-
 			if (ParsedFrameHeader.Type == TypeDtshdCore)
 			{
 				if (SyncFrameHeader.Type == TypeDtshdExt)
@@ -336,13 +304,10 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 			Status = CollatorError;
 		}
 	}
-
 	if (CollatorState == GotCompleteFrame)
 	{
-		CodedFrameParameters->DataSpecificFlags = CoreFrameSize;
 		ResetDvdSyncWordHeuristics();
 	}
-
 	return Status;
 }
 
@@ -382,20 +347,16 @@ void  Collator_PesAudioDtshd_c::SetPesPrivateDataLength(unsigned char SpecificCo
 CollatorStatus_t Collator_PesAudioDtshd_c::HandlePesPrivateData(unsigned char *PesPrivateData)
 {
 	BitStreamClass_c Bits;
-
 	if (CollatorState == SeekingSyncWord)
 	{
 		// ensure the PES private data is passed to the sync detection code
 		PassPesPrivateDataToElementaryStreamHandler = true;
-
 		// parse the private data area (assuming that is what we have)
 		Bits.SetPointer(PesPrivateData);
 		unsigned int SubStreamId = Bits.Get(8);
 		unsigned int NumberOfFrameHeaders = Bits.Get(8);
 		unsigned int FirstAccessUnitPointer = Bits.Get(16);
-
 		COLLATOR_DEBUG("FirstAccessUnitPointer: %d\n", FirstAccessUnitPointer);
-
 		if (((SubStreamId & 0xf8) != 0x88) ||
 				(NumberOfFrameHeaders > 127) ||
 				(FirstAccessUnitPointer > 2034))
@@ -416,26 +377,19 @@ CollatorStatus_t Collator_PesAudioDtshd_c::HandlePesPrivateData(unsigned char *P
 			MakeDvdSyncWordPrediction(((FirstAccessUnitPointer == 0) ? 1 : FirstAccessUnitPointer) + 3);
 		}
 	}
-
 	return CollatorNoError;
 }
 
 CollatorStatus_t Collator_PesAudioDtshd_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 	//
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesAudioDvd_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = DTSHD_FRAME_HEADER_SIZE;
-
 	Configuration.StreamIdentifierMask       = 0xff;
 	Configuration.StreamIdentifierCode       = PES_START_CODE_PRIVATE_STREAM_1;
 	Configuration.BlockTerminateMask         = 0xff;         // Picture
@@ -446,14 +400,11 @@ CollatorStatus_t Collator_PesAudioDtshd_c::Reset(void)
 	Configuration.TerminalCode               = 0;
 	Configuration.ExtendedHeaderLength       = 0;
 	Configuration.DeferredTerminateFlag      = false;
-
 	// by default do only 5.1...
 	EightChannelsRequired = false;
-
 	// default frame size is unset...
 	CoreFrameSize = 0;
 	GotCoreFrameSize = false;
 	memset(&SyncFrameHeader, 0, sizeof(DtshdAudioSyncFrameHeader_t));
-
 	return CollatorNoError;
 }

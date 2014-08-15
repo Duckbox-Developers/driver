@@ -33,7 +33,6 @@ HavanaStatus_t HavanaFactory_c::Init(class HavanaFactory_c*  FactoryList,
 									 void * (*NewFactory)(void))
 {
 	//HAVANA_DEBUG("\n");
-
 	NextFactory         = FactoryList;
 	this->Id            = Id;
 	this->SubId         = SubId;
@@ -41,7 +40,6 @@ HavanaStatus_t HavanaFactory_c::Init(class HavanaFactory_c*  FactoryList,
 	PlayerComponent     = Component;
 	FactoryVersion      = Version;
 	Factory             = NewFactory;
-
 	return HavanaNoError;
 }
 HavanaStatus_t HavanaFactory_c::ReLink(class HavanaFactory_c*  Next)
@@ -67,7 +65,6 @@ bool HavanaFactory_c::CanBuild(const char*             Id,
 {
 //    HAVANA_ERROR("I am %s, %s, %x, %x - Looking for %s, %s, %x, %x\n", this->Id, this->SubId, PlayerStreamType, PlayerComponent,
 //                                                                       Id, SubId, StreamType, Component);
-
 	if ((StreamType == PlayerStreamType) && (Component == PlayerComponent) && (strcmp(Id, this->Id) == 0))
 		return ((strcmp(SubId, this->SubId) == 0) ||
 				(strcmp(SubId, FACTORY_ANY_ID) == 0) ||
@@ -79,10 +76,8 @@ HavanaStatus_t HavanaFactory_c::Build(void**  Class)
 {
 	//HAVANA_DEBUG("\n");
 	*Class     = Factory();
-
 	if (*Class == NULL)
 		return HavanaNoMemory;
-
 	return HavanaNoError;
 }
 class HavanaFactory_c* HavanaFactory_c::Next(void)

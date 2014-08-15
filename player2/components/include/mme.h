@@ -328,7 +328,7 @@ typedef MME_ERROR(*MME_TermTransformer_t)(void *context);
 #else
 /* this is the definition of MME_PARAM for big endian machines */
 #define _MME_PARAM_ADDRESS(p, f)   \
-	((MME_TYPE_##f *)(((char *)((MME_GENERIC64*)p+MME_OFFSET_##f))+(sizeof(MME_GENERIC64)-sizeof(MME_TYPE_##f))))
+    ((MME_TYPE_##f *)(((char *)((MME_GENERIC64*)p+MME_OFFSET_##f))+(sizeof(MME_GENERIC64)-sizeof(MME_TYPE_##f))))
 
 /* At the moment we do not support BE machines */
 #error Unsupported CPU type

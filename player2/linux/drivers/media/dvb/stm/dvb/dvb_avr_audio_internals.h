@@ -38,7 +38,7 @@ license from ST.
 
 /* Extract the four extended capability bits for a given codec */
 #define ACC_DECODER_CAPABILITY_EXT_FLAGS(hdinfo, decoder) \
-	(((hdinfo)->DecoderCapabilityExtFlags[((int) (decoder)) >> 3] >> (4 * ((decoder) & 7))) & 0xf)
+    (((hdinfo)->DecoderCapabilityExtFlags[((int) (decoder)) >> 3] >> (4 * ((decoder) & 7))) & 0xf)
 
 /* Keep working against BL025_10 until we can retire it */
 #ifndef DRV_MULTICOM_PERFLOG_VERSION

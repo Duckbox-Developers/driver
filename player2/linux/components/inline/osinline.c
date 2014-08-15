@@ -180,11 +180,9 @@ int   OS_LockMutex_trylock(OS_Mutex_t  *Mutex)
 OS_Status_t   OS_InitializeEvent(OS_Event_t* Event)
 {
 	*Event = (OS_Event_t)OSDEV_Malloc(sizeof(struct OS_Event_s));
-
 	if (*Event != NULL)
 	{
 		OS_InitializeMutex(&((*Event)->Mutex));
-
 		if (OSDEV_InitializeWaitQueue(&((*Event)->Queue)) == OSDEV_NoError)
 		{
 			(*Event)->Valid   = false;
@@ -193,7 +191,6 @@ OS_Status_t   OS_InitializeEvent(OS_Event_t* Event)
 		else
 			OSDEV_Free(*Event);
 	}
-
 	return OS_ERROR;
 }
 
@@ -210,7 +207,6 @@ OS_Status_t   OS_WaitForEvent(OS_Event_t* Event, OS_Timeout_t Timeout)
 	if (!((*Event)->Valid))
 	{
 		OS_LockMutex(&((*Event)->Mutex));
-
 		if (!((*Event)->Valid))                 // NOTE this may have changed before we locked access
 		{
 			OS_UnLockMutex(&((*Event)->Mutex));
@@ -220,7 +216,6 @@ OS_Status_t   OS_WaitForEvent(OS_Event_t* Event, OS_Timeout_t Timeout)
 		else
 			OS_UnLockMutex(&((*Event)->Mutex));
 	}
-
 	return OS_NO_ERROR;
 }
 
@@ -229,7 +224,6 @@ OS_Status_t   OS_WaitForEventInterruptible(OS_Event_t* Event, OS_Timeout_t Timeo
 	if (!((*Event)->Valid))
 	{
 		OS_LockMutex(&((*Event)->Mutex));
-
 		if (!((*Event)->Valid))                 // NOTE this may have changed before we locked access
 		{
 			OSDEV_Status_t      Status;
@@ -240,7 +234,6 @@ OS_Status_t   OS_WaitForEventInterruptible(OS_Event_t* Event, OS_Timeout_t Timeo
 		else
 			OS_UnLockMutex(&((*Event)->Mutex));
 	}
-
 	return OS_NO_ERROR;
 }
 
@@ -252,10 +245,8 @@ bool OS_TestEventSet(OS_Event_t* Event)
 OS_Status_t OS_SetEvent(OS_Event_t* Event)
 {
 	OS_LockMutex(&((*Event)->Mutex));
-
 	(*Event)->Valid     = true;
 	OSDEV_WakeUpQueue((*Event)->Queue);
-
 	OS_UnLockMutex(&((*Event)->Mutex));
 	return OS_NO_ERROR;
 }
@@ -263,10 +254,8 @@ OS_Status_t OS_SetEvent(OS_Event_t* Event)
 OS_Status_t OS_SetEventInterruptible(OS_Event_t* Event)
 {
 	OS_LockMutex(&((*Event)->Mutex));
-
 	(*Event)->Valid     = true;
 	OSDEV_WakeUpQueueInterruptible((*Event)->Queue);
-
 	OS_UnLockMutex(&((*Event)->Mutex));
 	return OS_NO_ERROR;
 }
@@ -274,9 +263,7 @@ OS_Status_t OS_SetEventInterruptible(OS_Event_t* Event)
 OS_Status_t OS_ResetEvent(OS_Event_t *Event)
 {
 	OS_LockMutex(&((*Event)->Mutex));
-
 	(*Event)->Valid     = false;
-
 	OS_UnLockMutex(&((*Event)->Mutex));
 	return OS_NO_ERROR;
 }
@@ -284,10 +271,8 @@ OS_Status_t OS_ResetEvent(OS_Event_t *Event)
 OS_Status_t OS_ReInitializeEvent(OS_Event_t *Event)
 {
 	OS_LockMutex(&((*Event)->Mutex));
-
 	(*Event)->Valid = false;
 	OSDEV_ReInitializeWaitQueue((*Event)->Queue);
-
 	OS_UnLockMutex(&((*Event)->Mutex));
 	return OS_NO_ERROR;
 }
@@ -303,32 +288,24 @@ OS_Status_t   OS_CreateThread(OS_Thread_t        *Thread,
 {
 	unsigned int        FreeEntry;
 	OSDEV_Status_t      Status;
-
 //
-
 	for (FreeEntry = 0; FreeEntry < (OS_MAX_TASKS - 1); FreeEntry++)
 		if (OS_TaskNameTable[FreeEntry].Name[0] == '\0')
 			break;
-
 	strncpy(OS_TaskNameTable[FreeEntry].Name, Name, OS_MAX_NAME_SIZE);
 	OS_TaskNameTable[FreeEntry].Name[OS_MAX_NAME_SIZE - 1]        = '\0';
-
 //
-
 	Status = OSDEV_CreateThread(&(OS_TaskNameTable[FreeEntry].Thread),
 								(OSDEV_ThreadFn_t)TaskEntry,
 								(OSDEV_ThreadParam_t)Parameter,
 								Name,
 								(OSDEV_ThreadPriority_t)Priority);
-
 	if (Status != OSDEV_NoError)
 	{
 		OS_TaskNameTable[FreeEntry].Name[0] = '\0';
 		return OS_ERROR;
 	}
-
 	/* detach */
-
 	*Thread     = OS_TaskNameTable[FreeEntry].Thread;
 	return OS_NO_ERROR;
 }
@@ -338,13 +315,11 @@ OS_Status_t   OS_CreateThread(OS_Thread_t        *Thread,
 void   OS_TerminateThread(void)
 {
 	unsigned int        i;
-
 	for (i = 0; i < OS_MAX_TASKS; i++)
 		if ((OS_TaskNameTable[i].Name[0] != '\0') && (OS_TaskNameTable[i].Thread == current))
 		{
 			OS_TaskNameTable[i].Name[0] = '\0';
 		}
-
 	OSDEV_ExitThread();
 }
 
@@ -353,9 +328,7 @@ void   OS_TerminateThread(void)
 OS_Status_t OS_SetPriority(OS_TaskPriority_t Priority)
 {
 	OSDEV_Status_t      Status;
-
 	Status = OSDEV_SetPriority((OSDEV_ThreadPriority_t) Priority);
-
 	return (Status == OSDEV_NoError ? OS_NO_ERROR : OS_ERROR);
 }
 
@@ -371,11 +344,9 @@ OS_Status_t   OS_JoinThread(OS_Thread_t     Thread)
 char   *OS_ThreadName(void)
 {
 	unsigned int        i;
-
 	for (i = 0; i < OS_MAX_TASKS; i++)
 		if ((OS_TaskNameTable[i].Name[0] != '\0') && (OS_TaskNameTable[i].Thread == current))
 			return OS_TaskNameTable[i].Name;
-
 	return OSDEV_ThreadName();
 }
 
@@ -429,17 +400,12 @@ void OS_ReSchedule(void)
 unsigned int OS_GetTimeInSeconds(void)
 {
 	struct timeval  Now;
-
 #if !defined (CONFIG_USE_SYSTEM_CLOCK)
 	ktime_t         Ktime   = ktime_get();
-
 	Now                 = ktime_to_timeval(Ktime);
-
 #else
 	do_gettimeofday(&Now);
-
 #endif
-
 	return Now.tv_sec;
 }
 
@@ -462,10 +428,8 @@ void OS_RegisterTuneable(const char *Name, unsigned int *Address)
 {
 	static struct dentry *root = NULL;
 	struct dentry *dentry;
-
 	if (NULL == root)
 		root = debugfs_create_dir("havana", NULL);
-
 	if (NULL != root)
 		dentry = debugfs_create_u32(Name, 0600, root, Address);
 }
@@ -477,20 +441,16 @@ void OS_RegisterTuneable(const char *Name, unsigned int *Address)
 OS_Status_t   OS_Initialize(void)
 {
 	memset(OS_TaskNameTable, 0x00, sizeof(OS_TaskNameTable));
-
 	OS_TaskNameTable[0].Thread  = current;
 	strcpy(OS_TaskNameTable[0].Name, "Root Task");
-
 	return OS_NO_ERROR;
 }
 
 char* strdup(const char* String)
 {
 	char*  Copy = (char*)OS_Malloc(strlen(String) + 1);
-
 	if (Copy != NULL)
 		strcpy(Copy, String);
-
 	return Copy;
 }
 
@@ -505,27 +465,27 @@ char* strdup(const char* String)
 asmlinkage void user_watch_trap(unsigned long r4, unsigned long r5, unsigned long r6, unsigned long r7, struct pt_regs *regs)
 {
 	printk("User watch trap at 0x%.8x\n", (unsigned int)regs->pc);
-
 	while (1);
 }
 
 void OS_Add_Hardware_Watchpoint(unsigned int* WatchedAddress, OS_WatchAccessType_t AccessType)
 {
 	struct hw_watchpoint        WatchPoint;
-
 	hw_watch_init(&WatchPoint);
 	WatchPoint.addr             = (unsigned int)WatchedAddress;
 	WatchPoint.oneshot          = 1;
-
 	switch (AccessType)
 	{
-		case OS_WatchRead:      WatchPoint.rw   = WP_READ;      break;
-
-		case OS_WatchWrite:     WatchPoint.rw   = WP_WRITE;     break;
-
-		default:                WatchPoint.rw   = WP_ACCESS;    break;
+		case OS_WatchRead:
+			WatchPoint.rw = WP_READ;
+			break;
+		case OS_WatchWrite:
+			WatchPoint.rw = WP_WRITE;
+			break;
+		default:
+			WatchPoint.rw = WP_ACCESS;
+			break;
 	}
-
 	add_hw_watch(&WatchPoint);
 }
 
@@ -550,27 +510,19 @@ void* __builtin_new(size_t size)
 	if (size > 0)
 	{
 		void* p;
-
 		if (likely(size <= (4 * PAGE_SIZE)))
 			p   = kmalloc(size, GFP_KERNEL);
 		else
 			p   = vmalloc(size);
-
 #ifdef ENABLE_MALLOC_POISONING
-
 		if (p)
 			memset(p, 0xcc, size);
-
 #else
-
 		if (p)
 			memset(p, 0, size);
-
 #endif
-
 		return p;
 	}
-
 	return NULL;
 }
 

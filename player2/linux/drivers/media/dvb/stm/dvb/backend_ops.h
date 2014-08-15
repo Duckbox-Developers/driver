@@ -335,7 +335,7 @@ typedef enum
 typedef dvb_clock_data_point_t           clock_data_point_t;
 
 typedef void (*stream_event_signal_callback)(context_handle_t        context,
-											 struct stream_event_s*  event);
+		struct stream_event_s*  event);
 
 struct dvb_backend_operations
 {
@@ -361,8 +361,8 @@ struct dvb_backend_operations
 	int (*playback_remove_stream)(playback_handle_t       playback,
 								  stream_handle_t         stream);
 	int (*playback_set_native_playback_time)(playback_handle_t       playback,
-											 unsigned long long      NativeTime,
-											 unsigned long long      SystemTime);
+			unsigned long long      NativeTime,
+			unsigned long long      SystemTime);
 	int (*playback_set_option)(playback_handle_t       playback,
 							   play_option_t           option,
 							   unsigned int            value);
@@ -438,8 +438,8 @@ struct dvb_backend_operations
 	int (*stream_set_play_interval)(stream_handle_t         stream,
 									play_interval_t        *play_interval);
 	int (*stream_get_decode_buffer_pool_status)(stream_handle_t         stream,
-												unsigned int*           BuffersInPool,
-												unsigned int*           BuffersWithNonZeroReferenceCount);
+			unsigned int*           BuffersInPool,
+			unsigned int*           BuffersWithNonZeroReferenceCount);
 	int (*stream_get_player_environment)(stream_handle_t                 stream,
 										 playback_handle_t               *PlayerPlayback,
 										 stream_handle_t                 *PlayerStream);

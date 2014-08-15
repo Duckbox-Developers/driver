@@ -85,38 +85,29 @@ static inline allocator_status_t   AllocatorOpenEx(
 {
 	OSDEV_Status_t                  Status;
 	allocator_ioctl_allocate_t      Parameters;
-
 //
 //  Check the size of the partition name
 //
-
 	if (strlen(PartitionName) > (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1))
 	{
 		report(severity_error, "AllocatorOpenEx : Partition name too large ( %d > %d)\n", strlen(PartitionName), (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1));
 		*Device = ALLOCATOR_INVALID_DEVICE;
 		return allocator_error;
 	}
-
 //
 //  Malloc the device structure
 //
-
 	*Device = (allocator_device_t)OS_Malloc(sizeof(struct allocator_device_s));
-
 	if (*Device == NULL)
 	{
 		report(severity_error, "AllocatorOpenEx : Failed to allocate memory for device context.\n");
 		return allocator_error;
 	}
-
 	memset(*Device, 0, sizeof(struct allocator_device_s));
-
 //
 //  Open the device
 //
-
 	Status = OSDEV_Open(DEVICE_NAME, &((*Device)->UnderlyingDevice));
-
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "AllocatorOpenEx : Failed to open\n");
@@ -124,17 +115,13 @@ static inline allocator_status_t   AllocatorOpenEx(
 		*Device = ALLOCATOR_INVALID_DEVICE;
 		return allocator_error;
 	}
-
 //
 //  Allocate the memory
 //
-
 	Parameters.RequiredSize         = Size;
 	strcpy(Parameters.PartitionName, PartitionName);
-
 	Status = OSDEV_Ioctl((*Device)->UnderlyingDevice, ALLOCATOR_IOCTL_ALLOCATE_DATA,
 						 &Parameters, sizeof(allocator_ioctl_allocate_t));
-
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "AllocatorOpenEx : Failed to allocate memory (0x%08x from '%s')\n", Size, PartitionName);
@@ -143,14 +130,11 @@ static inline allocator_status_t   AllocatorOpenEx(
 		*Device = ALLOCATOR_INVALID_DEVICE;
 		return allocator_error;
 	}
-
 	(*Device)->BufferSize       = Size;
 	(*Device)->CachedAddress    = Parameters.CachedAddress;
 	(*Device)->UnCachedAddress  = Parameters.UnCachedAddress;
 	(*Device)->PhysicalAddress  = Parameters.PhysicalAddress;
-
 //
-
 	return allocator_ok;
 }
 
@@ -158,8 +142,8 @@ static inline allocator_status_t   AllocatorOpenEx(
 //   The open function
 
 static inline allocator_status_t   AllocatorOpen(allocator_device_t    *Device,
-												 unsigned int           Size,
-												 bool                   UseCachedMemory)
+		unsigned int           Size,
+		bool                   UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, SYS_LMI_PARTITION);
 }

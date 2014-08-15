@@ -49,21 +49,15 @@ static BufferDataDescriptor_t     DvpFrameParametersBuffer = BUFFER_MPEG4_FRAME_
 FrameParser_VideoDvp_c::FrameParser_VideoDvp_c(void)
 {
 	Configuration.FrameParserName       = "VideoDvp";
-
 	Configuration.StreamParametersCount     = 32;
 	Configuration.StreamParametersDescriptor    = &DvpStreamParametersBuffer;
-
 	Configuration.FrameParametersCount      = 32;
 	Configuration.FrameParametersDescriptor = &DvpFrameParametersBuffer;
-
 	Configuration.SupportSmoothReversePlay  = false;        // Cannot reverse captured data
 	Configuration.InitializeStartCodeList   = false;        // We take a simple structure - no start codes
-
 //
-
 	FrameParameters  = NULL;
 	StreamParameters = NULL;
-
 	ReverseQueuedPostDecodeSettingsRing = NULL;
 	Reset();
 }
@@ -91,19 +85,16 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::Reset(void)
 	memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
 	memset(&InputWindow, 0x00, sizeof(DvpRectangle_t));
 	memset(&OutputWindow, 0x00, sizeof(DvpRectangle_t));
-
 	if (StreamParameters != NULL)
 	{
 		delete StreamParameters;
 		StreamParameters = NULL;
 	}
-
 	if (ReverseQueuedPostDecodeSettingsRing != NULL)
 	{
 		delete ReverseQueuedPostDecodeSettingsRing;
 		ReverseQueuedPostDecodeSettingsRing     = NULL;
 	}
-
 	return FrameParser_Video_c::Reset();
 }
 
@@ -116,16 +107,12 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::RegisterOutputBufferRing(
 	Ring_t      Ring)
 {
 	FrameParserStatus_t Status = FrameParserNoError;
-
 	// Clear our parameter pointers
-
 	StreamParameters                    = NULL;
 	FrameParameters                     = NULL;
 	DeferredParsedFrameParameters       = NULL;
 	DeferredParsedVideoParameters       = NULL;
-
 	Status = FrameParser_Video_c::RegisterOutputBufferRing(Ring);
-
 	return Status;
 }
 
@@ -200,40 +187,30 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::ReadHeaders(void)
 	BufferStatus_t       BufferStatus;
 	StreamInfo_t        *StreamInfo;
 	PlayerSequenceType_t     SequenceType;
-
 	//
 	// Find the stream info structure, and extract the buffer
 	//
-
 	StreamInfo  = (StreamInfo_t*)BufferData;
 	Buffer  = (Buffer_t)StreamInfo->buffer_class;
-
 	//
 	// Switch the ownership of the buffer
 	//
-
 	Buffer->TransferOwnership(IdentifierFrameParser);
-
 	//
 	// Modify the buffer structure to match the actual capture
 	//
-
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataBufferStructureType, (void**)&BufferStructure);
-
 	if (BufferStatus != BufferNoError)
 	{
 		report(severity_error, "FrameParser_VideoDvp_c::RevPlayPurgeDecodeStacks - Unable to access buffer structure parameters %x.\n", BufferStatus);
 		return FrameParserError;
 	}
-
 	//
 	// Fill out appropriate frame and video parameters
 	//
-
 	ParsedFrameParameters->NewStreamParameters          = false;
 	ParsedFrameParameters->SizeofStreamParameterStructure   = sizeof(StreamInfo_t);
 	ParsedFrameParameters->StreamParameterStructure     = &StreamInfo;
-
 	ParsedFrameParameters->FirstParsedParametersForOutputFrame  = true;
 	ParsedFrameParameters->FirstParsedParametersAfterInputJump  = false;
 	ParsedFrameParameters->SurplusDataInjected          = false;
@@ -242,10 +219,8 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::ReadHeaders(void)
 	ParsedFrameParameters->ReferenceFrame           = true;     // Turn off autogeneration of DTS
 	ParsedFrameParameters->IndependentFrame         = true;
 	ParsedFrameParameters->NumberOfReferenceFrameLists      = 0;
-
 	ParsedFrameParameters->NewFrameParameters           = true;
 	ParsedVideoParameters->Content.PixelAspectRatio     = Rational_t(StreamInfo->pixel_aspect_ratio.Numerator, StreamInfo->pixel_aspect_ratio.Denominator);
-
 	ParsedVideoParameters->Content.Width            = StreamInfo->width;
 	ParsedVideoParameters->Content.Height           = StreamInfo->height;
 	ParsedVideoParameters->Content.DisplayWidth         = StreamInfo->width;
@@ -257,47 +232,35 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::ReadHeaders(void)
 	ParsedVideoParameters->Content.ColourMatrixCoefficients = ((StreamInfo->ColourMode == DVP_COLOUR_MODE_601) ? MatrixCoefficients_ITU_R_BT601 :
 			((StreamInfo->ColourMode == DVP_COLOUR_MODE_709) ? MatrixCoefficients_ITU_R_BT709 :
 			 MatrixCoefficients_Undefined));
-
 	ParsedVideoParameters->InterlacedFrame          = StreamInfo->interlaced;
 	ParsedVideoParameters->DisplayCount[0]          = 1;
 	ParsedVideoParameters->DisplayCount[1]          = ParsedVideoParameters->InterlacedFrame ? 1 : 0;
 	ParsedVideoParameters->SliceType                = SliceTypeI;
 	ParsedVideoParameters->TopFieldFirst            = StreamInfo->top_field_first;
 	ParsedVideoParameters->PictureStructure         = StructureFrame;
-
 	ParsedVideoParameters->PanScan.Count            = 0;
-
 	FirstDecodeOfFrame                      = true;
 	FrameToDecode                       = true;
-
 	//
 	// Do we need to update any of the window sizes
 	//
-
 	SequenceType    = (NextDecodeFrameIndex == 0) ? SequenceTypeImmediate : SequenceTypeBeforePlaybackTime;
-
 	if (memcmp(&StreamInfo->InputWindow, &InputWindow, sizeof(DvpRectangle_t)) != 0)
 	{
 		InputWindow = StreamInfo->InputWindow;
-
 		Player->CallInSequence(Stream, SequenceType, CodedFramePlaybackTime,
 							   ManifestorVideoFnSetInputWindow,
 							   InputWindow.X, InputWindow.Y, InputWindow.Width, InputWindow.Height);
 	}
-
 //
-
 	if (memcmp(&StreamInfo->OutputWindow, &OutputWindow, sizeof(DvpRectangle_t)) != 0)
 	{
 		OutputWindow    = StreamInfo->OutputWindow;
-
 		Player->CallInSequence(Stream, SequenceType, CodedFramePlaybackTime,
 							   ManifestorVideoFnSetOutputWindow,
 							   OutputWindow.X, OutputWindow.Y, OutputWindow.Width, OutputWindow.Height);
 	}
-
 //
-
 	return FrameParserNoError;
 }
 
@@ -309,7 +272,6 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::ReadHeaders(void)
 FrameParserStatus_t   FrameParser_VideoDvp_c::PrepareReferenceFrameList(void)
 {
 	ParsedFrameParameters->NumberOfReferenceFrameLists                  = 0;
-
 	return FrameParserNoError;
 }
 

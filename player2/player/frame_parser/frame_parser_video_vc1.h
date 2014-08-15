@@ -128,10 +128,10 @@ class FrameParser_VideoVc1_c : public FrameParser_Video_c
 		FrameParserStatus_t         CommitFrameForDecode(void);
 
 		unsigned long               BitsDotGetVc1VLC(unsigned long                   MaxBits,
-													 unsigned long                   LeafNode);
+				unsigned long                   LeafNode);
 		void                        SetBFraction(unsigned int                    Fraction,
-												 unsigned int*                   Numerator,
-												 unsigned int*                   Denominator);
+				unsigned int*                   Numerator,
+				unsigned int*                   Denominator);
 
 	public:
 

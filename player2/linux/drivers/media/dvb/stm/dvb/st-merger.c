@@ -40,11 +40,6 @@ unsigned long TSM_NUM_1394_ALT_OUT;
 #define LOAD_TSM_DATA
 #endif
 
-static short camRouting = 0;
-
-module_param(camRouting, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-MODULE_PARM_DESC(camRouting, "Enable camRouting 0=disabled 1=enabled");
-
 #if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 #define TSMergerBaseAddress     0xFE242000
 #else
@@ -203,24 +198,19 @@ void extern_inject_data(u32 *data, off_t size)
 	int n;
 	int m;
 	u32 *addr = (u32*)tsm_handle.tsm_swts;
-
 //paceSwtsByPti();
 	//dprintk("%s > size = %d, block %d\n", __FUNCTION__, (int) size, blocks);
-
 	for (n = 0; n < blocks; n++)
 	{
 		while (!(readl(tsm_handle.tsm_io + SWTS_CFG(0)) & TSM_SWTS_REQ))
 		{
 			udelay(0);
 		}
-
 		if (count > 128)
 			words = 128 / 4;
 		else
 			words = count / 4;
-
 		count -= words * 4;
-
 		for (m = 0; m < words; m++)
 			*addr = *p++;
 	}
@@ -238,7 +228,6 @@ void stm_tsm_inject_data(struct stm_tsm_handle *handle, u32 *data, off_t size)
 	int m;
 	u32 *addr = (u32*)handle->tsm_swts;
 	dprintk("%s > size = %d, block %d\n", __FUNCTION__, (int) size, blocks);
-
 	for (n = 0; n < blocks; n++)
 	{
 		while (!(readl(handle->tsm_io + SWTS_CFG(0)) & TSM_SWTS_REQ))
@@ -246,18 +235,14 @@ void stm_tsm_inject_data(struct stm_tsm_handle *handle, u32 *data, off_t size)
 			printk("%s: Waiting for FIFO %x\n", __FUNCTION__, readl(handle->tsm_io));
 			msleep(10);
 		}
-
 		if (count > 128)
 			words = 128 / 4;
 		else
 			words = count / 4;
-
 		count -= words * 4;
-
 		for (m = 0; m < words; m++)
 			*addr = *p++;
 	}
-
 	dprintk("%s < \n", __FUNCTION__);
 }
 
@@ -279,7 +264,6 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	dprintk("%s > size = %d\n", __FUNCTION__, (int) size);
 	dprintk("status: 0x%08x",  readl(tsm_io + TSM_STREAM3_STA));
 	paceSwtsByPti();
-
 	if (start & SWTS_FDMA_ALIGNMENT)
 	{
 		int hand = (SWTS_FDMA_ALIGNMENT + 1) - (start & SWTS_FDMA_ALIGNMENT);
@@ -289,18 +273,15 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		start += hand;
 		len   -= hand;
 	}
-
 	if (len & SWTS_FDMA_ALIGNMENT)
 	{
 		extra = len & SWTS_FDMA_ALIGNMENT;
 		len = len & ~SWTS_FDMA_ALIGNMENT;
 	}
-
 	nr_pages = (PAGE_ALIGN(start + len) - (start & PAGE_MASK)) >> PAGE_SHIFT;
 	down_read(&current->mm->mmap_sem);
 	ret = get_user_pages(current, current->mm, start, nr_pages, READ, 0, handle->swts_pages, NULL);
 	up_read(&current->mm->mmap_sem);
-
 	if (ret < nr_pages)
 	{
 		nr_pages = ret;
@@ -308,10 +289,8 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		dprintk("ret = %d < nr_pages %d\n", ret, nr_pages);
 		goto out_unmap;
 	}
-
 	page_offset = start & (PAGE_SIZE - 1);
 	remaining = len;
-
 	for (n = 0; n < nr_pages; n++)
 	{
 		int copy = min_t(int, PAGE_SIZE - page_offset, remaining);
@@ -326,14 +305,12 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		remaining -= copy;
 //dprintk("nr_pages %d, length %d, remaining %d\n", nr_pages, copy, remaining);
 	}
-
 	sg_count = dma_map_sg(NULL, &handle->swts_sg[0], nr_pages, DMA_TO_DEVICE);
 	in_param = &handle->swts_params[0];
 	curr_sg = &handle->swts_sg[0];
 	/* Go through the list and unscatter it  */
 	taddr = sg_dma_address(curr_sg);
 	tlen  = sg_dma_len(curr_sg);
-
 	for (n = 0; n < sg_count; n++)
 	{
 		unsigned long naddr, nlen;
@@ -342,7 +319,6 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		curr_sg++;
 		naddr = sg_dma_address(curr_sg);
 		nlen  = sg_dma_len(curr_sg);
-
 		if (taddr + tlen == naddr && ((n + 1) != sg_count))
 		{
 			tlen += nlen;
@@ -354,18 +330,15 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 			in_param++;
 		}
 	}
-
 	in_param--;
 	dma_params_link(in_param, NULL);
 	dma_compile_list(handle->fdma_channel, &handle->swts_params[0] , GFP_ATOMIC);
 	ret = dma_xfer_list(handle->fdma_channel, &handle->swts_params[0]);
-
 	if (ret)
 	{
 		printk("xfer ret = %d\n", ret);
 		goto out_unmap;
 	}
-
 	dma_wait_for_completion(handle->fdma_channel);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
 	dma_unmap_sg(NULL, sg, nr_pages, DMA_TO_DEVICE);
@@ -373,18 +346,14 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	/* #warning FIXME, STM24, skipping dma_unmap_sg */
 	/* dma_unmap_sg(NULL, sg, nr_pages, DMA_TO_DEVICE); */
 #endif
-
 	if (extra)
 	{
 		dprintk("inject 2\n");
 		stm_tsm_inject_data(handle, (u32*)(data + size - extra), extra);
 	}
-
 out_unmap:
-
 	for (n = 0; n < nr_pages; n++)
 		page_cache_release(handle->swts_pages[n]);
-
 	dprintk("%s < ret = %d\n", __FUNCTION__, ret);
 	return ret;
 }
@@ -408,16 +377,15 @@ static void *reg_sys_config = NULL;
 void spark_stm_tsm_init(void)
 {
 	unsigned int     ret;
+	unsigned int     stream_sync = 0xbc4722;
 	int              n;
 	/* ugly hack: the TSM sometimes seems to stop working, a
 	* reset of the config registers fixes it
 	* but the DMA stuff must not be touched or everything
 	* blows up badly */
 	int reinit = 0;
-
 	if (tsm_io)
 		reinit = 1;
-
 	if (reinit)
 	{
 		printk("[Spark] reinit stream routing...\n");
@@ -428,7 +396,6 @@ void spark_stm_tsm_init(void)
 		/* first configure sysconfig */
 		reg_sys_config = ioremap(SysConfigBaseAddress, 0x1000);
 	}
-
 	/*
 	 ->TSIN0 routed to TSIN2
 	 ->TSMerger TSIN2 receives TSIN0 (based on config before)
@@ -436,7 +403,6 @@ void spark_stm_tsm_init(void)
 	 */
 	ctrl_outl(0x3, reg_sys_config + SYS_CFG0);
 	ctrl_outl(0x0, reg_sys_config + SYS_CFG1);
-
 	if (reinit)
 	{
 		/* this seems to shorten the window for the race condition,
@@ -449,7 +415,6 @@ void spark_stm_tsm_init(void)
 		/* set up tsmerger */
 		tsm_handle.tsm_io = tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
 	}
-
 	/* 1. Reset */
 	ctrl_outl(0x0, tsm_io + TSM_SW_RST);
 	ctrl_outl(0x6, tsm_io + TSM_SW_RST);
@@ -511,7 +476,6 @@ void spark_stm_tsm_init(void)
 	ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
 	/* configure streams: */
 	/* add tag bytes to stream + stream priority */
-	unsigned int stream_sync = 0xbc4722;
 	ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
 	ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM0_CFG);
 	ctrl_outl(stream_sync, tsm_io + TSM_STREAM0_SYNC);
@@ -557,18 +521,15 @@ void spark_stm_tsm_init(void)
 	ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 	ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
 			  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN, tsm_io + TSM_STREAM3_CFG);
-
 	/* don't touch the DMA engine -- seems unnecessary on reinit */
 	if (reinit)
 		return;
-
 	tsm_handle.swts_channel = 3;
 	tsm_handle.tsm_swts = (unsigned long)ioremap(0x1A300000, 0x1000);
 	/* Now lets get the SWTS info and setup an FDMA channel */
 	tsm_handle.fdma_reqline = 31;
 	tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
 	tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
-
 	/* Initilise the parameters for the FDMA SWTS data injection */
 	for (n = 0; n < MAX_SWTS_PAGES; n++)
 	{
@@ -582,15 +543,23 @@ void spark_stm_tsm_init(void)
 
 void stm_tsm_init(int use_cimax)
 {
+	unsigned int ret;
+	int n;
+	int reinit = 0;
+#if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(HOMECAST5101) && \
+    !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
+    !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
+    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(VITAMIN_HD5000)
+	unsigned int stream_sync = 0xbc4733;
+#else
+	unsigned int stream_sync = 0xbc4722;
+#endif
 #if defined(SPARK)
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 	spark_stm_tsm_init();
 	return;
 #endif
 #endif
-	unsigned int     ret;
-	int              n;
-//#if defined(UFS910) ???
 #if defined(VIP2_V1) || defined(SPARK) || defined(SPARK7162) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(CUBEREVO_2000HD) || defined(SAGEMCOM88) // none ci targets
 	use_cimax = 0;
 #endif
@@ -600,11 +569,8 @@ void stm_tsm_init(int use_cimax)
 	 * but the DMA stuff must not be touched or everything
 	 * blows up badly
 	 */
-	int reinit = 0;
-
 	if (tsm_io)
 		reinit = 1;
-
 	if (reinit)
 	{
 		printk("[TSM] reinit stream routing...\n");
@@ -614,7 +580,6 @@ void stm_tsm_init(int use_cimax)
 		printk("[TSM] init stream routing...\n");
 		reg_sys_config = ioremap(SysConfigBaseAddress, 0x0900);
 	}
-
 	if (use_cimax != 0)
 	{
 		/* route tsmerger to cimax and then to pti */
@@ -626,9 +591,7 @@ void stm_tsm_init(int use_cimax)
 		}
 		else
 			printk("[TSM] skip stpio stuff in reinit\n");
-
 #elif defined(ATEVIO7500)
-
 		if (!reinit)
 		{
 			struct stpio_pin* pin;
@@ -642,9 +605,7 @@ void stm_tsm_init(int use_cimax)
 		}
 		else
 			printk("[TSM] skip stpio stuff in reinit\n");
-
 #elif defined(OCTAGON1008)
-
 		if (!reinit)
 		{
 			struct stpio* stream2_pin = stpio_request_pin(1, 3, "STREAM2", STPIO_OUT);
@@ -653,9 +614,7 @@ void stm_tsm_init(int use_cimax)
 		}
 		else
 			printk("[TSM] skip stpio stuff in reinit\n");
-
 #elif defined(UFS913)
-
 		if (!reinit)
 		{
 			struct stpio* pin = stpio_request_pin(12, 0, "ts", STPIO_ALT_OUT);
@@ -677,7 +636,6 @@ void stm_tsm_init(int use_cimax)
 			ctrl_outl(0xff, reg_sys_config + 0x1c0); /* sys_cfg48 */
 			ctrl_outl(0xf, reg_sys_config + 0x1c4); /* sys_cfg49 */
 		}
-
 #endif
 		/*
 		 * 0xbc4733
@@ -686,14 +644,6 @@ void stm_tsm_init(int use_cimax)
 		 * soap toker = 0x47
 		 * packet len = 188
 		 */
-#if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(HOMECAST5101) && \
-    !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
-    !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
-    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(VITAMIN_HD5000)
-		unsigned int stream_sync = 0xbc4733;
-#else
-		unsigned int stream_sync = 0xbc4722;
-#endif
 		/* Streamconfig + jeweils ram start s.u.
 		 * 0x20020 =
 		 * add_tag_bytes = 1
@@ -723,13 +673,8 @@ void stm_tsm_init(int use_cimax)
 		 * ->TSMerger TSIN2 receives TSIN1 (based on config before)
 		 *->TS interface is as indicated by TSMerger configuration bits
 		 */
-
 		/* from fw 202 rc ->see also pti */
-		if (camRouting == 1)
-			ctrl_outl(0x6, reg_sys_config + SYS_CFG0);
-		else
-			ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
-
+		ctrl_outl(0x6, reg_sys_config + SYS_CFG0);
 #elif defined(FORTIS_HDBOX)
 		/* ->TSIN0 routes to TSIN2 */
 		ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
@@ -763,7 +708,6 @@ void stm_tsm_init(int use_cimax)
 #if !defined(ATEVIO7500) && !defined(UFS912) && !defined(UFS913) && !defined(HS7810A) && !defined(HS7110) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(VITAMIN_HD5000)
 		ctrl_outl(0x0, reg_sys_config + SYS_CFG1);
 #endif
-
 		if (reinit)
 		{
 			/* this seems to shorten the window for the race condition,
@@ -776,7 +720,6 @@ void stm_tsm_init(int use_cimax)
 			/* set up tsmerger */
 			tsm_handle.tsm_io = tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
 		}
-
 		/* 1. Reset */
 		ctrl_outl(0x0, tsm_io + TSM_SW_RST);
 		ctrl_outl(0x6, tsm_io + TSM_SW_RST);
@@ -988,7 +931,6 @@ void stm_tsm_init(int use_cimax)
 #endif
 		/* auto count */
 		ctrl_outl(0x0, tsm_io + TSM_PROG_CNT0);
-//-if definied (UFS910) ???
 #if !defined(TF7700) && !defined(UFS922) && !defined(UFC960) && !defined(FORTIS_HDBOX) && !defined(HL101) && !defined(VIP1_V2) && !defined(HOMECAST5101) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(IPBOX9900) && !defined(ARIVALINK200) && !defined(VITAMIN_HD5000)
 		/* UFS910 stream configuration */
 		/* route stream 2 to PTI */
@@ -1006,19 +948,12 @@ void stm_tsm_init(int use_cimax)
 		 * 0xf from 106 pvrmain
 		 */
 #ifdef FW1XX
-
 		if (highSR)
 			ctrl_outl(0x7000f , tsm_io + TS_1394_CFG);
 		else
 			ctrl_outl(0x70014 , tsm_io + TS_1394_CFG);
-
 #elif defined(UFS910)
-
-		if (camRouting == 1)
-			ctrl_outl(0x70014 , tsm_io + TS_1394_CFG);
-		else
-			ctrl_outl(0x50014 , tsm_io + TS_1394_CFG);
-
+		ctrl_outl(0x70014 , tsm_io + TS_1394_CFG);
 #else
 		/* logged from fw 202rc ->see also pti */
 		ctrl_outl(0x50014 , tsm_io + TS_1394_CFG);
@@ -1225,11 +1160,9 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
 				  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN
 				  , tsm_io + TSM_STREAM3_CFG);
-
 		/* don't touch the DMA engine -- seems unnecessary on reinit */
 		if (reinit)
 			return;
-
 		tsm_handle.swts_channel = 3;
 		tsm_handle.tsm_swts = (unsigned long)ioremap(0x1A300000, 0x1000);
 		/* Now lets get the SWTS info and setup an FDMA channel */
@@ -1243,7 +1176,6 @@ void stm_tsm_init(int use_cimax)
 #endif
 		tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
 		tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
-
 		/* Initilise the parameters for the FDMA SWTS data injection */
 		for (n = 0; n < MAX_SWTS_PAGES; n++)
 		{
@@ -1251,7 +1183,6 @@ void stm_tsm_init(int use_cimax)
 			dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
 			dma_params_req(&tsm_handle.swts_params[n], tsm_handle.fdma_req);
 		}
-
 #endif
 	}
 	else
@@ -1259,7 +1190,6 @@ void stm_tsm_init(int use_cimax)
 		/* bypass cimax */
 		int n;
 		printk("Bypass ci\n");
-
 		if (reinit)
 		{
 			printk("reinit\n");
@@ -1272,7 +1202,6 @@ void stm_tsm_init(int use_cimax)
 			tsm_io = ioremap(/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
 		}
-
 #if defined(SAGEMCOM88)
 		//dvbt usb
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
@@ -1372,14 +1301,11 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x1E00, tsm_io + TSM_STREAM6_CFG); // 0x1E00-0x1EFF
 		ctrl_outl(0x1F00, tsm_io + TSM_STREAM7_CFG); // 0x1F00-0x1FFF
 #else // !defined(SPARK) && !defined(HS7110) && !defined(ATEMIO520) && !defined(ATEMIO530)
-
 		for (n = 0; n < 5; n++)
 		{
 			writel(TSM_RAM_ALLOC_START(0x3 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
-
 #endif // defined(SPARK) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530)
-
 		for (n = 0; n < 4/* config->nr_channels */; n++)
 		{
 #ifdef alt
@@ -1394,7 +1320,6 @@ void stm_tsm_init(int use_cimax)
 #endif // alt
 			writel(readl(tsm_io + TSM_DESTINATION(0)) | (1 << chan), tsm_io + TSM_DESTINATION(0));
 #if defined(ADB_BOX)
-
 			if (TsinMode == SERIAL)
 			{
 				printk("BZZB TsinMode = SERIAL*st-merger*\n\t");
@@ -1417,7 +1342,6 @@ void stm_tsm_init(int use_cimax)
 					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
 					   tsm_io + TSM_STREAM_CONF(chan));
 			}
-
 #elif defined(SAGEMCOM88)
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
 				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
@@ -1449,7 +1373,6 @@ void stm_tsm_init(int use_cimax)
 				   TSM_PACKET_LENGTH(188)
 				   , tsm_io + TSM_STREAM_SYNC(chan));
 		}
-
 		/* Put TSMERGER into normal mode */
 		writel(TSM_CFG_BYPASS_NORMAL, tsm_io + TSM_SYSTEM_CFG);
 	}

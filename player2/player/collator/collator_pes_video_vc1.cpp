@@ -67,7 +67,6 @@ Collator_PesVideoVc1_c::Collator_PesVideoVc1_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_PesVideoVc1_c::Reset();
 }
 
@@ -80,19 +79,13 @@ Collator_PesVideoVc1_c::Collator_PesVideoVc1_c(void)
 CollatorStatus_t Collator_PesVideoVc1_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 //
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesVideo_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	Configuration.GenerateStartCodeList      = true;
 	Configuration.MaxStartCodes              = 256;
-
 	Configuration.StreamIdentifierMask       = 0xff;                            // Video
 	Configuration.StreamIdentifierCode       = 0xfd;
 	Configuration.BlockTerminateMask         = 0xfe;                            // allows frame or field
@@ -103,6 +96,5 @@ CollatorStatus_t Collator_PesVideoVc1_c::Reset(void)
 	Configuration.TerminalCode               = VC1_FRAME_START_CODE;            // Configuration.BlockTerminateCode
 	Configuration.ExtendedHeaderLength       = 0;
 	Configuration.DeferredTerminateFlag      = false;
-
 	return CollatorNoError;
 }

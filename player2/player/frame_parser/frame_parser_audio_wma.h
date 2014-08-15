@@ -91,8 +91,8 @@ class FrameParser_AudioWma_c : public FrameParser_Audio_c
 		//
 
 		static FrameParserStatus_t ParseStreamHeader(unsigned char*                  FrameHeaderBytes,
-													 WmaAudioStreamParameters_t*     StreamParameters,
-													 bool                            Verbose = true);
+				WmaAudioStreamParameters_t*     StreamParameters,
+				bool                            Verbose = true);
 
 		FrameParserStatus_t   ReadHeaders(void);
 		FrameParserStatus_t   ResetReferenceFrameList(void);

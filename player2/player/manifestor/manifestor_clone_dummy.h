@@ -102,18 +102,14 @@ class Manifestor_CloneDummy_c : public Manifestor_c
 		ManifestorStatus_t   InitialFrame(Buffer_t                  Buffer)
 		{
 			report(severity_info, "InitialFrame - Called\n");
-
 			if (OutputRing != NULL) OutputRing->Insert((unsigned int)Buffer);
-
 			return ManifestorNoError;
 		}
 
 		ManifestorStatus_t   QueueDecodeBuffer(Buffer_t                  Buffer)
 		{
 			report(severity_info, "QueueDecodeBuffer - Called\n");
-
 			if (OutputRing != NULL) OutputRing->Insert((unsigned int)Buffer);
-
 			return ManifestorNoError;
 		}
 

@@ -374,114 +374,114 @@ static cap_v4l2_video_handle_t *CapVideoSysfsLookupContext(struct class_device *
 
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE( CapName, LinuxName )                         \
-	static ssize_t CapVideoSysfsShow##CapName( struct class_device *class_dev, char *buf )      \
-	{                                               \
-		int v = atomic_read(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName);          \
-		return sprintf(buf, "%d\n", v);                             \
-	}                                               \
-	\
-	static ssize_t CapVideoSysfsStore##CapName( struct class_device *class_dev, const char *buf, size_t count ) \
-	{                                               \
-		int v;                                          \
-		\
-		if (1 != sscanf(buf, "%i", &v))                             \
-			return -EINVAL;                                      \
-		\
-		if (v < 0)                                          \
-			return -EINVAL;                                      \
-		\
-		atomic_set(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName, v);            \
-		return count;                                       \
-	}                                               \
-	\
-	static CLASS_DEVICE_ATTR(LinuxName, 0600, CapVideoSysfsShow##CapName, CapVideoSysfsStore##CapName)
+    static ssize_t CapVideoSysfsShow##CapName( struct class_device *class_dev, char *buf )      \
+    {                                               \
+        int v = atomic_read(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName);          \
+        return sprintf(buf, "%d\n", v);                             \
+    }                                               \
+    \
+    static ssize_t CapVideoSysfsStore##CapName( struct class_device *class_dev, const char *buf, size_t count ) \
+    {                                               \
+        int v;                                          \
+        \
+        if (1 != sscanf(buf, "%i", &v))                             \
+            return -EINVAL;                                      \
+        \
+        if (v < 0)                                          \
+            return -EINVAL;                                      \
+        \
+        atomic_set(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName, v);            \
+        return count;                                       \
+    }                                               \
+    \
+    static CLASS_DEVICE_ATTR(LinuxName, 0600, CapVideoSysfsShow##CapName, CapVideoSysfsStore##CapName)
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_CREATE( CapName, LinuxName )                          \
-	{                                               \
-		int Result;                                         \
-		\
-		Result  = class_device_create_file(VideoContext->CapSysfsClassDevice,           \
-										   &class_device_attr_##LinuxName);              \
-		if (Result) {                                       \
-			DVB_ERROR("class_device_create_file failed (%d)\n", Result);             \
-			return -1;                                      \
-		}                                               \
-		\
-		player_sysfs_new_attribute_notification(VideoContext->CapSysfsClassDevice);         \
-		atomic_set(&VideoContext->Cap##CapName, 0);                         \
-	}
+    {                                               \
+        int Result;                                         \
+        \
+        Result  = class_device_create_file(VideoContext->CapSysfsClassDevice,           \
+                                           &class_device_attr_##LinuxName);              \
+        if (Result) {                                       \
+            DVB_ERROR("class_device_create_file failed (%d)\n", Result);             \
+            return -1;                                      \
+        }                                               \
+        \
+        player_sysfs_new_attribute_notification(VideoContext->CapSysfsClassDevice);         \
+        atomic_set(&VideoContext->Cap##CapName, 0);                         \
+    }
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_PROCESS_DECREMENT( CapName, LinuxName )              \
-	SYSFS_DECLARE( CapName, LinuxName );                                \
-	\
-	static void CapVideoSysfsProcessDecrement##CapName( cap_v4l2_video_handle_t *VideoContext ) \
-	{                                               \
-		int old, new;                                       \
-		\
-		/* conditionally decrement and notify one to zero transition. */                \
-		do {                                            \
-			old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-			\
-			if (new > 0)                                     \
-				new--;                                       \
-		} while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-		\
-		if (old == 1)                                       \
-			sysfs_notify (&((*(VideoContext->CapSysfsClassDevice)).kobj), NULL, #LinuxName );    \
-	}
+    SYSFS_DECLARE( CapName, LinuxName );                                \
+    \
+    static void CapVideoSysfsProcessDecrement##CapName( cap_v4l2_video_handle_t *VideoContext ) \
+    {                                               \
+        int old, new;                                       \
+        \
+        /* conditionally decrement and notify one to zero transition. */                \
+        do {                                            \
+            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+            \
+            if (new > 0)                                     \
+                new--;                                       \
+        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+        \
+        if (old == 1)                                       \
+            sysfs_notify (&((*(VideoContext->CapSysfsClassDevice)).kobj), NULL, #LinuxName );    \
+    }
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT( CapName, LinuxName )                \
-	SYSFS_DECLARE( CapName, LinuxName );                                \
-	\
-	static void CapVideoSysfsInterruptDecrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
-	{                                               \
-		int old, new;                                       \
-		\
-		/* conditionally decrement and notify one to zero transition. */                \
-		do {                                            \
-			old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-			\
-			if (new > 0)                                     \
-				new--;                                       \
-		} while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-		\
-		if (old == 1)                                       \
-		{                                               \
-			VideoContext->Cap##CapName##Notify  = true;                     \
-			up( &VideoContext->CapSynchronizerWakeSem );                        \
-		}                                               \
-	}
+    SYSFS_DECLARE( CapName, LinuxName );                                \
+    \
+    static void CapVideoSysfsInterruptDecrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+    {                                               \
+        int old, new;                                       \
+        \
+        /* conditionally decrement and notify one to zero transition. */                \
+        do {                                            \
+            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+            \
+            if (new > 0)                                     \
+                new--;                                       \
+        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+        \
+        if (old == 1)                                       \
+        {                                               \
+            VideoContext->Cap##CapName##Notify  = true;                     \
+            up( &VideoContext->CapSynchronizerWakeSem );                        \
+        }                                               \
+    }
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT( CapName, LinuxName )                \
-	SYSFS_DECLARE( CapName, LinuxName );                                \
-	\
-	static void CapVideoSysfsInterruptIncrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
-	{                                               \
-		int old, new;                                       \
-		\
-		/* conditionally decrement and notify one to zero transition. */                \
-		do {                                            \
-			old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-			\
-			if( new == 0)                                        \
-				new++;                                       \
-		} while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-		\
-		if (old == 0)                                       \
-		{                                               \
-			VideoContext->Cap##CapName##Notify  = true;                     \
-			up( &VideoContext->CapSynchronizerWakeSem );                        \
-		}                                               \
-	}
+    SYSFS_DECLARE( CapName, LinuxName );                                \
+    \
+    static void CapVideoSysfsInterruptIncrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+    {                                               \
+        int old, new;                                       \
+        \
+        /* conditionally decrement and notify one to zero transition. */                \
+        do {                                            \
+            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+            \
+            if( new == 0)                                        \
+                new++;                                       \
+        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+        \
+        if (old == 0)                                       \
+        {                                               \
+            VideoContext->Cap##CapName##Notify  = true;                     \
+            up( &VideoContext->CapSynchronizerWakeSem );                        \
+        }                                               \
+    }
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_TEST_NOTIFY( CapName, LinuxName )                         \
-	{                                               \
-		if( Context->Cap##CapName##Notify )                             \
-		{                                               \
-			Context->Cap##CapName##Notify   = false;                        \
-			sysfs_notify (&((*(Context->CapSysfsClassDevice)).kobj), NULL, #LinuxName );        \
-		}                                               \
-	}
+    {                                               \
+        if( Context->Cap##CapName##Notify )                             \
+        {                                               \
+            Context->Cap##CapName##Notify   = false;                        \
+            sysfs_notify (&((*(Context->CapSysfsClassDevice)).kobj), NULL, #LinuxName );        \
+        }                                               \
+    }
 // ------------------------------------------------------------------------------------------------
 
 SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCountingNotification,       frame_counting_notification);
@@ -501,42 +501,31 @@ static int CapVideoSysfsCreateAttributes(cap_v4l2_video_handle_t *VideoContext)
 	playback_handle_t playerplayback            = NULL;
 	stream_handle_t playerstream            = NULL;
 	int streamid;
-
 	Result = DvbStreamGetPlayerEnvironment(VideoContext->DeviceContext->VideoStream, &playerplayback, &playerstream);
-
 	if (Result < 0)
 	{
 		DVB_ERROR("StreamGetPlayerEnvironment failed\n");
 		return -1;
 	}
-
 	VideoContext->CapSysfsClassDevice = player_sysfs_get_class_device(playerplayback, playerstream);
-
 	if (VideoContext->CapSysfsClassDevice == NULL)
 	{
 		DVB_ERROR("get_class_device failed -> cannot create attribute \n");
 		return -1;
 	}
-
 	streamid = player_sysfs_get_stream_id(VideoContext->CapSysfsClassDevice);
-
 	if (streamid < 0 || streamid >= ARRAY_SIZE(VideoContextLookupTable))
 	{
 		DVB_ERROR("streamid out of range -> cannot create attribute\n");
 		return -1;
 	}
-
 	VideoContextLookupTable[streamid] = VideoContext;
-
 //
-
 	SYSFS_CREATE(FrameCountingNotification,         frame_counting_notification);
 	SYSFS_CREATE(FrameCaptureNotification,          frame_capture_notification);
 	SYSFS_CREATE(OutputCropTargetReachedNotification,   output_crop_target_reached_notification);
 	SYSFS_CREATE(PostMortem,                post_mortem);
-
 //
-
 	return 0;
 }
 
@@ -546,53 +535,39 @@ static struct stmcore_vsync_cb               vsync_cb_info;
 
 int CapVideoClose(cap_v4l2_video_handle_t   *Context)
 {
-
 	int Result;
 	struct stmcore_display_pipeline_data  pipeline_data;
-
 //
-
 	if (Context->VideoRunning)
 	{
 		Context->VideoRunning       = false;
-
 		Context->Synchronize        = false;
 		Context->SynchronizeEnabled = false;
 		Context->SynchronizerRunning    = false;
-
 		up(&Context->CapPreInjectBufferSem);
 		up(&Context->CapVideoInterruptSem);
 		up(&Context->CapSynchronizerWakeSem);
-
 		while (Context->DeviceContext->VideoStream != NULL)
 		{
 			unsigned int  Jiffies = ((HZ) / 1000) + 1;
-
 			set_current_state(TASK_INTERRUPTIBLE);
 			schedule_timeout(Jiffies);
 		}
-
 		stmcore_get_display_pipeline(0, &pipeline_data);
-
 		Result = stmcore_unregister_vsync_callback(pipeline_data.display_runtime,
-												   &vsync_cb_info);
-
+				 &vsync_cb_info);
 		if (Result)
 		{
 			printk("Error in %s: failed to deregister vsync callback\n", __FUNCTION__);
 			return -EINVAL;
 		}
-
 		Result = DvbDisplayDelete(BACKEND_VIDEO_ID, Context->DeviceContext->Id);
-
 		if (Result)
 		{
 			printk("Error in %s: DisplayDelete failed\n", __FUNCTION__);
 			return -EINVAL;
 		}
-
 	}
-
 	return 0;
 }
 
@@ -602,30 +577,24 @@ int CapVideoClose(cap_v4l2_video_handle_t   *Context)
 //
 
 static int CapConfigureVerticalResizeCoefficients(cap_v4l2_video_handle_t   *Context,
-												  unsigned int         ScalingFactorStep)
+		unsigned int         ScalingFactorStep)
 {
 	volatile int        *CapRegs    = Context->CapRegs;
 	unsigned int         i;
 	unsigned int         Index;
 	int         *Table;
-
 	//
 	// Select the table of coefficients
 	//
-
 	for (Index  = 0;
 			(ScalingFactorStep > VerticalResizingFilters[Index].ForScalingFactorLessThan);
 			Index++);
-
 	Table   = (int *)(&VerticalResizingFilters[Index].Coefficients);
-
 	//
 	// Program the filter
 	//
-
 	for (i = 0; i < WORDS_PER_VERTICAL_FILTER; i++)
 		CapRegs[GAM_CAP_VFC(i)] = Table[i];
-
 	return 0;
 }
 
@@ -641,24 +610,18 @@ static int CapConfigureHorizontalResizeCoefficients(cap_v4l2_video_handle_t *Con
 	unsigned int         i;
 	unsigned int         Index;
 	int         *Table;
-
 	//
 	// Select the table of coefficients
 	//
-
 	for (Index  = 0;
 			(ScalingFactorStep > HorizontalResizingFilters[Index].ForScalingFactorLessThan);
 			Index++);
-
 	Table   = (int *)(&HorizontalResizingFilters[Index].Coefficients);
-
 	//
 	// Program the filter
 	//
-
 	for (i = 0; i < WORDS_PER_HORIZONTAL_FILTER; i++)
 		CapRegs[GAM_CAP_HFC(i)] = Table[i];
-
 	return 0;
 }
 
@@ -679,97 +642,69 @@ static int CapRecalculateScaling(cap_v4l2_video_handle_t    *Context)
 	unsigned int         NewHSRC;
 	unsigned int         NewVSRC;
 	unsigned int         BytesPerLine;
-
 //
-
 	if (Context == NULL)
 		return -1;          // Too early to do anything
-
 //
-
 	Context->ScaledInputCrop    = Context->InputCrop;
-
 //
-
 //    printk("Hoz resize %d Vert resize %d\n",ControlValue(EnHsRc),ControlValue(EnVsRc));
-
 	ScalingInputWidth   = (Context->InputCrop.Width != 0) ? Context->InputCrop.Width : Context->ModeWidth;
 	ScalingInputHeight  = (Context->InputCrop.Height != 0) ? Context->InputCrop.Height : Context->ModeHeight;
 	ScalingOutputWidth  = (Context->OutputCrop.Width != 0) ? Context->OutputCrop.Width : Context->ModeWidth;
 	ScalingOutputHeight = (Context->OutputCrop.Height != 0) ? Context->OutputCrop.Height : Context->ModeHeight;
-
 //    printk("Scaled Output width %d height %d\n",ScalingOutputWidth,ScalingOutputHeight);
-
 	if ((ScalingInputWidth == 0) || (ScalingOutputWidth == 0))
 	{
 		printk("Scaling inputs not valid %d x %d\n", ScalingInputWidth, ScalingOutputWidth);
 		return -1;          // Too early to do anything
 	}
-
 	//
 	// We limit any downscaling to 1/8th
 	//
-
 	ScalingOutputWidth  = max(ScalingOutputWidth, ScalingInputWidth / 8);
 	ScalingOutputHeight = max(ScalingOutputHeight, ScalingInputHeight / 8);
-
 	//
 	// Now calculate the step values, note we only resize if the input is larger than the output.
 	//
-
 	NewHSRC     = CAP_SRC_OFF_VALUE;
 	NewVSRC     = CAP_SRC_OFF_VALUE;
 	ScaledInputWidth    = Context->ModeWidth;       // Not cropped version
 	ScaledInputHeight   = Context->ModeHeight;      // Not cropped version
-
 	if (ControlValue(EnHsRc) &&
 			(ScalingInputWidth > ScalingOutputWidth))
 	{
 		NewHSRC             = 0x01000000 | (((ScalingInputWidth - 1) * 256) / (ScalingOutputWidth - 1));
-
 		Context->ScaledInputCrop.X  = ((Context->InputCrop.X     * ScalingOutputWidth) / ScalingInputWidth);
 		Context->ScaledInputCrop.Width  = ((Context->InputCrop.Width * ScalingOutputWidth) / ScalingInputWidth);
-
 		ScaledInputWidth        = ((Context->ModeWidth * ScalingOutputWidth) / ScalingInputWidth);
 	}
-
 //
-
 	if (ControlValue(EnVsRc) &&
 			(ScalingInputHeight > ScalingOutputHeight))
 	{
 		NewVSRC             = 0x01000000 | (((ScalingInputHeight - 1) * 256) / (ScalingOutputHeight - 1));
-
 		Context->ScaledInputCrop.Y  = ((Context->InputCrop.Y      * ScalingOutputHeight) / ScalingInputHeight);
 		Context->ScaledInputCrop.Height = ((Context->InputCrop.Height * ScalingOutputHeight) / ScalingInputHeight);
-
 		ScaledInputHeight       = ((Context->ModeHeight * ScalingOutputHeight) / ScalingInputHeight);
-
 		printk("New VSRC 0x%08x - Scaled input height %d Crop Y %d Crop Height %d\n",
 			   NewVSRC, ScaledInputHeight, Context->ScaledInputCrop.Y, Context->ScaledInputCrop.Height);
 	}
-
 #if 0
 	NICK
 	ScaledInputWidth = (ScaledInputWidth + 0x1f) & 0xffffffe0;
 	ScaledInputHeight = (ScaledInputHeight + 0x1f) & 0xffffffe0;
 #endif
-
 	//
 	// Calculate the other new register values.
 	// This unfortunately is where I need to know the bytes per line
 	// value. I import here, the knowledge that the display hardware
 	// requires a 64 byte (32 pixel) allignment on a line.
 	//
-
 	printk("BufferBytesPerPixel %d - ScaledInputWidth %d\n", Context->BufferBytesPerPixel, ScaledInputWidth);
-
 	if (Context->BufferBytesPerPixel == 0) Context->BufferBytesPerPixel = 2;
-
 	BytesPerLine            = Context->BufferBytesPerPixel * ((ScaledInputWidth + 31) & 0xffffffe0);
-
 	down_interruptible(&Context->CapScalingStateLock);
-
 	Context->NextWidth          = ScaledInputWidth;
 	Context->NextHeight         = ScaledInputHeight;
 	Context->NextRegisterCMW        = ScaledInputWidth | ((ScaledInputHeight / (Context->StreamInfo.interlaced ? 2 : 1)) << 16);;
@@ -780,17 +715,12 @@ static int CapRecalculateScaling(cap_v4l2_video_handle_t    *Context)
 	Context->NextRegisterVSRC       = NewVSRC;
 	Context->NextInputWindow        = Context->ScaledInputCrop;
 	Context->NextOutputWindow       = Context->OutputCrop;
-
 	up(&Context->CapScalingStateLock);
-
 	printk("Scaling input height %d scaling output height %d (%s)\n",
 		   ScalingInputHeight, ScalingOutputHeight,
 		   Context->StreamInfo.interlaced ? "interlaced" : "progressive");
-
 	//printk("NextRegisterVBPminusVTP 0x%x\n",Context->NextRegisterVBPminusVTP);
-
 //
-
 	return  0;
 }
 
@@ -806,75 +736,53 @@ static int CapGetVideoBuffer(cap_v4l2_video_handle_t    *Context)
 	unsigned int         BufferIndex;
 	unsigned int         SurfaceFormat;
 	CapBufferStack_t    *Record;
-
 //
-
 	Record                  = &Context->CapBufferStack[Context->CapNextBufferToGet % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 	memset(Record, 0x00, sizeof(CapBufferStack_t));
-
 //
-
 	down_interruptible(&Context->CapScalingStateLock);
-
 	Dimensions[0]               = Context->NextWidth;
 	Dimensions[0]                               = (Dimensions[0] + 0x1f) & 0xffffffe0;
-
 	Dimensions[1]               = Context->NextHeight;
 	Dimensions[1]                               = (Dimensions[1] + 0x1f) & 0xffffffe0;
-
 	Record->RegisterCMW             = Context->NextRegisterCMW;
 	Record->RegisterVMP             = Context->NextRegisterVMP;
 	Record->RegisterVBPminusVTP         = Context->NextRegisterVBPminusVTP;
 	Record->RegisterHSRC            = Context->NextRegisterHSRC;
 	Record->RegisterVSRC            = Context->NextRegisterVSRC;
-
 	Record->InputWindow             = Context->NextInputWindow;
 	Record->OutputWindow            = Context->NextOutputWindow;
-
 //    SurfaceFormat                               = SURF_ARGB8888;
 	SurfaceFormat                               = SURF_RGB565;
 //    SurfaceFormat                               = SURF_YCBCR422R;
-
 	switch (SurfaceFormat)
 	{
 		case SURF_RGB565:
 			Context->CapControlCapFormat  = 0x0;
 			Context->BufferBytesPerPixel  = 0x2;
-
 			if (Context->CapControlSource == 0x0e)
 				Context->CapControlYCbCr2RGB = 0x1;
-
 			break;
-
 		case SURF_RGB888:
 			Context->CapControlCapFormat  = 0x1;
 			Context->BufferBytesPerPixel  = 0x3;
-
 			if (Context->CapControlSource == 0x0e)
 				Context->CapControlYCbCr2RGB = 0x1;
-
 			break;
-
 		case SURF_ARGB8888:
 			Context->CapControlCapFormat  = 0x5;
 			Context->BufferBytesPerPixel  = 0x4;
-
 			if (Context->CapControlSource == 0x0e)
 				Context->CapControlYCbCr2RGB = 0x1;
-
 			break;
-
 		case SURF_YCBCR422R:
 			Context->CapControlCapFormat  = 0x12;
 			Context->BufferBytesPerPixel  = 0x2;
 			Context->CapControlYCbCr2RGB  = 0;
 			break;
 	}
-
 	up(&Context->CapScalingStateLock);
-
 //
-
 	Result  = DvbStreamGetDecodeBuffer(Context->DeviceContext->VideoStream,
 									   &Record->Buffer,
 									   &Record->Data,
@@ -882,22 +790,17 @@ static int CapGetVideoBuffer(cap_v4l2_video_handle_t    *Context)
 									   2, Dimensions,
 									   &BufferIndex,
 									   &Context->BytesPerLine);
-
 	if (Result != 0)
 	{
 		printk("Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__);
 		return -1;
 	}
-
 	if (Context->BytesPerLine != (Dimensions[0] * Context->BufferBytesPerPixel))
 	{
 		printk("Error in %s: StreamGetDecodeBuffer returned an unexpected bytes per line value (%d instead of %d)\n", __FUNCTION__, Context->BytesPerLine, (Dimensions[0] * Context->BufferBytesPerPixel));
 	}
-
 //
-
 	Context->CapNextBufferToGet++;
-
 	return 0;
 }
 
@@ -910,26 +813,19 @@ static int CapReleaseBuffers(cap_v4l2_video_handle_t    *Context)
 {
 	int          Result;
 	CapBufferStack_t    *Record;
-
 //
-
 	while (Context->CapNextBufferToInject < Context->CapNextBufferToGet)
 	{
 		Record  = &Context->CapBufferStack[Context->CapNextBufferToInject % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
-
 		Result  = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
-
 		if (Result < 0)
 		{
 			printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
 			// No point returning, we may as well try and release the rest
 		}
-
 		Context->CapNextBufferToInject++;
 	}
-
 //
-
 	return 0;
 }
 
@@ -948,50 +844,35 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 	unsigned long long   PresentationTime;
 	unsigned long long   Pts;
 	StreamInfo_t         Packet;
-
 //
-
 	if (Context->CapNextBufferToInject >= Context->CapNextBufferToGet)
 	{
 		printk("CapInjectVideoBuffer - No buffer yet to inject.\n");
 		return -1;
 	}
-
 	//
 	// Make the call to set the time mapping.
 	//
-
 	Pts = (((Context->CapBaseTime * 27) + 150) / 300) & 0x00000001ffffffffull;
-
 	Result = cap_set_external_time_mapping(Context->SharedContext, Context->DeviceContext->VideoStream, Pts, Context->CapBaseTime);
-
 	if (Result < 0)
 	{
 		printk("CapInjectVideoBuffer - cap_enable_external_time_mapping failed\n");
 		return Result;
 	}
-
 //
-
 	Record              = &Context->CapBufferStack[Context->CapNextBufferToInject % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
-
 	//
 	// Calculate the expected fill time, Note the correction factor on the incoming values has 1 as 2^CAP_CORRECTION_FIXED_POINT_BITS.
 	//
-
 	Context->CapCalculatingFrameTime    = true;
-
 	ElapsedFrameTime            = CapCorrectedTimeForNFrames(Context->CapFrameCount + Context->CapLeadInVideoFrames);
-
 	Context->CapDriftFrameCount++;
 	Context->CapLastDriftCorrection = -(Context->CapCurrentDriftError * Context->CapDriftFrameCount) / (long long)(2 * CAP_MAXIMUM_TIME_INTEGRATION_FRAMES);
-
 	Record->ExpectedFillTime        = Context->CapBaseTime + ElapsedFrameTime + Context->CapLastDriftCorrection;
-
 	//
 	// Rebase our calculation values
 	//
-
 	if (ElapsedFrameTime >= (1ULL << 31))
 	{
 		Context->CapDriftFrameCount = 0;                // We zero the drift data, because it is encapsulated in the ExpectedFillTime
@@ -999,18 +880,13 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 		Context->CapBaseTime        = Record->ExpectedFillTime;
 		Context->CapFrameCount      = -Context->CapLeadInVideoFrames;
 	}
-
 	Context->CapCalculatingFrameTime    = false;
-
 	//
 	// Construct a packet to inject the information - NOTE we adjust the time to cope for a specific video latency
 	//
-
 	PresentationTime        = Record->ExpectedFillTime + Context->AppliedLatency;
 	Pts              = (((PresentationTime * 27) + 150) / 300) & 0x00000001ffffffffull;
-
 	memcpy(&Packet, &Context->StreamInfo, sizeof(StreamInfo_t));
-
 	Packet.buffer       = phys_to_virt((unsigned int)Record->Data);
 	Packet.buffer_class     = Record->Buffer;
 	Packet.width        = Context->NextWidth;
@@ -1021,45 +897,32 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 	Packet.OutputWindow     = Record->OutputWindow;
 	Packet.pixel_aspect_ratio.Numerator = Context->DeviceContext->PixelAspectRatio.Numerator;
 	Packet.pixel_aspect_ratio.Denominator = Context->DeviceContext->PixelAspectRatio.Denominator;
-
 #if 1
-
 	if (FrameCount++ == 128)
 		printk("Buffer Address 0x%08x\n", (unsigned int)Packet.buffer);
-
 #endif
-
 //printk( "ElapsedFrameTime = %12lld - %016llx - %12lld, %12lld - %016llx\n", ElapsedFrameTime, Pts, StreamInfo.FrameRateNumerator, StreamInfo.FrameRateDenominator, CapFrameDurationCorrection );
-
 	Result  = DvbStreamInjectPacket(Context->DeviceContext->VideoStream, (const unsigned char*)(&Packet), sizeof(StreamInfo_t), true, Pts);
-
 	if (Result < 0)
 	{
 		printk("Error in %s: StreamInjectDataPacket failed\n", __FUNCTION__);
 		return Result;
 	}
-
 	//
 	// The ownership of the buffer has now been passed to the player, so we release our hold
 	//
-
 	Result  = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
-
 	if (Result < 0)
 	{
 		printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
 		// No point in returning
 	}
-
 	//
 	// Move on to next buffer
 	//
-
 	Context->CapFrameCount++;
 	Context->CapNextBufferToInject++;
-
 //
-
 	return 0;
 }
 
@@ -1069,46 +932,38 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 //
 unsigned long cap_address;
 static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
-										 unsigned long long         Now)
+		unsigned long long         Now)
 {
 	volatile int        *CapRegs    = Context->CapRegs;
 	CapBufferStack_t        *Record;
 	unsigned int         BufferAdvance;
 	bool             DroppedAFrame;
-
 	//
 	// select one to move onto
 	//      We ensure that the timing for capture is right,
 	//      this may involve not filling buffers or refilling
 	//      the current buffer in an error condition
 	//
-
 	DroppedAFrame       = false;
 	BufferAdvance       = 0;
 	Record          = &Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
-
 	while (inrange((Now - Record->ExpectedFillTime), ((7 * CapTimeForNFrames(1)) / 8), 0x8000000000000000ULL))
 	{
 		Context->CapNextBufferToFill++;
-
 		if (Context->CapNextBufferToFill >= Context->CapNextBufferToGet)
 		{
 //      printk( "CAP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->CapNextBufferToFill, Context->CapNextBufferToGet, Context->CapPreInjectBufferSem.count );
 			printk("CAP DF\n");                      // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
 			DroppedAFrame   = true;
-
 			if (Context->StandardFrameRate)
 				Context->CapInterruptFrameCount--;          // Pretend this interrupt never happened
-
 			Context->CapNextBufferToFill--;
 			break;
 		}
-
 		Record          = &Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 		BufferAdvance++;
 		up(&Context->CapPreInjectBufferSem);
 	}
-
 	if ((BufferAdvance == 0) && ((Context->CapNextBufferToFill + 1) != Context->CapNextBufferToGet))
 	{
 		printk("CAP Video - Too early to fill buffer(%d), Discarding a frame (%lld)\n", Context->CapNextBufferToFill, (Record->ExpectedFillTime - Now));
@@ -1121,49 +976,37 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
 	else if (BufferAdvance > 1)
 	{
 		printk("CAP Video - Too late to fill buffer(%d), skipped %d buffers (%lld)\n", Context->CapNextBufferToFill, (BufferAdvance - 1), (Record->ExpectedFillTime - Now));
-
 		if (Context->StandardFrameRate)
 			Context->CapInterruptFrameCount += (BufferAdvance - 1);     // Compensate for the missed interrupts
 	}
-
 	Context->CapMissedFramesInARow  = DroppedAFrame ? (Context->CapMissedFramesInARow + 1) : 0;
-
 	//
 	// Update the Horizontal and Vertical re-sizing
 	//
-
 	if (Record->RegisterHSRC != Context->LastRegisterHSRC)
 	{
 		Context->RegisterCTL        &= ~(1 << 10);          // HRESIZE_EN           - Clear out the resize enable bit
-
 		if (Record->RegisterHSRC != CAP_SRC_OFF_VALUE)
 		{
 			CapConfigureHorizontalResizeCoefficients(Context, (Record->RegisterHSRC & 0x00000fff));
 			Context->RegisterCTL        |= (1 << 10);       // HRESIZE_EN           - Enable horizontal resize
 		}
-
 		Context->LastRegisterHSRC   = Record->RegisterHSRC;
 	}
-
 //
-
 	if (Record->RegisterVSRC != Context->LastRegisterVSRC)
 	{
 		Context->RegisterCTL        &= ~(1 << 9);           // VRESIZE_EN           - Clear out the resize enable bit
-
 		if (Record->RegisterVSRC != CAP_SRC_OFF_VALUE)
 		{
 			CapConfigureVerticalResizeCoefficients(Context, (Record->RegisterVSRC & 0x00000fff));
 			Context->RegisterCTL        |= (1 << 9);        // VRESIZE_EN           - Enable vertical resize
 		}
-
 		Context->LastRegisterVSRC   = Record->RegisterVSRC;
 	}
-
 	//
 	// Move onto the new buffer
 	//
-
 #ifdef OFFSET_THE_IMAGE
 	CapRegs[GAM_CAP_VTP]    = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP);
 	CapRegs[GAM_CAP_VBP]    = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP) + Record->RegisterVBPminusVTP;
@@ -1173,15 +1016,12 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
 	CapRegs[GAM_CAP_VBP]    = (unsigned int)Record->Data + Record->RegisterVBPminusVTP;
 	cap_address = (unsigned int)Record->Data;
 #endif
-
 	CapRegs[GAM_CAP_HSRC]   = Record->RegisterHSRC;
 	CapRegs[GAM_CAP_VSRC]   = Record->RegisterVSRC;
 	CapRegs[GAM_CAP_PMP]    = Record->RegisterVMP;
 	CapRegs[GAM_CAP_CMW]    = Record->RegisterCMW;      // Nick re-ordered, all registers should be configured before we hit CTL
 	CapRegs[GAM_CAP_CTL]    = Context->RegisterCTL;
-
 #if 0
-
 	if (frame_count++ == 100)
 	{
 		printk("Stored pitch %d ", CapRegs[GAM_CAP_PMP]);
@@ -1190,10 +1030,8 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
 			   (CapRegs[GAM_CAP_CMW] >> 16) & 0x7ff,
 			   CapRegs[GAM_CAP_CMW] >> 30);
 	}
-
 #endif
 //
-
 	return 0;
 }
 
@@ -1206,31 +1044,22 @@ static int CapHaltCapture(cap_v4l2_video_handle_t   *Context)
 {
 //unsigned int       Tmp;
 	volatile int        *CapRegs    = Context->CapRegs;
-
 	//
 	// Mark state
 	//
-
 	printk("%s\n", __PRETTY_FUNCTION__);
-
 	Context->CapState       = CapMovingToInactive;
-
 	//
 	// make sure nothing is going on
 	//
-
 //    CapRegs[GAM_CAP_CTL]  = CapRegs[GAM_CAP_CTL] & ~(0x00000060);
 	CapRegs[GAM_CAP_CTL]    = CapRegs[GAM_CAP_CTL] | (1 << 7);
 	printk("CTL = %08x\n", CapRegs[GAM_CAP_CTL]);
-
 	//
 	// Mark state
 	//
-
 	Context->CapState       = CapInactive;
-
 //
-
 	return 0;
 }
 
@@ -1249,30 +1078,23 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 	unsigned int             Width;
 	unsigned int             VOffset;
 	unsigned int             Height;
-
 //
-
 	ModeParams      = &Context->CapCaptureMode->ModeParams;
 	TimingParams    = &Context->CapCaptureMode->TimingParams;
 	Mode        = Context->CapCaptureMode->Mode;
-
 	//
 	// Modify default control values based on current mode
 	//     NOTE because some adjustments have an incestuous relationship,
 	//      we need to calculate some defaults twice.
 	//
-
 	Context->CapControlDefaultOddPixelCount         = ((ModeParams->ActiveAreaWidth + ControlValue(ActiveAreaAdjustWidth)) & 1);
 	Context->CapControlDefaultExternalVRefPolarityPositive  = TimingParams->VSyncPolarity;
 	Context->CapControlDefaultHRefPolarityPositive      = TimingParams->HSyncPolarity;
 	Context->CapControlDefaultVideoLatency          = (int)Context->CapLatency;
-
 	//
 	// Setup the stream info based on the current capture mode
 	//
-
 	Context->StandardFrameRate              = true;
-
 	if (ModeParams->FrameRate == 59940)
 	{
 		Context->StreamInfo.FrameRateNumerator      = 60000;
@@ -1293,12 +1115,9 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 		Context->StreamInfo.FrameRateNumerator      = ModeParams->FrameRate;
 		Context->StreamInfo.FrameRateDenominator    = 1000;
 	}
-
 	if (ModeParams->ScanType == SCAN_I)
 		Context->StreamInfo.FrameRateNumerator      /= 2;
-
 //
-
 	if (CapTimeForNFrames(1) > 20000)                // If frame time is more than 20ms then use counts appropriate to 30 or less fps
 	{
 		Context->CapWarmUpVideoFrames   = CAP_WARM_UP_VIDEO_FRAMES_30;
@@ -1309,9 +1128,7 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 		Context->CapWarmUpVideoFrames   = CAP_WARM_UP_VIDEO_FRAMES_60;
 		Context->CapLeadInVideoFrames   = CAP_LEAD_IN_VIDEO_FRAMES_60;
 	}
-
 	// Evaluate the picture aspect ratio. Only for NTSC and PAL I have the need to do that. 1:1 is the default.
-
 	if (Context->CapControlPictureAspectRatio == CAP_PICTURE_ASPECT_RATIO_4_3)
 	{
 		switch (Mode)
@@ -1323,13 +1140,11 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 				Context->DeviceContext->PixelAspectRatio.Numerator = 8;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 9;
 				break;
-
 			case CAP_720_576_I50000:
 			case CAP_720_576_P50000:
 				Context->DeviceContext->PixelAspectRatio.Numerator = 16;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 15;
 				break;
-
 			default:
 				Context->DeviceContext->PixelAspectRatio.Numerator = 1;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 1;
@@ -1347,109 +1162,82 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 				Context->DeviceContext->PixelAspectRatio.Numerator = 32;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 27;
 				break;
-
 			case CAP_720_576_I50000:
 			case CAP_720_576_P50000:
 				Context->DeviceContext->PixelAspectRatio.Numerator = 64;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 45;
 				break;
-
 			default:
 				Context->DeviceContext->PixelAspectRatio.Numerator = 1;
 				Context->DeviceContext->PixelAspectRatio.Denominator = 1;
 				break;
 		}
 	}
-
 	//
 	// Set appropriate policy to manage non progressive zoom format
 	//
-
 	Context->CapControlPixelAspectRatioCorrection = CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE; // cjt hack
-
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION,
 					   Context->CapControlPixelAspectRatioCorrection);
-
 	//
 	// Calculate how many buffers we will need to pre-inject.
 	// That is the buffers injected ahead of filling.
 	//
-
 	Context->CapBuffersRequiredToInjectAhead    = CAP_MAXIMUM_PLAYER_TRANSIT_TIME / CapTimeForNFrames(1) + 1;
-
 	//
 	// Fill in the stream info fields
 	//
-
 	Context->ModeWidth          = ModeParams->ActiveAreaWidth  + ControlValue(ActiveAreaAdjustWidth);
 	Context->ModeHeight         = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
-
 	Context->StreamInfo.interlaced  = ModeParams->ScanType == SCAN_I;
 	Context->StreamInfo.h_offset    = 0;
 	Context->StreamInfo.v_offset    = 0;
 	Context->StreamInfo.VideoFullRange  = ControlValue(FullRange);
 	Context->StreamInfo.ColourMode  = ControlValue(ColourMode);
-
 	//
 	// Lock in the state of control values
 	//
-
 	Context->SynchronizeEnabled     = ControlValue(VsyncLockEnable);
 	Context->AppliedLatency     = ControlValue(VideoLatency) - Context->CapLatency;
-
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_EXTERNAL_TIME_MAPPING_VSYNC_LOCKED,
 					   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
-
 	//
 	// Based on the mode<dimension> values, recalculate the scaling values.
 	//
-
 	CapRecalculateScaling(Context);
-
 	//
 	// Precalculate the register values
 	//
-
 	Interlaced          = Context->StreamInfo.interlaced;
-
 	HOffset         = ModeParams->ActiveAreaXStart + ControlValue(ActiveAreaAdjustHorizontalOffset);
 	Width           = ModeParams->ActiveAreaWidth  + ControlValue(ActiveAreaAdjustWidth);
 	VOffset         = ModeParams->FullVBIHeight    + ControlValue(ActiveAreaAdjustVerticalOffset);
 	Height          = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
-
 #ifdef OFFSET_THE_IMAGE
 // NAUGHTY - Since we are offseting the image, we need to crop it, or it will write past the buffer end
 	Width /= 2;
 	Height /= 2;
 #endif
-
 #if 0
 	VOffset         = Context->StreamInfo.interlaced ? ((VOffset + 1) / 2) : VOffset;
 #else
 	VOffset         = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
 #endif
-
 //   Height         = Context->StreamInfo.interlaced ? ((Height + 1) / 2) : Height;
 	Height          = Height;
-
 	printk("Hoff %d Voff %d Width %d Height %d - %s\n", HOffset, VOffset, Width, Height, Interlaced ? "interlaced" : "progressive");
-
 //    Context->RegisterCWO  = ((HOffset     ) | (TopVoffset          << 16));
-
 	Context->RegisterCWO    = ((VOffset          << 16));  // this works kinda
 	Context->RegisterCWS    = (((Width - 1)) | ((Height - 1)     << 16)) + Context->RegisterCWO;
 	Context->RegisterHLL    = Width ;
-
 	{
 		int print_width  = (Context->RegisterCWS - Context->RegisterCWO) & 0x7ff;
 		int print_height  = (Context->RegisterCWS - Context->RegisterCWO) >> 16;
 		printk("Capture window aperture w - %d - h %d\n", print_width, print_height);
 	}
-
 	//
 	// Setup the control register values (No constants, so I commented each field)
 	//
-
 	Context->RegisterCTL    = (ControlValue(CSignOut)   << 27) | // Change chroma sign when capturing YCbCr888 or YCbCr422R
 							  (ControlValue(CSignIn)    << 26) | // Color space converter, input chrominance components
 							  (ControlValue(BF709Not601)    << 25) | // Color space converter, colorimetry selection
@@ -1464,9 +1252,7 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 							  (ControlValue(BFCap)      <<  5) | // Back field capture
 							  (ControlValue(VTGSel)     <<  4) | // VTG 1 / 2 select
 							  (ControlValue(Source)     <<  0) ; // Source selection
-
 //
-
 	return 0;
 }
 
@@ -1479,84 +1265,61 @@ static int CapConfigureCapture(cap_v4l2_video_handle_t  *Context)
 {
 	volatile int        *CapRegs    = Context->CapRegs;
 	CapBufferStack_t        *Record;
-
 //
-
 	Record          = &Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE];
-
 	//
 	// make sure nothing is going on
 	//
-
 //    CapRegs[GAM_CAP_CTL]  = CapRegs[GAM_CAP_CTL] & ~(0x00000060); // Just disable capture
 	CapRegs[GAM_CAP_CTL]    = CapRegs[GAM_CAP_CTL] | (1 << 7);
 	printk("CTL = %08x\n", CapRegs[GAM_CAP_CTL]);
-
 	//
 	// Update to incorporate the resizing
 	//
-
 	if (Record->RegisterHSRC != CAP_SRC_OFF_VALUE)
 	{
 		CapConfigureHorizontalResizeCoefficients(Context, (Record->RegisterHSRC & 0x00000fff));
 		Context->RegisterCTL        |= (1 << 10);       // HRESIZE_EN           - Enable horizontal resize
 	}
-
 	Context->LastRegisterHSRC   = Record->RegisterHSRC;
-
 //
-
 	if (Record->RegisterVSRC != CAP_SRC_OFF_VALUE)
 	{
 		CapConfigureVerticalResizeCoefficients(Context, (Record->RegisterVSRC & 0x00000fff));
 		Context->RegisterCTL        |= (1 << 9);        // VRESIZE_EN           - Enable vertical resize
 	}
-
 	Context->LastRegisterVSRC   = Record->RegisterVSRC;
-
 	//
 	// Program the structure registers
 	//
-
 	printk("Buffer start 0x%08x - Field offset 0x%x\n", (unsigned int)Record->Data, Record->RegisterVBPminusVTP);
-
 	CapRegs[GAM_CAP_VTP]    = (unsigned int)Record->Data;
 	CapRegs[GAM_CAP_VBP]    = (unsigned int)(Record->Data + Record->RegisterVBPminusVTP);
 	CapRegs[GAM_CAP_HSRC]   = Record->RegisterHSRC;
 	CapRegs[GAM_CAP_VSRC]   = Record->RegisterVSRC;
 	CapRegs[GAM_CAP_PKZ]    = 0x5;
-
 	CapRegs[GAM_CAP_CWO]    = Context->RegisterCWO; // capture window offset
 	CapRegs[GAM_CAP_CWS]    = Context->RegisterCWS; // CWS cap window def
 	CapRegs[GAM_CAP_CMW]    = Record->RegisterCMW;
 	CapRegs[GAM_CAP_PMP]    = Record->RegisterVMP;  // pitch in bytes
 	CapRegs[GAM_CAP_CTL]    = Context->RegisterCTL; // Let er rip
-
 	printk("CTL 0x%08x - CWO 0x%08x - CWS 0x%08x - VTP 0x%08x\nVBP 0x%08x - PMP 0x%08x - CMW 0x%08x - HSRC 0x%08x\nVSRC 0x%08x - PKZ 0x%08x\n",
 		   CapRegs[GAM_CAP_CTL], CapRegs[GAM_CAP_CWO], CapRegs[GAM_CAP_CWS], CapRegs[GAM_CAP_VTP],
 		   CapRegs[GAM_CAP_VBP], CapRegs[GAM_CAP_PMP], CapRegs[GAM_CAP_CMW], CapRegs[GAM_CAP_HSRC],
 		   CapRegs[GAM_CAP_VSRC], CapRegs[GAM_CAP_PKZ]);
-
 	{
 		unsigned int i;
-
 		for (i = 0 ; i < WORDS_PER_HORIZONTAL_FILTER; ++i)
 		{
 			printk("HFC%d 0x%08x\t", i, CapRegs[GAM_CAP_HFC(i)]);
-
 			if (i == 5) printk("\n");
 		}
-
 		printk("\n");
-
 		for (i = 0 ; i < WORDS_PER_VERTICAL_FILTER; ++i)
 			printk("VFC%d 0x%08x\t", i, CapRegs[GAM_CAP_VFC(i)]);
-
 		printk("\n");
 	}
-
 	return 0;
-
 }
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -1566,11 +1329,9 @@ static int CapConfigureCapture(cap_v4l2_video_handle_t  *Context)
 static int CapStartup(cap_v4l2_video_handle_t   *Context)
 {
 	int          Result;
-
 	//
 	// Configure the capture
 	//
-
 	Context->CapCalculatingFrameTime    = false;
 	Context->CapBaseTime        = INVALID_TIME;
 	Context->CapFrameCount      = 0;
@@ -1591,27 +1352,19 @@ static int CapStartup(cap_v4l2_video_handle_t   *Context)
 	Context->CapLastDriftCorrection = 0;
 	Context->CapDriftFrameCount     = 0;
 	Context->CapState           = CapStarting;
-
 	cap_invalidate_external_time_mapping(Context->SharedContext);
-
 	sema_init(&Context->CapVideoInterruptSem, 0);
 	sema_init(&Context->CapPreInjectBufferSem, Context->CapBuffersRequiredToInjectAhead - 1);
-
 	Result              = CapConfigureCapture(Context);
-
 	if (Result < 0)
 	{
 		printk("CapStartup - Failed to configure capture hardware.\n");
 		return -EINVAL;
 	}
-
 //
-
 	while ((Context->CapState != CapStarted) && Context->VideoRunning && !Context->FastModeSwitch)
 		down_interruptible(&Context->CapVideoInterruptSem);
-
 //
-
 	return 0;
 }
 
@@ -1623,18 +1376,13 @@ static int CapStartup(cap_v4l2_video_handle_t   *Context)
 static int CapRun(cap_v4l2_video_handle_t   *Context)
 {
 	unsigned long long  ElapsedFrameTime;
-
 	//
 	// Set the start time, and switch to moving to run state
 	//
-
 	ElapsedFrameTime            = CapTimeForNFrames(Context->CapLeadInVideoFrames + 1);
 	Context->CapRunFromTime     = Context->CapBaseTime + ElapsedFrameTime - 8000;   // Allow for jitter by subtracting 8ms
-
 	Context->CapState           = CapMovingToRun;
-
 //
-
 	return 0;
 }
 
@@ -1646,27 +1394,20 @@ static int CapRun(cap_v4l2_video_handle_t   *Context)
 static int CapStop(cap_v4l2_video_handle_t  *Context)
 {
 	int          Result;
-
 	//
 	// Halt the capture
 	//
-
 	Result          = CapHaltCapture(Context);
-
 	if (Result < 0)
 	{
 		printk("Error in %s: Failed to halt capture hardware.\n", __FUNCTION__);
 		return -EINVAL;
 	}
-
 	//
 	// And adjust the state accordingly
 	//
-
 	Context->CapBaseTime    = INVALID_TIME;
-
 //
-
 	return 0;
 }
 
@@ -1685,21 +1426,15 @@ static int CapFrameRate(cap_v4l2_video_handle_t *Context,
 	unsigned int        i;
 	unsigned long long  MicroSecondsPerFrame;
 	unsigned int        NewCapBuffersRequiredToInjectAhead;
-
 	//
 	// First convert the us per frame into an idealized
 	// number (one where the clock is perfectish).
 	//
-
 	MicroSecondsPerFrame    = ((MicroSeconds << CAP_CORRECTION_FIXED_POINT_BITS) + (Context->CapFrameDurationCorrection >> 1)) / Context->CapFrameDurationCorrection;
 	MicroSecondsPerFrame    = (MicroSecondsPerFrame + (Frames / 2)) / Frames;
-
 	printk("CapFrameRate - Idealized MicroSecondsPerFrame = %5lld (%6lld, %4d, %08llx)\n", MicroSecondsPerFrame, MicroSeconds, Frames, Context->CapFrameDurationCorrection);
-
 //
-
 	Context->StandardFrameRate  = true;
-
 	if (CapValueMatchesFrameTime(MicroSecondsPerFrame, 16667))               // 60fps = 16666.67 us
 	{
 		Context->StreamInfo.FrameRateNumerator      = 60;
@@ -1746,39 +1481,28 @@ static int CapFrameRate(cap_v4l2_video_handle_t *Context,
 		Context->StreamInfo.FrameRateNumerator      = 1000000;
 		Context->StreamInfo.FrameRateDenominator    = MicroSecondsPerFrame;
 	}
-
 	// If it was non standard, but has not changed since
 	// last integration, we let it become the new standard.
-
 //
-
 	if (MicroSecondsPerFrame < 32000)                        // Has the interlaced flag been set incorrectly
 		Context->StreamInfo.interlaced          = false;
-
 //
-
 	if (Context->StandardFrameRate)
 		printk("CapFrameRate - Framerate = %lld/%lld (%s)\n", Context->StreamInfo.FrameRateNumerator, Context->StreamInfo.FrameRateDenominator,
 			   (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
-
 	//
 	// Recalculate how many buffers we will need to pre-inject.
 	// If this has increased, then allow more injections by performing up
 	// on the appropriate semaphore.
 	//
-
 	NewCapBuffersRequiredToInjectAhead      = CAP_MAXIMUM_PLAYER_TRANSIT_TIME / CapTimeForNFrames(1) + 1;
-
 	if (NewCapBuffersRequiredToInjectAhead > Context->CapBuffersRequiredToInjectAhead)
 	{
 		for (i = Context->CapBuffersRequiredToInjectAhead; i < NewCapBuffersRequiredToInjectAhead; i++)
 			up(&Context->CapPreInjectBufferSem);
-
 		Context->CapBuffersRequiredToInjectAhead = NewCapBuffersRequiredToInjectAhead;
 	}
-
 //
-
 	return 0;
 }
 
@@ -1794,22 +1518,16 @@ static int CapWarmUpFailure(cap_v4l2_video_handle_t *Context,
 							unsigned long long      MicroSeconds)
 {
 //    printk( "$$$ CapWarmUpFailure %5d => %5lld %5lld $$$\n", CapTimeForNFrames(1), CapTimeForNFrames(Context->CapInterruptFrameCount), MicroSeconds );
-
 	//
 	// Select an appropriate frame rate
 	//
-
 	CapFrameRate(Context, MicroSeconds, Context->CapInterruptFrameCount);
-
 	//
 	// Automatically switch to a slow startup
 	//
-
 	Context->CapWarmUpVideoFrames   = CAP_WARM_UP_VIDEO_FRAMES_60;
 	Context->CapLeadInVideoFrames   = CAP_LEAD_IN_VIDEO_FRAMES_60;
-
 //
-
 	return 0;
 }
 
@@ -1833,32 +1551,21 @@ void CapInterrupt(void* data, stm_field_t vsync)
 	long long        ClampChange;
 	long long        DriftError;
 	long long        DriftLimit;
-
 //
-
 	Context     = (cap_v4l2_video_handle_t *)data;
 	CapRegs     = Context->CapRegs;
-
 //
-
 	if (Context->StreamInfo.interlaced &&
 			(ControlValue(TopFieldFirst) == (vsync == STM_TOP_FIELD)))
 		return;
-
 //
-
 	Ktime       = ktime_get();
 	Now         = ktime_to_us(Ktime);
-
 	Context->CapInterruptFrameCount++;
-
 #if 0
-
 	if ((Context->CapState != CapInactive) && (Context->CapState != CapMovingToInactive))
 		printk("CapI - %d, %d - %016llx - %d\n", Context->CapState, Context->CapInterruptFrameCount, Now, vsync);
-
 #endif
-
 	switch (Context->CapState)
 	{
 		case CapInactive:
@@ -1866,17 +1573,14 @@ void CapInterrupt(void* data, stm_field_t vsync)
 // Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevant here
 //          CapHaltCapture( Context );              // Try and halt it
 			break;
-
 		case CapStarting:
 			Context->CapBaseTime                = Now + CapTimeForNFrames(1);   // Force trigger
 			Context->CapInterruptFrameCount         = 0;
 			Context->CapwarmUpSynchronizationAttempts   = 0;
 			Context->CapState               = CapWarmingUp;
-
 		case CapWarmingUp:
 			EstimatedBaseTime               = Now - CapCorrectedTimeForNFrames(Context->CapInterruptFrameCount);
 			EstimatedBaseTimeRange              = 1 + (CapTimeForNFrames(Context->CapInterruptFrameCount) * CAP_MAX_SUPPORTED_PPM_CLOCK_ERROR) / 1000000;
-
 			if (!inrange(Context->CapBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange) , (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
 					(Context->CapwarmUpSynchronizationAttempts < CAP_WARM_UP_TRIES))
 			{
@@ -1888,58 +1592,40 @@ void CapInterrupt(void* data, stm_field_t vsync)
 				Context->CapwarmUpSynchronizationAttempts++;
 				up(&Context->CapSynchronizerWakeSem);
 			}
-
 			if (Context->CapInterruptFrameCount < Context->CapWarmUpVideoFrames)
 				break;
-
 //printk( "Warm up tries was %d\n", Context->CapwarmUpSynchronizationAttempts );
-
 			if (Context->CapwarmUpSynchronizationAttempts >= CAP_WARM_UP_TRIES)
 				CapWarmUpFailure(Context, (Now - Context->CapBaseTime));
-
 			up(&Context->CapVideoInterruptSem);
-
 			Context->CapState               = CapStarted;
 			Context->CapIntegrateForAtLeastNFrames      = CAP_MINIMUM_TIME_INTEGRATION_FRAMES;
-
 		case CapStarted:
 			MonitorSignalEvent(MONITOR_EVENT_VIDEO_FIRST_FIELD_ACQUIRED, NULL, "CapInterrupt: First field acquired");
 			break;
-
 		case CapMovingToRun:
-
 //printk( "Moving %12lld  %12lld - %016llx %016llx\n", (Now - Context->CapRunFromTime), (Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now), Context->CapRunFromTime, Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime );
-
 			if (Now < Context->CapRunFromTime)
 				break;
-
 			Context->CapState               = CapRunning;
-
 		case CapRunning:
 			//
 			// Switch to next capture buffers.
 			//
-
 			CapConfigureNextCaptureBuffer(Context, Now);
-
 			//
 			// Keep the user up to date w.r.t. their frame timer/
 			//
-
 			CapVideoSysfsInterruptDecrementFrameCountingNotification(Context);
 			CapVideoSysfsInterruptDecrementFrameCaptureNotification(Context);
-
 			if (Context->CapMissedFramesInARow > CAP_MAX_MISSED_FRAMES_BEFORE_POST_MORTEM)
 				CapVideoSysfsInterruptIncrementPostMortem(Context);
-
 			//
 			// Do we wish to re-calculate the correction value,
 			// have we integrated for long enough, and is this value
 			// Unjittered.
 			//
-
 			DriftError  = Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now;
-
 			if (Context->CapCalculatingFrameTime ||
 					(Context->CapInterruptFrameCount < (2 * Context->CapIntegrateForAtLeastNFrames)) ||
 					((Context->CapInterruptFrameCount < Context->CapIntegrateForAtLeastNFrames) &&
@@ -1947,65 +1633,48 @@ void CapInterrupt(void* data, stm_field_t vsync)
 			{
 				if (!((Now - Context->CapTimeOfLastFrameInterrupt) > (CapTimeForNFrames(1) + CAP_MAXIMUM_FRAME_JITTER)))
 					Context->CapLastFrameDriftError = DriftError;
-
 				break;
 			}
-
 			//
 			// If running at a non-standard framerate, then try for an
 			// update, keep the integration period at the minimum number of frames
 			//
-
 			if (!Context->StandardFrameRate)
 			{
 				CapFrameRate(Context, (Now - Context->CapTimeAtZeroInterruptFrameCount), Context->CapInterruptFrameCount);
-
 				Context->CapIntegrateForAtLeastNFrames  = CAP_MINIMUM_TIME_INTEGRATION_FRAMES / 2;
 			}
-
 			//
 			// Re-calculate applying a clamp to the change
 			//
-
 			CorrectionFactor            = 0;        // Initialize for print purposes
 			AffectOfChangeOnPreviousFrameTimes  = 0;
-
 			if (Context->StandardFrameRate)
 			{
 				CorrectionFactor            = ((Now - Context->CapTimeAtZeroInterruptFrameCount) << CAP_CORRECTION_FIXED_POINT_BITS) / CapTimeForNFrames(Context->CapInterruptFrameCount);
 				CorrectionFactorChange      = CorrectionFactor - Context->CapFrameDurationCorrection;
-
 				ClampChange             = CAP_MAXIMUM_TIME_INTEGRATION_FRAMES / Context->CapIntegrateForAtLeastNFrames;
 				ClampChange             = min((128 * CAP_ONE_PPM), ((CAP_ONE_PPM * ClampChange * ClampChange) / 16));
 				Clamp(CorrectionFactorChange, -ClampChange, ClampChange);
-
 				Context->CapFrameDurationCorrection += CorrectionFactorChange;
-
 				//
 				// Adjust the base time so that the change only affects frames
 				// after those already calculated.
 				//
-
 				AffectOfChangeOnPreviousFrameTimes  = CapTimeForNFrames(Context->CapFrameCount + Context->CapLeadInVideoFrames);
 				AffectOfChangeOnPreviousFrameTimes  = (AffectOfChangeOnPreviousFrameTimes * Abs(CorrectionFactorChange)) >> CAP_CORRECTION_FIXED_POINT_BITS;
 				Context->CapBaseTime        += (CorrectionFactorChange < 0) ? AffectOfChangeOnPreviousFrameTimes : -AffectOfChangeOnPreviousFrameTimes;
 			}
-
 			//
 			// Now calculate the drift error - limitting to 2ppm
 			//
-
 			Context->CapCurrentDriftError       = (Abs(DriftError) < Abs(Context->CapLastFrameDriftError)) ? DriftError : Context->CapLastFrameDriftError;
-
 //printk( "oooh Last correction %4lld - Next correction %4lld (%4lld %4lld)\n", Context->CapLastDriftCorrection, Context->CapCurrentDriftError, DriftError, Context->CapLastFrameDriftError );
-
 			Context->CapBaseTime            = Context->CapBaseTime + Context->CapLastDriftCorrection;
 			Context->CapDriftFrameCount     = 0;
 			Context->CapLastDriftCorrection     = 0;
-
 			DriftLimit              = (1 * CapTimeForNFrames(CAP_MAXIMUM_TIME_INTEGRATION_FRAMES)) / 1000000;
 			Clamp(Context->CapCurrentDriftError, -DriftLimit, DriftLimit);
-
 			printk("New Correction factor %lld.%09lld [%3lld] (%lld.%09lld - %5d) - %5lld\n",
 				   (Context->CapFrameDurationCorrection >> CAP_CORRECTION_FIXED_POINT_BITS),
 				   (((Context->CapFrameDurationCorrection & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
@@ -2013,28 +1682,22 @@ void CapInterrupt(void* data, stm_field_t vsync)
 				   (CorrectionFactor >> CAP_CORRECTION_FIXED_POINT_BITS),
 				   (((CorrectionFactor & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
 				   Context->CapInterruptFrameCount, Context->CapCurrentDriftError);
-
 			//
 			// Initialize for next integration
 			//
-
 			Context->CapInterruptFrameCount         = 0;
 			Context->CapTimeAtZeroInterruptFrameCount   = Now;
 			Context->CapIntegrateForAtLeastNFrames      = (Context->CapIntegrateForAtLeastNFrames >= CAP_MAXIMUM_TIME_INTEGRATION_FRAMES) ?
-														  CAP_MAXIMUM_TIME_INTEGRATION_FRAMES :
-														  (Context->CapIntegrateForAtLeastNFrames * 2);
+					CAP_MAXIMUM_TIME_INTEGRATION_FRAMES :
+					(Context->CapIntegrateForAtLeastNFrames * 2);
 			break;
-
 		case CapMovingToInactive:
 			break;
 	}
-
 	//
 	// Update our history
 	//
-
 	Context->CapTimeOfLastFrameInterrupt        = Now;
-
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2046,23 +1709,18 @@ static void CapEventHandler(context_handle_t         EventContext,
 							struct stream_event_s  *Event)
 {
 	cap_v4l2_video_handle_t *Context;
-
 	//
 	// Initialize context variables
 	//
-
 	Context         = (cap_v4l2_video_handle_t *)EventContext;
-
 	//
 	// Is the event for us - if not just lose it
 	//
-
 	switch (Event->code)
 	{
 		case STREAM_EVENT_VSYNC_OFFSET_MEASURED:
 			cap_set_vsync_offset(Context->SharedContext, Event->u.longlong);
 			break;
-
 		case STREAM_EVENT_OUTPUT_SIZE_CHANGED:
 			if (!Context->OutputCropTargetReached &&
 					(Event->u.rectangle.x == Context->OutputCropTarget.X) &&
@@ -2073,9 +1731,7 @@ static void CapEventHandler(context_handle_t         EventContext,
 				CapVideoSysfsProcessDecrementOutputCropTargetReachedNotification(Context);
 				Context->OutputCropTargetReached    = true;
 			}
-
 			break;
-
 		default:
 			break;
 	}
@@ -2090,12 +1746,10 @@ static void   CapPerformOutputCropStep(cap_v4l2_video_handle_t  *Context)
 {
 	unsigned int    Steps;
 	unsigned int    Step;
-
 	//
 	// If no previous crop has been specified, then we
 	// take the mode dimensions as our starting point.
 	//
-
 	if (Context->OutputCropStart.Width == 0)
 	{
 		Context->OutputCropStart.X  = 0;
@@ -2103,26 +1757,20 @@ static void   CapPerformOutputCropStep(cap_v4l2_video_handle_t  *Context)
 		Context->OutputCropStart.Width  = Context->ModeWidth;
 		Context->OutputCropStart.Height = Context->ModeHeight;
 	}
-
 	//
 	// Obtain a set of output crop values
 	//
-
 	Step            = ++Context->OutputCropCurrentStep;
 	Steps           = Context->OutputCropSteps;
-
 	Context->OutputCrop.X   = ((Context->OutputCropStart.X      * (Steps - Step)) + (Context->OutputCropTarget.X      * Step)) / Steps;
 	Context->OutputCrop.Y   = ((Context->OutputCropStart.Y      * (Steps - Step)) + (Context->OutputCropTarget.Y      * Step)) / Steps;
 	Context->OutputCrop.Width   = ((Context->OutputCropStart.Width  * (Steps - Step)) + (Context->OutputCropTarget.Width  * Step)) / Steps;
 	Context->OutputCrop.Height  = ((Context->OutputCropStart.Height * (Steps - Step)) + (Context->OutputCropTarget.Height * Step)) / Steps;
-
 	if (Step == Steps)
 		Context->OutputCropStepping = false;
-
 	//
 	// Round them to even values on all but the last step
 	//
-
 	if (Context->OutputCropStepping)
 	{
 		Context->OutputCrop.X       = (Context->OutputCrop.X      + 1) & 0xfffffffe;
@@ -2130,11 +1778,9 @@ static void   CapPerformOutputCropStep(cap_v4l2_video_handle_t  *Context)
 		Context->OutputCrop.Width   = (Context->OutputCrop.Width  + 1) & 0xfffffffe;
 		Context->OutputCrop.Height  = (Context->OutputCrop.Height + 1) & 0xfffffffe;
 	}
-
 	//
 	// Now use the values
 	//
-
 	CapRecalculateScaling(Context);
 }
 
@@ -2147,25 +1793,19 @@ static int CapVideoThread(void *data)
 {
 	cap_v4l2_video_handle_t *Context;
 	int          Result;
-
 	const stm_mode_line_t*                CaptureCurrentDisplayMode = NULL;
 	const stm_mode_line_t*                DisplayCurrentDisplayMode = NULL;
 	const stm_mode_line_t*                PreviousDisplayMode = (stm_mode_line_t*)&CapModeParamsTable[CAP_640_480_P59940];
 	struct stmcore_display_pipeline_data  PipelineData;
 //struct v4l2_crop                      Crop;
-
 //struct v4l2_crop newCrop;
-
 	//
 	// Initialize context variables
 	//
-
 	Context         = (cap_v4l2_video_handle_t *)data;
-
 	//
 	// Initialize then player with a stream
 	//
-
 	Result = DvbPlaybackAddStream(Context->DeviceContext->Playback,
 								  BACKEND_VIDEO_ID,
 								  BACKEND_PES_ID,
@@ -2173,104 +1813,78 @@ static int CapVideoThread(void *data)
 								  DEMUX_INVALID_ID,
 								  Context->DeviceContext->Id,         // SurfaceId .....
 								  &Context->DeviceContext->VideoStream);
-
 	if (Result < 0)
 	{
 		printk("CapVideoThread - PlaybackAddStream failed with %d\n", Result);
 		return -EINVAL;
 	}
-
 	Result = CapVideoSysfsCreateAttributes(Context);
-
 	if (Result)
 	{
 		printk("CapVideoThread - Failed to create sysfs attributes\n");
 		// non-fatal
 	}
-
 	Context->DeviceContext->VideoState.play_state = VIDEO_PLAYING;
-
 	//
 	// Interject our event handler
 	//
-
 	DvbStreamRegisterEventSignalCallback(Context->DeviceContext->VideoStream, (context_handle_t)Context,
 										 (stream_event_signal_callback)CapEventHandler);
-
 	//
 	// Set the appropriate policies
 	//
-
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_VIDEO_ASPECT_RATIO, VIDEO_FORMAT_16_9);
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_VIDEO_DISPLAY_FORMAT,   VIDEO_FULL_SCREEN);
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_AV_SYNC,            PLAY_OPTION_VALUE_ENABLE);
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_DECIMATE_DECODER_OUTPUT,  PLAY_OPTION_VALUE_DECIMATE_DECODER_OUTPUT_DISABLED);
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_DISPLAY_FIRST_FRAME_EARLY, PLAY_OPTION_VALUE_DISABLE);
-
 	//
 	// Main loop
 	//
-
 	Context->VideoRunning       = true;
-
 	while (Context->VideoRunning)
 	{
 		//
 		// Handle setting up and executing a sequence
 		//
-
 		Context->CapNextBufferToGet = 0;
 		Context->CapNextBufferToInject  = 0;
 		Context->CapNextBufferToFill    = 0;
-
 		Context->FastModeSwitch     = false;
-
 		//
 		// Check to see that the display mode hasn't changed underneath us.
 		// cjt is this the correct place for this check ?
 		//
-
 		stmcore_get_display_pipeline(0, &PipelineData);
 		CaptureCurrentDisplayMode = stm_display_output_get_current_display_mode(PipelineData.display_runtime->main_output);
-
 		stmcore_get_display_pipeline(1, &PipelineData);
 		DisplayCurrentDisplayMode = stm_display_output_get_current_display_mode(PipelineData.display_runtime->main_output);
-
 		if ((CaptureCurrentDisplayMode != NULL) && (CaptureCurrentDisplayMode->Mode != PreviousDisplayMode->Mode))
 		{
 			printk("/\\/\\/\\ Updating Capture Display Settings w %4ld h %4ld %s /\\/\\/\\\n",
 				   CaptureCurrentDisplayMode->ModeParams.ActiveAreaWidth,
 				   CaptureCurrentDisplayMode->ModeParams.ActiveAreaHeight,
 				   (CaptureCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
-
 			printk("/\\/\\/\\ Updating Output  Display Settings w %4ld h %4ld %s /\\/\\/\\\n",
 				   DisplayCurrentDisplayMode->ModeParams.ActiveAreaWidth,
 				   DisplayCurrentDisplayMode->ModeParams.ActiveAreaHeight,
 				   (DisplayCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
-
 			if (CapVideoIoctlSetStandard(Context, CaptureCurrentDisplayMode->Mode) == 0)
 				PreviousDisplayMode = CaptureCurrentDisplayMode;
-
 			if (Context->OutputCrop.Width > 720 || Context->OutputCrop.Width == 0)
 			{
-
 				down_interruptible(&Context->CapScalingStateLock);
-
 				Context->InputCrop.Width  = CaptureCurrentDisplayMode->ModeParams.ActiveAreaWidth;
 				Context->InputCrop.Height = CaptureCurrentDisplayMode->ModeParams.ActiveAreaHeight;
 				Context->InputCrop.X = 0;
 				Context->InputCrop.Y = 0;
-
 				Context->OutputCrop.Width  = DisplayCurrentDisplayMode->ModeParams.ActiveAreaWidth;
 				Context->OutputCrop.Height = DisplayCurrentDisplayMode->ModeParams.ActiveAreaHeight;
 				Context->OutputCrop.X = 0;
 				Context->OutputCrop.Y = 0;
-
 				up(&Context->CapScalingStateLock);
-
 				CapParseModeValues(Context);
 				CapRecalculateScaling(Context);
-
 				/*
 				           Crop.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
 				           Crop.c.left   = 0;
@@ -2289,89 +1903,64 @@ static int CapVideoThread(void *data)
 				           CapVideoIoctlCrop(Context,&Crop);
 				*/
 			}
-
 		}
-
 		//
 		// Insert check for no standard set up
 		//
-
 		while (Context->CapCaptureMode == NULL)
 		{
 			printk("CapVideoThread - Attempting to run without a video standard specified, waiting for a VIDIOC_S_STD ioctl call.\n");
 			down_interruptible(&Context->CapVideoInterruptSem);
-
 			Context->FastModeSwitch = !Context->VideoRunning;
 		}
-
 		//
-
 		if (Context->VideoRunning && !Context->FastModeSwitch)
 			Result  = CapParseModeValues(Context);
-
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 			Result  = CapGetVideoBuffer(Context);
-
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 			Result  = CapStartup(Context);
-
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 			Result  = CapInjectVideoBuffer(Context);
-
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 			Result  = CapRun(Context);
-
 		//
 		// Enter the main loop for a running sequence
 		//
-
 		while ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 		{
 			down_interruptible(&Context->CapPreInjectBufferSem);
-
 			if (Context->OutputCropStepping)
 				CapPerformOutputCropStep(Context);
-
 			if (Context->VideoRunning && !Context->FastModeSwitch)
 				Result  = CapGetVideoBuffer(Context);
-
 			if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
 				Result  = CapInjectVideoBuffer(Context);
 		}
-
 		if (Result < 0)
 			break;
-
 		//
 		// Shutdown the running sequence, either before exiting, or for a format switch
 		//
-
 		CapStop(Context);
 		DvbStreamDrain(Context->DeviceContext->VideoStream, 1);
 		CapReleaseBuffers(Context);
 	}
-
 	//
 	// Remove our event handler
 	//
-
 	DvbStreamRegisterEventSignalCallback(Context->DeviceContext->VideoStream, NULL, NULL);
-
 	//
 	// Nothing should be happening, remove the stream from the playback
 	//
-
 	Result              = DvbPlaybackRemoveStream(Context->DeviceContext->Playback, Context->DeviceContext->VideoStream);
 	Context->DeviceContext->VideoStream = NULL;
-
 	if (Result < 0)
 	{
 		printk("Error in %s: PlaybackRemoveStream failed\n", __FUNCTION__);
 		return -EINVAL;
 	}
-
 //
-
 	return 0;
 }
 
@@ -2391,108 +1980,79 @@ static int CapSynchronizerThread(void *data)
 	unsigned long long   Now;
 	unsigned long long   ExpectedWake;
 	unsigned int         Jiffies;
-
 	//
 	// Initialize context variables
 	//
-
 	Context             = (cap_v4l2_video_handle_t *)data;
 	Context->SynchronizerRunning    = true;
-
 	//
 	// Enter the main loop waiting for something to happen
 	//
-
 	while (Context->SynchronizerRunning)
 	{
 		down_interruptible(&Context->CapSynchronizerWakeSem);
-
 		//
 		// Do we want to do something
 		//
-
 		SYSFS_TEST_NOTIFY(FrameCountingNotification,        frame_counting_notification);
 		SYSFS_TEST_NOTIFY(FrameCaptureNotification,         frame_capture_notification);
 		SYSFS_TEST_NOTIFY(PostMortem,               post_mortem);
-
 		while (Context->SynchronizerRunning && Context->SynchronizeEnabled && Context->Synchronize)
 		{
 			//
 			// When do we want to trigger (try for 32 us early to allow time
 			// for the procedure to execute, and to shake the sleep from my eyes).
 			//
-
 			TriggerPoint        = Context->CapBaseTime + ControlValue(VideoLatency) - 32;
 			FrameDuration       = CapTimeForNFrames(1);
-
 			if (Context->StreamInfo.interlaced &&
 					!ControlValue(TopFieldFirst))
 				TriggerPoint        += FrameDuration / 2;
-
 			Context->Synchronize    = false;
-
 			Ktime           = ktime_get();
 			Now             = ktime_to_us(Ktime);
-
 			SleepTime           = (long long)TriggerPoint - (long long)Now;
-
 			if (SleepTime < 0)
 				Frames          = ((-SleepTime) / FrameDuration) + 1;
 			else
 				Frames          = -(SleepTime / FrameDuration);
-
 			SleepTime           = SleepTime + (Frames * FrameDuration);
-
 			//
 			// Now sleep
 			//
-
 			Jiffies     = (unsigned int)(((long long)HZ * SleepTime) / 1000000);
 			ExpectedWake    = Now + SleepTime;
-
 			set_current_state(TASK_INTERRUPTIBLE);
 			schedule_timeout(Jiffies);
-
 			//
 			// Now livelock until we can do the synchronize
 			//
-
 			do
 			{
 				if (!Context->SynchronizerRunning || Context->Synchronize)
 					break;
-
 				Ktime       = ktime_get();
 				Now     = ktime_to_us(Ktime);
 			}
 			while (inrange((ExpectedWake - Now), 0, 0x7fffffffffffffffull) &&
 					Context->SynchronizerRunning && Context->SynchronizeEnabled && !Context->Synchronize);
-
 			if (!Context->SynchronizerRunning || !Context->SynchronizeEnabled || Context->Synchronize)
 				break;
-
 			//
 			// Finally do the synchronize
 			//
-
 			DvbDisplaySynchronize(BACKEND_VIDEO_ID, Context->DeviceContext->Id);             // Trigger vsync lock
-
 			Ktime       = ktime_get();
 			Now         = ktime_to_us(Ktime);
-
 			//
 			// If we check to see if we were interrupted at any critical point, and retry the sync if so.
 			// We assume an interrupt occurred if we took more than 128us to perform the sync trigger.
-
 			if ((Now - ExpectedWake) > 128)
 				Context->Synchronize    = true;
 		}
-
 //printk( "Synchronize Vsync - Now-Expected = %lld\n", (Now - ExpectedWake) );
 	}
-
 //
-
 	return 0;
 }
 
@@ -2508,7 +2068,6 @@ int CapVideoIoctlSetFramebuffer(cap_v4l2_video_handle_t *Context,
 								unsigned int         Control)
 {
 	printk("VIDIOC_S_FBUF: DOING NOTHING !!!! - W = %4d, H = %4d, BPL = %4d, Crtl = %08x\n", Width, Height, BytesPerLine, Control);
-
 	return 0;
 }
 
@@ -2519,42 +2078,31 @@ int CapVideoIoctlSetStandard(cap_v4l2_video_handle_t    *Context,
 {
 	int              i;
 	const stm_mode_line_t   *NewCaptureMode     = NULL;
-
 //
-
 	printk("VIDIOC_S_STD: %08x\n", (unsigned int) Id);
-
 //
-
 	for (i = 0; i < N_ELEMENTS(CapModeParamsTable); i++)
 	{
-
 		if ((unsigned int)CapModeParamsTable[i].Mode == (unsigned int)Id)
 		{
 			NewCaptureMode = (stm_mode_line_t*)&CapModeParamsTable[i];
 			break;
 		}
 	}
-
 	if (!NewCaptureMode)
 	{
 		printk("CapVideoIoctlSetStandard - Mode not supported\n");
 		return -EINVAL;
 	}
-
 	//
 	// we have a new capture mode, set the master copy, and force
 	// a mode switch if any video sequence is already running.
 	//
-
 	CapHaltCapture(Context);
-
 	Context->CapCaptureMode     = NewCaptureMode;
 	Context->FastModeSwitch     = true;
-
 	up(&Context->CapPreInjectBufferSem);
 	up(&Context->CapVideoInterruptSem);
-
 	return 0;
 }
 
@@ -2566,69 +2114,49 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 	char             TaskName[32];
 	struct task_struct  *Task;
 	struct sched_param   Param;
-
 	struct stmcore_display_pipeline_data  pipeline_data;
-
 //
-
 	printk("*** VIDIOC_OVERLAY: ****\n");
-
 	if (Context == NULL)
 	{
 		printk("CapVideoIoctlOverlayStart - Video context NULL\n");
 		return -EINVAL;
 	}
-
 //
-
 	Context->CapLatency     = (Context->SharedContext->target_latency * 1000);
-
 //
-
 	if (Context->VideoRunning)
 	{
 		printk("CapVideoIoctlOverlayStart - Capture Thread already started\n");
 		return 0;
 	}
-
 //
-
 	Context->CapLatency         = (Context->SharedContext->target_latency * 1000);
 	Context->VideoRunning       = false;
 	Context->CapState           = CapInactive;
-
 	Context->SynchronizerRunning    = false;
 	Context->Synchronize        = false;
-
 //
-
 	sema_init(&Context->CapVideoInterruptSem, 0);
 	sema_init(&Context->CapSynchronizerWakeSem, 0);
 	sema_init(&Context->CapPreInjectBufferSem, 0);
-
 	sema_init(&Context->CapScalingStateLock, 1);
-
 	stmcore_get_display_pipeline(0, &pipeline_data);
-
 	INIT_LIST_HEAD(&(vsync_cb_info.node));
 	vsync_cb_info.owner   = THIS_MODULE;
 	vsync_cb_info.context = (void*)Context;
 	vsync_cb_info.cb      = CapInterrupt;
-
 	if (stmcore_register_vsync_callback(pipeline_data.display_runtime,
 										&vsync_cb_info) < 0)
 	{
 		printk(KERN_ERR "********** Cannot register vsync callback ***********\n");
 		return -ENODEV;
 	}
-
 	//
 	// Create the video tasks
 	//
-
 	strcpy(TaskName, "cap video task");
 	Task        = kthread_create(CapVideoThread, Context, "%s", TaskName);
-
 	if (IS_ERR(Task))
 	{
 		printk("CapVideoIoctlOverlayStart - Unable to start video thread\n");
@@ -2636,9 +2164,7 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 		Context->SynchronizerRunning    = false;
 		return -EINVAL;
 	}
-
 	Param.sched_priority    = CAP_VIDEO_THREAD_PRIORITY;
-
 	if (sched_setscheduler(Task, SCHED_RR, &Param))
 	{
 		printk("CapVideoIoctlOverlayStart - FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Param.sched_priority);
@@ -2646,14 +2172,10 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 		Context->SynchronizerRunning    = false;
 		return -EINVAL;
 	}
-
 	wake_up_process(Task);
-
 //
-
 	strcpy(TaskName, "cap synchronizer task");
 	Task        = kthread_create(CapSynchronizerThread, Context, "%s", TaskName);
-
 	if (IS_ERR(Task))
 	{
 		printk("CapVideoIoctlOverlayStart - Unable to start synchronizer thread\n");
@@ -2661,9 +2183,7 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 		Context->SynchronizerRunning    = false;
 		return -EINVAL;
 	}
-
 	Param.sched_priority    = CAP_SYNCHRONIZER_THREAD_PRIORITY;
-
 	if (sched_setscheduler(Task, SCHED_RR, &Param))
 	{
 		printk("CapVideoIoctlOverlayStart - FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Param.sched_priority);
@@ -2671,21 +2191,16 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 		Context->SynchronizerRunning    = false;
 		return -EINVAL;
 	}
-
 	wake_up_process(Task);
-
 	//
 	// Guarantee both tasks are started
 	//
-
 	for (i = 0; (i < 100) && (!Context->VideoRunning || !Context->SynchronizerRunning); i++)
 	{
 		unsigned int  Jiffies = ((HZ) / 1000) + 1;
-
 		set_current_state(TASK_INTERRUPTIBLE);
 		schedule_timeout(Jiffies);
 	}
-
 	if (!Context->VideoRunning || !Context->SynchronizerRunning)
 	{
 		printk("CapVideoIoctlOverlayStart - FAILED to set start processes\n");
@@ -2693,9 +2208,7 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t   *Context)
 		Context->SynchronizerRunning    = false;
 		return -EINVAL;
 	}
-
 //
-
 	return 0;
 }
 
@@ -2710,33 +2223,26 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t       *Context,
 		   ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
 		   Crop->c.width, Crop->c.height);
 #endif
-
 	if ((Context == NULL) || (Context->DeviceContext->VideoStream == NULL))
 		return -EINVAL;
-
 	if (Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY)
 	{
 		if (!Context->OutputCropTargetReached && (Context->OutputCrop.X != 0))
 		{
 			printk("CapVideoIoctlCrop: Setting output crop before previous crop has reached display\n");
 		}
-
 		atomic_set(&Context->CapOutputCropTargetReachedNotification, 1);
-
 		Context->OutputCropStepping     = false;
 		Context->OutputCropTargetReached    = false;
-
 		Context->OutputCropTarget.X     = Crop->c.left;
 		Context->OutputCropTarget.Y     = Crop->c.top;
 		Context->OutputCropTarget.Width     = Crop->c.width;
 		Context->OutputCropTarget.Height    = Crop->c.height;
 		Context->OutputCropStart        = Context->OutputCrop;
-
 		if ((Context->OutputCropTarget.X      == Context->OutputCropStart.X) &&
 				(Context->OutputCropTarget.Y      == Context->OutputCropStart.Y) &&
 				(Context->OutputCropTarget.Width  == Context->OutputCropStart.Width) &&
 				(Context->OutputCropTarget.Height == Context->OutputCropStart.Height))
-
 		{
 			printk("CapVideoIoctlCrop: Setting output crop to be unchanged - marking as target on display immediately.\n");
 			CapVideoSysfsProcessDecrementOutputCropTargetReachedNotification(Context);
@@ -2748,7 +2254,6 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t       *Context,
 			{
 				default:
 					printk("CapVideoIoctlCrop: Unsupported output crop transition mode (%d) defaulting to single step. \n ", ControlValue(OutputCropTransitionMode));
-
 				case CAP_TRANSITION_MODE_SINGLE_STEP:
 					Context->OutputCrop.X           = Context->OutputCropTarget.X;
 					Context->OutputCrop.Y           = Context->OutputCropTarget.Y;
@@ -2756,11 +2261,9 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t       *Context,
 					Context->OutputCrop.Height      = Context->OutputCropTarget.Height;
 					CapRecalculateScaling(Context);
 					break;
-
 				case CAP_TRANSITION_MODE_STEP_OVER_N_VSYNCS:
 					Context->OutputCropSteps        = ControlValue(OutputCropTransitionModeParameter0);
 					Context->OutputCropCurrentStep      = 0;
-
 					Context->OutputCropStepping     = true;
 					break;
 			}
@@ -2779,9 +2282,7 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t       *Context,
 		printk("CapVideoIoctlCrop: Unknown type %d. \n ", Crop->type);
 		return -EINVAL;
 	}
-
 //
-
 	return 0;
 }
 
@@ -2792,14 +2293,11 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 							unsigned int         Value)
 {
 	int ret;
-
 	printk("VIDIOC_S_CTRL->V4L2_CID_STM_CAPIF_");
-
 	switch (Control)
 	{
 		case V4L2_CID_STM_CAPIF_RESTORE_DEFAULT:
 			printk("RESTORE_DEFAULT\n");
-
 			Context->CapControlCSignOut                 = CAP_USE_DEFAULT;
 			Context->CapControlCSignIn                  = CAP_USE_DEFAULT;
 			Context->CapControlBF709Not601                  = CAP_USE_DEFAULT;
@@ -2813,7 +2311,6 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlBFCap                    = CAP_USE_DEFAULT;
 			Context->CapControlVTGSel                   = CAP_USE_DEFAULT;
 			Context->CapControlSource                   = CAP_USE_DEFAULT;
-
 			Context->CapControlBigEndian                    = CAP_USE_DEFAULT;
 			Context->CapControlFullRange                    = CAP_USE_DEFAULT;
 			Context->CapControlIncompleteFirstPixel             = CAP_USE_DEFAULT;
@@ -2833,7 +2330,6 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlPixelAspectRatioCorrection           = CAP_USE_DEFAULT;
 			Context->CapControlOutputCropTransitionMode         = CAP_USE_DEFAULT;
 			Context->CapControlOutputCropTransitionModeParameter0       = CAP_USE_DEFAULT;
-
 			Context->CapControlDefaultCSignOut              = 0;
 			Context->CapControlDefaultCSignIn               = 0;
 			Context->CapControlDefaultBF709Not601               = 0;
@@ -2842,7 +2338,6 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlDefaultCapFormat             = 0x0;  // RGB565
 //      Context->CapControlDefaultCapFormat             = 0x5;  // ARGB8888
 //      Context->CapControlDefaultCapFormat             = 0x12; // YCbCr4:2:2R
-
 #ifdef DISABLE_DECIMATION
 			Context->CapControlDefaultEnHsRc                = 0;
 			Context->CapControlDefaultEnVsRc                = 0;
@@ -2857,7 +2352,6 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 //      Context->CapControlDefaultSource                = 0x1; // Video output
 //      Context->CapControlDefaultSource                = 0xe; // mixer output 422R
 			Context->CapControlDefaultSource                = 0xf; // mixer output RGB
-
 			Context->CapControlDefaultBigEndian             = 0;
 			Context->CapControlDefaultFullRange             = 0;
 			Context->CapControlDefaultIncompleteFirstPixel          = 0;
@@ -2876,30 +2370,23 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlDefaultOutputCropTransitionMode      = CAP_TRANSITION_MODE_SINGLE_STEP;
 			Context->CapControlDefaultOutputCropTransitionModeParameter0    = 8;
 			Context->CapControlDefaultPixelAspectRatioCorrection        = CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE;
-
 #if 0
 			Context->CapControlOutputCropTransitionMode         = CAP_TRANSITION_MODE_STEP_OVER_N_VSYNCS;
 			Context->CapControlOutputCropTransitionModeParameter0       = 50;
 #endif
 			break;
-
 		case  V4L2_CID_STM_CAPIF_BLANK:
 			Check("CAPIF_BLANK", 0, 1);
-
 			if (Context->DeviceContext->VideoStream == NULL)
 				return -EINVAL;
-
 			ret = DvbStreamEnable(Context->DeviceContext->VideoStream, Value);
-
 			if (ret < 0)
 			{
 				printk("CapVideoIoctlSetControl - StreamEnable failed (%d)\n", Value);
 				return -EINVAL;
 			}
-
 			Context->CapControlBlank    = Value;
 			break;
-
 		case  V4L2_CID_STM_CAPIF_MIXER_INPUT:
 			Check("MIXER_INPUT", 0, 0xf);
 			Context->CapControlSource = 0xf;
@@ -2908,14 +2395,11 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			// we have a new capture source, force a mode
 			// switch if any video sequence is already running.
 			//
-
 			CapHaltCapture(Context);
 			Context->FastModeSwitch     = true;
-
 			up(&Context->CapPreInjectBufferSem);
 			up(&Context->CapVideoInterruptSem);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VIDEO_INPUT:
 			CheckAndSet("VIDEO_INPUT", 0, 0x1, Context->CapControlSource);
 //                printk("Capture Source now 0x%0x\n",Context->CapControlSource );
@@ -2923,102 +2407,77 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			// we have a new capture source, force a mode
 			// switch if any video sequence is already running.
 			//
-
 			CapHaltCapture(Context);
 			Context->FastModeSwitch     = true;
-
 			up(&Context->CapPreInjectBufferSem);
 			up(&Context->CapVideoInterruptSem);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_BIG_ENDIAN:
 			CheckAndSet("BIG_ENDIAN", 0, 1, Context->CapControlBigEndian);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_FULL_RANGE:
 			CheckAndSet("FULL_RANGE", 0, 1, Context->CapControlFullRange);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_INCOMPLETE_FIRST_PIXEL:
 			CheckAndSet("INCOMPLETE_FIRST_PIXEL", 0, 1, Context->CapControlIncompleteFirstPixel);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ODD_PIXEL_COUNT:
 			CheckAndSet("ODD_PIXEL_COUNT", 0, 1, Context->CapControlOddPixelCount);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
 			CheckAndSet("VSYNC_BOTTOM_HALF_LINE_ENABLE", 0, 1, Context->CapControlVsyncBottomHalfLineEnable);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
 			CheckAndSet("ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET", -260, 260, Context->CapControlActiveAreaAdjustHorizontalOffset);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
 			CheckAndSet("ACTIVE_AREA_ADJUST_VERTICAL_OFFSET", -256, 256, Context->CapControlActiveAreaAdjustVerticalOffset);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_WIDTH:
 			CheckAndSet("ACTIVE_AREA_ADJUST_WIDTH", -2048, 2048, Context->CapControlActiveAreaAdjustWidth);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_HEIGHT:
 			CheckAndSet("ACTIVE_AREA_ADJUST_HEIGHT", -2048, 2048, Context->CapControlActiveAreaAdjustHeight);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_COLOUR_MODE:
 			CheckAndSet("COLOUR_MODE", 0, 2, Context->CapControlColourMode);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VIDEO_LATENCY:
 			CheckAndSet("VIDEO_LATENCY", 0, 1000000, Context->CapControlVideoLatency);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_HORIZONTAL_RESIZE_ENABLE:
 			CheckAndSet("HORIZONTAL_RESIZE_ENABLE", 0, 1, Context->CapControlEnHsRc);
 			CapRecalculateScaling(Context);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VERTICAL_RESIZE_ENABLE:
 			CheckAndSet("VERTICAL_RESIZE_ENABLE", 0, 1, Context->CapControlEnVsRc);
 			CapRecalculateScaling(Context);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_TOP_FIELD_FIRST:
 			CheckAndSet("TOP_FIELD_FIRST", 0, 1, Context->CapControlTopFieldFirst);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_OUTPUT_CROP_TRANSITION_MODE:
 			CheckAndSet("OUTPUT_CROP_TRANSITION_MODE", 0, 1, Context->CapControlOutputCropTransitionMode);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
 			CheckAndSet("OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0", 0, 0x7fffffff, Context->CapControlOutputCropTransitionModeParameter0);
 			break;
-
 		case V4L2_CID_STM_CAPIF_PIXEL_ASPECT_RATIO_CORRECTION:
 			CheckAndSet("PIXEL_ASPECT_RATIO_CORRECTION", CAP_PIXEL_ASPECT_RATIO_CORRECTION_MIN_VALUE,
 						CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->CapControlPixelAspectRatioCorrection);
-
 			if (Context->DeviceContext->VideoStream == NULL)
 				return -EINVAL;
-
 			ret = DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION, Value);
-
 			if (ret < 0)
 			{
 				printk("CapVideoIoctlSetControl - StreamSetOption failed (%d)\n", Value);
 				return -EINVAL;
 			}
-
 			break;
-
 		default:
 			printk("Unknown %08x\n", Control);
 			return -1;
 	}
-
 	return 0;
 }
 
@@ -3029,100 +2488,74 @@ int CapVideoIoctlGetControl(cap_v4l2_video_handle_t *Context,
 							unsigned int        *Value)
 {
 	printk("VIDIOC_G_CTRL->V4L2_CID_STM_CAPIF_");
-
 	switch (Control)
 	{
 		case V4L2_CID_STM_CAPIF_RESTORE_DEFAULT:
 			printk("RESTORE_DEFAULT - Not a readable control\n");
 			*Value      = 0;
 			break;
-
 		case  V4L2_CID_STM_CAPIF_MIXER_INPUT:
 			GetValue("MIXER_INPUT", Context->CapControlDefaultSource);
-
 			if (*Value == 0xf) *Value = 1;
-
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VIDEO_INPUT:
 			GetValue("VIDEO_INPUT", Context->CapControlDefaultSource);
-
 			if (*Value == 0x1) *Value = 1;
-
 			break;
-
 		case  V4L2_CID_STM_CAPIF_BIG_ENDIAN:
 			GetValue("BIG_ENDIAN", Context->CapControlBigEndian);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_FULL_RANGE:
 			GetValue("FULL_RANGE", Context->CapControlFullRange);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_INCOMPLETE_FIRST_PIXEL:
 			GetValue("INCOMPLETE_FIRST_PIXEL", Context->CapControlIncompleteFirstPixel);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ODD_PIXEL_COUNT:
 			GetValue("ODD_PIXEL_COUNT", Context->CapControlOddPixelCount);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
 			GetValue("VSYNC_BOTTOM_HALF_LINE_ENABLE", Context->CapControlVsyncBottomHalfLineEnable);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
 			GetValue("ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET", Context->CapControlActiveAreaAdjustHorizontalOffset);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
 			GetValue("ACTIVE_AREA_ADJUST_VERTICAL_OFFSET", Context->CapControlActiveAreaAdjustVerticalOffset);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_WIDTH:
 			GetValue("ACTIVE_AREA_ADJUST_WIDTH", Context->CapControlActiveAreaAdjustWidth);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_ACTIVE_AREA_ADJUST_HEIGHT:
 			GetValue("ACTIVE_AREA_ADJUST_HEIGHT", Context->CapControlActiveAreaAdjustHeight);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_COLOUR_MODE:
 			GetValue("COLOUR_MODE", Context->CapControlColourMode);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VIDEO_LATENCY:
 			GetValue("VIDEO_LATENCY", Context->CapControlVideoLatency);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_HORIZONTAL_RESIZE_ENABLE:
 			GetValue("HORIZONTAL_RESIZE_ENABLE", Context->CapControlEnHsRc);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_VERTICAL_RESIZE_ENABLE:
 			GetValue("VERTICAL_RESIZE_ENABLE", Context->CapControlEnVsRc);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_TOP_FIELD_FIRST:
 			GetValue("TOP_FIELD_FIRST", Context->CapControlTopFieldFirst);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_OUTPUT_CROP_TRANSITION_MODE:
 			GetValue("OUTPUT_CROP_TRANSITION_MODE", Context->CapControlOutputCropTransitionMode);
 			break;
-
 		case  V4L2_CID_STM_CAPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
 			GetValue("OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0", Context->CapControlOutputCropTransitionModeParameter0);
 			break;
-
 		case V4L2_CID_STM_CAPIF_PIXEL_ASPECT_RATIO_CORRECTION:
 			GetValue("PIXEL_ASPECT_RATIO_CORRECTION", Context->CapControlPixelAspectRatioCorrection);
 			break;
-
 		default:
 			printk("Unknown\n");
 			return -1;
 	}
-
 	return 0;
 }

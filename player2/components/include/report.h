@@ -85,9 +85,9 @@ static unsigned int *debug_data = (unsigned int *)(DEBUG_EVENT_BASE + 0x40);
 #define initialise_debug_event()        {volatile int i; for( i=0; i<0x2000; i++ ) debug_base[i] = 0; i = debug_base[16]; }
 
 #define print_debug_events()            {int i; for( i=0; i<(512+16); i+=8 )    \
-			report( severity_info, "        %08x %08x %08x %08x %08x %08x %08x %08x\n",     \
-					debug_base[i+0],debug_base[i+1],debug_base[i+2],debug_base[i+3],        \
-					debug_base[i+4],debug_base[i+5],debug_base[i+6],debug_base[i+7] ); }
+            report( severity_info, "        %08x %08x %08x %08x %08x %08x %08x %08x\n",     \
+                    debug_base[i+0],debug_base[i+1],debug_base[i+2],debug_base[i+3],        \
+                    debug_base[i+4],debug_base[i+5],debug_base[i+6],debug_base[i+7] ); }
 
 //#define debug_event(code)            if( debug_base[15] != 0xfeedface ) {volatile unsigned int dummy; dummy=debug_base[0]; debug_data[dummy++] = (unsigned int)code; dummy &= 0x1ff; debug_data[dummy] = 0xffffffff; debug_base[0] = dummy; dummy = debug_base[32];} else { while(true) task_delay(100); }
 #define debug_event(code)              {volatile unsigned int dummy; dummy=debug_base[0]; debug_data[dummy++] = (unsigned int)code; dummy &= 0x1ff; debug_data[dummy] = 0xffffffff; debug_base[0] = dummy; }

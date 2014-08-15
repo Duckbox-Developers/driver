@@ -236,9 +236,6 @@ struct snd_pcm_hw_params
 //#warning KSOUND.H AS C INCLUDE
 
 #include <linux/version.h>
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30) )    // STLinux 2.3
-#include <sound/driver.h>
-#endif
 #include <sound/core.h>
 #include <sound/minors.h>
 #include <sound/pcm.h>

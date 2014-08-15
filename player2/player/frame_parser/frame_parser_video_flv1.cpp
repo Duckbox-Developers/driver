@@ -77,14 +77,11 @@ static unsigned int PictureNo;
 
 FrameParser_VideoFlv1_c::FrameParser_VideoFlv1_c(void)
 {
-
 	// Our constructor is called after our subclass so the only change is to rename the frame parser
 	Configuration.FrameParserName               = "VideoFlv1";
-
 #if defined (DUMP_HEADERS)
 	PictureNo                                   = 0;
 #endif
-
 	Reset();
 }
 
@@ -98,24 +95,18 @@ FrameParserStatus_t   FrameParser_VideoFlv1_c::ReadHeaders(void)
 {
 	FrameParserStatus_t         Status  = FrameParserNoError;
 	unsigned int                StartCode;
-
 #if 0
 	unsigned int                i;
 	report(severity_info, "First 32 bytes of %d :", BufferLength);
-
 	for (i = 0; i < 32; i++)
 		report(severity_info, " %02x", BufferData[i]);
-
 	report(severity_info, "\n");
 #endif
-
 	Bits.SetPointer(BufferData);
-
 #if 0
 	{
 		unsigned char* Buff;
 		unsigned int   Bib;
-
 		Bits.GetPosition(&Buff, &Bib);
 		Buff -= 8;
 		report(severity_info, "::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n    %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
@@ -125,9 +116,7 @@ FrameParserStatus_t   FrameParser_VideoFlv1_c::ReadHeaders(void)
 			   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
 	}
 #endif
-
 	StartCode                   = Bits.Get(17);
-
 	if (StartCode == H263_PICTURE_START_CODE)
 		Status                  = FlvReadPictureHeader();
 	else
@@ -135,10 +124,8 @@ FrameParserStatus_t   FrameParser_VideoFlv1_c::ReadHeaders(void)
 		FRAME_ERROR("Not at the start of a picture - lost sync (%x).\n", StartCode);
 		return FrameParserError;
 	}
-
 	if (Status == FrameParserNoError)
 		Status      = CommitFrameForDecode();
-
 	return Status;
 }
 //}}}
@@ -157,84 +144,63 @@ FrameParserStatus_t   FrameParser_VideoFlv1_c::FlvReadPictureHeader(void)
 	unsigned int                Height;
 	unsigned char*              EndPointer;
 	unsigned int                EndBitsInByte;
-
 	if (FrameParameters == NULL)
 	{
 		Status                                  = GetNewFrameParameters((void **)&FrameParameters);
-
 		if (Status != FrameParserNoError)
 			return Status;
 	}
-
 	Header                                      = &FrameParameters->PictureHeader;
 	memset(Header, 0x00, sizeof(H263VideoPicture_t));
-
 	Header->version                             = Bits.Get(5);
-
 	if ((Header->version != 0x00) && (Header->version != 0x01))
 	{
 		FRAME_ERROR("Version %02x incorrect - should be 0x00 or 0x01.\n", Header->version);
 		return FrameParserError;
 	}
-
 	Header->tref                                = Bits.Get(8);                          // temporal reference 5.1.2
 	Header->format                              = Bits.Get(3);                          // source format
-
 	switch (Header->format)
 	{
 		case 0:
 			Width                               = Bits.Get(8);
 			Height                              = Bits.Get(8);
 			break;
-
 		case 1:
 			Width                               = Bits.Get(16);
 			Height                              = Bits.Get(16);
 			break;
-
 		default:
 			Width                               = Flv1DisplaySize[Header->format].Width;
 			Height                              = Flv1DisplaySize[Header->format].Height;
 			break;
 	}
-
 	Header->ptype                               = Bits.Get(2);
-
 	// For H263 there is no sequence header so we create one whenever the picture size changes
 	if ((StreamParameters == NULL) || (!StreamParameters->SequenceHeaderPresent) ||
 			(Header->format != StreamParameters->SequenceHeader.format))
 	{
 		Status                                  = GetNewStreamParameters((void **)&StreamParameters);
-
 		if (Status != FrameParserNoError)
 			return Status;
-
 		StreamParameters->UpdatedSinceLastFrame = true;
-
 		SequenceHeader                          = &StreamParameters->SequenceHeader;
 		memset(SequenceHeader, 0x00, sizeof(H263VideoSequence_t));
 		StreamParameters->SequenceHeaderPresent = true;
-
 		SequenceHeader->format                  = Header->format;
 		SequenceHeader->width                   = Width;
 		SequenceHeader->height                  = Height;
-
 		Header->ptype                           = H263_PICTURE_CODING_TYPE_I;           // New sequence - set picture type to I (5.1.3)
 	}
 	else
 		SequenceHeader                          = &StreamParameters->SequenceHeader;
-
 	Header->dflag                               = Bits.Get(1);                          // deblocking flag
 	Header->pquant                              = Bits.Get(5);                          // quantizer 5.1.4
-
 	while (Bits.Get(1))                                                                 // extra insertion info (pei) 5.1.9
 		Bits.Get(8);                                                                    // spare info (pspare) 5.1.10
-
 	Bits.GetPosition(&EndPointer, &EndBitsInByte);
 	Header->bit_offset                          = (((unsigned int)EndPointer - (unsigned int)BufferData) * 8) + (8 - EndBitsInByte);
-
 	FrameParameters->PictureHeaderPresent       = true;
-
 #ifdef DUMP_HEADERS
 	{
 		report(severity_note, "Picture header (%d)\n", PictureNo++);
@@ -247,7 +213,6 @@ FrameParserStatus_t   FrameParser_VideoFlv1_c::FlvReadPictureHeader(void)
 		report(severity_info, "    dflag         : %6d\n", Header->cpm);
 	}
 #endif
-
 	return FrameParserNoError;
 }
 //}}}

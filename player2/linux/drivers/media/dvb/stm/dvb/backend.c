@@ -65,15 +65,11 @@ int register_dvb_backend(char*                           Name,
 		BACKEND_ERROR("Cannot register backend %s - not created\n", Name);
 		return -ENOMEM;
 	}
-
 	Backend->Ops        = Ops;
 	Backend->Name       = kzalloc(strlen(Name) + 1,  GFP_KERNEL);
-
 	if (Backend->Name != NULL)
 		strcpy(Backend->Name, Name);
-
 	return 0;
-
 }
 EXPORT_SYMBOL(register_dvb_backend);
 /*}}}*/
@@ -82,15 +78,12 @@ EXPORT_SYMBOL(register_dvb_backend);
 int DvbBackendInit(void)
 {
 	Backend     = kzalloc(sizeof(struct BackendContext_s), GFP_KERNEL);
-
 	if (Backend == NULL)
 	{
 		BACKEND_ERROR("Unable to create backend context - no memory\n");
 		return -ENOMEM;
 	}
-
 	Backend->Ops                = NULL;
-
 	return 0;
 }
 /*}}}*/
@@ -102,12 +95,9 @@ int DvbBackendDelete(void)
 		BACKEND_ERROR("Unable to delete backend context - not created\n");
 		return -EINVAL;
 	}
-
 	if (Backend->Name != NULL)
 		kfree(Backend->Name);
-
 	Backend->Name       = NULL;
-
 	kfree(Backend);
 	Backend     = NULL;
 	return 0;
@@ -118,23 +108,17 @@ int DvbBackendDelete(void)
 int DvbPlaybackCreate(struct PlaybackContext_s**      Playback)
 {
 	int         Result;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	if (*Playback != NULL)
 		return -EINVAL;
-
 	*Playback   = kzalloc(sizeof(struct PlaybackContext_s), GFP_KERNEL);
-
 	if (*Playback == NULL)
 	{
 		BACKEND_ERROR("Unable to create playback context - insufficient memory\n");
 		return -ENOMEM;
 	}
-
 	Result      = Backend->Ops->playback_create(&(*Playback)->Handle);
-
 	if (Result < 0)
 	{
 		BACKEND_ERROR("Unable to create playback context\n");
@@ -142,12 +126,9 @@ int DvbPlaybackCreate(struct PlaybackContext_s**      Playback)
 		*Playback       = NULL;
 		return Result;
 	}
-
 	mutex_init(&((*Playback)->Lock));
 	(*Playback)->UsageCount     = 0;
-
 	BACKEND_TRACE("Playback %p\n", *Playback);
-
 	return Result;
 }
 /*}}}*/
@@ -155,34 +136,25 @@ int DvbPlaybackCreate(struct PlaybackContext_s**      Playback)
 int DvbPlaybackDelete(struct PlaybackContext_s*       Playback)
 {
 	int         Result  = 0;
-
 	if (Playback == NULL)
 		return -EINVAL;
-
 	BACKEND_TRACE("Playback %p, Usage = %d\n", Playback, Playback->UsageCount);
-
 	mutex_lock(&(Playback->Lock));
-
 	if (Playback->UsageCount != 0)
 	{
 		BACKEND_TRACE("Cannot delete playback - usage = %d\n", Playback->UsageCount);
 		mutex_unlock(&(Playback->Lock));
 		return -EINVAL;
 	}
-
 	if (Playback->Handle != NULL)
 	{
 		Result = Backend->Ops->playback_delete(Playback->Handle);
-
 		if (Result < 0)
 			BACKEND_ERROR("Failed to delete playback context\n");
 	}
-
 	mutex_unlock(&(Playback->Lock));
-
 	if (Result == 0)
 		kfree(Playback);
-
 	return Result;
 }
 /*}}}*/
@@ -199,28 +171,21 @@ int DvbPlaybackAddStream(struct PlaybackContext_s*       Playback,
 	int                         Result;
 	unsigned int                NewStream       = false;
 	unsigned int                Demux           = false;
-
 	BACKEND_DEBUG("%p\n", Playback);
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	if (Playback == NULL)                                       /* No playback to start stream in */
 		return -EINVAL;
-
 	if ((*Stream != NULL) && ((*Stream)->Handle != NULL))       /* Device already has this stream */
 		return -EINVAL;
-
 	if (*Stream == NULL)
 	{
 		*Stream     = kzalloc(sizeof(struct StreamContext_s), GFP_KERNEL);
-
 		if (*Stream == NULL)
 		{
 			BACKEND_ERROR("Unable to create stream context - insufficient memory\n");
 			return -ENOMEM;
 		}
-
 		if (Media == NULL)
 		{
 			(*Stream)->BufferLength             = DEMUX_BUFFER_SIZE;
@@ -237,23 +202,19 @@ int DvbPlaybackAddStream(struct PlaybackContext_s*       Playback,
 			{
 				(*Stream)->BufferLength         = 0;
 				(*Stream)->Buffer               = NULL;
-
 				if (strcmp(Encoding, BACKEND_AUTO_ID) == 0)     /* default to mpeg2 play */
 				{
 					BACKEND_DEBUG("Transport stream - Defaulting to mpeg2\n");
 					Encoding                    = BACKEND_MPEG2_ID;
 				}
 			}
-
 			(*Stream)->Inject                   = Backend->Ops->stream_inject_data;
 			(*Stream)->InjectPacket             = Backend->Ops->stream_inject_data_packet;
 			(*Stream)->Delete                   = Backend->Ops->playback_remove_stream;
 		}
-
 		if ((*Stream)->BufferLength != 0)
 		{
 			(*Stream)->Buffer                   = bigphysarea_alloc((*Stream)->BufferLength);
-
 			if ((*Stream)->Buffer == NULL)
 			{
 				BACKEND_ERROR("Unable to create stream buffer - insufficient memory\n");
@@ -262,12 +223,9 @@ int DvbPlaybackAddStream(struct PlaybackContext_s*       Playback,
 				return -ENOMEM;
 			}
 		}
-
 		NewStream       = true;
 	}
-
 	mutex_lock(&(Playback->Lock));
-
 	if ((Encoding != NULL) && (strcmp(Encoding, BACKEND_AUTO_ID) == 0))
 	{
 		(*Stream)->Handle       = NULL;
@@ -275,40 +233,33 @@ int DvbPlaybackAddStream(struct PlaybackContext_s*       Playback,
 	}
 	else if (Demux)
 		Result  = Backend->Ops->playback_add_demux(Playback->Handle,
-												   DemuxId,
-												   &(*Stream)->Handle);
+				  DemuxId,
+				  &(*Stream)->Handle);
 	else
 		Result  = Backend->Ops->playback_add_stream(Playback->Handle,
-													Media,
-													Format,
-													Encoding,
-													SurfaceId,
-													&(*Stream)->Handle);
-
+				  Media,
+				  Format,
+				  Encoding,
+				  SurfaceId,
+				  &(*Stream)->Handle);
 	if (Result < 0)
 	{
 		BACKEND_ERROR("Unable to create stream context\n");
-
 		if ((*Stream)->Buffer != NULL)
 			bigphysarea_free_pages((*Stream)->Buffer);
-
 		kfree(*Stream);
 		*Stream         = NULL;
 	}
 	else
 	{
 		mutex_init(&((*Stream)->Lock));
-
 		if (NewStream)
 		{
 			Playback->UsageCount++;
-
 			(*Stream)->DataToWrite      = 0;
 		}
 	}
-
 	mutex_unlock(&(Playback->Lock));
-
 	BACKEND_DEBUG("%p: Usage = %d\n", Playback, Playback->UsageCount);
 	return Result;
 }
@@ -318,33 +269,24 @@ int DvbPlaybackRemoveStream(struct PlaybackContext_s*       Playback,
 							struct StreamContext_s*         Stream)
 {
 	int         Result  = 0;
-
 	BACKEND_DEBUG("%p: Usage = %d\n", Playback, Playback->UsageCount);
-
 	if ((Playback == NULL) || (Stream == NULL))
 	{
 		BACKEND_ERROR("Unable to remove stream (%p) from playback (%p) if either is NULL\n", Stream, Playback);
 		return -EINVAL;
 	}
-
 	mutex_lock(&(Playback->Lock));
-
 	if (Stream->Handle != NULL)
 	{
 		Result = Stream->Delete(Playback->Handle, Stream->Handle);
-
 		if (Result < 0)
 			BACKEND_ERROR("Failed to remove stream from playback\n");
 	}
-
 	if (Stream->Buffer != NULL)
 		bigphysarea_free_pages(Stream->Buffer);
-
 	kfree(Stream);
-
 	Playback->UsageCount--;
 	mutex_unlock(&(Playback->Lock));
-
 	return Result;
 }
 /*}}}*/
@@ -353,15 +295,11 @@ int DvbPlaybackSetSpeed(struct PlaybackContext_s*       Playback,
 						unsigned int                    Speed)
 {
 	int                 Result;
-
 	if (Playback == NULL)
 		return -EINVAL;
-
 	Result      = Backend->Ops->playback_set_speed(Playback->Handle, Speed);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set speed\n");
-
 	return Result;
 }
 /*}}}*/
@@ -370,15 +308,11 @@ int DvbPlaybackGetSpeed(struct PlaybackContext_s*       Playback,
 						unsigned int*                   Speed)
 {
 	int                 Result;
-
 	if (Playback == NULL)                       /* No playback to start audio in */
 		return -EINVAL;
-
 	Result      = Backend->Ops->playback_get_speed(Playback->Handle, Speed);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to access speed\n");
-
 	return Result;
 }
 /*}}}*/
@@ -388,15 +322,11 @@ int DvbPlaybackSetOption(struct PlaybackContext_s*       Playback,
 						 unsigned int                    Value)
 {
 	int         Result;
-
 	if ((Playback == NULL) || (Playback->Handle == NULL))           /* No playback to set option on */
 		return -EINVAL;
-
 	Result      = Backend->Ops->playback_set_option(Playback->Handle, Option, Value);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set stream option\n");
-
 	return Result;
 }
 /*}}}*/
@@ -406,26 +336,20 @@ int DvbPlaybackSetNativePlaybackTime(struct PlaybackContext_s*       Playback,
 									 unsigned long long              SystemTime)
 {
 	int Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	if (Playback == NULL)
 		return -EINVAL;
-
 	if (NativeTime == SystemTime)
 	{
 		BACKEND_DEBUG("NativeTime == SystemTime -> no need for sync call \n");
 		return 0;
 	}
-
 	Result  = Backend->Ops->playback_set_native_playback_time(Playback->Handle,
 			  NativeTime,
 			  SystemTime);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set native playback time\n");
-
 	return Result;
 }
 /*}}}*/
@@ -434,14 +358,10 @@ int DvbPlaybackGetPlayerEnvironment(struct PlaybackContext_s*  Playback,
 									playback_handle_t*         playerplayback)
 {
 	int         Result = 0;
-
 	if (Playback == NULL) return -EINVAL;
-
 	Result      = Backend->Ops->playback_get_player_environment(Playback->Handle, playerplayback);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to get player environment\n");
-
 	return Result;
 }
 /*}}}*/
@@ -450,18 +370,13 @@ int DvbPlaybackSetClockDataPoint(struct PlaybackContext_s*       Playback,
 								 dvb_clock_data_point_t*         ClockData)
 {
 	int Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	if (Playback == NULL)
 		return -EINVAL;
-
 	Result  = Backend->Ops->playback_set_clock_data_point(Playback->Handle, (clock_data_point_t*)ClockData);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set clock data point\n");
-
 	return Result;
 }
 /*}}}*/
@@ -471,15 +386,11 @@ int DvbStreamEnable(struct StreamContext_s*         Stream,
 					unsigned int                    Enable)
 {
 	int         Result = 0;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_enable(Stream->Handle, Enable);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to enable stream\n");
-
 	return Result;
 }
 /*}}}*/
@@ -489,15 +400,11 @@ int DvbStreamSetId(struct StreamContext_s*         Stream,
 				   unsigned int                    Id)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to set id */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_set_id(Stream->Handle, DemuxId, Id);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set Id\n");
-
 	return Result;
 }
 /*}}}*/
@@ -506,15 +413,11 @@ int DvbStreamChannelSelect(struct StreamContext_s*         Stream,
 						   channel_select_t                Channel)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to set id */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_channel_select(Stream->Handle, Channel);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to select channel\n");
-
 	return Result;
 }
 /*}}}*/
@@ -524,15 +427,11 @@ int DvbStreamSetOption(struct StreamContext_s*         Stream,
 					   unsigned int                    Value)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No playback to set option on */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_set_option(Stream->Handle, Option, Value);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set stream option\n");
-
 	return Result;
 }
 /*}}}*/
@@ -542,15 +441,11 @@ int DvbStreamGetOption(struct StreamContext_s*         Stream,
 					   unsigned int*                   Value)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to get option on */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_get_option(Stream->Handle, Option, Value);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set stream option\n");
-
 	return Result;
 }
 /*}}}*/
@@ -560,7 +455,6 @@ int DvbStreamGetPlayInfo(struct StreamContext_s*         Stream,
 {
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	return Backend->Ops->stream_get_play_info(Stream->Handle, PlayInfo);
 }
 /*}}}*/
@@ -569,15 +463,11 @@ int DvbStreamSetPlayInterval(struct StreamContext_s*    Stream,
 							 dvb_play_interval_t*       PlayInterval)
 {
 	int                 Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No playback to set option on */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_set_play_interval(Stream->Handle, (play_interval_t*)PlayInterval);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set play interval\n");
-
 	return Result;
 }
 /*}}}*/
@@ -592,11 +482,9 @@ int DvbStreamInject(struct StreamContext_s*         Stream,
 					unsigned int                    Length)
 {
 	int         Result              = 0;
-
 	mutex_lock(&(Stream->Lock));
 	Result      = Stream->Inject(Stream->Handle, Buffer, Length);
 	mutex_unlock(&(Stream->Lock));
-
 	return Result;
 }
 /*}}}*/
@@ -612,11 +500,9 @@ int DvbStreamInjectPacket(struct StreamContext_s*         Stream,
 						  unsigned long long              PresentationTime)
 {
 	int         Result              = 0;
-
 	mutex_lock(&(Stream->Lock));
 	Result      = Stream->InjectPacket(Stream->Handle, Buffer, Length, PresentationTimeValid, PresentationTime);
 	mutex_unlock(&(Stream->Lock));
-
 	return Result;
 }
 /*}}}*/
@@ -632,30 +518,22 @@ int DvbStreamDrain2(struct StreamContext_s*         Stream,
 					unsigned int                    NonBlock)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to drain */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_drain(Stream->Handle, Discard, NonBlock);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to drain stream\n");
-
 	return Result;
 }
 
 int DvbStreamCheckDrained(struct StreamContext_s*         Stream)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to drain */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_check_drained(Stream->Handle);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to drain stream\n");
-
 	return Result;
 }
 /*}}}*/
@@ -663,15 +541,11 @@ int DvbStreamCheckDrained(struct StreamContext_s*         Stream)
 int DvbStreamStep(struct StreamContext_s*         Stream)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to step */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_step(Stream->Handle);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to step stream\n");
-
 	return Result;
 }
 /*}}}*/
@@ -681,12 +555,9 @@ int DvbStreamSwitch(struct StreamContext_s*         Stream,
 					char*                           Encoding)
 {
 	BACKEND_DEBUG("%p\n", Stream);
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))       /* No stream */
 		return -EINVAL;
-
 	return Backend->Ops->stream_switch(Stream->Handle, Format, Encoding);
-
 }
 /*}}}*/
 /*{{{  DvbStreamDiscontinuity*/
@@ -694,15 +565,11 @@ int DvbStreamDiscontinuity(struct StreamContext_s*         Stream,
 						   discontinuity_t                 Discontinuity)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_discontinuity(Stream->Handle, Discontinuity);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to inject discontinuity\n");
-
 	return Result;
 }
 /*}}}*/
@@ -713,7 +580,6 @@ stream_event_signal_callback DvbStreamRegisterEventSignalCallback(struct StreamC
 {
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return NULL;
-
 	return Backend->Ops->stream_register_event_signal_callback(Stream->Handle, (context_handle_t)Context, Callback);
 }
 /*}}}*/
@@ -728,15 +594,11 @@ int DvbStreamGetDecodeBuffer(struct StreamContext_s*         Stream,
 							 unsigned int*                   Stride)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_get_decode_buffer(Stream->Handle, Buffer, Data, Format, DimensionCount, Dimensions, Index, Stride);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to access decode buffer (%d)\n", Result);
-
 	return Result;
 }
 /*}}}*/
@@ -745,15 +607,11 @@ int DvbStreamReturnDecodeBuffer(struct StreamContext_s*         Stream,
 								buffer_handle_t*                Buffer)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_return_decode_buffer(Stream->Handle, Buffer);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to access decode buffer (%d)\n", Result);
-
 	return Result;
 }
 
@@ -764,15 +622,11 @@ int DvbStreamGetDecodeBufferPoolStatus(struct StreamContext_s*         Stream,
 									   unsigned int*                   BuffersWithNonZeroReferenceCount)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_get_decode_buffer_pool_status(Stream->Handle, BuffersInPool, BuffersWithNonZeroReferenceCount);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to access decode buffer pool (%d)\n", Result);
-
 	return Result;
 }
 
@@ -786,15 +640,11 @@ int DvbStreamGetOutputWindow(struct StreamContext_s*         Stream,
 							 unsigned int*                   Height)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to set id */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_get_output_window(Stream->Handle, X, Y, Width, Height);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to get output window (%d)\n", Result);
-
 	return Result;
 }
 /*}}}  */
@@ -807,15 +657,11 @@ int DvbStreamSetOutputWindow(struct StreamContext_s*         Stream,
 							 unsigned int                    Height)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to set id */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_set_output_window(Stream->Handle, X, Y, Width, Height);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set output window (%d)\n", Result);
-
 	return Result;
 }
 /*}}}*/
@@ -827,15 +673,11 @@ int DvbStreamSetInputWindow(struct StreamContext_s*         Stream,
 							unsigned int                    Height)
 {
 	int         Result;
-
 	if ((Stream == NULL) || (Stream->Handle == NULL))           /* No stream to set id */
 		return -EINVAL;
-
 	Result      = Backend->Ops->stream_set_input_window(Stream->Handle, X, Y, Width, Height);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set input window (%d)\n", Result);
-
 	return Result;
 }
 /*}}}*/
@@ -853,9 +695,7 @@ int DvbStreamIdentifyAudio(struct StreamContext_s*         Stream,
 {
 	int                 Status  = 0;
 	unsigned char*      Header  = Stream->Buffer;
-
 	*Id         = AUDIO_ENCODING_NONE;
-
 	/* first check for PES start code */
 	if ((Header[0] == 0x00) && (Header[1] == 0x00) && (Header[2] == 0x01))
 	{
@@ -866,7 +706,6 @@ int DvbStreamIdentifyAudio(struct StreamContext_s*         Stream,
 		{
 			/* find the length of the PES header */
 			unsigned char PesHeaderDataLength   = Header[8];
-
 			if (PesHeaderDataLength > 15)
 			{
 				BACKEND_ERROR("PES header data length is too long (%2x)\n", PesHeaderDataLength);
@@ -876,7 +715,6 @@ int DvbStreamIdentifyAudio(struct StreamContext_s*         Stream,
 			{
 				/* extract the sub-stream identifier */
 				unsigned char SubStreamIdentifier = Header[9 + PesHeaderDataLength];
-
 				if (IS_PRIVATE_STREAM_1_AC3(SubStreamIdentifier))
 					*Id         = AUDIO_ENCODING_AC3;
 				else if (IS_PRIVATE_STREAM_1_DTS(SubStreamIdentifier))
@@ -912,7 +750,6 @@ int DvbStreamIdentifyAudio(struct StreamContext_s*         Stream,
 					  Header[0], Header[1], Header[2], Header[3], Header[4], Header[5], Header[6], Header[7]);
 		Status  = -EINVAL;
 	}
-
 	return Status;
 }
 /*}}}*/
@@ -922,9 +759,7 @@ int DvbStreamIdentifyVideo(struct StreamContext_s*         Stream,
 {
 	int                 Status  = 0;
 	unsigned char*      Header  = Stream->Buffer;
-
 	*Id         = VIDEO_ENCODING_NONE;
-
 	/* check for PES start code */
 	if ((Header[0] == 0x00) && (Header[1] == 0x00) && (Header[2] == 0x01))
 	{
@@ -940,7 +775,6 @@ int DvbStreamIdentifyVideo(struct StreamContext_s*         Stream,
 		Status  = -EINVAL;
 		*/
 	}
-
 	return Status;
 }
 /*}}}*/
@@ -950,19 +784,13 @@ int DvbStreamGetFirstBuffer(struct StreamContext_s*         Stream,
 							unsigned int                    Length)
 {
 	int         CopyAmount;
-
 	mutex_lock(&(Stream->Lock));
 	CopyAmount      = Stream->BufferLength;
-
 	if (CopyAmount >= Length)
 		CopyAmount  = Length;
-
 	copy_from_user(Stream->Buffer, Buffer, CopyAmount);
-
 	mutex_unlock(&(Stream->Lock));
-
 	return CopyAmount;
-
 }
 /*}}}*/
 /*{{{  DvbStreamGetPlayerEnvironment*/
@@ -971,14 +799,10 @@ int DvbStreamGetPlayerEnvironment(struct StreamContext_s*     Stream,
 								  stream_handle_t*            playerstream)
 {
 	int         Result;
-
 	if (Stream == NULL) return -EINVAL;
-
 	Result      = Backend->Ops->stream_get_player_environment(Stream->Handle, playerplayback, playerstream);
-
 	if (Result < 0)
 		BACKEND_ERROR("Unable to get player environment\n");
-
 	return Result;
 }
 /*}}}*/
@@ -987,17 +811,12 @@ int DvbDisplayDelete(char*           Media,
 					 unsigned int    SurfaceId)
 {
 	int         Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	BACKEND_DEBUG("Media %s, SurfaceId  = %d\n", Media, SurfaceId);
-
 	Result = Backend->Ops->display_delete(Media, SurfaceId);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to close %s surface\n", Media);
-
 	return Result;
 }
 /*}}}*/
@@ -1008,17 +827,12 @@ int DisplayCreate(char*           Media,
 				  unsigned int    SurfaceId)
 {
 	int         Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	BACKEND_DEBUG("Media %s, SurfaceId  = %d\n", Media, SurfaceId);
-
 	Result = Backend->Ops->display_create(Media, SurfaceId);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to create media %s surface\n", Media);
-
 	return Result;
 }
 /*}}}*/
@@ -1027,14 +841,10 @@ int isDisplayCreated(char*           Media,
 					 unsigned int    SurfaceId)
 {
 	int         Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	BACKEND_DEBUG("Media %s, SurfaceId  = %d\n", Media, SurfaceId);
-
 	Result = Backend->Ops->is_display_created(Media, SurfaceId);
-
 	return Result;
 }
 /*}}}*/
@@ -1045,15 +855,11 @@ int DvbDisplaySynchronize(char*           Media,
 						  unsigned int    SurfaceId)
 {
 	int         Result  = 0;
-
 	if (Backend->Ops == NULL)
 		return -ENODEV;
-
 	Result = Backend->Ops->display_synchronize(Media, SurfaceId);
-
 	if (Result < 0)
 		BACKEND_ERROR("Failed to synchronize media %s surface\n", Media);
-
 	return Result;
 }
 /*}}}*/

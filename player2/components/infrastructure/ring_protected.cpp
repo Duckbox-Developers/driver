@@ -21,12 +21,10 @@ Date        Modification                                    Name
 RingProtected_c::RingProtected_c(unsigned int MaxEntries)
 {
 	OS_InitializeMutex(&Lock);
-
 	Limit       = MaxEntries + 1;
 	NextExtract = 0;
 	NextInsert  = 0;
 	Storage     = new uintptr_t[Limit];
-
 	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
@@ -36,7 +34,6 @@ RingProtected_c::RingProtected_c(unsigned int MaxEntries)
 RingProtected_c::~RingProtected_c(void)
 {
 	OS_TerminateMutex(&Lock);
-
 	if (Storage != NULL)
 		delete [] Storage;
 }
@@ -47,24 +44,18 @@ RingProtected_c::~RingProtected_c(void)
 RingStatus_t   RingProtected_c::Insert(uintptr_t     Value)
 {
 	unsigned int OldNextInsert;
-
 	OS_LockMutex(&Lock);
-
 	OldNextInsert       = NextInsert;
 	Storage[NextInsert] = Value;
-
 	NextInsert++;
-
 	if (NextInsert == Limit)
 		NextInsert = 0;
-
 	if (NextInsert == NextExtract)
 	{
 		NextInsert      = OldNextInsert;
 		OS_UnLockMutex(&Lock);
 		return RingTooManyEntries;
 	}
-
 	OS_UnLockMutex(&Lock);
 	return RingNoError;
 }
@@ -74,22 +65,16 @@ RingStatus_t   RingProtected_c::Insert(uintptr_t     Value)
 
 RingStatus_t   RingProtected_c::Extract(uintptr_t   *Value)
 {
-
 	OS_LockMutex(&Lock);
-
 	if (NextExtract == NextInsert)
 	{
 		OS_UnLockMutex(&Lock);
 		return RingNothingToGet;
 	}
-
 	*Value = Storage[NextExtract];
-
 	NextExtract++;
-
 	if (NextExtract == Limit)
 		NextExtract = 0;
-
 	OS_UnLockMutex(&Lock);
 	return RingNoError;
 }
@@ -103,7 +88,6 @@ RingStatus_t   RingProtected_c::Flush(void)
 	NextExtract = 0;
 	NextInsert  = 0;
 	OS_UnLockMutex(&Lock);
-
 	return RingNoError;
 }
 

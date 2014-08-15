@@ -85,7 +85,7 @@ class Codec_c : public BaseComponentClass_c
 		virtual CodecStatus_t   ReleaseReferenceFrame(unsigned int        ReferenceFrameDecodeIndex) = 0;
 
 		virtual CodecStatus_t   CheckReferenceFrameList(unsigned int          NumberOfReferenceFrameLists,
-														ReferenceFrameList_t      ReferenceFrameList[]) = 0;
+				ReferenceFrameList_t      ReferenceFrameList[]) = 0;
 
 		virtual CodecStatus_t   ReleaseDecodeBuffer(Buffer_t          Buffer) = 0;
 

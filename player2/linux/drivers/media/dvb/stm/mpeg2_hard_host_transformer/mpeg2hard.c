@@ -73,55 +73,39 @@ Mpeg2HardStatus_t Mpeg2HardInit(char                             *Name,
 {
 	Mpeg2HardCodecContext_t  *Context;
 	unsigned int              Value;
-
 	MapRegisters();
-
 	// First check to see if we need a new shared context
-
 	if (!SharedContextInitialized)
 	{
 		OSDEV_InitializeSemaphore(&DecoderLock, 1);
 		LastStreamContextLoaded         = NULL;
-
 		// Initialize the hardware block
 		WriteRegister(VID_IC_CFG, 0x0000);
-
 		// Clear interrupt mask, and status bits
-
 		WriteRegister(VID_ITM(0), 0x0000);                              // We don't use interrupts here
 		Value = ReadRegister(VID_ITS(0));                               // Clear status bits
-
 		// Initialize bit buffer
-
 		WriteRegister(VID_BBS(0), 0x0000);                              // Set bit buffer start
 		WriteRegister(VID_BBE(0), 0xFFFFFFFF);                              // Set bit buffer end
-
 		WriteRegister(VID_VLD_PTR(0), (unsigned int)NULL);              // VLD data
 		WriteRegister(VID_VLDRL(0), (unsigned int)NULL);                // VLD data limit
 		// Note we do not use the read limit.
-
 		// Soft reset
 		WriteRegister(VID_SRS(0), VID_SRS__SRC);                        // Soft reset
-
 		// Install interrupt handler
 		if (Mpeg2InterruptInstall() != MPEG2HARD_NO_ERROR)
 			return MPEG2HARD_ERROR;
-
 		SharedContextInitialized        = true;
 	}
-
 	// Obtain a decoder context
 	Context     = (Mpeg2HardCodecContext_t  *)OSDEV_Malloc(sizeof(Mpeg2HardCodecContext_t));
-
 	if (Context == NULL)
 	{
 		OSDEV_Print("Mpeg2HardInit - Unable to allocate memory for context structure\n");
 		return MPEG2HARD_NO_MEMORY;
 	}
-
 	memset(Context, 0x00, sizeof(Mpeg2HardCodecContext_t));
 	*Handle     = (void *)Context;
-
 	// Initialise decode semaphore
 #if USE_SEMAPHORE
 	OSDEV_InitializeSemaphore(&DecodeDone, 0);
@@ -129,9 +113,7 @@ Mpeg2HardStatus_t Mpeg2HardInit(char                             *Name,
 	init_waitqueue_head(&DecodeDone);
 	DecodeComplete      = false;
 #endif
-
 	return MPEG2HARD_NO_ERROR;
-
 }
 
 // ////////////////////////////////////////////////////////////////////////////////
@@ -148,32 +130,23 @@ Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(
 	Mpeg2HardSequenceParams_t        *SequenceParams)
 {
 	Mpeg2HardCodecContext_t  *Context = (Mpeg2HardCodecContext_t  *)Handle;
-
 	// Copy the 2 quantization matrices
 	memcpy(Context->IntraQuantizerMatrix, SequenceParams->intraQuantizerMatrix, QUANTISER_MATRIX_SIZE);
 	memcpy(Context->NonIntraQuantizerMatrix, SequenceParams->nonIntraQuantizerMatrix, QUANTISER_MATRIX_SIZE);
-
 	Context->MpegStreamType             = SequenceParams->mpegStreamType;
-
 	// Store the width/height in macroblocks NOTE number of macroblocks must be even.
-
 	Context->WidthInMacroBlocks         = (SequenceParams->horizontalSize + 15) / 16;
 	Context->HeightInMacroBlocks        = (SequenceParams->verticalSize + 15) / 16;
-
 	// Set the last decode buffer to null to indicate first field if field pictures.
 	Context->LumaDecodeFrameBuffer      = NULL;
-
 	// Force re-loading if this is a change to currently loaded values
 	if (Context == LastStreamContextLoaded)
 		LastStreamContextLoaded         = NULL;
-
 #if 0
-
 	OSDEV_Print("MPEG Stream type: %d\n", SequenceParams->mpegStreamType);
 	OSDEV_Print("Horizontal Size:  %d\n", SequenceParams->horizontalSize);
 	OSDEV_Print("Vertical Size:    %d\n", SequenceParams->verticalSize);
 	OSDEV_Print("Chroma Format:    %d\n", SequenceParams->chromaFormat);
-
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[0], SequenceParams->intraQuantizerMatrix[1],
 				SequenceParams->intraQuantizerMatrix[2], SequenceParams->intraQuantizerMatrix[3], SequenceParams->intraQuantizerMatrix[4],
 				SequenceParams->intraQuantizerMatrix[5], SequenceParams->intraQuantizerMatrix[6], SequenceParams->intraQuantizerMatrix[7]);
@@ -198,7 +171,6 @@ Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[56], SequenceParams->intraQuantizerMatrix[57],
 				SequenceParams->intraQuantizerMatrix[58], SequenceParams->intraQuantizerMatrix[59], SequenceParams->intraQuantizerMatrix[60],
 				SequenceParams->intraQuantizerMatrix[61], SequenceParams->intraQuantizerMatrix[62], SequenceParams->intraQuantizerMatrix[63]);
-
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[0], SequenceParams->nonIntraQuantizerMatrix[1],
 				SequenceParams->nonIntraQuantizerMatrix[2], SequenceParams->nonIntraQuantizerMatrix[3], SequenceParams->nonIntraQuantizerMatrix[4],
 				SequenceParams->nonIntraQuantizerMatrix[5], SequenceParams->nonIntraQuantizerMatrix[6], SequenceParams->nonIntraQuantizerMatrix[7]);
@@ -224,7 +196,6 @@ Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(
 				SequenceParams->nonIntraQuantizerMatrix[58], SequenceParams->nonIntraQuantizerMatrix[59], SequenceParams->nonIntraQuantizerMatrix[60],
 				SequenceParams->nonIntraQuantizerMatrix[61], SequenceParams->nonIntraQuantizerMatrix[62], SequenceParams->nonIntraQuantizerMatrix[63]);
 #endif
-
 	return MPEG2HARD_NO_ERROR;
 }
 
@@ -235,19 +206,15 @@ Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(
 static void Mpeg2HardLoadStreamContext(Mpeg2HardCodecContext_t  *Context)
 {
 	unsigned int i;
-
 	// Load the 2 quantization matrices
 	for (i = 0; i < QUANTISER_MATRIX_SIZE / sizeof(unsigned int); i++)
 		WriteRegister(VID0_QMWIP + (i * sizeof(unsigned int)), Context->IntraQuantizerMatrix[i]);
-
 	for (i = 0; i < QUANTISER_MATRIX_SIZE / sizeof(unsigned int); i++)
 		WriteRegister(VID0_QMWNIP + (i * sizeof(unsigned int)), Context->NonIntraQuantizerMatrix[i]);
-
 	// Load the size registers NOTE number of macroblocks must be even.
 	WriteRegister(VID_DFW(0), Context->WidthInMacroBlocks);
 	WriteRegister(VID_DFH(0), Context->HeightInMacroBlocks);
 	WriteRegister(VID_DFS(0), Context->WidthInMacroBlocks * Context->HeightInMacroBlocks);
-
 	LastStreamContextLoaded     = Context;
 }
 
@@ -265,14 +232,11 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 	static unsigned int       Colour = 0;
 	static unsigned int       Total = 0;
 #endif
-
 	// In a multi use environment, we need to grab the decoder, and if
 	// it is not currently loaded, load our stream context.
 	OSDEV_ClaimSemaphore(&DecoderLock);
-
 	if (LastStreamContextLoaded != Context)
 		Mpeg2HardLoadStreamContext(Context);
-
 #if 0 // used to fill decode buffers with pretty colours
 	{
 		memset((void*)(((unsigned int)FrameParams->lumaDecodeFramebuffer) | 0xa0000000),   0xff, 1920 * 1088);
@@ -300,7 +264,6 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		return MPEG2HARD_NO_ERROR;
 	}
 #endif
-
 	// Update reference frame pointers if appropriate
 	//    NOTE selective load allows old values to be used for error recovery on I frames
 	if (FrameParams->pictureCodingType == PICTURE_CODING_TYPE_B)
@@ -315,11 +278,9 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		WriteRegister(VID_FFP(0), (unsigned int)FrameParams->lumaForwardReferenceFrame);
 		WriteRegister(VID_FCHP(0), (unsigned int)FrameParams->chromaForwardReferenceFrame);
 	}
-
 	// Update decode frame pointers
 	WriteRegister(VID_RFP(0), (unsigned int)FrameParams->lumaDecodeFramebuffer);
 	WriteRegister(VID_RCHP(0), (unsigned int)FrameParams->chromaDecodeFramebuffer);
-
 	// Setup decimation values
 	if ((FrameParams->horizontalDecimationFactor != 1) || (FrameParams->verticalDecimationFactor != 1))
 	{
@@ -331,46 +292,34 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		unsigned int rcm = 0x06;
 		WriteRegister(VID_SRFP(0), (unsigned int)FrameParams->decimatedLumaDecodeFramebuffer);
 		WriteRegister(VID_SRCHP(0), (unsigned int)FrameParams->decimatedChromaDecodeFramebuffer);
-
 		printk("**** RCM A 0x%08x ****\n", rcm);
-
 		if (FrameParams->decodingFlags & PROGRESSIVE)
 			rcm++;
-
 		printk("**** RCM B 0x%08x ****\n", rcm);
-
 		if (FrameParams->horizontalDecimationFactor == 2)
 			rcm += (1 << 3);
 		else if (FrameParams->horizontalDecimationFactor == 4)
 			rcm += (1 << 4);
-
 		printk("**** RCM C 0x%08x ****\n", rcm);
-
 		if (FrameParams->verticalDecimationFactor == 2)
 			rcm += (1 << 5);
 		else if (FrameParams->verticalDecimationFactor == 4)
 			rcm += (1 << 6);
-
 		printk("**** RCM D 0x%08x ****\n", rcm);
 //      printk("**** Decimated Luma   0x%08x\n",FrameParams->decimatedLumaDecodeFramebuffer);
 //      printk("**** Decimated Chroma 0x%08x\n",FrameParams->decimatedChromaDecodeFramebuffer);
-
 		WriteRegister(VID_RCM(0), rcm);
 //      WriteRegister(VID_RCM(0),0x2e);
 	}
 	else
 		WriteRegister(VID_RCM(0), (unsigned int)(((FrameParams->decodingFlags & PROGRESSIVE) != 0) + 0x04));
-
 	// Set Compressed data pointers
 	WriteRegister(VID_VLD_PTR(0), (unsigned int)FrameParams->compressedDataFrame);   // VLD data
 	WriteRegister(VID_VLDRL(0), (unsigned int)(FrameParams->compressedDataFrame + FrameParams->compressedDataSize + 255 + 1024));      // VLD data limit
-
 //      OSDEV_Print("Compressed data pointer %x size %x\n",FrameParams->compressedDataFrame, FrameParams->compressedDataSize);
-
 	// Setup the picture parameters
 	FirstField          = (FrameParams->lumaDecodeFramebuffer != Context->LumaDecodeFrameBuffer);
 	//OSDEV_Print( "MPEG Stream Tye %d (0 MPEG1 : 1 MPEG2)\n",Context->MpegStreamType);
-
 	PictureParameters   =
 		(Context->MpegStreamType                                              << VID_PPR__MP2_SHIFT)  |
 		(((FirstField) ? VID_FFN__FIRST_FIELD : VID_FFN__SECOND_FIELD)        << VID_PPR__FFN_SHIFT)  |
@@ -383,7 +332,6 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		((FrameParams->pictureCodingType & VID_PPR__PCT_MASK)                 << VID_PPR__PCT_SHIFT)  |
 		((FrameParams->intraDCPrecision & VID_PPR__DCP_MASK)                  << VID_PPR__DCP_SHIFT)  |
 		((FrameParams->pictureStructure & VID_PPR__PST_MASK)                  << VID_PPR__PST_SHIFT);
-
 	if (Context->MpegStreamType == 0) // MPEG 1
 	{
 		PictureParameters   |=
@@ -399,9 +347,7 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 			((FrameParams->forwardVerticalMotionVector & VID_PPR__FFV_MASK)       << VID_PPR__FFV_SHIFT)  |
 			((FrameParams->backwardHorizontalMotionVector & VID_PPR__BFH_MASK)    << VID_PPR__BFH_SHIFT)  |
 			((FrameParams->forwardHorizontalMotionVector & VID_PPR__FFH_MASK)     << VID_PPR__FFH_SHIFT);
-
 	}
-
 	/*
 	    OSDEV_Print( "*   intra_dc_precision           : %6d\n",(FrameParams->intraDCPrecision & VID_PPR__DCP_MASK));
 	    OSDEV_Print( "*   picture_structure            : %6d\n",(FrameParams->pictureStructure & VID_PPR__PST_MASK));
@@ -412,14 +358,10 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 	    OSDEV_Print( "*   intra_vlc_format             : %6d\n",((FrameParams->decodingFlags & INTRA_VLC_FORMAT) != 0));
 	    OSDEV_Print( "*   alternate_scan               : %6d\n",((FrameParams->decodingFlags & ALTERNATE_SCAN) != 0));
 	*/
-
 	// Remember the decode buffer to check whether we are the second half of a field picture
 	Context->LumaDecodeFrameBuffer  = FrameParams->lumaDecodeFramebuffer;
-
 //      OS_FlushCacheAll();
-
 	WriteRegister(VID_PPR(0), PictureParameters);
-
 	ReadRegister(VID_ITS(0));                                   // Clear interrupt status bits
 	WriteRegister(VID_TIS(0), VID_TIS__RMM | VID_TIS__MVC);
 	WriteRegister(VID_ITM(0), VID_STA__DID   |
@@ -429,25 +371,21 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 				  VID_STA__DUE   |
 				  VID_STA__DOE);  // Set interrupt mask for decoder idle
 	WriteRegister(VID0_EXE, VID_EXE__EXE);                      // Go
-
 	// Now wait for the decode to complete
 #if USE_SEMAPHORE
 	OSDEV_ClaimSemaphore(&DecodeDone);                          // Wait for interrupt handler to signal decode complete
 #else
 	{
 		unsigned int            DecodeTimeout;
-
 		DecodeTimeout       = msecs_to_jiffies(80);             /* Set timeout for 2 frame periods at 25 frames a second */
 		DecodeComplete      = false;
 //              wait_event( DecodeDone, DecodeComplete);
 		DecodeTimeout       = wait_event_timeout(DecodeDone, DecodeComplete, DecodeTimeout);
-
 		if (!DecodeComplete)
 		{
 			unsigned int        MacroBlock;
 			unsigned int        Row;
 			unsigned int        Column;
-
 			MacroBlock  = ReadRegister(VID_MBNM(0));            /* Read macroblock decoder is working on */
 			Column      = (MacroBlock >> 16) & 0x7f;
 			Row         =  MacroBlock & 0x7f;
@@ -455,19 +393,14 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		}
 	}
 #endif
-
 	// Check statuses are as expected
 	//Status = ReadRegister( VID_ITS(0) );                        // Read interrupt status bits
 #if defined (ENABLE_HD)
-
 	if ((InterruptStatus & VID_STA__DID) != VID_STA__DID)
 		OSDEV_Print("Error: Interrupt status = %08x\n", InterruptStatus);
-
 #endif
-
 	// Release the decoder for use, and return
 	OSDEV_ReleaseSemaphore(&DecoderLock);
-
 	if (((FrameParams->pictureStructure == PICTURE_STRUCTURE_TOP_FIELD) || (FrameParams->pictureStructure == PICTURE_STRUCTURE_BOTTOM_FIELD)) &&
 			FirstField)
 		return MPEG2HARD_DECODE_FIRST_FIELD;
@@ -482,14 +415,11 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 Mpeg2HardStatus_t       Mpeg2HardTerminate(Mpeg2HardHandle_t                    Handle)
 {
 	Mpeg2HardCodecContext_t  *Context = (Mpeg2HardCodecContext_t  *)Handle;
-
 	// First, if our stream context is loaded, mark it as unloaded
 	if (Context == LastStreamContextLoaded)
 		LastStreamContextLoaded         = NULL;
-
 	Mpeg2InterruptUninstall();
 	UnMapRegisters();
-
 	// Free the context and return
 	OSDEV_Free(Context);
 	return MPEG2HARD_NO_ERROR;
@@ -502,13 +432,11 @@ Mpeg2HardStatus_t       Mpeg2HardTerminate(Mpeg2HardHandle_t                    
 //static
 Mpeg2HardStatus_t Mpeg2InterruptInstall(void)
 {
-
 	if (request_irq(MPEG2_INTERRUPT_NUMBER, Mpeg2InterruptHandler, 0, "mpeg2", NULL) != 0)
 	{
 		OSDEV_Print("MPEG2Hard interrupt install failure\n");
 		return MPEG2HARD_ERROR;
 	}
-
 	return MPEG2HARD_NO_ERROR;
 }
 
@@ -520,13 +448,11 @@ Mpeg2HardStatus_t Mpeg2InterruptInstall(void)
 Mpeg2HardStatus_t Mpeg2InterruptUninstall(void)
 {
 	OSDEV_Print("MPEG2 Hard interrupt uninstall (CURRENTLY DISABLED)\n");
-
 #if 0
 	// for some reason freeing the irq prevents the MPEG decoder initialising
 	// correctly when the device is reopened.
 	free_irq(MPEG2_INTERRUPT_NUMBER, NULL);
 #endif
-
 	return MPEG2HARD_NO_ERROR;
 }
 
@@ -540,15 +466,12 @@ OSDEV_InterruptHandlerEntrypoint(Mpeg2InterruptHandler)
 	unsigned int  MacroBlock;
 	unsigned int  Row;
 	unsigned int  Column;
-
 	Status     = ReadRegister(VID_ITS(0));                      // Read interrupt status bits
 	MacroBlock = ReadRegister(VID_MBNM(0));                     // Read macroblock decoder is working on
 	Column     = (MacroBlock >> 16) & 0x7f;
 	Row        =  MacroBlock & 0x7f;
-
 	if (LastStreamContextLoaded == NULL)
 		return IRQ_HANDLED;
-
 	if (((Row    != (LastStreamContextLoaded->HeightInMacroBlocks - 1))   ||
 			(Column != (LastStreamContextLoaded->WidthInMacroBlocks - 1)))      &&
 			((Status & VID_STA__DID) != VID_STA__DID))
@@ -559,13 +482,10 @@ OSDEV_InterruptHandlerEntrypoint(Mpeg2InterruptHandler)
 			OSDEV_Print("%s: MPEG Soft Reset Interrupt Status = 0x%08x Row = 0x%08x Column = 0x%08x\n",
 						__FUNCTION__, Status, Row, Column);
 		}
-
 		return IRQ_HANDLED;
 	}
-
 	InterruptStatus = Status;
 	//WriteRegister( VID_ITM(0), 0x0000 );                        // Clear interrupt mask
-
 #if USE_SEMAPHORE
 	OSDEV_ReleaseSemaphore(&DecodeDone);
 #else

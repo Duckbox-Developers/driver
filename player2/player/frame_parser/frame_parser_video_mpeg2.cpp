@@ -213,15 +213,11 @@ static SliceType_t SliceTypeTranslation[]  = { INVALID_INDEX, SliceTypeI, SliceT
 FrameParser_VideoMpeg2_c::FrameParser_VideoMpeg2_c(void)
 {
 	Configuration.FrameParserName               = "Unspecified";
-
 	Configuration.StreamParametersCount         = 32;
 	Configuration.StreamParametersDescriptor    = &Mpeg2StreamParametersBuffer;
-
 	Configuration.FrameParametersCount          = 32;
 	Configuration.FrameParametersDescriptor     = &Mpeg2FrameParametersBuffer;
-
 //
-
 	Reset();
 }
 
@@ -245,19 +241,14 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::Reset(void)
 {
 	memset(&CopyOfStreamParameters, 0x00, sizeof(Mpeg2StreamParameters_t));
 	memset(&ReferenceFrameList, 0x00, sizeof(ReferenceFrameList_t));
-
 	StreamParameters                            = NULL;
 	FrameParameters                             = NULL;
 	DeferredParsedFrameParameters               = NULL;
 	DeferredParsedVideoParameters               = NULL;
-
 	FirstDecodeOfFrame                          = true;
 	EverSeenRepeatFirstField                    = false;
-
 	LastFirstFieldWasAnI                        = false;
-
 //
-
 	return FrameParser_Video_c::Reset();
 }
 
@@ -269,29 +260,22 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::Reset(void)
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::RegisterOutputBufferRing(Ring_t          Ring)
 {
 	PlayerStatus_t  Status;
-
 	//
 	// Clear our parameter pointers
 	//
-
 	StreamParameters                    = NULL;
 	FrameParameters                     = NULL;
 	DeferredParsedFrameParameters       = NULL;
 	DeferredParsedVideoParameters       = NULL;
-
 	//
 	// Pass the call on down (we need the frame parameters count obtained by the lower level function).
 	//
-
 	Status      = FrameParser_Video_c::RegisterOutputBufferRing(Ring);
-
 	if (Status != FrameParserNoError)
 		return Status;
-
 	//
 	// Pass the call down the line
 	//
-
 	return FrameParserNoError;
 }
 
@@ -308,151 +292,111 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadHeaders(void)
 	unsigned int            ExtensionCode;
 	bool                    IgnoreStreamComponents;
 	bool                    IgnoreFrameComponents;
-
 //
-
 	IgnoreFrameComponents               = true;
 	IgnoreStreamComponents              = true;
-
 //
-
 	for (i = 0; i < StartCodeList->NumberOfStartCodes; i++)
 	{
 		Code    = StartCodeList->StartCodes[i];
 		Bits.SetPointer(BufferData + ExtractStartCodeOffset(Code));
 		Bits.FlushUnseen(32);
-
 		Status  = FrameParserNoError;
-
 		switch (ExtractStartCodeCode(Code))
 		{
 			case   MPEG2_PICTURE_START_CODE:
 				Status  = ReadPictureHeader();
 				IgnoreFrameComponents   = (Status != FrameParserNoError);
 				break;
-
 			case   MPEG2_FIRST_SLICE_START_CODE:
 				if (IgnoreFrameComponents)
 					break;
-
 				ParsedFrameParameters->DataOffset       = ExtractStartCodeOffset(Code);
 				Status  = CommitFrameForDecode();
-
 				IgnoreFrameComponents                   = true;
 				break;
-
 			case   MPEG2_USER_DATA_START_CODE:
 				break;
-
 			case   MPEG2_SEQUENCE_HEADER_CODE:
 				Status   = ReadSequenceHeader();
 				IgnoreStreamComponents  = (Status != FrameParserNoError);
 				break;
-
 			case   MPEG2_SEQUENCE_ERROR_CODE:
 				break;
-
 			case   MPEG2_EXTENSION_START_CODE:
 				ExtensionCode = Bits.Get(4);
-
 				switch (ExtensionCode)
 				{
 					case   MPEG2_SEQUENCE_EXTENSION_ID:
 						if (IgnoreStreamComponents)
 							break;
-
 						Status   = ReadSequenceExtensionHeader();
 						break;
-
 					case   MPEG2_SEQUENCE_DISPLAY_EXTENSION_ID:
 						if (IgnoreStreamComponents)
 							break;
-
 						Status   = ReadSequenceDisplayExtensionHeader();
 						break;
-
 					case   MPEG2_QUANT_MATRIX_EXTENSION_ID:
 						Status   = ReadQuantMatrixExtensionHeader();
 						break;
-
 					case   MPEG2_SEQUENCE_SCALABLE_EXTENSION_ID:
 						if (IgnoreStreamComponents)
 							break;
-
 						Status   = ReadSequenceScalableExtensionHeader();
 						break;
-
 					case   MPEG2_PICTURE_DISPLAY_EXTENSION_ID:
 						if (IgnoreFrameComponents)
 							break;
-
 						Status   = ReadPictureDisplayExtensionHeader();
-
 						if (Status != FrameParserNoError)
 							IgnoreFrameComponents       = true;
-
 						break;
-
 					case   MPEG2_PICTURE_CODING_EXTENSION_ID:
 						if (IgnoreFrameComponents)
 							break;
-
 						Status   = ReadPictureCodingExtensionHeader();
 						break;
-
 					case   MPEG2_PICTURE_SPATIAL_SCALABLE_EXTENSION_ID:
 						if (IgnoreFrameComponents)
 							break;
-
 						Status   = ReadPictureSpatialScalableExtensionHeader();
 						break;
-
 					case   MPEG2_PICTURE_TEMPORAL_SCALABLE_EXTENSION_ID:
 						if (IgnoreFrameComponents)
 							break;
-
 						Status   = ReadPictureTemporalScalableExtensionHeader();
 						break;
-
 					default:
 						report(severity_error, "FrameParser_VideoMpeg2_c::ReadHeaders - Unknown/Unsupported extension header %02x\n", ExtensionCode);
 						Status  = FrameParserUnhandledHeader;
 						break;
 				}
-
 				if ((Status == FrameParserNoError) && (StreamParameters != NULL))
 					StreamParameters->StreamType        = MpegStreamTypeMpeg2;
-
 				break;
-
 			case   MPEG2_SEQUENCE_END_CODE:
 				break;
-
 			case   MPEG2_GROUP_START_CODE:
 				if (IgnoreStreamComponents)
 					break;
-
 				Status  = ReadGroupOfPicturesHeader();
 				break;
-
 			case   MPEG2_VIDEO_PES_START_CODE:
 				report(severity_error, "FrameParser_VideoMpeg2_c::ReadHeaders - Pes headers should be removed\n");
 				Status  = FrameParserUnhandledHeader;
 				break;
-
 			default:
 				report(severity_error, "FrameParser_VideoMpeg2_c::ReadHeaders - Unknown/Unsupported header %02x\n", ExtractStartCodeCode(Code));
 				Status  = FrameParserUnhandledHeader;
 				break;
 		}
-
 		if ((Status != FrameParserNoError) && (Status != FrameParserUnhandledHeader))
 		{
 			IgnoreStreamComponents      = true;
 			IgnoreFrameComponents       = true;
 		}
 	}
-
 	return FrameParserNoError;
 }
 
@@ -464,9 +408,7 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadHeaders(void)
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ResetReferenceFrameList(void)
 {
 	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
-
 	ReferenceFrameList.EntryCount       = 0;
-
 	return FrameParserNoError;
 }
 
@@ -479,7 +421,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ResetReferenceFrameList(void)
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayProcessDecodeStacks(void)
 {
 	ReverseQueuedPostDecodeSettingsRing->Flush();
-
 	return FrameParser_Video_c::RevPlayProcessDecodeStacks();
 }
 
@@ -503,27 +444,22 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayGeneratePostDecodeParamet
 	//
 	// If this is the first decode of a frame then we need display frame indices and presentation timnes
 	//
-
 	if (ParsedFrameParameters->FirstParsedParametersForOutputFrame)
 	{
 		//
 		// If this is not a reference frame then place it on the ring for calculation later
 		//
-
 		if (!ParsedFrameParameters->ReferenceFrame)
 		{
 			ReverseQueuedPostDecodeSettingsRing->Insert((uintptr_t)ParsedFrameParameters);
 			ReverseQueuedPostDecodeSettingsRing->Insert((uintptr_t)ParsedVideoParameters);
 		}
 		else
-
 			//
 			// If this is a reference frame then first process it, then process the frames on the ring
 			//
-
 		{
 			CalculateFrameIndexAndPts(ParsedFrameParameters, ParsedVideoParameters);
-
 			while (ReverseQueuedPostDecodeSettingsRing->NonEmpty())
 			{
 				ReverseQueuedPostDecodeSettingsRing->Extract((uintptr_t *)&DeferredParsedFrameParameters);
@@ -532,9 +468,7 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayGeneratePostDecodeParamet
 			}
 		}
 	}
-
 //
-
 	return FrameParserNoError;
 }
 
@@ -552,46 +486,35 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::PrepareReferenceFrameList(void)
 	bool            SelfReference;
 	unsigned int    ReferenceFramesNeeded;
 	unsigned int    PictureCodingType;
-
 	//
 	// Note we cannot use StreamParameters or FrameParameters to address data directly,
 	// as these may no longer apply to the frame we are dealing with.
 	// Particularly if we have seen a sequence header or group of pictures
 	// header which belong to the next frame.
 	//
-
 	PictureCodingType           = ((Mpeg2FrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure))->PictureHeader.picture_coding_type;
 	ReferenceFramesNeeded       = REFERENCE_FRAMES_NEEDED(PictureCodingType);
-
 	//
 	// Detect the special case of a second field referencing the first
 	// this is when we have the field startup condition
 	//          I P P P
 	// where the first P actually references its own decode buffer.
 	//
-
 	Field                       = (ParsedVideoParameters->PictureStructure != StructureFrame);
 	SecondField                 = Field && !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	FirstField                  = Field && ParsedFrameParameters->FirstParsedParametersForOutputFrame;
-
 	SelfReference               = SecondField && (ReferenceFramesNeeded == 1) && LastFirstFieldWasAnI;
-
 	if (FirstField)
 		LastFirstFieldWasAnI    = (PictureCodingType == MPEG2_PICTURE_CODING_TYPE_I);
-
 	//
 	// Now we cannot decode if we do not have enbough reference frames,
 	// and this is not the most heinous of special cases.
 	//
-
 	if (!SelfReference && (ReferenceFrameList.EntryCount < ReferenceFramesNeeded))
 		return FrameParserInsufficientReferenceFrames;
-
 //
-
 	ParsedFrameParameters->NumberOfReferenceFrameLists                  = 1;
 	ParsedFrameParameters->ReferenceFrameList[0].EntryCount             = ReferenceFramesNeeded;
-
 	if (SelfReference)
 	{
 		ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0]   = NextDecodeFrameIndex;
@@ -601,9 +524,7 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::PrepareReferenceFrameList(void)
 		for (i = 0; i < ReferenceFramesNeeded; i++)
 			ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[i]   = ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount - ReferenceFramesNeeded + i];
 	}
-
 //
-
 	return FrameParserNoError;
 }
 
@@ -619,26 +540,20 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ForPlayUpdateReferenceFrameList(
 {
 	unsigned int    i;
 	bool            LastField;
-
 //
-
 	if (ParsedFrameParameters->ReferenceFrame)
 	{
 		LastField       = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 						  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
-
 		if (LastField)
 		{
 			if (ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FORWARD_PLAY)
 			{
 				Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ReferenceFrameList.EntryIndicies[0]);
-
 				ReferenceFrameList.EntryCount--;
-
 				for (i = 0; i < ReferenceFrameList.EntryCount; i++)
 					ReferenceFrameList.EntryIndicies[i] = ReferenceFrameList.EntryIndicies[i + 1];
 			}
-
 			ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount++] = ParsedFrameParameters->DecodeFrameIndex;
 		}
 		else
@@ -646,7 +561,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ForPlayUpdateReferenceFrameList(
 			Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
 		}
 	}
-
 	return FrameParserNoError;
 }
 
@@ -659,12 +573,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ForPlayUpdateReferenceFrameList(
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayAppendToReferenceFrameList(void)
 {
 	bool            LastField;
-
 //
-
 	LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 				  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
-
 	if (ParsedFrameParameters->ReferenceFrame && LastField)
 	{
 		if (ReferenceFrameList.EntryCount >= MAX_ENTRIES_IN_REFERENCE_FRAME_LIST)
@@ -672,10 +583,8 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayAppendToReferenceFrameLis
 			report(severity_error, "FrameParser_VideoMpeg2_c::RevPlayAppendToReferenceFrameList - List full - Implementation error.\n");
 			return PlayerImplementationError;
 		}
-
 		ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount++] = ParsedFrameParameters->DecodeFrameIndex;
 	}
-
 	return FrameParserNoError;
 }
 
@@ -692,20 +601,15 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayAppendToReferenceFrameLis
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::RevPlayRemoveReferenceFrameFromList(void)
 {
 	bool            LastField;
-
 //
-
 	LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
 				  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
-
 	if ((ReferenceFrameList.EntryCount != 0) && LastField)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
-
 		if (LastField)
 			ReferenceFrameList.EntryCount--;
 	}
-
 	return FrameParserNoError;
 }
 
@@ -731,20 +635,14 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceHeader(void)
 	FrameParserStatus_t                      Status;
 	Mpeg2VideoSequence_t                    *Header;
 	Mpeg2VideoQuantMatrixExtension_t        *CumulativeHeader;
-
 //
-
 	Status      = GetNewStreamParameters((void **)&StreamParameters);
-
 	if (Status != FrameParserNoError)
 		return Status;
-
 	StreamParameters->UpdatedSinceLastFrame     = true;
 	Header                              = &StreamParameters->SequenceHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoSequence_t));
-
 //
-
 	Header->horizontal_size_value                       = Bits.Get(12);
 	Header->vertical_size_value                         = Bits.Get(12);
 	Header->aspect_ratio_information                    = Bits.Get(4);
@@ -754,54 +652,39 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceHeader(void)
 	Header->vbv_buffer_size_value                       = Bits.Get(10);
 	Header->constrained_parameters_flag                 = Bits.Get(1);
 	Header->load_intra_quantizer_matrix                 = Bits.Get(1);
-
 	if (Header->load_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]]   = Bits.Get(8);
-
 	Header->load_non_intra_quantizer_matrix             = Bits.Get(1);
-
 	if (Header->load_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->non_intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]] = Bits.Get(8);
-
 //
-
 	CumulativeHeader    = &StreamParameters->CumulativeQuantMatrices;
-
 	if (Header->load_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_intra_quantizer_matrix           = Header->load_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->intra_quantizer_matrix, Header->intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 	if (Header->load_non_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_non_intra_quantizer_matrix       = Header->load_non_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->non_intra_quantizer_matrix, Header->non_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 //
-
 	if (!inrange(Header->frame_rate_code, MIN_LEGAL_FRAME_RATE_CODE, MAX_LEGAL_FRAME_RATE_CODE))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadSequenceHeader - frame_rate_code has illegal value (%02x).\n", Header->frame_rate_code);
 		return FrameParserHeaderSyntaxError;
 	}
-
 //
-
 	StreamParameters->SequenceHeaderPresent             = true;
-
 	//
 	// Reset the last pan scan offsets
 	//
-
 	LastPanScanHorizontalOffset         = 0;
 	LastPanScanVerticalOffset           = 0;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Sequence header :- \n");
 	report(severity_info, "    horizontal_size_value        : %6d\n", Header->horizontal_size_value);
@@ -810,37 +693,27 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceHeader(void)
 	report(severity_info, "    frame_rate_code              : %6d\n", Header->frame_rate_code);
 	report(severity_info, "    bit_rate_value               : %6d\n", Header->bit_rate_value);
 	report(severity_info, "    vbv_buffer_size_value        : %6d\n", Header->vbv_buffer_size_value);
-
 	report(severity_info, "    load_intra_quantizer_matrix  : %6d\n", Header->load_intra_quantizer_matrix);
-
 	if (Header->load_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 	report(severity_info, "    load_non_intra_quantizer_matrix  : %6d\n", Header->load_non_intra_quantizer_matrix);
-
 	if (Header->load_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->non_intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -852,20 +725,15 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceHeader(void)
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader(void)
 {
 	Mpeg2VideoSequenceExtension_t   *Header;
-
 //
-
 	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader - Appropriate sequence header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &StreamParameters->SequenceExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoSequenceExtension_t));
-
 //
-
 	Header->profile_and_level_indication        = Bits.Get(8);
 	Header->progressive_sequence                = Bits.Get(1);
 	Header->chroma_format                       = Bits.Get(2);
@@ -877,20 +745,15 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader(void
 	Header->low_delay                           = Bits.Get(1);
 	Header->frame_rate_extension_n              = Bits.Get(2);
 	Header->frame_rate_extension_d              = Bits.Get(5);
-
 //
-
 	if (Header->chroma_format != MPEG2_SEQUENCE_CHROMA_4_2_0)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader - Unsupported chroma format %d.\n", Header->chroma_format);
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserHeaderUnplayable;
 	}
-
 	StreamParameters->SequenceExtensionHeaderPresent    = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Sequence Extension header :- \n");
 	report(severity_info, "    profile_and_level_indication : %6d\n", Header->profile_and_level_indication);
@@ -904,7 +767,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader(void
 	report(severity_info, "    frame_rate_extension_n       : %6d\n", Header->frame_rate_extension_n);
 	report(severity_info, "    frame_rate_extension_d       : %6d\n", Header->frame_rate_extension_d);
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -916,55 +778,41 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceExtensionHeader(void
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceDisplayExtensionHeader(void)
 {
 	Mpeg2VideoSequenceDisplayExtension_t    *Header;
-
 //
-
 	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadSequenceDisplayExtensionHeader - Appropriate sequence header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &StreamParameters->SequenceDisplayExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoSequenceDisplayExtension_t));
-
 //
-
 	Header->video_format                      = Bits.Get(3);
 	Header->color_description                 = Bits.Get(1);
-
 	if (Header->color_description != 0)
 	{
 		Header->color_primaries               = Bits.Get(8);
 		Header->transfer_characteristics      = Bits.Get(8);
 		Header->matrix_coefficients           = Bits.Get(8);
 	}
-
 	Header->display_horizontal_size           = Bits.Get(14);
 	MarkerBit(1);
 	Header->display_vertical_size             = Bits.Get(14);
-
 //
-
 	StreamParameters->SequenceDisplayExtensionHeaderPresent     = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Sequence Display Extension header :- \n");
 	report(severity_info, "    video_format                 : %6d\n", Header->video_format);
-
 	if (Header->color_description != 0)
 	{
 		report(severity_info, "    color_primaries              : %6d\n", Header->color_primaries);
 		report(severity_info, "    transfer_characteristics     : %6d\n", Header->transfer_characteristics);
 		report(severity_info, "    matrix_coefficients          : %6d\n", Header->matrix_coefficients);
 	}
-
 	report(severity_info, "    display_horizontal_size      : %6d\n", Header->display_horizontal_size);
 	report(severity_info, "    display_vertical_size        : %6d\n", Header->display_vertical_size);
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -976,23 +824,17 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceDisplayExtensionHead
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHeader(void)
 {
 	Mpeg2VideoSequenceScalableExtension_t   *Header;
-
 //
-
 	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHeader - Appropriate sequence header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &StreamParameters->SequenceScalableExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoSequenceScalableExtension_t));
-
 //
-
 	Header->scalable_mode                               = Bits.Get(2);
 	Header->layer_id                                    = Bits.Get(4);
-
 	if (Header->scalable_mode == MPEG2_SCALABLE_MODE_SPATIAL_SCALABILITY)
 	{
 		Header->lower_layer_prediction_horizontal_size  = Bits.Get(14);
@@ -1006,7 +848,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHea
 	else if (Header->scalable_mode == MPEG2_SCALABLE_MODE_TEMPORAL_SCALABILITY)
 	{
 		Header->picture_mux_enable                      = Bits.Get(1);
-
 		if (Header->picture_mux_enable)
 		{
 			Header->mux_to_progressive_sequence         = Bits.Get(1);
@@ -1014,18 +855,13 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHea
 			Header->picture_mux_factor                  = Bits.Get(3);
 		}
 	}
-
 //
-
 	StreamParameters->SequenceScalableExtensionHeaderPresent    = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Sequence Scalable Extension header :- \n");
 	report(severity_info, "    scalable_mode                : %6d\n", Header->scalable_mode);
 	report(severity_info, "    layer_id                     : %6d\n", Header->layer_id);
-
 	if (Header->scalable_mode == MPEG2_SCALABLE_MODE_SPATIAL_SCALABILITY)
 	{
 		report(severity_info, "    lower_layer_prediction_horizontal_size : %6d\n", Header->lower_layer_prediction_horizontal_size);
@@ -1038,7 +874,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHea
 	else if (Header->scalable_mode == MPEG2_SCALABLE_MODE_TEMPORAL_SCALABILITY)
 	{
 		report(severity_info, "    picture_mux_enable           : %6d\n", Header->picture_mux_enable);
-
 		if (Header->picture_mux_enable)
 		{
 			report(severity_info, "    mux_to_progressive_sequence  : %6d\n", Header->mux_to_progressive_sequence);
@@ -1046,9 +881,7 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadSequenceScalableExtensionHea
 			report(severity_info, "    picture_mux_factor           : %6d\n", Header->picture_mux_factor);
 		}
 	}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1061,19 +894,13 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadGroupOfPicturesHeader(void)
 {
 	FrameParserStatus_t      Status;
 	Mpeg2VideoGOP_t         *Header;
-
 //
-
 	Status      = GetNewFrameParameters((void **)&FrameParameters);
-
 	if (Status != FrameParserNoError)
 		return Status;
-
 	Header      = &FrameParameters->GroupOfPicturesHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoGOP_t));
-
 //
-
 	Header->time_code.drop_frame_flag   = Bits.Get(1);
 	Header->time_code.hours             = Bits.Get(5);
 	Header->time_code.minutes           = Bits.Get(6);
@@ -1082,13 +909,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadGroupOfPicturesHeader(void)
 	Header->time_code.pictures          = Bits.Get(6);
 	Header->closed_gop                  = Bits.Get(1);
 	Header->broken_link                 = Bits.Get(1);
-
 //
-
 	FrameParameters->GroupOfPicturesHeaderPresent       = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_note, "Gop header :- \n");
 	report(severity_note, "    time_code.drop_frame_flag    : %6d\n", Header->time_code.drop_frame_flag);
@@ -1099,7 +922,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadGroupOfPicturesHeader(void)
 	report(severity_note, "    closed_gop                   : %6d\n", Header->closed_gop);
 	report(severity_note, "    broken_link                  : %6d\n", Header->broken_link);
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1112,34 +934,25 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureHeader(void)
 {
 	FrameParserStatus_t      Status;
 	Mpeg2VideoPicture_t     *Header;
-
 //
-
 	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureHeader - Appropriate sequence header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 //
-
 	if (FrameParameters == NULL)
 	{
 		Status  = GetNewFrameParameters((void **)&FrameParameters);
-
 		if (Status != FrameParserNoError)
 			return Status;
 	}
-
 	Header      = &FrameParameters->PictureHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoPicture_t));
-
 //
-
 	Header->temporal_reference                  = Bits.Get(10);
 	Header->picture_coding_type                 = Bits.Get(3);
 	Header->vbv_delay                           = Bits.Get(16);
-
 	if (Header->picture_coding_type == MPEG2_PICTURE_CODING_TYPE_P)
 	{
 		Header->full_pel_forward_vector         = Bits.Get(1);
@@ -1152,34 +965,26 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureHeader(void)
 		Header->full_pel_backward_vector        = Bits.Get(1);
 		Header->backward_f_code                 = Bits.Get(3);
 	}
-
 //
-
 	FrameParameters->PictureHeaderPresent       = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_note, "Picture header :- \n");
 	report(severity_note, "    temporal_reference           : %6d\n", Header->temporal_reference);
 	report(severity_note, "    picture_coding_type          : %6d\n", Header->picture_coding_type);
 	report(severity_note, "    vbv_delay                    : %6d\n", Header->vbv_delay);
-
 	if ((Header->picture_coding_type == MPEG2_PICTURE_CODING_TYPE_P) ||
 			(Header->picture_coding_type == MPEG2_PICTURE_CODING_TYPE_B))
 	{
 		report(severity_note, "    full_pel_forward_vector      : %6d\n", Header->full_pel_forward_vector);
 		report(severity_note, "    forward_f_code               : %6d\n", Header->forward_f_code);
 	}
-
 	if (Header->picture_coding_type == MPEG2_PICTURE_CODING_TYPE_B)
 	{
 		report(severity_note, "    full_pel_backward_vector     : %6d\n", Header->full_pel_backward_vector);
 		report(severity_note, "    backward_f_code              : %6d\n", Header->backward_f_code);
 	}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1191,20 +996,15 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureHeader(void)
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader(void)
 {
 	Mpeg2VideoPictureCodingExtension_t      *Header;
-
 //
-
 	if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader - Appropriate picture header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &FrameParameters->PictureCodingExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoPictureCodingExtension_t));
-
 //
-
 	Header->f_code[0][0]                = Bits.Get(4);
 	Header->f_code[0][1]                = Bits.Get(4);
 	Header->f_code[1][0]                = Bits.Get(4);
@@ -1221,7 +1021,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader
 	Header->chroma_420_type             = Bits.Get(1);
 	Header->progressive_frame           = Bits.Get(1);
 	Header->composite_display_flag      = Bits.Get(1);
-
 	if (Header->composite_display_flag)
 	{
 		Header->v_axis                      = Bits.Get(1);
@@ -1230,13 +1029,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader
 		Header->burst_amplitude             = Bits.Get(7);
 		Header->sub_carrier_phase           = Bits.Get(8);
 	}
-
 //
-
 	FrameParameters->PictureCodingExtensionHeaderPresent        = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Picture Coding Extension header :- \n");
 	report(severity_info, "    f_code                       : %6d %6d %6d %6d\n", Header->f_code[0][0],
@@ -1255,7 +1050,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader
 	report(severity_info, "    chroma_420_type              : %6d\n", Header->chroma_420_type);
 	report(severity_info, "    progressive_frame            : %6d\n", Header->progressive_frame);
 	report(severity_info, "    composite_display_flag       : %6d\n", Header->composite_display_flag);
-
 	if (Header->composite_display_flag)
 	{
 		report(severity_info, "    v_axis                       : %6d\n", Header->v_axis);
@@ -1264,9 +1058,7 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader
 		report(severity_info, "    burst_amplitude              : %6d\n", Header->burst_amplitude);
 		report(severity_info, "    sub_carrier_phase            : %6d\n", Header->sub_carrier_phase);
 	}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1280,140 +1072,100 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadQuantMatrixExtensionHeader(v
 	unsigned int                             i;
 	Mpeg2VideoQuantMatrixExtension_t        *Header;
 	Mpeg2VideoQuantMatrixExtension_t        *CumulativeHeader;
-
 //
-
 	if ((StreamParameters == NULL) || !StreamParameters->SequenceHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadQuantMatrixExtensionHeader - Appropriate sequence header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	StreamParameters->UpdatedSinceLastFrame     = true;
-
 	Header      = &StreamParameters->QuantMatrixExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoQuantMatrixExtension_t));
-
 //
-
 	Header->load_intra_quantizer_matrix                                                 = Bits.Get(1);
-
 	if (Header->load_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]]           = Bits.Get(8);
-
 	Header->load_non_intra_quantizer_matrix                                             = Bits.Get(1);
-
 	if (Header->load_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->non_intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]]       = Bits.Get(8);
-
 	Header->load_chroma_intra_quantizer_matrix                                          = Bits.Get(1);
-
 	if (Header->load_chroma_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->chroma_intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]]    = Bits.Get(8);
-
 	Header->load_chroma_non_intra_quantizer_matrix                                      = Bits.Get(1);
-
 	if (Header->load_chroma_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i++)
 			Header->chroma_non_intra_quantizer_matrix[QuantizationMatrixNaturalOrder[i]] = Bits.Get(8);
-
 //
-
 	CumulativeHeader    = &StreamParameters->CumulativeQuantMatrices;
-
 	if (Header->load_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_intra_quantizer_matrix           = Header->load_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->intra_quantizer_matrix, Header->intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 	if (Header->load_non_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_non_intra_quantizer_matrix       = Header->load_non_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->non_intra_quantizer_matrix, Header->non_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 	if (Header->load_chroma_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_chroma_intra_quantizer_matrix    = Header->load_chroma_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->chroma_intra_quantizer_matrix, Header->chroma_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 	if (Header->load_chroma_non_intra_quantizer_matrix)
 	{
 		CumulativeHeader->load_chroma_non_intra_quantizer_matrix = Header->load_chroma_non_intra_quantizer_matrix;
 		memcpy(CumulativeHeader->chroma_non_intra_quantizer_matrix, Header->chroma_non_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	}
-
 //
-
 	StreamParameters->QuantMatrixExtensionHeaderPresent = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Quant Matrix Extension header :- \n");
 	report(severity_info, "    load_intra_quantizer_matrix  : %6d\n", Header->load_intra_quantizer_matrix);
-
 	if (Header->load_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 	report(severity_info, "    load_non_intra_quantizer_matrix  : %6d\n", Header->load_non_intra_quantizer_matrix);
-
 	if (Header->load_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->non_intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 	report(severity_info, "    load_chroma_intra_quantizer_matrix  : %6d\n", Header->load_chroma_intra_quantizer_matrix);
-
 	if (Header->load_chroma_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->chroma_intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 	report(severity_info, "    load_chroma_non_intra_quantizer_matrix  : %6d\n", Header->load_chroma_non_intra_quantizer_matrix);
-
 	if (Header->load_chroma_non_intra_quantizer_matrix)
 		for (i = 0; i < 64; i += 16)
 		{
 			int j;
 			report(severity_info, "            ");
-
 			for (j = 0; j < 16; j++)
 				report(severity_info, "%02x ", Header->chroma_non_intra_quantizer_matrix[i + j]);
-
 			report(severity_info, "\n");
 		}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1431,36 +1183,25 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeade
 	bool                                     Frame;
 	bool                                     RepeatFirstField;
 	bool                                     TopFieldFirst;
-
 //
-
 	if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeader - Appropriate picture header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 //
-
 	Header      = &FrameParameters->PictureDisplayExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoPictureDisplayExtension_t));
-
 //
-
 	ProgressiveSequence = !StreamParameters->SequenceExtensionHeaderPresent ||
 						  StreamParameters->SequenceExtensionHeader.progressive_sequence;
-
 	Frame               = !FrameParameters->PictureCodingExtensionHeaderPresent ||
 						  (FrameParameters->PictureCodingExtensionHeader.picture_structure == MPEG2_PICTURE_STRUCTURE_FRAME);
-
 	RepeatFirstField    = FrameParameters->PictureCodingExtensionHeaderPresent &&
 						  FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
-
 	TopFieldFirst       = FrameParameters->PictureCodingExtensionHeaderPresent &&
 						  FrameParameters->PictureCodingExtensionHeader.top_field_first;
-
 //
-
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeader - Illegal combination of progressive_sequence, progressive_frame,  top_field_first and repeat_first_field(%c %c %c %c).\n",
@@ -1468,14 +1209,10 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeade
 			   (Frame                  ? 'T' : 'F'),
 			   (TopFieldFirst          ? 'T' : 'F'),
 			   (RepeatFirstField       ? 'T' : 'F'));
-
 		return FrameParserHeaderSyntaxError;
 	}
-
 	NumberOfOffsets     = PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField);
-
 //
-
 	for (i = 0; i < NumberOfOffsets; i++)
 	{
 		Header->frame_centre[i].horizontal_offset       = Bits.SignedGet(16);
@@ -1483,24 +1220,17 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeade
 		Header->frame_centre[i].vertical_offset         = Bits.SignedGet(16);
 		MarkerBit(1)
 	}
-
 //
-
 	FrameParameters->PictureDisplayExtensionHeaderPresent       = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Picture Display Extension header   :-\n");
-
 	for (i = 0; i < NumberOfOffsets; i++)
 	{
 		report(severity_info, "    frame_centre[%d].horizontal_offset       : %6d\n", i, Header->frame_centre[i].horizontal_offset);
 		report(severity_info, "    frame_centre[%d].vertical_offset         : %6d\n", i, Header->frame_centre[i].vertical_offset);
 	}
-
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1512,38 +1242,28 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeade
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureTemporalScalableExtensionHeader(void)
 {
 	Mpeg2VideoPictureTemporalScalableExtension_t    *Header;
-
 //
-
 	if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureTemporalScalableExtensionHeader - Appropriate picture header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &FrameParameters->PictureTemporalScalableExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoPictureTemporalScalableExtension_t));
-
 //
-
 	Header->reference_select_code               = Bits.Get(2);
 	Header->forward_temporal_reference          = Bits.Get(10);
 	MarkerBit(1);
 	Header->backward_temporal_reference         = Bits.Get(10);
-
 //
-
 	FrameParameters->PictureTemporalScalableExtensionHeaderPresent      = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Picture Temporal Scalable Extension header   :-\n");
 	report(severity_info, "    reference_select_code                    : %6d\n", Header->reference_select_code);
 	report(severity_info, "    forward_temporal_reference               : %6d\n", Header->forward_temporal_reference);
 	report(severity_info, "    backward_temporal_reference              : %6d\n", Header->backward_temporal_reference);
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1555,20 +1275,15 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureTemporalScalableExten
 FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureSpatialScalableExtensionHeader(void)
 {
 	Mpeg2VideoPictureSpatialScalableExtension_t     *Header;
-
 //
-
 	if ((FrameParameters == NULL) || !FrameParameters->PictureHeaderPresent)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureSpatialScalableExtensionHeader - Appropriate picture header not found.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	Header      = &FrameParameters->PictureSpatialScalableExtensionHeader;
 	memset(Header, 0x00, sizeof(Mpeg2VideoPictureSpatialScalableExtension_t));
-
 //
-
 	Header->lower_layer_temporal_reference              = Bits.Get(10);
 	MarkerBit(1);
 	Header->lower_layer_horizontal_offset               = Bits.Get(15);
@@ -1577,13 +1292,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureSpatialScalableExtens
 	Header->spatial_temporal_weight_code_table_index    = Bits.Get(2);
 	Header->lower_layer_progressive_frame               = Bits.Get(1);
 	Header->lower_layer_deinterlaced_field_select       = Bits.Get(1);
-
 //
-
 	FrameParameters->PictureSpatialScalableExtensionHeaderPresent       = true;
-
 //
-
 #ifdef DUMP_HEADERS
 	report(severity_info, "Picture Spatial Scalable Extension header   :-\n");
 	report(severity_info, "    lower_layer_temporal_reference          : %6d\n", Header->lower_layer_temporal_reference);
@@ -1593,7 +1304,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::ReadPictureSpatialScalableExtens
 	report(severity_info, "    lower_layer_progressive_frame           : %6d\n", Header->lower_layer_progressive_frame);
 	report(severity_info, "    lower_layer_deinterlaced_field_select   : %6d\n", Header->lower_layer_deinterlaced_field_select);
 #endif
-
 	return FrameParserNoError;
 }
 
@@ -1617,11 +1327,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	unsigned char            Policy;
 	SliceType_t              SliceType;
 	MatrixCoefficientsType_t MatrixCoefficients;
-
 	//
 	// Check we have the headers we need
 	//
-
 	if ((StreamParameters == NULL) ||
 			!StreamParameters->SequenceHeaderPresent ||
 			((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !StreamParameters->SequenceExtensionHeaderPresent))
@@ -1629,7 +1337,6 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Stream parameters unavailable for decode.\n");
 		return FrameParserNoStreamParameters;
 	}
-
 	if ((FrameParameters == NULL) ||
 			!FrameParameters->PictureHeaderPresent ||
 			((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !FrameParameters->PictureCodingExtensionHeaderPresent))
@@ -1642,11 +1349,9 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserPartialFrameParameters;
 	}
-
 	//
 	// Check that the aspect ratio code is valid for the specific standard
 	//
-
 	if ((StreamParameters->StreamType == MpegStreamTypeMpeg2) ?
 			!inrange(StreamParameters->SequenceHeader.aspect_ratio_information, MIN_LEGAL_MPEG2_ASPECT_RATIO_CODE, MAX_LEGAL_MPEG2_ASPECT_RATIO_CODE) :
 			!inrange(StreamParameters->SequenceHeader.aspect_ratio_information, MIN_LEGAL_MPEG1_ASPECT_RATIO_CODE, MAX_LEGAL_MPEG1_ASPECT_RATIO_CODE))
@@ -1654,44 +1359,33 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - aspect_ratio_information has illegal value (%02x) for mpeg standard.\n", StreamParameters->SequenceHeader.aspect_ratio_information);
 		return FrameParserHeaderSyntaxError;
 	}
-
 	//
 	// Check that the constrained parameters flag is valid for the specific standard
 	//
-
 	if ((StreamParameters->StreamType == MpegStreamTypeMpeg2) &&
 			(StreamParameters->SequenceHeader.constrained_parameters_flag != 0))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - constrained_parameters_flag has illegal value (%02x) for mpeg2 standard.\n", StreamParameters->SequenceHeader.constrained_parameters_flag);
 		return FrameParserHeaderSyntaxError;
 	}
-
 	//
 	// Obtain and check the progressive etc values.
 	//
-
 	ProgressiveSequence = !StreamParameters->SequenceExtensionHeaderPresent ||
 						  StreamParameters->SequenceExtensionHeader.progressive_sequence;
-
 	PictureStructure    = FrameParameters->PictureCodingExtensionHeaderPresent ?
 						  PictureStructures[FrameParameters->PictureCodingExtensionHeader.picture_structure] :
 						  StructureFrame;
-
 	SliceType           = SliceTypeTranslation[FrameParameters->PictureHeader.picture_coding_type];
 	Frame               = PictureStructure == StructureFrame;
-
 	RepeatFirstField    = FrameParameters->PictureCodingExtensionHeaderPresent &&
 						  FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
-
 	TopFieldFirst       = FrameParameters->PictureCodingExtensionHeaderPresent &&
 						  FrameParameters->PictureCodingExtensionHeader.top_field_first;
-
 	PanAndScanCount     = FrameParameters->PictureDisplayExtensionHeaderPresent ?
 						  PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField) :
 						  0;
-
 //
-
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Illegal combination of progressive_sequence, progressive_frame, repeat_first_field and top_field_first (%c %c %c %c).\n",
@@ -1699,41 +1393,32 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 			   (Frame                  ? 'T' : 'F'),
 			   (RepeatFirstField       ? 'T' : 'F'),
 			   (TopFieldFirst          ? 'T' : 'F'));
-
 		return FrameParserHeaderSyntaxError;
 	}
-
 	//
 	// If we are doing field decode check for sequence error, and set appropriate flags
 	// Update AccumulatedPictureStructure for nex pass, if this is the first decode of a field picture
 	// it is what we have otherwise it is empty
 	//
-
 	FieldSequenceError          = (AccumulatedPictureStructure == PictureStructure);
 	FirstDecodeOfFrame          = FieldSequenceError || (AccumulatedPictureStructure == StructureEmpty);
 	AccumulatedPictureStructure = (FirstDecodeOfFrame && !Frame) ? PictureStructure : StructureEmpty;
-
 	if (FieldSequenceError)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Field sequence error detected.\n");
-
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnOutputPartialDecodeBuffers);
 	}
-
 	//
 	// For a field decode we need to recalculate top field first,
 	// as this is always set false for a field picture.
 	//
-
 	if (!Frame)
 	{
 		TopFieldFirst   = (FirstDecodeOfFrame == (PictureStructure == StructureTopField));
 	}
-
 	//
 	// Deduce the matrix coefficients for colour conversions
 	//
-
 	if (StreamParameters->StreamType == MpegStreamTypeMpeg1)
 	{
 		MatrixCoefficients      = MatrixCoefficients_ITU_R_BT601;
@@ -1743,52 +1428,54 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	{
 		switch (StreamParameters->SequenceDisplayExtensionHeader.matrix_coefficients)
 		{
-			case MPEG2_MATRIX_COEFFICIENTS_BT709:       MatrixCoefficients      = MatrixCoefficients_ITU_R_BT709;       break;
-
-			case MPEG2_MATRIX_COEFFICIENTS_FCC:         MatrixCoefficients      = MatrixCoefficients_FCC;               break;
-
-			case MPEG2_MATRIX_COEFFICIENTS_BT470_BGI:   MatrixCoefficients      = MatrixCoefficients_ITU_R_BT470_2_BG;  break;
-
-			case MPEG2_MATRIX_COEFFICIENTS_SMPTE_170M:  MatrixCoefficients      = MatrixCoefficients_SMPTE_170M;        break;
-
-			case MPEG2_MATRIX_COEFFICIENTS_SMPTE_240M:  MatrixCoefficients      = MatrixCoefficients_SMPTE_240M;        break;
-
+			case MPEG2_MATRIX_COEFFICIENTS_BT709:
+				MatrixCoefficients      = MatrixCoefficients_ITU_R_BT709;
+				break;
+			case MPEG2_MATRIX_COEFFICIENTS_FCC:
+				MatrixCoefficients      = MatrixCoefficients_FCC;
+				break;
+			case MPEG2_MATRIX_COEFFICIENTS_BT470_BGI:
+				MatrixCoefficients      = MatrixCoefficients_ITU_R_BT470_2_BG;
+				break;
+			case MPEG2_MATRIX_COEFFICIENTS_SMPTE_170M:
+				MatrixCoefficients      = MatrixCoefficients_SMPTE_170M;
+				break;
+			case MPEG2_MATRIX_COEFFICIENTS_SMPTE_240M:
+				MatrixCoefficients      = MatrixCoefficients_SMPTE_240M;
+				break;
 			default:
 			case MPEG2_MATRIX_COEFFICIENTS_FORBIDDEN:
 			case MPEG2_MATRIX_COEFFICIENTS_RESERVED:
 				report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Forbidden or reserved matrix coefficient code specified (%02x)\n", StreamParameters->SequenceDisplayExtensionHeader.matrix_coefficients);
-
 			// fall through
-
-			case MPEG2_MATRIX_COEFFICIENTS_UNSPECIFIED: MatrixCoefficients      = MatrixCoefficients_Undefined;         break;
+			case MPEG2_MATRIX_COEFFICIENTS_UNSPECIFIED:
+				MatrixCoefficients      = MatrixCoefficients_Undefined;
+				break;
 		}
 	}
 	else
 	{
 		Policy      = Player->PolicyValue(Playback, Stream, PolicyMPEG2ApplicationType);
-
 		switch (Policy)
 		{
 			case PolicyValueMPEG2ApplicationMpeg2:
-			case PolicyValueMPEG2ApplicationAtsc:       MatrixCoefficients      = MatrixCoefficients_ITU_R_BT709;
+			case PolicyValueMPEG2ApplicationAtsc:
+				MatrixCoefficients      = MatrixCoefficients_ITU_R_BT709;
 				break;
-
 			default:
-			case PolicyValueMPEG2ApplicationDvb:        if (StreamParameters->SequenceHeader.horizontal_size_value > 720)
+			case PolicyValueMPEG2ApplicationDvb:
+				if (StreamParameters->SequenceHeader.horizontal_size_value > 720)
 					MatrixCoefficients  = MatrixCoefficients_ITU_R_BT709;
 				else if (FrameRates(StreamParameters->SequenceHeader.frame_rate_code) < 28)
 					MatrixCoefficients  = MatrixCoefficients_ITU_R_BT470_2_BG;
 				else
 					MatrixCoefficients  = MatrixCoefficients_SMPTE_170M;
-
 				break;
 		}
 	}
-
 	//
 	// Record the stream and frame parameters into the appropriate structure
 	//
-
 	ParsedFrameParameters->FirstParsedParametersForOutputFrame          = FirstDecodeOfFrame;
 	ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
 	ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
@@ -1796,46 +1483,36 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	ParsedFrameParameters->KeyFrame                                     = SliceType == SliceTypeI;
 	ParsedFrameParameters->ReferenceFrame                               = SliceType != SliceTypeB;
 	ParsedFrameParameters->IndependentFrame                             = ParsedFrameParameters->KeyFrame;
-
 	ParsedFrameParameters->NewStreamParameters                          = NewStreamParametersCheck();
 	ParsedFrameParameters->SizeofStreamParameterStructure               = sizeof(Mpeg2StreamParameters_t);
 	ParsedFrameParameters->StreamParameterStructure                     = StreamParameters;
-
 	ParsedFrameParameters->NewFrameParameters                           = true;
 	ParsedFrameParameters->SizeofFrameParameterStructure                = sizeof(Mpeg2FrameParameters_t);
 	ParsedFrameParameters->FrameParameterStructure                      = FrameParameters;
-
 //
-
 	ParsedVideoParameters->Content.Width                                = StreamParameters->SequenceHeader.horizontal_size_value;
 	ParsedVideoParameters->Content.Height                               = StreamParameters->SequenceHeader.vertical_size_value;
 	ParsedVideoParameters->Content.DisplayWidth                         = ParsedVideoParameters->Content.Width;
 	ParsedVideoParameters->Content.DisplayHeight                        = ParsedVideoParameters->Content.Height;
-
 	if (StreamParameters->SequenceDisplayExtensionHeaderPresent)
 	{
 		ParsedVideoParameters->Content.DisplayWidth                     = StreamParameters->SequenceDisplayExtensionHeader.display_horizontal_size;
 		ParsedVideoParameters->Content.DisplayHeight                    = StreamParameters->SequenceDisplayExtensionHeader.display_vertical_size;
 	}
-
 	ParsedVideoParameters->Content.Progressive                          = ProgressiveSequence;
 	ParsedVideoParameters->Content.OverscanAppropriate                  = false;
 	ParsedVideoParameters->Content.PixelAspectRatio                     = (StreamParameters->StreamType == MpegStreamTypeMpeg2) ?
 			Mpeg2AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information) :
 			Mpeg1AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information);
 	ParsedVideoParameters->Content.FrameRate                            = FrameRates(StreamParameters->SequenceHeader.frame_rate_code);
-
 	ParsedVideoParameters->Content.VideoFullRange                       = false;
 	ParsedVideoParameters->Content.ColourMatrixCoefficients             = MatrixCoefficients;
-
 	ParsedVideoParameters->SliceType                                    = SliceType;
 	ParsedVideoParameters->PictureStructure                             = PictureStructure;
 	ParsedVideoParameters->InterlacedFrame                              = FrameParameters->PictureCodingExtensionHeaderPresent ? (FrameParameters->PictureCodingExtensionHeader.progressive_frame == 0) : false;
 	ParsedVideoParameters->TopFieldFirst                                = !FrameParameters->PictureCodingExtensionHeaderPresent || TopFieldFirst;
-
 	ParsedVideoParameters->DisplayCount[0]                              = DisplayCount0(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField);
 	ParsedVideoParameters->DisplayCount[1]                              = DisplayCount1(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField);
-
 	//
 	// Specialist code for broadcast streams that do not get progressive_frame right
 	//
@@ -1843,36 +1520,29 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	// good reason not to. If for example we have seen a repeat first field in the
 	// stream then we suspect that some sort of pulldown (possibly 3:2) may be in effect.
 	//
-
 	Policy      = Player->PolicyValue(Playback, Stream, PolicyMPEG2DoNotHonourProgressiveFrameFlag);
-
 	if (Policy == PolicyValueApply)
 	{
 		if (RepeatFirstField)
 			EverSeenRepeatFirstField                                    = true;
-
 		if (!EverSeenRepeatFirstField)
 			ParsedVideoParameters->InterlacedFrame                      = !ProgressiveSequence;
 		else
 			ParsedVideoParameters->InterlacedFrame                      = false;
 	}
-
 	//
 	// Now insert the pan and scan counts if we have them,
 	// alternatively repeat the last value for the appropriate period
 	//
-
 	if (PanAndScanCount != 0)
 	{
 		ParsedVideoParameters->PanScan.Count                            = PanAndScanCount;
-
 		for (i = 0; i < PanAndScanCount; i++)
 		{
 			ParsedVideoParameters->PanScan.DisplayCount[i]              = 1;
 			ParsedVideoParameters->PanScan.HorizontalOffset[i]          = FrameParameters->PictureDisplayExtensionHeader.frame_centre[i].horizontal_offset;
 			ParsedVideoParameters->PanScan.VerticalOffset[i]            = FrameParameters->PictureDisplayExtensionHeader.frame_centre[i].vertical_offset;
 		}
-
 		LastPanScanHorizontalOffset                                     = ParsedVideoParameters->PanScan.HorizontalOffset[PanAndScanCount - 1];
 		LastPanScanVerticalOffset                                       = ParsedVideoParameters->PanScan.VerticalOffset[PanAndScanCount - 1];
 	}
@@ -1883,17 +1553,14 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 		ParsedVideoParameters->PanScan.HorizontalOffset[0]              = LastPanScanHorizontalOffset;
 		ParsedVideoParameters->PanScan.VerticalOffset[0]                = LastPanScanVerticalOffset;
 	}
-
 	//
 	// If we have a Display aspect ratio, convert to a sample aspect ratio
 	//
-
 	if ((ParsedVideoParameters->Content.PixelAspectRatio != Rational_t(1, 1)) &&
 			(StreamParameters->StreamType == MpegStreamTypeMpeg2))
 	{
 		Width                                   = ParsedVideoParameters->Content.DisplayWidth;
 		Height                                  = ParsedVideoParameters->Content.DisplayHeight;
-
 		// This is a bodge to cope with streams which set their aspect ratios on the width/height
 		// rather than DisplayWidth/DisplayHeight (e.g. Rome and Stargate).
 		if ((ParsedVideoParameters->Content.DisplayWidth < ParsedVideoParameters->Content.Width) &&
@@ -1902,34 +1569,26 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 			Width                               = ParsedVideoParameters->Content.Width;
 			Height                              = ParsedVideoParameters->Content.Height;
 		}
-
 		//ParsedVideoParameters->Content.PixelAspectRatio = (ParsedVideoParameters->Content.PixelAspectRatio * Width) / Height;
 		// Convert to height/width similar to h264, vc1 etc
 		ParsedVideoParameters->Content.PixelAspectRatio = (ParsedVideoParameters->Content.PixelAspectRatio * Height) / Width;
 	}
-
 	//
 	// Record our claim on both the frame and stream parameters
 	//
-
 	Buffer->AttachBuffer(StreamParametersBuffer);
 	Buffer->AttachBuffer(FrameParametersBuffer);
-
 	//
 	// We clear the FrameParameters pointer, a new one will be obtained
 	// before/if we read in headers pertaining to the next frame. This
 	// will generate an error should I accidentally write code that
 	// accesses this data when it should not.
 	//
-
 	FrameParameters             = NULL;
-
 	//
 	// Finally set the appropriate flag and return
 	//
-
 	FrameToDecode       = true;
-
 	return FrameParserNoError;
 }
 
@@ -1942,31 +1601,23 @@ FrameParserStatus_t   FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 bool   FrameParser_VideoMpeg2_c::NewStreamParametersCheck(void)
 {
 	bool            Different;
-
 	//
 	// The parameters cannot be new if they have been used before.
 	//
-
 	if (!StreamParameters->UpdatedSinceLastFrame)
 		return false;
-
 	StreamParameters->UpdatedSinceLastFrame     = false;
-
 	//
 	// Check for difference using a straightforward comparison to see if the
 	// stream parameters have changed. (since we zero on allocation simple
 	// memcmp should be sufficient).
 	//
-
 	Different   = memcmp(&CopyOfStreamParameters, StreamParameters, sizeof(Mpeg2StreamParameters_t)) != 0;
-
 	if (Different)
 	{
 		memcpy(&CopyOfStreamParameters, StreamParameters, sizeof(Mpeg2StreamParameters_t));
 		return true;
 	}
-
 //
-
 	return false;
 }

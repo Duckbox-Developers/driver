@@ -73,13 +73,10 @@ void report_init(void)
 	severity_restriction_lower  = 0;
 	severity_restriction_upper  = 0x7fffffff;
 	OS_InitializeMutex(&report_lock);
-
 #if defined(REPORT_UART)
 	UartInit();
 #endif
-
 	OS_RegisterTuneable("min_trace_level", (unsigned int *) &severity_restriction_lower);
-
 	return;
 }
 
@@ -100,20 +97,16 @@ static void report_output(void)
 	UartOutput(report_buffer);
 #elif defined (REPORT_LOG)
 	char *p = report_buffer;
-
 	while (0 != (*report_log_ptr++ = *p++))
 	{
-
 #ifdef __ST200__
 		__asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
 #endif
-
 		if (report_log_ptr >= (report_log + REPORT_LOG_SZ))
 		{
 			report_log_ptr = report_log;
 		}
 	}
-
 #ifdef __ST200__
 	__asm__ __volatile__("prgadd 0[%0] ;;" : : "r"(report_log_ptr));
 #endif
@@ -142,31 +135,22 @@ void report(report_severity_t   report_severity,
 			const char         *format, ...)
 {
 	va_list      list;
-
 	/* --- Should we report this message --- */
-
 	if (!inrange(report_severity, severity_restriction_lower, severity_restriction_upper) &&
 			(report_severity < severity_fatal)) return;
-
 	/* --- Perform the report --- */
-
 	OS_LockMutex(&report_lock);
-
 	if (report_severity >= severity_error)
 	{
 		sprintf(report_buffer, "***** %s-%s: ",
 				((report_severity >= severity_fatal) ? "Fatal" : "Error"),
 				OS_ThreadName());
-
 		report_output();
 	}
-
 	va_start(list, format);
 	vsnprintf(report_buffer, REPORT_STRING_SIZE, format, list);
 	va_end(list);
-
 	report_output();
-
 	if (report_severity == severity_fatal)
 	{
 #ifdef __KERNEL__
@@ -174,10 +158,8 @@ void report(report_severity_t   report_severity,
 		set_current_state(TASK_INTERRUPTIBLE);
 		schedule();
 #endif
-
 		while (true);
 	}
-
 	OS_UnLockMutex(&report_lock);
 }
 #endif
@@ -194,15 +176,12 @@ void report_dump_hex(report_severity_t level,
 {
 	int n, i;
 	char str[256];
-
 	for (n = 0; n < length; n += width)
 	{
 		char *str2 = str;
 		str2 += sprintf(str2, "0x%08x:", (unsigned int)start + n);
-
 		for (i = 0; i < ((length - n) < width ? (length - n) : width); i++)
 			str2 += sprintf(str2, " %02x", data[n + i] & 0x0ff);
-
 		str2 += sprintf(str2, "\n");
 		report(level, str);
 	}
@@ -299,8 +278,8 @@ void report_dump_hex(report_severity_t level,
 //
 
 #define set_pio_pins()          os_register_write( PIO_C0(5), 0x00 ); \
-	os_register_write( PIO_C1(5), 0x99 ); \
-	os_register_write( PIO_C2(5), 0xff );
+    os_register_write( PIO_C1(5), 0x99 ); \
+    os_register_write( PIO_C2(5), 0xff );
 
 #define set_baudrate( rate )    os_register_write( ASC_BAUDRATE(1), (CPU_FREQUENCY / ( 16 * rate )) )
 #define set_interrupt_mask()    os_register_write( ASC_INT_ENABLE(1), 0 )
@@ -330,11 +309,9 @@ static void UartOutChar(char    c)
 	if (transmit_buffer_full())
 	{
 		OS_SleepMilliSeconds(2);                        // 8 bytes at 38400
-
 		if (transmit_buffer_full())
 			reset_transmit();                   // Should have clocked some by now
 	}
-
 	transmit_char(c);
 }
 
@@ -345,7 +322,6 @@ static void UartOutput(char    *String)
 	while (*String != 0)
 	{
 		UartOutChar(*String);
-
 		if (*(String++) == '\n')
 			UartOutChar('\r');
 	}

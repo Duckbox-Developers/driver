@@ -34,10 +34,8 @@ static struct platform_device *platform_7111[] __initdata =
 
 static __init int platform_init_7111(void)
 {
-
 //    register_board_drivers();
 	return platform_add_devices(platform_7111, sizeof(platform_7111) / sizeof(struct platform_device*));
-
 }
 
 module_init(platform_init_7111);

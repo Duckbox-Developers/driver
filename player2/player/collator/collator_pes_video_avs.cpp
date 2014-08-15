@@ -67,7 +67,6 @@ Collator_PesVideoAvs_c::Collator_PesVideoAvs_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_PesVideoAvs_c::Reset();
 }
 
@@ -80,19 +79,13 @@ Collator_PesVideoAvs_c::Collator_PesVideoAvs_c(void)
 CollatorStatus_t Collator_PesVideoAvs_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 //
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesVideo_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	Configuration.GenerateStartCodeList      = true;
 	Configuration.MaxStartCodes              = 256;
-
 	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
 	Configuration.StreamIdentifierCode       = PES_START_CODE_VIDEO;
 	Configuration.BlockTerminateMask         = 0xFA;                            // Picture
@@ -102,11 +95,8 @@ CollatorStatus_t Collator_PesVideoAvs_c::Reset(void)
 	Configuration.InsertFrameTerminateCode   = true;                            // Force the mme decode to terminate after a picture
 	Configuration.TerminalCode               = AVS_VIDEO_SEQUENCE_END_CODE;
 	Configuration.ExtendedHeaderLength       = 0;
-
 	Configuration.DeferredTerminateFlag      = false;
-
 	Configuration.StreamTerminateFlushesFrame   = true;         // Use an end of sequence to force a frame flush
 	Configuration.StreamTerminationCode         = AVS_VIDEO_SEQUENCE_END_CODE;
-
 	return CollatorNoError;
 }

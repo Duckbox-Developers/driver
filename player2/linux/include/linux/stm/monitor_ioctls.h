@@ -31,7 +31,7 @@ Date        Modification                                    Name
 #ifndef H_MONITOR_IOCTLS
 #define H_MONITOR_IOCTLS
 
-#include "monitor_types.h"
+#include "linux/stm/monitor_types.h"
 
 #define MONITOR_TIME_UNKNOWN                    0xfedcba9876543210ull
 

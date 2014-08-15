@@ -43,7 +43,7 @@ Date        Modification                                    Name
 #endif
 
 #define INTERFACE_DEBUG(fmt, args...)  ((void) (ENABLE_INTERFACE_DEBUG && \
-												(printk("Interface:%s: " fmt, __FUNCTION__, ##args), 0)))
+                                                (printk("Interface:%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define INTERFACE_TRACE(fmt, args...)  (printk("Interface:%s: " fmt, __FUNCTION__, ##args))

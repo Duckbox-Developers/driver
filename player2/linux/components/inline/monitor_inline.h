@@ -41,8 +41,8 @@ Date        Modification                                    Name
 extern "C" {
 #endif
 void                    MonitorSignalEvent(monitor_event_code_t            EventCode,
-										   unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
-										   const char*                     Description);
+		unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
+		const char*                     Description);
 #ifdef __cplusplus
 }
 #endif
@@ -50,8 +50,8 @@ void                    MonitorSignalEvent(monitor_event_code_t            Event
 #else
 
 static inline void      MonitorSignalEvent(monitor_event_code_t            EventCode,
-										   unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
-										   const char*                     Description) {}
+		unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
+		const char*                     Description) {}
 
 #endif
 

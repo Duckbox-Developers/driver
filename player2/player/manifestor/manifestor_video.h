@@ -186,11 +186,11 @@ class Manifestor_Video_c : public Manifestor_Base_c
 												struct BufferStructure_s*       BufferStructure) = 0;
 
 		virtual ManifestorStatus_t  QueueInitialFrame(unsigned int                    BufferIndex,
-													  struct ParsedVideoParameters_s* VideoParameters,
-													  struct BufferStructure_s*       BufferStructure) = 0;
+				struct ParsedVideoParameters_s* VideoParameters,
+				struct BufferStructure_s*       BufferStructure) = 0;
 
 		virtual ManifestorStatus_t  CheckInputDimensions(unsigned int                    Width,
-														 unsigned int                    Height) = 0;
+				unsigned int                    Height) = 0;
 
 		virtual ManifestorStatus_t  UpdateOutputSurfaceDescriptor(void) = 0;
 
@@ -232,8 +232,8 @@ class Manifestor_Video_c : public Manifestor_Base_c
 
 		/* these virtual functions are implemented by the device specific part of the video manifestor */
 		virtual ManifestorStatus_t  OpenOutputSurface(DeviceHandle_t          DisplayDevice,
-													  unsigned int            SurfaceId,
-													  unsigned int            OutputId) = 0;
+				unsigned int            SurfaceId,
+				unsigned int            OutputId) = 0;
 		virtual ManifestorStatus_t  CloseOutputSurface(void) = 0;
 		virtual ManifestorStatus_t  Enable(void) = 0;
 		virtual ManifestorStatus_t  Disable(void) = 0;

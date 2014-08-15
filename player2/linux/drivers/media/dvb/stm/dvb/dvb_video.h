@@ -57,19 +57,19 @@ int                 VideoIoctlGetSize(struct DeviceContext_s*        Context,
 int                 VideoIoctlSetSpeed(struct DeviceContext_s*        Context,
 									   int                            Speed);
 int                 VideoIoctlSetPlayInterval(struct DeviceContext_s*        Context,
-											  video_play_interval_t*         PlayInterval);
+		video_play_interval_t*         PlayInterval);
 int                 PlaybackInit(struct DeviceContext_s*        Context);
 int                 VideoSetOutputWindow(struct DeviceContext_s*        Context,
-										 unsigned int                   Left,
-										 unsigned int                   Top,
-										 unsigned int                   Width,
-										 unsigned int                   Height);
+		unsigned int                   Left,
+		unsigned int                   Top,
+		unsigned int                   Width,
+		unsigned int                   Height);
 int                 VideoSetInputWindow(struct DeviceContext_s*        Context,
 										unsigned int                   Left,
 										unsigned int                   Top,
 										unsigned int                   Width,
 										unsigned int                   Height);
 int                 VideoGetPixelAspectRatio(struct DeviceContext_s*        Context,
-											 unsigned int*                  Numerator,
-											 unsigned int*                  Denominator);
+		unsigned int*                  Numerator,
+		unsigned int*                  Denominator);
 #endif

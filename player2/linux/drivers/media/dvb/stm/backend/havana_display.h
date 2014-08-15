@@ -56,7 +56,7 @@ Date        Modification                                    Name
 #endif
 
 #define DISPLAY_DEBUG(fmt, args...)      ((void) (ENABLE_DISPLAY_DEBUG && \
-												  (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+                                                  (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define DISPLAY_TRACE(fmt, args...)     (report(severity_note, "HavanaDisplay_c::%s: " fmt, __FUNCTION__, ##args))
@@ -78,13 +78,12 @@ class HavanaDisplay_c
 		~HavanaDisplay_c(void);
 
 		HavanaStatus_t              GetManifestor(class HavanaPlayer_c*   HavanaPlayer,
-												  char*                   Media,
-												  char*                   Encoding,
-												  unsigned int            SurfaceId,
-												  class Manifestor_c**    Manifestor);
+				char*                   Media,
+				char*                   Encoding,
+				unsigned int            SurfaceId,
+				class Manifestor_c**    Manifestor);
 
-		class Manifestor_c*         ReferenceManifestor(void)
-		{
+		class Manifestor_c*         ReferenceManifestor(void) {
 				return Manifestor;
 		};
 };

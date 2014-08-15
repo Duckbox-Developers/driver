@@ -1,5 +1,3 @@
-CCFLAGSY += -I$(DRIVER_TOPDIR)/include/player2
-
 # workaround for stlinux24
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)

@@ -28,13 +28,11 @@ static struct dvb_device* dvbdev_find_device(int minor)
 	struct list_head *entry;
 	int number = minor >> 6;
 	struct dvb_device *dev;
-
 	if (adap->num != 0)
 	{
 		printk("%s(): configuration failure - the STM DVB adapter is not in slot 0\n", __func__);
 		return NULL;
 	}
-
 	/* It is assumed that the STM adapter is registered first (adapter0).
 	   That is, the actual list head is pointed to by adap->list_head.prev
 	   because register_dvb_adapter are added to tail and not to head.
@@ -44,26 +42,22 @@ static struct dvb_device* dvbdev_find_device(int minor)
 	{
 		struct dvb_adapter *adap1;
 		adap1 = list_entry(entry, struct dvb_adapter, list_head);
-
 #if 0
 		printk("adap %d, list_head %p, prev %p, next %p\n",
 			   adap1->num, &adap1->list_head, adap1->list_head.prev,
 			   adap1->list_head.next);
 #endif
-
 		if (adap1->num == number)
 		{
 			struct list_head *entry1;
 			list_for_each(entry1, &adap1->device_list)
 			{
 				dev = list_entry(entry1, struct dvb_device, list_head);
-
 				if (nums2minor(adap1->num, dev->type, dev->id) == minor)
 					return dev;
 			}
 		}
 	}
-
 	return NULL;
 }
 
@@ -100,7 +94,6 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, in
 		{ SYS_DVBC_ANNEX_B,  "DVB-C" }
 #endif
 	};
-
 	/* loop over all adapters */
 	for (j = 0; j < 4; j++)
 	{
@@ -112,40 +105,32 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, in
 				printk("%s(): not enough space\n", __func__);
 				break;
 			}
-
 			if ((dev = dvbdev_find_device(nums2minor(j, DVB_DEVICE_FRONTEND, i))) == NULL)
 			{
 				/* there are no further frontends registered with this adapter */
 				break;
 			}
-
 			fe = dev->priv;
-
 			/* loop over all types */
 			for (k = 0; k < sizeof(typeMap) / sizeof(typeMap[0]); k++)
 			{
 #if (DVB_API_VERSION < 5)
 				fe_info.delivery = typeMap[k].type;
-
 				if (fe->ops.get_info(fe, &fe_info) == 0)
 				{
 					pType = typeMap[k].pType;
 					break;
 				}
-
 #else
 				p.cmd = DTV_DELIVERY_SYSTEM;
 				p.u.data = typeMap[k].type;
-
 				if (fe->ops.get_property(fe, &p) == 0)
 				{
 					pType = typeMap[k].pType;
 					break;
 				}
-
 #endif
 			}
-
 			len += sprintf(page + len, "NIM Socket %d:\n"
 						   "Type: %s\n"
 						   "Name: %s\n"
@@ -154,6 +139,5 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, in
 			feIndex++;
 		}
 	}
-
 	return len;
 }

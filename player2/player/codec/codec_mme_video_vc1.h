@@ -71,7 +71,7 @@ class Codec_MmeVideoVc1_c : public Codec_MmeVideo_c
 		// Functions
 
 		void                SaveIntensityCompensationData(unsigned int            RefBufferIndex,
-														  VC9_IntensityComp_t*    Intensity);
+				VC9_IntensityComp_t*    Intensity);
 		void                GetForwardIntensityCompensationData(unsigned int            RefBufferIndex,
 				VC9_IntensityComp_t*    Intensity);
 		void                GetBackwardIntensityCompensationData(unsigned int            RefBufferIndex,

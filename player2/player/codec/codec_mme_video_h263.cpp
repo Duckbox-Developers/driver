@@ -77,40 +77,29 @@ static BufferDataDescriptor_t                   H263CodecDecodeContextDescriptor
 Codec_MmeVideoH263_c::Codec_MmeVideoH263_c(void)
 {
 	//printf( "Codec_MmeVideoH263_c::Codec_MmeVideoH263_c - decode context coming from system memory - needs fixing inbox\n" );
-
 	Configuration.CodecName                             = "H263 video";
-
 	Configuration.DecodeOutputFormat                    = FormatVideo420_MacroBlock;
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &H263CodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &H263CodecDecodeContextDescriptor;
-
 	Configuration.MaxDecodeIndicesPerBuffer             = 2;
 	Configuration.SliceDecodePermitted                  = false;
 	Configuration.DecimatedDecodePermitted              = false;
-
 	Configuration.TransformName[0]                      = H263_MME_TRANSFORMER_NAME "0";
 	Configuration.TransformName[1]                      = H263_MME_TRANSFORMER_NAME "1";
 	Configuration.AvailableTransformers                 = 2;
-
 	Configuration.SizeOfTransformCapabilityStructure    = sizeof(H263D_Capability_t);
 	Configuration.TransformCapabilityStructurePointer   = (void*)(&H263TransformerCapability);
-
 	// The video firmware violates the MME spec. and passes data buffer addresses
 	// as parametric information. For this reason it requires physical addresses
 	// to be used.
 	Configuration.AddressingMode                        = UnCachedAddress;
-
 	//
 	// We do not need the coded data after decode is complete
 	//
-
 	Configuration.ShrinkCodedDataBuffersAfterDecode     = true;
 //
-
 	Reset();
 }
 //}}}
@@ -150,7 +139,6 @@ CodecStatus_t   Codec_MmeVideoH263_c::HandleCapabilities(void)
 {
 	CODEC_TRACE("'%s' capabilities are :-\n", H263_MME_TRANSFORMER_NAME);
 	CODEC_TRACE("    caps len                          = %d bytes\n", H263TransformerCapability.caps_len);
-
 	return CodecNoError;
 }
 //}}}
@@ -162,28 +150,22 @@ CodecStatus_t   Codec_MmeVideoH263_c::HandleCapabilities(void)
 //
 CodecStatus_t   Codec_MmeVideoH263_c::FillOutTransformerInitializationParameters(void)
 {
-
 	report(severity_info, "Codec_MmeVideoH263_c::%s\n", __FUNCTION__);
 	//
 	// Fill out the command parameters
 	//
-
 	H263InitializationParameters.PictureWidhth                  = H263_WIDTH_CIF;
 	H263InitializationParameters.PictureHeight                  = H263_HEIGHT_CIF;
 	H263InitializationParameters.ErrorConceal_type              = MOTION_COMPENSATED;   // doesn't really matter as not currently supported
 	//H263InitializationParameters.Post_processing                = 0;
-
 	CODEC_TRACE("FillOutTransformerInitializationParameters\n");
 	CODEC_TRACE("  PictureWidth              %6u\n", H263_WIDTH_CIF);
 	CODEC_TRACE("  PictureHeight             %6u\n", H263_HEIGHT_CIF);
-
 	//
 	// Fill out the actual command
 	//
-
 	MMEInitializationParameters.TransformerInitParamsSize       = sizeof(H263D_GlobalParams_t);
 	MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&H263InitializationParameters);
-
 	return CodecNoError;
 }
 //}}}
@@ -197,29 +179,21 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutSetStreamParametersCommand(void)
 {
 	H263CodecStreamParameterContext_t*          Context = (H263CodecStreamParameterContext_t*)StreamParameterContext;
 	H263StreamParameters_t*                     Parsed  = (H263StreamParameters_t*)ParsedFrameParameters->StreamParameterStructure;
-
 	report(severity_info, "Codec_MmeVideoH263_c::FillOutSetStreamParametersCommand (%dx%d)\n", Parsed->SequenceHeader.width, Parsed->SequenceHeader.height);
-
 	//
 	// Fill out the command parameters
 	//
-
 	Context->StreamParameters.PictureWidhth             = Parsed->SequenceHeader.width;
 	Context->StreamParameters.PictureHeight             = Parsed->SequenceHeader.height;
-
 	//
 	// Fill out the actual command
 	//
-
 	memset(&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));
-
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(H263D_GlobalParams_t);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->StreamParameters);
-
 	return CodecNoError;
-
 }
 //}}}
 //{{{  FillOutDecodeCommand
@@ -234,34 +208,24 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand(void)
 	H263CodecDecodeContext_t*           Context        = (H263CodecDecodeContext_t*)DecodeContext;
 	H263FrameParameters_t*              Frame          = (H263FrameParameters_t*)ParsedFrameParameters->FrameParameterStructure;
 	//H263StreamParameters_t*             Stream         = (H263StreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
-
 	H263D_TransformParams_t*            Param;
 	unsigned int                        i;
-
 	report(severity_info, "Codec_MmeVideoH263_c::%s\n", __FUNCTION__);
-
 	//
 	// For H263 we do not do slice decodes.
 	//
-
 	KnownLastSliceInFieldFrame                  = true;
-
 	//
 	// Fill out the straight forward command parameters
 	//
-
 	Param                                       = &Context->DecodeParameters;
-
 	Param->Width                                = ParsedVideoParameters->Content.Width;
 	Param->Height                               = ParsedVideoParameters->Content.Height;
 	Param->FrameType                            = (H263PictureCodingType_t)Frame->PictureHeader.ptype;          // I/P
-
 	//
 	// Fill out the actual command
 	//
-
 	memset(&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));
-
 	DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize      = sizeof(H263D_DecodeReturnParams_t);
 	DecodeContext->MMECommand.CmdStatus.AdditionalInfo_p        = (MME_GenericParams_t*)&Context->DecodeStatus;
 	DecodeContext->MMECommand.StructSize                        = sizeof(MME_Command_t);
@@ -270,12 +234,9 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand(void)
 	DecodeContext->MMECommand.DueTime                           = (MME_Time_t)0;
 	DecodeContext->MMECommand.NumberInputBuffers                = H263_NUM_MME_INPUT_BUFFERS;
 	DecodeContext->MMECommand.NumberOutputBuffers               = H263_NUM_MME_OUTPUT_BUFFERS;
-
 	DecodeContext->MMECommand.DataBuffers_p                     = (MME_DataBuffer_t**)DecodeContext->MMEBufferList;
-
 	DecodeContext->MMECommand.ParamSize                         = sizeof(H263D_TransformParams_t);
 	DecodeContext->MMECommand.Param_p                           = NULL;//(MME_GenericParams_t *)&ConcealmentParams;
-
 	// Fill in details for all buffers
 	for (i = 0; i < H263_NUM_MME_BUFFERS; i++)
 	{
@@ -288,28 +249,22 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand(void)
 		DecodeContext->MMEBuffers[i].ScatterPages_p                 = &DecodeContext->MMEPages[i];
 		DecodeContext->MMEBuffers[i].TotalSize                      = ((ParsedVideoParameters->Content.Width * ParsedVideoParameters->Content.Height) * 3) / 2;
 		DecodeContext->MMEBuffers[i].StartOffset                    = 0;
-
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].Page_p       = (void*)(void*)BufferState[CurrentDecodeBufferIndex].BufferLumaPointer;
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].Size         = DecodeContext->MMEBuffers[i].TotalSize;
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].BytesUsed    = 0;
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsIn      = 0;
 		DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsOut     = 0;
-
 	}
-
 	// Then overwrite bits specific to coded data buffer
 	DecodeContext->MMEBuffers[H263_MME_CODED_DATA_BUFFER].TotalSize                      = CodedDataLength;
 	DecodeContext->MMEBuffers[H263_MME_CODED_DATA_BUFFER].ScatterPages_p[0].Page_p       = (void*)CodedData;
 	DecodeContext->MMEBuffers[H263_MME_CODED_DATA_BUFFER].ScatterPages_p[0].Size         = CodedDataLength;
-
 	if (DecodeContext->ReferenceFrameList[0].EntryCount == 1)
 	{
 		unsigned int    Entry   = DecodeContext->ReferenceFrameList[0].EntryIndicies[0];
 		DecodeContext->MMEBuffers[H263_MME_REFERENCE_FRAME_BUFFER].ScatterPages_p[0].Page_p     = BufferState[Entry].BufferLumaPointer;
 	}
-
 #if 0
-
 	for (i = 0; i < H263_NUM_MME_BUFFERS; i++)
 	{
 		report(severity_info, "Buffer List      (%d)  %x\n", i, DecodeContext->MMEBufferList[i]);
@@ -321,20 +276,15 @@ CodecStatus_t   Codec_MmeVideoH263_c::FillOutDecodeCommand(void)
 		report(severity_info, "Scatter Pages p  (%d)  %x\n", i, DecodeContext->MMEBuffers[i].ScatterPages_p[0].Page_p);
 		report(severity_info, "Start Offset     (%d)  %x\n\n", i, DecodeContext->MMEBuffers[i].StartOffset);
 	}
-
 	report(severity_info, "Additional Size  %x\n", DecodeContext->MMECommand.CmdStatus.AdditionalInfoSize);
 	report(severity_info, "Additional p     %x\n", DecodeContext->MMECommand.CmdStatus.AdditionalInfo_p);
 	report(severity_info, "Param Size       %x\n", DecodeContext->MMECommand.ParamSize);
 	report(severity_info, "Param p          %x\n", DecodeContext->MMECommand.Param_p);
 	report(severity_info, "DataBuffer p     %x\n", DecodeContext->MMECommand.DataBuffers_p);
-
 #endif
-
 	Context->BaseContext.MMECommand.ParamSize                       = sizeof(H263D_TransformParams_t);
 	Context->BaseContext.MMECommand.Param_p                         = (MME_GenericParams_t)(&Context->DecodeParameters);
-
 	return CodecNoError;
-
 }
 //}}}
 //{{{  ValidateDecodeContext
@@ -375,13 +325,9 @@ unsigned int H263StaticPicture;
 CodecStatus_t   Codec_MmeVideoH263_c::DumpDecodeParameters(void    *Parameters)
 {
 	H263D_TransformParams_t*            FrameParams;
-
 	FrameParams     = (H263D_TransformParams_t *)Parameters;
-
 	H263StaticPicture++;
-
 	report(severity_info, "********** Picture %d *********\n", H263StaticPicture - 1);
-
 	return CodecNoError;
 }
 //}}}

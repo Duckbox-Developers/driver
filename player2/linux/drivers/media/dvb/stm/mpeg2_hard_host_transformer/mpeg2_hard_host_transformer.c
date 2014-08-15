@@ -86,7 +86,6 @@ unsigned char* nonIntraQuantizerMatrix;
 static int __init StmLoadModule(void)
 {
 	MME_ERROR status = MME_SUCCESS;
-
 	// Now do the MME Init
 	status =  MME_RegisterTransformer(
 				  mmeName,
@@ -95,12 +94,10 @@ static int __init StmLoadModule(void)
 				  initTransformer,
 				  processCommand,
 				  termTransformer);
-
 	if (status == MME_SUCCESS)
 		OSDEV_Print("%s loaded\n", MODULE_NAME);
 	else
 		OSDEV_Print("Error registering %s with MME (%d)\n", MODULE_NAME, status);
-
 	return status;
 }
 
@@ -123,13 +120,11 @@ static MME_ERROR getTransformerCapability(MME_TransformerCapability_t *capabilit
 	            MME_GenericParams_t  TransformerInfo_p;
 	} MME_TransformerCapability_t;
 	*/
-
 	capability->Version = 0xBEEFF00D;
 	cap.MPEG1Capability = 0x1;
 	cap.StructSize = sizeof(MPEG2_TransformerCapability_t);
 	capability->TransformerInfo_p = &cap;
 	capability->TransformerInfoSize = sizeof(MPEG2_TransformerCapability_t);
-
 	return MME_SUCCESS;
 }
 
@@ -137,17 +132,12 @@ static MME_ERROR initTransformer(MME_UINT paramsSize, MME_GenericParams_t params
 {
 	Mpeg2HardHandle_t      Context;
 	Mpeg2HardInitParams_t*  InitParams = 0;
-
 	Mpeg2HardStatus_t status;
 	status = Mpeg2HardInit("wibble", InitParams, &Context);
-
 	intraQuantizerMatrix    = (unsigned char*)OSDEV_Malloc(sizeof(unsigned char) * 64);
 	nonIntraQuantizerMatrix = (unsigned char*)OSDEV_Malloc(sizeof(unsigned char) * 64);
-
 	Context = OSDEV_Malloc(sizeof(Mpeg2HardCodecContext_t));
-
 	*context = (void*)Context;
-
 	return MME_SUCCESS;
 }
 
@@ -170,29 +160,23 @@ static MME_ERROR processCommand(void *context, MME_Command_t *cmd)
 	            MME_GenericParams_t       Param_p;
 	} MME_Command_t;
 	*/
-
 	sequenceParams.intraQuantizerMatrix = intraQuantizerMatrix;
 	sequenceParams.nonIntraQuantizerMatrix = nonIntraQuantizerMatrix;
-
 	switch (cmd->CmdCode)
 	{
 		case MME_TRANSFORM:
 			copyFrameParameters(&frameParams, (MPEG2_TransformParam_t*)cmd->Param_p);
 			Mpeg2HardDecodeFrame((Mpeg2HardHandle_t)context, &frameParams);
 			break;
-
 		case MME_SET_GLOBAL_TRANSFORM_PARAMS:
 			copySequenceParameters(&sequenceParams, (MPEG2_SetGlobalParamSequence_t*) cmd->Param_p);
 			Mpeg2HardSetSequenceParams((Mpeg2HardHandle_t)context, &sequenceParams);
 			break;
-
 		case MME_SEND_BUFFERS:
 			break;
-
 		default:
 			break;
 	}
-
 	return MME_SUCCESS;
 }
 
@@ -201,13 +185,11 @@ static MME_ERROR termTransformer(void* context)
 	OSDEV_Free(intraQuantizerMatrix);
 	OSDEV_Free(nonIntraQuantizerMatrix);
 	OSDEV_Free(context);
-
 	return MME_SUCCESS;
 }
 
 void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_TransformParam_t* frameParamsIn)
 {
-
 //  OSDEV_Print("copyFrameParameters\n");
 	/*
 	 U32                          StructSize;
@@ -222,7 +204,6 @@ void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_Transfor
 	 MPEG2_AdditionalFlags_t      AdditionalFlags;
 	 MPEG2_ParamPicture_t         PictureParameters;
 	 */
-
 	/* Mpeg2HardFrameParams_t
 	 unsigned char               *compressedDataFrame;
 	 unsigned int                 compressedDataSize;
@@ -241,86 +222,68 @@ void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_Transfor
 	 unsigned char                pictureStructure;                      // 2 bits
 	 unsigned char                decodingFlags;                         // 5 bits
 	*/
-
 	frameParamsOut->compressedDataFrame = (unsigned char*)frameParamsIn->PictureStartAddrCompressedBuffer_p;
 	frameParamsOut->compressedDataSize = (unsigned int)frameParamsIn->PictureStopAddrCompressedBuffer_p -
 										 (unsigned int)frameParamsIn->PictureStartAddrCompressedBuffer_p;
-
 	frameParamsOut->lumaDecodeFramebuffer    = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecodedLuma_p;
 	frameParamsOut->chromaDecodeFramebuffer  = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecodedChroma_p;
-
 	frameParamsOut->horizontalDecimationFactor = 1;
 	frameParamsOut->verticalDecimationFactor = 1;
-
 	if ((frameParamsIn->HorizontalDecimationFactor != MPEG2_HDEC_1) || (frameParamsIn->VerticalDecimationFactor != MPEG2_VDEC_1))
 	{
-
 		switch (frameParamsIn->HorizontalDecimationFactor)
 		{
 			case MPEG2_HDEC_1:
 				frameParamsOut->horizontalDecimationFactor = 1;
 				break;
-
 			case MPEG2_HDEC_2:
 			case MPEG2_HDEC_ADVANCED_2:
 				frameParamsOut->horizontalDecimationFactor = 2;
 				break;
-
 			case MPEG2_HDEC_4:
 			case MPEG2_HDEC_ADVANCED_4:
 				frameParamsOut->horizontalDecimationFactor = 4;
 				break;
-
 			default:
 				frameParamsOut->horizontalDecimationFactor = 1;
 				break;
 		}
-
 		switch (frameParamsIn->VerticalDecimationFactor)
 		{
 			case MPEG2_VDEC_1:
 				frameParamsOut->verticalDecimationFactor = 1;
 				break;
-
 			case MPEG2_VDEC_2_INT:
 			case MPEG2_VDEC_2_PROG:
 			case MPEG2_VDEC_ADVANCED_2_INT:
 			case MPEG2_VDEC_ADVANCED_2_PROG:
 				frameParamsOut->verticalDecimationFactor = 2;
 				break;
-
 			default:
 				frameParamsOut->verticalDecimationFactor = 1;
 				break;
 		}
-
 		frameParamsOut->decimatedLumaDecodeFramebuffer    = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedLuma_p;
 		frameParamsOut->decimatedChromaDecodeFramebuffer  = (unsigned char*)frameParamsIn->DecodedBufferAddress.DecimatedChroma_p;
 	}
-
 	frameParamsOut->lumaBackwardReferenceFrame   = (unsigned char*)frameParamsIn->RefPicListAddress.BackwardReferenceLuma_p;
 	frameParamsOut->chromaBackwardReferenceFrame = (unsigned char*)frameParamsIn->RefPicListAddress.BackwardReferenceChroma_p;
 	frameParamsOut->lumaForwardReferenceFrame    = (unsigned char*)frameParamsIn->RefPicListAddress.ForwardReferenceLuma_p;
 	frameParamsOut->chromaForwardReferenceFrame  = (unsigned char*)frameParamsIn->RefPicListAddress.ForwardReferenceChroma_p;
-
 	frameParamsOut->pictureCodingType = (unsigned char)frameParamsIn->PictureParameters.picture_coding_type;
-
 	frameParamsOut->forwardHorizontalMotionVector  = (unsigned char)frameParamsIn->PictureParameters.forward_horizontal_f_code;
 	frameParamsOut->forwardVerticalMotionVector    = (unsigned char)frameParamsIn->PictureParameters.forward_vertical_f_code;
 	frameParamsOut->backwardHorizontalMotionVector = (unsigned char)frameParamsIn->PictureParameters.backward_horizontal_f_code;
 	frameParamsOut->backwardVerticalMotionVector   = (unsigned char)frameParamsIn->PictureParameters.backward_vertical_f_code;
-
 	frameParamsOut->intraDCPrecision = (unsigned char)frameParamsIn->PictureParameters.intra_dc_precision;
 	frameParamsOut->pictureStructure = (unsigned char)frameParamsIn->PictureParameters.picture_structure;
 	frameParamsOut->decodingFlags    = (unsigned char)frameParamsIn->PictureParameters.mpeg_decoding_flags;
-
 }
 
 void copySequenceParameters(Mpeg2HardSequenceParams_t  *seqParamsOut, MPEG2_SetGlobalParamSequence_t* seqParamsIn)
 {
 	unsigned int i;
 //  OSDEV_Print("copySequenceParameters\n");
-
 	/* MPEG2_SetGlobalParamSequence_t
 	U32                  StructSize;
 	BOOL                 MPEGStreamTypeFlag;
@@ -334,7 +297,6 @@ void copySequenceParameters(Mpeg2HardSequenceParams_t  *seqParamsOut, MPEG2_SetG
 	U8                   chroma_intra_quantiser_matrix[64];
 	U8                   chroma_non_intra_quantiser_matrix[64];
 	*/
-
 	/*
 	 *     MpegStreamType_t             mpegStreamType;
 	 *     unsigned int                 horizontalSize;
@@ -343,26 +305,21 @@ void copySequenceParameters(Mpeg2HardSequenceParams_t  *seqParamsOut, MPEG2_SetG
 	 *     unsigned char               *intraQuantizerMatrix;
 	 *     unsigned char               *nonIntraQuantizerMatrix;
 	*/
-
 	seqParamsOut->mpegStreamType = seqParamsIn->MPEGStreamTypeFlag;
 	seqParamsOut->horizontalSize = seqParamsIn->horizontal_size;
 	seqParamsOut->verticalSize   = seqParamsIn->vertical_size;
 //        seqParamsOut->chromaFormat   = (unsigned int)seqParamsIn->chroma_format;
 	seqParamsOut->chromaFormat   = 0;
-
 	for (i = 0 ; i < 64 ; i++)
 	{
 		seqParamsOut->intraQuantizerMatrix[quantizationMatrixZigZagOrder[i]] = seqParamsIn->intra_quantiser_matrix[i];
 		seqParamsOut->nonIntraQuantizerMatrix[quantizationMatrixZigZagOrder[i]] = seqParamsIn->non_intra_quantiser_matrix[i];
 	}
-
 }
 
 static void __exit StmUnloadModule(void)
 {
-
 	Mpeg2InterruptUninstall();
 	UnMapRegisters();
-
 	OSDEV_Print("Module unloaded\n");
 }

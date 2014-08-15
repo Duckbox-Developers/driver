@@ -54,15 +54,12 @@ OSDEV_ExportSymbol(OSDEV_DeviceDescriptors);
 OSDEV_Status_t   OSDEV_Stat(const char                      *Name)
 {
 	unsigned int     i;
-
 //
-
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
 	{
 		if (OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0))
 			return OSDEV_NoError;
 	}
-
 	return OSDEV_Error;
 }
 
@@ -75,24 +72,19 @@ OSDEV_Status_t   OSDEV_Open(const char                      *Name,
 	unsigned int     Major;
 	unsigned int     Minor;
 	OSDEV_Status_t   Status;
-
 //
-
 	*Handle = OSDEV_INVALID_DEVICE;
-
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
 	{
 		if (OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0))
 		{
 			Major = OSDEV_DeviceList[i].MajorNumber;
 			Minor = OSDEV_DeviceList[i].MinorNumber;
-
 			if (OSDEV_DeviceDescriptors[Major] == NULL)
 			{
 				printk("Error-%s-\nOSDEV_Open - No Descriptor associated with major number %d\n", OS_ThreadName(), Major);
 				return OSDEV_Error;
 			}
-
 			for (i = 0; i < OSDEV_MAX_OPENS; i++)
 				if (!OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open)
 				{
@@ -100,24 +92,18 @@ OSDEV_Status_t   OSDEV_Open(const char                      *Name,
 					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].MinorNumber = Minor;
 					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Descriptor  = OSDEV_DeviceDescriptors[Major];
 					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].PrivateData = NULL;
-
 					Status = OSDEV_DeviceDescriptors[Major]->OpenFn(&OSDEV_DeviceDescriptors[Major]->OpenContexts[i]);
-
 					if (Status == OSDEV_NoError)
 						*Handle                                                 = &OSDEV_DeviceDescriptors[Major]->OpenContexts[i];
 					else
 						OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open    = false;
-
 					return Status;
 				}
-
 			printk("Error-%s-\nOSDEV_Open - Too many opens on device '%s'.\n", OS_ThreadName(), OSDEV_DeviceDescriptors[Major]->Name);
 			return OSDEV_Error;
 		}
 	}
-
 //
-
 	printk("Error-%s-\nOSDEV_Open - Unable to find device '%s'.\n", OS_ThreadName(), Name);
 	return OSDEV_Error;
 }
@@ -127,20 +113,15 @@ OSDEV_Status_t   OSDEV_Open(const char                      *Name,
 OSDEV_Status_t   OSDEV_Close(OSDEV_DeviceIdentifier_t     Handle)
 {
 	OSDEV_Status_t   Status;
-
 //
-
 	if ((Handle == NULL) || (!Handle->Open))
 	{
 		printk("Error-%s-\nOSDEV_Open - Attempt to close invalid handle\n", OS_ThreadName());
 		return OSDEV_Error;
 	}
-
 //
-
 	Status              = Handle->Descriptor->CloseFn(Handle);
 	Handle->Open        = false;
-
 	return Status;
 }
 
@@ -174,19 +155,14 @@ OSDEV_Status_t   OSDEV_Ioctl(OSDEV_DeviceIdentifier_t         Handle,
 							 unsigned int                     ArgumentSize)
 {
 	OSDEV_Status_t   Status;
-
 //
-
 	if ((Handle == NULL) || (!Handle->Open))
 	{
 		printk("Error-%s-\nOSDEV_Ioctl - Attempt to use an invalid handle\n", OS_ThreadName());
 		return OSDEV_Error;
 	}
-
 //
-
 	Status              = Handle->Descriptor->IoctlFn(Handle, Command, (unsigned long)Argument);
-
 	return Status;
 }
 
@@ -199,21 +175,15 @@ OSDEV_Status_t   OSDEV_Map(OSDEV_DeviceIdentifier_t          Handle,
 						   unsigned int                      Flags)
 {
 	OSDEV_Status_t   Status;
-
 //
-
 	*MapAddress = NULL;
-
 	if ((Handle == NULL) || (!Handle->Open))
 	{
 		printk("Error-%s-\nOSDEV_Map - Attempt to use an invalid handle\n", OS_ThreadName());
 		return OSDEV_Error;
 	}
-
 //
-
 	Status              = Handle->Descriptor->MmapFn(Handle, Offset, Length, (unsigned char **)MapAddress);
-
 	// To implement this is userspace then either:
 	//
 	//  1. Don't
@@ -223,7 +193,6 @@ OSDEV_Status_t   OSDEV_Map(OSDEV_DeviceIdentifier_t          Handle,
 	{
 		*MapAddress = OSDEV_TranslateAddressToUncached(*MapAddress);
 	}
-
 	return Status;
 }
 

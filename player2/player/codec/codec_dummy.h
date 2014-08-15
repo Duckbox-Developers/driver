@@ -79,7 +79,6 @@ class Codec_Dummy_c : public Codec_c
 			CodecTrickModeParameters.MaximumSubstandardDecodeRate   = 3;
 			CodecTrickModeParameters.DefaultGroupSize       = 12;
 			CodecTrickModeParameters.DefaultGroupReferenceFrameCount = 4;
-
 			*TrickModeParameters    = CodecTrickModeParameters;
 			return CodecNoError;
 		}

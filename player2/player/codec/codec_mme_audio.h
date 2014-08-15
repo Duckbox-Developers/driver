@@ -61,13 +61,13 @@ Date        Modification                                    Name
 #include <ACC_Transformers/TrueHD_DecoderTypes.h>
 #include <ACC_Transformers/RealAudio_DecoderTypes.h>
 #include <ACC_Transformers/OV_DecoderTypes.h>
+
 ////////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
 //
 
 #define AUDIO_DECODER_TRANSFORMER_NAME "AUDIO_DECODER"
-
 extern const int ACC_AcMode2ChannelCountLUT[];
 extern const int ACC_SamplingFreqLUT[];
 #define ACC_AcMode2ChannelCount(AcMode) (ACC_AcMode2ChannelCountLUT[(AcMode&0xf)] + ((AcMode >= 0x80)?1:0))
@@ -137,7 +137,7 @@ class Codec_MmeAudio_c : public Codec_MmeBase_c
 		virtual CodecStatus_t   ValidatePcmProcessingExtendedStatus(CodecBaseDecodeContext_t *Context,
 				MME_PcmProcessingFrameExtStatus_t *PcmStatus);
 		virtual void            HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-													 MME_PcmProcessingStatusTemplate_t *PcmStatus);
+				MME_PcmProcessingStatusTemplate_t *PcmStatus);
 //! AWTODO - add virtual function for DecodeContext that WMA codec can over-ride for different buffers and MME command
 		virtual CodecStatus_t   FillOutDecodeContext(void);
 		virtual void            FinishedDecode(void);

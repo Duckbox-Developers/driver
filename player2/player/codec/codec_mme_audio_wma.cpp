@@ -112,25 +112,16 @@ Codec_MmeAudioWma_c::Codec_MmeAudioWma_c(void)
 {
 	CODEC_DEBUG("%s\n", __FUNCTION__);
 	Configuration.CodecName                             = "WMA audio";
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &WmaAudioCodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = SENDBUF_DECODE_CONTEXT_COUNT; //4;
 	Configuration.DecodeContextDescriptor               = &WmaAudioCodecDecodeContextDescriptor;
-
 	Configuration.MaximumSampleCount                    = 4096;
-
 //
-
 	AudioDecoderTransformCapabilityMask.DecoderCapabilityFlags = (1 << ACC_WMAPROLSL);
-
 	DecoderId                                           = ACC_WMAPROLSL_ID;
-
 	Reset();
-
 	SendbufTriggerTransformCount                        = 1;
-
 }
 //}}}
 //{{{  Destructor
@@ -144,7 +135,6 @@ Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c(void)
 	CODEC_DEBUG("%s\n", __FUNCTION__);
 	Halt();
 	Reset();
-
 }
 //}}}
 
@@ -156,14 +146,11 @@ Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c(void)
 ///
 CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
-
 	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
 	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
 //    MME_LxWmaConfig_t &Config = *((MME_LxWmaConfig_t *) GlobalParams.DecConfig);
 	MME_LxWmaProLslConfig_t &Config = *((MME_LxWmaProLslConfig_t *) GlobalParams.DecConfig);
-
 	CODEC_TRACE("Initializing WMA audio decoder\n");
-
 //    MME_LxWmaProLslConfig_t &config = ((MME_LxWmaProLslConfig_t *) globalParams.DecConfig)[0];
 	memset(&Config, 0, sizeof(Config));
 	Config.DecoderId = ACC_WMAPROLSL_ID;
@@ -184,15 +171,12 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 	Config.MaxNbPages = 16;
 #endif
 	Config.MaxPageSize = MAX_ASF_PACKET_SIZE; // default if no other is specified
-
 	if ((ParsedFrameParameters != NULL) && (ParsedFrameParameters->StreamParameterStructure != NULL))
 	{
 		WmaAudioStreamParameters_t*     StreamParams    = (WmaAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
-
 		Config.NbSamplesOut = StreamParams->SamplesPerFrame ? StreamParams->SamplesPerFrame : 2048;
 		CODEC_TRACE("%s - StreamParams->SamplesPerFrame %d\n", __FUNCTION__, StreamParams->SamplesPerFrame);
 		CODEC_TRACE("%s - Config.NbSamplesOut %d\n", __FUNCTION__, Config.NbSamplesOut);
-
 		if (0 == StreamParams->StreamNumber)
 		{
 			// zero is an illegal stream number
@@ -204,13 +188,11 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 		else
 		{
 			Config.NewAudioStreamInfo = ACC_MME_TRUE;
-
 			//MME_WmaAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
 			MME_WmaProLslAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
 			streamInfo.nVersion            = (StreamParams->FormatTag == WMA_VERSION_2_9) ? 2 :     // WMA V2
 											 (StreamParams->FormatTag == WMA_VERSION_9_PRO) ? 3 :   // WMA Pro
 											 (StreamParams->FormatTag == WMA_LOSSLESS) ? 4 : 1;     // WMA lossless - Default to WMA version1?
-
 			streamInfo.wFormatTag          = StreamParams->FormatTag;
 			streamInfo.nSamplesPerSec      = StreamParams->SamplesPerSecond;
 			streamInfo.nAvgBytesPerSec     = StreamParams->AverageNumberOfBytesPerSecond;
@@ -224,7 +206,6 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 			streamInfo.wValidBitsPerSample = StreamParams->ValidBitsPerSample;
 			streamInfo.wStreamId           = StreamParams->StreamNumber;
 			CODEC_TRACE("%s INFO : streamInfo.nSamplesPerSec %d \n", __FUNCTION__, streamInfo.nSamplesPerSec);
-
 			// HACK: see ValidateCompletedCommand()
 			//NumChannels = StreamParams.NumberOfChannels;
 		}
@@ -236,14 +217,11 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 		Config.NewAudioStreamInfo = ACC_MME_FALSE;
 		Config.StructSize = 2 * sizeof(U32) ; // only transmit the ID and StructSize (all other params are irrelevant)
 	}
-
 	// This is not what the ACC headers make it look like but this is what
 	// the firmware actually expects (tightly packed against the config structure)
 	// unsigned char *pcmParams = ((unsigned char *) &Config) + Config.StructSize;
 	// FillPcmProcessingGlobalParams((void *) pcmParams);
-
 	return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
-
 	//  return CodecNoError;
 }
 //}}}

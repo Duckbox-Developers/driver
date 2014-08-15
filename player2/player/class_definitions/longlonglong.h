@@ -87,20 +87,17 @@ class LongLongLong_c
 		{
 			LongLongLong_c  Temp;
 			LongLongLong_c  Result;
-
 			if (Negative != F.Negative)
 			{
 				Temp        = F;
 				Temp.Negative   = Negative;
 				return (*this - Temp);
 			}
-
 			Result.Negative     = Negative;
 			Result.Lower32      = Lower32 + F.Lower32;
 			Result.Upper64      = Upper64 + F.Upper64;
 			Result.Upper64      += (Result.Lower32 >> 32);
 			Result.Lower32      &= 0xffffffff;
-
 			return Result;
 		}
 
@@ -132,21 +129,18 @@ class LongLongLong_c
 		{
 			LongLongLong_c  Temp;
 			LongLongLong_c  Result;
-
 			if (Negative != F.Negative)
 			{
 				Temp        = F;
 				Temp.Negative   = Negative;
 				return (*this + Temp);
 			}
-
 			if ((Upper64 > F.Upper64) ||
 					((Upper64 == F.Upper64) && (Lower32 > F.Lower32)))
 			{
 				Result.Negative = Negative;
 				Result.Lower32  = Lower32 - F.Lower32;
 				Result.Upper64  = Upper64 - F.Upper64;
-
 				if (Result.Lower32 > 0xffffffff)
 				{
 					Result.Lower32  += 0x100000000ull;
@@ -158,14 +152,12 @@ class LongLongLong_c
 				Result.Negative = !Negative;
 				Result.Lower32  = F.Lower32 - Lower32;
 				Result.Upper64  = F.Upper64 - Upper64;
-
 				if (Result.Lower32 > 0xffffffff)
 				{
 					Result.Lower32  += 0x100000000ull;
 					Result.Upper64  -= 1;
 				}
 			}
-
 			return Result;
 		}
 
@@ -198,13 +190,11 @@ class LongLongLong_c
 		LongLongLong_c   operator* (LongLongLong_c  F)
 		{
 			LongLongLong_c  Product;
-
 			Product.Negative    = (Negative ^ F.Negative);
 			Product.Lower32     = Lower32 * F.Lower32;
 			Product.Upper64     = (Lower32 * F.Upper64) + (Upper64 * F.Lower32) + ((Upper64 * F.Upper64) << 32);
 			Product.Upper64     += (Product.Lower32 >> 32);
 			Product.Lower32     &= 0xffffffff;
-
 			return Product;
 		}
 
@@ -227,7 +217,6 @@ class LongLongLong_c
 			unsigned int    UpperBits   = 0;
 			long long   Val     = 0;
 			unsigned int    Shift       = 0;
-
 			if (Upper64 != 0)
 			{
 				UpperBits   += ((Upper64 & 0xffffffff00000000ull) != 0) ? 32 : 0;
@@ -238,10 +227,8 @@ class LongLongLong_c
 				UpperBits   += (((Upper64 >> UpperBits) & 0x00000002) != 0) ? 1 : 0;
 				UpperBits++;
 			}
-
 			Shift   = (UpperBits > 31) ? (UpperBits - 31) : 0;
 			Val = ((Shift > 31) ? (Upper64 >> (Shift - 32)) : (Upper64 << (32 - Shift))) | (Lower32 >> Shift);
-
 			*Value  = Negative ? -Val : Val;
 			*Shifted = Shift;
 		}
@@ -265,7 +252,7 @@ typedef LongLongLong_c LongLongLong_t;
 //
 
 static inline LongLongLong_c   operator+ (long long I,
-										  LongLongLong_c  F)
+		LongLongLong_c  F)
 {
 	LongLongLong_c  Temp = I;
 	return Temp + F;
@@ -274,7 +261,7 @@ static inline LongLongLong_c   operator+ (long long I,
 //
 
 static inline LongLongLong_c   operator- (long long I,
-										  LongLongLong_c  F)
+		LongLongLong_c  F)
 {
 	LongLongLong_c  Temp = I;
 	return Temp - F;
@@ -283,7 +270,7 @@ static inline LongLongLong_c   operator- (long long I,
 //
 
 static inline LongLongLong_c   operator* (long long V,
-										  LongLongLong_c  F)
+		LongLongLong_c  F)
 {
 	LongLongLong_c  Temp = V;
 	return Temp * F;

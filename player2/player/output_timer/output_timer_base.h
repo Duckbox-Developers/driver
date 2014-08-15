@@ -51,7 +51,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define OUTPUT_TIMER_DEBUG(fmt, args...) ((void)(ENABLE_OUTPUT_TIMER_DEBUG && \
-												 (report(severity_note, "%s: " fmt, OUTPUT_TIMER_FUNCTION, ##args), 0)))
+                                                 (report(severity_note, "%s: " fmt, OUTPUT_TIMER_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define OUTPUT_TIMER_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, OUTPUT_TIMER_FUNCTION, ##args))
@@ -280,12 +280,12 @@ class OutputTimer_Base_c : public OutputTimer_c
 		// Functions
 
 		bool   PlaybackTimeCheckGreaterThanOrEqual(unsigned long long   T0,
-												   unsigned long long  T1);
+				unsigned long long  T1);
 
 		bool   PlaybackTimeCheckIntervalsIntersect(unsigned long long   I0Start,
-												   unsigned long long  I0End,
-												   unsigned long long  I1Start,
-												   unsigned long long  I1End);
+				unsigned long long  I0End,
+				unsigned long long  I1Start,
+				unsigned long long  I1End);
 
 		void              SetTrickModeDomainBoundaries(void);
 		OutputTimerStatus_t       TrickModeControl(void);
@@ -319,7 +319,7 @@ class OutputTimer_Base_c : public OutputTimer_c
 		OutputTimerStatus_t   Reset(void);
 
 		OutputTimerStatus_t   SetModuleParameters(unsigned int    ParameterBlockSize,
-												  void         *ParameterBlock);
+				void         *ParameterBlock);
 
 		//
 		// OutputTimer class functions
@@ -349,7 +349,7 @@ class OutputTimer_Base_c : public OutputTimer_c
 		//
 
 		virtual OutputTimerStatus_t   PerformAVDSync(unsigned long long   ExpectedFrameOutputTime,
-													 unsigned long long    ActualFrameOutputTime);
+				unsigned long long    ActualFrameOutputTime);
 
 		//
 		// Functions to be provided by the stream specific implementations
@@ -358,7 +358,7 @@ class OutputTimer_Base_c : public OutputTimer_c
 		virtual OutputTimerStatus_t   InitializeConfiguration(void) = 0;
 
 		virtual OutputTimerStatus_t   FrameDuration(void              *ParsedAudioVideoDataParameters,
-													unsigned long long    *Duration) = 0;
+				unsigned long long    *Duration) = 0;
 
 		virtual OutputTimerStatus_t   FillOutFrameTimingRecord(unsigned long long     SystemTime,
 				void             *ParsedAudioVideoDataParameters,

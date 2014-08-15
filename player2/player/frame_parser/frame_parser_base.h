@@ -46,16 +46,16 @@ Date        Modification                                    Name
 //
 
 #define MarkerBit( v )      if( Bits.Get(1) != (v) )                                    \
-	{                                               \
-		report( severity_error, "%s(%d) - Invalid marker bit value.\n", __FUNCTION__, __LINE__ );   \
-		return FrameParserHeaderSyntaxError;                            \
-	}
+    {                                               \
+        report( severity_error, "%s(%d) - Invalid marker bit value.\n", __FUNCTION__, __LINE__ );   \
+        return FrameParserHeaderSyntaxError;                            \
+    }
 
 #define MarkerBits( n, v )  if( Bits.Get((n)) != (v) )                                  \
-	{                                               \
-		report( severity_error, "%s(%d) - Invalid marker bits value.\n", __FUNCTION__, __LINE__ );  \
-		return FrameParserHeaderSyntaxError;                            \
-	}
+    {                                               \
+        report( severity_error, "%s(%d) - Invalid marker bits value.\n", __FUNCTION__, __LINE__ );  \
+        return FrameParserHeaderSyntaxError;                            \
+    }
 
 //
 
@@ -68,7 +68,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define FRAME_DEBUG(fmt, args...) ((void)(ENABLE_FRAME_DEBUG && \
-										  (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args), 0)))
+                                          (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define FRAME_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args))
@@ -76,7 +76,7 @@ Date        Modification                                    Name
 #define FRAME_ERROR(fmt, args...) (report(severity_error, "%s: " fmt, FRAME_FUNCTION, ##args))
 
 #define FRAME_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-												   FRAME_FUNCTION, #x, __FILE__, __LINE__); while(0)
+                                                   FRAME_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -206,8 +206,8 @@ class FrameParser_Base_c : public FrameParser_c
 			return 0;
 		}
 		FrameParserStatus_t   PresentCollatedHeader(unsigned char         StartCode,
-													unsigned char        *HeaderBytes,
-													FrameParserHeaderFlag_t  *Flags)
+				unsigned char        *HeaderBytes,
+				FrameParserHeaderFlag_t  *Flags)
 		{
 			return PlayerNotSupported;
 		}

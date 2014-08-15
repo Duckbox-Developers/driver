@@ -590,10 +590,10 @@ class Player_Generic_c : public Player_c
 											   PlayerControlStructure_t     *ControlStructure);
 
 		PlayerStatus_t   AccumulateControlMessage(Buffer_t            Buffer,
-												  PlayerControlStructure_t     *Message,
-												  unsigned int             *MessageCount,
-												  unsigned int              MessageTableSize,
-												  PlayerBufferRecord_t         *MessageTable);
+				PlayerControlStructure_t     *Message,
+				unsigned int             *MessageCount,
+				unsigned int              MessageTableSize,
+				PlayerBufferRecord_t         *MessageTable);
 
 		PlayerStatus_t   ProcessControlMessage(PlayerStream_t             Stream,
 											   Buffer_t              Buffer,
@@ -761,9 +761,9 @@ class Player_Generic_c : public Player_c
 										  PlayDirection_t       Direction);
 
 		PlayerStatus_t   SetPresentationInterval(PlayerPlayback_t     Playback,
-												 PlayerStream_t        Stream            = PlayerAllStreams,
-												 unsigned long long    IntervalStartNativeTime   = INVALID_TIME,
-												 unsigned long long    IntervalEndNativeTime     = INVALID_TIME);
+				PlayerStream_t        Stream            = PlayerAllStreams,
+				unsigned long long    IntervalStartNativeTime   = INVALID_TIME,
+				unsigned long long    IntervalEndNativeTime     = INVALID_TIME);
 
 		PlayerStatus_t   StreamStep(PlayerStream_t        Stream);
 
@@ -772,22 +772,22 @@ class Player_Generic_c : public Player_c
 											   unsigned long long    SystemTime            = INVALID_TIME);
 
 		PlayerStatus_t   RetrieveNativePlaybackTime(PlayerPlayback_t      Playback,
-													unsigned long long   *NativeTime);
+				unsigned long long   *NativeTime);
 
 		PlayerStatus_t   TranslateNativePlaybackTime(PlayerPlayback_t     Playback,
-													 unsigned long long    NativeTime,
-													 unsigned long long   *SystemTime);
+				unsigned long long    NativeTime,
+				unsigned long long   *SystemTime);
 
 		PlayerStatus_t   RequestTimeNotification(PlayerStream_t       Stream,
-												 unsigned long long    NativeTime,
-												 void             *EventUserData     = NULL);
+				unsigned long long    NativeTime,
+				void             *EventUserData     = NULL);
 
 		//
 		// Clock recovery support - for playbacks with system clock as master
 		//
 
 		PlayerStatus_t   ClockRecoveryInitialize(PlayerPlayback_t     Playback,
-												 PlayerTimeFormat_t    SourceTimeFormat  = TimeFormatPts);
+				PlayerTimeFormat_t    SourceTimeFormat  = TimeFormatPts);
 
 		PlayerStatus_t   ClockRecoveryDataPoint(PlayerPlayback_t      Playback,
 												unsigned long long    SourceTime,
@@ -851,8 +851,8 @@ class Player_Generic_c : public Player_c
 									  Manifestor_t         *Manifestor);
 
 		PlayerStatus_t   GetCodedFrameBufferPool(PlayerStream_t       Stream,
-												 BufferPool_t         *Pool          = NULL,
-												 unsigned int         *MaximumCodedFrameSize = NULL);
+				BufferPool_t         *Pool          = NULL,
+				unsigned int         *MaximumCodedFrameSize = NULL);
 
 		PlayerStatus_t   GetDecodeBufferPool(PlayerStream_t       Stream,
 											 BufferPool_t         *Pool);
@@ -872,8 +872,8 @@ class Player_Generic_c : public Player_c
 										  PlayDirection_t      *Direction);
 
 		PlayerStatus_t   GetPresentationInterval(PlayerStream_t       Stream,
-												 unsigned long long   *IntervalStartNormalizedTime,
-												 unsigned long long   *IntervalEndNormalizedTime);
+				unsigned long long   *IntervalStartNormalizedTime,
+				unsigned long long   *IntervalEndNormalizedTime);
 
 		unsigned char    PolicyValue(PlayerPlayback_t     Playback,
 									 PlayerStream_t        Stream,

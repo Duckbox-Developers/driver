@@ -54,9 +54,7 @@ Date        Modification                                    Name
 Demultiplexor_Base_c::Demultiplexor_Base_c(void)
 {
 	InitializationStatus        = DemultiplexorError;
-
 //
-
 	InitializationStatus        = DemultiplexorNoError;
 }
 
@@ -79,22 +77,16 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::CreateContext(DemultiplexorContext
 	unsigned int            i;
 	DemultiplexorContext_t      NewContext;
 	DemultiplexorBaseContext_t      BaseContext;
-
 //
-
 	NewContext  = (DemultiplexorContext_t)new unsigned char[SizeofContext];
 	memset(NewContext, 0x00, SizeofContext);
-
 	BaseContext = (DemultiplexorBaseContext_t)NewContext;
-
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
 	{
 		BaseContext->Streams[i].Stream      = NULL;
 		BaseContext->Streams[i].Identifier  = INVALID_INDEX;
 	}
-
 	OS_InitializeMutex(&BaseContext->Lock);
-
 	*Context    = NewContext;
 	return DemultiplexorNoError;
 }
@@ -107,11 +99,8 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::CreateContext(DemultiplexorContext
 DemultiplexorStatus_t   Demultiplexor_Base_c::DestroyContext(DemultiplexorContext_t    Context)
 {
 	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
-
 	OS_LockMutex(&BaseContext->Lock);
-
 	OS_TerminateMutex(&BaseContext->Lock);
-
 	delete(unsigned char *)Context;
 	return DemultiplexorNoError;
 }
@@ -128,12 +117,9 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::AddStream(
 {
 	unsigned int                    i;
 	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
-
 //
 	report(severity_info, "Demultiplexor_Base_c::AddStream - %x, %d.\n", Stream, StreamIdentifier);
-
 	OS_LockMutex(&BaseContext->Lock);
-
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
 		if (BaseContext->Streams[i].Stream == NULL)
 		{
@@ -141,15 +127,11 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::AddStream(
 			BaseContext->Streams[i].Stream      = Stream;
 			BaseContext->Streams[i].Identifier  = StreamIdentifier;
 			BaseContext->LastStreamSet          = i;
-
 			Player->AttachDemultiplexor(Stream, this, Context);
-
 			OS_UnLockMutex(&BaseContext->Lock);
 			return DemultiplexorNoError;
 		}
-
 //
-
 	OS_UnLockMutex(&BaseContext->Lock);
 	report(severity_error, "Demultiplexor_Base_c::AddStream - Too many streams.\n");
 	return DemultiplexorError;
@@ -166,13 +148,9 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::RemoveStream(
 {
 	unsigned int                    i, j;
 	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
-
 //
-
 	report(severity_info, "Demultiplexor_Base_c::RemoveStream - %d.\n", StreamIdentifier);
-
 	OS_LockMutex(&BaseContext->Lock);
-
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
 		if (BaseContext->Streams[i].Identifier == StreamIdentifier)
 		{
@@ -181,24 +159,18 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::RemoveStream(
 			// then we can detach the multiplexor from it. NOTE this means we will work if you
 			// have multiple identifiers going to the same stream.
 			//
-
 			for (j = 0; j < DEMULTIPLEXOR_MAX_STREAMS; j++)
 				if ((j != i) && (BaseContext->Streams[i].Stream == BaseContext->Streams[j].Stream))
 					break;
-
 			if (j == DEMULTIPLEXOR_MAX_STREAMS)
 				Player->DetachDemultiplexor(BaseContext->Streams[i].Stream);
-
 			//
 			// release and return.
 			//
-
 			BaseContext->Streams[i].Stream      = NULL;
 			BaseContext->Streams[i].Identifier  = INVALID_INDEX;
 		}
-
 //
-
 	OS_UnLockMutex(&BaseContext->Lock);
 	return DemultiplexorNoError;
 }
@@ -214,16 +186,12 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::SwitchStream(
 {
 	unsigned int                    i;
 	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
-
 //
 	report(severity_info, "Demultiplexor_Base_c::SwitchStream - %x.\n", Stream);
-
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
 		if (BaseContext->Streams[i].Stream == Stream)
 			Player->GetClassList(Stream, &BaseContext->Streams[i].Collator, NULL, NULL, NULL, NULL);
-
 //
-
 	return DemultiplexorError;
 }
 
@@ -250,29 +218,21 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::Demux(
 {
 	PlayerStatus_t                    Status;
 	DemultiplexorBaseContext_t        BaseContext = (DemultiplexorBaseContext_t)Context;
-
 //
-
 	Status      = Buffer->ObtainMetaDataReference(Player->MetaDataInputDescriptorType, (void **)(&BaseContext->Descriptor));
-
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "Demultiplexor_Base_c::Demux - Unable to obtain the meta data input descriptor.\n");
 		return Status;
 	}
-
 //
-
 	Status  = Buffer->ObtainDataReference(NULL, &BaseContext->BufferLength, (void **)(&BaseContext->BufferData));
-
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "Demultiplexor_Base_c::Demux - unable to obtain data reference.\n");
 		return Status;
 	}
-
 //
-
 	return DemultiplexorNoError;
 }
 

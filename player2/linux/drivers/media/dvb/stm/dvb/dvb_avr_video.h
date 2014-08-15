@@ -430,10 +430,10 @@ int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
 // ////////////////////////////
 
 int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
-										 unsigned int         DesiredCount,
-										 unsigned int         DesiredSize,
-										 unsigned int        *ActualCount,
-										 unsigned int        *ActualSize);
+		unsigned int         DesiredCount,
+		unsigned int         DesiredSize,
+		unsigned int        *ActualCount,
+		unsigned int        *ActualSize);
 
 int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
 									  unsigned int          Index,

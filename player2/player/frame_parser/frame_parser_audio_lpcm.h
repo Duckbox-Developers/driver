@@ -110,8 +110,8 @@ class FrameParser_AudioLpcm_c : public FrameParser_Audio_c
 		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
 
 		static FrameParserStatus_t  ParseFrameHeader(unsigned char *FrameHeader,
-													 LpcmAudioParsedFrameHeader_t *ParsedFrameHeader,
-													 int RemainingElementaryLength);
+				LpcmAudioParsedFrameHeader_t *ParsedFrameHeader,
+				int RemainingElementaryLength);
 
 };
 

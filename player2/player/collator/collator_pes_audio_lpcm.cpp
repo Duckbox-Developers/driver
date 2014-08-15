@@ -82,7 +82,9 @@ const static char FirstAccessUnitOffset[] =
 
 #define NB_SAMPLES_SPDIFIN 1024
 
-/* #warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync" */
+/*
+ * todo Update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync.
+ */
 
 const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast] =
 {
@@ -189,9 +191,7 @@ Collator_PesAudioLpcm_c::Collator_PesAudioLpcm_c(LpcmStreamType_t GivenStreamTyp
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	StreamType = GivenStreamType;
-
 	Collator_PesAudioLpcm_c::Reset();
 }
 
@@ -203,7 +203,6 @@ Collator_PesAudioLpcm_c::Collator_PesAudioLpcm_c(LpcmStreamType_t GivenStreamTyp
 ///
 CollatorStatus_t Collator_PesAudioLpcm_c::FindNextSyncWord(int *CodeOffset)
 {
-
 	if (IsPesPrivateDataAreaValid)
 	{
 		// There is no sync on lpcm, so we are always sync'ed!....
@@ -227,49 +226,37 @@ CollatorStatus_t Collator_PesAudioLpcm_c::FindNextSyncWord(int *CodeOffset)
 CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(unsigned int *FrameLength)
 {
 	CollatorStatus_t Status = CollatorNoError;
-
 	//
 	COLLATOR_DEBUG(">><<\n");
-
 	if (IsFirstPacket)
 	{
 		//case of very first packet, skip the packet portion before the FirstAccessUnitOffsetPointer
 		CollatorState = SkipSubFrame;
-
 		IsFirstPacket = false;
-
 		// for the very first packet of dvd-audio, the stuffing bytes are not part of the PDA
 		// since Configuration.ExtendedHeaderLength is not the same as PrivateHeaderLength,
 		// so skip these bytes in this case
-
 		*FrameLength = PesPrivateToSkip +
 					   NextParsedFrameHeader.FirstAccessUnitPointer +
 					   FirstAccessUnitOffset[StreamType] -
 					   NextParsedFrameHeader.PrivateHeaderLength;
 		PesPrivateToSkip = 0;
-
 		COLLATOR_TRACE("First packet: Skipping %d bytes\n", *FrameLength);
-
 		return (Status);
 	}
-
 	// accumulate the private data area for the frame parser,
 	// if some major parameter inside have changed...
-
 	if (AccumulatePrivateDataArea)
 	{
 		// save the location of the private data area, to update it later...
 		Status = AccumulateData(Configuration.ExtendedHeaderLength, &NewPesPrivateDataArea[0]);
-
 		if (Status != CollatorNoError)
 		{
 			return (Status);
 		}
-
 		AccumulatePrivateDataArea = false;
 		COLLATOR_DEBUG("Accumulate PDA of length %d\n", Configuration.ExtendedHeaderLength);
 	}
-
 	if (!IsPesPrivateDataAreaValid)
 	{
 		//case of wrong packet passed to collator, skip the whole packet
@@ -297,7 +284,6 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		// or if some pda key parameters are new
 		CollatorState = GotCompleteFrame;
 		COLLATOR_DEBUG("Flush after %d audio frames\n", AccumulatedFrameNumber);
-
 		AccumulatedFrameNumber = 0;
 		// prevent accumulating anything for this frame, the next thing we need to do
 		// is accumlate the private data area for the frame parser but we can't do that
@@ -307,9 +293,7 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		AccumulatePrivateDataArea = true;
 		// reset
 		IsPesPrivateDataAreaNew = false;
-
 		PlaybackTime += (GlobbedFramesOfNewPacket * LpcmPresentationTime[StreamType][NextParsedFrameHeader.SamplingFrequency1]);
-
 		COLLATOR_DEBUG("PlaybackTime: %llx\n", PlaybackTime);
 	}
 	else
@@ -318,10 +302,8 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		CollatorState = ReadSubFrame;
 		AccumulatedFrameNumber += 1;
 		GlobbedFramesOfNewPacket += 1;
-
 		COLLATOR_ASSERT(0 == RemainingDataLength);
 		COLLATOR_ASSERT(0 == PesPrivateToSkip);
-
 		// DVD-audio allows stuffing bytes to form part of the private data area (and these can be different
 		// for each packet). We can't easily handle this in the PES layer since the length can't be predicted
 		// and therefore we cannot set Configuration.ExtendedHeaderLength until it is too late. Instead
@@ -339,12 +321,10 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 			// read the whole frame!
 			*FrameLength        = NextParsedFrameHeader.AudioFrameSize;
 		}
-
 		COLLATOR_DEBUG("Read frame of size %d (total frames in this chunk: %d)\n",
 					   *FrameLength,
 					   AccumulatedFrameNumber);
 	}
-
 	return Status;
 }
 
@@ -370,23 +350,17 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 ///
 CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *PesPrivateData)
 {
-
 	FrameParserStatus_t  FPStatus;
-
 	COLLATOR_DEBUG(">><<\n");
-
 	if (StreamId != Configuration.StreamIdentifierCode)
 	{
 		IsPesPrivateDataAreaValid = false;
 		return (CollatorError);
 	}
-
 	NextParsedFrameHeader.Type = StreamType;
-
 	FPStatus = FrameParser_AudioLpcm_c::ParseFrameHeader(PesPrivateData,
 			   &NextParsedFrameHeader,
 			   PesPayloadLength + Configuration.ExtendedHeaderLength);
-
 	if (FPStatus != FrameParserNoError)
 	{
 		IsPesPrivateDataAreaValid = false;
@@ -398,10 +372,8 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 		// no need to pass this private data area any more to elementary stream handler,
 		PassPesPrivateDataToElementaryStreamHandler = false;
 		GlobbedFramesOfNewPacket = 0;
-
 		// inform the state change logic how many stuffing bytes it needs to skip
 		PesPrivateToSkip = NextParsedFrameHeader.PrivateHeaderLength - Configuration.ExtendedHeaderLength;
-
 		if (IsFirstPacket)
 		{
 			// special case of very first packet
@@ -428,7 +400,6 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 				IsPesPrivateDataAreaNew = false;
 			}
 		}
-
 		// do a few consistency check on access unit pointer...
 		if ((GuessedNextFirstAccessUnit != 0) &&
 				(GuessedNextFirstAccessUnit != NextParsedFrameHeader.FirstAccessUnitPointer))
@@ -436,19 +407,15 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 			COLLATOR_DEBUG("Uncorrect FirstAccessUnitPointer (%d. vs expected %d)\n", NextParsedFrameHeader.FirstAccessUnitPointer, GuessedNextFirstAccessUnit);
 			GuessedNextFirstAccessUnit = 0;
 		}
-
 		// and guess next access unit pointer
 		if ((StreamType != TypeLpcmDVDBD) && (StreamType != TypeLpcmSPDIFIN))
 		{
 			GuessedNextFirstAccessUnit = NextParsedFrameHeader.Length + NextParsedFrameHeader.FirstAccessUnitPointer - PesPayloadLength;
 		}
-
 		// save back parsed packet info
 		memcpy(&ParsedFrameHeader, &NextParsedFrameHeader, sizeof(LpcmAudioParsedFrameHeader_t));
-
 		return (CollatorNoError);
 	}
-
 	//
 }
 
@@ -459,7 +426,6 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 void Collator_PesAudioLpcm_c::ResetCollatorStateAfterForcedFrameFlush()
 {
 	Collator_PesAudio_c::ResetCollatorStateAfterForcedFrameFlush();
-
 	GuessedNextFirstAccessUnit               = 0;
 	AccumulatedFrameNumber                   = 0;
 	IsPesPrivateDataAreaNew                  = false;
@@ -469,7 +435,6 @@ void Collator_PesAudioLpcm_c::ResetCollatorStateAfterForcedFrameFlush()
 	RemainingDataLength                      = 0;
 	PesPrivateToSkip                         = 0;
 	GlobbedFramesOfNewPacket                 = 0;
-
 	memset(&ParsedFrameHeader, 0 , sizeof(LpcmAudioParsedFrameHeader_t));
 	memset(&NextParsedFrameHeader, 0 , sizeof(LpcmAudioParsedFrameHeader_t));
 }
@@ -490,19 +455,13 @@ void  Collator_PesAudioLpcm_c::SetPesPrivateDataLength(unsigned char SpecificCod
 CollatorStatus_t Collator_PesAudioLpcm_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 	//
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesAudio_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = LPCM_FRAME_HEADER_SIZE;
-
 	Configuration.StreamIdentifierMask       = 0xff;
 	Configuration.StreamIdentifierCode       = 0xbd; // lpcm packets always have a stream_id equal to 0xbd
 	Configuration.BlockTerminateMask         = 0xff;
@@ -513,8 +472,6 @@ CollatorStatus_t Collator_PesAudioLpcm_c::Reset(void)
 	Configuration.TerminalCode               = 0;
 	Configuration.ExtendedHeaderLength       = AudioPesPrivateDataLength[StreamType];
 	Configuration.DeferredTerminateFlag      = false;
-
 	ResetCollatorStateAfterForcedFrameFlush();
-
 	return CollatorNoError;
 }

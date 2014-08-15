@@ -49,11 +49,11 @@ typedef enum
 //
 
 #define AssertComponentState( f, s )            \
-	if( ComponentState != s )                   \
-	{                                           \
-		report( severity_error, "%s - Component not in required state (in %d, required %d).\n", f, ComponentState, s ); \
-		return PlayerError;                     \
-	}
+    if( ComponentState != s )                   \
+    {                                           \
+        report( severity_error, "%s - Component not in required state (in %d, required %d).\n", f, ComponentState, s ); \
+        return PlayerError;                     \
+    }
 
 #define TestComponentState( s )                 (ComponentState == s)
 #define SetComponentState( s )                  ComponentState = s
@@ -114,13 +114,11 @@ class BaseComponentClass_c
 			Stream          = PlayerAllStreams;
 			EventMask       = 0;
 			EventUserData   = NULL;
-
 			Collator        = NULL;
 			FrameParser     = NULL;
 			Codec           = NULL;
 			OutputTimer     = NULL;
 			Manifestor      = NULL;
-
 			SetComponentState(ComponentReset);
 			return  PlayerNoError;
 		}
@@ -141,26 +139,19 @@ class BaseComponentClass_c
 			// In order to provide this data for early use, there is an assumption
 			// that this registratory function does no real work, and cannot fail.
 			//
-
 			this->Player    = Player;
 			this->Playback  = Playback;
 			this->Stream    = Stream;
-
 			if (Collator != NULL)
 				this->Collator  = Collator;
-
 			if (FrameParser != NULL)
 				this->FrameParser   = FrameParser;
-
 			if (Codec != NULL)
 				this->Codec     = Codec;
-
 			if (OutputTimer != NULL)
 				this->OutputTimer   = OutputTimer;
-
 			if (Manifestor != NULL)
 				this->Manifestor    = Manifestor;
-
 			return  PlayerNoError;
 		}
 
@@ -172,7 +163,6 @@ class BaseComponentClass_c
 		{
 			this->EventMask         = EventMask;
 			this->EventUserData     = EventUserData;
-
 			return  PlayerNoError;
 		}
 

@@ -24,7 +24,6 @@ RingUnprotected_c::RingUnprotected_c(unsigned int MaxEntries)
 	NextExtract = 0;
 	NextInsert  = 0;
 	Storage     = new uintptr_t[Limit];
-
 	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
@@ -43,21 +42,16 @@ RingUnprotected_c::~RingUnprotected_c(void)
 RingStatus_t   RingUnprotected_c::Insert(uintptr_t   Value)
 {
 	unsigned int OldNextInsert;
-
 	OldNextInsert       = NextInsert;
 	Storage[NextInsert] = Value;
-
 	NextInsert++;
-
 	if (NextInsert == Limit)
 		NextInsert = 0;
-
 	if (NextInsert == NextExtract)
 	{
 		NextInsert      = OldNextInsert;
 		return RingTooManyEntries;
 	}
-
 	return RingNoError;
 }
 
@@ -68,14 +62,10 @@ RingStatus_t   RingUnprotected_c::Extract(uintptr_t *Value)
 {
 	if (NextExtract == NextInsert)
 		return RingNothingToGet;
-
 	*Value = Storage[NextExtract];
-
 	NextExtract++;
-
 	if (NextExtract == Limit)
 		NextExtract = 0;
-
 	return RingNoError;
 }
 
@@ -86,7 +76,6 @@ RingStatus_t   RingUnprotected_c::Flush(void)
 {
 	NextExtract = 0;
 	NextInsert  = 0;
-
 	return RingNoError;
 }
 

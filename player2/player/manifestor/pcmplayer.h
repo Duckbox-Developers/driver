@@ -47,7 +47,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define PCMPLAYER_DEBUG(fmt, args...) ((void)(ENABLE_PCMPLAYER_DEBUG && \
-											  (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args), 0)))
+                                              (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define PCMPLAYER_TRACE(fmt, args...) (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args))
@@ -55,7 +55,7 @@ Date        Modification                                    Name
 #define PCMPLAYER_ERROR(fmt, args...) (report(severity_error, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args))
 
 #define PCMPLAYER_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-													   PCMPLAYER_FUNCTION, #x, __FILE__, __LINE__); while(0)
+                                                       PCMPLAYER_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -87,7 +87,7 @@ class PcmPlayer_c
 
 		enum OutputEncoding
 		{
-			OUTPUT_DISABLED, //< Don't configure this output (will be sent via seperate coded data formatter)
+			OUTPUT_DISABLED, //< Don't configure this output (will be sent via separate coded data formatter)
 			OUTPUT_PCM,      //< Raw PCM
 			OUTPUT_IEC60958, //< PCM formatted for SPDIF output
 			OUTPUT_AC3,      //< AC3 with IEC61937 formatting for SPDIF output
@@ -208,7 +208,6 @@ class PcmPlayer_c
 					L(BYPASS_DTSHD_MA);
 					L(BYPASS_TRUEHD);
 #undef L
-
 				default:
 					return "UNKNOWN";
 			}

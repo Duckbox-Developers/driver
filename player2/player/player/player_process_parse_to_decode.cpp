@@ -47,9 +47,7 @@ Date        Modification                                    Name
 OS_TaskEntry(PlayerProcessParseToDecode)
 {
 	PlayerStream_t          Stream = (PlayerStream_t)Parameter;
-
 	Stream->Player->ProcessParseToDecode(Stream);
-
 	OS_TerminateThread();
 	return NULL;
 }
@@ -78,104 +76,79 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 	PlayerBufferRecord_t             *Table;
 	bool                              DiscardBuffer;
 	bool                  PromoteNextStreamParametersToNew;
-
 	//
 	// Set parameters
 	//
-
 	LastEntryTime                               = OS_GetTimeInMicroSeconds();
 	SequenceNumber                              = INVALID_SEQUENCE_VALUE;
 	MaximumActualSequenceNumberSeen             = 0;
 	AccumulatedBeforeControlMessagesCount       = 0;
 	AccumulatedAfterControlMessagesCount        = 0;
 	PromoteNextStreamParametersToNew        = false;
-
 	//
 	// Signal we have started
 	//
-
 	OS_LockMutex(&Lock);
-
 	Stream->ProcessRunningCount++;
-
 	if (Stream->ProcessRunningCount == Stream->ExpectedProcessCount)
 		OS_SetEvent(&Stream->StartStopEvent);
-
 	OS_UnLockMutex(&Lock);
-
 	//
 	// Main Loop
 	//
-
 	while (!Stream->Terminating)
 	{
 		RingStatus      = Stream->ParsedFrameRing->Extract((uintptr_t *)(&Buffer), PLAYER_MAX_EVENT_WAIT);
-
 		if ((RingStatus == RingNothingToGet) || Stream->Terminating)
 		{
 			continue;
 		}
-
 		Buffer->GetType(&BufferType);
 		Buffer->TransferOwnership(IdentifierProcessParseToDecode);
-
 		//
 		// Deal with a coded frame buffer
 		//
-
 		if (BufferType == Stream->CodedFrameBufferType)
 		{
 			//
 			// Obtain a sequence number from the buffer
 			//
-
 			Status      = Buffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessParseToDecode - Unable to obtain the meta data \"SequenceNumber\" - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessParseToDecode);
 				continue;
 			}
-
 			SequenceNumberStructure->TimeEntryInProcess1        = OS_GetTimeInMicroSeconds();
 			SequenceNumberStructure->DeltaEntryInProcess1       = SequenceNumberStructure->TimeEntryInProcess1 - LastEntryTime;
 			LastEntryTime                                       = SequenceNumberStructure->TimeEntryInProcess1;
 			SequenceNumber                                      = SequenceNumberStructure->Value;
 			MaximumActualSequenceNumberSeen                     = max(SequenceNumber, MaximumActualSequenceNumberSeen);
-
 			if (SequenceNumberStructure->MarkerFrame)
 				Stream->DiscardingUntilMarkerFramePtoD  = false;
-
 			//
 			// Obtain the parsed frame parameters
 			//
-
 			Status      = Buffer->ObtainMetaDataReference(MetaDataParsedFrameParametersType, (void **)(&ParsedFrameParameters));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessParseToDecode - Unable to obtain the meta data \"ParsedFrameParameters\" - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessParseToDecode);
 				continue;
 			}
-
 			//
 			// Process any outstanding control messages to be applied before this buffer
 			//
-
 			ProcessAccumulatedControlMessages(Stream,
 											  &AccumulatedBeforeControlMessagesCount,
 											  PLAYER_MAX_PTOD_MESSAGES,
 											  Stream->AccumulatedBeforePtoDControlMessages,
 											  SequenceNumber, INVALID_TIME);
-
 			//
 			// If we are not discarding everything, then proceed to process the buffer
 			//
-
 			DiscardBuffer       = Stream->DiscardingUntilMarkerFramePtoD;
-
 			//
 			// Handle output timing functions, await entry into the decode window,
 			// Then check for frame drop (whether due to trick mode, or because
@@ -185,33 +158,25 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 			// NOTE2 We may block in these functions, so it is important to
 			// recheck flags
 			//
-
 			if (!DiscardBuffer && !SequenceNumberStructure->MarkerFrame)
 			{
 				Status  = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeDecodeWindow);
-
 				if (Status == OutputTimerNoError)
 				{
 					if (ParsedFrameParameters->FirstParsedParametersForOutputFrame)
 						Stream->OutputTimer->AwaitEntryIntoDecodeWindow(Buffer);
-
 					Status  = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeDecode);
 				}
-
 				if (Stream->DiscardingUntilMarkerFramePtoD ||
 						Stream->Terminating ||
 						(Status != OutputTimerNoError))
 					DiscardBuffer       = true;
-
 #if 0
-
 				// Nick debug data
 				if (Status != OutputTimerNoError)
 					report(severity_info, "Timer Discard (before decode) %08x - %d\n", Status, ParsedFrameParameters->DecodeFrameIndex);
-
 #endif
 			}
-
 			//
 			// Pass the buffer to the codec for decoding
 			// then release our hold on this buffer.
@@ -220,7 +185,6 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 			// we remember the fact, and on the next frame that is decoded, we
 			// promote its stream parameters as new.
 			//
-
 			if (!DiscardBuffer)
 			{
 				if (PromoteNextStreamParametersToNew && (ParsedFrameParameters->StreamParameterStructure != NULL))
@@ -228,50 +192,39 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 					ParsedFrameParameters->NewStreamParameters  = true;
 					PromoteNextStreamParametersToNew        = false;
 				}
-
 				SequenceNumberStructure->TimePassToCodec        = OS_GetTimeInMicroSeconds();
 				Status  = Stream->Codec->Input(Buffer);
-
 				if (Status != CodecNoError)
 					DiscardBuffer               = true;
 			}
-
 			if (DiscardBuffer)
 			{
 				if (ParsedFrameParameters->NewStreamParameters)
 					PromoteNextStreamParametersToNew        = true;
-
 				if (ParsedFrameParameters->FirstParsedParametersForOutputFrame)
 				{
 					RecordNonDecodedFrame(Stream, Buffer, ParsedFrameParameters);
 					Stream->Codec->OutputPartialDecodeBuffers();
 				}
 			}
-
 			Buffer->DecrementReferenceCount(IdentifierProcessParseToDecode);
-
 			//
 			// Process any outstanding control messages to be applied after this buffer
 			//
-
 			ProcessAccumulatedControlMessages(Stream,
 											  &AccumulatedAfterControlMessagesCount,
 											  PLAYER_MAX_PTOD_MESSAGES,
 											  Stream->AccumulatedAfterPtoDControlMessages,
 											  SequenceNumber, INVALID_TIME);
 		}
-
 		//
 		// Deal with a player control structure
 		//
-
 		else if (BufferType == BufferPlayerControlStructureType)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
-
 			ProcessNow  = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
 						  ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
-
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
 			else
@@ -287,7 +240,6 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 					Count       = &AccumulatedAfterControlMessagesCount;
 					Table       = Stream->AccumulatedAfterPtoDControlMessages;
 				}
-
 				AccumulateControlMessage(Buffer, ControlStructure, Count, PLAYER_MAX_PTOD_MESSAGES, Table);
 			}
 		}
@@ -297,20 +249,14 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 			Buffer->DecrementReferenceCount();
 		}
 	}
-
 	report(severity_info, "1111 Holding control structures %d\n", AccumulatedBeforeControlMessagesCount + AccumulatedAfterControlMessagesCount);
-
 	//
 	// Signal we have terminated
 	//
-
 	OS_LockMutex(&Lock);
-
 	Stream->ProcessRunningCount--;
-
 	if (Stream->ProcessRunningCount == 0)
 		OS_SetEvent(&Stream->StartStopEvent);
-
 	OS_UnLockMutex(&Lock);
 }
 
@@ -320,29 +266,24 @@ void   Player_Generic_c::ProcessParseToDecode(PlayerStream_t            Stream)
 //
 
 void   Player_Generic_c::RecordNonDecodedFrame(PlayerStream_t            Stream,
-											   Buffer_t                  Buffer,
-											   ParsedFrameParameters_t  *ParsedFrameParameters)
+		Buffer_t                  Buffer,
+		ParsedFrameParameters_t  *ParsedFrameParameters)
 {
 	unsigned int            i;
 	PlayerStatus_t          Status;
-
 	//
 	// Fill me a record
 	//
-
 	for (i = 0; i < PLAYER_MAX_DISCARDED_FRAMES; i++)
 		if (Stream->NonDecodedBuffers[i].Buffer == NULL)
 		{
 			//
 			// Do we want the buffer, or can we take the index now
 			//
-
 			Stream->NonDecodedBuffers[i].ReleasedBuffer = ParsedFrameParameters->DisplayFrameIndex != INVALID_INDEX;
-
 			if (Stream->NonDecodedBuffers[i].ReleasedBuffer)
 			{
 				Stream->NonDecodedBuffers[i].DisplayFrameIndex  = ParsedFrameParameters->DisplayFrameIndex;
-
 				if (Stream->DiscardingUntilMarkerFramePtoD || ParsedFrameParameters->CollapseHolesInDisplayIndices)
 					Stream->DisplayIndicesCollapse  = max(Stream->DisplayIndicesCollapse, ParsedFrameParameters->DisplayFrameIndex);
 			}
@@ -350,32 +291,24 @@ void   Player_Generic_c::RecordNonDecodedFrame(PlayerStream_t            Stream,
 			{
 				Buffer->IncrementReferenceCount(IdentifierNonDecodedFrameList);
 				Stream->NonDecodedBuffers[i].ParsedFrameParameters      = ParsedFrameParameters;        // Check for it later
-
 				//
 				// Shrink that buffer
 				//
-
 				Buffer->SetUsedDataSize(0);
 				Status  = Buffer->ShrinkBuffer(0);
-
 				if (Status != PlayerNoError)
 					report(severity_info, "Player_Generic_c::RecordNonDecodedFrame - Failed to shrink buffer.\n");
 			}
-
 			Stream->NonDecodedBuffers[i].Buffer                 = Buffer;
 			Stream->InsertionsIntoNonDecodedBuffers++;
-
 			//
 			// Would it be wise to poke the post decode process to check the non decoded list
 			//
-
 			if ((Stream->InsertionsIntoNonDecodedBuffers - Stream->RemovalsFromNonDecodedBuffers) >
 					(PLAYER_MAX_DISCARDED_FRAMES - 2))
 				Stream->DecodedFrameRing->Insert((uintptr_t)NULL);
-
 			return;
 		}
-
 	//
 	// If we have no free entry report it, but ignore it,
 	// it will be picked up as a hole in the list, but
@@ -383,7 +316,6 @@ void   Player_Generic_c::RecordNonDecodedFrame(PlayerStream_t            Stream,
 	// because this does occur when we do a drain (skip,
 	// terminate, reverse).
 	//
-
 #if 0
 	OS_SleepMilliSeconds(20);
 	report(severity_info, "Player_Generic_c::RecordNonDecodedFrame - Unable to record %4d, table full.\n", ParsedFrameParameters->DisplayFrameIndex);

@@ -106,7 +106,7 @@ class OutputTimer_c : public BaseComponentClass_c
 		virtual OutputTimerStatus_t   AwaitEntryIntoDecodeWindow(Buffer_t         Buffer) = 0;
 
 		virtual OutputTimerStatus_t   TestForFrameDrop(Buffer_t       Buffer,
-													   OutputTimerTestPoint_t    TestPoint) = 0;
+				OutputTimerTestPoint_t    TestPoint) = 0;
 
 		virtual OutputTimerStatus_t   GenerateFrameTiming(Buffer_t        Buffer) = 0;
 

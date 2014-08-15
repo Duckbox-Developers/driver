@@ -105,7 +105,6 @@ class LeastSquares_c
 		{
 			CumulativeY += DeltaY;
 			CumulativeX += DeltaX;
-
 			SigmaY      += CumulativeY;
 			SigmaYX     += CumulativeY * CumulativeX;
 			SigmaXSquared   += CumulativeX * CumulativeX;
@@ -125,19 +124,15 @@ class LeastSquares_c
 			long long   BottomLong;
 			unsigned int    TopShift;
 			unsigned int    BottomShift;
-
 			if (Count < 2)
 			{
 				report(severity_error, "LeastSquares_c::Gradient - Attepmpt to obtain least squares fit with less than 2 values\n");
 				return 0;
 			}
-
 			Top = ((SigmaY * SigmaX) - (Count * SigmaYX));
 			Bottom  = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
-
 			Top.Get(&TopLong, &TopShift);
 			Bottom.Get(&BottomLong, &BottomShift);
-
 			if (TopShift != BottomShift)
 			{
 				if (TopShift > BottomShift)
@@ -145,7 +140,6 @@ class LeastSquares_c
 				else
 					TopLong     /= (1 << (BottomShift - TopShift));
 			}
-
 			return Rational_t(TopLong, BottomLong);
 		}
 
@@ -161,19 +155,15 @@ class LeastSquares_c
 			long long   BottomLong;
 			unsigned int    TopShift;
 			unsigned int    BottomShift;
-
 			if (Count < 2)
 			{
 				report(severity_error, "LeastSquares_c::Intercept - Attepmpt to obtain least squares fit with less than 2 values\n");
 				return 0;
 			}
-
 			Top = ((SigmaX * SigmaYX) - (SigmaY * SigmaXSquared));
 			Bottom  = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
-
 			Top.Get(&TopLong, &TopShift);
 			Bottom.Get(&BottomLong, &BottomShift);
-
 			if (TopShift != BottomShift)
 			{
 				if (TopShift > BottomShift)
@@ -181,7 +171,6 @@ class LeastSquares_c
 				else
 					TopLong /= (1 << (BottomShift - TopShift));
 			}
-
 			return Rational_t(TopLong, BottomLong);
 		}
 };

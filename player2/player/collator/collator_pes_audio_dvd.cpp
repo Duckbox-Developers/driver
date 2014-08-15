@@ -81,14 +81,11 @@ Collator_PesAudioDvd_c::Collator_PesAudioDvd_c()
 CollatorStatus_t   Collator_PesAudioDvd_c::Reset(void)
 {
 	CollatorStatus_t Status = Collator_PesAudio_c::Reset();
-
 	MakeDvdSyncWordPrediction(INVALID_PREDICTION);
 	ResetDvdSyncWordHeuristics();
-
 	// reprocessing it typically unsafe for DVD-style streams (unless the sub-class carefully
 	// toggles this variable during PES private header handling)
 	ReprocessAccumulatedDataDuringErrorRecovery = false;
-
 	return Status;
 }
 
@@ -104,10 +101,8 @@ void Collator_PesAudioDvd_c::AdjustDvdSyncWordPredictionAfterConsumingData(int A
 	if (Adjustment > 0)
 		COLLATOR_ERROR("Probably implementation error - positive adjustment requested (%d)\n",
 					   Adjustment);
-
 	if (-Adjustment > SyncWordPrediction)
 		SyncWordPrediction = INVALID_PREDICTION;
-
 	if (SyncWordPrediction != WILDCARD_PREDICTION && SyncWordPrediction != INVALID_PREDICTION)
 	{
 		COLLATOR_DEBUG("Adjusting prediction from %d to %d\n",
@@ -133,12 +128,10 @@ void Collator_PesAudioDvd_c::MakeDvdSyncWordPrediction(int Prediction)
 	if (0 == RemainingMispredictionsBeforeAutomaticWildcard)
 	{
 		COLLATOR_TRACE("Deploying bad first access unit pointer workaround.\n");
-
 		Prediction = WILDCARD_PREDICTION;
 		PassPesPrivateDataToElementaryStreamHandler = false;
 		RemainingMispredictionsBeforeAutomaticWildcard = MaxMispredictionsBeforeAutomaticWildcard;
 	}
-
 	COLLATOR_DEBUG("Making prediction of %d\n", Prediction);
 	SyncWordPrediction = Prediction;
 }
@@ -171,14 +164,12 @@ void Collator_PesAudioDvd_c::VerifyDvdSyncWordPrediction(int Offset)
 		// and need to ensure the DVD PES private data *is* processed as elementary
 		// stream.
 		PassPesPrivateDataToElementaryStreamHandler = (SyncWordPrediction != Offset);
-
 		// If we badly predicted the location of the sync word then record this. This
 		// counter is used as part of a heuristic workaround in other parts of the code.
 		if ((SyncWordPrediction != Offset) &&
 				(SyncWordPrediction != INVALID_PREDICTION) &&
 				(RemainingMispredictionsBeforeAutomaticWildcard > 0))
 			RemainingMispredictionsBeforeAutomaticWildcard--;
-
 		// Having consumed the prediction enter a wildcard mode. This causes
 		// PassPesPrivateDataToElementaryStreamHandler to hold the same
 		// value until we process a PES private data area whilst SeekingFrameHeader.
@@ -198,7 +189,6 @@ void Collator_PesAudioDvd_c::VerifyDvdSyncWordPrediction(int Offset)
 			COLLATOR_TRACE("Having trouble re-locking, %s DVD wildcard mode.\n",
 						   (PassPesPrivateDataToElementaryStreamHandler ? "entering" : "leaving"));
 			PassPesPrivateDataToElementaryStreamHandler = !PassPesPrivateDataToElementaryStreamHandler;
-
 			// having switched modes we can reset our counter.
 			RemainingWildcardsPermitted = MaxWildcardsPermitted;
 		}

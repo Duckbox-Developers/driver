@@ -108,8 +108,8 @@ class FrameParser_AudioEAc3_c : public FrameParser_Audio_c
 											 int RemainingElementaryLength);
 
 		static FrameParserStatus_t ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-														  EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
-														  bool SearchForConvSync);
+				EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
+				bool SearchForConvSync);
 };
 
 #endif /* H_FRAME_PARSER_AUDIO_EAC3 */

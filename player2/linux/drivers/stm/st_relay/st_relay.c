@@ -69,10 +69,10 @@ static DEFINE_SPINLOCK(st_chan_lock);
  * file_create() callback.  Creates relay file in debugfs.
  */
 static struct dentry *st_create_buf_file_handler(const char *filename,
-												 struct dentry *parent,
-												 int mode,
-												 struct rchan_buf *buf,
-												 int *is_global)
+		struct dentry *parent,
+		int mode,
+		struct rchan_buf *buf,
+		int *is_global)
 {
 	struct dentry *buf_file;
 	buf_file = debugfs_create_file(filename, mode, parent, buf, &relay_file_operations);
@@ -107,13 +107,10 @@ static inline int st_relay_write(struct rchan *chan,
 {
 	unsigned long flags;
 	struct rchan_buf *buf;
-
 	local_irq_save(flags);
 	buf = chan->buf[smp_processor_id()];
-
 	if (unlikely(buf->offset + length > chan->subbuf_size))
 		length = relay_switch_subbuf(buf, length);
-
 	memcpy(buf->data + buf->offset, data, length);
 	buf->offset += length;
 	local_irq_restore(flags);
@@ -125,10 +122,8 @@ static inline int st_relay_write(struct rchan *chan,
 void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, unsigned int len, void *info)
 {
 	unsigned long flags;
-
 	//did we get to open our channel?
 	if (!st_relay_chan) return;
-
 	//check exists!
 	if (id >= RELAY_NUMBER_OF_TYPES)
 	{
@@ -140,7 +135,6 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 		if (relay_entries[id].active)
 		{
 			int wrote1, wrote2, wrote3;
-
 			relay_entries[id].x      = 0;   //mini meta data
 			relay_entries[id].y      = 0;
 			relay_entries[id].z      = 0;
@@ -148,33 +142,24 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 			relay_entries[id].source = source;
 			relay_entries[id].count  = relay_source_item_counts[source][id];
 			relay_entries[id].len    = len;
-
 			if (id == ST_RELAY_TYPE_DECODED_VIDEO_BUFFER)
 			{
 				//for these we need to hunt two separate parts, Luma and Chroma
 				//TODO - we assume info->type is SURF_YCBCR420MB right now...
-
 				struct relay_video_frame_info_s *vid_info = info;
-
 				relay_entries[id].x      = vid_info->width;
 				relay_entries[id].y      = vid_info->height;
 				relay_entries[id].len    = (((relay_entries[id].x * relay_entries[id].y) * 3) / 2);
-
 				spin_lock_irqsave(&st_chan_lock, flags);
 				wrote1 = st_relay_write(st_relay_chan, relay_entries[id].name, ST_RELAY_ENTRY_HEADER_LEN);
-
 				if (wrote1 != 0)
 				{
-
 					wrote2 = st_relay_write(st_relay_chan, buf + (vid_info->luma_offset),
 											(relay_entries[id].x * relay_entries[id].y));
-
 					if (wrote2 != 0)
 					{
-
 						wrote3 = st_relay_write(st_relay_chan, buf + (vid_info->chroma_offset),
 												((relay_entries[id].x * relay_entries[id].y) / 2));
-
 						if (wrote3 != 0)
 						{
 							relay_source_item_counts[source][id]++;
@@ -190,19 +175,15 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 					}
 				}
 				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN;   //use wrote1 to signify error and how much failed to write
-
 				spin_unlock_irqrestore(&st_chan_lock, flags);
-
 			}
 			else
 			{
 				spin_lock_irqsave(&st_chan_lock, flags);
 				wrote1 = st_relay_write(st_relay_chan, relay_entries[id].name, ST_RELAY_ENTRY_HEADER_LEN);
-
 				if (wrote1 != 0)
 				{
 					wrote2 = st_relay_write(st_relay_chan, buf, len);
-
 					if (wrote2 != 0)
 					{
 						relay_source_item_counts[source][id]++;
@@ -213,10 +194,8 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 					}
 				}
 				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN;   //use wrote1 to signify error and how much failed to write
-
 				spin_unlock_irqrestore(&st_chan_lock, flags);
 			}
-
 			if (wrote1 < 0)
 			{
 				printk("st_relayfs_write: DISABLING %s - client not reading data quick enough! (%d lost) \n",
@@ -230,7 +209,6 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 unsigned int st_relayfs_getindex(unsigned int source)
 {
 	unsigned int n, index = 0;
-
 	switch (source)
 	{
 		case ST_RELAY_SOURCE_AUDIO_MANIFESTOR:
@@ -243,9 +221,7 @@ unsigned int st_relayfs_getindex(unsigned int source)
 					break;
 				}
 			}
-
 			break;
-
 		case ST_RELAY_SOURCE_VIDEO_MANIFESTOR:
 			for (n = 0; n < 4; n++)
 			{
@@ -256,10 +232,8 @@ unsigned int st_relayfs_getindex(unsigned int source)
 					break;
 				}
 			}
-
 			break;
 	}
-
 	return index;
 }
 
@@ -270,7 +244,6 @@ void st_relayfs_freeindex(unsigned int source, unsigned int index)
 		case ST_RELAY_SOURCE_AUDIO_MANIFESTOR:
 			audio_manifestor_indexes[index] = 0;
 			break;
-
 		case ST_RELAY_SOURCE_VIDEO_MANIFESTOR:
 			video_manifestor_indexes[index] = 0;
 			break;
@@ -280,24 +253,19 @@ void st_relayfs_freeindex(unsigned int source, unsigned int index)
 int st_relayfs_open(void)
 {
 	int n, m;
-
 	//clear and fill in entries table with names/default
 	memset(&relay_entries, 0x00, sizeof(relay_entries));
-
 	for (n = 0; n < RELAY_NUMBER_OF_TYPES; n++)
 	{
 		strcpy(relay_entries[n].name, relay_type_names[n]);
 		relay_entries[n].active = 0;
 	}
-
 	//clear count table
 	for (n = 0; n < RELAY_NUMBER_OF_SOURCES; n++)
 		for (m = 0; m < RELAY_NUMBER_OF_TYPES; m++)
 			relay_source_item_counts[n][m] = 0;
-
 	//set up our debugfs dir and entries
 	strelay_dir = debugfs_create_dir("st_relay", NULL);
-
 	if (!strelay_dir)
 	{
 		printk("%s: ERROR: Couldn't create debugfs app directory.\n", __FUNCTION__);
@@ -307,7 +275,6 @@ int st_relayfs_open(void)
 	{
 		st_relay_chan = relay_open("data", strelay_dir, SUBBUF_SIZE,
 								   N_SUBBUFS, &st_relayfs_callbacks, 0);
-
 		if (st_relay_chan)
 		{
 			for (n = 0; n < RELAY_NUMBER_OF_TYPES; n++)
@@ -321,23 +288,18 @@ int st_relayfs_open(void)
 			printk("st_relayfs_open: ERROR: Couldn't create relay channel.\n");
 		}
 	}
-
 	return 0;
 }
 
 void st_relayfs_close(void)
 {
 	int n;
-
 	for (n = 0; n < RELAY_NUMBER_OF_TYPES; n++)
 	{
 		if (relay_entries[n].dentry) debugfs_remove(relay_entries[n].dentry);
 	}
-
 	if (strelay_dir) debugfs_remove(strelay_dir);
-
 	if (st_relay_chan) relay_close(st_relay_chan);
-
 	st_relay_chan = 0;
 }
 

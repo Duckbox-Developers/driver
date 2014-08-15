@@ -99,6 +99,7 @@ class Codec_MmeVideoDivxHd_c : public Codec_MmeVideo_c
 
 		CodecStatus_t   DumpSetStreamParameters(void *Parameters);
 		CodecStatus_t   DumpDecodeParameters(void *Parameters);
+
 		CodecStatus_t   InitializeMMETransformer(void);
 };
 #endif

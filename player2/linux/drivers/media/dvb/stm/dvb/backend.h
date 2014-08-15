@@ -71,7 +71,7 @@ Date        Modification                                    Name
 #endif
 
 #define BACKEND_DEBUG(fmt, args...)  ((void) (ENABLE_BACKEND_DEBUG && \
-											  (printk("LinuxDvb:%s: " fmt, __FUNCTION__, ##args), 0)))
+                                              (printk("LinuxDvb:%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define BACKEND_TRACE(fmt, args...)  (printk("LinuxDvb:%s: " fmt, __FUNCTION__, ##args))
@@ -246,7 +246,7 @@ static inline int DvbPlaybackAddDemux(struct PlaybackContext_s*       Playback,
 }
 
 static inline int DvbPlaybackRemoveDemux(struct PlaybackContext_s*       Playback,
-										 struct StreamContext_s*         Demux)
+		struct StreamContext_s*         Demux)
 {
 	return DvbPlaybackRemoveStream(Playback, Demux);
 }

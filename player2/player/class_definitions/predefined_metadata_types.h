@@ -354,14 +354,14 @@ typedef struct ParsedAudioParameters_s
 //
 
 #define OUTPUT_TIMING_COMMON                                    \
-	unsigned long long      SystemPlaybackTime;             \
-	unsigned long long      ExpectedDurationTime;           \
-	unsigned long long      ActualSystemPlaybackTime;       \
-	\
-	Rational_t              OutputRateAdjustment;           \
-	Rational_t              SystemClockAdjustment;          \
-	\
-	bool                    TimingGenerated;
+    unsigned long long      SystemPlaybackTime;             \
+    unsigned long long      ExpectedDurationTime;           \
+    unsigned long long      ActualSystemPlaybackTime;       \
+    \
+    Rational_t              OutputRateAdjustment;           \
+    Rational_t              SystemClockAdjustment;          \
+    \
+    bool                    TimingGenerated;
 
 typedef struct VideoOutputTiming_s
 {

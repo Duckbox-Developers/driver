@@ -54,7 +54,9 @@ Date        Modification                                    Name
 #define NB_SAMPLES_48_KHZ 960
 #define NB_SAMPLES_96_KHZ 1920
 #define NB_SAMPLES_192_KHZ 1920
-/* #warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync" */
+/*
+ * todo Update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync
+ */
 
 const char NbAudioFramesToGlob[MlpSamplingFreqNone] =
 {
@@ -89,7 +91,6 @@ Collator_PesAudioMlp_c::Collator_PesAudioMlp_c(void)
 {
 	if (InitializationStatus != CollatorNoError)
 		return;
-
 	Collator_PesAudioMlp_c::Reset();
 }
 
@@ -108,16 +109,13 @@ CollatorStatus_t Collator_PesAudioMlp_c::FindNextSyncWord(int *CodeOffset)
 {
 	int i;
 	unsigned char MlpHeader[MLP_HEADER_SIZE];
-
 	int RemainingInPotential = PotentialFrameHeaderLength;
 	unsigned char * PotentialFramePtr = PotentialFrameHeader;
-
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - MLP_HEADER_SIZE); i++)
 	{
 		unsigned int SyncWord, Signature;
 		unsigned char * ElementaryPtr;
-
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least MLP_HEADER_SIZE bytes to get the stream type...*/
@@ -130,33 +128,24 @@ CollatorStatus_t Collator_PesAudioMlp_c::FindNextSyncWord(int *CodeOffset)
 		{
 			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
 		}
-
 		Bits.SetPointer(ElementaryPtr + 4);
-
 		// get the major sync
 		SyncWord = Bits.Get(32);
 		Bits.FlushUnseen(32);
 		Signature = Bits.Get(16);
-
 		if (((SyncWord == MLP_FORMAT_SYNC_A) || (SyncWord == MLP_FORMAT_SYNC_B))
 				&& (Signature == MLP_SIGNATURE))
 		{
 			int Offset = (RemainingInPotential > 0) ? (-RemainingInPotential) : (i - PotentialFrameHeaderLength);
-
 			COLLATOR_DEBUG(">>Got Synchronization, i = %d, Offset= %d <<\n", i, Offset);
 			*CodeOffset = Offset;
-
 			VerifyDvdSyncWordPrediction(Offset + StuffingBytesLength);
-
 			return CollatorNoError;
 		}
-
 		RemainingInPotential--;
 		PotentialFramePtr++;
 	}
-
 	AdjustDvdSyncWordPredictionAfterConsumingData(-RemainingElementaryLength);
-
 	return CollatorError;
 }
 
@@ -174,9 +163,7 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 	FrameParserStatus_t FPStatus;
 	CollatorStatus_t Status;
 	MlpAudioParsedFrameHeader_t ParsedFrameHeader;
-
 	//
-
 	if (StuffingBytesLength > 0)
 	{
 		COLLATOR_DEBUG("Skipping %d bytest of pda stuffing bytes\n", StuffingBytesLength);
@@ -185,10 +172,8 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 		CollatorState = SkipSubFrame;
 		return CollatorNoError;
 	}
-
 	FPStatus = FrameParser_AudioMlp_c::ParseSingleFrameHeader(StoredFrameHeader,
 			   &ParsedFrameHeader);
-
 	if (FPStatus == FrameParserNoError)
 	{
 		// normally we have sync on a major sync frame, so we should for the
@@ -198,14 +183,11 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 			NbFramesToGlob = NbAudioFramesToGlob[ParsedFrameHeader.SamplingFrequency];
 			COLLATOR_DEBUG("Setting number of frames to glob to %d\n", NbFramesToGlob);
 		}
-
 		if (CollatorState == SeekingFrameEnd)
 		{
 			AccumulatedFrameNumber += 1;
 		}
-
 		*FrameLength = ParsedFrameHeader.Length;
-
 		if (AccumulatedFrameNumber >= NbFramesToGlob)
 		{
 			CollatorState = GotCompleteFrame;
@@ -216,16 +198,13 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 		{
 			CollatorState = ReadSubFrame;
 		}
-
 		COLLATOR_DEBUG("Length: %d\n", ParsedFrameHeader.Length);
-
 		Status = CollatorNoError;
 	}
 	else
 	{
 		Status = CollatorError;
 	}
-
 	return Status;
 }
 
@@ -242,9 +221,7 @@ void  Collator_PesAudioMlp_c::SetPesPrivateDataLength(unsigned char SpecificCode
 	/* when the Pes stream_id is PES_START_CODE_PRIVATE_STREAM_1 we consider */
 	/* this is a DVD-Audio, so we set the private data area to 10 bytes long */
 	/* If we have mistaken, the HandlePesPrivateData will mark these bytes as part of the stream */
-
 	Configuration.ExtendedHeaderLength = (IS_PES_START_CODE_PRIVATE_STREAM_1(SpecificCode)) ? MLP_PRIVATE_DATA_AREA_SIZE : 0;
-
 	if (IS_PES_START_CODE_EXTENDED_STREAM_ID(SpecificCode))
 	{
 		COLLATOR_DEBUG("Pes SubStream ID: 0x%x\n", StoredPesHeader[16]);
@@ -274,13 +251,11 @@ void  Collator_PesAudioMlp_c::SetPesPrivateDataLength(unsigned char SpecificCode
 CollatorStatus_t Collator_PesAudioMlp_c::HandlePesPrivateData(unsigned char *PesPrivateData)
 {
 	BitStreamClass_c Bits;
-
 	// ensure the PES private data is passed to the sync detection code
 	if (CollatorState == SeekingSyncWord)
 	{
 		PassPesPrivateDataToElementaryStreamHandler = true;
 	}
-
 	// parse the private data area (assuming that is what we have)
 	Bits.SetPointer(PesPrivateData);
 	unsigned int SubStreamId = Bits.Get(8);
@@ -288,9 +263,7 @@ CollatorStatus_t Collator_PesAudioMlp_c::HandlePesPrivateData(unsigned char *Pes
 	Bits.FlushUnseen(5 + 8);
 	unsigned int PrivateHeaderLength = Bits.Get(8);
 	unsigned int FirstAccessUnitPointer = Bits.Get(16);
-
 	COLLATOR_DEBUG("FirstAccessUnitPointer: %d \n", FirstAccessUnitPointer);
-
 	if (((SubStreamId & 0xff) != 0xA1) ||
 			(Reserved != 0) ||
 			(FirstAccessUnitPointer > 2034) ||
@@ -300,7 +273,6 @@ CollatorStatus_t Collator_PesAudioMlp_c::HandlePesPrivateData(unsigned char *Pes
 		// check if we have a HD-DVD private data header type
 		Bits.SetPointer(PesPrivateData + 1);
 		FirstAccessUnitPointer = Bits.Get(16);
-
 		if (((SubStreamId & 0xf8) != 0xB0) ||
 				(FirstAccessUnitPointer > 2025) ||
 				(FirstAccessUnitPointer < 2))
@@ -318,32 +290,23 @@ CollatorStatus_t Collator_PesAudioMlp_c::HandlePesPrivateData(unsigned char *Pes
 		MakeDvdSyncWordPrediction(FirstAccessUnitPointer - 1 + 6);
 		StuffingBytesLength = PrivateHeaderLength - 6;
 	}
-
 	return CollatorNoError;
 }
 
 CollatorStatus_t Collator_PesAudioMlp_c::Reset(void)
 {
 	CollatorStatus_t Status;
-
 //
-
 	COLLATOR_DEBUG(">><<\n");
-
 	Status = Collator_PesAudioDvd_c::Reset();
-
 	if (Status != CollatorNoError)
 		return Status;
-
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = MLP_HEADER_SIZE;
-
 	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
 	Configuration.StreamIdentifierCode       = PES_START_CODE_PRIVATE_STREAM_1;
-
 	Configuration.SubStreamIdentifierMask    = 0xff;
 	Configuration.SubStreamIdentifierCode    = MLP_STREAM_ID_EXTENSION_MLP;
-
 	Configuration.BlockTerminateMask         = 0xff;         // Picture
 	Configuration.BlockTerminateCode         = 0x00;
 	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
@@ -352,11 +315,8 @@ CollatorStatus_t Collator_PesAudioMlp_c::Reset(void)
 	Configuration.TerminalCode               = 0;
 	Configuration.ExtendedHeaderLength       = 0;
 	Configuration.DeferredTerminateFlag      = false;
-
 	AccumulatedFrameNumber = 0;
 	NbFramesToGlob = 0;
-
 	StuffingBytesLength = 0;
-
 	return CollatorNoError;
 }

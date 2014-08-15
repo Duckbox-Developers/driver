@@ -144,7 +144,7 @@ Mpeg2HardStatus_t Mpeg2HardInit(char *Name,
 								Mpeg2HardHandle_t                *Handle);
 
 Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(Mpeg2HardHandle_t                 Handle,
-											 Mpeg2HardSequenceParams_t        *SequenceParams);
+		Mpeg2HardSequenceParams_t        *SequenceParams);
 
 Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t Handle,
 									   Mpeg2HardFrameParams_t *FrameParams);

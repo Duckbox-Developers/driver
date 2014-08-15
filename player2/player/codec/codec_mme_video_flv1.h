@@ -50,7 +50,7 @@ Date        Modification                                    Name
 #define FLV1_NUM_MME_BUFFERS                    (FLV1_NUM_MME_INPUT_BUFFERS+FLV1_NUM_MME_OUTPUT_BUFFERS)
 
 #define FLV1_MME_CODED_DATA_BUFFER              0
-#define FLV1_MME_CURRENT_FRAME_BUFFER           1
+#define FLV1_MME_CURRENT_FRAME_BUFFER_RASTER    1
 #define FLV1_MME_REFERENCE_FRAME_BUFFER         2
 #define FLV1_MME_CURRENT_FRAME_BUFFER_LUMA      3
 #define FLV1_MME_CURRENT_FRAME_BUFFER_CHROMA    4

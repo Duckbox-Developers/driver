@@ -150,30 +150,23 @@ extern void SysfsInit(void);
 #endif
 static int __init PlayerLoadModule(void)
 {
-
 	report_init();
 	report_restricted_severity_levels(severity_fatal, severity_interrupt * 10);
-
 	DisplayInit();
 	BackendInit();
-
 	register_dvb_backend(MODULE_NAME, &DvbBackendOps);
 	register_alsa_backend(MODULE_NAME, &AlsaBackendOps);
 #if defined (CONFIG_EXPORT_PLAYER_INTERFACE)
 	register_player_interface(MODULE_NAME, &PlayerInterfaceOps);
 #endif
-
 	PLAYER_DEBUG("Player2 backend loaded\n");
-
 	return 0;
 }
 
 static void __exit PlayerUnloadModule(void)
 {
 	BackendDelete();
-
 	PLAYER_DEBUG("Player2 backend unloaded\n");
-
 	return;
 }
 

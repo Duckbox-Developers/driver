@@ -199,166 +199,166 @@ proc = open("/sys/class/stmcoredisplay/display0/hdmi0.0/modes", "r")
 #include "linux/dvb/stm_ioctls.h"
 
 	   /* external functions provided by the module e2_procfs */
-	   extern int install_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc, void *data);
-extern int remove_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc);
+	   extern int install_e2_procs(char* name, read_proc_t* read_proc, write_proc_t* write_proc, void* data);
+extern int remove_e2_procs(char* name, read_proc_t* read_proc, write_proc_t* write_proc);
 
-extern int proc_progress_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_progress_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_progress_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_progress_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
-extern int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_bus_nim_sockets_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_info_model_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_info_model_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_audio_ac3_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_audio_ac3_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_audio_delay_pcm_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_audio_delay_pcm_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_audio_delay_bitstream_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_audio_delay_bitstream_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_audio_j1_mute_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_audio_j1_mute_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_aspect_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_aspect_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_aspect_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_policy_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_policy_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_policy_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_videomode_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_videomode_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_pal_h_start_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_pal_h_start_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_pal_h_end_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_pal_h_end_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_pal_v_start_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_pal_v_start_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_pal_v_end_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_pal_v_end_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_alpha_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_alpha_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_audio_ac3_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_audio_ac3_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_audio_delay_pcm_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_audio_delay_pcm_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_audio_delay_bitstream_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_audio_delay_bitstream_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_audio_j1_mute_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_audio_j1_mute_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_aspect_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_aspect_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_aspect_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_policy_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_policy_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_policy_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_videomode_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_videomode_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_pal_h_start_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_pal_h_start_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_pal_h_end_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_pal_h_end_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_pal_v_start_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_pal_v_start_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_pal_v_end_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_pal_v_end_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_alpha_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_alpha_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 #if defined(ADB_BOX)
-extern int proc_video_switch_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_switch_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_switch_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_video_switch_type_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_video_switch_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_switch_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_switch_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_video_switch_type_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 #endif
-extern int proc_avs_0_colorformat_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_colorformat_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_avs_0_colorformat_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_fb_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_fb_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_avs_0_input_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_input_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_avs_0_sb_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_sb_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_avs_0_volume_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_volume_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_avs_0_input_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_avs_0_colorformat_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_colorformat_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_avs_0_colorformat_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_fb_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_fb_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_avs_0_input_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_avs_0_sb_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_sb_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_avs_0_volume_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_avs_0_input_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_avs_0_standby_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_avs_0_standby_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_avs_0_standby_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_avs_0_standby_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
-extern int proc_denc_0_wss_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_denc_0_wss_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_denc_0_wss_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_denc_0_wss_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
-extern int proc_tsmux_input0_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_tsmux_input0_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_tsmux_input1_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_tsmux_input1_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_tsmux_ci0_input_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_tsmux_ci0_input_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_tsmux_ci1_input_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_tsmux_ci1_input_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_tsmux_lnb_b_input_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_tsmux_lnb_b_input_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_tsmux_input0_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_tsmux_input0_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_tsmux_input1_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_tsmux_input1_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_tsmux_ci0_input_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_tsmux_ci0_input_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_tsmux_ci1_input_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_tsmux_ci1_input_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_tsmux_lnb_b_input_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_tsmux_lnb_b_input_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 #if defined(IPBOX9900)
-extern int proc_misc_12V_output_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_misc_12V_output_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_misc_12V_output_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_misc_12V_output_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 #endif
-extern int proc_audio_ac3_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_videomode_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_videomode_preferred_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_video_videomode_preferred_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_fp_led0_pattern_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_fp_led0_pattern_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_fp_led_pattern_speed_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_fp_led_pattern_speed_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_fp_was_timer_wakeup_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_fp_was_timer_wakeup_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_audio_ac3_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_videomode_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_videomode_preferred_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_video_videomode_preferred_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_fp_led0_pattern_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_fp_led0_pattern_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_fp_led_pattern_speed_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_fp_led_pattern_speed_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_fp_was_timer_wakeup_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_fp_was_timer_wakeup_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
 #if defined(IPBOX9900) || defined(IPBOX99)
-extern int proc_fp_wakeup_time_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_fp_wakeup_time_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_fp_wakeup_time_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_fp_wakeup_time_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 #endif
 
-extern int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_vmpeg_0_dst_all_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_vmpeg_0_dst_left_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_dst_left_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_vmpeg_0_dst_top_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_dst_top_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_vmpeg_0_dst_width_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_dst_width_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_vmpeg_0_dst_height_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_dst_height_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_vmpeg_0_dst_all_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_dst_all_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
-extern int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_aspect_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_vmpeg_0_framerate_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_vmpeg_0_yres_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_xres_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_aspect_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_vmpeg_0_framerate_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_hdmi_audio_source_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_hdmi_audio_source_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_hdmi_audio_source_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_hdmi_audio_source_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_hdmi_audio_source_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_hdmi_audio_source_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_hdmi_edid_handling_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_hdmi_edid_handling_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
-extern int proc_hdmi_output_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_hdmi_output_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_hdmi_output_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_hdmi_output_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_hdmi_output_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_hdmi_output_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
 
-extern int proc_stream_AV_SYNC_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_AV_SYNC_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_TRICK_MODE_AUDIO_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_TRICK_MODE_AUDIO_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_MASTER_CLOCK_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_MASTER_CLOCK_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_EXTERNAL_TIME_MAPPING_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_EXTERNAL_TIME_MAPPING_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_DISPLAY_FIRST_FRAME_EARLY_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_STREAM_ONLY_KEY_FRAMES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_STREAM_ONLY_KEY_FRAMES_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_PLAYOUT_ON_TERMINATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_PLAYOUT_ON_TERMINATE_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_PLAYOUT_ON_SWITCH_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_PLAYOUT_ON_SWITCH_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_PLAYOUT_ON_DRAIN_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_PLAYOUT_ON_DRAIN_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_TRICK_MODE_DOMAIN_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_TRICK_MODE_DOMAIN_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_DISCARD_LATE_FRAMES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_DISCARD_LATE_FRAMES_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_REBASE_ON_FRAME_DECODE_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_REBASE_ON_FRAME_DECODE_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write(struct file *file, const char __user *buf, unsigned long count, void *data);
-extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
-extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_stream_AV_SYNC_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_AV_SYNC_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_TRICK_MODE_AUDIO_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_TRICK_MODE_AUDIO_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_MASTER_CLOCK_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_MASTER_CLOCK_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_EXTERNAL_TIME_MAPPING_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_EXTERNAL_TIME_MAPPING_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_DISPLAY_FIRST_FRAME_EARLY_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_STREAM_ONLY_KEY_FRAMES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_STREAM_ONLY_KEY_FRAMES_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_PLAYOUT_ON_TERMINATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_PLAYOUT_ON_TERMINATE_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_PLAYOUT_ON_SWITCH_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_PLAYOUT_ON_SWITCH_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_PLAYOUT_ON_DRAIN_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_PLAYOUT_ON_DRAIN_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_TRICK_MODE_DOMAIN_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_TRICK_MODE_DOMAIN_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_DISCARD_LATE_FRAMES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_DISCARD_LATE_FRAMES_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_REBASE_ON_FRAME_DECODE_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_REBASE_ON_FRAME_DECODE_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write(struct file* file, const char __user* buf, unsigned long count, void* data);
+extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused);
+extern int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file* file, const char __user* buf, unsigned long count, void* data);
 
 struct e2_procs
 {
-	char *name;
-	read_proc_t *read_proc;
-	write_proc_t *write_proc;
+	char* name;
+	read_proc_t* read_proc;
+	write_proc_t* write_proc;
 	int context;
 } e2_procs[] =
 {
@@ -484,7 +484,7 @@ struct DeviceContext_s* ProcDeviceContext = NULL;
 #else
 #include <linux/stm/pio.h>
 #endif
-extern struct stpio_pin *output_pin;
+extern struct stpio_pin* output_pin;
 
 void setup_stpio_pin()
 {
@@ -498,16 +498,13 @@ void init_e2_proc(struct DeviceContext_s* DC)
 #if defined(IPBOX9900)
 	setup_stpio_pin();
 #endif
-
 	int i;
-
 	for (i = 0; i < sizeof(e2_procs) / sizeof(e2_procs[0]); i++)
 	{
 		install_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
 						 e2_procs[i].write_proc,
 						 &DC->DvbContext->DeviceContext[e2_procs[i].context]);
 	}
-
 	/* save players device context */
 	ProcDeviceContext = DC;
 }
@@ -515,7 +512,6 @@ void init_e2_proc(struct DeviceContext_s* DC)
 void cleanup_e2_proc(void)
 {
 	int i;
-
 	for (i = sizeof(e2_procs) / sizeof(e2_procs[0]) - 1; i >= 0; i--)
 	{
 		remove_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,

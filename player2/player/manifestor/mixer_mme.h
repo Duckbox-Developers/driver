@@ -36,6 +36,7 @@ Date        Modification                                    Name
 #if defined(__TDT__)
 #include <linux/version.h>
 #endif
+
 #include "player_types.h"
 #include "manifestor_audio_ksound.h"
 #include "mixer.h"
@@ -60,32 +61,23 @@ Date        Modification                                    Name
 #define MIXER_STAGE_MAX (MIXER_STAGE_POST_MIX+1)
 
 #define MIXER_MAX_48K_GRANULE 1536
+
 /* Dagobert: Also add UFS922 here for the "bad" 7101BWC cpu
  * currently it seems so that this works for both cpu types
  * (BWC vs. BWD)
  */
 #if (defined(CONFIG_KERNELVERSION) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)) && defined(__TDT__)
-
 #if (defined(FORTIS_HDBOX) || defined(OCTAGON1008))
-
 #define MIXER_NUM_PERIODS 3
-
 #elif defined(UFS922)
-
 #define MIXER_NUM_PERIODS 2
-
 #elif defined(CUBEREVO) || \
     defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || \
     defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA)
-
 #define MIXER_NUM_PERIODS 4
-
 #elif defined(__TDT__)
-
 #define MIXER_NUM_PERIODS 3
-
 #endif
-
 #elif defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008))
 #define MIXER_NUM_PERIODS 4
 #elif defined(__TDT__)
@@ -100,7 +92,7 @@ Date        Modification                                    Name
 #define MIXER_AUDIO_MAX_INPUT_BUFFERS  (MIXER_MAX_CLIENTS + 1 + MIXER_MAX_INTERACTIVE_CLIENTS)
 #define MIXER_AUDIO_MAX_OUTPUT_BUFFERS 4
 #define MIXER_AUDIO_MAX_BUFFERS        (MIXER_AUDIO_MAX_INPUT_BUFFERS +\
-										MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
+                                        MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
 #if defined(__TDT__)
 #define MIXER_AUDIO_PAGES_PER_BUFFER   32
 #else
@@ -343,13 +335,13 @@ class Mixer_Mme_c: public Mixer_c
 		void ResetMixingMetadata();
 
 		PlayerStatus_t FillOutTransformerGlobalParameters(MME_LxMixerBDTransformerGlobalParams_Extended_t *
-														  GlobalParams);
+				GlobalParams);
 
 		PcmPlayer_c::OutputEncoding LookupOutputEncoding(int dev_num, unsigned int freq = 0);
 		unsigned int LookupOutputSamplingFrequency(int dev_num);
 #if 0
 		unsigned int LookupOutputNumberOfSamples(int dev_num, unsigned int NominalMixerGranuleSize,
-												 unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
+				unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
 #endif
 		unsigned int LookupOutputNumberOfChannels(int dev_num);
 
@@ -361,7 +353,7 @@ class Mixer_Mme_c: public Mixer_c
 		void FillOutDeviceSpdifParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams,
 										  int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding);
 		PlayerStatus_t FillOutDevicePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-												  PcmParams , int dev_num);
+				PcmParams , int dev_num);
 
 		PlayerStatus_t AggregatePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
 											  PcmParams);
@@ -386,14 +378,10 @@ class Mixer_Mme_c: public Mixer_c
 		static const char * LookupDiscreteSamplingFrequencyRange(enum eFsRange DiscreteRange);
 		static unsigned int LookupSpdifPreamblePc(PcmPlayer_c::OutputEncoding Encoding);
 		static const char * LookupAudioMode(enum eAccAcMode DiscreteMode);
-		static enum eAccAcMode TranslateChannelAssignmentToAudioMode(
-			struct snd_pseudo_mixer_channel_assignment ChannelAssignment);
-		static struct snd_pseudo_mixer_channel_assignment TranslateAudioModeToChannelAssignment(
-			enum eAccAcMode AudioMode);
-		static enum eAccAcMode TranslateDownstreamCardToMainAudioMode(
-			struct snd_pseudo_mixer_downstream_card *DownstreamCard);
-		static enum eAccAcMode TranslateDownstreamCardToAuxAudioMode(
-			struct snd_pseudo_mixer_downstream_card *DownstreamCard);
+		static enum eAccAcMode TranslateChannelAssignmentToAudioMode(struct snd_pseudo_mixer_channel_assignment ChannelAssignment);
+		static struct snd_pseudo_mixer_channel_assignment TranslateAudioModeToChannelAssignment(enum eAccAcMode AudioMode);
+		static enum eAccAcMode TranslateDownstreamCardToMainAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard);
+		static enum eAccAcMode TranslateDownstreamCardToAuxAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard);
 		static enum eAccAcMode LookupFatPipeOutputMode(enum eAccAcMode InputMode);
 
 	public:
@@ -411,7 +399,7 @@ class Mixer_Mme_c: public Mixer_c
 		PlayerStatus_t EnableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t DisableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t UpdateManifestorParameters(Manifestor_AudioKsound_c *Manifestor,
-												  ParsedAudioParameters_t *ParsedAudioParameters);
+				ParsedAudioParameters_t *ParsedAudioParameters);
 		PlayerStatus_t SetManifestorEmergencyMuteState(Manifestor_AudioKsound_c *Manifestor, bool Muted);
 
 		PlayerStatus_t LookupDataBuffer(Manifestor_AudioKsound_c * Manifestor,

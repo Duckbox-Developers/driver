@@ -70,7 +70,6 @@ class Collator2_Pes_c : public Collator2_Base_c
 		// Data
 
 		bool                  GotPartialHeader;         // New style partial header management
-
 		PartialHeaderType_t   GotPartialType;
 		unsigned int          GotPartialCurrentSize;
 		unsigned int          GotPartialDesiredSize;

@@ -49,7 +49,7 @@ Date        Modification                                    Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define MIXER_DEBUG(fmt, args...) ((void)(ENABLE_MIXER_DEBUG && \
-										  (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args), 0)))
+                                          (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define MIXER_TRACE(fmt, args...) (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args))
@@ -57,7 +57,7 @@ Date        Modification                                    Name
 #define MIXER_ERROR(fmt, args...) (report(severity_error, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args))
 
 #define MIXER_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-												   MIXER_FUNCTION, #x, __FILE__, __LINE__); while(0)
+                                                   MIXER_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 class Mixer_c: public BaseComponentClass_c
 {
@@ -96,7 +96,6 @@ class Mixer_c: public BaseComponentClass_c
 					E(STARTED);
 					E(STOPPING);
 #undef E
-
 				default:
 					return "INVALID";
 			}

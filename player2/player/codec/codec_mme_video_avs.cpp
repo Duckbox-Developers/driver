@@ -89,18 +89,13 @@ static BufferDataDescriptor_t           AvsMbStructInitialDescriptor = BUFFER_AV
 Codec_MmeVideoAvs_c::Codec_MmeVideoAvs_c(void)
 {
 	Configuration.CodecName                             = "Avs video";
-
 	Configuration.DecodeOutputFormat                    = FormatVideo420_MacroBlock;
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &AvsCodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &AvsCodecDecodeContextDescriptor;
-
 	Configuration.MaxDecodeIndicesPerBuffer             = 2;
 	Configuration.SliceDecodePermitted                  = false;
-
 #if defined (TRANSFORMER_AVSDEC_HD)
 	Configuration.TransformName[0]                      = AVSDECHD_MME_TRANSFORMER_NAME "0";
 	Configuration.TransformName[1]                      = AVSDECHD_MME_TRANSFORMER_NAME "1";
@@ -109,46 +104,34 @@ Codec_MmeVideoAvs_c::Codec_MmeVideoAvs_c(void)
 	Configuration.TransformName[1]                      = AVSDECSD_MME_TRANSFORMER_NAME "1";
 #endif
 	Configuration.AvailableTransformers                 = 2;
-
 	Configuration.SizeOfTransformCapabilityStructure    = sizeof(AvsTransformCapability);
 	Configuration.TransformCapabilityStructurePointer   = (void *)(&AvsTransformCapability);
-
 	//
 	// The video firmware violates the MME spec. and passes data buffer addresses
 	// as parametric information. For this reason it requires physical addresses
 	// to be used.
 	//
-
 	Configuration.AddressingMode                        = PhysicalAddress;
-
 	IntraMbStructMemoryDevice                           = NULL;
 	MbStructMemoryDevice                                = NULL;
-
 #if defined (AVS_MBSTRUCT)
 	AvsMbStructPool                                     = NULL;
 #endif
-
 	DecodingWidth                                       = AVS_MAXIMUM_PICTURE_WIDTH;
 	DecodingHeight                                      = AVS_MAXIMUM_PICTURE_HEIGHT;
 	//
 	// We do not need the coded data after decode is complete
 	//
-
 	Configuration.ShrinkCodedDataBuffersAfterDecode     = true;
-
 	//
 	// My trick mode parameters
 	//
-
 	Configuration.TrickModeParameters.EmpiricalMaximumDecodeFrameRateShortIntegration   = 60;
 	Configuration.TrickModeParameters.EmpiricalMaximumDecodeFrameRateLongIntegration    = 60;
-
 	Configuration.TrickModeParameters.SubstandardDecodeSupported        = false;
 	Configuration.TrickModeParameters.SubstandardDecodeRateIncrease     = 1;
-
 	Configuration.TrickModeParameters.DefaultGroupSize                  = 12;
 	Configuration.TrickModeParameters.DefaultGroupReferenceFrameCount   = 4;
-
 	Reset();
 }
 //}}}
@@ -179,23 +162,18 @@ CodecStatus_t   Codec_MmeVideoAvs_c::Reset(void)
 		AllocatorClose(IntraMbStructMemoryDevice);
 		IntraMbStructMemoryDevice       = NULL;
 	}
-
 	if (MbStructMemoryDevice != NULL)
 	{
 		AllocatorClose(MbStructMemoryDevice);
 		MbStructMemoryDevice            = NULL;
 	}
-
 #if defined (AVS_MBSTRUCT)
-
 	if (AvsMbStructPool != NULL)
 	{
 		BufferManager->DestroyPool(AvsMbStructPool);
 		AvsMbStructPool                 = NULL;
 	}
-
 #endif
-
 	return Codec_MmeVideo_c::Reset();
 }
 //}}}
@@ -215,7 +193,6 @@ CodecStatus_t   Codec_MmeVideoAvs_c::HandleCapabilities(void)
 	CODEC_TRACE("MME Transformer '%s' capabilities are :-\n", AVSDECSD_MME_TRANSFORMER_NAME);
 #endif
 	CODEC_TRACE("    Version                           = %x\n", AvsTransformCapability.api_version);
-
 	return CodecNoError;
 }
 //}}}
@@ -232,50 +209,39 @@ CodecStatus_t   Codec_MmeVideoAvs_c::HandleCapabilities(void)
 CodecStatus_t   Codec_MmeVideoAvs_c::RegisterOutputBufferRing(Ring_t                    Ring)
 {
 	CodecStatus_t Status;
-
 	Status = Codec_MmeVideo_c::RegisterOutputBufferRing(Ring);
-
 	if (Status != CodecNoError)
 		return Status;
-
 	//
 	// Create the buffer type for the macroblocks structure
 	//
 	// Find the type if it already exists
 	//
-
 	Status      = BufferManager->FindBufferDataType(BUFFER_AVS_MBSTRUCT, &AvsMbStructType);
-
 	if (Status != BufferNoError)
 	{
 		//
 		// It didn't already exist - create it
 		//
-
 		Status  = BufferManager->CreateBufferDataType(&AvsMbStructInitialDescriptor, &AvsMbStructType);
-
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("Failed to create the %s buffer type.\n", AvsMbStructInitialDescriptor.TypeName);
 			return Status;
 		}
 	}
-
 	//
 	// Now create the pool
 	//
-
 	unsigned int                    Size;
 	Size            = ((DecodingWidth + 15) / 16) * ((DecodingHeight + 15) / 16) * 6 * sizeof(unsigned int);
 	Status          = BufferManager->CreatePool(&AvsMbStructPool, AvsMbStructType, DecodeBufferCount, Size,
-												NULL, NULL, Configuration.AncillaryMemoryPartitionName);
-
+					  NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		CODEC_ERROR("Failed to create macroblock structure pool.\n");
 		return Status;
 	}
-
 	return CodecNoError;
 }
 //}}}
@@ -291,60 +257,47 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutTransformerInitializationParameters(
 {
 	unsigned int                Size;
 	allocator_status_t          AStatus;
-
 	CODEC_TRACE("%s\n", __FUNCTION__);
 	//
 	// Fill out the command parameters
 	//
-
 	AvsInitializationParameters.CircularBufferBeginAddr_p       = (U32*)0x00000000;
 	AvsInitializationParameters.CircularBufferEndAddr_p         = (U32*)0xffffffff;
-
 	// Get the macroblock structure buffer
 	if (IntraMbStructMemoryDevice != NULL)
 	{
 		AllocatorClose(IntraMbStructMemoryDevice);
 		IntraMbStructMemoryDevice       = NULL;
 	}
-
 	Size                = ((DecodingWidth + 15) / 16) * ((DecodingHeight + 15) / 16) * sizeof(AVS_IntraMBstruct_t);
 	CODEC_TRACE("Allocating %d bytes for intra mbstruct buffer:\n", Size);
 	AStatus             = LmiAllocatorOpen(&IntraMbStructMemoryDevice, Size, true);
-
 	if (AStatus != allocator_ok)
 	{
 		CODEC_ERROR("Failed to allocate intra macroblock structure memory\n");
 		return CodecError;
 	}
-
 	AvsInitializationParameters.IntraMB_struct_ptr      = (AVS_IntraMBstruct_t*)AllocatorPhysicalAddress(IntraMbStructMemoryDevice);
-
 	// Get the macroblock structure buffer
 	if (MbStructMemoryDevice != NULL)
 	{
 		AllocatorClose(MbStructMemoryDevice);
 		MbStructMemoryDevice            = NULL;
 	}
-
 	Size                = ((DecodingWidth + 15) / 16) * ((DecodingHeight + 15) / 16) * 6 * sizeof(unsigned int);
 	CODEC_TRACE("Allocating %d bytes for mbstruct buffer:\n", Size);
 	AStatus             = LmiAllocatorOpen(&MbStructMemoryDevice, Size, true);
-
 	if (AStatus != allocator_ok)
 	{
 		CODEC_ERROR("Failed to allocate macroblock structure memory\n");
 		return CodecError;
 	}
-
 	//
 	// Fill out the actual command
 	//
-
 	MMEInitializationParameters.TransformerInitParamsSize       = sizeof(AvsInitializationParameters);
 	MMEInitializationParameters.TransformerInitParams_p         = (MME_GenericParams_t)(&AvsInitializationParameters);
-
 //
-
 	return CodecNoError;
 }
 //}}}
@@ -360,29 +313,22 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutSetStreamParametersCommand(void)
 {
 	AvsStreamParameters_t*              Parsed          = (AvsStreamParameters_t*)ParsedFrameParameters->StreamParameterStructure;
 	AvsCodecStreamParameterContext_t*   Context         = (AvsCodecStreamParameterContext_t*)StreamParameterContext;
-
 	//
 	// Fill out the command parameters
 	//
-
 	DecodingWidth                                       = Parsed->SequenceHeader.horizontal_size;
 	DecodingHeight                                      = Parsed->SequenceHeader.vertical_size;
-
 	Context->StreamParameters.Width                     = DecodingWidth;
 	Context->StreamParameters.Height                    = DecodingHeight;
 	Context->StreamParameters.Progressive_sequence      = (AVS_SeqSyntax_t)Parsed->SequenceHeader.progressive_sequence;
-
 	//
 	// Fill out the actual command
 	//
-
 	memset(&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));
-
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->StreamParameters);
-
 	return CodecNoError;
 }
 //}}}
@@ -402,29 +348,22 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 	AVS_StartCodecsParam_t*             StartCodes;
 	AVS_DecodedBufferAddress_t*         Decode;
 	AVS_RefPicListAddress_t*            RefList;
-
 	unsigned int                        Entry;
-
 	CODEC_DEBUG("%s\n", __FUNCTION__);
-
 	// For avs we do not do slice decodes.
 	KnownLastSliceInFieldFrame                  = true;
-
 	Param                                       = &Context->DecodeParameters;
 	Decode                                      = &Param->DecodedBufferAddr;
 	RefList                                     = &Param->RefPicListAddr;
 	StartCodes                                  = &Param->StartCodecs;
-
 #if defined (TRANSFORMER_AVSDEC_HD)
 	Param->PictureStartAddr_p                   = (AVS_CompressedData_t)(CodedData + PictureHeader->top_field_offset);
 #else
 	Param->PictureStartAddr_p                   = (AVS_CompressedData_t)CodedData;
 #endif
 	Param->PictureEndAddr_p                     = (AVS_CompressedData_t)(CodedData + CodedDataLength);
-
 	Decode->Luma_p                              = (AVS_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].BufferLumaPointer;
 	Decode->Chroma_p                            = (AVS_ChromaAddress_t)BufferState[CurrentDecodeBufferIndex].BufferChromaPointer;
-
 	if (Player->PolicyValue(Playback, this->Stream, PolicyDecimateDecoderOutput) != PolicyValueDecimateDecoderOutputDisabled)
 	{
 		Decode->LumaDecimated_p                 = (AVS_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].DecimatedLumaPointer;
@@ -435,10 +374,8 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 		Decode->LumaDecimated_p                 = NULL;
 		Decode->ChromaDecimated_p               = NULL;
 	}
-
 	//{{{  Obtain MBStruct buffer
 #if defined (AVS_MBSTRUCT)
-
 	if (PictureHeader->ReversePlay)
 	{
 		if (PictureHeader->picture_coding_type != AVS_PICTURE_CODING_TYPE_B)
@@ -447,34 +384,26 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 			Buffer_t                AvsMbStructBuffer;
 			unsigned int            Size;
 			CodecStatus_t           Status;
-
 			Size            = ((DecodingWidth + 15) / 16) * ((DecodingHeight + 15) / 16) * 6 * sizeof(unsigned int);
-
 			Status  = AvsMbStructPool->GetBuffer(&AvsMbStructBuffer, Size);
-
 			if (Status != BufferNoError)
 			{
 				CODEC_ERROR("Failed to get macroblock structure buffer.\n");
 				return Status;
 			}
-
 			AvsMbStructBuffer->ObtainDataReference(NULL, NULL, (void **)&Decode->MBStruct_p, PhysicalAddress);
-
 			CurrentDecodeBuffer->AttachBuffer(AvsMbStructBuffer);           // Attach to decode buffer (so it will be freed at the same time)
 			AvsMbStructBuffer->DecrementReferenceCount();                   // and release ownership of the buffer to the decode buffer
-
 			// Remember the MBStruct pointer in case we have a second field to follow
 			BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructurePointer  = (unsigned char*)Decode->MBStruct_p;
 		}
 	}
 	else
 		Decode->MBStruct_p                      = (U32*)AllocatorPhysicalAddress(MbStructMemoryDevice);
-
 #else
 	Decode->MBStruct_p                          = (U32*)AllocatorPhysicalAddress(MbStructMemoryDevice);
 #endif
 	//}}}
-
 	//{{{  Initialise decode buffers to bright pink
 #if 0
 	unsigned int        LumaSize        = DecodingWidth * DecodingHeight;
@@ -487,7 +416,6 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 	memset(ChromaBuffer, Colour++ & 0xff, LumaSize / 2);
 #endif
 	//}}}
-
 	//{{{  Fill out the reference frame lists
 	if (ParsedFrameParameters->NumberOfReferenceFrameLists != 0)
 	{
@@ -498,115 +426,89 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 			RefList->BackwardRefChroma_p                                = (AVS_ChromaAddress_t)BufferState[Entry].BufferChromaPointer;
 			//Param->Picture_structure_bwd                                = (AVS_PicStruct_t)BufferState[i].PictureSyntax);
 #if defined (AVS_MBSTRUCT)
-
 			if (PictureHeader->ReversePlay)
 				Decode->MBStruct_p                                      = (U32*)BufferState[Entry].BufferMacroblockStructurePointer;
-
 #endif
 		}
-
 		if (DecodeContext->ReferenceFrameList[0].EntryCount > 1)
 		{
 			Entry                                                       = DecodeContext->ReferenceFrameList[0].EntryIndicies[1];
 			RefList->ForwardRefLuma_p                                   = (AVS_LumaAddress_t)BufferState[Entry].BufferLumaPointer;
 			RefList->ForwardRefChroma_p                                 = (AVS_ChromaAddress_t)BufferState[Entry].BufferChromaPointer;
 #if defined (AVS_MBSTRUCT)
-
 			if ((PictureHeader->ReversePlay) && (PictureHeader->picture_coding_type == AVS_PICTURE_CODING_TYPE_P))
 				Decode->MBStruct_p                                      = (U32*)BufferState[Entry].BufferMacroblockStructurePointer;
-
 #endif
 		}
 	}
-
 	//}}}
-
 	//{{{  Fill in remaining fields
 	Param->Progressive_frame                                            = (AVS_FrameSyntax_t)PictureHeader->progressive_frame;
-
 	Param->MainAuxEnable                                                = AVS_MAINOUT_EN;
 	Param->HorizontalDecimationFactor                                   = AVS_HDEC_1;
 	Param->VerticalDecimationFactor                                     = AVS_VDEC_1;
-
 	Param->AebrFlag                                                     = 0;
 	Param->Picture_structure                                            = (AVS_PicStruct_t)PictureHeader->picture_structure;
 	Param->Picture_structure_bwd                                        = (AVS_PicStruct_t)PictureHeader->picture_structure;
-
 	Param->Fixed_picture_qp                                             = (MME_UINT)PictureHeader->fixed_picture_qp;
 	Param->Picture_qp                                                   = (MME_UINT)PictureHeader->picture_qp;
 	Param->Skip_mode_flag                                               = (AVS_SkipMode_t)PictureHeader->skip_mode_flag;
 	Param->Loop_filter_disable                                          = (MME_UINT)PictureHeader->loop_filter_disable;
-
 	Param->alpha_offset                                                 = (S32)PictureHeader->alpha_c_offset;
 	Param->beta_offset                                                  = (S32)PictureHeader->beta_offset;
-
 	Param->Picture_ref_flag                                             = (AVS_PicRef_t)PictureHeader->picture_reference_flag;
-
 	Param->tr                                                           = (S32)PictureHeader->tr;
 	Param->imgtr_next_P                                                 = (S32)PictureHeader->imgtr_next_P;
 	Param->imgtr_last_P                                                 = (S32)PictureHeader->imgtr_last_P;
 	Param->imgtr_last_prev_P                                            = (S32)PictureHeader->imgtr_last_prev_P;
-
 	// To do
 	Param->field_flag                                                   = (AVS_FieldSyntax_t)0;
 	Param->topfield_pos                                                 = (U32)PictureHeader->top_field_offset;
 	Param->botfield_pos                                                 = (U32)PictureHeader->bottom_field_offset;
-
 	Param->DecodingMode                                                 = AVS_NORMAL_DECODE;
 	Param->AdditionalFlags                                              = (MME_UINT)0;
-
 	Param->FrameType                                                    = (AVS_PictureType_t)PictureHeader->picture_coding_type;
-
 	//}}}
 	//{{{  Fill in decimation values if required
 	switch (Player->PolicyValue(Playback, this->Stream, PolicyDecimateDecoderOutput))
 	{
 		case PolicyValueDecimateDecoderOutputDisabled:
-		{
-			// Normal Case
-			Param->MainAuxEnable                = AVS_MAINOUT_EN;
-			Param->HorizontalDecimationFactor   = AVS_HDEC_1;
-			Param->VerticalDecimationFactor     = AVS_VDEC_1;
-			break;
-		}
-
+			{
+				// Normal Case
+				Param->MainAuxEnable                = AVS_MAINOUT_EN;
+				Param->HorizontalDecimationFactor   = AVS_HDEC_1;
+				Param->VerticalDecimationFactor     = AVS_VDEC_1;
+				break;
+			}
 		case PolicyValueDecimateDecoderOutputHalf:
-		{
-			Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
-			Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_2;
-
-			if (Param->Progressive_frame)
-				Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_PROG;
-			else
-				Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_INT;
-
-			break;
-		}
-
+			{
+				Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
+				Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_2;
+				if (Param->Progressive_frame)
+					Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_PROG;
+				else
+					Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_INT;
+				break;
+			}
 		case PolicyValueDecimateDecoderOutputQuarter:
-		{
-			Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
-			Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_4;
-			Param->VerticalDecimationFactor     = AVS_VDEC_ADVANCED_2_INT;
-			break;
-		}
+			{
+				Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
+				Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_4;
+				Param->VerticalDecimationFactor     = AVS_VDEC_ADVANCED_2_INT;
+				break;
+			}
 	}
-
 	//}}}
-
 	//{{{  Fill out slice list if HD decode
 #if defined (TRANSFORMER_AVSDEC_HD)
 	StartCodes->SliceCount                                              = Parsed->SliceHeaderList.no_slice_headers;
-
 	for (unsigned int i = 0; i < StartCodes->SliceCount; i++)
 	{
 		StartCodes->SliceArray[i].SliceStartAddrCompressedBuffer_p      = (AVS_CompressedData_t)(CodedData + Parsed->SliceHeaderList.slice_array[i].slice_offset);
 		StartCodes->SliceArray[i].SliceAddress                          = Parsed->SliceHeaderList.slice_array[i].slice_start_code;
 	}
-
 #endif
 	//}}}
-
 	//{{{  Set up raster buffers if SD decode
 #if !defined (TRANSFORMER_AVSDEC_HD)
 	{
@@ -616,30 +518,24 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 		Buffer_t                        RasterBuffer;
 		BufferStructure_t               RasterBufferStructure;
 		unsigned char*                  RasterBufferBase;
-
 		Status                                                          = FillOutDecodeBufferRequest(&RasterBufferStructure);
-
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("%s - Failed to fill out a buffer request structure.\n", __FUNCTION__);
 			return Status;
 		}
-
 		// Override the format so we get one sized for raster rather than macroblock
 		RasterBufferStructure.Format                                    = FormatVideo420_PlanarAligned;
 		RasterBufferStructure.ComponentBorder[0]                        = 32;
 		RasterBufferStructure.ComponentBorder[1]                        = 32;
 		// Ask the manifestor for a buffer of the new format
 		Status                                                          = Manifestor->GetDecodeBuffer(&RasterBufferStructure, &RasterBuffer);
-
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("%s - Failed to obtain a decode buffer from the manifestor.\n", __FUNCTION__);
 			return Status;
 		}
-
 		RasterBuffer->ObtainDataReference(NULL, NULL, (void **)&RasterBufferBase, UnCachedAddress);
-
 		//{{{  Fill in details for all buffers
 		for (int i = 0; i < AVS_NUM_MME_BUFFERS; i++)
 		{
@@ -652,16 +548,12 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 			DecodeContext->MMEBuffers[i].ScatterPages_p                 = &DecodeContext->MMEPages[i];
 			DecodeContext->MMEBuffers[i].StartOffset                    = 0;
 		}
-
 		//}}}
-
 		// Then overwrite bits specific to other buffers
 		DecodeContext->MMEBuffers[AVS_MME_CURRENT_FRAME_BUFFER].ScatterPages_p[0].Page_p        = RasterBufferBase + RasterBufferStructure.ComponentOffset[0];
 		DecodeContext->MMEBuffers[AVS_MME_CURRENT_FRAME_BUFFER].TotalSize                       = RasterBufferStructure.Size;
-
 		// Preserve raster buffer pointers for later use as reference frames
 		BufferState[CurrentDecodeBufferIndex].BufferRasterPointer                               = RasterBufferBase + RasterBufferStructure.ComponentOffset[0];
-
 		if (ParsedFrameParameters->NumberOfReferenceFrameLists != 0)
 		{
 			if (DecodeContext->ReferenceFrameList[0].EntryCount > 0)
@@ -670,7 +562,6 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 				DecodeContext->MMEBuffers[AVS_MME_BACKWARD_REFERENCE_FRAME_BUFFER].ScatterPages_p[0].Page_p = BufferState[Entry].BufferRasterPointer;
 				DecodeContext->MMEBuffers[AVS_MME_BACKWARD_REFERENCE_FRAME_BUFFER].TotalSize                = RasterBufferStructure.Size;
 			}
-
 			if (DecodeContext->ReferenceFrameList[0].EntryCount > 1)
 			{
 				Entry                                                                                       = DecodeContext->ReferenceFrameList[0].EntryIndicies[1];
@@ -678,7 +569,6 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 				DecodeContext->MMEBuffers[AVS_MME_FORWARD_REFERENCE_FRAME_BUFFER].TotalSize                 = RasterBufferStructure.Size;
 			}
 		}
-
 		//{{{  Initialise remaining scatter page values
 		for (int i = 0; i < AVS_NUM_MME_BUFFERS; i++)
 		{
@@ -688,13 +578,10 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 			DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsIn      = 0;
 			DecodeContext->MMEBuffers[i].ScatterPages_p[0].FlagsOut     = 0;
 		}
-
 		//}}}
-
 		// Attach planar buffer to decode buffer and let go of it
 		CurrentDecodeBuffer->AttachBuffer(RasterBuffer);
 		RasterBuffer->DecrementReferenceCount();
-
 		//{{{  Initialise raster decode buffers to bright pink
 #if 0
 		{
@@ -709,21 +596,17 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 	}
 #endif
 	//}}}
-
 	// Fill out the actual command
 	memset(&Context->BaseContext.MMECommand, 0x00, sizeof(MME_Command_t));
-
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->DecodeParameters);
-
 #if !defined (TRANSFORMER_AVSDEC_HD)
 	DecodeContext->MMECommand.NumberInputBuffers                        = AVS_NUM_MME_INPUT_BUFFERS;
 	DecodeContext->MMECommand.NumberOutputBuffers                       = AVS_NUM_MME_OUTPUT_BUFFERS;
 	DecodeContext->MMECommand.DataBuffers_p                             = (MME_DataBuffer_t**)DecodeContext->MMEBufferList;
 #endif
-
 	return CodecNoError;
 }
 //}}}
@@ -754,10 +637,8 @@ CodecStatus_t   Codec_MmeVideoAvs_c::ValidateDecodeContext(CodecBaseDecodeContex
 CodecStatus_t   Codec_MmeVideoAvs_c::DumpSetStreamParameters(void    *Parameters)
 {
 	MME_AVSSetGlobalParamSequence_t*    StreamParameters        = (MME_AVSSetGlobalParamSequence_t*)Parameters;
-
 	CODEC_TRACE("%s\n", __FUNCTION__);
 	CODEC_TRACE("     Progressive           %6d\n", StreamParameters->Progressive_sequence);
-
 	return CodecNoError;
 }
 //}}}
@@ -773,10 +654,8 @@ CodecStatus_t   Codec_MmeVideoAvs_c::DumpDecodeParameters(void    *Parameters)
 	MME_AVSVideoDecodeParams_t*         Param           = (MME_AVSVideoDecodeParams_t *)Parameters;
 	AVS_DecodedBufferAddress_t*         Decode;
 	AVS_RefPicListAddress_t*            RefList;
-
 	Decode                              = &Param->DecodedBufferAddr;
 	RefList                             = &Param->RefPicListAddr;
-
 	CODEC_TRACE("%s\n", __FUNCTION__);
 	CODEC_TRACE("    Param->PictureStartAddr_p                  %x\n", Param->PictureStartAddr_p);
 	CODEC_TRACE("    Param->PictureEndAddr_p                    %x\n", Param->PictureEndAddr_p);
@@ -820,7 +699,6 @@ CodecStatus_t   Codec_MmeVideoAvs_c::DumpDecodeParameters(void    *Parameters)
 	CODEC_TRACE("    MMEBuffers[Forward]...Page_p               %x\n", DecodeContext->MMEBuffers[AVS_MME_FORWARD_REFERENCE_FRAME_BUFFER].ScatterPages_p[0].Page_p);
 	CODEC_TRACE("    MMEBuffers[Backward]...Page_p              %x\n", DecodeContext->MMEBuffers[AVS_MME_BACKWARD_REFERENCE_FRAME_BUFFER].ScatterPages_p[0].Page_p);
 #endif
-
 	return CodecNoError;
 }
 //}}}

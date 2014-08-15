@@ -108,13 +108,13 @@ static OSDEV_MmapEntrypoint(H264ppMmap);
 
 static OSDEV_Descriptor_t H264ppDeviceDescriptor =
 {
-Name: "H264 Pre-processor Module",
-MajorNumber: MAJOR_NUMBER,
+	Name:           "H264 Pre-processor Module",
+	MajorNumber:    MAJOR_NUMBER,
 
-OpenFn: H264ppOpen,
-CloseFn: H264ppClose,
-IoctlFn: H264ppIoctl,
-MmapFn: H264ppMmap
+	OpenFn:         H264ppOpen,
+	CloseFn:        H264ppClose,
+	IoctlFn:        H264ppIoctl,
+	MmapFn:         H264ppMmap
 };
 
 /* --- External entrypoints --- */
@@ -137,15 +137,11 @@ OSDEV_PlatformLoadEntrypoint(H264ppLoadModule)
 {
 	unsigned int    i;
 	OSDEV_Status_t  Status;
-
 //
-
 	OSDEV_LoadEntry();
-
 	//
 	// Initialize the hardware context
 	//
-
 	// Determine if we should attempt to apply the Gnbvd42331 Preprocessor workaround
 	if (PlatformData->PrivateData)
 	{
@@ -154,40 +150,30 @@ OSDEV_PlatformLoadEntrypoint(H264ppLoadModule)
 	}
 	else
 		DeviceContext.ApplyWorkAroundForGnbvd42331 = false;
-
 	DeviceContext.NumberOfPreProcessors     = min(min(PlatformData->NumberBaseAddresses, PlatformData->NumberInterrupts), H264_PP_MAX_SUPPORTED_PRE_PROCESSORS);
-
 	OSDEV_InitializeSemaphore(&DeviceContext.Lock, 1);
 	OSDEV_InitializeSemaphore(&DeviceContext.PPClaim, DeviceContext.NumberOfPreProcessors);
-
 	for (i = 0; i < DeviceContext.NumberOfPreProcessors; i++)
 	{
 		DeviceContext.RegisterBase[i]    = (unsigned int)OSDEV_IOReMap(PlatformData->BaseAddress[i], H264_PP_REGISTER_SIZE);
 		DeviceContext.InterruptNumber[i] = PlatformData->Interrupt[i];
 		DeviceContext.PPState[i].Busy    = false;
 	}
-
 	//
 	// Initialize the hardware device
 	//
-
 	H264ppInitializeDevice();
-
 	//
 	// Register our device
 	//
 	Status = OSDEV_RegisterDevice(&H264ppDeviceDescriptor);
-
 	if (Status != OSDEV_NoError)
 	{
 		OSDEV_Print("H264ppLoadModule : Unable to get major %d\n", MAJOR_NUMBER);
 		OSDEV_LoadExit(OSDEV_Error);
 	}
-
 	OSDEV_LinkDevice(H264_PP_DEVICE, MAJOR_NUMBER, MINOR_NUMBER);
-
 //
-
 	OSDEV_Print("H264ppLoadModule : H264pp device loaded\n");
 	OSDEV_LoadExit(OSDEV_NoError);
 }
@@ -199,24 +185,11 @@ OSDEV_PlatformLoadEntrypoint(H264ppLoadModule)
 OSDEV_PlatformUnloadEntrypoint(H264ppUnloadModule)
 {
 	OSDEV_Status_t          Status;
-
-	/* --- */
-
 	OSDEV_UnloadEntry();
-
-	/* --- */
-
 	Status = OSDEV_DeRegisterDevice(&H264ppDeviceDescriptor);
-
 	if (Status != OSDEV_NoError)
 		OSDEV_Print("H264ppUnloadModule : Unregister of device failed\n");
-
-	/* --- */
-
 	OSDEV_DeInitializeSemaphore(&DeviceContext.Lock);
-
-	/* --- */
-
 	OSDEV_Print("H264pp device unloaded\n");
 	OSDEV_UnloadExit(OSDEV_NoError);
 }
@@ -235,27 +208,20 @@ OSDEV_InterruptHandlerEntrypoint(H264ppInterruptHandler)
 	unsigned long long Now;
 	H264ppState_t *State;
 	H264ppProcessBuffer_t *Record;
-
 	//
 	// Read and clear the interrupt status
 	//
-
 	Now = OSDEV_GetTimeInMilliSeconds();
 	State = &DeviceContext.PPState[N];
-
 	PP_ITS = OSDEV_ReadLong(PP_ITS(N));
 	PP_ISBG = OSDEV_ReadLong(PP_ISBG(N));
 	PP_IPBG = OSDEV_ReadLong(PP_IPBG(N));
 	PP_WDL = OSDEV_ReadLong(PP_WDL(N));
-
 	OSDEV_WriteLong(PP_ITS(N), PP_ITS);                 // Clear interrupt status
-
 #if 0
-
 	if (PP_ITS != PP_ITM__DMA_CMP)
 	{
 		printk("$$$$$$ H264ppInterruptHandler (PP %d)  - Took %dms $$$$$$\n", N, Now);
-
 		printk("       PP_READ_START           = %08x\n", OSDEV_ReadLong(PP_READ_START(N)));
 		printk("       PP_READ_STOP            = %08x\n", OSDEV_ReadLong(PP_READ_STOP(N)));
 		printk("       PP_BBG                  = %08x\n", OSDEV_ReadLong(PP_BBG(N)));
@@ -273,53 +239,39 @@ OSDEV_InterruptHandlerEntrypoint(H264ppInterruptHandler)
 		printk("       PP_ITM                  = %08x\n", OSDEV_ReadLong(PP_ITM(N)));
 		printk("       PP_ITS                  = %08x\n", PP_ITS);
 	}
-
 #endif
-
 	//
 	// If appropriate, signal the code.
 	//
-
 	State->Accumulated_ITS |= PP_ITS;
-
 	if (State->Busy)
 	{
 		//
 		// Record the completion of this process
 		//
-
 		Record = State->BufferState;
-
 		Record->PP = N;
 		Record->PP_ITS = State->Accumulated_ITS;
-
 		if (PP_ITS & PP_ITM__DMA_CMP)
 			Record->OutputSize = (PP_WDL - PP_ISBG);
 		else
 			Record->OutputSize = 0;
-
 		Record->DecodeTime = Now - Record->DecodeTime;
-
 		Record->Processed = true;
-
 		OSDEV_ReleaseSemaphore(Record->BufferComplete);
 		OSDEV_ReleaseSemaphore(Record->VirtualPPClaim);
-
 		//
 		// If we have seen an error condition, then force the pre-processor
 		// to launch the H264ppWorkAroundGNBvd42331 on the next pass.
 		//
-
 		if (DeviceContext.ApplyWorkAroundForGnbvd42331 && (PP_ITS != PP_ITM__DMA_CMP))
 			State->ForceWorkAroundGNBvd42331 = true;
-
 		//
 		// Indicate that the pre-processor is free
 		//
 		State->Busy = 0;
 		OSDEV_ReleaseSemaphore(&DeviceContext.PPClaim);
 	}
-
 	return IRQ_HANDLED;
 }
 
@@ -330,44 +282,33 @@ OSDEV_InterruptHandlerEntrypoint(H264ppInterruptHandler)
 static OSDEV_OpenEntrypoint(H264ppOpen)
 {
 	H264ppOpenContext_t *H264ppOpenContext;
-
 	//
 	// Entry
 	//
-
 	OSDEV_OpenEntry();
-
 	//
 	// Allocate and initialize the private data structure.
 	//
-
 	H264ppOpenContext    = (H264ppOpenContext_t *)OSDEV_Malloc(sizeof(H264ppOpenContext_t));
 	OSDEV_PrivateData   = (void *)H264ppOpenContext;
-
 	if (H264ppOpenContext == NULL)
 	{
 		OSDEV_Print("H264ppOpen - Unable to allocate memory for open context.\n");
 		OSDEV_OpenExit(OSDEV_Error);
 	}
-
 	//
 	// Initialize the data structure
 	//
-
 	memset(H264ppOpenContext, 0x00, sizeof(H264ppOpenContext_t));
-
 	H264ppOpenContext->Closing = false;
 	H264ppOpenContext->ProcessBufferInsert = 0;
 	H264ppOpenContext->ProcessBufferExtract = 0;
-
 	//
 	// Initialize the semaphores
 	//
-
 	OSDEV_InitializeSemaphore(&H264ppOpenContext->VirtualPPClaim, H264_PP_VIRTUAL_PP_PER_OPEN);             // How many queues can we run at once
 	OSDEV_InitializeSemaphore(&H264ppOpenContext->ProcessBufferClaim, H264_PP_MAX_SUPPORTED_BUFFERS_PER_OPEN);      // The table contains this many entries
 	OSDEV_InitializeSemaphore(&H264ppOpenContext->BufferComplete, 0);                           // used to signal a buffer complete
-
 	OSDEV_OpenExit(OSDEV_NoError);
 }
 
@@ -379,50 +320,37 @@ static OSDEV_CloseEntrypoint(H264ppClose)
 {
 	unsigned int i;
 	H264ppOpenContext_t *H264ppOpenContext;
-
 	OSDEV_CloseEntry();
 	H264ppOpenContext               = (H264ppOpenContext_t  *)OSDEV_PrivateData;
-
 	H264ppOpenContext->Closing      = true;
-
 	//
 	// Signal both the queue and dequeue semaphores
 	//
-
 	OSDEV_ReleaseSemaphore(&H264ppOpenContext->ProcessBufferClaim);
 	OSDEV_ReleaseSemaphore(&H264ppOpenContext->BufferComplete);
-
 	//
 	// Grab all of my virtual pre-processors, to be sure all decodes have completed
 	//
-
 	for (i = 0; i < H264_PP_VIRTUAL_PP_PER_OPEN; i++)
 	{
 		OSDEV_ClaimSemaphore(&H264ppOpenContext->VirtualPPClaim);
 	}
-
 	//
 	// Make sure everyone exits
 	//
-
 	while (H264ppOpenContext->InQueue || H264ppOpenContext->InDequeue)
 	{
 		OSDEV_SleepMilliSeconds(2);
 	}
-
 	//
 	// De-initialize the semaphores
 	//
-
 	OSDEV_DeInitializeSemaphore(&H264ppOpenContext->ProcessBufferClaim);
 	OSDEV_DeInitializeSemaphore(&H264ppOpenContext->BufferComplete);
-
 	//
 	// Free the context memory
 	//
-
 	OSDEV_Free(H264ppOpenContext);
-
 	OSDEV_CloseExit(OSDEV_NoError);
 }
 
@@ -434,13 +362,10 @@ static OSDEV_MmapEntrypoint(H264ppMmap)
 {
 	H264ppOpenContext_t  *H264ppOpenContext;
 	OSDEV_Status_t    MappingStatus;
-
 	OSDEV_MmapEntry();
 	H264ppOpenContext    = (H264ppOpenContext_t  *)OSDEV_PrivateData;
-
 	OSDEV_Print("H264ppMmap - No allocated memory to map.\n");
 	MappingStatus = OSDEV_Error;
-
 	OSDEV_MmapExit(MappingStatus);
 }
 
@@ -451,21 +376,17 @@ static OSDEV_MmapEntrypoint(H264ppMmap)
 static OSDEV_Status_t H264ppIoctlQueueBuffer(H264ppOpenContext_t *H264ppOpenContext, unsigned int ParameterAddress)
 {
 	H264ppProcessBuffer_t *Record;
-
 	//
 	// Check if we are closing, then claim our resources and recheck the closing state
 	//
-
 	if (H264ppOpenContext->Closing)
 	{
 		OSDEV_Print("H264ppIoctlQueueBuffer - device closing.\n");
 		return OSDEV_Error;
 	}
-
 	H264ppOpenContext->InQueue = true;
 	OSDEV_ClaimSemaphore(&H264ppOpenContext->VirtualPPClaim);           // Claim a virtual pre-processor
 	OSDEV_ClaimSemaphore(&H264ppOpenContext->ProcessBufferClaim);       // Claim a buffer to use
-
 	if (H264ppOpenContext->Closing)
 	{
 		OSDEV_Print("H264ppIoctlQueueBuffer - device closing.\n");
@@ -473,27 +394,19 @@ static OSDEV_Status_t H264ppIoctlQueueBuffer(H264ppOpenContext_t *H264ppOpenCont
 		H264ppOpenContext->InQueue = false;
 		return OSDEV_Error;
 	}
-
 	//
 	// Now we can use next buffer in the list, we need to initialize it
 	//
-
 	Record = &H264ppOpenContext->ProcessBuffers[(H264ppOpenContext->ProcessBufferInsert++) % H264_PP_MAX_SUPPORTED_BUFFERS_PER_OPEN];
-
 	memset(Record, 0x00, sizeof(H264ppProcessBuffer_t));
-
 	Record->Processed = false;
 	Record->BufferComplete = &H264ppOpenContext->BufferComplete;
 	Record->VirtualPPClaim = &H264ppOpenContext->VirtualPPClaim;
-
 	OSDEV_CopyToDeviceSpace(&Record->Parameters, ParameterAddress, sizeof(h264pp_ioctl_queue_t));
-
 	//
 	// queue the decode on a real device
 	//
-
 	H264ppQueueBufferToDevice(Record);
-
 	H264ppOpenContext->InQueue = false;
 	return OSDEV_NoError;
 }
@@ -506,51 +419,38 @@ static OSDEV_Status_t H264ppIoctlGetPreprocessedBuffer(H264ppOpenContext_t *H264
 {
 	h264pp_ioctl_dequeue_t Params;
 	H264ppProcessBuffer_t *Record;
-
 	H264ppOpenContext->InDequeue = true;
 	Record = &H264ppOpenContext->ProcessBuffers[(H264ppOpenContext->ProcessBufferExtract++) % H264_PP_MAX_SUPPORTED_BUFFERS_PER_OPEN];
-
 	while (!H264ppOpenContext->Closing)
 	{
 		//
 		// Anything to report
 		//
-
 		if (Record->Processed)
 		{
 #if 0
-
 			if (Record->PP_ITS != PP_ITM__DMA_CMP)
 				printk("H264ppIoctlGPB (PP %d)  - Took %dms - ITS = %04x - QID = %d\n", Record->PP, Record->DecodeTime, Record->PP_ITS, Record->Parameters.QueueIdentifier);
-
 #endif
-
 			//
 			// Take the buffer
 			//
-
 			Params.QueueIdentifier = Record->Parameters.QueueIdentifier;
 			Params.OutputSize = Record->OutputSize;
 			Params.ErrorMask = Record->PP_ITS & ~(PP_ITM__SRS_COMP | PP_ITM__DMA_CMP);
 			OSDEV_CopyToUserSpace(ParameterAddress, &Params, sizeof(h264pp_ioctl_dequeue_t));
-
 			//
 			// Free up the record for re-use
 			//
-
 			OSDEV_ReleaseSemaphore(&H264ppOpenContext->ProcessBufferClaim);
 			H264ppOpenContext->InDequeue = false;
-
 			return OSDEV_NoError;
 		}
-
 		//
 		// Wait for a buffer completed signal
 		//
-
 		OSDEV_ClaimSemaphore(&H264ppOpenContext->BufferComplete);
 	}
-
 	OSDEV_Print("H264ppIoctlGetPreprocessedBuffer - device closing.\n");
 	H264ppOpenContext->InDequeue = false;
 	return OSDEV_Error;
@@ -564,26 +464,21 @@ static OSDEV_IoctlEntrypoint(H264ppIoctl)
 {
 	OSDEV_Status_t           Status;
 	H264ppOpenContext_t      *H264ppOpenContext;
-
 	OSDEV_IoctlEntry();
 	H264ppOpenContext    = (H264ppOpenContext_t  *)OSDEV_PrivateData;
-
 	switch (OSDEV_IoctlCode)
 	{
 		case H264_PP_IOCTL_QUEUE_BUFFER:
 			Status = H264ppIoctlQueueBuffer(H264ppOpenContext, OSDEV_ParameterAddress);
 			break;
-
 		case H264_PP_IOCTL_GET_PREPROCESSED_BUFFER:
 			Status = H264ppIoctlGetPreprocessedBuffer(H264ppOpenContext, OSDEV_ParameterAddress);
 			break;
-
 		default:
 			OSDEV_Print("H264ppIoctl : Invalid ioctl %08x\n", OSDEV_IoctlCode);
 			Status = OSDEV_Error;
 			break;
 	}
-
 	OSDEV_IoctlExit(Status);
 }
 
@@ -596,49 +491,36 @@ static void H264ppInitializeDevice(void)
 	unsigned int    i;
 	unsigned int    N;
 	int             Status;
-
 	//
 	// Ensure we will have no interrupt surprises and install the interrupt handler
 	//
-
 	for (N = 0; N < DeviceContext.NumberOfPreProcessors; N++)
 	{
 		OSDEV_WriteLong(PP_ITS(N),                     0xffffffff);             // Clear interrupt status
 		OSDEV_WriteLong(PP_ITM(N),                     0x00000000);
-
 		//
 		// Initialize subcontect data
 		//
-
 		DeviceContext.PPState[N].ForceWorkAroundGNBvd42331      = true;
 		DeviceContext.PPState[N].last_mb_adaptive_frame_field_flag  = 0;    // Doesn't matter, will be initialized on first frame
-
 		//
 		// Perform soft reset
 		//
-
 		OSDEV_WriteLong(PP_SRS(N),         1);              // Perform a soft reset
-
 		for (i = 0; i < H264_PP_RESET_TIME_LIMIT; i++)
 		{
 			if ((OSDEV_ReadLong(PP_ITS(N)) & PP_ITM__SRS_COMP) != 0)
 				break;
-
 			OSDEV_SleepMilliSeconds(1);
 		}
-
 		if (i == H264_PP_RESET_TIME_LIMIT)
 			OSDEV_Print("H264ppInitializeDevice - Failed to soft reset PP %d.\n", N);
-
 		OSDEV_WriteLong(PP_MAX_OPC_SIZE(N),            5);                      // Setup the ST bus parameters
 		OSDEV_WriteLong(PP_MAX_CHUNK_SIZE(N),          0);
 		OSDEV_WriteLong(PP_MAX_MESSAGE_SIZE(N),        3);
-
 		// Clear interrupt status
 		OSDEV_WriteLong(PP_ITS(N),                     0xffffffff);
-
 		Status  = request_irq(DeviceContext.InterruptNumber[N], H264ppInterruptHandler, IRQF_DISABLED, "H264 PP", (void *)N);
-
 		if (Status != 0)
 			OSDEV_Print("H264ppInitializeDevice - Unable to request IRQ %d for PP %d.\n", DeviceContext.InterruptNumber[N], N);
 	}
@@ -659,28 +541,21 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t    *Buffer)
 	unsigned int     SliceErrorStatusAddress;
 	unsigned int     IntermediateAddress;
 	unsigned int     IntermediateEndAddress;
-
 	//
 	// Claim a real pre-processor, then lock while we find which one we are going to use
 	//
-
 	while (OSDEV_ClaimSemaphoreTimeout(&DeviceContext.PPClaim, 100))
 	{
 		OSDEV_Print("%s: Failed to claim a PreProcessor within 100ms\n", __FUNCTION__);
-
 		for (N = 0; N < DeviceContext.NumberOfPreProcessors; N++)
 		{
 			// Initiate a soft reset on the PreProcessor
 			OSDEV_Print("%s: Initiating reset to stimulate pre-processor[%d] - (%d)\n", __FUNCTION__, N, ++DeviceContext.PPState[N].Resets);
 			OSDEV_WriteLong(PP_SRS(N), 1);          // Perform a soft reset
 		}
-
 	}
-
 	OSDEV_ClaimSemaphore(&DeviceContext.Lock);
-
 	State   = NULL;
-
 	for (N = 0; N < DeviceContext.NumberOfPreProcessors; N++)
 	{
 		if (!DeviceContext.PPState[N].Busy)
@@ -691,46 +566,35 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t    *Buffer)
 			break;
 		}
 	}
-
 	OSDEV_ReleaseSemaphore(&DeviceContext.Lock);
-
 	if (N == DeviceContext.NumberOfPreProcessors)
 	{
 		OSDEV_Print("H264ppQueueBufferToDevice - No free pre-processor - implementation error (should be one, the semaphore says there is).\n");
 		return;
 	}
-
 	//
 	// Optionally check for and perform the workaround to GNBvd42331
 	//
-
 	if (DeviceContext.ApplyWorkAroundForGnbvd42331)
 		H264ppWorkAroundGNBvd42331(State, N);
-
 	//
 	// Calculate the address values
 	//
-
 	InputBufferBase     = (unsigned int)Buffer->Parameters.InputBufferPhysicalAddress;
 	OutputBufferBase        = (unsigned int)Buffer->Parameters.OutputBufferPhysicalAddress;
-
 	SliceErrorStatusAddress     = OutputBufferBase;
 	IntermediateAddress         = OutputBufferBase + H264_PP_SESB_SIZE;
 	IntermediateEndAddress      = IntermediateAddress + H264_PP_OUTPUT_SIZE - 1;
 	SourceAddress               = InputBufferBase;
 	EndAddress                  = SourceAddress + Buffer->Parameters.InputSize - 1;
-
 	//
 	// Program the preprocessor
 	//
 	// Standard pre-processor initialization
 	//
-
 	__flush_wback_region(Buffer->Parameters.InputBufferCachedAddress, Buffer->Parameters.InputSize);
 	__flush_wback_region(Buffer->Parameters.OutputBufferCachedAddress, H264_PP_SESB_SIZE);
-
 	OSDEV_WriteLong(PP_ITS(N),                 0xffffffff);                             // Clear interrupt status
-
 	OSDEV_WriteLong(PP_ITM(N),                 PP_ITM__BIT_BUFFER_OVERFLOW |            // We are interested in every interrupt
 					PP_ITM__BIT_BUFFER_UNDERFLOW |
 					PP_ITM__INT_BUFFER_OVERFLOW |
@@ -738,31 +602,24 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t    *Buffer)
 					PP_ITM__ERROR_SC_DETECTED |
 					PP_ITM__SRS_COMP |
 					PP_ITM__DMA_CMP);
-
 	//
 	// Setup the decode
 	//
-
 	OSDEV_WriteLong(PP_BBG(N), (SourceAddress & 0xfffffff8));
 	OSDEV_WriteLong(PP_BBS(N), (EndAddress    | 0x7));
 	OSDEV_WriteLong(PP_READ_START(N),          SourceAddress);
 	OSDEV_WriteLong(PP_READ_STOP(N),           EndAddress);
-
 	OSDEV_WriteLong(PP_ISBG(N),                SliceErrorStatusAddress);
 	OSDEV_WriteLong(PP_IPBG(N),                IntermediateAddress);
 	OSDEV_WriteLong(PP_IBS(N),                 IntermediateEndAddress);
-
 	OSDEV_WriteLong(PP_CFG(N),                 PP_CFG__CONTROL_MODE__START_STOP | Buffer->Parameters.Cfg);
 	OSDEV_WriteLong(PP_PICWIDTH(N),            Buffer->Parameters.PicWidth);
 	OSDEV_WriteLong(PP_CODELENGTH(N),          Buffer->Parameters.CodeLength);
-
 	//
 	// Launch the pre-processor
 	//
-
 	Buffer->DecodeTime              = OSDEV_GetTimeInMilliSeconds();
 	State->Accumulated_ITS          = 0;
-
 	OSDEV_WriteLong(PP_START(N),               1);
 }
 
@@ -802,91 +659,65 @@ static void H264ppWorkAroundGNBvd42331(H264ppState_t        *State,
 	unsigned int    SliceErrorStatusAddress;
 	unsigned int    IntermediateAddress;
 	unsigned int    IntermediateEndAddress;
-
 	//
 	// Do we have to worry.
 	//
-
 	mb_adaptive_frame_field_flag        = ((State->BufferState->Parameters.Cfg & 1) != 0);
 	entropy_coding_mode_flag            = ((State->BufferState->Parameters.Cfg & 2) != 0);
-
 	PerformWorkaround                   = !mb_adaptive_frame_field_flag &&
 										  State->last_mb_adaptive_frame_field_flag &&
 										  entropy_coding_mode_flag;
-
 	State->last_mb_adaptive_frame_field_flag = mb_adaptive_frame_field_flag;
-
 	if (!PerformWorkaround && !State->ForceWorkAroundGNBvd42331)
 		return;
-
 //OSDEV_Print( "H264ppWorkAroundGNBvd42331 - Deploying GNBvd42331 workaround block to PP %d - %08x.\n", N, State->BufferState->Parameters.Cfg );
-
 	State->ForceWorkAroundGNBvd42331    = 0;
-
 	//
 	// we transfer the workaround stream to the output buffer (offset by 64k to not interfere with the output).
 	//
-
 	memcpy((void *)((unsigned int)State->BufferState->Parameters.OutputBufferCachedAddress + 0x10000), GNBvd42331Data, sizeof(GNBvd42331Data));
-
 	GNBvd42331DataPhysicalAddress   = (unsigned char *)State->BufferState->Parameters.OutputBufferPhysicalAddress + 0x10000;
-
 	__flush_wback_region((State->BufferState->Parameters.OutputBufferCachedAddress + 0x10000), sizeof(GNBvd42331Data));
-
 	//
 	// Derive the pointers - we use the next buffer to be queued as output as our output
 	//
-
 	BufferBase                  = (unsigned int)State->BufferState->Parameters.OutputBufferPhysicalAddress;
-
 	SliceErrorStatusAddress     = BufferBase;
 	IntermediateAddress         = BufferBase + H264_PP_SESB_SIZE;
 	IntermediateEndAddress      = IntermediateAddress + H264_PP_OUTPUT_SIZE - 1;
 	SourceAddress               = (unsigned int)GNBvd42331DataPhysicalAddress;
 	EndAddress                  = (unsigned int)GNBvd42331DataPhysicalAddress + sizeof(GNBvd42331Data) - 1;
-
 	//
 	// Launch the workaround block
 	//
-
 	SavedITM        = OSDEV_ReadLong(PP_ITM(N));            // Turn off interrupts
 	OSDEV_WriteLong(PP_ITM(N), 0);
-
 	OSDEV_WriteLong(PP_BBG(N), (SourceAddress & 0xfffffff8));
 	OSDEV_WriteLong(PP_BBS(N), (EndAddress    | 0x7));
 	OSDEV_WriteLong(PP_READ_START(N),          SourceAddress);
 	OSDEV_WriteLong(PP_READ_STOP(N),           EndAddress);
-
 	OSDEV_WriteLong(PP_ISBG(N),                SliceErrorStatusAddress);
 	OSDEV_WriteLong(PP_IPBG(N),                IntermediateAddress);
 	OSDEV_WriteLong(PP_IBS(N),                 IntermediateEndAddress);
-
 	OSDEV_WriteLong(PP_CFG(N),                 GNBvd42331_CFG);
 	OSDEV_WriteLong(PP_PICWIDTH(N),            GNBvd42331_PICWIDTH);
 	OSDEV_WriteLong(PP_CODELENGTH(N),          GNBvd42331_CODELENGTH);
-
 	OSDEV_WriteLong(PP_ITS(N),                 0xffffffff);         // Clear interrupt status
 	OSDEV_WriteLong(PP_START(N),               1);
-
 	//
 	// Wait for it to complete
 	//
-
 	for (i = 0; i < H264_PP_RESET_TIME_LIMIT; i++)
 	{
 		OSDEV_SleepMilliSeconds(1);
-
 		if ((OSDEV_ReadLong(PP_ITS(N)) & PP_ITM__DMA_CMP) != 0)
 			break;
 	}
-
 	if ((i == H264_PP_RESET_TIME_LIMIT) || (OSDEV_ReadLong(PP_ITS(N)) != PP_ITM__DMA_CMP))
 		OSDEV_Print("H264ppWorkAroundGNBvd42331 - Failed to execute GNBvd42331 workaround block to PP %d (ITS %08x).\n", N, OSDEV_ReadLong(PP_ITS(N)));
-
 	//
 	// Restore the interrupts
 	//
-
 	OSDEV_WriteLong(PP_ITS(N),                     0xffffffff);             // Clear interrupt status
 	OSDEV_WriteLong(PP_ITM(N), SavedITM);
 }

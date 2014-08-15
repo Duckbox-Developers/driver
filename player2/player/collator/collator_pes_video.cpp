@@ -111,46 +111,35 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 	bool            Loop;
 	bool            BlockTerminate;
 	FrameParserHeaderFlag_t HeaderFlags;
-
 //
-
 	st_relayfs_write(ST_RELAY_TYPE_PES_VIDEO_BUFFER, ST_RELAY_SOURCE_VIDEO_COLLATOR, (unsigned char *)Data, DataLength, 0);
-
 	COLLATOR_ASSERT(!NonBlocking);
 	AssertComponentState("Collator_PesVideo_c::Input", ComponentRunning);
 	InputEntry(Input, DataLength, Data, NonBlocking);
-
 	ActOnInputDescriptor(Input);
-
 	//
 	// Initialize scan state
 	//
-
 	RemainingData       = (unsigned char *)Data;
 	RemainingLength     = DataLength;
-
 	while (RemainingLength != 0)
 	{
 		//
 		// Are we accumulating an extended header
 		//
-
 		if (GotPartialHeader)
 		{
 			if (GotPartialCurrentSize < GotPartialDesiredSize)
 			{
 				Transfer    =  min(RemainingLength, (GotPartialDesiredSize - GotPartialCurrentSize));
 				memcpy(StoredPartialHeader + GotPartialCurrentSize, RemainingData, Transfer);
-
 				GotPartialCurrentSize   += Transfer;
 				RemainingData       += Transfer;
 				RemainingLength     -= Transfer;
 			}
-
 			if (GotPartialCurrentSize >= GotPartialDesiredSize)
 			{
 				Loop    = false;
-
 				switch (GotPartialType)
 				{
 					case HeaderZeroStartCode:
@@ -165,62 +154,46 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 						else
 						{
 							GotPartialDesiredSize    = 4;
-
 							if (Configuration.DetermineFrameBoundariesByPresentationToFrameParser)
 								GotPartialDesiredSize   += FrameParser->RequiredPresentationLength(0x00);
-
 							GotPartialType       = HeaderGenericStartCode;
 						}
-
 						Loop                = true;
 						break;
-
 //
-
 					case HeaderPesStartCode:
 						if (GotPartialCurrentSize >= PES_INITIAL_HEADER_SIZE)
 							GotPartialDesiredSize   = PES_HEADER_SIZE(StoredPartialHeader);
-
 						if (GotPartialCurrentSize < GotPartialDesiredSize)
 						{
 							Loop            = true;
 							break;
 						}
-
 						GotPartialHeader        = false;
 						StoredPesHeader         = StoredPartialHeader;
 						Status              = ReadPesHeader();
-
 						if (Status != CollatorNoError)
 						{
 							InputExit();
 							return Status;
 						}
-
 						if (SeekingPesHeader)
 						{
 							AccumulatedDataSize         = 0;            // Dump any collected data
 							SeekingPesHeader            = false;
 						}
-
 						break;
-
 //
-
 					case HeaderPaddingStartCode:
 						Skipping            = PES_PADDING_SKIP(StoredPartialHeader);
 						GotPartialHeader        = false;
 						break;
-
 //
-
 					case HeaderGenericStartCode:
 						//
 						// Is it going to terminate a frame
 						//
-
 						Code                = StoredPartialHeader[3];
-
 						if (Configuration.DetermineFrameBoundariesByPresentationToFrameParser)
 						{
 							FrameParser->PresentCollatedHeader(Code, (StoredPartialHeader + 4), &HeaderFlags);
@@ -233,94 +206,73 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 												  (Configuration.DeferredTerminateFlag && TerminationFlagIsSet);
 							TerminationFlagIsSet    = false;
 						}
-
 						GotPartialHeader        = false;
-
 						if (BlockTerminate)
 						{
 							memcpy(StoredPartialHeaderCopy, StoredPartialHeader, GotPartialCurrentSize);
-
 							Status          = InternalFrameFlush();
-
 							if (Status != CollatorNoError)
 							{
 								InputExit();
 								return Status;
 							}
-
 							memcpy(BufferBase, StoredPartialHeaderCopy, GotPartialCurrentSize);
 							AccumulatedDataSize     = 0;
 							SeekingPesHeader        = false;
 						}
-
 						//
 						// Accumulate it in any event
 						//
-
 						Status      = AccumulateStartCode(PackStartCode(AccumulatedDataSize, Code));
-
 						if (Status != CollatorNoError)
 						{
 							DiscardAccumulatedData();
 							InputExit();
 							return Status;
 						}
-
 						AccumulatedDataSize         += GotPartialCurrentSize;
-
 						//
 						// Check whether or not this start code will be a block terminate in the future
 						//
-
 						if (Configuration.DeferredTerminateFlag && ((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode))
 							TerminationFlagIsSet = true;
-
 						break;
 				}
-
 				if (Loop)
 					continue;
 			}
-
 			if (RemainingLength == 0)
 			{
 				InputExit();
 				return CollatorNoError;
 			}
 		}
-
 		//
 		// Are we skipping padding
 		//
-
 		if (Skipping != 0)
 		{
 			Skip                 = min(Skipping, RemainingLength);
 			RemainingData       += Skip;
 			RemainingLength     -= Skip;
 			Skipping            -= Skip;
-
 			if (RemainingLength == 0)
 			{
 				InputExit();
 				return CollatorNoError;
 			}
 		}
-
 		//
 		// Check for spanning header
 		//
-
 		SpanningWord             = 0xffffffff << (8 * min(AccumulatedDataSize, 3));
 		SpanningWord            |= BufferBase[AccumulatedDataSize - 3] << 16;
 		SpanningWord            |= BufferBase[AccumulatedDataSize - 2] << 8;
 		SpanningWord            |= BufferBase[AccumulatedDataSize - 1];
-
 		StartingWord             = 0x00ffffff >> (8 * min((RemainingLength - 1), 3));
 		StartingWord            |= RemainingData[0] << 24;
 		StartingWord            |= RemainingData[1] << 16;
 		StartingWord            |= RemainingData[2] <<  8;
-
 		//
 		// Check for a start code spanning, or in the first word
 		// record the nature of the span in a counter indicating how many
@@ -328,9 +280,7 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 		// NOTE the 00 at the bottom indicates we have a byte for the code,
 		//      not what it is.
 		//
-
 		SpanningCount           = 0;
-
 		if ((SpanningWord << 8) == 0x00000100)
 		{
 			SpanningCount       = 1;
@@ -350,39 +300,31 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 			SpanningPlaybackTimeValid   = false;
 			SpanningDecodeTimeValid     = false;
 		}
-
 		//
 		// Check that if we have a spanning code, that the code is not to be ignored
 		//
-
 		if ((SpanningCount != 0) &&
 				inrange(RemainingData[SpanningCount - 1], Configuration.IgnoreCodesRangeStart, Configuration.IgnoreCodesRangeEnd))
 		{
 			SpanningCount       = 0;
 		}
-
 		//
 		// Handle a spanning start code
 		//
-
 		if (SpanningCount != 0)
 		{
 			//
 			// Copy over the spanning bytes
 			//
-
 			for (i = 0; i < SpanningCount; i++)
 				BufferBase[AccumulatedDataSize + i]     = RemainingData[i];
-
 			AccumulatedDataSize     += SpanningCount - 4;
 			RemainingData           += SpanningCount;
 			RemainingLength         -= SpanningCount;
 		}
-
 		//
 		// Handle search for next start code
 		//
-
 		else
 		{
 			//
@@ -390,7 +332,6 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 			// had no normal PTS for this frame, then copy the spanning time
 			// to the normal time.
 			//
-
 			if (!PlaybackTimeValid && SpanningPlaybackTimeValid)
 			{
 				PlaybackTimeValid       = SpanningPlaybackTimeValid;
@@ -401,56 +342,43 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 				SpanningPlaybackTimeValid   = false;
 				SpanningDecodeTimeValid     = false;
 			}
-
 			//
 			// Get a new start code
 			//
-
 			Status      = FindNextStartCode(&CodeOffset);
-
 			if (Status != CollatorNoError)
 			{
 				//
 				// No start code, copy remaining data into buffer, and exit
 				//
-
 				Status  = AccumulateData(RemainingLength, RemainingData);
-
 				if (Status != CollatorNoError)
 					DiscardAccumulatedData();
-
 				RemainingLength         = 0;
 				InputExit();
 				return Status;
 			}
-
 			//
 			// Got a start code accumulate up to it, and process
 			//
-
 			Status      = AccumulateData(CodeOffset + 4, RemainingData);
-
 			if (Status != CollatorNoError)
 			{
 				DiscardAccumulatedData();
 				InputExit();
 				return Status;
 			}
-
 			AccumulatedDataSize         -= 4;
 			RemainingLength                     -= CodeOffset + 4;
 			RemainingData                       += CodeOffset + 4;
 		}
-
 		//
 		// Now process the code, whether from spanning, or from search
 		//
-
 		GotPartialHeader        = true;
 		GotPartialCurrentSize       = 4;
 		StoredPartialHeader     = BufferBase + AccumulatedDataSize;
 		Code                        = StoredPartialHeader[3];
-
 		if (Code == 0x00)
 		{
 			GotPartialType      = HeaderZeroStartCode;
@@ -485,14 +413,11 @@ CollatorStatus_t   Collator_PesVideo_c::Input(
 		{
 			// A generic start code
 			GotPartialType      = HeaderGenericStartCode;
-
 			GotPartialDesiredSize    = 4;
-
 			if (Configuration.DetermineFrameBoundariesByPresentationToFrameParser)
 				GotPartialDesiredSize   += FrameParser->RequiredPresentationLength(Code);
 		}
 	}
-
 	InputExit();
 	return CollatorNoError;
 }
@@ -513,27 +438,19 @@ CollatorStatus_t   Collator_PesVideo_c::InternalFrameFlush(bool        FlushedBy
 CollatorStatus_t   Collator_PesVideo_c::InternalFrameFlush(void)
 {
 	CollatorStatus_t        Status;
-
 //
-
 	AssertComponentState("Collator_PesVideo_c::InternalFrameFlush", ComponentRunning);
-
 //
-
 	Status                                      = Collator_Pes_c::InternalFrameFlush();
-
 	if (Status != CodecNoError)
 		return Status;
-
 	SeekingPesHeader                            = true;
 	GotPartialHeader                = false;        // New style all but divx
 	GotPartialZeroHeader                        = false;        // Old style for divx support only
 	GotPartialPesHeader                         = false;
 	GotPartialPaddingHeader                     = false;
 	Skipping                                    = 0;
-
 	TerminationFlagIsSet = false;
-
 	//
 	// at this point we sit (approximately) between frames and should update the PTS/DTS with the values
 	// last extracted from the PES header. UseSpanningTime will (or at least should) be true when the
@@ -558,7 +475,6 @@ CollatorStatus_t   Collator_PesVideo_c::InternalFrameFlush(void)
 		CodedFrameParameters->DecodeTime        = DecodeTime;
 		DecodeTimeValid                         = false;
 	}
-
 	return CodecNoError;
 }
 

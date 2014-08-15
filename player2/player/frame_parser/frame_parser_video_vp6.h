@@ -74,7 +74,6 @@ class RangeCoder_c
 			int                 Low             = (High + 1) >> 1;
 			unsigned int        LowShift        = Low << 8;
 			int                 Bit             = Data >= LowShift;
-
 			if (Bit)
 			{
 				High            = (High - Low) << 1;
@@ -82,26 +81,21 @@ class RangeCoder_c
 			}
 			else
 				High            = Low << 1;
-
 			/* normalize */
 			Data              <<= 1;
-
 			if (--Bits == 0)
 			{
 				Bits            = 8;
 				Data           |= *Buffer++;
 			}
-
 			return Bit;
 		}
 
 		int GetBits(int Bits)
 		{
 			int Value   = 0;
-
 			while (Bits--)
 				Value   = (Value << 1) | GetBit();
-
 			return Value;
 		}
 

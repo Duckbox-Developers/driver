@@ -5,7 +5,7 @@
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
-#include <linux/math64.h>
+#include <asm/div64.h>
 
 extern u64 __xdiv64_32(u64 n, u32 d);
 
@@ -13,9 +13,8 @@ u64 __udivdi3(u64 n, u64 d)
 {
 	if (unlikely(d & 0xffffffff00000000ULL))
 	{
-		printk(KERN_WARNING "Workaround for 64-bit/64-bit division");
 		uint32_t di = d;
-
+		printk(KERN_WARNING "Workaround for 64-bit/64-bit division.");
 		/* Scale divisor to 32 bits */
 		if (d > 0xffffffffULL)
 		{
@@ -23,7 +22,6 @@ u64 __udivdi3(u64 n, u64 d)
 			di = d >> shift;
 			n >>= shift;
 		}
-
 		/* avoid 64 bit division if possible */
 		if (n >> 32)
 		{
@@ -31,7 +29,6 @@ u64 __udivdi3(u64 n, u64 d)
 			return d;
 		}
 	}
-
 	return __xdiv64_32(n, (u32)d);
 }
 
@@ -40,9 +37,7 @@ uint32_t __umoddi3(u64 xp, u32 y)
 {
 	uint32_t rem;
 	uint64_t q = __xdiv64_32(xp, y);
-
 	rem = xp - q * y;
-
 	return rem;
 }
 

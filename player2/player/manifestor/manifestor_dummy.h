@@ -83,43 +83,30 @@ class Manifestor_Dummy_c : public Manifestor_c
 			BufferType_t                 DecodeBufferType;
 			BufferStatus_t               Status;
 //
-
 			report(severity_info, "Manifestor_Dummy_c::GetDecodeBufferPool - Called\n");
-
 			Player->GetBufferManager(&BufferManager);
 			Status  = BufferManager->CreateBufferDataType(&InitialDecodeBufferDescriptor, &DecodeBufferType);
-
 			if (Status != BufferNoError)
 			{
 				report(severity_error, "Manifestor_Dummy_c::GetDecodeBufferPool - Failed to create the decode buffer data type.\n");
 				return ManifestorError;
 			}
-
 			BufferManager->GetDescriptor(DecodeBufferType, BufferDataTypeBase, &DecodeBufferDescriptor);
-
 //
-
 			MemoryPointers[CachedAddress]   = Memory;
 			MemoryPointers[UnCachedAddress] = Memory;
 			MemoryPointers[PhysicalAddress] = Memory;
 			Status     = BufferManager->CreatePool(Pool, DecodeBufferType, 32, 8 * 1024 * 1024, MemoryPointers);
-
 			if (Status != BufferNoError)
 			{
 				report(severity_error, "Manifestor_Dummy_c::GetDecodeBufferPool - Failed to create the pool.\n");
 				return ManifestorError;
 			}
-
 //
-
 			BufferPool      = *Pool;
-
 //
-
 			BufferPool->AttachMetaData(Player->MetaDataBufferStructureType);
-
 //
-
 			return ManifestorNoError;
 		}
 
@@ -138,7 +125,6 @@ class Manifestor_Dummy_c : public Manifestor_c
 			OutputSurfaceDescriptor.DisplayHeight   = 576;
 			OutputSurfaceDescriptor.Progressive = true;
 			OutputSurfaceDescriptor.FrameRate   = 50;
-
 			*SurfaceParameters  = &OutputSurfaceDescriptor;
 			return ManifestorNoError;
 		}
@@ -168,24 +154,19 @@ class Manifestor_Dummy_c : public Manifestor_c
 		ManifestorStatus_t   QueueDecodeBuffer(Buffer_t       Buffer)
 		{
 			ManifestorStatus_t  Status;
-
 			Status  = Buffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersReferenceType, (void **)(&ParsedFrameParameters));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Manifestor_Dummy_c::QueueDecodeBuffer - Unable to obtain the meta data \"ParsedFrameParameters\".\n");
 				return ManifestorError;
 			}
-
 			if (GotEventRecord)
 			{
 				if (EventRecord.PlaybackTime == INVALID_TIME)
 					EventRecord.PlaybackTime    = ParsedFrameParameters->NativePlaybackTime;
-
 				Player->SignalEvent(&EventRecord);
 				GotEventRecord  = false;
 			}
-
 			report(severity_info, "Manifestor_Dummy_c::QueueDecodeBuffer - Queueing %3d - Native playback time %016llx\n", ParsedFrameParameters->DisplayFrameIndex, ParsedFrameParameters->NativePlaybackTime);
 			OutputRing->Insert((unsigned int)Buffer);
 			return ManifestorNoError;
@@ -214,28 +195,21 @@ class Manifestor_Dummy_c : public Manifestor_c
 		{
 			ManifestorStatus_t   Status;
 			BufferStructure_t   *AttachedRequestStructure;
-
 			RequestedStructure->Dimension[0]    = ((RequestedStructure->Dimension[0] + 31) / 32) * 32;
 			RequestedStructure->Dimension[1]    = ((RequestedStructure->Dimension[1] + 31) / 32) * 32;
-
 			RequestedStructure->ComponentCount  = 2;
 			RequestedStructure->ComponentOffset[0]  = 0;
 			RequestedStructure->ComponentOffset[1]  = RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1];
-
 			RequestedStructure->Strides[0][0]   = RequestedStructure->Dimension[0];
 			RequestedStructure->Strides[0][1]   = RequestedStructure->Dimension[0];
-
 			RequestedStructure->Size        = (RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1] * 3) / 2;
-
 			Status  = BufferPool->GetBuffer(Buffer, IdentifierManifestor, RequestedStructure->Size);
-
 			if (Status == BufferNoError)
 			{
 				(*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
 												   (void **)(&AttachedRequestStructure));
 				memcpy(AttachedRequestStructure, RequestedStructure, sizeof(BufferStructure_t));
 			}
-
 			return Status;
 		}
 
@@ -245,16 +219,12 @@ class Manifestor_Dummy_c : public Manifestor_c
 		{
 			RequestedStructure->Dimension[0]    = ((RequestedStructure->Dimension[0] + 31) / 32) * 32;
 			RequestedStructure->Dimension[1]    = ((RequestedStructure->Dimension[1] + 31) / 32) * 32;
-
 			RequestedStructure->ComponentCount  = 2;
 			RequestedStructure->ComponentOffset[0]  = 0;
 			RequestedStructure->ComponentOffset[1]  = RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1];
-
 			RequestedStructure->Strides[0][0]   = RequestedStructure->Dimension[0];
 			RequestedStructure->Strides[0][1]   = RequestedStructure->Dimension[0];
-
 			RequestedStructure->Size        = (RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1] * 3) / 2;
-
 			*Count  = (8 * 1024 * 1024) / RequestedStructure->Size;
 			return ManifestorNoError;
 		}

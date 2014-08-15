@@ -94,8 +94,7 @@ struct platform_device cap_device_7105 =
 	.num_resources =  1,
 	.resource      = (struct resource[])
 	{
-		[0] =
-		{
+		[0] = {
 			.start = 0xFE20AE00,
 			.end   = 0xFE20AEFF,
 			.flags = IORESOURCE_MEM,
@@ -119,31 +118,23 @@ static struct platform_device *platform_7105[] __initdata =
 
 static __init int platform_init_7105(void)
 {
-
 	// iomap so memory available
 	int *data = (int*)ioremap(0xfe000000, 0x1000);
-
 	printk("Switching Preprocessor clock to full speed.\n");
-
 	// unlock CKGB_LCK to allow clockgen programming
 	data[0x10 / 4] = 0xC0DE;
-
 	data[0x80 / 4] = data[0x70 / 4];
 	data[0x84 / 4] = data[0x74 / 4];
 	data[0x88 / 4] = data[0x78 / 4];
 	data[0x8C / 4] = data[0x7C / 4];
-
 	if ((data[0x80 / 4] != data[0x70 / 4]) &&
 			(data[0x84 / 4] != data[0x74 / 4]) &&
 			(data[0x88 / 4] != data[0x78 / 4]) &&
 			(data[0x8C / 4] != data[0x7C / 4]))
 		printk("Switching Preprocessor clock to full speed FAILED\n");
-
 	iounmap(data);
-
 //    register_board_drivers();
 	return platform_add_devices(platform_7105, sizeof(platform_7105) / sizeof(struct platform_device*));
-
 }
 
 module_init(platform_init_7105);

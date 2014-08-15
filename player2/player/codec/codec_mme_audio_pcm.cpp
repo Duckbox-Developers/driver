@@ -84,22 +84,15 @@ static BufferDataDescriptor_t           PcmAudioCodecDecodeContextDescriptor    
 Codec_MmeAudioPcm_c::Codec_MmeAudioPcm_c(void)
 {
 	Configuration.CodecName                             = "Pcm transcoder";
-
 	Configuration.StreamParameterContextCount           = 1;
 	Configuration.StreamParameterContextDescriptor      = &PcmAudioCodecStreamParameterContextDescriptor;
-
 	Configuration.DecodeContextCount                    = 4;
 	Configuration.DecodeContextDescriptor               = &PcmAudioCodecDecodeContextDescriptor;
-
 	for (int i = 0; i < CODEC_MAX_TRANSFORMERS; i++)
 		Configuration.TransformName[i]                  = PCM_MME_TRANSFORMER_NAME;
-
 	Configuration.AvailableTransformers                 = CODEC_MAX_TRANSFORMERS;
-
 	Configuration.AddressingMode                        = CachedAddress;
-
 	RestartTransformer                                  = ACC_MME_TRUE;
-
 	Reset();
 }
 //}}}
@@ -139,20 +132,14 @@ CodecStatus_t   Codec_MmeAudioPcm_c::HandleCapabilities(void)
 CodecStatus_t Codec_MmeAudioPcm_c::FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams_p)
 {
 	MME_LxAudioDecoderGlobalParams_t   &GlobalParams    = *GlobalParams_p;
-
 	CODEC_TRACE("Initializing PCM audio decoder\n");
-
 	GlobalParams.StructSize             = sizeof(MME_LxAudioDecoderGlobalParams_t);
-
 	MME_LxPcmAudioConfig_t &Config      = *((MME_LxPcmAudioConfig_t*)GlobalParams.DecConfig);
-
 	Config.DecoderId                    = ACC_PCM_ID;
 	Config.StructSize                   = sizeof(Config);
-
 	if (ParsedFrameParameters != NULL)
 	{
 		PcmAudioStreamParameters_s*     StreamParams    = (PcmAudioStreamParameters_s*)ParsedFrameParameters->StreamParameterStructure;
-
 		Config.ChannelCount             = StreamParams->ChannelCount;
 		Config.SampleRate               = StreamParams->SampleRate;
 		Config.BytesPerSecond           = StreamParams->BytesPerSecond;
@@ -169,9 +156,7 @@ CodecStatus_t Codec_MmeAudioPcm_c::FillOutTransformerGlobalParameters(MME_LxAudi
 		Config.BitsPerSample            = 16;
 		Config.DataEndianness           = PCM_LITTLE_ENDIAN;
 	}
-
 	RestartTransformer                  = ACC_MME_TRUE;
-
 	CODEC_TRACE("DecoderId                  %d (%x)\n", Config.DecoderId, Config.DecoderId);
 	CODEC_TRACE("StructSize                 %d (%x)\n", Config.StructSize, Config.StructSize);
 	CODEC_TRACE("Config.ChannelCount        %d (%x)\n", Config.ChannelCount, Config.ChannelCount);
@@ -180,7 +165,6 @@ CodecStatus_t Codec_MmeAudioPcm_c::FillOutTransformerGlobalParameters(MME_LxAudi
 	CODEC_TRACE("Config.BlockAlign          %d (%x)\n", Config.BlockAlign, Config.BlockAlign);
 	CODEC_TRACE("Config.BitsPerSample       %d (%x)\n", Config.BitsPerSample, Config.BitsPerSample);
 	CODEC_TRACE("Config.DataEndianness      %d (%x)\n", Config.DataEndianness, Config.DataEndianness);
-
 	return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
 }
 //}}}
@@ -193,15 +177,11 @@ CodecStatus_t   Codec_MmeAudioPcm_c::FillOutTransformerInitializationParameters(
 {
 	CodecStatus_t                       Status;
 	MME_LxAudioDecoderInitParams_t     &Params                  = AudioDecoderInitializationParameters;
-
 	MMEInitializationParameters.TransformerInitParamsSize       = sizeof(Params);
 	MMEInitializationParameters.TransformerInitParams_p         = &Params;
-
 	Status                                                      = Codec_MmeAudio_c::FillOutTransformerInitializationParameters();
-
 	if (Status != CodecNoError)
 		return Status;
-
 	return FillOutTransformerGlobalParameters(&Params.GlobalParams);
 }
 //}}}
@@ -214,54 +194,41 @@ CodecStatus_t   Codec_MmeAudioPcm_c::FillOutSetStreamParametersCommand(void)
 {
 	CodecStatus_t                               Status;
 	PcmAudioCodecStreamParameterContext_t*      Context = (PcmAudioCodecStreamParameterContext_t *)StreamParameterContext;
-
 	CODEC_TRACE("\n");
 	// Fill out the structure
 #if 0
 	// There are no set stream parameters for Vp6 decoder so the transformer is
 	// terminated and restarted when required (i.e. if width or height change).
-
 	if (RestartTransformer)
 	{
 		TerminateMMETransformer();
-
 		memset(&MMEInitializationParameters, 0x00, sizeof(MME_TransformerInitParams_t));
-
 		MMEInitializationParameters.Priority                    = MME_PRIORITY_NORMAL;
 		MMEInitializationParameters.StructSize                  = sizeof(MME_TransformerInitParams_t);
 		MMEInitializationParameters.Callback                    = &MMECallbackStub;
 		MMEInitializationParameters.CallbackUserData            = this;
-
 		FillOutTransformerInitializationParameters();
-
 		MMEStatus               = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-													  &MMEInitializationParameters, &MMEHandle);
-
+								  &MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus ==  MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", DecodingWidth, DecodingHeight);
 			CodecStatus                                         = CodecNoError;
 			RestartTransformer                                  = eAccFalse;
 			ParsedFrameParameters->NewStreamParameters          = false;
-
 			MMEInitialized                                      = true;
 		}
 	}
-
 #endif
-
 	memset(&(Context->StreamParameters), 0, sizeof(Context->StreamParameters));
 	Status              = FillOutTransformerGlobalParameters(&(Context->StreamParameters));
-
 	if (Status != CodecNoError)
 		return Status;
-
 	// Fill out the actual command
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->StreamParameters);
-
 	return CodecNoError;
 }
 //}}}
@@ -273,27 +240,20 @@ CodecStatus_t   Codec_MmeAudioPcm_c::FillOutSetStreamParametersCommand(void)
 CodecStatus_t   Codec_MmeAudioPcm_c::FillOutDecodeCommand(void)
 {
 	PcmAudioCodecDecodeContext_t    *Context                            = (PcmAudioCodecDecodeContext_t *)DecodeContext;
-
 	CODEC_DEBUG("%s: Initializing decode params\n", __FUNCTION__);
-
 	// Initialize the frame parameters
 	memset(&Context->DecodeParameters, 0, sizeof(Context->DecodeParameters));
 	Context->DecodeParameters.Restart           = RestartTransformer;
-
 	RestartTransformer                          = ACC_MME_FALSE;
-
 	// Zero the reply structure
 	memset(&Context->DecodeStatus, 0, sizeof(Context->DecodeStatus));
-
 	// Fill out the actual command
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
 	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
 	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);
 	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->DecodeParameters);
-
 	CODEC_DEBUG("Restart                    %d\n", Context->DecodeParameters.Restart);
 	CODEC_DEBUG("AdditionalInfoSize         %d\n", Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize);
-
 	return CodecNoError;
 }
 //}}}
@@ -309,40 +269,30 @@ CodecStatus_t   Codec_MmeAudioPcm_c::ValidateDecodeContext(CodecBaseDecodeContex
 	PcmAudioCodecDecodeContext_t*       DecodeContext   = (PcmAudioCodecDecodeContext_t*)Context;
 	MME_LxAudioDecoderFrameStatus_t    &Status          = DecodeContext->DecodeStatus;
 	ParsedAudioParameters_t*            AudioParameters;
-
 	//CODEC_TRACE ("%s: DecStatus %d\n", __FUNCTION__, Status.DecStatus);
-
 	if (ENABLE_CODEC_DEBUG)
 	{
 		//DumpCommand(bufferIndex);
 	}
-
 	if (Status.DecStatus != ACC_HXR_OK)
 	{
 		CODEC_ERROR("PCM audio decode error (muted frame): %d\n", Status.DecStatus);
 		//DumpCommand(bufferIndex);
 		// don't report an error to the higher levels (because the frame is muted)
 	}
-
 	// SYSFS
 	AudioDecoderStatus                          = Status;
-
 	//
 	// Attach any codec derived metadata to the output buffer (or verify the
 	// frame analysis if the frame analyser already filled everything in for
 	// us).
 	//
-
 	AudioParameters                             = BufferState[DecodeContext->BaseContext.BufferIndex].ParsedAudioParameters;
-
 	AudioParameters->Source.BitsPerSample       = AudioOutputSurface->BitsPerSample;
 	AudioParameters->Source.ChannelCount        = AudioOutputSurface->ChannelCount;
 	AudioParameters->Organisation               = Status.AudioMode;
-
 	AudioParameters->SampleCount                = Status.NbOutSamples;
-
 	int SamplingFreqCode                        = Status.SamplingFreq;
-
 	if (SamplingFreqCode < ACC_FS_reserved)
 	{
 		AudioParameters->Source.SampleRateHz    = ACC_SamplingFreqLUT[SamplingFreqCode];
@@ -352,13 +302,11 @@ CodecStatus_t   Codec_MmeAudioPcm_c::ValidateDecodeContext(CodecBaseDecodeContex
 		AudioParameters->Source.SampleRateHz    = 0;
 		CODEC_ERROR("PCM audio decode bad sampling freq returned: 0x%x\n", SamplingFreqCode);
 	}
-
 	CODEC_DEBUG("AudioParameters->Source.BitsPerSample         %d\n", AudioParameters->Source.BitsPerSample);
 	CODEC_DEBUG("AudioParameters->Source.ChannelCount          %d\n", AudioParameters->Source.ChannelCount);
 	CODEC_DEBUG("AudioParameters->Organisation                 %d\n", AudioParameters->Organisation);
 	CODEC_DEBUG("AudioParameters->SampleCount                  %d\n", AudioParameters->SampleCount);
 	CODEC_DEBUG("AudioParameters->Source.SampleRateHz          %d\n", AudioParameters->Source.SampleRateHz);
-
 	return CodecNoError;
 }
 //}}}
@@ -388,7 +336,6 @@ CodecStatus_t   Codec_MmeAudioPcm_c::DumpDecodeParameters(void    *Parameters)
 	CODEC_TRACE("%s: Page_p[0]                     %p\n", __FUNCTION__, DecodeContext->MMEPages[0].Page_p);
 	CODEC_TRACE("%s: TotalSize[1]                  %d\n", __FUNCTION__, DecodeContext->MMEBuffers[1].TotalSize);
 	CODEC_TRACE("%s: Page_p[1]                     %p\n", __FUNCTION__, DecodeContext->MMEPages[1].Page_p);
-
 	return CodecNoError;
 }
 //}}}

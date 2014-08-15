@@ -74,7 +74,6 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 		~Manifestor_AudioDummy_c(void)
 		{
 			report(severity_info, "~Manifestor_AudioDummy_c - Called\n");
-
 			if (BufferPool != NULL)
 			{
 				AllocatorClose(MemoryPointersDevice);
@@ -92,63 +91,44 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 			BufferType_t                 DecodeBufferType;
 			BufferStatus_t               Status;
 			allocator_status_t           AStatus;
-
 //
-
 			report(severity_info, "Manifestor_AudioDummy_c::GetDecodeBufferPool - Called\n");
-
 			// Only create the pool if it doesn't exist and buffers have been created
 			if (BufferPool != NULL)
 			{
 				*Pool   = BufferPool;
 				return ManifestorNoError;
 			}
-
 			Player->GetBufferManager(&BufferManager);
 			Status  = BufferManager->CreateBufferDataType(&InitialDecodeBufferDescriptor, &DecodeBufferType);
-
 			if (Status != BufferNoError)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::GetDecodeBufferPool - Failed to create the decode buffer data type.\n");
 				return ManifestorError;
 			}
-
 			BufferManager->GetDescriptor(DecodeBufferType, BufferDataTypeBase, &DecodeBufferDescriptor);
-
 //
-
 			AStatus = PartitionAllocatorOpen(&MemoryPointersDevice, SYS_LMI_PARTITION, 6 * 128 * 1024, true);
-
 			if (AStatus != allocator_ok)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::GetDecodeBufferPool - Failed to allocate memory\n");
 				return PlayerInsufficientMemory;
 			}
-
 			MemoryPointers[CachedAddress]         = AllocatorUserAddress(MemoryPointersDevice);
 			MemoryPointers[UnCachedAddress]       = AllocatorUncachedUserAddress(MemoryPointersDevice);
 			MemoryPointers[PhysicalAddress]       = AllocatorPhysicalAddress(MemoryPointersDevice);
-
 //
-
 			Status     = BufferManager->CreatePool(Pool, DecodeBufferType, 32, 6 * 128 * 1024, MemoryPointers);
-
 			if (Status != BufferNoError)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::GetDecodeBufferPool - Failed to create the pool.\n");
 				return ManifestorError;
 			}
-
 //
-
 			BufferPool      = *Pool;
-
 //
-
 			BufferPool->AttachMetaData(Player->MetaDataBufferStructureType);
-
 //
-
 			return ManifestorNoError;
 		}
 
@@ -166,7 +146,6 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 			OutputSurfaceDescriptor.BitsPerSample   = 32;
 			OutputSurfaceDescriptor.ChannelCount    = 2;
 			OutputSurfaceDescriptor.SampleRateHz    = 48000;
-
 			*SurfaceParameters  = &OutputSurfaceDescriptor;
 			return ManifestorNoError;
 		}
@@ -196,52 +175,40 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 		ManifestorStatus_t   QueueDecodeBuffer(Buffer_t       Buffer)
 		{
 			ManifestorStatus_t  Status;
-
 			//report( severity_info, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Called\n" );
 			Status  = Buffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersReferenceType, (void **)(&ParsedFrameParameters));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Unable to obtain the meta data \"ParsedFrameParameters\".\n");
 				return ManifestorError;
 			}
-
 			Status  = Buffer->ObtainMetaDataReference(Player->MetaDataParsedAudioParametersType, (void **)(&ParsedAudioParameters));
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Unable to obtain the meta data \"ParsedAudioParameters\".\n");
 				return ManifestorError;
 			}
-
 			if (GotEventRecord)
 			{
 				if (EventRecord.PlaybackTime == INVALID_TIME)
 					EventRecord.PlaybackTime    = ParsedFrameParameters->NativePlaybackTime;
-
 				Player->SignalEvent(&EventRecord);
 				GotEventRecord  = false;
 			}
-
 			//
 			// Dump the first four samples of the buffer (assuming it to be a ten channel buffer)
 			//
-
 			// TODO: this really ought to extract the ParsedAudioParameters and use the number of channels
 			//       found there...
-
 			unsigned int *pcm;
 			Status = Buffer->ObtainDataReference(NULL, NULL, (void **) &pcm, CachedAddress);
-
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Unable to obtain the buffer data parser\n");
 				return ManifestorError;
 			}
-
 			report(severity_info, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Queueing %4d - Normalized playback time %lluus\n",
 				   ParsedFrameParameters->DisplayFrameIndex, ParsedFrameParameters->NormalizedPlaybackTime);
-
 			for (unsigned int i = 0; i < 4; i++)
 			{
 				unsigned int j = ParsedAudioParameters->Source.ChannelCount * i;
@@ -249,7 +216,6 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 					   pcm[j + 0] >> 8, pcm[j + 1] >> 8, pcm[j + 2] >> 8, pcm[j + 3] >> 8, pcm[j + 4] >> 8,
 					   pcm[j + 5] >> 8, pcm[j + 6] >> 8, pcm[j + 7] >> 8, pcm[j + 8] >> 8, pcm[j + 9] >> 8);
 			}
-
 			OutputRing->Insert((unsigned int)Buffer);
 			return ManifestorNoError;
 		}
@@ -277,24 +243,18 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 		{
 			ManifestorStatus_t   Status;
 			BufferStructure_t   *AttachedRequestStructure;
-
 			RequestedStructure->ComponentCount  = 1;
 			RequestedStructure->ComponentOffset[0]  = 0;
-
 			RequestedStructure->Strides[0][0]   = RequestedStructure->Dimension[0] / 8;
 			RequestedStructure->Strides[1][0]   = (RequestedStructure->Dimension[0] / 8) * RequestedStructure->Dimension[1];
-
 			RequestedStructure->Size        = (RequestedStructure->Dimension[0] / 8) * RequestedStructure->Dimension[1] * RequestedStructure->Dimension[2];
-
 			Status  = BufferPool->GetBuffer(Buffer, IdentifierManifestor, RequestedStructure->Size);
-
 			if (Status == BufferNoError)
 			{
 				(*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
 												   (void **)(&AttachedRequestStructure));
 				memcpy(AttachedRequestStructure, RequestedStructure, sizeof(BufferStructure_t));
 			}
-
 			return Status;
 		}
 
@@ -304,12 +264,9 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 		{
 			RequestedStructure->ComponentCount  = 1;
 			RequestedStructure->ComponentOffset[0]  = 0;
-
 			RequestedStructure->Strides[0][0]   = RequestedStructure->Dimension[0] / 8;
 			RequestedStructure->Strides[1][0]   = (RequestedStructure->Dimension[0] / 8) * RequestedStructure->Dimension[1];
-
 			RequestedStructure->Size        = (RequestedStructure->Dimension[0] / 8) * RequestedStructure->Dimension[1] * RequestedStructure->Dimension[2];
-
 			*Count  = (6 * 128 * 1024) / RequestedStructure->Size;
 			return ManifestorNoError;
 		}

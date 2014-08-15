@@ -60,31 +60,23 @@ struct SysfsContext_s*   SysfsContext;
 static int __init SysfsLoadModule(void)
 {
 	SysfsContext        = kmalloc(sizeof(struct SysfsContext_s),  GFP_KERNEL);
-
 	if (SysfsContext == NULL)
 	{
 		SYSFS_ERROR("Unable to allocate device memory\n");
 		return -ENOMEM;
 	}
-
 	PlayerInterfaceInit();
-
 	SYSFS_DEBUG("sysfs interface to stream device loaded\n");
-
 	return 0;
 }
 
 static void __exit SysfsUnloadModule(void)
 {
 	PlayerInterfaceDelete();
-
 	if (SysfsContext != NULL)
 		kfree(SysfsContext);
-
 	SysfsContext        = NULL;
-
 	SYSFS_DEBUG("STM sysfs interface to stream device unloaded\n");
-
 	return;
 }
 

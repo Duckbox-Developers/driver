@@ -93,6 +93,7 @@ Date        Modification                                    Name
 #define BASE_MANIFESTOR             0x6000
 #define BASE_OUTPUT_TIMER           0x7000
 #define BASE_OUTPUT_COORDINATOR     0x8000
+
 #define BASE_EXTERNAL               0xf000
 
 enum

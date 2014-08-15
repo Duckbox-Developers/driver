@@ -74,29 +74,29 @@ class Buffer_c : public BaseComponentClass_c
 											  bool          Upwards   = true) = 0;
 
 		virtual BufferStatus_t   PartitionBuffer(unsigned int     LeaveInFirstPartitionSize,
-												 bool          DuplicateMetaData,
-												 Buffer_t     *SecondPartition,
-												 unsigned int      SecondOwnerIdentifier = UNSPECIFIED_OWNER,
-												 bool          NonBlocking       = false) = 0;
+				bool          DuplicateMetaData,
+				Buffer_t     *SecondPartition,
+				unsigned int      SecondOwnerIdentifier = UNSPECIFIED_OWNER,
+				bool          NonBlocking       = false) = 0;
 
 		//
 		// Reference manipulation, and ownership control
 		//
 
 		virtual BufferStatus_t   RegisterDataReference(unsigned int   BlockSize,
-													   void         *Pointer,
-													   AddressType_t     AddressType = CachedAddress) = 0;
+				void         *Pointer,
+				AddressType_t     AddressType = CachedAddress) = 0;
 
 		virtual BufferStatus_t   RegisterDataReference(unsigned int   BlockSize,
-													   void         *Pointers[3]) = 0;
+				void         *Pointers[3]) = 0;
 
 		virtual BufferStatus_t   ObtainDataReference(unsigned int    *BlockSize,
-													 unsigned int     *UsedDataSize,
-													 void        **Pointer,
-													 AddressType_t     AddressType = CachedAddress) = 0;
+				unsigned int     *UsedDataSize,
+				void        **Pointer,
+				AddressType_t     AddressType = CachedAddress) = 0;
 
 		virtual BufferStatus_t   TransferOwnership(unsigned int   OwnerIdentifier0,
-												   unsigned int      OwnerIdentifier1  = UNSPECIFIED_OWNER) = 0;
+				unsigned int      OwnerIdentifier1  = UNSPECIFIED_OWNER) = 0;
 
 		virtual BufferStatus_t   IncrementReferenceCount(
 			unsigned int      OwnerIdentifier   = UNSPECIFIED_OWNER) = 0;
@@ -125,7 +125,7 @@ class Buffer_c : public BaseComponentClass_c
 		virtual BufferStatus_t   GetMetaDataCount(unsigned int   *Count) = 0;
 
 		virtual BufferStatus_t   GetMetaDataList(unsigned int     ArraySize,
-												 unsigned int     *ArrayOfMetaDataTypes) = 0;
+				unsigned int     *ArrayOfMetaDataTypes) = 0;
 
 		virtual BufferStatus_t   GetOwnerCount(unsigned int  *Count) = 0;
 

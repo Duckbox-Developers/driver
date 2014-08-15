@@ -87,8 +87,8 @@ class BufferPool_c : public BaseComponentClass_c
 			unsigned int     *Count) = 0;
 
 		virtual BufferStatus_t   GetAllUsedBuffers(unsigned int   ArraySize,
-												   Buffer_t     *ArrayOfBuffers,
-												   unsigned int      OwnerIdentifier) = 0;
+				Buffer_t     *ArrayOfBuffers,
+				unsigned int      OwnerIdentifier) = 0;
 
 		//
 		// Status dump/reporting

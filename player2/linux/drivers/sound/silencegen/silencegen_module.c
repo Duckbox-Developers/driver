@@ -24,21 +24,16 @@ MODULE_PARM_DESC(name, "Name to use for MME Transformer registration");
 static int __init silencegen_init(void)
 {
 	MME_ERROR status = MME_SUCCESS;
-
 	status = SilenceGen_RegisterTransformer(name);
-
 	if (MME_SUCCESS != status)
 		printk("Failed to register %s with MME\n", name);
-
 	return (0 == status ? 0 : -ENODEV);
 }
 
 static void __exit silencegen_exit(void)
 {
 	MME_ERROR status;
-
 	status = MME_DeregisterTransformer(name);
-
 	if (MME_SUCCESS != status)
 		printk("Failed to deregister %s with MME\n", name);
 }

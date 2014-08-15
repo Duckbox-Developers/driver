@@ -44,7 +44,7 @@ Date        Modification                                    Name
 #endif
 
 #define DEMUX_DEBUG(fmt, args...)      ((void) (ENABLE_DEMUX_DEBUG && \
-												(report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+                                                (report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define DEMUX_TRACE(fmt, args...)      (report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args))
