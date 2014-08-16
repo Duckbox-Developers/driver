@@ -536,11 +536,6 @@ static int zero_read(char *page, char **start, off_t off, int count, int *eof, v
 	return len;
 }
 
-static int default_read_proc(char *page, char **start, off_t off, int count, int *eof, void *data)
-{
-	return 0;
-}
-
 static int default_write_proc(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
 	return count;
