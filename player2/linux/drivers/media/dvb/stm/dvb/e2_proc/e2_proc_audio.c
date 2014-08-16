@@ -108,7 +108,9 @@ int proc_audio_delay_bitstream_write(struct file* file, const char __user* buf, 
 		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
+#ifdef VERY_VERBOSE
 		printk("%s\n", myString);
+#endif
 		sscanf(myString, "%x", &delay);
 		if (delay != 0)
 			delay /= 90;

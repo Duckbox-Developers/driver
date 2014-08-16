@@ -10,6 +10,7 @@
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
 #include <linux/string.h>
+#include <linux/kernel.h>      /* sscanf */
 #include <linux/fb.h>
 
 #include "../backend.h"
