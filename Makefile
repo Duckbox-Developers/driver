@@ -120,6 +120,9 @@ endif
 ifdef ARIVALINK200
 CCFLAGSY += -DARIVALINK200
 endif
+ifdef FORTIS_DP7000
+CCFLAGSY += -DFORTIS_DP7000
+endif
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 else
@@ -130,8 +133,10 @@ export CCFLAGSY
 
 obj-y := avs/
 obj-y += multicom/
+ifndef FORTIS_DP7000 #temporary due to wrong definitions
 obj-y += stgfb/
 obj-y += player2/
+endif
 obj-y += boxtype/
 obj-y += simu_button/
 obj-y += e2_proc/
@@ -140,7 +145,10 @@ obj-y += frontcontroller/
 ifdef WLANDRIVER
 obj-y += wireless/
 endif
+
+ifndef FORTIS_DP7000 #temporary due to wrong definitions
 obj-y += cpu_frequ/
+endif
 
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
 obj-y += pti/
