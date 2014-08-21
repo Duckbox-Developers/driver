@@ -7,7 +7,7 @@ typedef struct
 	enum eAccBoolean CompOn;
 	enum eAccBoolean CompOnSec;
 	enum eAccBoolean TestMode;
-	char   Ac3Mode;
+	char Ac3Mode;
 	enum eAccBoolean LfeActivate;
 	enum eAccBoolean LfeLpActivate;
 	enum eAccBoolean SurDelayActivate;

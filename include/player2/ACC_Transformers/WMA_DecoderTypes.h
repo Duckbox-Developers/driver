@@ -20,7 +20,7 @@
 
 #define DRV_MME_WMA_DECODER_VERSION  0x040705
 
-#include "mme.h"
+
 #include "Pcm_PostProcessingTypes.h"
 #include "acc_mmedefines.h"
 

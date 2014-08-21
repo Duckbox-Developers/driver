@@ -89,10 +89,10 @@ typedef enum
 {
     HDEC_1          = 0x00000000,           /* no resize   */
     HDEC_2          = 0x00000001,           /* H/2  resize */
-    HDEC_4	   		= 0x00000002,        /* H/4  resize */
-	HDEC_8			= 0x00000003,			/* H/8	resize for FGT */
-    HDEC_ADVANCED_2 = 0x00000101,		/* Advanced H/2 resize using improved 8-tap filters */
-    HDEC_ADVANCED_4 = 0x00000102		/* Advanced H/2 resize using improved 8-tap filters */
+    HDEC_4          = 0x00000002,           /* H/4  resize */
+	HDEC_8          = 0x00000003,           /* H/8  resize for FGT */
+    HDEC_ADVANCED_2 = 0x00000101,           /* Advanced H/2 resize using improved 8-tap filters */
+    HDEC_ADVANCED_4 = 0x00000102            /* Advanced H/2 resize using improved 8-tap filters */
     
 } H264_HorizontalDeciFactor_t;
 

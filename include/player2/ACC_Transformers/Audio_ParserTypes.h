@@ -55,6 +55,7 @@ typedef struct
 
 	//! System Init 
 	enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached data aren't sent back to DDR
+
 	uADFeatures           BlockWise;  //!< use AudioDecoder macros to read this field 
 
 	//! Decoder specific parameters

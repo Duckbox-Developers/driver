@@ -112,16 +112,16 @@ enum eAccDecPcmProcId
 
 enum eAccPacketCode
 {
-    ACC_ES,
-    ACC_PES_MP2,
-    ACC_PES_MP1,
-    ACC_PES_DVD_VIDEO,
-    ACC_PES_DVD_AUDIO,
-    ACC_IEC_61937,
-    ACC_ASF,
+	ACC_ES,
+	ACC_PES_MP2,
+	ACC_PES_MP1,
+	ACC_PES_DVD_VIDEO,
+	ACC_PES_DVD_AUDIO,
+	ACC_IEC_61937,
+	ACC_ASF,
 	ACC_WAV,
 	ACC_WMA_ST_FILE,
-    ACC_UNKNOWN_PACKET
+	ACC_UNKNOWN_PACKET
 };
 
 enum eStreamingBufferParams
@@ -142,7 +142,7 @@ enum eStreamingBufferType
 
 enum eStreamingFrameStatus
 {
-    STREAMING_STATUS_RUNNING,
+	STREAMING_STATUS_RUNNING,
 	STREAMING_STATUS_EOF,
 	STREAMING_STATUS_BAD_STREAM
 };
@@ -262,22 +262,22 @@ typedef union
 } uADFeatures;
 
 // Macros to be used by host
-#define AUDIODEC_SET_BLOCKWISE(x,bk)    x->BlockWise.Bits.BlockWise   = bk; // x->BlockWise = ((x->BlockWise & 0xFFFFFFFE) | (bk ))
-#define AUDIODEC_SET_TIMER_ENABLE(x,tm) x->BlockWise.Bits.TimerEnable = tm; // x->BlockWise = ((x->BlockWise & 0xFFFFFFFD) | (tm  << 1))
-#define AUDIODEC_SET_STREAMBASE(x,str)  x->BlockWise.Bits.StreamBase  = str;// x->BlockWise = ((x->BlockWise & 0xFFFFFFFB) | (str << 2))
-#define AUDIODEC_SET_WATCH(x,w)         x->BlockWise.Bits.Watch       = w;  // x->BlockWise = ((x->BlockWise & 0xFFFFFFF7) | (w   << 3))
-#define AUDIODEC_SET_OUTPUT_WS(x,ws)    x->BlockWise.Bits.OutputWS    = ws; // x->BlockWise = ((x->BlockWise & 0xFFFFFF0F) | (ws  << 4))
-#define AUDIODEC_SET_RSPL_ENABLE(x,rsp) x->BlockWise.Bits.RsplEnable  = rsp;// x->BlockWise = ((x->BlockWise & 0xFFFEFFFF) | (rsp << 16))
-#define AUDIODEC_SET_PACKET_TYPE(x,pkt) x->BlockWise.Bits.PacketType  = pkt;// x->BlockWise = ((x->BlockWise & 0xF0FFFFFF) | (pkt << 24))
+#define AUDIODEC_SET_BLOCKWISE(x,bk)       x->BlockWise.Bits.BlockWise   = bk; // x->BlockWise = ((x->BlockWise & 0xFFFFFFFE) | (bk ))
+#define AUDIODEC_SET_TIMER_ENABLE(x,tm)    x->BlockWise.Bits.TimerEnable = tm; // x->BlockWise = ((x->BlockWise & 0xFFFFFFFD) | (tm  << 1))
+#define AUDIODEC_SET_STREAMBASE(x,str)     x->BlockWise.Bits.StreamBase  = str;// x->BlockWise = ((x->BlockWise & 0xFFFFFFFB) | (str << 2))
+#define AUDIODEC_SET_WATCH(x,w)            x->BlockWise.Bits.Watch       = w;  // x->BlockWise = ((x->BlockWise & 0xFFFFFFF7) | (w   << 3))
+#define AUDIODEC_SET_OUTPUT_WS(x,ws)       x->BlockWise.Bits.OutputWS    = ws; // x->BlockWise = ((x->BlockWise & 0xFFFFFF0F) | (ws  << 4))
+#define AUDIODEC_SET_RSPL_ENABLE(x,rsp)    x->BlockWise.Bits.RsplEnable  = rsp;// x->BlockWise = ((x->BlockWise & 0xFFFEFFFF) | (rsp << 16))
+#define AUDIODEC_SET_PACKET_TYPE(x,pkt)    x->BlockWise.Bits.PacketType  = pkt;// x->BlockWise = ((x->BlockWise & 0xF0FFFFFF) | (pkt << 24))
 
 // Macros to be used by companion
-#define AUDIODEC_GET_BLOCKWISE(x)    (x->BlockWise.Bits.BlockWise)  // ((x->BlockWise     ) & 0x1) // Extract BlockWise          from InitParams
-#define AUDIODEC_GET_TIMER_ENABLE(x) (x->BlockWise.Bits.TimerEnable)// ((x->BlockWise >> 1) & 0x1) // Extract TimerEnable        from InitParams
-#define AUDIODEC_GET_STREAMBASE(x)   (x->BlockWise.Bits.StreamBase) // ((x->BlockWise >> 2) & 0x1) // Extract StreamBase Enable  from InitParams
-#define AUDIODEC_GET_WATCH(x)        (x->BlockWise.Bits.Watch)      // ((x->BlockWise >> 3) & 0x1) // Extract Watch      Enable  from InitParams
-#define AUDIODEC_GET_OUTPUT_WS(x)    (x->BlockWise.Bits.OutputWS)   // ((x->BlockWise >> 4) & 0xF) // Extract outputWordSize     from InitParams
-#define AUDIODEC_GET_RSPL_ENABLE(x)  (x->BlockWise.Bits.RsplEnable) // ((x->BlockWise >>16) & 0x1) // Extract ResamplingEnable   from InitParams
-#define AUDIODEC_GET_PACKET_TYPE(x)  (x->BlockWise.Bits.PacketType) // ((x->BlockWise >>24) & 0xF) // Extract PacketType         from InitParams
+#define AUDIODEC_GET_BLOCKWISE(x)          (x->BlockWise.Bits.BlockWise)       // ((x->BlockWise     ) & 0x1) // Extract BlockWise          from InitParams
+#define AUDIODEC_GET_TIMER_ENABLE(x)       (x->BlockWise.Bits.TimerEnable)     // ((x->BlockWise >> 1) & 0x1) // Extract TimerEnable        from InitParams
+#define AUDIODEC_GET_STREAMBASE(x)         (x->BlockWise.Bits.StreamBase)      // ((x->BlockWise >> 2) & 0x1) // Extract StreamBase Enable  from InitParams
+#define AUDIODEC_GET_WATCH(x)              (x->BlockWise.Bits.Watch)           // ((x->BlockWise >> 3) & 0x1) // Extract Watch      Enable  from InitParams
+#define AUDIODEC_GET_OUTPUT_WS(x)          (x->BlockWise.Bits.OutputWS)        // ((x->BlockWise >> 4) & 0xF) // Extract outputWordSize     from InitParams
+#define AUDIODEC_GET_RSPL_ENABLE(x)        (x->BlockWise.Bits.RsplEnable)      // ((x->BlockWise >>16) & 0x1) // Extract ResamplingEnable   from InitParams
+#define AUDIODEC_GET_PACKET_TYPE(x)        (x->BlockWise.Bits.PacketType)      // ((x->BlockWise >>24) & 0xF) // Extract PacketType         from InitParams
 
 typedef struct
 {
@@ -426,13 +426,13 @@ typedef struct
 
 typedef struct
 {
-	MME_LxAudioDecoderFrameStatus_t  DecStatus;  
+	MME_LxAudioDecoderFrameStatus_t  DecStatus;
 	MME_MixMetadataFrameStatus_t     PcmStatus;
 
 } MME_LxAudioDecoderFrameMixMetadataStatus_t;
 
 
-// registering function to plug-in new AudioDecoder 
+// registering function to plug-in new AudioDecoder
 extern MME_ERROR AudioDecoder_registerDLL(void * f_params); // tAudioDLL * f_params
 
 #endif /* _AUDIO_DECODER_DECODERTYPES_H_ */

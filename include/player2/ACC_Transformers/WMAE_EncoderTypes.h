@@ -17,7 +17,7 @@ typedef struct
 	long SizeOf_s_stream_obj;
 	long SizeOf_s_ext_obj;
 	long SizeOf_s_data_obj;
-	long long nAudioDelayBuffer;	
+	long long nAudioDelayBuffer;
 	long long SamplesPerPack;
 
 }MME_WmaeAsfPostProcessing_t;

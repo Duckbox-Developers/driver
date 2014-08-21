@@ -96,7 +96,7 @@ typedef enum _DIVXHD_ERROR_CODES_T_
 	MPEG4P2_GMC_NOT_SUPPORTED,				/* GLOBAL Motion Compensation not supported */
 	MPEG4P2_QPEL_NOT_SUPPORTED,				/* QPEL not supported */
 	MPEG4P2_FIRMWARE_TIME_OUT_ENCOUNTERED	/* Timeout in F/W */
-}DIVXHD_ERROR_CODES;
+} DIVXHD_ERROR_CODES;
 
 #endif
 
@@ -120,8 +120,8 @@ typedef enum
 	DIVXHD_VDEC_1				= 0x00000000,	/* no V resize              */
 	DIVXHD_VDEC_2_PROG			= 0x00000004,	/* V/2 , progressive resize */
 	DIVXHD_VDEC_2_INT			= 0x00000008,	/* V/2 , interlaced resize  */
-    DIVXHD_VDEC_ADVANCED_2_PROG  = 0x00000204,	/* Advanced V/2 , progressive resize */
-    DIVXHD_VDEC_ADVANCED_2_INT   = 0x00000208	/* Advanced V/2 , interlaced resize */
+	DIVXHD_VDEC_ADVANCED_2_PROG  = 0x00000204,	/* Advanced V/2 , progressive resize */
+	DIVXHD_VDEC_ADVANCED_2_INT   = 0x00000208	/* Advanced V/2 , interlaced resize */
 
 } DIVXHD_VerticalDeciFactor_t;
 
@@ -137,7 +137,7 @@ typedef enum
 } DIVXHD_MainAuxEnable_t;
 
 typedef struct _DIVXHDVIDEODECODERETURNPARAMS_T_
-	{
+{
 	DIVXHD_ERROR_CODES Errortype;
 	DIVXHD_PICTURETYPE picturetype;
 	MME_UINT Memory_Usage;
@@ -147,16 +147,16 @@ typedef struct _DIVXHDVIDEODECODERETURNPARAMS_T_
 	MME_UINT pm_imiss;
 	MME_UINT pm_bundles;
 	MME_UINT pm_pft;
-	} MME_DivXHDVideoDecodeReturnParams_t;
+} MME_DivXHDVideoDecodeReturnParams_t;
 
 typedef struct _DIVXHDVIDEODECODEINITPARAMS_T_
-	{
-		DivXHD_CompressedData_t CircularBufferBeginAddr_p;
-	    DivXHD_CompressedData_t CircularBufferEndAddr_p;
-		MME_UINT								width;					//!< width predetermined from the AVI file
-		MME_UINT								height;					//!< height predetermined from the AVI file
-		MME_UINT								codec_version;					//!< width predetermined from the AVI file
-	} MME_DivXHDVideoDecodeInitParams_t;
+{
+	DivXHD_CompressedData_t CircularBufferBeginAddr_p;
+	DivXHD_CompressedData_t CircularBufferEndAddr_p;
+	MME_UINT								width;					//!< width predetermined from the AVI file
+	MME_UINT								height;					//!< height predetermined from the AVI file
+	MME_UINT								codec_version;					//!< width predetermined from the AVI file
+} MME_DivXHDVideoDecodeInitParams_t;
 
 typedef struct _DIVX_SETGLOBALPARAMSEQUENCE_T_
 {
@@ -168,7 +168,7 @@ typedef struct _DIVX_SETGLOBALPARAMSEQUENCE_T_
 	int load_intra_quant_matrix;
 	unsigned char intra_quant_matrix[64];
 	unsigned char nonintra_quant_matrix[64];
-    int load_nonintra_quant_matrix;
+	int load_nonintra_quant_matrix;
 	int quarter_pixel;
 	char resync_marker_disable; /* HE */
 	char data_partitioning; /* HE */
@@ -179,34 +179,34 @@ typedef struct _DIVX_SETGLOBALPARAMSEQUENCE_T_
 }	MME_DivXHDSetGlobalParamSequence_t;
 
 typedef struct _DIVXHDVIDEODECODEPARAMS_T_
-	{
-		DivXHD_CompressedData_t		PictureStartAddr_p;
-		DivXHD_CompressedData_t		PictureEndAddr_p;
-		DivXHD_DecodedBufferAddress_t  DecodedBufferAddr;
-		DivXHD_RefPicListAddress_t     RefPicListAddr;
-		DIVXHD_MainAuxEnable_t        MainAuxEnable;               /* enable Main and/or Aux outputs */ 
-		DIVXHD_HorizontalDeciFactor_t HorizontalDecimationFactor;  /* Horizontal decimation factor */ 
-		DIVXHD_VerticalDeciFactor_t   VerticalDecimationFactor;    /* Vertical decimation factor */ 
-		int prediction_type;
-		int quantizer;
-		int rounding_type;
-		int fcode_for;
-		int vop_coded;	
-		int use_intra_dc_vlc;
-		int trb_trd;
-		int trb_trd_trd;
-		int intra_dc_vlc_thr;
-		int fcode_back;	
-		int shape_coding_type;
-		int bit_skip_no;
-		char alternate_vertical_scan_flag;
-		void *UserData_p;
+{
+	DivXHD_CompressedData_t		PictureStartAddr_p;
+	DivXHD_CompressedData_t		PictureEndAddr_p;
+	DivXHD_DecodedBufferAddress_t  DecodedBufferAddr;
+	DivXHD_RefPicListAddress_t     RefPicListAddr;
+	DIVXHD_MainAuxEnable_t        MainAuxEnable;               /* enable Main and/or Aux outputs */ 
+	DIVXHD_HorizontalDeciFactor_t HorizontalDecimationFactor;  /* Horizontal decimation factor */ 
+	DIVXHD_VerticalDeciFactor_t   VerticalDecimationFactor;    /* Vertical decimation factor */ 
+	int prediction_type;
+	int quantizer;
+	int rounding_type;
+	int fcode_for;
+	int vop_coded;	
+	int use_intra_dc_vlc;
+	int trb_trd;
+	int trb_trd_trd;
+	int intra_dc_vlc_thr;
+	int fcode_back;	
+	int shape_coding_type;
+	int bit_skip_no;
+	char alternate_vertical_scan_flag;
+	void *UserData_p;
 } MME_DivXHDVideoDecodeParams_t;
 
 typedef struct
-	{
+{
 	unsigned int caps_len;
-	}MME_DivXHD_Capability_t;
+} MME_DivXHD_Capability_t;
 
 #endif /* _DIVXHD_DECODERTYPES_H_ */
 

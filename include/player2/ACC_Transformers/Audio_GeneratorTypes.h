@@ -97,7 +97,8 @@ typedef struct
 typedef struct
 {
 	U32                   StructSize;      //!< Size of this structure
-    enum eAccProcessApply CacheFlush;      //!< If ACC_DISABLED then the cached data aren't sent back at th
+	enum eAccProcessApply CacheFlush;      //!< If ACC_DISABLED then the cached data aren't sent back at th
+
 	U8                    NbChannelsOut;   //!< Number of Interlaced Channels in Main Output PcmBuffers
 
 	MME_AudioGeneratorGlobalParams_t GlobalParams; //!< Main Params

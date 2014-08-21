@@ -20,7 +20,7 @@
 
 #define DRV_MULTICOM_DOLBY_DIGITAL_DECODER_VERSION 061004
 
-#include "mme.h"
+
 #include "Audio_DecoderTypes.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
@@ -68,7 +68,6 @@ enum eDDConfigIdx
 	DD_LDR,
 	DD_HIGH_COST_VCR,
 	DD_VCR_REQUESTED,
-  
 	DDP_FRAMEBASED_ENABLE,
 	DDP_OUTPUT_SETTING, // Bit[0..1] :: UPSAMPLE_PCMOUT_ENABLE ; BIT[2] :: LITTLE_ENDIAN_DDout 
 
@@ -82,7 +81,6 @@ enum eDDCompMode
 	DD_CUSTOM_MODE_1,
 	DD_LINE_OUT,
 	DD_RF_MODE,
-	
 	/* Do not edit beyond this element */
 	DD_LAST_COMP_MODE
 };
@@ -91,7 +89,7 @@ typedef struct
 {
 	enum eAccDecoderId      DecoderId;
 	U32                     StructSize;
-  
+
 	U8                      Config[DD_NB_CONFIG_ELEMENTS];
 	//config[0]:enum eAccBoolean  CrcOff;      //!< Disable the CRC Checking
 	//config[1]:enum eAccBoolean  LfeEnable;   //!< Enable the Lfe Processing

@@ -4,7 +4,6 @@
 //#define DRV_MME_MLP_DECODER_VERSION 0x031124 
 #define DRV_MME_TRUEHD_DECODER_VERSION 0x00001 //(TO ask)
 
-#include "mme.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
 
@@ -33,11 +32,10 @@ enum eTrueHDConfig
 	TRUEHD_BITFIELD_FEATURES, // Future use
 	TRUEHD_DRC_ENABLE,
 	TRUEHD_PP_ENABLE,         // Enables postprocessing
-  	TRUEHD_DIALREF,
+	TRUEHD_DIALREF,
 	TRUEHD_LDR,
 	TRUEHD_HDR,
- 	TRUEHD_SERIAL_ACCESS_UNITS,
-
+	TRUEHD_SERIAL_ACCESS_UNITS,
 	/* Do not edit beyond this line */
 	TRUEHD_NB_CONFIG_ELEMENTS
 };

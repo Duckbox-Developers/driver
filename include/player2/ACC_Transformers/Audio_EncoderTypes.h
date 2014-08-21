@@ -11,7 +11,6 @@
 #define AUDIO_ENCODER_NUM_BUFFERS_PER_SENDBUFFER  AUDIO_STREAMING_NUM_BUFFERS_PER_SENDBUFFER
 #define ACC_ENCODER_ID_BITPOS 4
 
-
 #define ACC_GENERATE_ENCODERID(x)        (ACC_ENCODER_OUTPUT_CONFIG_ID + (x<<ACC_ENCODER_ID_BITPOS))
 #define ACC_EXTRACT_ENCODER_ID(x)        (x >> ACC_ENCODER_ID_BITPOS)
 #define ACC_EXTRACT_ENCODER_CONFIG_ID(x) (x & ((1<<ACC_ENCODER_ID_BITPOS) -1))
@@ -41,7 +40,7 @@ typedef struct
 {
 	U32 PtsFlags;
 	U32 PTS;
-}MME_AudioEncoderPts_t;
+} MME_AudioEncoderPts_t;
 
 enum eAccEncGlobalParamsId
 {
@@ -86,9 +85,9 @@ enum eMmeAudioEncoderTimerId
 
 	AENC_NB_TIMERID
 };
-    
+
 enum eSfcConfigIdx
-{   
+{
 	SFC_MODE,             // Selection of the SFC mode see previous definition
 	SFC_FILTER_SELECTION, // Choose among compiled filters
 	SFC_FILT_32BIT_MODE,  // Higher Precision, more expensive
@@ -106,6 +105,7 @@ enum eAccEncoderPcmId
 	// do not edit beyond this line
 	ACC_LAST_ENCODER_PCMPROCESS_ID
 };
+
 typedef struct
 {
 	enum eAccEncoderPcmId  Id;                //!< ID of this processing
@@ -131,15 +131,16 @@ typedef struct {
 	U8                          Config[NB_ENCODER_CONFIG_ELEMENT];  //Specific encoder configuration
 } MME_AudEncOutConfig_t;
 
-typedef struct 
+typedef struct
 {
-	enum eAccEncGlobalParamsId  Id;               //!< Id of the PostProcessing structure.
-	U32                     StructSize;       //!< Size of this structure
+	enum eAccEncGlobalParamsId   Id;               //!< Id of the PostProcessing structure.
+	U32                          StructSize;       //!< Size of this structure
 
 	MME_SfcGlobalParams_t   Sfc;
 	MME_Resamplex2GlobalParams_t Resamplex2;
-	
+
 } MME_AudEncPreProcessingConfig_t; //!< PcmPostProcessings Params
+
 /*param stucture for initialising the audio encoder transformer*/
 typedef struct
 {
@@ -147,7 +148,6 @@ typedef struct
 	MME_AudEncInConfig_t            InConfig;   //!< Specific Configuration for Mixer
 	MME_AudEncPreProcessingConfig_t PcmParams;  //!< PrePostProcessings Params
 	MME_AudEncOutConfig_t           OutConfig;  //!< output specific configuration information
-
 } MME_AudioEncoderGlobalParams_t;
 
 typedef struct
@@ -168,7 +168,7 @@ enum AudioEncoderInitParamsOptionFlags
 	AEIPOF1_START_UNUSED_BITS
 };
 
-typedef struct 
+typedef struct
 {
 	U32                            StructSize;
 	U32                            BytesToSkipBeginScatterPage;
@@ -179,7 +179,7 @@ typedef struct
 
 /*audio transform structure*/
 
-typedef struct 
+typedef struct
 {
 	//U32               numberInputBuffers;           //!< number inputBuffers = 1
 	//U32               numberOutputBuffers;          //!< number outputBuffers = 0
@@ -192,7 +192,7 @@ typedef struct
 	MME_AudioEncoderPts_t PtsInfo;
 } MME_AudioEncoderTransformParams_t;
 
-typedef struct 
+typedef struct
 {
 	U32               numberInputBuffers;           //!< number inputBuffers = 1
 	U32               numberOutputBuffers;          //!< number outputBuffers = 0
@@ -203,7 +203,7 @@ typedef struct
 
 /*Return Parameters*/
 
-typedef struct 
+typedef struct
 {
 	U32 StructSize;
 	
@@ -222,10 +222,9 @@ typedef struct
 
 	U32 SpecificEncoderStatusBArraySize;   //!< Number of bytes allocated for the encoder status (must be set by host)
 	U8 SpecificEncoderStatusBArray[MAX_NB_ENCODER_TRANSFORM_RETURN_ELEMENT]; //!< Array of bytes for the encoder to report status
-	
 } MME_AudioEncoderStatusParams_t;
 
-typedef struct 
+typedef struct
 {
 	U32 StructSize;
 	enum eAccEncStatusError EncoderStatus; //Encoder Status (see eAccEncStatusError)
@@ -234,7 +233,3 @@ typedef struct
 } MME_AudioEncoderStatusBuffer_t;
 
 #endif /*AUDIOENCODERTYPES_H*/
-
-
-	
-

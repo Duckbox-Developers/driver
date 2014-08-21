@@ -614,7 +614,7 @@ enum ePcmProcessingCapability
 	ACC_ST_OMNISURROUND,
 	ACC_KOKVC, /* Voice Cancel  */
 	ACC_KOKPS, /* Pitch Shift   */
-	ACC_TEMPO_CONTROL, 
+	ACC_TEMPO_CONTROL,
 	ACC_KOKVL, /* Voice Line : Echo/Reverb/Chorus */
 	ACC_SCORING,
 	ACC_MIXING, 
@@ -622,7 +622,7 @@ enum ePcmProcessingCapability
 	ACC_VOLUME_CONTROL,
 	ACC_DELAY,
 	ACC_DCREMOVE,
-	ACC_EQUALIZER, 
+	ACC_EQUALIZER,
 	ACC_VUMETER,
 	ACC_FREQ_ANALYSER,
 	ACC_WATERMARKING,
@@ -718,7 +718,7 @@ typedef struct
 } MME_SpecialGlobalParams_t;
 
 typedef enum MME_ERROR (*pSpecialFunction)(MME_SpecialGlobalParams_t *,  MME_SpecialGlobalParams_t *, int);
-extern pSpecialFunction SpecialFunction[SPECIAL_FEATURE_LAST_ID & 0x0000FFFF];
+extern const pSpecialFunction SpecialFunction[SPECIAL_FEATURE_LAST_ID & 0x0000FFFF];
 
 
 
@@ -748,8 +748,8 @@ enum eAccPtsDts
 
 #define ACC_PTSflag_SET(Flag, val, bit32) Flag = ((ACC_PTSflag_MASKOUT(Flag)) | (val&3) | ((bit32)<<16))
 
-#define ACC_GET_USERFLAG(f)     (f & 0x00FFFFFF)   
-#define ACC_SET_USERFLAG(f, u) ((f & 0xFF000000) | u) 
+#define ACC_GET_USERFLAG(f)     (f & 0x00FFFFFF)
+#define ACC_SET_USERFLAG(f, u) ((f & 0xFF000000) | u)
 
 #define ACC_SET_BITFIELD_8(x,y)   *(unsigned char  *) (x) = (y)
 #define ACC_SET_BITFIELD_16(x,y)  *(unsigned short *) (x) = (y)
@@ -768,7 +768,7 @@ typedef struct
 	unsigned int FrameType           : 2; // Bit[10-11]:: MpgLayer or WmaBlockInfo 
 	unsigned int FrontMatrixEncoded  : 2; 
 
-	// 	unsigned int Reserved_b14_15 : 2;
+	//	unsigned int Reserved_b14_15 : 2;
 	unsigned int RearMatrixEncoded  : 2;	
 	
 	unsigned int PTS_Bit32          : 1;

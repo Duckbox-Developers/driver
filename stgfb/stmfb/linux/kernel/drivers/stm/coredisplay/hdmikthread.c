@@ -29,10 +29,10 @@
 #include <linux/stm/stmcoredisplay.h>
 #include <linux/stm/stmcorehdmi.h>
 
-
 #define I2C_CLIENT_NAME_STM_HDMI  "HDMI-EDID"
 #define I2C_EDID_ADDR             0x50
 #define I2C_EDDC_SEGMENT_REG_ADDR 0x30
+
 
 
 /*

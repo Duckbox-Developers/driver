@@ -68,8 +68,8 @@ typedef enum ERROR_CODES_T_
 	MPEG4P2_DC_DAMAGED,						/* DC value damaged for block detected */
 	MPEG4P2_AC_DAMAGED,						/* AC value damaged for block detected */
 	MPEG4P2_MISSING_MARKER_BIT,				/* Marker bit disabled detected */
-    MPEG4P2_INVALID_PICTURE_SIZE,    
-}ERROR_CODES;
+	MPEG4P2_INVALID_PICTURE_SIZE,    
+} ERROR_CODES;
 #else /* MME API < 12 */
 typedef enum ERROR_CODES_T_
 {
@@ -86,7 +86,7 @@ typedef enum ERROR_CODES_T_
 	MPEG4P2_GMC_NOT_SUPPORTED,				/* GLOBAL Motion Compensation not supported */
 	MPEG4P2_QPEL_NOT_SUPPORTED,				/* QPEL not supported */
 	MPEG4P2_FIRMWARE_TIME_OUT_ENCOUNTERED	/* Timeout in F/W */
-}ERROR_CODES;
+} ERROR_CODES;
 #endif
 
 typedef struct _DIVXVIDEODECODERETURNPARAMS_T_
@@ -106,7 +106,7 @@ typedef struct
 	MME_UINT display_buffer_size;	/* Omega2 frame buffer size (luma+chroma) */
 	MME_UINT packed_buffer_size;	/* packed-data buffer size (for VIDA) */
 	MME_UINT packed_buffer_total;	/* number of packed buffers (for VIDA) */
-	MME_UINT supports_311;          /* If non-zero indicates support for DivX 311 */
+	MME_UINT supports_311;			/* If non-zero indicates support for DivX 311 */
 } MME_DivXVideoDecodeCapabilityParams_t;
 
 typedef struct _DIVXVIDEODECODEPARAMS_T_
@@ -117,12 +117,12 @@ typedef struct _DIVXVIDEODECODEPARAMS_T_
 
 /*! DIVX Picture Coding type, the numeric values are guaranteed to correspond to the MPEG4 standard */
 typedef enum 
-	{ 
+{
 	DIVX_PCT_INTRA = 0, 
 	DIVX_PCT_PREDICTIVE = 1, 
 	DIVX_PCT_BIDIRECTIONAL = 2, 
 	DIVX_PCT_SPRITE = 3 
-	} MME_DIVXPictureCodingType; 
+} MME_DIVXPictureCodingType;
 
 
 #endif /* _DIVX_DECODERTYPES_H_ */

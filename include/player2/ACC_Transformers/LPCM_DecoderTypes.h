@@ -20,7 +20,7 @@
 
 #define DRV_MME_LPCM_DECODER_VERSION 0x041220
 
-#include "mme.h"
+
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
@@ -118,7 +118,7 @@ typedef struct
 {
 	enum eAccDecoderId      DecoderId;
 	U32                     StructSize;
-    
+
 	//U8                      Config[LPCM_NB_CONFIG_ELEMENTS];
 	U32                      Config[LPCM_NB_CONFIG_ELEMENTS];
 	//!< [ 0] : ACC_LPCM_VIDEO / ACC_LPCM_AUDIO
@@ -141,7 +141,7 @@ typedef struct
 
 /*
   These are the indicies of the parameters that can be passed to update for each command
-  the number of samples to porcess and the Drc (that can be also be set through a set global command 
+  the number of samples to process and the Drc (that can be also be set through a set global command
 */
 #define ACC_LPCM_FRAME_PARAMS_NBSAMPLES_INDEX 0
 #define ACC_LPCM_FRAME_PARAMS_DRC_INDEX       1

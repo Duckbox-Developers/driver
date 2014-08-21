@@ -81,7 +81,6 @@ typedef struct
 	MME_NEOGlobalParams_t       Neo;        //!< DTS Neo 6
 	MME_BTSCGlobalParams_t      Btsc;
 	MME_VIQGlobalParams_t       Viq;        //!< SRS VIQ
-
 } MME_LxPcmProcessingGlobalParams_t;
 
 
@@ -194,7 +193,6 @@ typedef struct
 
 
 
-
 // Ensure PcmProcessing TRANSFORMs applie and return the same params / status as a LPCM / PCM Decoder 
 #define MME_PcmProcessingFrameParams_t  MME_LxAudioDecoderFrameParams_t
 #define MME_PcmProcessingFrameStatus_t  MME_LxAudioDecoderFrameStatus_t
@@ -241,12 +239,12 @@ enum ePPFrameParams
 // Output Buffer Properties for any output chains
 typedef struct 
 {
-  U32                    Id;               //<! Output Chain ID
-  U32                    StructSize;
-  int                    NbOutSamples;     //<! Report the actual number of samples that have been output 
-  int                    NbChannels  ;     //<! Number of Interlaced Channels in Output Buffer
-  enum eAccAcMode        AudioMode   ;     //<! Channel Output configuration 
-  enum eAccFsCode        SamplingFreq;     //<! Sampling Frequency of Output Buffer
+	U32                    Id;               //<! Output Chain ID
+	U32                    StructSize;
+	int                    NbOutSamples;     //<! Report the actual number of samples that have been output 
+	int                    NbChannels  ;     //<! Number of Interlaced Channels in Output Buffer
+	enum eAccAcMode        AudioMode   ;     //<! Channel Output configuration 
+	enum eAccFsCode        SamplingFreq;     //<! Sampling Frequency of Output Buffer
 
 } MME_PcmProcessingOutputChainStatus_t;
 

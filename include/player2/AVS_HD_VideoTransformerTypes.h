@@ -35,11 +35,11 @@ If wants to build the firmware for old MME API version, change this string corre
 	#define AVS_HD_MME_VERSION	 17		/* Latest MME API version */ 		
 #endif
 
-#if (AVS_HD_MME_VERSION==17)
+#if (AVS_HD_MME_VERSION >= 17)
     #define AVSDECHD_MME_API_VERSION "1.7"
-#elif (AVS_HD_MME_VERSION==16)
+#elif (AVS_HD_MME_VERSION >= 16)
     #define AVSDECHD_MME_API_VERSION "1.6"
-#elif (AVS_HD_MME_VERSION==15)
+#elif (AVS_HD_MME_VERSION >= 15)
     #define AVSDECHD_MME_API_VERSION "1.5"
 #else
     #define AVSDECHD_MME_API_VERSION "1.4"
@@ -75,7 +75,7 @@ typedef U32 *AVS_ChromaAddress_t;
 ** AVS_MBStruct_t :
 ** Parameters in reference frame's MB for Direct Macroblock decoding 
 */
-typedef U32 * AVS_MBStructureAddress_t;
+typedef U32 *AVS_MBStructureAddress_t;
 
 
 /*
@@ -253,15 +253,15 @@ typedef struct _INTRA_MB_STRUCT_T_
 
 
 /*
-** AVS_VideoDecodeInitParams_t :
+** MME_AVSVideoDecodeInitParams_t :
 ** Identifies the Initialization parameters for the transformer.
 */
-typedef struct _AVS_VIDEODECODEINITPARAMS_T_
+typedef struct _MME_AVSVIDEODECODEINITPARAMS_T_
 {
 	AVS_CompressedData_t CircularBufferBeginAddr_p;
 	AVS_CompressedData_t CircularBufferEndAddr_p;
 	AVS_IntraMBstruct_t *IntraMB_struct_ptr;
-}	AVS_VideoDecodeInitParams_t;
+} MME_AVSVideoDecodeInitParams_t;
 
 
 /*
@@ -309,25 +309,28 @@ typedef enum
 #if (AVS_HD_MME_VERSION >= 16)
 typedef enum
 {
-    AVS_ADDITIONAL_FLAG_NONE = 0,
-    AVS_ADDITIONAL_FLAG_CEH  = 1, /* Request firmware to return values of the CEH registers */
+	AVS_ADDITIONAL_FLAG_NONE = 0,
+	AVS_ADDITIONAL_FLAG_CEH  = 1, /* Request firmware to return values of the CEH registers */
 	AVS_ADDITIONAL_FLAG_RASTER = 64 /* Output storage of Auxillary reconstruction in Raster format. */
-}	AVS_AdditionalFlags_t;
+} AVS_AdditionalFlags_t;
 #else
 typedef enum
 {
-    AVS_ADDITIONAL_FLAG_NONE = 0,
-    AVS_ADDITIONAL_FLAG_CEH  = 1 /* Request firmware to return values of the CEH registers */
-}	AVSDECHD_AdditionalFlags_t;
+	AVS_ADDITIONAL_FLAG_NONE = 0,
+	AVS_ADDITIONAL_FLAG_CEH  = 1 /* Request firmware to return values of the CEH registers */
+} AVSDECHD_AdditionalFlags_t;
 #endif
 
 
 /*
-** AVS_VideoDecodeReturnParams_t :
+** MME_AVSVideoDecodeReturnParams_t :
 ** Identifies the parameters to be returned back to the driver by decoder.
 */
-typedef struct _AVSVIDEODECODERETURNPARAMS_T_
+typedef struct _MME_AVSVIDEODECODERETURNPARAMS_T_
 {
+#if (AVS_HD_MME_VERSION >= 17)
+	AVS_PictureType_t picturetype;
+#endif	
 	/* profiling info */
 	U32 pm_cycles;
 	U32 pm_dmiss;
@@ -344,31 +347,32 @@ typedef struct _AVSVIDEODECODERETURNPARAMS_T_
     // VC9_TransformParam_t.AdditionalFlags will have the flag
     // VC9_ADDITIONAL_FLAG_CEH set. They will remain unchanged otherwise.
 	U32 CEHRegisters[AVS_NUMBER_OF_CEH_INTERVALS];
-	AVS_PictureType_t picturetype;
+#if (AVS_HD_MME_VERSION >= 17)
 	U32 Memory_usage;
-}	AVS_VideoDecodeReturnParams_t;
+#endif
+} MME_AVSVideoDecodeReturnParams_t;
 
 
 /*
-** AVS_VideoDecodeCapabilityParams_t :
+** MME_AVSVideoDecodeCapabilityParams_t :
 ** Transformer capability parameters.
 */
-typedef struct _AVS_VIDEODECODECAPABILITYPARAMS_T_
+typedef struct _MME_AVSVIDEODECODECAPABILITYPARAMS_T_
 {
 	U32 api_version;	// Omega2 frame buffer size (luma+chroma)
-}	AVS_VideoDecodeCapabilityParams_t;
+} MME_AVSVideoDecodeCapabilityParams_t;
 
 
 /*
-** AVS_SetGlobalParamSequence_t :
+** MME_AVSSetGlobalParamSequence_t :
 ** Parameters to be sent along with the MME_SET_GLOBAL_TRANSFORM_PARAMS command
 */
-typedef struct _AVS_SETGLOBALPARAMSEQUENCE_T_
+typedef struct _MME_AVSSETGLOBALPARAMSEQUENCE_T_
 {
-	U32	Width;			
-	U32	Height;			
+	U32	Width;
+	U32	Height;
 	AVS_SeqSyntax_t Progressive_sequence;
-}	AVS_SetGlobalParamSequence_t;
+} MME_AVSSetGlobalParamSequence_t;
 
 
 /* AVS_SliceParam_t :
@@ -378,25 +382,25 @@ typedef struct _AVS_SLICEPARAM_T_
 {
 	AVS_CompressedData_t SliceStartAddrCompressedBuffer_p;
 	U32 SliceAddress;
-}AVS_SliceParam_t;
+} AVS_SliceParam_t;
 
 
-/* AVS_StartCodesParam_t :
+/* AVS_StartCodecsParam_t :
 ** It describes the slice start codes of the current picture 
 */
 #define MAX_SLICE 68 // Maximum number of slices = maximum number of MB lines == 1088 /* 16 */
-typedef struct _AVS_STARTCODESPARAM_T_
+typedef struct _AVS_STARTCODECSPARAM_T_
 {
 	U32 SliceCount;
 	AVS_SliceParam_t SliceArray[MAX_SLICE];
-}AVS_StartCodesParam_t;
+} AVS_StartCodecsParam_t;
 
 
 /*
-** AVS_VideoDecodeParams_t :
+** MME_AVSVideoDecodeParams_t :
 ** Parameters to be sent along with the Transform command
 */
-typedef struct _AVS_VIDEODECODEPARAMS_T_
+typedef struct _MME_AVSVIDEODECODEPARAMS_T_
 {
 	AVS_CompressedData_t		PictureStartAddr_p;
 	AVS_CompressedData_t		PictureEndAddr_p;
@@ -406,31 +410,41 @@ typedef struct _AVS_VIDEODECODEPARAMS_T_
 	AVS_MainAuxEnable_t			MainAuxEnable;
 	AVS_HorizontalDeciFactor_t	HorizontalDecimationFactor;
 	AVS_VerticalDeciFactor_t	VerticalDecimationFactor;
+#if (AVS_HD_MME_VERSION >= 17)
+	U8							AebrFlag;
+#else
 	BOOL						AebrFlag;
+#endif
 	AVS_PicStruct_t				Picture_structure;
 	AVS_PicStruct_t				Picture_structure_bwd;
 	U32							Fixed_picture_qp;
 	U32							Picture_qp;
 	AVS_SkipMode_t				Skip_mode_flag;
 	U32							Loop_filter_disable;
+#if (AVS_HD_MME_VERSION >= 17)
+	AVS_PictureType_t			FrameType;
+#else
 	AVS_PictureType_t			PictureType;
+#endif
 	S32							alpha_offset;
 	S32							beta_offset;
 	AVS_PicRef_t				Picture_ref_flag;
 	S32							tr;
 	S32							imgtr_next_P;
 	S32							imgtr_last_P;
-	S32							imgtr_last_prev_P;        
+	S32							imgtr_last_prev_P;
 	AVS_FieldSyntax_t			field_flag;
+#if (AVS_HD_MME_VERSION >= 17)
 	U32							topfield_pos;
 	U32							botfield_pos;
-	AVS_StartCodesParam_t       StartCodes;
+#endif
+	AVS_StartCodecsParam_t      StartCodecs;
 	AVS_DecodingMode_t			DecodingMode;
 #if (AVS_HD_MME_VERSION >= 16)
-    U32							AdditionalFlags; /* Additional Flags for future uses */
+	U32							AdditionalFlags; /* Additional Flags for future uses */
 #else
-    AVSDECHD_AdditionalFlags_t  CEH_returnvalue_flag; /* Additonal Flags for future uses */
+	AVS_AdditionalFlags_t		CEH_returnvalue_flag; /* Additonal Flags for future uses */
 #endif
-}	AVS_VideoDecodeParams_t;
+} MME_AVSVideoDecodeParams_t;
 
 #endif /* _AVS_VIDEOTRANSFORMERTYPES_H_ */

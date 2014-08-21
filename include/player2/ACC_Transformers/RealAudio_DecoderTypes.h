@@ -18,7 +18,6 @@
 #ifndef _REALAUDIO_DECODERTYPES_H_
 #define _REALAUDIO_DECODERTYPES_H_
 
-#include "mme.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
 
@@ -55,13 +54,13 @@ typedef struct
 	enum eAccDecoderId   DecoderId;
 	U32                  StructSize;
 	U32                  CodecType;       
-    U16                  usNumChannels;
-    U16                  usFlavorIndex;
+	U16                  usNumChannels;
+	U16                  usFlavorIndex;
 	U32                  NbSample2Conceal;
-    U32                  ulSampleRate;
-    U32                  ulBitsPerFrame;
-    U32                  ulGranularity;
-    U32                  ulOpaqueDataSize;
+	U32                  ulSampleRate;
+	U32                  ulBitsPerFrame;
+	U32                  ulGranularity;
+	U32                  ulOpaqueDataSize;
 	U32                  Features; 
 }MME_LxRealAudioConfig_t;
 

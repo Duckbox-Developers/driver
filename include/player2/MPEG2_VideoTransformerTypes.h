@@ -137,9 +137,9 @@ typedef enum
 */
 typedef enum
 {
-	MPEG2_AUXOUT_EN         = 0x00000010,  /* enable decimated reconstruction             */
-	MPEG2_MAINOUT_EN        = 0x00000020,  /* enable main reconstruction                  */
-	MPEG2_AUX_MAIN_OUT_EN   = 0x00000030   /* enable both main & decimated reconstruction */
+	MPEG2_AUXOUT_EN           = 0x00000010,  /* Enable decimated reconstruction             */
+	MPEG2_MAINOUT_EN          = 0x00000020,  /* Enable main reconstruction                  */
+	MPEG2_AUX_MAIN_OUT_EN     = 0x00000030   /* Enable both main & decimated reconstruction */
 } MPEG2_MainAuxEnable_t;
 
 

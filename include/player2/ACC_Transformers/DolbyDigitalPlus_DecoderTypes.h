@@ -20,7 +20,7 @@
 
 #define DRV_MULTICOM_DOLBY_DIGITAL_PLUS_DECODER_VERSION 061004
 
-#include "mme.h"
+
 #include "Audio_DecoderTypes.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "DolbyDigital_DecoderTypes.h"
@@ -55,7 +55,7 @@ enum eAccDDPStatus
 //	DDP_DUAL_MODE,
 //	DDP_KMODE,
 //	DDP_OUTPUT_SETTING, // Bit[0..1] :: UPSAMPLE_PCMOUT_ENABLE ; BIT[2] :: LITTLE_ENDIAN_DDout 
-//  
+//
 //	/* Do not edit beyond this comment */
 //	DDP_NB_CONFIG_ELEMENTS
 //};
@@ -96,12 +96,11 @@ typedef struct
 
 } tMMEDDPLUSStatus;
 
-
 typedef struct 
 {
 	enum eAccDecoderId      DecoderId;
 	U32                     StructSize;
-  
+
 	U8                      Config[DD_NB_CONFIG_ELEMENTS];
 	//config[0]:enum eAccBoolean  CrcOff;      //!< Disable the CRC Checking
 	//config[1]:enum eAccBoolean  LfeEnable;   //!< Enable the Lfe Processing
@@ -112,7 +111,6 @@ typedef struct
 	//config[6]:enum eAccBoolean  VcrRequested;//!< If ACC_MME_TRUE then process VCR downmix internally
 	tCoeff15                PcmScale;          //!< Q15 scaling coeff (applied in freq domain) 1.0 <=> 0x7FFF     
 } MME_LxDDPConfig_t;
-
 
 typedef struct
 {
@@ -125,7 +123,6 @@ typedef struct
 	MME_DMixGlobalParams_t DMix; //!< Generic DMix : valid for main and vcr output
 
 } MME_LxDDPPcmProcessingGlobalParams_t;
-
 
 typedef struct
 {

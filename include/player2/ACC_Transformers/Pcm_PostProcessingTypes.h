@@ -74,7 +74,7 @@ enum eAccPcmProcId
 	ACC_PCM_DMIX_ID,
 	ACC_PCM_KOKPS_ID,     /* Pitch Shift   */
 	ACC_PCM_KOKVC_ID,     /* Voice Cancel  */
-	ACC_PCM_TEMPO_ID,     
+	ACC_PCM_TEMPO_ID,
 	ACC_PCM_KOKMUSIC_ID,
 	ACC_PCM_BASSMGT_ID,
 	ACC_PCM_EQUALIZER_ID,
@@ -84,7 +84,6 @@ enum eAccPcmProcId
 	ACC_PCM_SFC_ID,
 	ACC_PCM_SIGANALYSIS_ID,
 	ACC_PCM_ES2PES_ENCODER_ID,
-
 	ACC_PCM_ENCODER_ID,
 	ACC_PCM_SPDIFOUT_ID,
 	ACC_PCMPRO_BTSC_ID,
@@ -121,27 +120,27 @@ enum eTSXTCOnfigIdx
 
 enum eTSXTLfResponse
 {
-    TSXTLfResponse_40Hz,
-    TSXTLfResponse_60Hz,
-    TSXTLfResponse_100Hz,
-    TSXTLfResponse_150Hz,
-    TSXTLfResponse_200Hz,
-    TSXTLfResponse_250Hz,
-    TSXTLfResponse_300Hz,
-    TSXTLfResponse_400Hz,
+	TSXTLfResponse_40Hz,
+	TSXTLfResponse_60Hz,
+	TSXTLfResponse_100Hz,
+	TSXTLfResponse_150Hz,
+	TSXTLfResponse_200Hz,
+	TSXTLfResponse_250Hz,
+	TSXTLfResponse_300Hz,
+	TSXTLfResponse_400Hz,
 };
 
 enum eTSXTMode
-{ 
+{
 	TSXT_Passivematrix,
 	TSXT_1_0,
-	TSXT_2_0, 
+	TSXT_2_0,
 	TSXT_3_0,
-	TSXT_2_1, 
+	TSXT_2_1,
 	TSXT_3_1,
-	TSXT_2_2, 
+	TSXT_2_2,
 	TSXT_3_2,
-	TSXT_3_3, 
+	TSXT_3_3,
 	TSXT_3_2_BSDigital,
 	TSXT_PL2_Music,
 	TSXT_CSII,
@@ -158,7 +157,7 @@ typedef struct
 	//!< [1] : enum eBoolean   TsxtHeadphone;
 	//!< [2] : enum eTBSpkSize TBSize;
 	//!< [3] : enum eTsxtMode  TsxtMode;
-	
+
 	tCoeff15            FocusElevation;        //!< Q15 Coefficient for focus
 	tCoeff15            FocusTweeterElevation; //!< Q15 Coefficient for focus
 	tCoeff15            TBLevel;               //!< Q15 TruBass level
@@ -192,8 +191,7 @@ enum eDMixConfigIdx
 	DMIX_NORMALIZE,
 	DMIX_NORM_IDX,
 	DMIX_DIALOG_ENHANCE,
-	DMIX_FEATURES, 
-
+	DMIX_FEATURES,
 	/* Do not edit beyond this comment */
 	DMIX_NB_CONFIG_ELEMENTS
 };
@@ -211,7 +209,7 @@ typedef union
 } uDmixFeatures;
 
 
-#define DMIX_NB_IN_CHANNELS 8 
+#define DMIX_NB_IN_CHANNELS 8
 
 typedef struct
 {
@@ -228,7 +226,7 @@ typedef struct
 	//!< [6] : enum eBoolean Normalize;       /* Enable Normalization                                     */
 	//!< [7] : u8            NormIdx;         /* Index to the predifined set of normalisation coefficient */
 	//!< [8] : enum eBoolean DialogEnhance;   /* Boost Centre Channel downmix wrt L/R/Surrounds           */
-	//!< [9] : BitFields     Feature;         /* Other options  
+	//!< [9] : BitFields     Feature;         /* Other options
 	//!< The 2 Following tables should be sent only if the UserDefinedTab is set to ACC_TRUE
 	tCoeff15               MainMixTable[DMIX_NB_IN_CHANNELS][DMIX_NB_IN_CHANNELS]; //!< Q15 Downmix Coefficient for main Output
 	tCoeff15               AuxMixTable [2                  ][DMIX_NB_IN_CHANNELS]; //!< Q15 Downmix Coefficient for aux  Output
@@ -250,7 +248,7 @@ typedef struct
 {
 	U32                    Id;                //!< ID of this processing
 	U32                    StructSize;        //!< Size of this structure
-	
+
 	U8                  Config[CMC_NB_CONFIG_ELEMENTS];
 	//!< [0] : enum eAcMode   DownMix[MIX_MAIN]
 	//!< [1] : enum eAcMode   DownMix[MIX_AUX]
@@ -259,14 +257,12 @@ typedef struct
 	
 	tCoeff15            CenterMixCoeff;
 	tCoeff15            SurroundMixCoeff;
-	
 } MME_CMCGlobalParams_t;
 
 enum eAccDeemphMode
 {
 	ACC_DEEMPH_50_15_us,
 	ACC_DEEMPH_CCITT_J_17,
-	
 	// do not edit below this item
 	ACC_LAST_DEEMPH_MODE
 };
@@ -274,7 +270,7 @@ typedef struct
 {
 	U32                    Id;             //!< ID of this processing
 	U32                    StructSize;     //!< Size of this structure
-	
+
 	enum eAccProcessApply  Apply;          //!< Deemphasis Enable switch
 	enum eAccDeemphMode    Mode;           //!< Deemphasis Mode selector
 } MME_DeEmphGlobalParams_t;
@@ -303,9 +299,9 @@ typedef struct
 {
 	U32                    Id;             //!< ID of this processing
 	U32                    StructSize;     //!< Size of this structure
-	
+
 	enum eAccProcessApply  Apply;          //!< Encoder Enable switch
-	enum eEncoderPPType    Type;           //!< Encoder Type :: use macros below 
+	enum eEncoderPPType    Type;           //!< Encoder Type :: use macros below
 	U32                    BitRate;        //!< BitRate
 } MME_EncoderPPGlobalParams_t;
 
@@ -316,7 +312,7 @@ typedef struct
 #define ACC_ENCODERPP_SET_SUBTYPE(cfg, stype) cfg->Type = (enum eEncoderPPType) (((U32)cfg->Type &0xFF0F) + ((stype & 0xF) <<4))
 #define ACC_ENCODERPP_SET_IECENABLE(cfg, en ) cfg->Type = (enum eEncoderPPType) (((U32)cfg->Type &0xFEFF) + ((en & 0x1) <<8))
 
-typedef struct 
+typedef struct
 {
 	unsigned int Mode                : 1;  //! if SPDIF (Mode = 0) else if FatPipe (Mode == 1)
 	unsigned int UpdateSpdifControl  : 1;  //! force update of SpdifOut CS / Validity / User
@@ -331,12 +327,12 @@ typedef struct
 
 	// Spdif Compressed related bits.
 	unsigned int SpdifCompressed     : 1;  //! Set the SPDIF output as Compressed Mode
-	unsigned int AddIECPreamble      : 1;  //! Request insertion of IEC preambles : PA/PB/PC/PD 
+	unsigned int AddIECPreamble      : 1;  //! Request insertion of IEC preambles : PA/PB/PC/PD
 	unsigned int ReservedIEC61937    : 2;  //! Reserved for future extension.
-	unsigned int ForcePC             : 1;  //! Force PC value of SPDIF compressed :: 
+	unsigned int ForcePC             : 1;  //! Force PC value of SPDIF compressed ::
 	                                       //!    if set to 0 then it comes from input PcmBuffer.
 	                                       //!    else take it from ExtSpdifOutGP.Preamble_PC;
-	unsigned int Endianness          : 1;  //! Endianness of the compressed input 
+	unsigned int Endianness          : 1;  //! Endianness of the compressed input
 	                                       //!    if set to 0 Big else 1 little;
 	unsigned int Reserved            :18;
 }tSpdifOutControl;
@@ -349,7 +345,7 @@ typedef struct
 	U32             ChannelStatus[SPDIF_NB_IEC_FRAMES/(sizeof(unsigned int)* 8)];
 	U32             UserData[SPDIF_NB_IEC_FRAMES/(sizeof(unsigned int)* 8)];
 
-	// SPDIF Preambles 
+	// SPDIF Preambles
 	U16    Preamble_PA;
 	U16    Preamble_PB;
 	U16    Preamble_PC; // First 5 bit indicates Encoded type, others are according to spec (cf PauseBurst).
@@ -380,7 +376,7 @@ typedef struct
 {
 	U32                    Id;             //!< ID of this processing
 	U32                    StructSize;     //!< Size of this structure
-	
+
 	enum eAccProcessApply  Apply;          //!< Fatpipe Enable switch
 	tSpdifOutControl       Config;         //!< SpdifOut Control bitfield.
 	//!< [0] bit 0       : Enable
@@ -390,7 +386,7 @@ typedef struct
 	//!< [0] bit 4       : Upsample4x
 	//!< [0] bit 5       : Encryption
 	//!< [0] bit {6..31} : reserved
-	
+
 	// Spdifout Optional
 	MME_ExtSpdifOutGlobalParams_t  Spdifout; //! To be provided if UpdateChannelStatus
 
@@ -401,13 +397,13 @@ typedef struct
 {
 	U32                    Id;             //!< ID of this processing
 	U32                    StructSize;     //!< Size of this structure
-	
+
 	enum eAccProcessApply  Apply;          //!< Fatpipe Enable switch
 	tSpdifOutControl       Config;         //!< SpdifOut Control bitfield.
 	//!< [0] bit 0       : Enable
 	//!< [0] bit 1       : UpdateChannelStatus
 	//!< [0] bit {2..31} : reserved
-	
+
 	// Spdifout Optional
 	MME_ExtSpdifOutGlobalParams_t  Spdifout; //! To be provided if UpdateChannelStatus
 } MME_SpdifOutGlobalParams_t;
@@ -415,14 +411,14 @@ typedef struct
 
 enum ePLIIDecMode
 {
-    PLII_PROLOGIC = 0,
-    PLII_VIRTUAL,
-    PLII_MUSIC,
-    PLII_MOVIE,
-    PLII_MATRIX,
-    PLII_RESERVED_1,
-    PLII_RESERVED_2,
-    PLII_CUSTOM
+	PLII_PROLOGIC = 0,
+	PLII_VIRTUAL,
+	PLII_MUSIC,
+	PLII_MOVIE,
+	PLII_MATRIX,
+	PLII_RESERVED_1,
+	PLII_RESERVED_2,
+	PLII_CUSTOM
 };
 
 enum ePLIIConfigIdx
@@ -438,6 +434,7 @@ enum ePLIIConfigIdx
 	/* Do not edit beyond this comment */
 	PLII_NB_CONFIG_ELEMENTS
 };
+
 typedef struct
 {
 	U32                    Id;             //!< ID of this processing
@@ -494,7 +491,7 @@ typedef struct
 {
 	U32                    Id;                //!< ID of this processing
 	U32                    StructSize;        //!< Size of this structure
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 	U8                     Config[KOKVC_NB_CONFIG_ELEMENTS];
 
 } MME_KokVCGlobalParams_t;
@@ -503,7 +500,7 @@ typedef struct
 {
 	U32                    Id;               //!< ID of this processing
 	U32                    StructSize;       //!< Size of this structure
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 
 	int                    Ratio;            //!< Speed Change ratio in %
 
@@ -535,11 +532,11 @@ enum eCSIIEnableBitField
 
 typedef struct
 {
-	U32                    Id;                //!< ID of this processing 
+	U32                    Id;                //!< ID of this processing
 	U32                    StructSize;        //!< Size of this structure
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 	U8                     Config[CSII_NB_CONFIG_ELEMENTS];
-	
+
 	//!< [0] bit 0 : Phantom
 	//!< [0] bit 1 : CenterFB
 	//!< [0] bit 2 : IS525Mode
@@ -551,7 +548,7 @@ typedef struct
 	//!< [2] : enum eTBSpkSize TBSize;
 	//!< [3] : enum eCSiiOutputMode  OutMode;
 	//!< [4] : enum eCSiiMode  Mode;
-	
+
 	//enum eBoolean   Phantom;	 /* true for phantom center image*/
 	//enum eBoolean   CenterFB;	 /* true for full bandwidth center channel*/
 	//enum eBoolean   IS525Mode; /* true for 525 mode*/
@@ -589,9 +586,9 @@ enum eOMNICOnfigIdx
 
 typedef struct
 {
-    U32                    Id;                //!< ID of this processing 
+    U32                    Id;                //!< ID of this processing
 	U32                    StructSize;        //!< Size of this structure
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 	U8                     Config[OMNI_NB_CONFIG_ELEMENTS];
 } MME_OmniGlobalParams_t;
 
@@ -610,10 +607,10 @@ enum eSTWDCOnfigIdx
 
 typedef struct
 {
-	U32                    Id;                //!< ID of this processing 
+	U32                    Id;                //!< ID of this processing
 	U32                    StructSize;        //!< Size of this structure
 
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 
 	U8                     Config[STWD_NB_CONFIG_ELEMENTS];
 	tCoeff15               StwdSurroundGain;  //!< Surround Gain
@@ -635,15 +632,15 @@ enum eCHSYNConfigIdx
 
 typedef struct
 {
-	U32              Id;             //!< ID of this processing 
+	U32              Id;             //!< ID of this processing
 	U32                       StructSize;     //!< Size of this structure
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 	U8                        Config[CHSYN_NB_CONFIG_ELEMENTS];
 
 } MME_ChsynGlobalParams_t;
 
 
-enum eAccBassMgtType 
+enum eAccBassMgtType
 {
 	BASSMGT_VOLUME_CTRL,
 	BASSMGT_DOLBY_1,
@@ -664,7 +661,7 @@ enum eBassMgtConfigIdx
 	BASSMGT_BOOST_OUT,
 	BASSMGT_PROLOGIC_IN,
 	BASSMGT_OUT_WS,
-	BASSMGT_LIMITER, 
+	BASSMGT_LIMITER,
 	BASSMGT_INPUT_ROUTE,
 	BASSMGT_OUTPUT_ROUTE,
 	/* Do not edit beyond this comment */
@@ -705,8 +702,8 @@ enum eDelayConfigIdx
 
 typedef struct
 {
-	U32              Id;   //!< ID of this processing 
-	U32              StructSize;
+	U32                    Id;   //!< ID of this processing
+	U32                    StructSize;
 	enum eAccProcessApply  Apply; 
 	U8               Config[BASSMGT_NB_CONFIG_ELEMENTS];
 	//!< [0] : enum eBassMgtType Type;      /* Select the type of BassMgt */
@@ -740,9 +737,9 @@ enum eEqualizerMgtConfigIdx
 };
 typedef struct
 {
-	U32              Id;               //!< ID of this processing 
+	U32              Id;               //!< ID of this processing
 	U32              StructSize;
-	enum eAccProcessApply  Apply; 
+	enum eAccProcessApply  Apply;
 	enum eAccBoolean Enable;
 	U8               Config[EQ_NB_CONFIG_ELEMENTS];
 	//!< [0 .. 7] /* Gain in given frequency band in dB */
@@ -751,42 +748,42 @@ typedef struct
 
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
 	enum eAccProcessApply Apply;
 } MME_DCRemoveGlobalParams_t;
-											
+
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
 	enum eAccProcessApply Apply;
 	enum eAccFsCode       FsOut;
 } MME_SfcPPGlobalParams_t;
-				
+
 
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
 	enum eAccProcessApply Apply;
 	enum eFsRange         Range;
 } MME_Resamplex2GlobalParams_t;
-		
+
 
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
-	enum eAccProcessApply Apply; 
+	enum eAccProcessApply Apply;
 	enum eAccBoolean      DelayUpdate;
 	U8                    Delay[DELAY_NB_CONFIG_ELEMENTS];
-	//!< [0..7] /* Delay for given channel in samples */ 
+	//!< [0..7] /* Delay for given channel in samples */
 } MME_DelayGlobalParams_t;
 
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
 	enum eAccProcessApply Apply;
 	tCoeff15              InputGain;
@@ -846,16 +843,16 @@ typedef struct
 {
 	U32                   Id;
 	U32                   StructSize;
-	
+
 	enum eAccProcessApply Apply;
-	
+
 	U8                    Config[SIGANALYSIS_NB_CONFIG_ELEMENTS];
 
 } MME_SigAnalysisGlobalParams_t;
 
 typedef struct
 {
-	U32                   Id;               //!< ID of this processing 
+	U32                   Id;               //!< ID of this processing
 	U32                   StructSize;
 	enum eAccProcessApply Apply;
 } MME_es2pesGlobalParams_t;
@@ -981,7 +978,6 @@ typedef struct
 	uEmergencyMute    EmergencyMute;
 } MME_LimiterStatus_t;
 
-
 typedef struct
 {
 	U32              TablePresent   : 1;
@@ -991,7 +987,7 @@ typedef struct
 	U32              Reserved_12_31 :20;
 } tDmixStatusDesc;
 
-typedef struct 
+typedef struct
 {
 	U32              Id;                      //!< {CHAIN, ACC_PCM_DMIX_ID}
 	U32              StructSize;
@@ -1030,7 +1026,7 @@ typedef struct
 	U8                     DRC[MAX_DTS_DRC_COEFF]; //!< DRC Coeffiecients
 } MME_DTSMetadataGlobalParams_t;
 
-// registering function to plug-in new PcmPostProcessing 
+// registering function to plug-in new PcmPostProcessing
 extern MME_ERROR PcmProcess_registerDLL(void * f_params); // tAudioDLL * f_params
 
 #endif /* _PCM_POSTPROCESSINGTYPES_H_ */

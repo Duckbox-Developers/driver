@@ -14,7 +14,7 @@ enum eEncoderAACSubType
 typedef struct
 {
 	enum eEncoderAACSubType SubType;
-	
+
 	unsigned long           quantqual;
 	int                     VbrOn;
 } tMMEAaceConfig;

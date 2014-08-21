@@ -347,9 +347,8 @@ static int starci_readreg(struct dvb_ca_state* state, u8 reg)
 */
 void getCiSource(int slot, int* source)
 {
-  int val;
-
 #if !defined(ATEVIO7500) && !defined(HS7810A) && !defined(HS7110)
+  int val;
   val = starci_readreg(&ca_state, TWIN_MODE_CTRL_REG);
   val &= 0x20;
 

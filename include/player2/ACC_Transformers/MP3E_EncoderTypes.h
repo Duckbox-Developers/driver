@@ -4,10 +4,10 @@
 #include "acc_mmedefines.h"
 typedef struct
 {
-	long             bandWidth;		/* BandWidth */
-	enum eAccBoolean fIntensity;	/* Intensity Stereo */
-	enum eAccBoolean fVbrMode;		/* VBR Mode */
-	int              vbrQuality;		/* VBR Quality */
+	long             bandWidth;   /* BandWidth */
+	enum eAccBoolean fIntensity;  /* Intensity Stereo */
+	enum eAccBoolean fVbrMode;    /* VBR Mode */
+	int              vbrQuality;  /* VBR Quality */
 	enum eAccBoolean fFullHuffman;
 	enum eAccBoolean paddingMode;
 	enum eAccBoolean fCrc;

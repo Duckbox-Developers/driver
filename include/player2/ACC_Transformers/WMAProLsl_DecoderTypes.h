@@ -19,7 +19,7 @@
 
 #define DRV_MME_WMAPROLSL_DECODER_VERSION  0x060103
 
-#include "mme.h"
+
 #include "Audio_DecoderTypes.h"
 #include "Pcm_PostProcessingTypes.h"
 #include "acc_mmedefines.h"
@@ -69,17 +69,17 @@ typedef struct
 
 	U16                             MaxNbPages;
 	U16                             MaxPageSize;
-	U32                             _DUMMY;			  //MaxBitRate;//!< Max bitrate present in ASF header.
-	U32                             NbSamplesOut;     //!< Number of Output Samples per WMA Decoder call. 
+	U32                             _DUMMY;				//MaxBitRate;//!< Max bitrate present in ASF header.
+	U32                             NbSamplesOut;		//!< Number of Output Samples per WMA Decoder call. 
 
 	enum eAccBoolean                NewAudioStreamInfo;
-	MME_WmaProLslAudioStreamInfo_t  AudioStreamInfo;  //!< Audio stream specific properties present in ASF header.
+	MME_WmaProLslAudioStreamInfo_t  AudioStreamInfo;	//!< Audio stream specific properties present in ASF header.
 	U16                             nDecoderFlags;
 	U16                             nDRCSetting;
-    int                             iPeakAmplitudeRef;
-    int                             iRmsAmplitudeRef;
-    int                             iPeakAmplitudeTarget;
-    int                             iRmsAmplitudeTarget;
+	int                             iPeakAmplitudeRef;
+	int                             iRmsAmplitudeRef;
+	int                             iPeakAmplitudeTarget;
+	int                             iRmsAmplitudeTarget;
 
 	U32                             nInterpResampRate;
 }

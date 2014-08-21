@@ -98,9 +98,9 @@ enum eAccMixerStatusId
 
 enum eMixerDataBufferType
 {
-    ACC_MIXER_DATABUFFER_FLAG_REGULAR = 0,
-    ACC_MIXER_DATABUFFER_FLAG_IAUDIO_MONO = 1,
-    ACC_MIXER_DATABUFFER_FLAG_IAUDIO_STEREO = 2,
+    ACC_MIXER_DATABUFFER_FLAG_REGULAR         = 0,
+    ACC_MIXER_DATABUFFER_FLAG_IAUDIO_MONO     = 1,
+    ACC_MIXER_DATABUFFER_FLAG_IAUDIO_STEREO   = 2,
     ACC_MIXER_DATABUFFER_FLAG_COMPRESSED_DATA = 4
 };
 
@@ -128,60 +128,60 @@ enum eAccRendererProcId
 
 enum eAccMixerCapabilityFlags
 {
-    ACC_MIXER_PREPROCESSING,
-    ACC_MIXER_PROCESSING,
-    ACC_MIXER_POSTPROCESSING,
-    ACC_MIXER_INT_AUDIO
+	ACC_MIXER_PREPROCESSING,
+	ACC_MIXER_PROCESSING,
+	ACC_MIXER_POSTPROCESSING,
+	ACC_MIXER_INT_AUDIO
 	//    ACC_MIXER_LIMITER
 };
 
 //! Additional decoder capability structure
 typedef struct
 {
-  U32                     StructSize;       //!< Size of this structure
-  U32                     MixerCapabilityFlags;
-  U32                     PcmProcessorCapabilityFlags[2];
+	U32                     StructSize;       //!< Size of this structure
+	U32                     MixerCapabilityFlags;
+	U32                     PcmProcessorCapabilityFlags[2];
 } MME_LxMixerTransformerInfo_t;
 
 enum eMixerInputType
 {
-    ACC_MIXER_LINEARISER,
-    ACC_MIXER_BEEPTONE_GENERATOR,
-    ACC_MIXER_PINKNOISE_GENERATOR,
-    ACC_MIXER_IAUDIO,
-    ACC_MIXER_COMPRESSED_DATA,
-    
-    // do not edit further
-    ACC_NB_MIXER_INPUT_TYPE,
-    ACC_MIXER_INVALID_INPUT
+	ACC_MIXER_LINEARISER,
+	ACC_MIXER_BEEPTONE_GENERATOR,
+	ACC_MIXER_PINKNOISE_GENERATOR,
+	ACC_MIXER_IAUDIO,
+	ACC_MIXER_COMPRESSED_DATA,
+
+	// do not edit further
+	ACC_NB_MIXER_INPUT_TYPE,
+	ACC_MIXER_INVALID_INPUT
 };
 
 typedef struct 
 {
-  U8                      InputId;          //!< b[7..4] :: Input Type | b[3..0] :: Input Number  
-  U8                      NbChannels;       //!< Interleaving of the input pcm buffers
-  U16                     Alpha;            //!< Mixing Coefficient for Each Input
-  U16                     Mono2Stereo;      //!< [enum eAccBoolean] Mono 2 Stereo upmix of a mono input
-  U16                     Reserved;         //!< Inserted by Compiler for alignment issue
-  enum eAccWordSizeCode   WordSize;         //!< Input WordSize : ACC_WS32 / ACC_WS16
-  enum eAccAcMode         AudioMode;        //!<  Channel Configuration
-  enum eAccFsCode         SamplingFreq;     //!< Sampling Frequency
-  enum eAccMainChannelIdx FirstOutputChan;  //!< To which output channel is mixer the 1st channel of this input stream
-  enum eAccBoolean        AutoFade;
-  U32                     Config;           //!< Special config (applicable to generators);
+	U8                      InputId;          //!< b[7..4] :: Input Type | b[3..0] :: Input Number  
+	U8                      NbChannels;       //!< Interleaving of the input pcm buffers
+	U16                     Alpha;            //!< Mixing Coefficient for Each Input
+	U16                     Mono2Stereo;      //!< [enum eAccBoolean] Mono 2 Stereo upmix of a mono input
+	U16                     Reserved;         //!< Inserted by Compiler for alignment issue
+	enum eAccWordSizeCode   WordSize;         //!< Input WordSize : ACC_WS32 / ACC_WS16
+	enum eAccAcMode         AudioMode;        //!<  Channel Configuration
+	enum eAccFsCode         SamplingFreq;     //!< Sampling Frequency
+	enum eAccMainChannelIdx FirstOutputChan;  //!< To which output channel is mixer the 1st channel of this input stream
+	enum eAccBoolean        AutoFade;
+	U32                     Config;           //!< Special config (applicable to generators);
 } MME_MixerInputConfig_t;
 
 typedef struct 
 {
-  enum eAccMixerId             Id;                //!< ID of this processing 
-  U32                          StructSize;        //!< Size of this structure
-  MME_MixerInputConfig_t       Config[ACC_MIXER_MAX_NB_INPUT];
+	enum eAccMixerId             Id;                //!< ID of this processing 
+	U32                          StructSize;        //!< Size of this structure
+	MME_MixerInputConfig_t       Config[ACC_MIXER_MAX_NB_INPUT];
 } MME_LxMixerInConfig_t;
 
 // get/set compressed data output identifier from the MME_LxMixerInConfig_t structure
-#define AUDIOMIXER_SET_COMPRESSED_DATA_OUTPUT_ID(input_config, out_id) (input_config->Config |= (out_id & 0xFF))
+#define AUDIOMIXER_SET_COMPRESSED_DATA_OUTPUT_ID(input_config, out_id) ((input_config)->Config |= (out_id & 0xFFFF))
 
-#define AUDIOMIXER_GET_COMPRESSED_DATA_OUTPUT_ID(input_config) (input_config->Config & 0xFF)
+#define AUDIOMIXER_GET_COMPRESSED_DATA_OUTPUT_ID(input_config)  (((input_config)->Config>>0) & 0xFFFF)
 
 
 #define AUDIOMIXER_OVERRIDE_OUTFS 0x1FF
@@ -196,104 +196,104 @@ typedef struct
 	//!< Override OutSfreq when InputParams->OutputSamplingFreq == AUDIOMIXER_OVERRIDE_OUTFS
 	unsigned int MainFS     : 8; //! SamplingFrequency of the Main Output (enum eAccFsCode)
 	unsigned int Reserved   : 8;
-
 } MME_LxMixerOutConfig_t;
 
 typedef struct 
 {
-  enum eAccMixerId            Id;                //!< Id of the PostProcessing structure.
-  U16                         StructSize;        //!< Size of this structure
-  U8                          DigSplit;          //!< Point of split between Dig  output and Main/Aux output
-  U8                          AuxSplit;          //!< Point of split between Main output and Aux output
+	enum eAccMixerId            Id;                //!< Id of the PostProcessing structure.
+	U16                         StructSize;        //!< Size of this structure
+	U8                          DigSplit;          //!< Point of split between Dig  output and Main/Aux output
+	U8                          AuxSplit;          //!< Point of split between Main output and Aux output
 
-  MME_BassMgtGlobalParams_t   BassMgt;
-  MME_EqualizerGlobalParams_t Equalizer;
-  MME_TempoGlobalParams_t     TempoControl;
-  MME_DCRemoveGlobalParams_t  DCRemove;
-  MME_DelayGlobalParams_t     Delay;
-  MME_EncoderPPGlobalParams_t Encoder;
-  MME_SfcPPGlobalParams_t     Sfc;
-  MME_CMCGlobalParams_t       CMC;
-  MME_DMixGlobalParams_t      Dmix;
-  MME_SpdifOutGlobalParams_t  Spdifout;
-  MME_BTSCGlobalParams_t      Btsc;
-  MME_VIQGlobalParams_t       Viq;
+	MME_BassMgtGlobalParams_t   BassMgt;
+	MME_EqualizerGlobalParams_t Equalizer;
+	MME_TempoGlobalParams_t     TempoControl;
+	MME_DCRemoveGlobalParams_t  DCRemove;
+	MME_DelayGlobalParams_t     Delay;
+	MME_EncoderPPGlobalParams_t Encoder;
+	MME_SfcPPGlobalParams_t     Sfc;
+	MME_CMCGlobalParams_t       CMC;
+	MME_DMixGlobalParams_t      Dmix;
+	MME_SpdifOutGlobalParams_t  Spdifout;
+	MME_BTSCGlobalParams_t      Btsc;
+	MME_VIQGlobalParams_t       Viq;
 } MME_LxPcmPostProcessingGlobalParameters_t; //!< PcmPostProcessings Params
 
 /* All the following structures may apply to Blu Ray Mixer */
 
 typedef struct 
 {
-  U32      InputId;       //!< Input Number  
-  U16      AlphaPerChannel[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Mixing coefficient for each channel (applies for DD+ primary stream)
+	U32      InputId;       //!< Input Number  
+	U16      AlphaPerChannel[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Mixing coefficient for each channel (applies for DD+ primary stream)
 } MME_LxMixerInGainSet_t; //!< GainSet params
 
 typedef struct 
 {
-  enum eAccMixerId       Id;            //!< Id of the GainSet structure.
-  U32                    StructSize;    //!< Size of this structure
-  MME_LxMixerInGainSet_t GainSet[ACC_MIXER_MAX_NB_INPUT];
+	enum eAccMixerId       Id;            //!< Id of the GainSet structure.
+	U32                    StructSize;    //!< Size of this structure
+	MME_LxMixerInGainSet_t GainSet[ACC_MIXER_MAX_NB_INPUT];
 } MME_LxMixerGainSet_t;
 
 typedef struct 
 {
-  U32                 InputId;       //!< Input Number  
-  U16                 Panning[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Panning coefficient for each channel (applies for mono secondary stream)
-} MME_LxMixerInPanningSet_t; 
+	U32                 InputId;       //!< Input Number  
+	U16                 Panning[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Panning coefficient for each channel (applies for mono secondary stream)
+} MME_LxMixerInPanningSet_t;
 
 typedef struct 
 {
-  enum eAccMixerId          Id;            //!< Id of the PanningSet structure.
-  U32                       StructSize;    //!< Size of this structure
-  MME_LxMixerInPanningSet_t PanningSet[ACC_MIXER_MAX_NB_INPUT];
+	enum eAccMixerId          Id;            //!< Id of the PanningSet structure.
+	U32                       StructSize;    //!< Size of this structure
+	MME_LxMixerInPanningSet_t PanningSet[ACC_MIXER_MAX_NB_INPUT];
 } MME_LxMixerPanningSet_t;
 
 typedef struct 
 {
-  enum eAccMixerId          Id;            //!< Id of the BluRay General structure.
-  U32                       StructSize;    //!< Size of this structure
-  U16                       PostMixGain;
-  enum eAccBoolean          GainSmoothEnable;
-  enum eAccBoolean          OutputLimiterEnable;
+	enum eAccMixerId          Id;            //!< Id of the BluRay General structure.
+	U32                       StructSize;    //!< Size of this structure
+	U16                       PostMixGain;
+	U16                       Reserved;
+	enum eAccBoolean          GainSmoothEnable;
+	enum eAccBoolean          OutputLimiterEnable;
 } MME_LxMixerBDGeneral_t;
 
 typedef struct
 {
-  U8                      InputId;                         //!< Input Number  
-  U8                      NbChannels;                      //!< Interleaving of the input pcm buffers
-  U16                     Alpha;                           //!< Mixing Coefficient for Each Input
-  U16                     Panning[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Panning coefficient for each channel
-  enum eAccBoolean        Play;                            //!< Play/Stop for each input
+	U8                      InputId;                         //!< Input Number  
+	U8                      NbChannels;                      //!< Interleaving of the input pcm buffers
+	U16                     Alpha;                           //!< Mixing Coefficient for Each Input
+	U16                     Panning[ACC_MIXER_MAIN_CHANNEL_NB]; //!< Panning coefficient for each channel
+	enum eAccBoolean        Play;                            //!< Play/Stop for each input
 } MME_MixerIAudioInputConfig_t;
 
 typedef struct 
 {
-  enum eAccMixerId             Id;                //!< ID of this processing 
-  U32                          StructSize;        //!< Size of this structure
-  U32                          NbInteractiveAudioInput;
-  MME_MixerIAudioInputConfig_t ConfigIAudio[ACC_MIXER_MAX_IAUDIO_NB_INPUT];
+	enum eAccMixerId             Id;                //!< ID of this processing 
+	U32                          StructSize;        //!< Size of this structure
+	U32                          NbInteractiveAudioInput;
+	MME_MixerIAudioInputConfig_t ConfigIAudio[ACC_MIXER_MAX_IAUDIO_NB_INPUT];
 } MME_LxMixerInIAudioConfig_t;
 
 /* end of Blu Ray specific structures */
 
 typedef struct
 {
-  U32                                        StructSize;     //!< Size of this structure
-  MME_LxMixerInConfig_t                      InConfig;       //!< Specific configuration of input
-  MME_LxMixerOutConfig_t                     OutConfig;      //!< output specific configuration information
-  MME_LxPcmPostProcessingGlobalParameters_t  PcmParams;      //!< PcmPostProcessings Params
+	U32                                        StructSize;     //!< Size of this structure
+	MME_LxMixerInConfig_t                      InConfig;       //!< Specific configuration of input
+	MME_LxMixerOutConfig_t                     OutConfig;      //!< output specific configuration information
+	MME_LxPcmPostProcessingGlobalParameters_t  PcmParams;      //!< PcmPostProcessings Params
 } MME_LxMixerTransformerGlobalParams_t;
 
 typedef struct
 {
-  U32                                        StructSize;    //!< Size of this structure
-  MME_LxMixerInConfig_t                      InConfig;        //!< Specific configuration of input
-  MME_LxMixerGainSet_t                       InGainConfig;    //!< Specific configuration of input gains
-  MME_LxMixerPanningSet_t                    InPanningConfig; //!< Specific configuration of input panning
-  MME_LxMixerInIAudioConfig_t                InIaudioConfig;  //!< Specific configuration of iaudio input
-  MME_LxMixerBDGeneral_t                     InBDGenConfig;    //!< some geenral config for BD mixer
-  MME_LxMixerOutConfig_t                     OutConfig;       //!< output specific configuration information
-  MME_LxPcmPostProcessingGlobalParameters_t  PcmParams;       //!< PcmPostProcessings Params
+	U32                                        StructSize;    //!< Size of this structure
+	MME_LxMixerInConfig_t                      InConfig;        //!< Specific configuration of input
+	MME_LxMixerGainSet_t                       InGainConfig;    //!< Specific configuration of input gains
+	MME_LxMixerPanningSet_t                    InPanningConfig; //!< Specific configuration of input panning
+	MME_LxMixerInIAudioConfig_t                InIaudioConfig;  //!< Specific configuration of iaudio input
+	MME_LxMixerBDGeneral_t                     InBDGenConfig;    //!< some geenral config for BD mixer
+	MME_LxMixerOutConfig_t                     OutConfig;       //!< output specific configuration information
+	MME_LxPcmPostProcessingGlobalParameters_t  PcmParams;       //!< PcmPostProcessings Params
 } MME_LxMixerBDTransformerGlobalParams_t;
 
 
@@ -320,7 +320,7 @@ typedef struct
 	U32                   StructSize; //!< Size of this structure
 	
 	//! System Init 
-	enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached 
+	enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached
 	//!< data aren't sent back at the end of the command
 	
 	//! Mixer Init Params    
@@ -337,99 +337,99 @@ typedef struct
 
 typedef struct
 {
-  U32                   StructSize; //!< Size of this structure
+	U32                   StructSize; //!< Size of this structure
 	
-  //! System Init 
-  enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached 
-  //!< data aren't sent back at the end of the command
-	
-  //! Mixer Init Params    
-  U32                   NbInput;
-  U32                   MaxNbOutputSamplesPerTransform;
-	
-  U32                   OutputNbChannels;  //! To cast to MME_OutChan_t in order to access extended API.
-  enum eAccFsCode       OutputSamplingFreq;
-	
-  //! Mixer specific global parameters 
-  MME_LxMixerBDTransformerGlobalParams_t	GlobalParams; 
+	//! System Init 
+	enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached 
+	//!< data aren't sent back at the end of the command
+
+	//! Mixer Init Params    
+	U32                   NbInput;
+	U32                   MaxNbOutputSamplesPerTransform;
+
+	U32                   OutputNbChannels;  //! To cast to MME_OutChan_t in order to access extended API.
+	enum eAccFsCode       OutputSamplingFreq;
+
+	//! Mixer specific global parameters 
+	MME_LxMixerBDTransformerGlobalParams_t	GlobalParams; 
 	
 } MME_LxMixerTransformerInitBDParams_t; 
 
 enum eMixerCommand
 {
-    MIXER_STOP,
-    MIXER_PLAY,
-    MIXER_FADE_OUT, ///!< Invalid command. for compatibility only
-    MIXER_MUTE,
-    MIXER_PAUSE,
-    MIXER_FADE_IN, ///!< Invalid command. for compatibility only
-    MIXER_FOFI,
-    MIXER_LAST_COMMAND
+	MIXER_STOP,
+	MIXER_PLAY,
+	MIXER_FADE_OUT, ///!< Invalid command. for compatibility only
+	MIXER_MUTE,
+	MIXER_PAUSE,
+	MIXER_FADE_IN, ///!< Invalid command. for compatibility only
+	MIXER_FOFI,
+	MIXER_LAST_COMMAND
 };
 
 typedef struct
 {
-  U16 Command;     //!< enum eMixerCommand : Play / Mute / Pause / Fade in - out ...
-  U16 StartOffset; //!< start offset of the given input [when exiting of Pause / Underflow ]
-  U32 PTSflags;
-  U32 PTS;
+	U16 Command;     //!< enum eMixerCommand : Play / Mute / Pause / Fade in - out ...
+	U16 StartOffset; //!< start offset of the given input [when exiting of Pause / Underflow ]
+	U32 PTSflags;
+	U32 PTS;
 } tMixerFrameParams;
 
 //! This structure must be passed when sending the TRANSFORM command to the decoder
 typedef struct
 {
-  tMixerFrameParams   InputParam[ACC_MIXER_MAX_NB_INPUT]; //!< Input Params attached to given input buffers
+	tMixerFrameParams   InputParam[ACC_MIXER_MAX_NB_INPUT]; //!< Input Params attached to given input buffers
 } MME_LxMixerTransformerFrameDecodeParams_t;
 
 typedef struct
 {
-  enum eMixerState State;
-  U32              BytesUsed;
-  U32              NbInSplNextTransform;
+	enum eMixerState State;
+	U32              BytesUsed;
+	U32              NbInSplNextTransform;
 } MME_MixerInputStatus_t;
 
 typedef struct
 {
-  U32 StructSize;
-  // System report
-  U32                    ElapsedTime;     //<! elapsed time to do the transform in microseconds
-  MME_MixerInputStatus_t InputStreamStatus[ACC_MIXER_MAX_NB_INPUT];
+	U32 StructSize;
+	// System report
+	U32                    ElapsedTime;     //<! elapsed time to do the transform in microseconds
+	MME_MixerInputStatus_t InputStreamStatus[ACC_MIXER_MAX_NB_INPUT];
 } MME_LxMixerTransformerSetGlobalStatusParams_t;
 
 typedef struct
 {
-  U32                    StructSize;
-	
-  // Mixed signal Properties
-  enum eAccAcMode        MixerAudioMode;   //<! Channel Output configuration 
-  enum eAccFsCode        MixerSamplingFreq;//<! Sampling Frequency of Output PcmBuffer 
-	
-  int                    NbOutSamples;     //<! Report the actual number of samples that have been output 
-  enum eAccAcMode        AudioMode;        //<! Channel Output configuration 
-  enum eAccFsCode        SamplingFreq;     //<! Sampling Frequency of Output PcmBuffer 
+	U32                    StructSize;
 
-  enum eAccBoolean       Emphasis;         //<! Buffer has emphasis
-  U32                    ElapsedTime;      //<! elapsed time to do the transform in microseconds
+	// Mixed signal Properties
+	enum eAccAcMode        MixerAudioMode;   //<! Channel Output configuration 
+	enum eAccFsCode        MixerSamplingFreq;//<! Sampling Frequency of Output PcmBuffer 
 
-  U32                    PTSflag;          //<! PTSflag[b0..1] = PTS - Validity / PTSflag[b16] =  PTS[b32] 
-  U32                    PTS;              //<! PTS[b0..b31]
+	int                    NbOutSamples;     //<! Report the actual number of samples that have been output 
+	enum eAccAcMode        AudioMode;        //<! Channel Output configuration 
+	enum eAccFsCode        SamplingFreq;     //<! Sampling Frequency of Output PcmBuffer 
 
-  // Input consumption feedback
-  MME_MixerInputStatus_t InputStreamStatus[ACC_MIXER_MAX_NB_INPUT];
-	
+	enum eAccBoolean       Emphasis;         //<! Buffer has emphasis
+	U32                    ElapsedTime;      //<! elapsed time to do the transform in microseconds
+
+	U32                    PTSflag;          //<! PTSflag[b0..1] = PTS - Validity / PTSflag[b16] =  PTS[b32] 
+	U32                    PTS;              //<! PTS[b0..b31]
+
+	// Input consumption feedback
+	MME_MixerInputStatus_t InputStreamStatus[ACC_MIXER_MAX_NB_INPUT];
+
 } MME_LxMixerTransformerFrameDecodeStatusParams_t;
 
 typedef struct 
 {
-  U32 Id;
-  U32 StructSize;
-  U8  Config[1];
+	U32 Id;
+	U32 StructSize;
+	U8  Config[1];
 } MME_MixerStatusTemplate_t;
 
 typedef struct
 {
-  U32                               BytesUsed;  // Amount of this structure already filled
-  MME_MixerStatusTemplate_t         MixExtStatus;  // To be replaced with MME_MixerOutputExtStatus_t like structures
+	U32                               BytesUsed;  // Amount of this structure already filled
+	MME_MixerStatusTemplate_t         MixExtStatus;  // To be replaced with MME_MixerOutputExtStatus_t like structures
 } MME_MixerFrameExtStatus_t;
 
 
@@ -445,8 +445,8 @@ typedef struct
 
 typedef struct
 {
-  MME_LxMixerTransformerFrameDecodeStatusParams_t     MixStatus;  
-  MME_MixerFrameExtStatus_t                           MixExtStatus;
+	MME_LxMixerTransformerFrameDecodeStatusParams_t     MixStatus;  
+	MME_MixerFrameExtStatus_t                           MixExtStatus;
 } MME_LxMixerTransformerFrameMixExtendedParams_t;
 
 #endif /* _AUDIOMIXER_PROCESSORTYPES_H_ */

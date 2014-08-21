@@ -17,7 +17,7 @@
 #ifndef _LOWLATENCY_TRANSFORMERTYPES_H_
 #define _LOWLATENCY_TRANSFORMERTYPES_H_
 
-#include "mme.h"
+
 
 /* A bug in older versions of this file made any code that expanded
  * LOWLATENCY_API_VERSION fail to compile. We therefore introduce the

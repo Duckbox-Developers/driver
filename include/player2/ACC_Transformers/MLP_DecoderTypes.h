@@ -20,7 +20,7 @@
 
 #define DRV_MME_MLP_DECODER_VERSION 0x031124
 
-#include "mme.h"
+
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
 
@@ -47,7 +47,6 @@ typedef struct
 {
 	enum eAccDecoderId      DecoderId;
 	U32                     StructSize;
-    
 	U8                      Config[MLP_NB_CONFIG_ELEMENTS];
 
 } MME_LxMlpConfig_t;

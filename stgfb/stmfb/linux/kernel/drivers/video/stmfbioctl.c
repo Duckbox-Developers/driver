@@ -381,7 +381,7 @@ int VirtToPhys(void *vaddr, int *paddrp)
 
 static int ValidatePagesContiguous(unsigned virtAddress, unsigned size, unsigned* physBase) {
 	/* Iterate over the pages ensuring they are physically contiguous */
-        int result = 0;
+	int result = 0;
 
 	unsigned virtBase  = (virtAddress / PAGE_SIZE) * PAGE_SIZE;
 	unsigned offset    = virtAddress - virtBase;
@@ -399,7 +399,7 @@ static int ValidatePagesContiguous(unsigned virtAddress, unsigned size, unsigned
 		
 		if (res == VTOP_INVALID_ARG) 
 		{
-                	printk("Page lookup failed for address 0x%08x\n", virtBase);
+			printk("Page lookup failed for address 0x%08x\n", virtBase);
 			result = -EFAULT;
 			break;
 		}
@@ -411,15 +411,14 @@ static int ValidatePagesContiguous(unsigned virtAddress, unsigned size, unsigned
 			return 0;
 #endif
 		} else if (phys == (lastPhys + PAGE_SIZE)) {
-			lastPhys += PAGE_SIZE;		
+			lastPhys += PAGE_SIZE;
 		} else {
-                	printk("Page discontinuous virtual 0x%08x, last phys 0x%08x, phys 0x%08x, pageCount %d\n", 
-                	       virtBase, lastPhys, phys, pageCount);
-                	
+			printk("Page discontinuous virtual 0x%08x, last phys 0x%08x, phys 0x%08x, pageCount %d\n", virtBase, lastPhys, phys, pageCount);
+
 			result = -EFAULT;
 			break;
 		}
-	}        
+	}
 
 	return result;
 }

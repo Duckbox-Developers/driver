@@ -2,7 +2,6 @@
 #define _AMRWB_DECODERTYPES_H_
 
 
-#include "mme.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
@@ -18,7 +17,7 @@ typedef struct
 {
 	enum eAccDecoderId      DecoderId;
 	U32                     StructSize;
-    
+
 	U8                      Config[AMRWB_NB_CONFIG_ELEMENTS];
 	//config[0]: Word16 mode;        /* AMR_WB core mode: 0..8 */
 	//config[1]: Word16 extension;   /* 0=AMRWB, 1=mono, 2=stereo20%, 3=stereo25% */

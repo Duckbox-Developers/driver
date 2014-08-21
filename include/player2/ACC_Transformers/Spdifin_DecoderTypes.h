@@ -20,7 +20,7 @@
 
 #define SPDIFIN_API_VERSION 0x100415
 
-#include "mme.h"
+
 #include "Audio_DecoderTypes.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "DolbyDigital_DecoderTypes.h"
@@ -184,5 +184,6 @@ typedef struct
 
 // Fourth U16 extended definition
 	U16 NbSamplesLeft;    // Number of samples already decoded but not yet output.
-}tMMESpdifinStatus;
+} tMMESpdifinStatus;
+
 #endif /* _SPDIFIN_DECODERTYPES_H_ */

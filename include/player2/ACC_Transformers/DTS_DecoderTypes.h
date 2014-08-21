@@ -20,7 +20,6 @@
 
 #define DRV_MME_DTS_DECODER_VERSION 0x060220 //0x051112
 
-#include "mme.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
@@ -75,21 +74,21 @@ enum eDtsConfigIdx
 typedef struct
 {
 	U32 DRC              :7;     // DRCPercentage; Values from 0 to 100
-    U32 SampleFreq       :8;     // 
-    U32 DialogNorm       :1;     // Enable / Disable Dialog Normalisation
-    U32 MultipleAsset    :1;     // Enable / Disable Multiple Asset Decoding
-    U32 AudioPresentation:4;     // No of Audio Presentations
-    U32 SndField         :1;     // Sound Field Select ( 0/1)
-    U32 DefaultSpkMap    :1;     // Enable / Disable Default Speaker Remapping
-    U32 BitDepth         :1;     // Select Bit Depth ( 24 / 16 )
-    U32 AnalogComp       :1;     // Enable / Disable Analog Compensation During DMix
+	U32 SampleFreq       :8;     // 
+	U32 DialogNorm       :1;     // Enable / Disable Dialog Normalisation
+	U32 MultipleAsset    :1;     // Enable / Disable Multiple Asset Decoding
+	U32 AudioPresentation:4;     // No of Audio Presentations
+	U32 SndField         :1;     // Sound Field Select ( 0/1)
+	U32 DefaultSpkMap    :1;     // Enable / Disable Default Speaker Remapping
+	U32 BitDepth         :1;     // Select Bit Depth ( 24 / 16 )
+	U32 AnalogComp       :1;     // Enable / Disable Analog Compensation During DMix
 	U32 ReportDmixTable  :1;     // If Set, then report the Dmix table from metadata to the PcmStatus.
 	U32 ReportRev2Meta   :1;     // If Set, then report the DialNorm/DRC info from metadata to the PcmStatus.
 	U32 Only96From192K   :1;     // Disable decoding of 192K only 96K O/P produced.
 	U32 ReportFrameInfo  :1;     // If set, then report the Frame Info to the PcmStatus.(tDTSFrameStatus_t)
 	U32 Reserved         :3;     // Reserved for future use
 
-	U32 Features;              // Reserved for future extns. Should be 0.
+	U32 Features;                // Reserved for future extns. Should be 0.
 }
 PostProcessings_t;
 

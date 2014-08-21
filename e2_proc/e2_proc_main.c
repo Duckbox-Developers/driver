@@ -705,7 +705,7 @@ struct ProcStructure_s e2Proc[] =
 #endif
 
 #if defined(IPBOX9900) || defined(IPBOX99)
-	{cProcEntry, "stb/misc/fan"                                                             , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/misc/fan"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 
 #if defined(ADB_BOX) || defined(SAGEMCOM88)

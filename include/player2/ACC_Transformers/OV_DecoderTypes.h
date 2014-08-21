@@ -20,7 +20,6 @@
 
 #define DRV_MME_OV_DECODER_VERSION  0x050105
 
-#include "mme.h"
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
 
@@ -29,12 +28,6 @@
 #define ACC_AUDIO_DECODER_NB_MAX_INPUT_BUFFER 1
 #define OV_DECODER_NUM_BUFFERS_PER_SENDBUFFER AUDIO_STREAMING_NUM_BUFFERS_PER_SENDBUFFER
 #define OV_DECODER_MAX_BUFFER_PARAMS          AUDIO_MAX_BUFFER_PARAMS
-
-
-
-
-
-
 
 typedef struct
 {
@@ -45,9 +38,7 @@ typedef struct
 
 } MME_LxOvTransformerInfo_t;
 
-
 /****************************************************************************/
-
 
 typedef struct
 {

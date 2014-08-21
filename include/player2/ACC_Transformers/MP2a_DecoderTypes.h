@@ -20,7 +20,7 @@
 
 #define DRV_MME_MP2a_DECODER_VERSION 0x031030
 
-#include "mme.h"
+
 #include "PcmProcessing_DecoderTypes.h"
 #include "acc_mmedefines.h"
 #include "Audio_DecoderTypes.h"
@@ -50,7 +50,7 @@ enum eAccMP2aStatus
 	ACC_MPEG_EXT_ID_RESERVED           = (1 << 16),
 	ACC_MPEG_MULTILINGUAL_WARNING      = (1 << 17),
 	ACC_MPEG_PREDICTION_ON_WARNING     = (1 << 18),
-	ACC_MPEG_BAD_SYNCWORD_ERROR        = (1 << 19) 
+	ACC_MPEG_BAD_SYNCWORD_ERROR        = (1 << 19)
 };
 
 enum eMP2aCapabilityFlags
@@ -109,8 +109,6 @@ enum eAacConfigIdx
 	AAC_DRC_CUT,      //! DRC cut   factor (portion of the attenuation factor for high level signal)
 	AAC_DRC_BOOST,    //! DRC boost factor (portion of the gain factor for low level signal)
 	AAC_DUAL_MONO,    //! Force the copy of the mono onto L/R when stereo output.
-	
-
 	/* Do not edit below this comment */
 	AAC_NB_CONFIG_ELEMENTS
 };
