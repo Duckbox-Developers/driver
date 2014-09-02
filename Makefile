@@ -83,11 +83,17 @@ endif
 ifdef ATEVIO7500
 CCFLAGSY += -DATEVIO7500
 endif
+ifdef HS7110
+CCFLAGSY += -DHS7110
+endif
+ifdef HS7119
+CCFLAGSY += -DHS7119
+endif
 ifdef HS7810A
 CCFLAGSY += -DHS7810A
 endif
-ifdef HS7110
-CCFLAGSY += -DHS7110
+ifdef HS7819
+CCFLAGSY += -DHS7819
 endif
 ifdef ATEMIO520
 CCFLAGSY += -DATEMIO520
@@ -210,12 +216,22 @@ obj-y += smartcard/
 obj-y += sata_switch/
 endif
 
+ifdef HS7110
+obj-y += cec/
+obj-y += smartcard/
+endif
+
 ifdef HS7810A
 obj-y += cec/
 obj-y += smartcard/
 endif
 
-ifdef HS7110
+ifdef HS7119
+obj-y += cec/
+obj-y += smartcard/
+endif
+
+ifdef HS7819
 obj-y += cec/
 obj-y += smartcard/
 endif

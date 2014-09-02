@@ -497,7 +497,7 @@ static int read_ratio(char *page, char **start,
     case 10: val_sysaclkout=freq_pll1/4;break;
     case 11: val_sysaclkout=freq_pll1/4;break;
   }
-  len+=sprintf(page+len, "SYSACLKOUT (standard 266MHZ) = %ldMHZ\n", val_sysaclkout);
+  len+=sprintf(page+len, "SYSACLKOUT (standard 266MHz) = %ldMHz\n", val_sysaclkout);
 #endif
 #if defined(STX7105) || defined(STX7111)
   mdiv = (value >>  0) & 0x07;
@@ -534,22 +534,22 @@ static int read_ratio(char *page, char **start,
   len+=sprintf(page+len, "BOGOMIPS (measured)= %ld\n", bogomips);
 
   len+=sprintf(page+len, "\n");
-  len+=sprintf(page+len, "PLL0     = %ld MHZ\n", freq_pll0);
-  len+=sprintf(page+len, "SH4      = %ld MHZ\n", freq_pll0 / sh4_div);
+  len+=sprintf(page+len, "PLL0     = %ld MHz\n", freq_pll0);
+  len+=sprintf(page+len, "SH4      = %ld MHz\n", freq_pll0 / sh4_div);
 #ifdef STB7100
-  len+=sprintf(page+len, "SH4_IC   = %ld MHZ\n", freq_pll0 / sh4_ic_div);
-  len+=sprintf(page+len, "MODULE   = %ld MHZ\n", freq_pll0 / module_div);
+  len+=sprintf(page+len, "SH4_IC   = %ld MHz\n", freq_pll0 / sh4_ic_div);
+  len+=sprintf(page+len, "MODULE   = %ld MHz\n", freq_pll0 / module_div);
 
   if(slim_bypass == 0)
-    len+=sprintf(page+len, "SLIM     = %ld MHZ\n", freq_pll0 / slim_div);
+    len+=sprintf(page+len, "SLIM     = %ld MHz\n", freq_pll0 / slim_div);
   else
-    len+=sprintf(page+len, "SLIM     = %ld MHZ\n", freq_pll1);
+    len+=sprintf(page+len, "SLIM     = %ld MHz\n", freq_pll1);
 #endif
-  len+=sprintf(page+len, "PLL1     = %ld MHZ\n", freq_pll1);
+  len+=sprintf(page+len, "PLL1     = %ld MHz\n", freq_pll1);
 #ifdef STB7100
-  len+=sprintf(page+len, "COMMS    = %ld MHZ\n", freq_pll1 / 4);
-  len+=sprintf(page+len, "TMU0     = %ld MHZ\n", (freq_pll0 / module_div) / 4);
-  len+=sprintf(page+len, "TMU1     = %ld MHZ\n", (freq_pll0 / module_div) / 4);
+  len+=sprintf(page+len, "COMMS    = %ld MHz\n", freq_pll1 / 4);
+  len+=sprintf(page+len, "TMU0     = %ld MHz\n", (freq_pll0 / module_div) / 4);
+  len+=sprintf(page+len, "TMU1     = %ld MHz\n", (freq_pll0 / module_div) / 4);
 
   len+=sprintf(page+len, "\n");
   len+=sprintf(page+len, "sh4 ratio (2,4,6,8,12,16)\n");
@@ -583,12 +583,12 @@ static int write_pll1_ndiv_mdiv(struct file *file, const char *buffer,
 
   if(mdiv<0 || mdiv>255)
   {
-    dprintk("[CPU_FREQU] mdiv not correct, use another PLL1 Frequenze (%d)\n", mdiv);
+    dprintk("[CPU_FREQU] mdiv not correct, use another PLL1 frequency (%d)\n", mdiv);
     return count;
   }
   if(ndiv<3 || ndiv>255)
   {
-    dprintk("[CPU_FREQU] ndiv not correct, use another PLL1 Frequenze (%d)\n", ndiv);
+    dprintk("[CPU_FREQU] ndiv not correct, use another PLL1 frequency (%d)\n", ndiv);
     return count;
   }
 
@@ -809,7 +809,7 @@ static int write_pll0_ndiv_mdiv(struct file *file, const char *buffer,
 #endif
 
 #if defined(STX7105) || defined(STX7111)
-  // set /proc does not work in smt23
+  // set /proc does not work in stm23
   frequ = get_pll0_frequ();
   //set_clock("CLKA_PLL0HS", frequ);
   //set_clock("CLKA_PLL0LS", frequ / 2);
@@ -1111,6 +1111,6 @@ void __exit cpu_frequ_exit(void)
 module_init(cpu_frequ_init);
 module_exit(cpu_frequ_exit);
 
-MODULE_DESCRIPTION("Set CPU Frequenze on STb710x");
+MODULE_DESCRIPTION("Set CPU clock frequency on STb710x");
 MODULE_AUTHOR("nit");
 MODULE_LICENSE("GPL");

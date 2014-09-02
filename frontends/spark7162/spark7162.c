@@ -72,7 +72,7 @@
 #ifdef YW_GIT_VER
 #define YWDVB_VERSION YW_GIT_VER
 #else
-#define YWDVB_VERSION "Unknow"
+#define YWDVB_VERSION "Unknown"
 #endif
 
 #define I2C_ADDR_IX7306		(0xc0 >> 1)

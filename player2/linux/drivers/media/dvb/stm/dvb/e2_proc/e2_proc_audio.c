@@ -182,7 +182,7 @@ static void WriteRegister(volatile unsigned long* reg, unsigned long val)
 	writel(val, (unsigned long)reg);
 }
 
-#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 #define SPDIF_EN               (1L<<3)
 #define PCM_EN                 (1L<<5)
 #define SPDIF_PCM_DIS          0xFFFFFFD7
@@ -201,14 +201,14 @@ void spdif_out_mute(int mute)
 {
 	unsigned long val;
 	unsigned long* RegMap;
-#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 	RegMap = (unsigned long*)ioremap(STb7105_AUDIO_BASE, 0x10);
 #else
 	RegMap = (unsigned long*)ioremap(STb7100_REGISTER_BASE, STb7100_REG_ADDR_SIZE);
 #endif
 	if (mute == AVS_MUTE)
 	{
-#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 		val = ReadRegister(RegMap);
 		WriteRegister(RegMap, val & SPDIF_DIS);
 #else
@@ -218,7 +218,7 @@ void spdif_out_mute(int mute)
 	}
 	else
 	{
-#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(UFS912) || defined(SPARK) || defined (SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS913) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 		val = ReadRegister(RegMap);
 		WriteRegister(RegMap , val | SPDIF_EN);
 #else

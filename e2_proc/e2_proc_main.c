@@ -286,10 +286,14 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "octagon1008\n");
 #elif defined(ATEVIO7500)
 	int len = sprintf(page, "atevio7500\n");
-#elif defined(HS7810A)
-	int len = sprintf(page, "hs7810a\n");
 #elif defined(HS7110)
 	int len = sprintf(page, "hs7110\n");
+#elif defined(HS7119)
+	int len = sprintf(page, "hs7119\n");
+#elif defined(HS7810A)
+	int len = sprintf(page, "hs7810a\n");
+#elif defined(HS7819)
+	int len = sprintf(page, "hs7819\n");
 #elif defined(ATEMIO520)
 	int len = sprintf(page, "atemio520\n");
 #elif defined(ATEMIO530)
@@ -325,7 +329,7 @@ static int info_chipset_read(char *page, char **start, off_t off, int count, int
 	int len = sprintf(page, "STi7105\n");
 #elif defined(FORTIS_HDBOX) || defined(HL101) || defined(OCTAGON1008) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_250HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ARIVALINK200)
 	int len = sprintf(page, "STi7109\n");
-#elif defined(UFS912) || defined(HS7810A) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK) || defined(VITAMIN_HD5000)
+#elif defined(UFS912) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK) || defined(VITAMIN_HD5000)
 	int len = sprintf(page, "STi7111\n");
 #elif defined(SPARK7162)
 	int len = sprintf(page, "STi7162\n");
@@ -684,7 +688,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/plane/psi_contrast"                                     , NULL, NULL, NULL, NULL, "psi_contrast"},
 	{cProcEntry, "stb/video/plane/psi_tint"                                         , NULL, NULL, NULL, NULL, "psi_tint"},
 	{cProcEntry, "stb/video/plane/psi_apply"                                        , NULL, NULL, NULL, NULL, "psi_apply"},
-#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)  || defined(VITAMIN_HD5000)
+#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(HS7819) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)  || defined(VITAMIN_HD5000)
 	{cProcDir  , "stb/cec"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_activesource"                                       , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_standby"                                            , NULL, NULL, NULL, NULL, ""},
@@ -738,10 +742,10 @@ static int cpp_read_proc(char *page, char **start, off_t off, int count, int *eo
 	return 0;
 }
 
-/* we need this functions because the cpp modules cannot inlcude
- * the linux kernel headers and therefor we miss some functions
+/* we need this function because the cpp modules cannot include
+ * the linux kernel headers and therefore we miss some functions
  * (e.g. copy_from_user)
- * so we make here the dirty stuff and then call the c-function
+ * so here we make the dirty stuff and then call the c-function
  * in the cpp module which can cast the instance and call the
  * real method ;-)
  */

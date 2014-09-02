@@ -72,7 +72,7 @@ inline int avs_pio_standby(int type)
 	{
 		if (ft_stnby == 0)
 		{
-#if defined(HS7810A)
+#if defined(HS7810A) || defined(HS7819)
 			stpio_set_pin(avs_format, 0);
 			stpio_set_pin(avs_standby, 1);
 			stpio_set_pin(avs_mode, 0);
@@ -88,7 +88,7 @@ inline int avs_pio_standby(int type)
 	{
 		if (ft_stnby == 1)
 		{
-#if defined(HS7810A)
+#if defined(HS7810A) || defined(HS7819)
 			stpio_set_pin(avs_format, 0);
 			stpio_set_pin(avs_standby, 0);
 			stpio_set_pin(avs_mode, 0);
@@ -195,21 +195,21 @@ int avs_pio_set_wss(int val)
 
 	if (val == SAA_WSS_43F)
 	{
-#if defined(HS7810A)
+#if defined(HS7810A) || defined(HS7819)
 		stpio_set_pin(avs_standby, 0);
 #endif
 		stpio_set_pin(avs_format, 0);
 	}
 	else if (val == SAA_WSS_169F)
 	{
-#if defined(HS7810A)
+#if defined(HS7810A) || defined(HS7819)
 		stpio_set_pin(avs_standby, 0);
 #endif
 		stpio_set_pin(avs_format, 1);
 	}
 	else if (val == SAA_WSS_OFF)
 	{
-#if !defined(HS7810A)
+#if !defined(HS7810A) || defined(HS7819)
 		stpio_set_pin(avs_format, 1);
 #endif
 	}
@@ -371,7 +371,7 @@ int avs_pio_init(void)
 	avs_standby	= stpio_request_pin (6, 1, "avs_standby", 	STPIO_OUT);
 	avs_mute	= stpio_request_pin (2, 4, "avs_mute", 		STPIO_OUT);
 	avs_src		= NULL;
-#elif defined(HS7810A)
+#elif defined(HS7810A) || defined(HS7819)
 	avs_format	= stpio_request_pin (6, 5, "avs0", STPIO_OUT);
 	avs_standby	= stpio_request_pin (6, 6, "avs1", STPIO_OUT);
 	avs_mode	= stpio_request_pin (6, 4, "avs2", STPIO_OUT);

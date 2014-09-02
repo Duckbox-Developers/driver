@@ -30,10 +30,14 @@ extern void ufs912_setup_clks(void);
 extern void spark_setup_clks(void);
 #elif defined(UFS922) || defined(UFC960)
 extern void ufs922_setup_clks(void);
-#elif defined(HS7810A)
-extern void hs7810a_setup_clks(void);
 #elif defined(HS7110)
 extern void hs7110_setup_clks(void);
+#elif defined(HS7810A)
+extern void hs7810a_setup_clks(void);
+#elif defined(HS7119)
+extern void hs7119_setup_clks(void);
+#elif defined(HS7819)
+extern void hs7819_setup_clks(void);
 #elif defined(ATEMIO520)
 extern void atemio520_setup_clks(void);
 #elif defined(ATEMIO530)
@@ -46,10 +50,14 @@ int my_init_module(void)
    ufs912_setup_clks();
 #elif defined(SPARK)
    spark_setup_clks();
-#elif defined(HS7810A)
-   hs7810a_setup_clks();
 #elif defined(HS7110)
    hs7110_setup_clks();
+#elif defined(HS7810A)
+   hs7810a_setup_clks();
+#elif defined(HS7119)
+   hs7119_setup_clks();
+#elif defined(HS7819)
+   hs7819_setup_clks();
 #elif defined(ATEMIO520)
    atemio520_setup_clks();
 #elif defined(ATEMIO530)

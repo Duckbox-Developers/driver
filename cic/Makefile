@@ -59,12 +59,18 @@ obj-m += cimax.o
 else ifdef ATEVIO7500
 obj-m += starci.o
 starci-objs:= starci2win/starci2win.o
+else ifdef HS7110
+obj-m += hs711x.o
+hs711x-objs:= hs711x/hs711x_cic.o
+else ifdef HS7119
+obj-m += hs711x.o
+hs711x-objs:= hs711x/hs711x_cic.o
 else ifdef HS7810A
 obj-m += starci.o
 starci-objs:= starci2win/starci2win.o
-else ifdef HS7110
-obj-m += hs7110.o
-hs7110-objs:= hs7110/hs7110_cic.o
+else ifdef HS7819
+obj-m += starci.o
+starci-objs:= starci2win/starci2win.o
 else ifdef ATEMIO520
 obj-m += cnbox_cic.o
 cnbox_cic-objs:= cnbox_cic/cnbox_cic.o
@@ -93,5 +99,3 @@ else
 cimax-objs += cimax/cimax.o
 obj-m += cimax.o
 endif
-
-

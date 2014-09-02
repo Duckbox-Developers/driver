@@ -77,11 +77,19 @@ ifdef ATEVIO7500
 obj-y += nuvoton/
 endif
 
+ifdef HS7110
+obj-y += nuvoton/
+endif
+
 ifdef HS7810A
 obj-y += nuvoton/
 endif
 
-ifdef HS7110
+ifdef HS7119
+obj-y += nuvoton/
+endif
+
+ifdef HS7819
 obj-y += nuvoton/
 endif
 
