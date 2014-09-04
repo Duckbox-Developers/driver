@@ -1,4 +1,4 @@
-unsigned char *UTF_Char_Table=NULL;
+unsigned char *UTF_Char_Table = NULL;
 unsigned char UTF_C2[64] =
 {
 	0x10,//0x40,@  0x80

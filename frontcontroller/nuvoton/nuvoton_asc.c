@@ -18,7 +18,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- */
+ *
+ ****************************************************************************************
+ *
+ * Changes
+ *
+ * Date     By              Description
+ * --------------------------------------------------------------------------------------
+ * 20140416 Audioniek       Added HS7119 and HS7819
+ *
+ ****************************************************************************************/
 
 #include <asm/io.h>
 #include <asm/uaccess.h>
@@ -46,7 +55,7 @@
 #if defined(ATEVIO7500)
 unsigned int InterruptLine = 120;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
-#elif defined(HS7810A) || defined(HS7110)
+#elif defined(HS7110) || defined(HS7119)|| defined(HS7810A) || defined(HS7819)
 unsigned int InterruptLine = 274;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
 #else
@@ -56,38 +65,40 @@ unsigned int ASCXBaseAddress = ASC2BaseAddress;
 
 //-------------------------------------
 
-void serial_init (void)
+void serial_init(void)
 {
 #ifdef OCTAGON1008
-    /* Configure the PIO pins */
-    stpio_request_pin(4, 3,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
-    stpio_request_pin(4, 2,  "ASC_RX", STPIO_IN);      /* Rx */
+	/* Configure the PIO pins */
+	stpio_request_pin(4, 3,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
+	stpio_request_pin(4, 2,  "ASC_RX", STPIO_IN);      /* Rx */
 #endif
 
-    // Configure the asc input/output settings
-    *(unsigned int*)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
-    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00001589;
-    *(unsigned int*)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
-    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000000c9;
-    *(unsigned int*)(ASCXBaseAddress + ASC_TX_RST)   = 0;
-    *(unsigned int*)(ASCXBaseAddress + ASC_RX_RST)   = 0;
+	// Configure the asc input/output settings
+	*(unsigned int *)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
+	*(unsigned int *)(ASCXBaseAddress + ASC_CTRL)     = 0x00001589;
+	*(unsigned int *)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
+	*(unsigned int *)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000000c9;
+	*(unsigned int *)(ASCXBaseAddress + ASC_TX_RST)   = 0;
+	*(unsigned int *)(ASCXBaseAddress + ASC_RX_RST)   = 0;
 }
 
-int serial_putc (char Data)
+int serial_putc(char Data)
 {
-    char                  *ASCn_TX_BUFF = (char*)(ASCXBaseAddress + ASC_TX_BUFF);
-    unsigned int          *ASCn_INT_STA = (unsigned int*)(ASCXBaseAddress + ASC_INT_STA);
-    unsigned long         Counter = 200000;
+	char          *ASCn_TX_BUFF = (char *)(ASCXBaseAddress + ASC_TX_BUFF);
+	unsigned int  *ASCn_INT_STA = (unsigned int *)(ASCXBaseAddress + ASC_INT_STA);
+	unsigned long Counter = 200000;
 
-    while (((*ASCn_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
-         mdelay(1);
+	while (((*ASCn_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
+	{
+		mdelay(1);
+	}
 
-    if (Counter == 0)
-    {
-        dprintk(1, "Error writing char\n");
-    }
+	if (Counter == 0)
+	{
+		dprintk(1, "Error writing char\n");
+	}
 
-    *ASCn_TX_BUFF = Data;
-    return 1;
+	*ASCn_TX_BUFF = Data;
+	return 1;
 }
 
