@@ -1,5 +1,5 @@
 /*
- * 	Copyright (C) 2010 Duolabs Srl
+ *  Copyright (C) 2010 Duolabs Srl
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 /*****************************
  * DATA TYPES
  *****************************/
- 
+
 /* Architecture specific */
 typedef int INT;
 typedef unsigned int UINT;

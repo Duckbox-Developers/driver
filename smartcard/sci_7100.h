@@ -27,8 +27,8 @@
 #define SUPPORT_NO_AUTOSET
 #endif
 
-#define SYS_CFG_BASE_ADDRESS     	0x19001000
-#define SYS_CFG7                  	0x11C
+#define SYS_CFG_BASE_ADDRESS        0x19001000
+#define SYS_CFG7                    0x11C
 
 /******* SC 0 *******/
 

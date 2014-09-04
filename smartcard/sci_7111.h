@@ -4,9 +4,9 @@
 #define SUPPORT_NO_VOLTAGE
 #define SUPPORT_NO_AUTOSET
 
-#define SYS_CFG_BASE_ADDRESS     	0xFE001000
-#define SYS_CFG5                  	0x114
-#define SYS_CFG7                  	0x11C
+#define SYS_CFG_BASE_ADDRESS        0xFE001000
+#define SYS_CFG5                    0x114
+#define SYS_CFG7                    0x11C
 
 /******* SC 0 *******/
 
