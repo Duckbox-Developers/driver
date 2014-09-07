@@ -813,7 +813,7 @@ int nuvotonSetLED(int which, int level)
                      // bit 2(?) = RC feedback (green) seems to be not controllable
 #define MAX_LED 2
 #define MAX_BRIGHT 7
-#elif defined(HS7110) || defined(HS7119) || defined(WHITEBOX)
+#elif defined(HS7110) || defined(HS7119)
 #define MAX_LED 2
 #define MAX_BRIGHT 7
 #endif
@@ -1343,10 +1343,6 @@ int nuvotonWriteString(unsigned char *aBuf, int len)
 	dprintk(100, "%s <\n", __func__);
 	return res;
 }
-#else // not HS7110, HS7119, HS7810A, HS7819, OCTAGON1008, FORTIS_HDBOX or ATEVIO7500
-dprintk(100, "%s >\n", __func__);
-dprintk(100, "%s <\n", __func__);
-return -EFAULT;
 #endif
 
 #if !defined(ATEVIO7500)
