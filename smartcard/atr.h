@@ -47,10 +47,10 @@
 #define ATR_IO_ERROR    3   /* I/O stream error */
 
 /* Paramenters */
-#define ATR_MAX_SIZE        33  /* Maximum size of ATR byte array */
-#define ATR_MAX_HISTORICAL  15  /* Maximum number of historical bytes */
-#define ATR_MAX_PROTOCOLS   7   /* Maximun number of protocols */
-#define ATR_MAX_IB      4   /* Maximum number of interface bytes per protocol */
+#define ATR_MAX_SIZE            33  /* Maximum size of ATR byte array */
+#define ATR_MAX_HISTORICAL      15  /* Maximum number of historical bytes */
+#define ATR_MAX_PROTOCOLS       7   /* Maximun number of protocols */
+#define ATR_MAX_IB              4   /* Maximum number of interface bytes per protocol */
 #define ATR_CONVENTION_DIRECT   0   /* Direct convention */
 #define ATR_CONVENTION_INVERSE  1   /* Inverse convention */
 #define ATR_PROTOCOL_TYPE_T0    0   /* Protocol type T=0 */
@@ -62,16 +62,16 @@
 #define ATR_INTERFACE_BYTE_TB   1   /* Interface byte TBi */
 #define ATR_INTERFACE_BYTE_TC   2   /* Interface byte TCi */
 #define ATR_INTERFACE_BYTE_TD   3   /* Interface byte TDi */
-#define ATR_PARAMETER_F     0   /* Parameter F */
-#define ATR_PARAMETER_D     1   /* Parameter D */
-#define ATR_PARAMETER_I     2   /* Parameter I */
-#define ATR_PARAMETER_P     3   /* Parameter P */
-#define ATR_PARAMETER_N     4   /* Parameter N */
+#define ATR_PARAMETER_F         0   /* Parameter F */
+#define ATR_PARAMETER_D         1   /* Parameter D */
+#define ATR_PARAMETER_I         2   /* Parameter I */
+#define ATR_PARAMETER_P         3   /* Parameter P */
+#define ATR_PARAMETER_N         4   /* Parameter N */
 #define ATR_INTEGER_VALUE_FI    0   /* Integer value FI */
 #define ATR_INTEGER_VALUE_DI    1   /* Integer value DI */
 #define ATR_INTEGER_VALUE_II    2   /* Integer value II */
 #define ATR_INTEGER_VALUE_PI1   3   /* Integer value PI1 */
-#define ATR_INTEGER_VALUE_N 4   /* Integer value N */
+#define ATR_INTEGER_VALUE_N     4   /* Integer value N */
 #define ATR_INTEGER_VALUE_PI2   5   /* Integer value PI2 */
 
 /* Default values for paramenters */

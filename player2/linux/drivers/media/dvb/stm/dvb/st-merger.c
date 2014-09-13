@@ -583,7 +583,7 @@ void stm_tsm_init(int use_cimax)
 	if (use_cimax != 0)
 	{
 		/* route tsmerger to cimax and then to pti */
-#if defined(UFS912) || defined(HS7810A)
+#if defined(UFS912) || defined(HS7810A) || defined(HS7819)
 		if (!reinit)
 		{
 			struct stpio* stream1_pin = stpio_request_pin(5, 0, "TSinterface1", STPIO_IN);

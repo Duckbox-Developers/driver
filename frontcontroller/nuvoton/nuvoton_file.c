@@ -1386,7 +1386,7 @@ int nuvoton_init_func(void)
 #elif defined(HS7819)
 	printk("Fortis HS7819");
 #else
-	printk("Fortis\n");
+	printk("Fortis");
 #endif
 	printk(" VFD/Nuvoton module initializing.\n");
 	/* must be called before standby_disable */
