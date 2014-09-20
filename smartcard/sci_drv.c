@@ -221,7 +221,6 @@ void set_reg(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, UINT bit
 void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, UINT bits)
 {
 	ULONG reg_address = 0x0;
-	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
 	PDEBUG(" ...\n");
 	switch (base_address)
 	{
@@ -251,7 +250,7 @@ void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg
 		default:
 			return;
 	}
-
+	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
 	if (!map_base)
 		return;
 	PDEBUG("reg_address=%lx, bits=%x\n", map_base, bits);
@@ -269,7 +268,6 @@ void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg
 void set_reg_writeonly16(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, USHORT bits)
 {
 	ULONG reg_address = 0x0;
-	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
 	PDEBUG(" ...\n");
 	switch (base_address)
 	{
@@ -299,7 +297,7 @@ void set_reg_writeonly16(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG r
 		default:
 			return;
 	}
-
+	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
 	if (!map_base)
 		return;
 	PDEBUG("reg_address=%lx, bits=%x\n", map_base, bits);
@@ -640,8 +638,7 @@ irqreturn_t sci_irq1_rx_tx_handler(int irq, void *dev_id)
 	set_reg(sci, BASE_ADDRESS_ASC1, ASC1_INT_EN, 0x00 , 0x1FF);
 #endif
 	res = get_reg(sci, BASE_ADDRESS_ASC1, ASC1_STA);
-	/* Rx interrupt active */
-	if ((res & RX_FULL_IRQ) && ((sci->irq_mode == RX_FULL_IRQ) ||
+	if ((res & RX_FULL_IRQ) && /* Rx interrupt active */((sci->irq_mode == RX_FULL_IRQ) ||
 								(sci->irq_mode == RX_FULL_TX_EMPTY_IRQ) ||
 								(sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
 	{
@@ -691,13 +688,11 @@ irqreturn_t sci_irq1_rx_tx_handler(int irq, void *dev_id)
 		while (res & 0x1);
 		PDEBUG("Read byte in INT: 0x%02x\n", sci->read_buf[sci->rx_rptr - 1]);
 	}
-	/* Tx interrupt active */
-	if ((res & TX_EMPTY_IRQ) && ((sci->irq_mode == TX_EMPTY_IRQ) ||
+	if ((res & TX_EMPTY_IRQ) && ((sci->irq_mode == TX_EMPTY_IRQ) || /* Tx interrupt active */
 								 (sci->irq_mode == RX_FULL_TX_EMPTY_IRQ) ||
 								 (sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
 	{
-		/* TX is not FULL */
-		if ((res & 0x200) != 0x200)
+		if ((res & 0x200) != 0x200) /* TX is not FULL */
 		{
 			unsigned char i = 0, size = 0;
 			if ((sci->tx_rptr - sci->tx_wptr) > HW_FIFO_SIZE)
@@ -721,11 +716,9 @@ irqreturn_t sci_irq1_rx_tx_handler(int irq, void *dev_id)
 				set_serial_irq(sci, RX_FULL_IRQ);
 		}
 	}
-	/* Tx HALF interrupt active */
-	else if ((res & TX_HALF_EMPTY_IRQ) && ((sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
+	else if ((res & TX_HALF_EMPTY_IRQ) && ((sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ)))) /* Tx HALF interrupt active */
 	{
-		/* TX is not FULL */
-		if ((res & 0x200) != 0x200)
+		if ((res & 0x200) != 0x200) /* TX is not FULL */
 		{
 			unsigned char i = 0, size = 0;
 			if ((sci->tx_rptr - sci->tx_wptr) > (HW_FIFO_SIZE / 2))
@@ -781,8 +774,7 @@ irqreturn_t sci_irq0_rx_tx_handler(int irq, void *dev_id)
 	set_reg(sci, BASE_ADDRESS_ASC0, ASC0_INT_EN, 0x00, 0x1FF);
 #endif
 	res = get_reg(sci, BASE_ADDRESS_ASC0, ASC0_STA);
-	/* Rx interrupt active */
-	if ((res & RX_FULL_IRQ) && ((sci->irq_mode == RX_FULL_IRQ) ||
+	if ((res & RX_FULL_IRQ) && /* Rx interrupt active */((sci->irq_mode == RX_FULL_IRQ) ||
 								(sci->irq_mode == RX_FULL_TX_EMPTY_IRQ) ||
 								(sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
 	{
@@ -831,13 +823,11 @@ irqreturn_t sci_irq0_rx_tx_handler(int irq, void *dev_id)
 		while (res & 0x1);
 		PDEBUG("Read byte in INT: 0x%02x\n", sci->read_buf[sci->rx_rptr - 1]);
 	}
-	/* Tx interrupt active */
-	if ((res & TX_EMPTY_IRQ) && ((sci->irq_mode == TX_EMPTY_IRQ) ||
+	if ((res & TX_EMPTY_IRQ) &&  /* Tx interrupt active */((sci->irq_mode == TX_EMPTY_IRQ) ||
 								 (sci->irq_mode == RX_FULL_TX_EMPTY_IRQ) ||
 								 (sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
 	{
-		/* TX is not FULL */
-		if ((res & 0x200) != 0x200)
+		if ((res & 0x200) != 0x200) /* TX is not FULL */
 		{
 			unsigned char i = 0, size = 0;
 			if ((sci->tx_rptr - sci->tx_wptr) > HW_FIFO_SIZE)
@@ -861,11 +851,9 @@ irqreturn_t sci_irq0_rx_tx_handler(int irq, void *dev_id)
 				set_serial_irq(sci, RX_FULL_IRQ);
 		}
 	}
-	/* Tx HALF interrupt active */
-	else if ((res & TX_HALF_EMPTY_IRQ) && ((sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ))))
+	else if ((res & TX_HALF_EMPTY_IRQ) && ((sci->irq_mode == (TX_HALF_EMPTY_IRQ | RX_FULL_TX_EMPTY_IRQ)))) /* Tx HALF interrupt active */
 	{
-		/* TX is not FULL */
-		if ((res & 0x200) != 0x200)
+		if ((res & 0x200) != 0x200) /* TX is not FULL */
 		{
 			unsigned char i = 0, size = 0;
 			if ((sci->tx_rptr - sci->tx_wptr) > (HW_FIFO_SIZE / 2))
@@ -1092,8 +1080,7 @@ void sci_exit(void)
 		if (sci->cmdvcc != NULL)
 		{
 #if defined(ADB_BOX)
-			// active low
-			stpio_set_pin(sci->cmdvcc, 0);
+			stpio_set_pin(sci->cmdvcc, 0); // active low
 #else
 			stpio_set_pin(sci->cmdvcc, 1);
 #endif
@@ -1131,10 +1118,10 @@ void sci_exit(void)
 
 static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 {
+	PDEBUG(" ...\n");
 	/* Configure smart clock coming from smartclock generator */
 	U32 reg_address = 0;
 	U32 val = 0;
-	PDEBUG(" ...\n");
 #if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411) || defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(UFS912) || defined(SPARK)
 	reg_address = (U32)checked_ioremap(SYS_CFG_BASE_ADDRESS + SYS_CFG7, 4);
 	if (!reg_address)
@@ -1206,8 +1193,7 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 #endif
 #endif
 	/* Configure smartcard control register */
-	// SCI_n_CLK_CTRL
-	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4);
+	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4); // SCI_n_CLK_CTRL
 	if (!reg_address)
 		return 0;
 	val = ctrl_inl(reg_address);
@@ -1221,11 +1207,10 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_ClockEnable(SCI_CONTROL_BLOCK *sci)
 {
+	PDEBUG(" ...\n");
 	U32 val;
 	U32 reg_address;
-	PDEBUG(" ...\n");
-	// SCI_n_CLK_CTRL
-	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4);
+	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4); // SCI_n_CLK_CTRL
 	if (!reg_address)
 		return 0;
 	val = ctrl_inl(reg_address);
@@ -1237,11 +1222,10 @@ static int SCI_ClockEnable(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_ClockDisable(SCI_CONTROL_BLOCK *sci)
 {
+	PDEBUG(" ...\n");
 	U32 val;
 	U32 reg_address;
-	PDEBUG(" ...\n");
-	// SCI_n_CLK_CTRL
-	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4);
+	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4); // SCI_n_CLK_CTRL
 	if (!reg_address)
 		return 0;
 	val = ctrl_inl(reg_address);
@@ -1253,19 +1237,17 @@ static int SCI_ClockDisable(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_Set_Clock(SCI_CONTROL_BLOCK *sci)
 {
+	dprintk(1, "Setting clock to: %u.%02uMhz\n", sci->clk / 100, sci->clk % 100);
 	U32 val;
 	U32 reg_address;
 	U32 clkg = (U32)SCI_CLK_GLOBAL;
-	//SCI_CLK_GLOBAL/(2*clk)
-	U32 clkdiv = clkg / (2 * 10000 * (sci->clk - 1));
-	dprintk(1, "Setting clock to: %u.%02uMhz\n", sci->clk / 100, sci->clk % 100);
+	U32 clkdiv = clkg / (2 * 10000 * (sci->clk - 1)); //SCI_CLK_GLOBAL/(2*clk)
 	if ((clkdiv > 0) && (clkdiv < 0x1F))
 		val = clkdiv;
 	else
 		val = 0x0e;  /* 3.578 Mhz */
 	dprintk(2, "clkdiv = 0x%02X\n", val);
-	// SCI_n_CLK_VAL
-	reg_address = (U32)checked_ioremap(sci->base_address_sci, 4);
+	reg_address = (U32)checked_ioremap(sci->base_address_sci, 4); // SCI_n_CLK_VAL
 	if (!reg_address)
 		return 0;
 	ctrl_outl(val, reg_address);
@@ -1282,8 +1264,7 @@ static int SCI_IO_init(SCI_CONTROL_BLOCK *sci)
 	sci->clock  = stpio_request_pin(sci->pio_port, 3, "sc_clock", STPIO_ALT_OUT);
 	sci->reset  = stpio_request_pin(sci->pio_port, 4, "sc_reset", STPIO_OUT);
 	sci->detect = stpio_request_pin(sci->pio_port, 7, "sc_detect", STPIO_IN);
-	// must be after detect
-	sci->cmdvcc = stpio_request_pin(sci->pio_port, 5, "sc_cmdvcc", STPIO_OUT);
+	sci->cmdvcc = stpio_request_pin(sci->pio_port, 5, "sc_cmdvcc", STPIO_OUT); // must be after detect
 	if (!SCI_SetClockSource(sci))
 		return 0;
 	if (!SCI_ClockEnable(sci))
@@ -1927,8 +1908,7 @@ static ssize_t sci_read(struct file *file, char *buffer, size_t length, loff_t *
 				cnt_tmp++;
 				real_num_bytes = sci->rx_rptr - sci->rx_wptr;
 			}
-			/* Wait a second */
-			while ((real_num_bytes < length) && (cnt_tmp < 100));
+			while ((real_num_bytes < length) && (cnt_tmp < 100)); /* Wait a second */
 		}
 	}
 	if (real_num_bytes > length)
@@ -2116,10 +2096,9 @@ int sci_ioctl(struct inode *inode,
 	SCI_PARAMETERS sci_param;
 	UINT sci_rc;
 	sci_id = MINOR(inode->i_rdev);
-	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
 	if (sci_id >= SCI_NUMBER_OF_CONTROLLERS)
 		return -1;
-
+	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
 	switch (ioctl_num)
 	{
 		case IOCTL_SET_ONLY_RESET: // 100
