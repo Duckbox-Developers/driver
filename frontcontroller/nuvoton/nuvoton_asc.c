@@ -18,7 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
- *
  ****************************************************************************************
  *
  * Changes
@@ -26,6 +25,7 @@
  * Date     By              Description
  * --------------------------------------------------------------------------------------
  * 20140416 Audioniek       Added HS7119 and HS7819
+ * 20140920 Audioniek       Corrected HS7119 ASC address and IRQ
  *
  ****************************************************************************************/
 
@@ -55,9 +55,12 @@
 #if defined(ATEVIO7500)
 unsigned int InterruptLine = 120;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
-#elif defined(HS7110) || defined(HS7119)|| defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) || defined(HS7810A) || defined(HS7819)
 unsigned int InterruptLine = 274;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
+#elif defined(HS7119)
+unsigned int InterruptLine = 122;
+unsigned int ASCXBaseAddress = ASC1BaseAddress;
 #else
 unsigned int InterruptLine = 121;
 unsigned int ASCXBaseAddress = ASC2BaseAddress;

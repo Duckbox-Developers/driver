@@ -45,6 +45,9 @@
  * 20140403 Audioniek       SetLED for ATEVIO7500 added.
  * 20140415 Audioniek       ATEVIO7500 finished; yet to do: icons.
  * 20140426 Audioniek       HS7119/7810A/7819 work completed.
+ * 20140916 Audioniek       Fixed compiler warnings with HS7119/7810A/7819.
+ * 20140921 Audioniek       No special handling of periods and colons for
+ *                          HS7119: receiver has not got these segments.
  *
  *****************************************************************************/
 
@@ -428,7 +431,7 @@ NOTE: period on 1st position cannot be controlled */
 //	'`'   'a'   'b'   'c'   'd'   'e'   'f'   'g'
 	0x20, 0x5f, 0x7c, 0x58, 0x5e, 0x7b, 0x71, 0x6f,
 //	'h'   'i'   'j'   'k'   'l'   'm'   'n'  'o'
-	0x74, 0x06, 0x0e, 0x78, 0x38, 0x55, 0x54, 0x5c,
+	0x74, 0x04, 0x0e, 0x78, 0x38, 0x55, 0x54, 0x5c,
 //	'p'   'q'   'r'   's'   't'   'u'   'v'   'w'
 	0x73, 0x67, 0x50, 0x6d, 0x78, 0x1c, 0x1c, 0x1c,
 //	'x'   'y'   'z'   '{'   '|'   '}'   '~'   DEL
@@ -814,15 +817,12 @@ int nuvotonSetLED(int which, int level)
 #define MAX_LED 2
 #define MAX_BRIGHT 7
 #elif defined(HS7110) || defined(HS7119)
-#define MAX_LED 2
+#define MAX_LED 1
 #define MAX_BRIGHT 7
 #endif
 
 #if defined(HS7110)
 	printk("[nuvoton] Function %s is not supported on HS7110 (yet)\n", __func__);
-	return -EINVAL;
-#elif defined(HS7119)
-	printk("[nuvoton] Function %s is not supported on HS7119 (yet)\n", __func__);
 	return -EINVAL;
 #else
 	if (which < 1 || which > MAX_LED)
@@ -1070,7 +1070,7 @@ int nuvotonSetDisplayOnOff(char level)
 	return res;
 }
 
-#if defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(HS7810A) || defined(HS7819)
 int nuvotonWriteString(unsigned char *aBuf, int len)
 {
 	int i, j, res;
@@ -1141,6 +1141,34 @@ int nuvotonWriteString(unsigned char *aBuf, int len)
 		{
 			cmd_buf[i + 2] &= 0x80;
 		}
+	}
+
+	cmd_buf[0] = SOP;
+	cmd_buf[1] = cCommandSetVFD;
+	cmd_buf[6] = EOP;
+	res = nuvotonWriteCommand(cmd_buf, 7, 0);
+
+	dprintk(100, "%s <\n", __func__);
+	return res;
+}
+#elif defined(HS7119)
+int nuvotonWriteString(unsigned char *aBuf, int len)
+{
+	int i, res;
+	unsigned char cmd_buf[7];
+
+	dprintk(100, "%s > %d\n", __func__, len);
+
+	memset(cmd_buf, 0, 7);
+
+	if (len > 4)
+	{
+		len = 4;
+	}
+
+	for (i = 0; i < 4; i++)
+	{
+		cmd_buf[i + 2] = _7seg_fonts[(aBuf[i] - 0x20)];
 	}
 
 	cmd_buf[0] = SOP;
@@ -1365,7 +1393,7 @@ int nuvoton_init_func(void)
 #elif defined(HS7810A) || defined(HS7819)
 	char init5[] = {SOP, cCommandSetLed, 0x02, 0x03, 0x00, EOP};  //logo brightness 3
 #else
-	char init5[] = {SOP, cCommandSetLed, 0xff, 0x00, 0x00, EOP};  //all LEDs off
+	char init5[] = {SOP, cCommandSetLed, 0xff, 0x00, 0x00, EOP};  //all LEDs off (=green on)
 #endif
 	int  vLoop;
 	int  res = 0;

@@ -180,7 +180,7 @@ enum stv090x_delsys {
 };
 
 struct stv090x_long_frame_crloop {
-	enum stv090x_modcod	modcod;
+	enum stv090x_modcod modcod;
 
 	u8 crl_pilots_on_2;
 	u8 crl_pilots_off_2;
@@ -215,41 +215,43 @@ struct stv090x_tab {
 };
 
 struct stv090x_state {
-	enum stv090x_device		device;
-	enum stv090x_demodulator	demod;
-	enum stv090x_mode		demod_mode;
-	u32				dev_ver;
+	enum stv090x_device      device;
+	enum stv090x_demodulator demod;
+	enum stv090x_mode        demod_mode;
+	u32  dev_ver;
 
-	struct i2c_adapter		*i2c;
-	const struct stv090x_config	*config;
-	struct dvb_frontend		frontend;
+	struct i2c_adapter          *i2c;
+	const struct stv090x_config *config;
+	struct dvb_frontend         frontend;
 
-	u32				*verbose; /* Cached module verbosity */
+	int id;
 
-	enum stv090x_delsys		delsys;
-	enum stv090x_fec		fec;
-	enum stv090x_modulation		modulation;
-	enum stv090x_modcod		modcod;
-	enum stv090x_search		search_mode;
-	enum stv090x_frame		frame_len;
-	enum stv090x_pilot		pilots;
-	enum stv090x_rolloff		rolloff;
-	enum stv090x_inversion		inversion;
-	enum stv090x_algo		algo;
-	enum stv090x_tuner		tuner;
+	u32 *verbose; /* Cached module verbosity */
 
-	u32				frequency;
-	u32				srate;
+	enum stv090x_delsys     delsys;
+	enum stv090x_fec        fec;
+	enum stv090x_modulation modulation;
+	enum stv090x_modcod     modcod;
+	enum stv090x_search     search_mode;
+	enum stv090x_frame      frame_len;
+	enum stv090x_pilot      pilots;
+	enum stv090x_rolloff    rolloff;
+	enum stv090x_inversion  inversion;
+	enum stv090x_algo       algo;
+	enum stv090x_tuner      tuner;
 
-	s32				mclk; /* Masterclock Divider factor */
-	s32				tuner_bw;
+	u32 frequency;
+	u32 srate;
 
-	u32				tuner_refclk;
+	s32 mclk; /* Masterclock Divider factor */
+	s32 tuner_bw;
 
-	s32				search_range;
+	u32 tuner_refclk;
 
-	s32				DemodTimeout;
-	s32				FecTimeout;
+	s32 search_range;
+
+	s32 DemodTimeout;
+	s32 FecTimeout;
 	
 };
 

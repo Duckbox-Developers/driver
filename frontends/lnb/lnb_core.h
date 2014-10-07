@@ -16,23 +16,22 @@
 #include <linux/miscdevice.h>
 #include <asm/string.h>
  
-#define I2C_DRIVERID_LNB	1
-#define LNB_MINOR			0
-#define LNB_MAJOR 			149
+#define I2C_DRIVERID_LNB 1
+#define LNB_MINOR        0
+#define LNB_MAJOR        149
 
  
 /* IOCTL */
-#define LNB_VOLTAGE_OFF   	 	0x2b0010
-#define LNB_VOLTAGE_VER   	 	0x2b0011
-#define LNB_VOLTAGE_HOR   	 	0x2b0012
+#define LNB_VOLTAGE_OFF 0x2b0010
+#define LNB_VOLTAGE_VER 0x2b0011
+#define LNB_VOLTAGE_HOR 0x2b0012
 
-extern short debug;
+extern short paramDebug;
+#define TAGDEBUG "[LNB] "
 
-#define dprintk(fmt...) \
-	do { \
-		if (debug) printk (fmt); \
-	} while (0)
-
+#define dprintk(level, x...) do { \
+	if ((paramDebug) && (level <= paramDebug)) printk(TAGDEBUG x); \
+} while (0)
 
 int a8293_init(struct i2c_client *client);
 int a8293_command(struct i2c_client *client, unsigned int cmd, void *arg );
@@ -46,3 +45,6 @@ int lnb_pio_init(void);
 int lnb_pio_exit(void);
 int lnb_pio_command(unsigned int cmd, void *arg );
 int lnb_pio_command_kernel(unsigned int cmd, void *arg);
+
+int lnb_init(void);
+
