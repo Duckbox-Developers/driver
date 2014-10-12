@@ -42,7 +42,7 @@ int lnb_pio_command_kernel(unsigned int cmd, void *arg)
 	{
 		case LNB_VOLTAGE_OFF:
 		{
-			dprintk(10, "Switch LNB voltage off\n");
+			dprintk(10, "Switch LNB power off\n");
 
 			if(_12v_isON == 0)
 			{

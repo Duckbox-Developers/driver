@@ -15,9 +15,7 @@
 #include <linux/poll.h>
 #include <linux/types.h>
 #include <linux/i2c.h>
-
 #include <asm/io.h>
-
 #include "lnb_core.h"
 
 extern int _12v_isON; //defined in e2_proc ->I will implement a better mechanism later
@@ -30,26 +28,27 @@ unsigned char a8293_read(struct i2c_client *client)
 
 	byte = 0;
 
-	if (1 != i2c_master_recv(client,&byte,1))
+	if (1 != i2c_master_recv(client, &byte, 1))
 	{
+		dprintk(1, "Error reading data from address 0x%02x\n", client->addr);
 		return -1;
 	}
 
-	dprintk(10, "%s OK, 0x%02x <\n", __func__, byte);
+	dprintk(10, "%s OK, data = 0x%02x <\n", __func__, byte);
 
 	return byte;
 }
 
 int a8293_write(struct i2c_client *client, unsigned char reg)
 {
-	dprintk(10, "%s 0x%02x >\n", __func__, reg);
+	dprintk(10, "%s write 0x%02x to address 0x%02x>\n", __func__, reg, client->addr);
 
-	if ( 1 != i2c_master_send(client, &reg, 1))
+	if (1 != i2c_master_send(client, &reg, 1))
 	{
-		printk("[LNB] %s: Error sending data\n", __func__);
+		dprintk(1, "Error writing 0x%02x to address 0x%02x\n", reg, client->addr);
 		return -EFAULT;
 	}
-	dprintk(10, "%s OK <\n", __func__);
+	dprintk(10, "OK <\n", __func__);
 	return 0;
 }
 
@@ -67,7 +66,7 @@ int a8293_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg 
 	{
 		case LNB_VOLTAGE_OFF:
 		{
-			dprintk(20, "Switch LNB voltage off\n");
+			dprintk(20, "Switch LNB power off\n");
 
 			if (_12v_isON == 0)
 			{
@@ -106,7 +105,7 @@ int a8293_init(struct i2c_client *client)
 	unsigned char reg;
 	int res;
 
-	/* This read is required needed, otherwise
+	/* This read is required, otherwise
 	 * LNB power is not supplied!
 	 */
 	reg = a8293_read(client);

@@ -47,7 +47,7 @@ static int lnb_newprobe(struct i2c_client *client, const struct i2c_device_id *i
 		return -ENODEV;
 	}
 
-	dprintk(10, "I2C chip found @ 0x%02x\n", client->addr);
+	dprintk(10, "I2C device found at address 0x%02x\n", client->addr);
 
 	switch(devType)
 	{
@@ -262,36 +262,39 @@ int __init lnb_init(void)
 
 	if (err)
 	{
-		printk("[LNB] Error detecting LNB type!\n");
+		dprintk(1, "Unknown LNB type\n");
 		return err;
 	}
 
-//	dprintk(20, "LNB power control handling, type: %s\n", name);
-
 	if (devType == LNB_PIO)
 	{
-		if (res = lnb_pio_init())
+		res = lnb_pio_init();
+		if (res)
 		{
 			dprintk(1, "Init LNB PIO failed\n");
 			return res;
 		}
 	}
-	else if (res = i2c_add_driver(&lnb_i2c_driver))
+	else
 	{
-		dprintk(1, "Adding i2c driver failed\n");
-		return res;
+		res = i2c_add_driver(&lnb_i2c_driver);
+		if (res)
+		{
+			dprintk(1, "Adding i2c driver failed\n");
+			return res;
+		}
 	}
 
 	if (!lnb_client)
 	{
-		printk(KERN_ERR "[LNB] No client found\n");
+		dprintk(1, "No client found\n");
 		i2c_del_driver(&lnb_i2c_driver);
 		return -EIO;
 	}
 	
 	if (register_chrdev(LNB_MAJOR, "LNB", &lnb_fops) < 0)
 	{
-		printk(KERN_ERR "[LNB] Unable to register device\n");
+		dprintk(1, "Unable to register device\n");
 		if (devType == LNB_PIO)
 		{
 			lnb_pio_exit();
@@ -302,7 +305,7 @@ int __init lnb_init(void)
 		}
 		return -EIO;
 	}
-	printk("[LNB] module lnb loaded, type: %s\n", name);
+	dprintk(1,"module lnb loaded, type: %s\n", name);
 	return 0;
 }
 
@@ -310,7 +313,7 @@ void __exit lnb_exit(void)
 {
 	unregister_chrdev(LNB_MAJOR,"LNB");
 	i2c_del_driver(&lnb_i2c_driver);
-	printk("[LNB] module lnb unloaded\n");
+	dprintk(1, "module lnb unloaded\n");
 }
 
 module_init(lnb_init);
