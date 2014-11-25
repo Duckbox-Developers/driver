@@ -123,7 +123,7 @@ typedef struct YWI2C_SoftParam_s
 
 static void iic_delay(int micros)
 {
-    udelay(micros * 2);
+    udelay(micros * 4);
 }
 
 

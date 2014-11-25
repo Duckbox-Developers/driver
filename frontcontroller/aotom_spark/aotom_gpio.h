@@ -1,7 +1,7 @@
 #ifndef __AOTOM_GPIO_H__
 #define __AOTOM_GPIO_H__
 
-#define PIO_BITS					8
+#define PIO_BITS                			8
 
 #define GPIO_SIMULATE_I2C_SCL_PORT			2
 #define GPIO_SIMULATE_I2C_SCL_BIT			0
