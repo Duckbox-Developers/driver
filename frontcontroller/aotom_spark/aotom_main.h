@@ -26,7 +26,6 @@ typedef unsigned int u32;
 #define VFDGETSTBYKEY         0xc0425af3
 #define VFDSETSTBYKEY         0xc0425af4
 #define VFDPOWEROFF           0xc0425af5
-#define VFDPOWEROFF           0xc0425af5
 #define VFDSETPOWERONTIME     0xc0425af6
 #define VFDGETVERSION         0xc0425af7
 #define VFDGETSTARTUPSTATE    0xc0425af8
