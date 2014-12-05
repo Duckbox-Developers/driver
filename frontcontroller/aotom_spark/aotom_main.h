@@ -1,19 +1,14 @@
 #ifndef __AOTOM_MAIN_H__
 #define __AOTOM_MAIN_H__
 
-#ifndef __KERNEL__
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
-#endif
-
-#define VFD_MAJOR             147
-
-#define LOG_OFF               0
-#define LOG_ON                1
+#define LED_OFF               0
+#define LED_ON                1
+#define LOG_OFF               LED_OFF // deprecated
+#define LOG_ON                LED_ON  // deprecated
 #define LED_RED               0
 #define LED_GREEN             1
-#define LASTLED               2
+#define LED_COUNT             2
+#define LED_SPINNER           2
 
 #define VFDBRIGHTNESS         0xc0425a03
 #define VFDDRIVERINIT         0xc0425a08
@@ -34,42 +29,27 @@ typedef unsigned int u32;
 #define VFDSETTIME            0xc0425afb
 #define VFDSTANDBY            0xc0425afc
 #define VFDSETTIME2           0xc0425afd // seife, set 'complete' time...
-
 #define VFDSETLED             0xc0425afe
 #define VFDSETMODE            0xc0425aff
 #define VFDDISPLAYCLR         0xc0425b00
 #define VFDGETLOOPSTATE       0xc0425b01
 #define VFDSETLOOPSTATE       0xc0425b02
 
-#define	REMOTE_SLAVE_ADDRESS          0x40bd0000 /* slave address is 5 */
-#define	REMOTE_SLAVE_ADDRESS_NEW      0xc03f0000 /* sz 2008-06-26 add new remote*/
-#define	REMOTE_SLAVE_ADDRESS_EDISION1 0x22dd0000
-#define	REMOTE_SLAVE_ADDRESS_EDISION2 0XCC330000
-#define	REMOTE_SLAVE_ADDRESS_GOLDEN   0x48b70000 /* slave address is 5 */
-#define REMOTE_TOPFIELD_MASK          0x4fb0000
+#define INVALID_KEY           -1
 
-#define YW_VFD_ENABLE
-#define  INVALID_KEY    -1
-
-#define	I2C_BUS_NUM      1
-#define	I2C_BUS_ADD      (0x50>>1)  //this is important not 0x50
-
-typedef unsigned int     YWOS_ClockMsec;
-
-#define LOG_OFF     0
-#define LOG_ON      1
-#define YWPANEL_KEYBOARD
-
-struct set_brightness_s {
+struct set_brightness_s
+{
 	int level;
 };
 
-struct set_icon_s {
+struct set_icon_s
+{
 	int icon_nr;
 	int on;
 };
 
-struct set_led_s {
+struct set_led_s
+{
 	int led_nr;
 	int on;
 };
@@ -80,28 +60,33 @@ struct set_led_s {
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
+struct set_standby_s
+{
 	char time[5];
 };
 
-struct set_time_s {
+struct set_time_s
+{
 	char time[5];
 };
 
-struct set_key_s {
+struct set_key_s
+{
 	int key_nr;
-	u32 key;
+	unsigned int key;
 };
 
 /* this changes the mode temporarily (for one ioctl)
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
  */
-struct set_mode_s {
+struct set_mode_s
+{
 	int compat; /* 0 = compatibility mode to vfd driver; 1 = nuvoton mode */
 };
 
-struct aotom_ioctl_data {
+struct aotom_ioctl_data
+{
 	union
 	{
 		struct set_icon_s icon;
@@ -114,7 +99,8 @@ struct aotom_ioctl_data {
 	} u;
 };
 
-struct vfd_ioctl_data {
+struct vfd_ioctl_data
+{
 	unsigned char start_address;
 	unsigned char data[64];
 	unsigned char length;
@@ -122,71 +108,77 @@ struct vfd_ioctl_data {
 
 enum
 {
-	KEY_DIGIT0 = 11,
-	KEY_DIGIT1 = 2,
-	KEY_DIGIT2 = 3,
-	KEY_DIGIT3 = 4,
-	KEY_DIGIT4 = 5,
-	KEY_DIGIT5 = 6,
-	KEY_DIGIT6 = 7,
-	KEY_DIGIT7 = 8,
-	KEY_DIGIT8 = 9,
-	KEY_DIGIT9 = 10
+	/*----------------------------------11G-------------------------------------*/
+	AOTOM_PLAY_FASTBACKWARD = 11 * 16 + 1,
+	AOTOM_FIRST = AOTOM_PLAY_FASTBACKWARD,
+	AOTOM_PLAY_PREV,
+	AOTOM_PLAY_HEAD = AOTOM_PLAY_PREV,  // deprecated
+	AOTOM_PLAY,
+	AOTOM_PLAY_LOG = AOTOM_PLAY,        // deprecated
+	AOTOM_NEXT,
+	AOTOM_PLAY_TAIL = AOTOM_NEXT,       // deprecated
+	AOTOM_PLAY_FASTFORWARD,
+	AOTOM_PLAY_PAUSE,
+	AOTOM_REC1,
+	AOTOM_MUTE,
+	AOTOM_LOOP,
+	AOTOM_CYCLE = AOTOM_LOOP,           // deprecated
+	AOTOM_DOLBYDIGITAL,
+	AOTOM_DUBI = AOTOM_DOLBYDIGITAL,    // deprecated
+	AOTOM_CA,
+	AOTOM_CI,
+	AOTOM_USB,
+	AOTOM_DOUBLESCREEN,
+	AOTOM_REC2,
+	/*----------------------------------12G-------------------------------------*/
+	AOTOM_HDD_A8 = 12 * 16 + 1,
+	AOTOM_HDD_A7,
+	AOTOM_HDD_A6,
+	AOTOM_HDD_A5,
+	AOTOM_HDD_A4,
+	AOTOM_HDD_A3,
+	AOTOM_HDD_FULL,
+	AOTOM_HDD_A2,
+	AOTOM_HDD_A1,
+	AOTOM_MP3,
+	AOTOM_AC3,
+	AOTOM_TV,
+	AOTOM_TVMODE_LOG = AOTOM_TV,        // deprecated
+	AOTOM_AUDIO,
+	AOTOM_ALERT,
+	AOTOM_HDD_FRAME,
+	AOTOM_HDD_A9 = AOTOM_HDD_FRAME,     // deprecated
+	/*----------------------------------13G-------------------------------------*/
+	AOTOM_CLOCK_PM = 13 * 16 + 1,
+	AOTOM_CLOCK_AM,
+	AOTOM_CLOCK,
+	AOTOM_TIME_SECOND,
+	AOTOM_DOT2,
+	AOTOM_STANDBY,
+	AOTOM_TERRESTRIAL,
+	AOTOM_TER = AOTOM_TERRESTRIAL,      // deprecated
+	AOTOM_DISK_S3,
+	AOTOM_DISK_S2,
+	AOTOM_DISK_S1,
+	AOTOM_DISK_CIRCLE,
+	AOTOM_DISK_S0 = AOTOM_DISK_CIRCLE,  // deprecated
+	AOTOM_SATELLITE,
+	AOTOM_SAT = AOTOM_SATELLITE,        // deprecated
+	AOTOM_TIMESHIFT,
+	AOTOM_DOT1,
+	AOTOM_CABLE,
+	AOTOM_CAB = AOTOM_CABLE,            // deprecated
+	AOTOM_LAST = AOTOM_CABLE,
+	/*----------------------------------end-------------------------------------*/
+	AOTOM_ALL
 };
 
-typedef enum LogNum_e
-{
-/*----------------------------------11G-------------------------------------*/
-	PLAY_FASTBACKWARD = 11*16+1,
-	PLAY_HEAD,
-	PLAY_LOG,
-	PLAY_TAIL,
-	PLAY_FASTFORWARD,
-	PLAY_PAUSE,
-	REC1,
-	MUTE,
-	CYCLE,
-	DUBI,
-	CA,
-	CI,
-	USB,
-	DOUBLESCREEN,
-	REC2,
-/*----------------------------------12G-------------------------------------*/
-	HDD_A8 = 12*16+1,
-	HDD_A7,
-	HDD_A6,
-	HDD_A5,
-	HDD_A4,
-	HDD_A3,
-	HDD_FULL,
-	HDD_A2,
-	HDD_A1,
-	MP3,
-	AC3,
-	TVMODE_LOG,
-	AUDIO,
-	ALERT,
-	HDD_A9,
-/*----------------------------------13G-------------------------------------*/
-	CLOCK_PM = 13*16+1,
-	CLOCK_AM,
-	CLOCK,
-	TIME_SECOND,
-	DOT2,
-	STANDBY,
-	TER,
-	DISK_S3,
-	DISK_S2,
-	DISK_S1,
-	DISK_S0,
-	SAT,
-	TIMESHIFT,
-	DOT1,
-	CAB,
-/*----------------------------------end-------------------------------------*/
-	LogNum_Max
-} LogNum_T;
+#ifdef __KERNEL__
+
+#define VFD_MAJOR       147
+#define I2C_BUS_NUM     1
+#define I2C_BUS_ADD     (0x50>>1)  //this is important not 0x50
+typedef unsigned int    YWOS_ClockMsec;
 
 typedef enum VFDMode_e
 {
@@ -208,11 +200,13 @@ typedef struct SegAddrVal_s
 	u8 CurrValue2;
 } SegAddrVal_T;
 
+#if 0
 typedef struct VFD_Format_s
 {
 	unsigned char LogNum;
 	unsigned char LogSta;
 } VFD_Format_T;
+#endif
 
 typedef struct VFD_Time_s
 {
@@ -220,14 +214,14 @@ typedef struct VFD_Time_s
 	unsigned char mint;
 } VFD_Time_T;
 
-#define YWPANEL_FP_INFO_MAX_LENGTH		  (10)
-#define YWPANEL_FP_DATA_MAX_LENGTH		  (38)
+#define YWPANEL_FP_INFO_MAX_LENGTH        (10)
+#define YWPANEL_FP_DATA_MAX_LENGTH        (38)
 
 typedef struct YWPANEL_I2CData_s
 {
-	u8	writeBuffLen;
-	u8	writeBuff[YWPANEL_FP_DATA_MAX_LENGTH];
-	u8	readBuff[YWPANEL_FP_INFO_MAX_LENGTH];
+	u8  writeBuffLen;
+	u8  writeBuff[YWPANEL_FP_DATA_MAX_LENGTH];
+	u8  readBuff[YWPANEL_FP_INFO_MAX_LENGTH];
 
 } YWPANEL_I2CData_t;
 
@@ -237,14 +231,15 @@ typedef enum YWPANEL_DataType_e
 	YWPANEL_DATATYPE_LCD,
 	YWPANEL_DATATYPE_LED,
 	YWPANEL_DATATYPE_VFD,
+	YWPANEL_DATATYPE_DVFD,
 	YWPANEL_DATATYPE_SCANKEY,
 	YWPANEL_DATATYPE_IRKEY,
 
 	YWPANEL_DATATYPE_GETVERSION,
-	YWPANEL_DATATYPE_GETVFDSTATE,
-	YWPANEL_DATATYPE_SETVFDSTATE,
 	YWPANEL_DATATYPE_GETCPUSTATE,
 	YWPANEL_DATATYPE_SETCPUSTATE,
+	YWPANEL_DATATYPE_GETVFDSTATE,
+	YWPANEL_DATATYPE_SETVFDSTATE,
 
 	YWPANEL_DATATYPE_GETSTBYKEY1,
 	YWPANEL_DATATYPE_GETSTBYKEY2,
@@ -256,6 +251,16 @@ typedef enum YWPANEL_DataType_e
 	YWPANEL_DATATYPE_SETSTBYKEY3,
 	YWPANEL_DATATYPE_SETSTBYKEY4,
 	YWPANEL_DATATYPE_SETSTBYKEY5,
+	YWPANEL_DATATYPE_GETBLUEKEY1,
+	YWPANEL_DATATYPE_GETBLUEKEY2,
+	YWPANEL_DATATYPE_GETBLUEKEY3,
+	YWPANEL_DATATYPE_GETBLUEKEY4,
+	YWPANEL_DATATYPE_GETBLUEKEY5,
+	YWPANEL_DATATYPE_SETBLUEKEY1,
+	YWPANEL_DATATYPE_SETBLUEKEY2,
+	YWPANEL_DATATYPE_SETBLUEKEY3,
+	YWPANEL_DATATYPE_SETBLUEKEY4,
+	YWPANEL_DATATYPE_SETBLUEKEY5,
 
 	YWPANEL_DATATYPE_GETIRCODE,
 	YWPANEL_DATATYPE_SETIRCODE,
@@ -278,22 +283,12 @@ typedef enum YWPANEL_DataType_e
 	YWPANEL_DATATYPE_GETVFDSTANDBYSTATE,
 	YWPANEL_DATATYPE_SETVFDSTANDBYSTATE,
 
-	YWPANEL_DATATYPE_GETBLUEKEY1,
-	YWPANEL_DATATYPE_GETBLUEKEY2,
-	YWPANEL_DATATYPE_GETBLUEKEY3,
-	YWPANEL_DATATYPE_GETBLUEKEY4,
-	YWPANEL_DATATYPE_GETBLUEKEY5,
-	YWPANEL_DATATYPE_SETBLUEKEY1,
-	YWPANEL_DATATYPE_SETBLUEKEY2,
-	YWPANEL_DATATYPE_SETBLUEKEY3,
-	YWPANEL_DATATYPE_SETBLUEKEY4,
-	YWPANEL_DATATYPE_SETBLUEKEY5,
-
-	YWPANEL_DATATYPE_GETPOWERONSTATE, /* 0x77 */
-	YWPANEL_DATATYPE_SETPOWERONSTATE, /* 0x78 */
-	YWPANEL_DATATYPE_GETSTARTUPSTATE, /* 0x79 */
-	YWPANEL_DATATYPE_GETLOOPSTATE,    /* 0x80 */
-	YWPANEL_DATATYPE_SETLOOPSTATE,    /* 0x81 */
+	YWPANEL_DATATYPE_GETPOWERONSTATE,
+	YWPANEL_DATATYPE_SETPOWERONSTATE,
+	YWPANEL_DATATYPE_GETSTARTUPSTATE,
+	YWPANEL_DATATYPE_SETSTARTUPSTATE,
+	YWPANEL_DATATYPE_GETLOOPSTATE,
+	YWPANEL_DATATYPE_SETLOOPSTATE,
 
 	YWPANEL_DATATYPE_NUM
 } YWPANEL_DataType_t;
@@ -335,6 +330,25 @@ typedef struct YWPANEL_VFDData_s
 
 } YWPANEL_VFDData_t;
 
+typedef enum YWPANEL_DVFDDataType_e
+{
+	YWPANEL_DVFD_SETTING = 0x1,
+	YWPANEL_DVFD_DISPLAY,
+	YWPANEL_DVFD_DISPLAYSTRING,
+	YWPANEL_DVFD_DISPLAYSYNC,
+	YWPANEL_DVFD_SETTIMEMODE,
+	YWPANEL_DVFD_GETTIMEMODE,
+} YWPANEL_DVFDDataType_t;
+
+typedef struct YWPANEL_DVFDData_s
+{
+	YWPANEL_DVFDDataType_t type;
+	u8 setValue;
+	u8 ulen;
+	u8 address[16];
+	u8 DisplayValue[16][5];
+} YWPANEL_DVFDData_t;
+
 typedef struct YWPANEL_IRKEY_s
 {
 	u32 customCode;
@@ -367,7 +381,7 @@ typedef struct YWPANEL_IRCode_s
 
 typedef enum YWPANEL_ENCRYPEMODE_e
 {
-	YWPANEL_ENCRYPEMODE_NONE =0x00,
+	YWPANEL_ENCRYPEMODE_NONE = 0x00,
 	YWPANEL_ENCRYPEMODE_ODDBIT,
 	YWPANEL_ENCRYPEMODE_EVENBIT,
 	YWPANEL_ENCRYPEMODE_RAMDONBIT
@@ -375,7 +389,7 @@ typedef enum YWPANEL_ENCRYPEMODE_e
 
 typedef struct YWPANEL_EncryptMode_s
 {
-	YWPANEL_ENCRYPEMODE_T	 mode;
+	YWPANEL_ENCRYPEMODE_T    mode;
 } YWPANEL_EncryptMode_t;
 
 typedef struct YWPANEL_EncryptKey_s
@@ -385,7 +399,7 @@ typedef struct YWPANEL_EncryptKey_s
 
 typedef enum YWPANEL_VERIFYSTATE_e
 {
-	YWPANEL_VERIFYSTATE_NONE =0x00,
+	YWPANEL_VERIFYSTATE_NONE = 0x00,
 	YWPANEL_VERIFYSTATE_CRC16 ,
 	YWPANEL_VERIFYSTATE_CRC32 ,
 	YWPANEL_VERIFYSTATE_CHECKSUM
@@ -416,11 +430,13 @@ typedef struct YWPANEL_BlueKey_s
 	u32 key;
 } YWPANEL_BlueKey_t;
 
+#if 0
 typedef struct YWVFD_Format_s
 {
 	u8 LogNum;
 	u8 LogSta;
 } YWVFD_Format_T;
+#endif
 
 typedef struct YWVFD_Time_s
 {
@@ -459,7 +475,7 @@ typedef enum YWPANEL_LBDStatus_e
 typedef enum YWPANEL_STARTUPSTATE_e
 {
 	YWPANEL_STARTUPSTATE_UNKNOWN,
-	YWPANEL_STARTUPSTATE_ELECTRIFY =0x01,
+	YWPANEL_STARTUPSTATE_ELECTRIFY = 0x01,
 	YWPANEL_STARTUPSTATE_STANDBY,
 	YWPANEL_STARTUPSTATE_TIMER
 } YWPANEL_STARTUPSTATE_t;
@@ -467,7 +483,7 @@ typedef enum YWPANEL_STARTUPSTATE_e
 typedef enum YWPANEL_LOOPSTATE_e
 {
 	YWPANEL_LOOPSTATE_UNKNOWN,
-	YWPANEL_LOOPSTATE_LOOPOFF =0x01,
+	YWPANEL_LOOPSTATE_LOOPOFF = 0x01,
 	YWPANEL_LOOPSTATE_LOOPON
 } YWPANEL_LOOPSTATE_t;
 
@@ -511,10 +527,10 @@ typedef struct YWPANEL_LoopState_s
 
 typedef enum YWPANEL_LBDType_e
 {
-	YWPANEL_LBD_TYPE_POWER  = ( 1 << 0 ),
-	YWPANEL_LBD_TYPE_SIGNAL = ( 1 << 1 ),
-	YWPANEL_LBD_TYPE_MAIL   = ( 1 << 2 ),
-	YWPANEL_LBD_TYPE_AUDIO  = ( 1 << 3 )
+	YWPANEL_LBD_TYPE_POWER  = (1 << 0),
+	YWPANEL_LBD_TYPE_SIGNAL = (1 << 1),
+	YWPANEL_LBD_TYPE_MAIL   = (1 << 2),
+	YWPANEL_LBD_TYPE_AUDIO  = (1 << 3)
 } YWPANEL_LBDType_T;
 
 typedef enum YWPAN_FP_MCUTYPE_E
@@ -530,6 +546,7 @@ typedef enum YWPANEL_FP_DispType_e
 	YWPANEL_FP_DISPTYPE_UNKNOWN = 0x00,
 	YWPANEL_FP_DISPTYPE_VFD = (1 << 0),
 	YWPANEL_FP_DISPTYPE_LCD = (1 << 1),
+	YWPANEL_FP_DISPTYPE_DVFD = (3),
 	YWPANEL_FP_DISPTYPE_LED = (1 << 2),
 	YWPANEL_FP_DISPTYPE_LBD = (1 << 3)
 } YWPANEL_FP_DispType_t;
@@ -545,30 +562,31 @@ typedef struct YWPANEL_Version_s
 
 typedef struct YWPANEL_FPData_s
 {
-	YWPANEL_DataType_t	dataType;
+	YWPANEL_DataType_t  dataType;
 
 	union
 	{
-		YWPANEL_Version_t			version;
-		YWPANEL_LBDData_t			lbdData;
-		YWPANEL_LEDData_t			ledData;
-		YWPANEL_LCDData_t			lcdData;
-		YWPANEL_VFDData_t			vfdData;
-		YWPANEL_IRKEY_t 			IrkeyData;
-		YWPANEL_SCANKEY_t			ScanKeyData;
-		YWPANEL_CpuState_t			CpuState;
-		YWPANEL_StandByKey_t		stbyKey;
-		YWPANEL_IRCode_t			irCode;
-		YWPANEL_EncryptMode_t		EncryptMode;
-		YWPANEL_EncryptKey_t		EncryptKey;
-		YWPANEL_VerifyState_t		verifyState;
-		YWPANEL_Time_t				time;
-		YWPANEL_ControlTimer_t		TimeState;
-		YWPANEL_VfdStandbyState_T	VfdStandbyState;
-		YWPANEL_BlueKey_t			BlueKey;
-		YWPANEL_PowerOnState_t		PowerOnState;
-		YWPANEL_StartUpState_t		StartUpState;
-		YWPANEL_LoopState_t 		LoopState;
+		YWPANEL_Version_t           version;
+		YWPANEL_LBDData_t           lbdData;
+		YWPANEL_LEDData_t           ledData;
+		YWPANEL_LCDData_t           lcdData;
+		YWPANEL_VFDData_t           vfdData;
+		YWPANEL_DVFDData_t          dvfdData;
+		YWPANEL_IRKEY_t             IrkeyData;
+		YWPANEL_SCANKEY_t           ScanKeyData;
+		YWPANEL_CpuState_t          CpuState;
+		YWPANEL_StandByKey_t        stbyKey;
+		YWPANEL_IRCode_t            irCode;
+		YWPANEL_EncryptMode_t       EncryptMode;
+		YWPANEL_EncryptKey_t        EncryptKey;
+		YWPANEL_VerifyState_t       verifyState;
+		YWPANEL_Time_t              time;
+		YWPANEL_ControlTimer_t      TimeState;
+		YWPANEL_VfdStandbyState_T   VfdStandbyState;
+		YWPANEL_BlueKey_t           BlueKey;
+		YWPANEL_PowerOnState_t      PowerOnState;
+		YWPANEL_StartUpState_t      StartUpState;
+		YWPANEL_LoopState_t         LoopState;
 	} data;
 
 	int ack;
@@ -577,38 +595,38 @@ typedef struct YWPANEL_FPData_s
 
 #define BASE_VFD_PRIVATE 0x00
 
-// #define VFD_GetRevision         _IOWR('s',(BASE_VFD_PRIVATE+0),char*)
-#define VFD_ShowLog             _IOWR('s',(BASE_VFD_PRIVATE+1),YWVFD_Format_T)
-#define VFD_ShowTime            _IOWR('s',(BASE_VFD_PRIVATE+2),YWVFD_Time_T)
-#define VFD_ShowStr             _IOWR('s',(BASE_VFD_PRIVATE+3),char*)
-#define VFD_ClearTime           _IOWR('s',(BASE_VFD_PRIVATE+4),int)
-#define VFD_SetBright           _IOWR('s',(BASE_VFD_PRIVATE+5),int)
-#define VFD_GetCPUState         _IOWR('s',(BASE_VFD_PRIVATE+6),YWPANEL_CPUSTATE_t)
-#define VFD_SetCPUState         _IOWR('s',(BASE_VFD_PRIVATE+7),YWPANEL_CPUSTATE_t)
-#define VFD_GetStartUpState     _IOWR('s',(BASE_VFD_PRIVATE+8),YWPANEL_STARTUPSTATE_t)
-#define VFD_GetVFDState         _IOWR('s',(BASE_VFD_PRIVATE+9),YWPANEL_VFDSTATE_t)
-#define VFD_SetVFDState         _IOWR('s',(BASE_VFD_PRIVATE+10),YWPANEL_VFDSTATE_t)
-#define VFD_GetPOWERONState     _IOWR('s',(BASE_VFD_PRIVATE+11),YWPANEL_POWERONSTATE_t)
-#define VFD_SetPOWERONState     _IOWR('s',(BASE_VFD_PRIVATE+12),YWPANEL_POWERONSTATE_t)
-#define VFD_GetTime             _IOWR('s',(BASE_VFD_PRIVATE+13),u32)
-#define VFD_SetTime             _IOWR('s',(BASE_VFD_PRIVATE+14),u32)
-#define VFD_ControlTime         _IOWR('s',(BASE_VFD_PRIVATE+15),int)
-#define VFD_GetStandByKey       _IOWR('s',(BASE_VFD_PRIVATE+16),YWVFD_FuncKey_T)
-#define VFD_SetStandByKey       _IOWR('s',(BASE_VFD_PRIVATE+17),YWVFD_FuncKey_T)
-#define VFD_GetBlueKey          _IOWR('s',(BASE_VFD_PRIVATE+18),YWVFD_FuncKey_T)
-#define VFD_SetBlueKey          _IOWR('s',(BASE_VFD_PRIVATE+19),YWVFD_FuncKey_T)
-#define VFD_GetPowerOnTime      _IOWR('s',(BASE_VFD_PRIVATE+20),u32)
-#define VFD_SetPowerOnTime      _IOWR('s',(BASE_VFD_PRIVATE+21),u32)
-#define VFD_ControlLBD          _IOWR('s',(BASE_VFD_PRIVATE+22),YWPANEL_LBDStatus_T)
+// #define VFD_GetRevision  _IOWR('s',(BASE_VFD_PRIVATE+0),char*)
+// #define VFD_ShowLog          _IOWR('s',(BASE_VFD_PRIVATE+1),YWVFD_Format_T)
+#define VFD_ShowTime        _IOWR('s',(BASE_VFD_PRIVATE+2),YWVFD_Time_T)
+#define VFD_ShowStr         _IOWR('s',(BASE_VFD_PRIVATE+3),char*)
+#define VFD_ClearTime       _IOWR('s',(BASE_VFD_PRIVATE+4),int)
+#define VFD_SetBright       _IOWR('s',(BASE_VFD_PRIVATE+5),int)
+#define VFD_GetCPUState     _IOWR('s',(BASE_VFD_PRIVATE+6),YWPANEL_CPUSTATE_t)
+#define VFD_SetCPUState     _IOWR('s',(BASE_VFD_PRIVATE+7),YWPANEL_CPUSTATE_t)
+#define VFD_GetStartUpState _IOWR('s',(BASE_VFD_PRIVATE+8),YWPANEL_STARTUPSTATE_t)
+#define VFD_GetVFDState     _IOWR('s',(BASE_VFD_PRIVATE+9),YWPANEL_VFDSTATE_t)
+#define VFD_SetVFDState     _IOWR('s',(BASE_VFD_PRIVATE+10),YWPANEL_VFDSTATE_t)
+#define VFD_GetPOWERONState _IOWR('s',(BASE_VFD_PRIVATE+11),YWPANEL_POWERONSTATE_t)
+#define VFD_SetPOWERONState _IOWR('s',(BASE_VFD_PRIVATE+12),YWPANEL_POWERONSTATE_t)
+#define VFD_GetTime         _IOWR('s',(BASE_VFD_PRIVATE+13),u32)
+#define VFD_SetTime         _IOWR('s',(BASE_VFD_PRIVATE+14),u32)
+#define VFD_ControlTime     _IOWR('s',(BASE_VFD_PRIVATE+15),int)
+#define VFD_GetStandByKey   _IOWR('s',(BASE_VFD_PRIVATE+16),YWVFD_FuncKey_T)
+#define VFD_SetStandByKey   _IOWR('s',(BASE_VFD_PRIVATE+17),YWVFD_FuncKey_T)
+#define VFD_GetBlueKey      _IOWR('s',(BASE_VFD_PRIVATE+18),YWVFD_FuncKey_T)
+#define VFD_SetBlueKey      _IOWR('s',(BASE_VFD_PRIVATE+19),YWVFD_FuncKey_T)
+#define VFD_GetPowerOnTime  _IOWR('s',(BASE_VFD_PRIVATE+20),u32)
+#define VFD_SetPowerOnTime  _IOWR('s',(BASE_VFD_PRIVATE+21),u32)
+#define VFD_ControlLBD      _IOWR('s',(BASE_VFD_PRIVATE+22),YWPANEL_LBDStatus_T)
 
 int YWPANEL_VFD_Init(void);
 extern int (*YWPANEL_VFD_Term)(void);
 extern int (*YWPANEL_VFD_Initialize)(void);
-extern int (*YWPANEL_VFD_ShowIcon)(LogNum_T, int);
-extern int (*YWPANEL_VFD_ShowTime)(u8 hh,u8 mm);
+extern int (*YWPANEL_VFD_ShowIcon)(int, int);
+extern int (*YWPANEL_VFD_ShowTime)(u8 hh, u8 mm);
 extern int (*YWPANEL_VFD_ShowTimeOff)(void);
 extern int (*YWPANEL_VFD_SetBrightness)(int);
-extern u8 (*YWPANEL_VFD_ScanKeyboard)(void);
+extern u8(*YWPANEL_VFD_ScanKeyboard)(void);
 extern int (*YWPANEL_VFD_ShowString)(char *);
 
 extern int YWPANEL_width;
@@ -624,7 +642,6 @@ u32 YWPANEL_FP_GetTime(void);
 int YWPANEL_FP_SetTime(u32 value);
 int YWPANEL_FP_GetKey(int blue, int key_nr, u32 *k);
 int YWPANEL_FP_SetKey(int blue, int key_nr, u32 k);
-int YWPANEL_LBD_SetStatus(YWPANEL_LBDStatus_T  LBDStatus );
 int YWPANEL_FP_GetStartUpState(YWPANEL_STARTUPSTATE_t *State);
 int YWPANEL_FP_GetVersion(YWPANEL_Version_t *version);
 int  YWPANEL_FP_GetLoopState(YWPANEL_LOOPSTATE_t *state);
@@ -635,6 +652,10 @@ u32 YWPANEL_FP_GetPowerOnTime(void);
 int YWPANEL_VFD_GetKeyValue(void);
 int YWPANEL_VFD_SetLed(int which, int on);
 
+int utf8strlen(char *s, int len);
+int utf8charlen(unsigned char c);
+
+#endif /* __KERNEL__ */
 #endif /* __AOTOM_MAIN_H__ */
 
 // vim:ts=4

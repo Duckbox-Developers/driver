@@ -27,18 +27,18 @@
 
 #include "aotom_trace.h"
 
-int trace_level = TRACE_ERROR | TRACE_FATAL|TRACE_INFO;
+int trace_level = TRACE_ERROR | TRACE_FATAL | TRACE_INFO;
 
 int YWTRACE_Init(void)
 {
-    return 0;    
+	return 0;
 }
 
-int YWTRACE_Print (const unsigned int level, const char * format, ...)
+int YWTRACE_Print(const unsigned int level, const char *format, ...)
 {
 	va_list args;
-	int r=0;
-	if(trace_level & level)
+	int r = 0;
+	if (trace_level & level)
 	{
 		va_start(args, format);
 		if (level & (TRACE_ERROR | TRACE_FATAL))

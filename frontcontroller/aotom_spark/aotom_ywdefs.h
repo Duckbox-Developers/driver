@@ -2,54 +2,54 @@
 #ifndef __AOTOM_YWDEFS_H__
 #define __AOTOM_YWDEFS_H__
 
-#define YW_K              		(1024)
-#define YW_M              		(YW_K * YW_K)
-#define YW_G              		(YW_K * YW_K * YW_K)
+#define YW_K                    (1024)
+#define YW_M                    (YW_K * YW_K)
+#define YW_G                    (YW_K * YW_K * YW_K)
 #define YW_ENDIAN_LITTLE
 
 #define YWOS_MODULE_PUBLIC_ID               300
 #define YWOS_MODULE_SYSTEMEVT_ID            305
 #define YWOS_MODULE_EVT_ID                  310
-#define	YWOS_MODULE_LIB_ID				    311
+#define YWOS_MODULE_LIB_ID                  311
 
-#define	YWHAL_MODULE_PUBLIC_ID  			400
-#define	YWHAL_MODULE_SYSTEM_ID  			410
-#define	YWHAL_MODULE_PTI_ID  				411
-#define	YWHAL_MODULE_VIDEO_ID  				412
-#define	YWHAL_MODULE_AUDIO_ID  				413
-#define	YWHAL_MODULE_ENCODER_ID  			414
-#define	YWHAL_MODULE_CANVAS_ID  			415
-#define	YWHAL_MODULE_AVOS_ID  				416
-#define	YWHAL_MODULE_TUNER_ID  				417
-#define	YWHAL_MODULE_FLASH_ID  				418
-#define	YWHAL_MODULE_VFS_ID  				419
-#define	YWHAL_MODULE_USB_ID  				420
-#define	YWHAL_MODULE_UART_ID  				421
-#define	YWHAL_MODULE_RTC_ID  				422
-#define	YWHAL_MODULE_PANEL_ID 				423
-#define	YWHAL_MODULE_PHY_ID  				424
-#define	YWHAL_MODULE_PCM_ID  				425
-#define	YWHAL_MODULE_SMART_ID  				426
-#define	YWHAL_MODULE_I2C_ID  				427
-#define	YWHAL_MODULE_GPIO_ID				428
-#define	YWHAL_MODULE_HDD_ID					429
-#define	YWHAL_MODULE_INJECT_ID				430
-#define	YWHAL_MODULE_PVR_ID                 431
-#define	YWHAL_MODULE_TCPIP_ID  				432
-#define	YWHAL_MODULE_PLUGINSWP_ID  			433
-#define	YWHAL_MODULE_CA_ID  				434
+#define YWHAL_MODULE_PUBLIC_ID              400
+#define YWHAL_MODULE_SYSTEM_ID              410
+#define YWHAL_MODULE_PTI_ID                 411
+#define YWHAL_MODULE_VIDEO_ID               412
+#define YWHAL_MODULE_AUDIO_ID               413
+#define YWHAL_MODULE_ENCODER_ID             414
+#define YWHAL_MODULE_CANVAS_ID              415
+#define YWHAL_MODULE_AVOS_ID                416
+#define YWHAL_MODULE_TUNER_ID               417
+#define YWHAL_MODULE_FLASH_ID               418
+#define YWHAL_MODULE_VFS_ID                 419
+#define YWHAL_MODULE_USB_ID                 420
+#define YWHAL_MODULE_UART_ID                421
+#define YWHAL_MODULE_RTC_ID                 422
+#define YWHAL_MODULE_PANEL_ID               423
+#define YWHAL_MODULE_PHY_ID                 424
+#define YWHAL_MODULE_PCM_ID                 425
+#define YWHAL_MODULE_SMART_ID               426
+#define YWHAL_MODULE_I2C_ID                 427
+#define YWHAL_MODULE_GPIO_ID                428
+#define YWHAL_MODULE_HDD_ID                 429
+#define YWHAL_MODULE_INJECT_ID              430
+#define YWHAL_MODULE_PVR_ID                 431
+#define YWHAL_MODULE_TCPIP_ID               432
+#define YWHAL_MODULE_PLUGINSWP_ID           433
+#define YWHAL_MODULE_CA_ID                  434
 
 /*yw mid */
-#define	YWMID_MODULE_PUBLIC_ID  			500
-#define	YWMID_MODULE_DBASE_ID  				501
-#define	YWMID_MODULE_EPG_ID  				504
-#define	YWMID_MODULE_TTX_ID  				505
-#define	YWMID_MODULE_SUBT_ID  				506
-#define	YWMID_MODULE_TIMER_ID  				509
-#define	YWMID_MODULE_NIM_ID  				511
-#define	YWMID_MODULE_NVM_ID  				514
-#define	YWMID_MODULE_CI_ID  				527
-#define	YWMID_MODULE_TCPIP_ID  				528
+#define YWMID_MODULE_PUBLIC_ID              500
+#define YWMID_MODULE_DBASE_ID               501
+#define YWMID_MODULE_EPG_ID                 504
+#define YWMID_MODULE_TTX_ID                 505
+#define YWMID_MODULE_SUBT_ID                506
+#define YWMID_MODULE_TIMER_ID               509
+#define YWMID_MODULE_NIM_ID                 511
+#define YWMID_MODULE_NVM_ID                 514
+#define YWMID_MODULE_CI_ID                  527
+#define YWMID_MODULE_TCPIP_ID               528
 
 #define YWMID_MODULE_PRM_ID                 529
 #define YWMID_MODULE_CHANNEL_ID             530
@@ -67,12 +67,12 @@
 #define YWMID_MODULE_ABM_ID                 541
 #define YWMID_MODULE_SHOUTCAST_ID           542
 #define YWMID_MODULE_YOUTUBE_ID             543
-#define YWMID_MODULE_AVCTL_ID             	544
+#define YWMID_MODULE_AVCTL_ID               544
 
 /*yw app */
-#define	YWAPP_MODULE_PUBLIC_ID  		    600
-#define	YWAPP_MODULE_INSTALL_ID  			611
-#define	YWAPP_MODULE_SERVICE_ID  			612
+#define YWAPP_MODULE_PUBLIC_ID              600
+#define YWAPP_MODULE_INSTALL_ID             611
+#define YWAPP_MODULE_SERVICE_ID             612
 
 #define YW_MODULE_SET_ID(a)     (a << 16)
 #define YW_MODULE_GET_ID(a)     ((a >> 16) & 0xFFFF)
@@ -80,75 +80,75 @@
 #define YW_INVALID_HANDLE       0xffffffff
 
 /*Error type*/
-#define YW_NO_ERROR				0
-#define YW_ERROR_CODE(a,b)  	((b==0)?0:(YW_MODULE_SET_ID(a) +b))
+#define YW_NO_ERROR             0
+#define YW_ERROR_CODE(a,b)      ((b==0)?0:(YW_MODULE_SET_ID(a) +b))
 
 /*Event Type*/
-#define YW_EVENT_CODE(a,b)  	((b==0)?0:(YW_MODULE_SET_ID(a) +b))
+#define YW_EVENT_CODE(a,b)      ((b==0)?0:(YW_MODULE_SET_ID(a) +b))
 
 
 #ifndef TRUE
-    #define TRUE (1 == 1)
+#define TRUE (1 == 1)
 #endif
 #ifndef FALSE
-    #define FALSE (!TRUE)
+#define FALSE (!TRUE)
 #endif
 
 #ifndef NULL
-	#define NULL 0
+#define NULL 0
 #endif
 
 /*mid public error*/
 enum
 {
-    YWMID_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWMID_MODULE_PUBLIC_ID ),   /* Bad parameter passed       */
-    YWMID_ERROR_NO_MEMORY,                 		/* Memory allocation failed   */
-    YWMID_ERROR_ALREADY_INITIALIZED,       		/* Device already initialized */
-    YWMID_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
-    YWMID_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
-    YWMID_ERROR_OPEN_HANDLE,               		/* At least one open handle   */
-    YWMID_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
-    YWMID_ERROR_FEATURE_NOT_SUPPORTED   		/* Feature unavailable        */
+	YWMID_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWMID_MODULE_PUBLIC_ID),    /* Bad parameter passed       */
+	YWMID_ERROR_NO_MEMORY,                      /* Memory allocation failed   */
+	YWMID_ERROR_ALREADY_INITIALIZED,            /* Device already initialized */
+	YWMID_ERROR_NO_INITIALIZED,                 /* Device has not been initialized*/
+	YWMID_ERROR_NO_FREE_HANDLES,                /* Cannot open device again   */
+	YWMID_ERROR_OPEN_HANDLE,                    /* At least one open handle   */
+	YWMID_ERROR_INVALID_HANDLE,                 /* Handle is not valid        */
+	YWMID_ERROR_FEATURE_NOT_SUPPORTED           /* Feature unavailable        */
 };
 
 /*Hal public error*/
 enum
 {
-    YWHAL_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWHAL_MODULE_PUBLIC_ID ),   /* Bad parameter passed  */
-    YWHAL_ERROR_NO_MEMORY,                 			/* Memory allocation failed   */
-    YWHAL_ERROR_UNKNOWN_DEVICE,            		/* Unknown device */
-    YWHAL_ERROR_ALREADY_INITIALIZED,      		/* Device already initialized */
-    YWHAL_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
-    YWHAL_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
-    YWHAL_ERROR_OPEN_HANDLE,              		/* At least one open handle   */
-    YWHAL_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
-    YWHAL_ERROR_FEATURE_NOT_SUPPORTED,   		/* Feature unavailable        */
-    YWHAL_ERROR_TIMEOUT,                  		/* Timeout occured            */
-    YWHAL_ERROR_DEVICE_BUSY,              		/* Device is currently busy   */
-    YWHAL_ERROR_NOT_OPEN,						/*Device is not open*/
-    YWHAL_ERROR_NOT_ENOUGH_DEVICE				/*Device is all opened*/
+	YWHAL_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWHAL_MODULE_PUBLIC_ID),    /* Bad parameter passed  */
+	YWHAL_ERROR_NO_MEMORY,                          /* Memory allocation failed   */
+	YWHAL_ERROR_UNKNOWN_DEVICE,                 /* Unknown device */
+	YWHAL_ERROR_ALREADY_INITIALIZED,            /* Device already initialized */
+	YWHAL_ERROR_NO_INITIALIZED,                 /* Device has not been initialized*/
+	YWHAL_ERROR_NO_FREE_HANDLES,                /* Cannot open device again   */
+	YWHAL_ERROR_OPEN_HANDLE,                    /* At least one open handle   */
+	YWHAL_ERROR_INVALID_HANDLE,                 /* Handle is not valid        */
+	YWHAL_ERROR_FEATURE_NOT_SUPPORTED,          /* Feature unavailable        */
+	YWHAL_ERROR_TIMEOUT,                        /* Timeout occured            */
+	YWHAL_ERROR_DEVICE_BUSY,                    /* Device is currently busy   */
+	YWHAL_ERROR_NOT_OPEN,                       /*Device is not open*/
+	YWHAL_ERROR_NOT_ENOUGH_DEVICE               /*Device is all opened*/
 };
 
 
 /*variable type*******************************************************/
-typedef	signed char		    S8;
-typedef	unsigned char		U8;
-typedef	signed short		S16;
-typedef unsigned short		U16;
-typedef	signed int			S32;
-typedef	unsigned int		U32;
+typedef signed char         S8;
+typedef unsigned char       U8;
+typedef signed short        S16;
+typedef unsigned short      U16;
+typedef signed int          S32;
+typedef unsigned int        U32;
 
-typedef U32					BOOL;
-typedef U32 				YW_ErrorType_T;
-typedef U32       			YW_EventType_T;
+typedef U32                 BOOL;
+typedef U32                 YW_ErrorType_T;
+typedef U32                 YW_EventType_T;
 
 
 #ifdef ARCHITECTURE_ST40
 typedef struct U64_s
 {
-    unsigned int LSW;
-    unsigned int MSW;
-}U64;
+	unsigned int LSW;
+	unsigned int MSW;
+} U64;
 
 typedef U64 S64;
 
