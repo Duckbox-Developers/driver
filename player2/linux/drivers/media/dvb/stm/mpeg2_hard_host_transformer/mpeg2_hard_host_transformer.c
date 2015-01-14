@@ -190,7 +190,7 @@ static MME_ERROR termTransformer(void* context)
 
 void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_TransformParam_t* frameParamsIn)
 {
-//  OSDEV_Print("copyFrameParameters\n");
+//	OSDEV_Print("copyFrameParameters\n");
 	/*
 	 U32                          StructSize;
 	 MPEG2_CompressedData_t       PictureStartAddrCompressedBuffer_p;
@@ -283,7 +283,7 @@ void copyFrameParameters(Mpeg2HardFrameParams_t  *frameParamsOut, MPEG2_Transfor
 void copySequenceParameters(Mpeg2HardSequenceParams_t  *seqParamsOut, MPEG2_SetGlobalParamSequence_t* seqParamsIn)
 {
 	unsigned int i;
-//  OSDEV_Print("copySequenceParameters\n");
+//	OSDEV_Print("copySequenceParameters\n");
 	/* MPEG2_SetGlobalParamSequence_t
 	U32                  StructSize;
 	BOOL                 MPEGStreamTypeFlag;

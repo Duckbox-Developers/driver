@@ -909,9 +909,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is responsible for walking only the unsatisfied
-//  reference stack, when we have a failure to do smooth reverse decode,
-//  to discard everything on it.
+//	This function is responsible for walking only the unsatisfied
+//	reference stack, when we have a failure to do smooth reverse decode,
+//	to discard everything on it.
 //
 
 FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack(void)
@@ -981,9 +981,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Reverse play function to count resource utilization and check if
-//  it allows continued smooth reverse play. NOTE this function is only
-//  called if we are not already in a discarding state.
+//	Reverse play function to count resource utilization and check if
+//	it allows continued smooth reverse play. NOTE this function is only
+//	called if we are not already in a discarding state.
 //
 
 FrameParserStatus_t   FrameParser_Video_c::RevPlayClearResourceUtilization(void)
@@ -1001,9 +1001,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayClearResourceUtilization(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Reverse play function to count resource utilization and check if
-//  it allows continued smooth reverse play. NOTE this function is only
-//  called if we are not already in a discarding state.
+//	Reverse play function to count resource utilization and check if
+//	it allows continued smooth reverse play. NOTE this function is only
+//	called if we are not already in a discarding state.
 //
 
 FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
@@ -1101,7 +1101,7 @@ FrameParserStatus_t   FrameParser_Video_c::InitializePostDecodeParameterSettings
 	{
 		CodedFrameDecodeTimeValid                       = false;
 		ReasonableDecodeTime                            = (ParsedFrameParameters->NativePlaybackTime == INVALID_TIME) ||
-														  (((CodedFramePlaybackTime - CodedFrameDecodeTime) & 0x1ffffffffull) < MAXIMUM_DECODE_TIME_OFFSET);
+				(((CodedFramePlaybackTime - CodedFrameDecodeTime) & 0x1ffffffffull) < MAXIMUM_DECODE_TIME_OFFSET);
 		if (ReasonableDecodeTime)
 		{
 			ParsedFrameParameters->NativeDecodeTime     = CodedFrameDecodeTime;
@@ -1562,9 +1562,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayJunkReferenceFrameList(void)
 //
 //      Private function to convert a us per frame
 //
-//  We define matching as within 8us, since we can have errors of
-//  up to 5.5555555 us when trying to express a frame time as a
-//  PTS (90kHz clock)
+//	We define matching as within 8us, since we can have errors of
+//	up to 5.5555555 us when trying to express a frame time as a
+//	PTS (90kHz clock)
 //
 
 #define ValueMatchesFrameTime(V,T)   inrange( V, T - 8, T + 8 )

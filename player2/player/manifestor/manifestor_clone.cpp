@@ -154,8 +154,8 @@ ManifestorStatus_t   Manifestor_Clone_c::GetPostProcessControlBufferPool(BufferP
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  RegisterOutputBufferRing - we use a different ring for the clone,
-//                 as allocated when the clone was registered.
+//	RegisterOutputBufferRing - we use a different ring for the clone,
+//				   as allocated when the clone was registered.
 //
 
 ManifestorStatus_t   Manifestor_Clone_c::RegisterOutputBufferRing(Ring_t                    Ring)
@@ -248,8 +248,8 @@ ManifestorStatus_t   Manifestor_Clone_c::QueueNullManifestation(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      QueueEventSignal - we do not want the clone to do this, it would
-//             interfere with the correct functioning of the player
+//	QueueEventSignal - we do not want the clone to do this, it would
+//			   interfere with the correct functioning of the player
 //
 
 ManifestorStatus_t   Manifestor_Clone_c::QueueEventSignal(PlayerEventRecord_t      *Event)

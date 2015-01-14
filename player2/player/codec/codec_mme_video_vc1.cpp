@@ -401,30 +401,30 @@ CodecStatus_t   Codec_MmeVideoVc1_c::FillOutDecodeCommand(void)
 	switch (Player->PolicyValue(Playback, this->Stream, PolicyDecimateDecoderOutput))
 	{
 		case PolicyValueDecimateDecoderOutputDisabled:
-			{
-				// Normal Case
-				Param->MainAuxEnable                = VC9_MAINOUT_EN;
-				Param->HorizontalDecimationFactor   = VC9_HDEC_1;
-				Param->VerticalDecimationFactor     = VC9_VDEC_1;
-				break;
-			}
+		{
+			// Normal Case
+			Param->MainAuxEnable                = VC9_MAINOUT_EN;
+			Param->HorizontalDecimationFactor   = VC9_HDEC_1;
+			Param->VerticalDecimationFactor     = VC9_VDEC_1;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputHalf:
-			{
-				Param->MainAuxEnable                = VC9_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor   = VC9_HDEC_ADVANCED_2;
-				if ((VC9_PictureSyntax_t)Frame->PictureHeader.fcm == VC9_PICTURE_SYNTAX_PROGRESSIVE)
-					Param->VerticalDecimationFactor = VC9_VDEC_ADVANCED_2_PROG;
-				else
-					Param->VerticalDecimationFactor = VC9_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                = VC9_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor   = VC9_HDEC_ADVANCED_2;
+			if ((VC9_PictureSyntax_t)Frame->PictureHeader.fcm == VC9_PICTURE_SYNTAX_PROGRESSIVE)
+				Param->VerticalDecimationFactor = VC9_VDEC_ADVANCED_2_PROG;
+			else
+				Param->VerticalDecimationFactor = VC9_VDEC_ADVANCED_2_INT;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputQuarter:
-			{
-				Param->MainAuxEnable                = VC9_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor   = VC9_HDEC_ADVANCED_4;
-				Param->VerticalDecimationFactor     = VC9_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                = VC9_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor   = VC9_HDEC_ADVANCED_4;
+			Param->VerticalDecimationFactor     = VC9_VDEC_ADVANCED_2_INT;
+			break;
+		}
 	}
 	//Param->DecodingMode                         = VC9_NORMAL_DECODE_WITHOUT_ERROR_RECOVERY;
 	Param->DecodingMode                         = VC9_NORMAL_DECODE;

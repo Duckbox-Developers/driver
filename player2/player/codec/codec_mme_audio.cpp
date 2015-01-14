@@ -550,7 +550,7 @@ CodecStatus_t Codec_MmeAudio_c::FillOutTransformerGlobalParameters(MME_LxAudioDe
 	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
 	MME_LxDecConfig_t &Config = *((MME_LxDecConfig_t *) GlobalParams.DecConfig);
 	unsigned char *PcmParams_p = ((unsigned char *) &Config) + Config.StructSize;
-	//
+//
 	MME_LxPcmProcessingGlobalParams_Subset_t &PcmParams = *((MME_LxPcmProcessingGlobalParams_Subset_t *) PcmParams_p);
 	PcmParams.StructSize = sizeof(PcmParams);
 	PcmParams.DigSplit   = ACC_SPLIT_AUTO;

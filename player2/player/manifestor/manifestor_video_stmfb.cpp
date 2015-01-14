@@ -948,7 +948,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int            
 	// Clear the DisplayBuff record
 	//
 	memset((void*)DisplayBuff, 0, sizeof(stm_display_buffer_t));
-	//
+//
 #if defined (QUEUE_BUFFER_CAN_FAIL)
 	DisplayFlush                = false;
 #endif
@@ -957,7 +957,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int            
 	Adjustment                  -= 1000000;
 	if (Adjustment != ClockRateAdjustment)
 	{
-//        MANIFESTOR_DEBUG("Setting output clock adjustment to %d parts per million\n", Adjustment);
+//		MANIFESTOR_DEBUG("Setting output clock adjustment to %d parts per million\n", Adjustment);
 		Status                  = stm_display_output_set_control(Output, STM_CTRL_CLOCK_ADJUSTMENT, Adjustment);
 		if (Status == 0)
 			ClockRateAdjustment = Adjustment;

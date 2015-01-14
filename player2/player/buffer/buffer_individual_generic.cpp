@@ -111,7 +111,7 @@ Buffer_Generic_c::~Buffer_Generic_c(void)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Attach meta data structure
+//	Attach meta data structure
 //
 
 BufferStatus_t   Buffer_Generic_c::AttachMetaData(
@@ -183,7 +183,7 @@ BufferStatus_t   Buffer_Generic_c::AttachMetaData(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Detach meta data
+//	Detach meta data
 //
 
 BufferStatus_t   Buffer_Generic_c::DetachMetaData(
@@ -224,7 +224,7 @@ BufferStatus_t   Buffer_Generic_c::DetachMetaData(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Obtain a meta data reference
+//	Obtain a meta data reference
 //
 
 BufferStatus_t   Buffer_Generic_c::ObtainMetaDataReference(
@@ -259,7 +259,7 @@ BufferStatus_t   Buffer_Generic_c::ObtainMetaDataReference(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Set the amount of the buffer that is used.
+//	Set the amount of the buffer that is used.
 //
 
 BufferStatus_t   Buffer_Generic_c::SetUsedDataSize(unsigned int   DataSize)
@@ -284,7 +284,7 @@ BufferStatus_t   Buffer_Generic_c::SetUsedDataSize(unsigned int   DataSize)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Shrink the buffer
+//	Shrink the buffer
 //
 
 BufferStatus_t   Buffer_Generic_c::ShrinkBuffer(unsigned int      NewSize)
@@ -300,7 +300,7 @@ BufferStatus_t   Buffer_Generic_c::ShrinkBuffer(unsigned int      NewSize)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Expand the buffer
+//	Expand the buffer
 //
 
 BufferStatus_t   Buffer_Generic_c::ExtendBuffer(unsigned int     *NewSize,
@@ -312,7 +312,7 @@ BufferStatus_t   Buffer_Generic_c::ExtendBuffer(unsigned int     *NewSize,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Partition a buffer into separate buffers
+//	Partition a buffer into separate buffers
 //
 
 BufferStatus_t   Buffer_Generic_c::PartitionBuffer(
@@ -440,7 +440,7 @@ BufferStatus_t   Buffer_Generic_c::PartitionBuffer(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Register data reference functions
+//	Register data reference functions
 //
 
 BufferStatus_t   Buffer_Generic_c::RegisterDataReference(
@@ -585,10 +585,10 @@ BufferStatus_t   Buffer_Generic_c::IncrementReferenceCount(unsigned int  NewOwne
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Decrement a reference count, and release the buffer if we get to zero.
-//  We take a copy (during the locked period) of the reference to ensure
-//  that if two processes are decrementing the count, only one will do the
-//  actual release (without having to extend the period of locking).
+//	Decrement a reference count, and release the buffer if we get to zero.
+//	We take a copy (during the locked period) of the reference to ensure
+//	that if two processes are decrementing the count, only one will do the
+//	actual release (without having to extend the period of locking).
 //
 
 BufferStatus_t   Buffer_Generic_c::DecrementReferenceCount(unsigned int  OldOwnerIdentifier)
@@ -621,7 +621,7 @@ BufferStatus_t   Buffer_Generic_c::DecrementReferenceCount(unsigned int  OldOwne
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Attach a buffer to this one
+//	Attach a buffer to this one
 //
 
 BufferStatus_t   Buffer_Generic_c::AttachBuffer(Buffer_t      Buffer)
@@ -645,7 +645,7 @@ BufferStatus_t   Buffer_Generic_c::AttachBuffer(Buffer_t      Buffer)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Detach a buffer from this one
+//	Detach a buffer from this one
 //
 
 BufferStatus_t   Buffer_Generic_c::DetachBuffer(Buffer_t      Buffer)
@@ -669,7 +669,7 @@ BufferStatus_t   Buffer_Generic_c::DetachBuffer(Buffer_t      Buffer)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Obtain a meta data reference
+//	Obtain a meta data reference
 //
 
 BufferStatus_t   Buffer_Generic_c::ObtainAttachedBufferReference(
@@ -695,7 +695,7 @@ BufferStatus_t   Buffer_Generic_c::ObtainAttachedBufferReference(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Discover the type of buffer supported by the pool
+//	Discover the type of buffer supported by the pool
 //
 
 BufferStatus_t   Buffer_Generic_c::GetType(BufferType_t  *Type)
@@ -708,7 +708,7 @@ BufferStatus_t   Buffer_Generic_c::GetType(BufferType_t  *Type)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Discover the type of buffer supported by the pool
+//	Discover the type of buffer supported by the pool
 //
 
 BufferStatus_t   Buffer_Generic_c::GetIndex(unsigned int     *Index)

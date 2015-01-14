@@ -374,114 +374,114 @@ static cap_v4l2_video_handle_t *CapVideoSysfsLookupContext(struct class_device *
 
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE( CapName, LinuxName )                         \
-    static ssize_t CapVideoSysfsShow##CapName( struct class_device *class_dev, char *buf )      \
-    {                                               \
-        int v = atomic_read(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName);          \
-        return sprintf(buf, "%d\n", v);                             \
-    }                                               \
-    \
-    static ssize_t CapVideoSysfsStore##CapName( struct class_device *class_dev, const char *buf, size_t count ) \
-    {                                               \
-        int v;                                          \
-        \
-        if (1 != sscanf(buf, "%i", &v))                             \
-            return -EINVAL;                                      \
-        \
-        if (v < 0)                                          \
-            return -EINVAL;                                      \
-        \
-        atomic_set(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName, v);            \
-        return count;                                       \
-    }                                               \
-    \
-    static CLASS_DEVICE_ATTR(LinuxName, 0600, CapVideoSysfsShow##CapName, CapVideoSysfsStore##CapName)
+static ssize_t CapVideoSysfsShow##CapName( struct class_device *class_dev, char *buf )      \
+{                                               \
+    int v = atomic_read(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName);          \
+    return sprintf(buf, "%d\n", v);                             \
+}                                               \
+                                                \
+static ssize_t CapVideoSysfsStore##CapName( struct class_device *class_dev, const char *buf, size_t count ) \
+{                                               \
+    int v;                                          \
+                                                \
+    if (1 != sscanf(buf, "%i", &v))                             \
+       return -EINVAL;                                      \
+                                                \
+    if (v < 0)                                          \
+       return -EINVAL;                                      \
+                                                \
+    atomic_set(&CapVideoSysfsLookupContext(class_dev)->Cap##CapName, v);            \
+    return count;                                       \
+}                                               \
+                                                \
+static CLASS_DEVICE_ATTR(LinuxName, 0600, CapVideoSysfsShow##CapName, CapVideoSysfsStore##CapName)
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_CREATE( CapName, LinuxName )                          \
-    {                                               \
-        int Result;                                         \
-        \
-        Result  = class_device_create_file(VideoContext->CapSysfsClassDevice,           \
-                                           &class_device_attr_##LinuxName);              \
-        if (Result) {                                       \
-            DVB_ERROR("class_device_create_file failed (%d)\n", Result);             \
-            return -1;                                      \
-        }                                               \
-        \
-        player_sysfs_new_attribute_notification(VideoContext->CapSysfsClassDevice);         \
-        atomic_set(&VideoContext->Cap##CapName, 0);                         \
-    }
+{                                               \
+int Result;                                         \
+                                                \
+    Result  = class_device_create_file(VideoContext->CapSysfsClassDevice,           \
+                                      &class_device_attr_##LinuxName);              \
+    if (Result) {                                       \
+       DVB_ERROR("class_device_create_file failed (%d)\n", Result);             \
+        return -1;                                      \
+    }                                               \
+                                                \
+    player_sysfs_new_attribute_notification(VideoContext->CapSysfsClassDevice);         \
+    atomic_set(&VideoContext->Cap##CapName, 0);                         \
+}
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_PROCESS_DECREMENT( CapName, LinuxName )              \
-    SYSFS_DECLARE( CapName, LinuxName );                                \
-    \
-    static void CapVideoSysfsProcessDecrement##CapName( cap_v4l2_video_handle_t *VideoContext ) \
-    {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-            \
-            if (new > 0)                                     \
-                new--;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-        \
-        if (old == 1)                                       \
-            sysfs_notify (&((*(VideoContext->CapSysfsClassDevice)).kobj), NULL, #LinuxName );    \
-    }
+SYSFS_DECLARE( CapName, LinuxName );                                \
+                                                \
+static void CapVideoSysfsProcessDecrement##CapName( cap_v4l2_video_handle_t *VideoContext ) \
+{                                               \
+    int old, new;                                       \
+                                                \
+    /* conditionally decrement and notify one to zero transition. */                \
+    do {                                            \
+       old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+                                                \
+       if (new > 0)                                     \
+           new--;                                       \
+    } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+                                                \
+    if (old == 1)                                       \
+       sysfs_notify (&((*(VideoContext->CapSysfsClassDevice)).kobj), NULL, #LinuxName );    \
+}
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT( CapName, LinuxName )                \
-    SYSFS_DECLARE( CapName, LinuxName );                                \
-    \
-    static void CapVideoSysfsInterruptDecrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+SYSFS_DECLARE( CapName, LinuxName );                                \
+                                                \
+static void CapVideoSysfsInterruptDecrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+{                                               \
+    int old, new;                                       \
+                                                \
+    /* conditionally decrement and notify one to zero transition. */                \
+    do {                                            \
+       old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+                                                \
+       if (new > 0)                                     \
+           new--;                                       \
+    } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+                                                \
+    if (old == 1)                                       \
     {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-            \
-            if (new > 0)                                     \
-                new--;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-        \
-        if (old == 1)                                       \
-        {                                               \
-            VideoContext->Cap##CapName##Notify  = true;                     \
-            up( &VideoContext->CapSynchronizerWakeSem );                        \
-        }                                               \
-    }
+    VideoContext->Cap##CapName##Notify  = true;                     \
+    up( &VideoContext->CapSynchronizerWakeSem );                        \
+    }                                               \
+}
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT( CapName, LinuxName )                \
-    SYSFS_DECLARE( CapName, LinuxName );                                \
-    \
-    static void CapVideoSysfsInterruptIncrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+SYSFS_DECLARE( CapName, LinuxName );                                \
+                                                \
+static void CapVideoSysfsInterruptIncrement##CapName( cap_v4l2_video_handle_t *VideoContext )   \
+{                                               \
+    int old, new;                                       \
+                                                \
+    /* conditionally decrement and notify one to zero transition. */                \
+    do {                                            \
+       old = new = atomic_read(&VideoContext->Cap##CapName);                    \
+                                                \
+       if( new == 0)                                        \
+           new++;                                       \
+    } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
+                                                \
+    if (old == 0)                                       \
     {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Cap##CapName);                    \
-            \
-            if( new == 0)                                        \
-                new++;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Cap##CapName, old, new));   \
-        \
-        if (old == 0)                                       \
-        {                                               \
-            VideoContext->Cap##CapName##Notify  = true;                     \
-            up( &VideoContext->CapSynchronizerWakeSem );                        \
-        }                                               \
-    }
+    VideoContext->Cap##CapName##Notify  = true;                     \
+    up( &VideoContext->CapSynchronizerWakeSem );                        \
+    }                                               \
+}
 // ------------------------------------------------------------------------------------------------
 #define SYSFS_TEST_NOTIFY( CapName, LinuxName )                         \
+{                                               \
+    if( Context->Cap##CapName##Notify )                             \
     {                                               \
-        if( Context->Cap##CapName##Notify )                             \
-        {                                               \
-            Context->Cap##CapName##Notify   = false;                        \
-            sysfs_notify (&((*(Context->CapSysfsClassDevice)).kobj), NULL, #LinuxName );        \
-        }                                               \
-    }
+    Context->Cap##CapName##Notify   = false;                        \
+    sysfs_notify (&((*(Context->CapSysfsClassDevice)).kobj), NULL, #LinuxName );        \
+    }                                               \
+}
 // ------------------------------------------------------------------------------------------------
 
 SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCountingNotification,       frame_counting_notification);
@@ -573,7 +573,7 @@ int CapVideoClose(cap_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to configure the vertical resize coefficients
+//	Function to configure the vertical resize coefficients
 //
 
 static int CapConfigureVerticalResizeCoefficients(cap_v4l2_video_handle_t   *Context,
@@ -600,7 +600,7 @@ static int CapConfigureVerticalResizeCoefficients(cap_v4l2_video_handle_t   *Con
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to configure the horizontal resize coefficients
+//	Function to configure the horizontal resize coefficients
 //
 
 static int CapConfigureHorizontalResizeCoefficients(cap_v4l2_video_handle_t *Context,
@@ -627,8 +627,8 @@ static int CapConfigureHorizontalResizeCoefficients(cap_v4l2_video_handle_t *Con
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to calculate what scalings should be applied to
-//  input data, based on the crop values and the current input mode.
+//	Function to calculate what scalings should be applied to
+//	input data, based on the crop values and the current input mode.
 //
 
 static int CapRecalculateScaling(cap_v4l2_video_handle_t    *Context)
@@ -726,7 +726,7 @@ static int CapRecalculateScaling(cap_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to get a buffer
+//	Function to get a buffer
 //
 
 static int CapGetVideoBuffer(cap_v4l2_video_handle_t    *Context)
@@ -806,7 +806,7 @@ static int CapGetVideoBuffer(cap_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to release currently held, but not injected buffers
+//	Function to release currently held, but not injected buffers
 //
 
 static int CapReleaseBuffers(cap_v4l2_video_handle_t    *Context)
@@ -831,7 +831,7 @@ static int CapReleaseBuffers(cap_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to inject a buffer to the player
+//	Function to inject a buffer to the player
 //
 
 static int FrameCount = 0;
@@ -928,7 +928,7 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to configure the capture buffer pointers
+//	Function to configure the capture buffer pointers
 //
 unsigned long cap_address;
 static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
@@ -952,7 +952,7 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t    *Context,
 		Context->CapNextBufferToFill++;
 		if (Context->CapNextBufferToFill >= Context->CapNextBufferToGet)
 		{
-//      printk( "CAP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->CapNextBufferToFill, Context->CapNextBufferToGet, Context->CapPreInjectBufferSem.count );
+//			printk( "CAP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->CapNextBufferToFill, Context->CapNextBufferToGet, Context->CapPreInjectBufferSem.count );
 			printk("CAP DF\n");                      // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
 			DroppedAFrame   = true;
 			if (Context->StandardFrameRate)
@@ -1065,7 +1065,7 @@ static int CapHaltCapture(cap_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to configure the capture hardware
+//	Function to configure the capture hardware
 //
 
 static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
@@ -1258,7 +1258,7 @@ static int CapParseModeValues(cap_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to configure the capture hardware
+//	Function to configure the capture hardware
 //
 
 static int CapConfigureCapture(cap_v4l2_video_handle_t  *Context)
@@ -1323,7 +1323,7 @@ static int CapConfigureCapture(cap_v4l2_video_handle_t  *Context)
 }
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to start capturing data
+//	Function to start capturing data
 //
 
 static int CapStartup(cap_v4l2_video_handle_t   *Context)
@@ -1370,7 +1370,7 @@ static int CapStartup(cap_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to enter the run state, where we capture and move onto the next buffer
+//	Function to enter the run state, where we capture and move onto the next buffer
 //
 
 static int CapRun(cap_v4l2_video_handle_t   *Context)
@@ -1388,7 +1388,7 @@ static int CapRun(cap_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to stop capturing data
+//	Function to stop capturing data
 //
 
 static int CapStop(cap_v4l2_video_handle_t  *Context)
@@ -1413,10 +1413,10 @@ static int CapStop(cap_v4l2_video_handle_t  *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Function to handle a warm up failure
-//      What warmup failure usually means, is that the
-//      frame rate is either wrong, or the source is
-//      way way out of spec.
+//	Function to handle a warm up failure
+//	What warmup failure usually means, is that the
+//	frame rate is either wrong, or the source is
+//	way way out of spec.
 //
 
 static int CapFrameRate(cap_v4l2_video_handle_t *Context,
@@ -1508,10 +1508,10 @@ static int CapFrameRate(cap_v4l2_video_handle_t *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Function to handle a warm up failure
-//      What warmup failure usually means, is that the
-//      frame rate is either wrong, or the source is
-//      way way out of spec.
+//	Function to handle a warm up failure
+//	What warmup failure usually means, is that the
+//	frame rate is either wrong, or the source is
+//	way way out of spec.
 //
 
 static int CapWarmUpFailure(cap_v4l2_video_handle_t *Context,
@@ -1569,9 +1569,9 @@ void CapInterrupt(void* data, stm_field_t vsync)
 	switch (Context->CapState)
 	{
 		case CapInactive:
-//          printk( "CapInterrupt - Cap inactive - possible implementation error.\n" );
-// Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevant here
-//          CapHaltCapture( Context );              // Try and halt it
+//			printk( "CapInterrupt - Cap inactive - possible implementation error.\n" );
+//			Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevent here
+//			CapHaltCapture( Context );             // Try and halt it
 			break;
 		case CapStarting:
 			Context->CapBaseTime                = Now + CapTimeForNFrames(1);   // Force trigger
@@ -1584,7 +1584,7 @@ void CapInterrupt(void* data, stm_field_t vsync)
 			if (!inrange(Context->CapBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange) , (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
 					(Context->CapwarmUpSynchronizationAttempts < CAP_WARM_UP_TRIES))
 			{
-//              printk( "CapInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->CapBaseTime, CapTimeForNFrames(1), EstimatedBaseTime, Context->CapInterruptFrameCount, Context->CapBaseTime );
+//				printk( "CapInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->CapBaseTime, CapTimeForNFrames(1), EstimatedBaseTime, Context->CapInterruptFrameCount, Context->CapBaseTime );
 				Context->CapBaseTime            = Now;
 				Context->CapInterruptFrameCount     = 0;
 				Context->CapTimeAtZeroInterruptFrameCount   = Context->CapBaseTime;
@@ -1702,7 +1702,7 @@ void CapInterrupt(void* data, stm_field_t vsync)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Cap version of the stream event handler
+//	Cap version of the stream event handler
 //
 
 static void CapEventHandler(context_handle_t         EventContext,
@@ -1739,7 +1739,7 @@ static void CapEventHandler(context_handle_t         EventContext,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to handle a step in the output crop
+//	Function to handle a step in the output crop
 //
 
 static void   CapPerformOutputCropStep(cap_v4l2_video_handle_t  *Context)
@@ -1786,7 +1786,7 @@ static void   CapPerformOutputCropStep(cap_v4l2_video_handle_t  *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Video cap thread, re-written to handle low latency
+//	Video cap thread, re-written to handle low latency
 //
 
 static int CapVideoThread(void *data)
@@ -1966,7 +1966,7 @@ static int CapVideoThread(void *data)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Cap synchronizer thread, to start the output at a specified time
+//	Cap synchronizer thread, to start the output at a specified time
 //
 
 static int CapSynchronizerThread(void *data)
@@ -2058,7 +2058,7 @@ static int CapSynchronizerThread(void *data)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  The ioctl implementations for video
+//	The ioctl implementations for video
 //
 
 int CapVideoIoctlSetFramebuffer(cap_v4l2_video_handle_t *Context,
@@ -2336,8 +2336,8 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlDefaultYCbCr2RGB             = 0;
 			Context->CapControlDefaultBigNotLittle              = 0;
 			Context->CapControlDefaultCapFormat             = 0x0;  // RGB565
-//      Context->CapControlDefaultCapFormat             = 0x5;  // ARGB8888
-//      Context->CapControlDefaultCapFormat             = 0x12; // YCbCr4:2:2R
+//			Context->CapControlDefaultCapFormat             = 0x5;  // ARGB8888
+//			Context->CapControlDefaultCapFormat             = 0x12; // YCbCr4:2:2R
 #ifdef DISABLE_DECIMATION
 			Context->CapControlDefaultEnHsRc                = 0;
 			Context->CapControlDefaultEnVsRc                = 0;
@@ -2349,8 +2349,8 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			Context->CapControlDefaultTFCap                 = 1;
 			Context->CapControlDefaultBFCap                 = 1;
 			Context->CapControlDefaultVTGSel                = 0;
-//      Context->CapControlDefaultSource                = 0x1; // Video output
-//      Context->CapControlDefaultSource                = 0xe; // mixer output 422R
+//			Context->CapControlDefaultSource                = 0x1; // Video output
+//			Context->CapControlDefaultSource                = 0xe; // mixer output 422R
 			Context->CapControlDefaultSource                = 0xf; // mixer output RGB
 			Context->CapControlDefaultBigEndian             = 0;
 			Context->CapControlDefaultFullRange             = 0;

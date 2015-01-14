@@ -68,10 +68,10 @@ Date        Modification                                    Name
 // /////////////////////////////////////////////////////////////////////////
 //
 // Static declaration of the output rate parameter sets
-//  Minimum Integration Frames
-//  Maximum Integration Frames
-//  Ignore between integrations
-//  Maximum Jitter allowed
+//	Minimum Integration Frames
+//	Maximum Integration Frames
+//	Ignore between integrations
+//	Maximum Jitter allowed
 
 static OutputRateAdjustmentParameters_t     ORAInputFollowingAudio  = {  128, 2048, 64,  256, 32 };
 static OutputRateAdjustmentParameters_t     ORAOutputDrivenAudio    = {  512, 4096, 64, 2048, 32 };
@@ -214,8 +214,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	NewContext->TimeMappingEstablished                                  = false;
 	NewContext->BasedOnMasterMappingVersion                             = 0;
 	NewContext->AccumulatedPlaybackTimeJumpsSinceSynchronization        = 0;
-	NewContext->OutputRateAdjustmentType                = OutputRateAdjustmentNotDetermined;
-	NewContext->OutputRateAdjustmentParameters              = (StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio;
+	NewContext->OutputRateAdjustmentType                                = OutputRateAdjustmentNotDetermined;
+	NewContext->OutputRateAdjustmentParameters                          = (StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio;
 	NewContext->ClockAdjustmentEstablished                              = false;
 	NewContext->IntegratingClockDrift                                   = true;
 	NewContext->FramesToIntegrateOver                                   = NewContext->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
@@ -868,7 +868,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 				if (inrange(StreamOffset, -MAX_SYNCHRONIZATION_WINDOW, MAX_SYNCHRONIZATION_WINDOW))
 				{
 					Context->StreamOffset                               = StreamOffset;
-//          report( severity_info, "OutputCoordinator_Base_c::SynchronizeStreams(%s) - Stream offset by %12lldus\n", StreamType(), StreamOffset );
+//					report( severity_info, "OutputCoordinator_Base_c::SynchronizeStreams(%s) - Stream offset by %12lldus\n", StreamType(), StreamOffset );
 				}
 				else
 				{
@@ -1187,12 +1187,12 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 //
 
 OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustment(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                ExpectedDuration,
-	unsigned long long                ActualDuration,
-	long long                         CurrentError,
-	Rational_t                       *OutputRateAdjustment,
-	Rational_t                       *ParamSystemClockAdjustment)
+		OutputCoordinatorContext_t        Context,
+		unsigned long long                ExpectedDuration,
+		unsigned long long                ActualDuration,
+		long long                         CurrentError,
+		Rational_t                       *OutputRateAdjustment,
+		Rational_t                       *ParamSystemClockAdjustment)
 {
 	unsigned char           ExternalMapping;
 	long long               Difference;
@@ -1317,7 +1317,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 				long long   Jerk;
 				SysChange   = (1 / Context->ClockAdjustment) - SystemClockAdjustment;
 				Jerk    = LongLongIntegerPart(SysChange * (OS_GetTimeInMicroSeconds() - MasterBaseSystemTime)) / 2;
-//      report( severity_info, "Jerk - %lld\n", Jerk );
+//				report( severity_info, "Jerk - %lld\n", Jerk );
 				MasterBaseSystemTime    -= Jerk;
 				CurrentError        -= Jerk;
 			}

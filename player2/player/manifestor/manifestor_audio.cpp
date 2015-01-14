@@ -293,7 +293,7 @@ ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*   
 	}
 	Buffer->DumpToRelayFS(ST_RELAY_TYPE_DECODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_MANIFESTOR + RelayfsIndex, (void*)Player);
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataAudioOutputTimingType,
-				   (void**) &StreamBuffer[BufferIndex].AudioOutputTiming);
+				   (void **) &StreamBuffer[BufferIndex].AudioOutputTiming);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer audio output timing parameters %x.\n", BufferStatus);

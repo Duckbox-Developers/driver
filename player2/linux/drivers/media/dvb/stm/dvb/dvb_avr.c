@@ -33,7 +33,7 @@ license from ST.
 #include <asm/uaccess.h>
 #include <asm/irq.h>
 
-#include <linux/device.h>
+#include <linux/autoconf.h>
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/moduleparam.h>
@@ -515,7 +515,7 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 			{
 				struct v4l2_framebuffer *argp = arg;
 				DvpVideoIoctlSetFramebuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-											argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
+						argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
 				break;
 			}
 			CASE(VIDIOC_S_STD)
@@ -783,18 +783,18 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 						AvrAudioSetAacDecodeEnable(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle, ctrlvalue);
 						break;
 					case V4L2_CID_STM_AUDIO_MUTE: // 1 = mute on; 0 = mute off
+					{
+						int ret = 0;
+						FAIL_IF_NULL(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle);
+						if ((ctrlvalue != 0) && (ctrlvalue != 1)) return -ERANGE;
+						ret = AvrAudioSetEmergencyMuteReason(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle, ctrlvalue);
+						if (ret < 0)
 						{
-							int ret = 0;
-							FAIL_IF_NULL(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle);
-							if ((ctrlvalue != 0) && (ctrlvalue != 1)) return -ERANGE;
-							ret = AvrAudioSetEmergencyMuteReason(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle, ctrlvalue);
-							if (ret < 0)
-							{
-								DVB_ERROR("dvp_deploy_emergency_mute failed\n");
-								return -EINVAL;
-							}
-							break;
+							DVB_ERROR("dvp_deploy_emergency_mute failed\n");
+							return -EINVAL;
 						}
+						break;
+					}
 					case V4L2_CID_STM_AVR_AUDIO_CHANNEL_SELECT:
 						FAIL_IF_NULL(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle);
 						if ((ctrlvalue < V4L2_AVR_AUDIO_CHANNEL_SELECT_STEREO) ||
@@ -815,15 +815,15 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 						AvrAudioSetSilenceDuration(handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle, ctrlvalue);
 						break;
 					default:
+					{
+						int ret = 0;
+						ret = DvpVideoIoctlSetControl(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle, ctrlid, ctrlvalue);
+						if (ret < 0)
 						{
-							int ret = 0;
-							ret = DvpVideoIoctlSetControl(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle, ctrlid, ctrlvalue);
-							if (ret < 0)
-							{
-								DVB_ERROR("Set control invalid\n");
-								return -EINVAL;
-							}
+							DVB_ERROR("Set control invalid\n");
+							return -EINVAL;
 						}
+					}
 				}
 				break;
 			}
@@ -883,9 +883,9 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				break;
 			}
 		default:
-			{
-				return -ENOTTY;
-			}
+		{
+			return -ENOTTY;
+		}
 	} // end switch (cmd)
 	return 0;
 }

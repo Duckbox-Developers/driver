@@ -30,7 +30,7 @@ HavanaStatus_t HavanaFactory_c::Init(class HavanaFactory_c*  FactoryList,
 									 PlayerStreamType_t      StreamType,
 									 PlayerComponent_t       Component,
 									 unsigned int            Version,
-									 void * (*NewFactory)(void))
+									 void*                  (*NewFactory)(void))
 {
 	//HAVANA_DEBUG("\n");
 	NextFactory         = FactoryList;

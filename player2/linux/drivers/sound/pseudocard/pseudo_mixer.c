@@ -322,7 +322,6 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 };
 
 #elif defined CONFIG_CPU_SUBTYPE_STX7108
-
 #warning "7108 values haven't been tested"
 static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {

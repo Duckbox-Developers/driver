@@ -32,7 +32,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "output_timer_base.h"
 
@@ -163,7 +163,7 @@ OutputTimerStatus_t   OutputTimer_Base_c::Reset(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  Override for component base class set module parameters function
+//	Override for component base class set module parameters function
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::SetModuleParameters(
@@ -315,8 +315,8 @@ OutputTimerStatus_t   OutputTimer_Base_c::ResetTimeMapping(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  The function to await entry into the decode window, if the decode
-//  time is invalid, or if no time mapping has yet been established,
-//  we return immediately.
+//	time is invalid, or if no time mapping has yet been established,
+//	we return immediately.
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::AwaitEntryIntoDecodeWindow(Buffer_t         Buffer)
@@ -1081,7 +1081,7 @@ OutputTimerStatus_t   OutputTimer_Base_c::RecordActualFrameTiming(
 // /////////////////////////////////////////////////////////////////////////
 //
 //  The function to extract the stream delay relative to other
-//  streams in the playback (Note returns coordinator values)
+//	streams in the playback (Note returns coordinator values)
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::GetStreamStartDelay(unsigned long long     *Delay)
@@ -1263,7 +1263,7 @@ OutputTimerStatus_t   OutputTimer_Base_c::PerformAVDSync(
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Read the trick mode parameters, and set the trick mode
-//  domain boundaries.
+//	domain boundaries.
 //
 
 void   OutputTimer_Base_c::SetTrickModeDomainBoundaries(void)
@@ -1321,7 +1321,7 @@ void   OutputTimer_Base_c::SetTrickModeDomainBoundaries(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Read the trick mode parameters, and set the trick mode
-//  domain boundaries.
+//	domain boundaries.
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::TrickModeControl(void)
@@ -1681,12 +1681,12 @@ void   OutputTimer_Base_c::DecodeInTimeFailure(unsigned long long   FailedBy)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  Extract pointers, these functions extract the pointers
-//  appropriate to a buffer either before or after a decode,
-//  this common code is used to ensure that we only actually
-//  do the extraction once for each buffer in each circumstance,
-//  since we need these pointers in at least three cases in the
-//  decode->manifest sequence.
+//	Extract pointers, these functions extract the pointers
+//	appropriate to a buffer either before or after a decode,
+//	this common code is used to ensure that we only actually
+//	do the extraction once for each buffer in each circumstance,
+//	since we need these pointers in at least three cases in the
+//	decode->manifest sequence.
 //
 
 OutputTimerStatus_t   OutputTimer_Base_c::ExtractPointersPreDecode(Buffer_t     Buffer)
@@ -1767,8 +1767,8 @@ OutputTimerStatus_t   OutputTimer_Base_c::ExtractPointersPostManifest(Buffer_t  
 //
 //  Time functions
 //
-//  NOTE these are playback times, which are independant of the direction of play
-//  so play direction does not affect them in any way.
+//	NOTE these are playback times, which are independant of the direction of play
+//	so play direction does not affect them in any way.
 //
 
 bool   OutputTimer_Base_c::PlaybackTimeCheckGreaterThanOrEqual(

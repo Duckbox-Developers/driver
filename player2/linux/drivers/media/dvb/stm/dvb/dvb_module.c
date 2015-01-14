@@ -37,7 +37,7 @@ Date        Modification                                    Name
 #include <linux/module.h>
 #include <linux/file.h>
 #include <linux/kthread.h>
-#include <linux/version.h>
+#include <linux/autoconf.h>
 #include <asm/uaccess.h>
 
 #include <linux/dvb/audio.h>

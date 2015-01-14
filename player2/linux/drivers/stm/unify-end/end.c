@@ -30,6 +30,7 @@ Date        Modification                                    Name
 
 #include <linux/io.h>
 #include <linux/init.h>
+#include <linux/autoconf.h>
 
 static __init int stm_init(void)
 {

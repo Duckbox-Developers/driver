@@ -883,28 +883,28 @@ CodecStatus_t   Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 	switch (Player->PolicyValue(Playback, Stream, PolicyDecimateDecoderOutput))
 	{
 		case PolicyValueDecimateDecoderOutputDisabled:
-			{
-				// Normal Case
-				Param->MainAuxEnable                        = MAINOUT_EN;
-				Param->HorizontalDecimationFactor           = HDEC_1;
-				Param->VerticalDecimationFactor             = VDEC_1;
-				break;
-			}
+		{
+			// Normal Case
+			Param->MainAuxEnable                        = MAINOUT_EN;
+			Param->HorizontalDecimationFactor           = HDEC_1;
+			Param->VerticalDecimationFactor             = VDEC_1;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputHalf:
-			{
-				Param->MainAuxEnable                        = AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor           = HDEC_ADVANCED_2;
-				Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_PROG;
-				Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                        = AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor           = HDEC_ADVANCED_2;
+			Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_PROG;
+			Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_INT;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputQuarter:
-			{
-				Param->MainAuxEnable                        = AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor           = HDEC_ADVANCED_4;
-				Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                        = AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor           = HDEC_ADVANCED_4;
+			Param->VerticalDecimationFactor             = VDEC_ADVANCED_2_INT;
+			break;
+		}
 	}
 	DowngradeDecode             = ParsedFrameParameters->ApplySubstandardDecode &&
 								  SLICE_TYPE_IS(((H264FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure)->SliceHeader.slice_type, H264_SLICE_TYPE_B);
@@ -1307,9 +1307,9 @@ CodecStatus_t   Codec_MmeVideoH264_c::DumpDecodeParameters(void    *Parameters)
 // /////////////////////////////////////////////////////////////////////////
 //
 //      A local release reference frame, the external one inserts into our
-//  processing list, and the parent class one is generic, this version
-//  of the function releases the reference list slot allocation, then
-//  passes control to the generic function.
+//	processing list, and the parent class one is generic, this version
+//	of the function releases the reference list slot allocation, then
+//	passes control to the generic function.
 //
 
 CodecStatus_t   Codec_MmeVideoH264_c::H264ReleaseReferenceFrame(unsigned int     ReferenceFrameDecodeIndex)
@@ -1344,10 +1344,10 @@ CodecStatus_t   Codec_MmeVideoH264_c::H264ReleaseReferenceFrame(unsigned int    
 // /////////////////////////////////////////////////////////////////////////
 //
 //      A function to handle allocation of reference frame slots.
-//  Split out since it can be called on a decode where the
-//  allocation may be deferred, and on release where a deferred
-//  allocation may be enacted. Only one allocation may be deferred
-//  at any one time.
+//	Split out since it can be called on a decode where the
+//	allocation may be deferred, and on release where a deferred
+//	allocation may be enacted. Only one allocation may be deferred
+//	at any one time.
 //
 
 CodecStatus_t   Codec_MmeVideoH264_c::ReferenceFrameSlotAllocate(unsigned int        BufferIndex)

@@ -53,7 +53,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "collator_pes_audio.h"
 #include "st_relay.h"

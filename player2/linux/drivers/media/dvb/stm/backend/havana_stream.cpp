@@ -359,8 +359,7 @@ HavanaStatus_t HavanaStream_c::Discontinuity(bool                    ContinuousR
 }
 //}}}
 //{{{  Drain
-HavanaStatus_t HavanaStream_c::Drain(bool            Discard,
-									 bool            NonBlock)
+HavanaStatus_t HavanaStream_c::Drain(bool            Discard, bool            NonBlock)
 {
 	unsigned int        PolicyValue     = Discard ? PolicyValueDiscard : PolicyValuePlayout;
 	PlayerStatus_t      Status;
@@ -1061,8 +1060,7 @@ HavanaStatus_t HavanaStream_c::GetPlayInfo(struct play_info_s* PlayInfo)
 /// \param Multiplex            Name of multiplex if present (TS)
 /// \return                     Havana status code, HavanaNoError indicates success.
 //}}}
-HavanaStatus_t HavanaStream_c::Switch(char*   Format,
-									  char*   Encoding)
+HavanaStatus_t HavanaStream_c::Switch(char*   Format, char*   Encoding)
 {
 	HavanaStatus_t              Status                  = HavanaNoError;
 	PlayerStatus_t              PlayerStatus            = PlayerNoError;
@@ -1442,4 +1440,3 @@ HavanaStatus_t HavanaStream_c::GetPlayerEnvironment(PlayerPlayback_t*           
 	return HavanaNoError;
 }
 //}}}
-

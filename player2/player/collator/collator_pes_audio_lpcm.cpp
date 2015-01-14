@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "collator_pes_audio_lpcm.h"
 #include "frame_parser_audio_lpcm.h"

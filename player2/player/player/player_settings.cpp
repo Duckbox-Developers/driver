@@ -423,9 +423,9 @@ PlayerStatus_t   Player_Generic_c::SetModuleParameters(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Overload of SetModuleParameters, this version is responsible for setting player
-//  parameters, it is called by the master version of the function (above), which splits
-//  out to individual component calls.
+//	Overload of SetModuleParameters, this version is responsible for setting player
+//	parameters, it is called by the master version of the function (above), which splits
+//	out to individual component calls.
 //
 
 PlayerStatus_t   Player_Generic_c::SetModuleParameters(

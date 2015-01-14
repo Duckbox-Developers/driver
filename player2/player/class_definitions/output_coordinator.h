@@ -68,7 +68,7 @@ enum
 	OutputCoordinatorFnSynchronizeStreams,
 	OutputCoordinatorFnPerformEntryIntoDecodeWindowWait,
 	OutputCoordinatorFnHandlePlaybackTimeDeltas,
-	OutputCoordinatorFnCalculateOutputRateAdjustment,
+	OutputCoordinatorFnCalculateOutputRateAdjustments,
 	OutputCoordinatorFnAdjustMappingBase,
 	OutputCoordinatorFnMappingBaseAdjustmentApplied,
 

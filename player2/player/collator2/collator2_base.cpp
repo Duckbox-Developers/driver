@@ -327,7 +327,7 @@ CollatorStatus_t   Collator2_Base_c::Input(PlayerInputDescriptor_t   *Input,
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function is called when we enter input
-//  for a specific collator
+//	for a specific collator
 
 CollatorStatus_t   Collator2_Base_c::InputEntry(
 	PlayerInputDescriptor_t  *Input,
@@ -366,7 +366,7 @@ CollatorStatus_t   Collator2_Base_c::InputEntry(
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function is called when we exit input
-//  for a specific collator
+//	for a specific collator
 
 CollatorStatus_t   Collator2_Base_c::InputExit(void)
 {
@@ -482,14 +482,14 @@ void   Collator2_Base_c::InitializePartition(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function handles the output of a partition. This
-//  is easy when we are in forward play, but depends on the associated
-//  header status bits when we are in reverse (IE we stack frames until
-//  we hit a confirmed reversal point).
+//	is easy when we are in forward play, but depends on the associated
+//	header status bits when we are in reverse (IE we stack frames until
+//	we hit a confirmed reversal point).
 //
-//  Note we stack the buffer, with the reversible point flag encoded in
-//  bit 0, this assumes that buffer will be aligned to 16 bits at least
-//  (32 expected). since this may not be true on future processors, we
-//  test this assumption.
+//	Note we stack the buffer, with the reversible point flag encoded in
+//	bit 0, this assumes that buffer will be aligned to 16 bits at least
+//	(32 expected). since this may not be true on future processors, we
+//	test this assumption.
 //
 
 CollatorStatus_t   Collator2_Base_c::OutputOnePartition(PartitionPoint_t    *Descriptor)
@@ -566,7 +566,7 @@ CollatorStatus_t   Collator2_Base_c::OutputOnePartition(PartitionPoint_t    *Des
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function splits the coded data into two partitions,
-//  and copied in the appropriate meta data.
+//	and copied in the appropriate meta data.
 //
 
 CollatorStatus_t   Collator2_Base_c::PerformOnePartition(
@@ -642,10 +642,10 @@ CollatorStatus_t   Collator2_Base_c::PerformOnePartition(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - This is a fairly crucial function, it takes the
-//  accumulated data buffer and outputs the individual collated frames.
-//  it also manages the acquisition of a new operating buffer when
-//  appropriate.
+//	Protected - This is a fairly crucial function, it takes the
+//	accumulated data buffer and outputs the individual collated frames.
+//	it also manages the acquisition of a new operating buffer when
+//	appropriate.
 //
 
 CollatorStatus_t   Collator2_Base_c::PartitionOutput(void)
@@ -961,9 +961,9 @@ CollatorStatus_t   Collator2_Base_c::AccumulateStartCode(PackedStartCode_t  Code
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - Check if we should promote a glitch to a full blown
-//        discontinuity. This works by checking pts flow around
-//        the glitch.
+//	Private - Check if we should promote a glitch to a full blown
+//	discontinuity. This works by checking pts flow around
+//	the glitch.
 //
 
 void   Collator2_Base_c::CheckForGlitchPromotion(PartitionPoint_t    *Descriptor)
@@ -1002,8 +1002,8 @@ void   Collator2_Base_c::CheckForGlitchPromotion(PartitionPoint_t    *Descriptor
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - If the input is to be throttled, the the delay
-//        will occur here.
+//	Private - If the input is to be throttled, the the delay
+//	will occur here.
 //
 
 void   Collator2_Base_c::DelayForInjectionThrottling(PartitionPoint_t    *Descriptor)

@@ -248,7 +248,7 @@ typedef LongLongLong_c LongLongLong_t;
 
 // //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  The inconvenient bunch where the non long long long is on the left
+//	The inconvenient bunch where the non long long long is on the left
 //
 
 static inline LongLongLong_c   operator+ (long long I,

@@ -1346,39 +1346,39 @@ ManifestorStatus_t   Manifestor_Video_c::FillOutBufferStructure(BufferStructure_
 			// do require paired macroblock heights, H264 in particular.
 			RequestedStructure->Dimension[0]            = ((RequestedStructure->Dimension[0] + 0x1f) & 0xffffffe0);
 		case FormatVideo420_MacroBlock:
+		{
+			RequestedStructure->Dimension[0]            = ((RequestedStructure->Dimension[0] + 0x0f) & 0xfffffff0);
+			RequestedStructure->Dimension[1]            = ((RequestedStructure->Dimension[1] + 0x1f) & 0xffffffe0);
+			RequestedStructure->ComponentOffset[0]      = 0;
+			RequestedStructure->ComponentOffset[1]      = RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1];
+			// Force a 1k alignment, to support the 7109 hardware mpeg2 decoder
+			RequestedStructure->ComponentOffset[1]      = (RequestedStructure->ComponentOffset[1] + 0x3ff) & 0xfffffc00;
+			RequestedStructure->Strides[0][0]           = RequestedStructure->Dimension[0];
+			RequestedStructure->Strides[0][1]           = RequestedStructure->Dimension[0];
+			RequestedStructure->Size                    = RequestedStructure->ComponentOffset[1] +
+					((RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1]) / 2);
+			RequestedStructure->ComponentCount          = 2;
+			if (RequestedStructure->DecimationRequired)
 			{
-				RequestedStructure->Dimension[0]            = ((RequestedStructure->Dimension[0] + 0x0f) & 0xfffffff0);
-				RequestedStructure->Dimension[1]            = ((RequestedStructure->Dimension[1] + 0x1f) & 0xffffffe0);
-				RequestedStructure->ComponentOffset[0]      = 0;
-				RequestedStructure->ComponentOffset[1]      = RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1];
-				// Force a 1k alignment, to support the 7109 hardware mpeg2 decoder
-				RequestedStructure->ComponentOffset[1]      = (RequestedStructure->ComponentOffset[1] + 0x3ff) & 0xfffffc00;
-				RequestedStructure->Strides[0][0]           = RequestedStructure->Dimension[0];
-				RequestedStructure->Strides[0][1]           = RequestedStructure->Dimension[0];
-				RequestedStructure->Size                    = RequestedStructure->ComponentOffset[1] +
+				RequestedStructure->ComponentCount      = 4;
+				RequestedStructure->Dimension[2]        = RequestedStructure->Dimension[0] / DecimationValue;
+				RequestedStructure->Dimension[3]        = RequestedStructure->Dimension[1] / DecimationValue;
+				RequestedStructure->Dimension[2]        = ((RequestedStructure->Dimension[2] + 0x0f) & 0xfffffff0);
+				RequestedStructure->Dimension[3]        = ((RequestedStructure->Dimension[3] + 0x1f) & 0xffffffe0);
+				RequestedStructure->Strides[0][2]       = RequestedStructure->Dimension[2];
+				RequestedStructure->Strides[0][3]       = RequestedStructure->Dimension[2];
+				RequestedStructure->ComponentOffset[2]  = RequestedStructure->ComponentOffset[1] +
 						((RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1]) / 2);
-				RequestedStructure->ComponentCount          = 2;
-				if (RequestedStructure->DecimationRequired)
-				{
-					RequestedStructure->ComponentCount      = 4;
-					RequestedStructure->Dimension[2]        = RequestedStructure->Dimension[0] / DecimationValue;
-					RequestedStructure->Dimension[3]        = RequestedStructure->Dimension[1] / DecimationValue;
-					RequestedStructure->Dimension[2]        = ((RequestedStructure->Dimension[2] + 0x0f) & 0xfffffff0);
-					RequestedStructure->Dimension[3]        = ((RequestedStructure->Dimension[3] + 0x1f) & 0xffffffe0);
-					RequestedStructure->Strides[0][2]       = RequestedStructure->Dimension[2];
-					RequestedStructure->Strides[0][3]       = RequestedStructure->Dimension[2];
-					RequestedStructure->ComponentOffset[2]  = RequestedStructure->ComponentOffset[1] +
-							((RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1]) / 2);
-					RequestedStructure->ComponentOffset[3]  = RequestedStructure->ComponentOffset[2] +
-							(RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]);
-					// Force a 1k alignment, to support the 7109 hardware mpeg2 decoder
-					RequestedStructure->ComponentOffset[3]      = (RequestedStructure->ComponentOffset[3] + 0x3ff) & 0xfffffc00;
-					RequestedStructure->DecimatedSize      += (RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]) +
-							((RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]) / 2);
-					RequestedStructure->Size               += RequestedStructure->DecimatedSize;
-				}
-				break;
+				RequestedStructure->ComponentOffset[3]  = RequestedStructure->ComponentOffset[2] +
+						(RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]);
+				// Force a 1k alignment, to support the 7109 hardware mpeg2 decoder
+				RequestedStructure->ComponentOffset[3]      = (RequestedStructure->ComponentOffset[3] + 0x3ff) & 0xfffffc00;
+				RequestedStructure->DecimatedSize      += (RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]) +
+						((RequestedStructure->Dimension[2] * RequestedStructure->Dimension[3]) / 2);
+				RequestedStructure->Size               += RequestedStructure->DecimatedSize;
 			}
+			break;
+		}
 		case FormatVideo422_Raster:
 			//
 			// Round up dimesion 0 to 32, these buffers are used for dvp capture,

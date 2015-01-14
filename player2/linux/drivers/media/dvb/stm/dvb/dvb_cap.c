@@ -412,7 +412,7 @@ static int cap_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 			{
 				struct v4l2_framebuffer *argp = arg;
 				CapVideoIoctlSetFramebuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-											argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
+					argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
 				break;
 			}
 			CASE(VIDIOC_S_STD)
@@ -522,15 +522,15 @@ static int cap_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 					            }
 					*/
 					default:
+					{
+						int ret = 0;
+						ret = CapVideoIoctlSetControl(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle, ctrlid, ctrlvalue);
+						if (ret < 0)
 						{
-							int ret = 0;
-							ret = CapVideoIoctlSetControl(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle, ctrlid, ctrlvalue);
-							if (ret < 0)
-							{
-								DVB_ERROR("Set control invalid\n");
-								return -EINVAL;
-							}
+							DVB_ERROR("Set control invalid\n");
+							return -EINVAL;
 						}
+					}
 				}
 				break;
 			}
@@ -564,9 +564,9 @@ static int cap_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				break;
 			}
 		default:
-			{
-				return -ENOTTY;
-			}
+		{
+			return -ENOTTY;
+		}
 	} // end switch (cmd)
 	return 0;
 }
@@ -777,8 +777,8 @@ static int cap_probe(struct device *dev)
 	// discover the platform resources and record this in the shared context
 	base = platform_get_resource(cap_device_data, IORESOURCE_MEM, 0)->start;
 	size = (((unsigned int)(platform_get_resource(cap_device_data, IORESOURCE_MEM, 0)->end)) - base) + 1;
-//  shared_context->cap_irq = platform_get_resource(cap_device_data, IORESOURCE_IRQ, 0)->start;
-//  shared_context->cap_irq2 = platform_get_resource(cap_device_data, IORESOURCE_IRQ, 0)->end;
+//	shared_context->cap_irq = platform_get_resource(cap_device_data, IORESOURCE_IRQ, 0)->start;
+//	shared_context->cap_irq2 = platform_get_resource(cap_device_data, IORESOURCE_IRQ, 0)->end;
 	shared_context->mapped_cap_registers = ioremap(base, size);
 	shared_context->mapped_vtg_registers = ioremap(0xfe030200, 32 * 1024);
 	DVB_DEBUG("Compositor Capture Settings initialised\n");

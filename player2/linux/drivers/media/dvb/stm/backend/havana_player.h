@@ -126,7 +126,7 @@ class HavanaPlayer_c
 				PlayerComponent_t       Component,
 				unsigned int            Version,
 				bool                    Force,
-				void * (*NewFactory)(void));
+				void*                  (*NewFactory)(void));
 		HavanaStatus_t              DeRegisterFactory(const char*             Id,
 				const char*             SubId,
 				PlayerStreamType_t      StreamType,

@@ -699,8 +699,7 @@ int VideoIoctlSetSpeed(struct DeviceContext_s* Context, int Speed)
 	if (DirectionChange)
 		mutex_unlock(Context->ActiveVideoWriteLock);
 #ifdef __TDT__
-	/* Phantomias: quick hack to improve resynchronization after
-	   fast forward */
+	/* Phantomias: quick hack to improve resynchronization after fast forward */
 	if ((prevSpeed != Speed) && (prevSpeed != DVB_SPEED_STOPPED) &&
 			(Context->PlaySpeed == DVB_SPEED_NORMAL_PLAY))
 	{
@@ -966,28 +965,28 @@ static int VideoIoctlSetEncoding(struct DeviceContext_s* Context, unsigned int E
 			 * stream to be fully populated so we can reissue the play. */
 			return VideoIoctlPlay(Context);
 		default:
+		{
+			int         Result  = 0;
+			sigset_t    Newsigs;
+			sigset_t    Oldsigs;
+			if ((Encoding <= VIDEO_ENCODING_AUTO) || (Encoding >= VIDEO_ENCODING_NONE))
 			{
-				int         Result  = 0;
-				sigset_t    Newsigs;
-				sigset_t    Oldsigs;
-				if ((Encoding <= VIDEO_ENCODING_AUTO) || (Encoding >= VIDEO_ENCODING_NONE))
-				{
-					DVB_ERROR("Cannot switch to undefined encoding after play has started\n");
-					return  -EINVAL;
-				}
-				/* a signal received in here can cause issues. Turn them off, just for this bit... */
-				sigfillset(&Newsigs);
-				sigprocmask(SIG_BLOCK, &Newsigs, &Oldsigs);
-				Result      = DvbStreamSwitch(Context->VideoStream,
-											  BACKEND_PES_ID,
-											  VideoContent[Context->VideoEncoding]);
-				sigprocmask(SIG_SETMASK, &Oldsigs, NULL);
-				/*
-				if (Result == 0)
-				    Result  = VideoIoctlSetId            (Context, Context->VideoId);
-				*/
-				return Result;
+				DVB_ERROR("Cannot switch to undefined encoding after play has started\n");
+				return  -EINVAL;
 			}
+			/* a signal received in here can cause issues. Turn them off, just for this bit... */
+			sigfillset(&Newsigs);
+			sigprocmask(SIG_BLOCK, &Newsigs, &Oldsigs);
+			Result      = DvbStreamSwitch(Context->VideoStream,
+										  BACKEND_PES_ID,
+										  VideoContent[Context->VideoEncoding]);
+			sigprocmask(SIG_SETMASK, &Oldsigs, NULL);
+			/*
+			if (Result == 0)
+			    Result  = VideoIoctlSetId            (Context, Context->VideoId);
+			*/
+			return Result;
+		}
 	}
 }
 #endif

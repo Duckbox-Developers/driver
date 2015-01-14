@@ -663,56 +663,56 @@ static int PlayerSetEvent(struct player_event_s*       Event)
 	switch (Event->code)
 	{
 		case PLAYER_EVENT_PLAYBACK_CREATED:
-			{
-				SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_CREATED\n");
-				Result = event_playback_created_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_CREATED\n");
+			Result = event_playback_created_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		case PLAYER_EVENT_PLAYBACK_TERMINATED:
-			{
-				SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_TERMINATED\n");
-				Result = event_playback_terminated_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			SYSFS_DEBUG("PLAYER_EVENT_PLAYBACK_TERMINATED\n");
+			Result = event_playback_terminated_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		case PLAYER_EVENT_INPUT_FORMAT_CREATED:
 		case PLAYER_EVENT_SUPPORTED_INPUT_FORMAT_CREATED:
 		case PLAYER_EVENT_DECODE_ERRORS_CREATED:
 		case PLAYER_EVENT_SAMPLE_FREQUENCY_CREATED:
 		case PLAYER_EVENT_NUMBER_CHANNELS_CREATED:
 		case PLAYER_EVENT_NUMBER_OF_SAMPLES_PROCESSED:
-			{
-				Result = event_attribute_created_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			Result = event_attribute_created_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		case PLAYER_EVENT_STREAM_CREATED:
-			{
-				SYSFS_DEBUG("PLAYER_EVENT_STREAM_CREATED\n");
-				Result = event_stream_created_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			SYSFS_DEBUG("PLAYER_EVENT_STREAM_CREATED\n");
+			Result = event_stream_created_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		case PLAYER_EVENT_STREAM_TERMINATED:
-			{
-				SYSFS_DEBUG("PLAYER_EVENT_STREAM_TERMINATED\n");
-				Result = event_stream_terminated_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			SYSFS_DEBUG("PLAYER_EVENT_STREAM_TERMINATED\n");
+			Result = event_stream_terminated_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		case PLAYER_EVENT_INPUT_FORMAT_CHANGED:
-			{
-				SYSFS_DEBUG("PLAYER_EVENT_INPUT_FORMAT_CHANGED\n");
-				Result = event_input_format_changed_handler(Event);
-				if (Result) return Result;
-				break;
-			}
+		{
+			SYSFS_DEBUG("PLAYER_EVENT_INPUT_FORMAT_CHANGED\n");
+			Result = event_input_format_changed_handler(Event);
+			if (Result) return Result;
+			break;
+		}
 		default:
-			{
-				SYSFS_DEBUG("EVENT UNKNOWN %x\n", Event->code);
-				break;
-			}
+		{
+			SYSFS_DEBUG("EVENT UNKNOWN %x\n", Event->code);
+			break;
+		}
 	}
 	return Result;
 }

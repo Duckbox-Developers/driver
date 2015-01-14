@@ -386,9 +386,7 @@ ManifestorStatus_t Manifestor_AudioKsound_c::GetNextQueuedManifestationTime(unsi
 				// running a 'broken' manifestor without silence injection on starvation making
 				// the use of this code inevitable.
 				MANIFESTOR_ERROR("DisplayTimeOfNextCommit has illegal (historic) value, deploying workaround\n");
-				DisplayTimeOfNextCommit = WallTime +
-										  ((MIXER_NUM_PERIODS * 1000000ull * Mixer->GetMixerGranuleSize()) /
-										   OutputSampleRateHz);
+				DisplayTimeOfNextCommit = WallTime + ((MIXER_NUM_PERIODS * 1000000ull * Mixer->GetMixerGranuleSize()) / OutputSampleRateHz);
 			}
 			DisplayTime = DisplayTimeOfNextCommit +
 						  ((((unsigned long long) SamplesQueuedForDisplayAfterDisplayTimeOfNextCommit) * 1000000ull) /
@@ -537,13 +535,15 @@ ManifestorStatus_t      Manifestor_AudioKsound_c::FlushDisplayQueue(void)
 /// \return Manifestor status code, ManifestorNoError indicates success.
 ///
 ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
-	unsigned int SamplesToDescatter,
-	Rational_c RescaleFactor,
-	bool FinalBuffer,
-	MME_DataBuffer_t *DataBuffer, tMixerFrameParams *MixerFrameParams,
-	MME_DataBuffer_t *CodedDataBuffer, tMixerFrameParams *CodedMixerFrameParams,
-	PcmPlayer_c::OutputEncoding *OutputEncoding,
-	BypassPhysicalChannel_t BypassChannel)
+		unsigned int SamplesToDescatter,
+		Rational_c RescaleFactor,
+		bool FinalBuffer,
+		MME_DataBuffer_t* DataBuffer,
+		tMixerFrameParams* MixerFrameParams,
+		MME_DataBuffer_t* CodedDataBuffer,
+		tMixerFrameParams* CodedMixerFrameParams,
+		PcmPlayer_c::OutputEncoding *OutputEncoding,
+		BypassPhysicalChannel_t BypassChannel)
 {
 	ManifestorStatus_t Status = ManifestorNoError;
 	unsigned int TimeToFillInSamples;
@@ -600,12 +600,9 @@ ManifestorStatus_t Manifestor_AudioKsound_c::FillOutInputBuffer(
 			MixerFrameParams->Command = MIXER_PAUSE;
 			OutputState = MUTED;
 			ReleaseAllInputBuffersDuringUpdate = true;
-			return FillOutCodedDataBuffer(DataBuffer,
-										  MixerFrameParams,
-										  CodedDataBuffer,
-										  CodedMixerFrameParams,
-										  OutputEncoding,
-										  BypassChannel);
+			return FillOutCodedDataBuffer(DataBuffer, MixerFrameParams,
+										  CodedDataBuffer, CodedMixerFrameParams,
+										  OutputEncoding, BypassChannel);
 		}
 		//
 		// Non-blocking dequeue of buffer (with silence stuffing in reaction to error)
@@ -1347,10 +1344,10 @@ PcmPlayer_c::OutputEncoding Manifestor_AudioKsound_c::LookupCodedDtsDataBufferOu
 /// \return Output encoding to be used.
 ///
 PcmPlayer_c::OutputEncoding Manifestor_AudioKsound_c::LookupCodedDataBufferOutputEncoding(
-	Buffer_c* CodedFrameBuffer,
-	unsigned int CodedDataBufferSize,
-	unsigned int *RepetitionPeriod,
-	BypassPhysicalChannel_t BypassChannel)
+		Buffer_c* CodedFrameBuffer,
+		unsigned int CodedDataBufferSize,
+		unsigned int *RepetitionPeriod,
+		BypassPhysicalChannel_t BypassChannel)
 {
 	BufferStatus_t Status;
 	ParsedAudioParameters_t *ParsedAudioParameters;
@@ -1491,8 +1488,8 @@ bool Manifestor_AudioKsound_c::DoesTranscodedBufferExist(BypassPhysicalChannel_t
 	// stream format and output type
 	const static bool IsTranscodedMatrix[BypassPhysicalChannelCount][AudioOriginalEncodingTrueHD + 1] =
 	{
-		// None   AC3    DD+   DTS     DTSHD  DTSHDMA  DTSHDLBR  TrueHD  over SPDIF
-		{ false,  false, true, false,  true,  true,    false,    false},
+		// None   AC3    DD+    DTS    DTSHD  DTSHDMA  DTSHDLBR  TrueHD  over SPDIF
+		{ false,  false, true,  false, true,  true,    false,    false},
 		// None   AC3    DD+    DTS    DTSHD  DTSHDMA  DTSHDLBR  TrueHD  over HDMI
 		{ false,  false, false, false, false, false,   false,    true}
 	};
@@ -1868,9 +1865,9 @@ ManifestorStatus_t Manifestor_AudioKsound_c::UpdateCodedDataBuffer(MME_DataBuffe
 		// This is fortunate since the firmware doesn't know when the frame will end (due to historic
 		// DTS encoder bugs) meaning the value of SamplesUntilNextCodedDataRepetitionPeriod needs to
 		// be corrected by the driver.
-		if (CurrentCodedDataEncoding == PcmPlayer_c::BYPASS_DTS_CDDA &&
-				0 == SamplesUntilNextCodedDataRepetitionPeriod &&
-				0 != CodedDataBuffer->StartOffset)
+		if ((CurrentCodedDataEncoding == PcmPlayer_c::BYPASS_DTS_CDDA) &&
+				(0 == SamplesUntilNextCodedDataRepetitionPeriod) &&
+				(0 != CodedDataBuffer->StartOffset))
 		{
 			SamplesUntilNextCodedDataRepetitionPeriod = CurrentCodedDataRepetitionPeriod -
 					(CodedDataBuffer->StartOffset / 4);
@@ -1958,4 +1955,3 @@ ManifestorStatus_t Manifestor_AudioKsound_c::ReleaseTranscodedDataBuffer(Buffer_
 	}
 	return ManifestorNoError;
 }
-

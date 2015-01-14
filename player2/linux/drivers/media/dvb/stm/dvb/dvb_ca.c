@@ -134,104 +134,104 @@ static int CaIoctl(struct inode*    Inode,
 	switch (IoctlCode)
 	{
 		case CA_SET_PID: // currently this is useless but prevents from softcams errors
+		{
+			ca_pid_t *service_pid = (ca_pid_t*) Parameter;
+			int vLoop;
+			unsigned short pid = service_pid->pid;
+			int descramble_index = service_pid->index;
+			printk("CA_SET_PID index = %d pid %d\n", descramble_index, pid);
+			if (descramble_index >= 0)
 			{
-				ca_pid_t *service_pid = (ca_pid_t*) Parameter;
-				int vLoop;
-				unsigned short pid = service_pid->pid;
-				int descramble_index = service_pid->index;
-				printk("CA_SET_PID index = %d pid %d\n", descramble_index, pid);
-				if (descramble_index >= 0)
+				if (descramble_index >= NUMBER_OF_DESCRAMBLERS)
 				{
-					if (descramble_index >= NUMBER_OF_DESCRAMBLERS)
+					printk("Error only descramblers 0 - %d supportet\n", NUMBER_OF_DESCRAMBLERS - 1);
+					return -1;
+				}
+				pSession->descramblerForPid[pid] = descramble_index;
+				for (vLoop = 0; vLoop < pSession->num_pids; vLoop++)
+				{
+					if (((unsigned short) pSession->pidtable[vLoop] == (unsigned short) pid))
 					{
-						printk("Error only descramblers 0 - %d supportet\n", NUMBER_OF_DESCRAMBLERS - 1);
-						return -1;
-					}
-					pSession->descramblerForPid[pid] = descramble_index;
-					for (vLoop = 0; vLoop < pSession->num_pids; vLoop++)
-					{
-						if (((unsigned short) pSession->pidtable[vLoop] == (unsigned short) pid))
+						if (pSession->type[vLoop] == DMX_TYPE_TS)
 						{
-							if (pSession->type[vLoop] == DMX_TYPE_TS)
+							/* link audio/video slot to the descrambler */
+							if ((pSession->pes_type[vLoop] == DMX_TS_PES_VIDEO) ||
+									(pSession->pes_type[vLoop] == DMX_TS_PES_AUDIO) ||
+									(pid > 50)) /*dirty hack because for some reason the pes_type is changed to DMX_TS_PES_OTHER*/
 							{
-								/* link audio/video slot to the descrambler */
-								if ((pSession->pes_type[vLoop] == DMX_TS_PES_VIDEO) ||
-										(pSession->pes_type[vLoop] == DMX_TS_PES_AUDIO) ||
-										(pid > 50)) /*dirty hack because for some reason the pes_type is changed to DMX_TS_PES_OTHER*/
+								int err;
+								if (pSession->descramblerindex[vLoop] != descramble_index)
 								{
-									int err;
-									if (pSession->descramblerindex[vLoop] != descramble_index)
-									{
-										pSession->descramblerindex[vLoop] = descramble_index;
-										if ((err = pti_hal_descrambler_link(pSession->session,
-																			pSession->descramblers[pSession->descramblerindex[vLoop]],
-																			pSession->slots[vLoop])) != 0)
-											printk("Error linking slot %d to descrambler %d, err = %d\n",
-												   pSession->slots[vLoop],
-												   pSession->descramblers[pSession->descramblerindex[vLoop]],
-												   err);
-										else dprintk("linking pid %d slot %d to descrambler %d, session = %d pSession %p\n",
-														 pid, pSession->slots[vLoop],
-														 pSession->descramblers[pSession->descramblerindex[vLoop]],
-														 pSession->session, pSession);
-										return 0;
-									}
-									else
-									{
-										printk("pid %x is already linked to descrambler %d\n", pid, descramble_index);
-										return 0;
-									}
+									pSession->descramblerindex[vLoop] = descramble_index;
+									if ((err = pti_hal_descrambler_link(pSession->session,
+																		pSession->descramblers[pSession->descramblerindex[vLoop]],
+																		pSession->slots[vLoop])) != 0)
+										printk("Error linking slot %d to descrambler %d, err = %d\n",
+											   pSession->slots[vLoop],
+											   pSession->descramblers[pSession->descramblerindex[vLoop]],
+											   err);
+									else dprintk("linking pid %d slot %d to descrambler %d, session = %d pSession %p\n",
+													 pid, pSession->slots[vLoop],
+													 pSession->descramblers[pSession->descramblerindex[vLoop]],
+													 pSession->session, pSession);
+									return 0;
 								}
 								else
 								{
-									printk("pid %x no audio or video pid! type=%d slot=%d not linking to descrambler\n", pid, pSession->pes_type[vLoop], pSession->slots[vLoop]);
-									return -1;
+									printk("pid %x is already linked to descrambler %d\n", pid, descramble_index);
+									return 0;
 								}
 							}
 							else
 							{
-								printk("pid %x type is not DMX_TYPE_TS! not linking to descrambler\n", pid);
+								printk("pid %x no audio or video pid! type=%d slot=%d not linking to descrambler\n", pid, pSession->pes_type[vLoop], pSession->slots[vLoop]);
 								return -1;
 							}
 						}
+						else
+						{
+							printk("pid %x type is not DMX_TYPE_TS! not linking to descrambler\n", pid);
+							return -1;
+						}
 					}
-					printk("pid %x not found in pidtable, it might be inactive\n", pid);
 				}
-				return 0;
-				break;
+				printk("pid %x not found in pidtable, it might be inactive\n", pid);
 			}
+			return 0;
+			break;
+		}
 		case CA_SET_DESCR:
+		{
+			ca_descr_t *descr = (ca_descr_t*) Parameter;
+			dprintk("CA_SET_DESCR\n");
+			if (descr->index >= 16)
+				return -EINVAL;
+			if (descr->parity > 1)
+				return -EINVAL;
+			if (&Context->DvbContext->Lock != NULL)
+				mutex_lock(&Context->DvbContext->Lock);
+			dprintk("index = %d\n", descr->index);
+			dprintk("parity = %d\n", descr->parity);
+			dprintk("cw[0] = %d\n", descr->cw[0]);
+			dprintk("cw[1] = %d\n", descr->cw[1]);
+			dprintk("cw[2] = %d\n", descr->cw[2]);
+			dprintk("cw[3] = %d\n", descr->cw[3]);
+			dprintk("cw[4] = %d\n", descr->cw[4]);
+			dprintk("cw[5] = %d\n", descr->cw[5]);
+			dprintk("cw[6] = %d\n", descr->cw[6]);
+			dprintk("cw[7] = %d\n", descr->cw[7]);
+			if (descr->index < 0 || descr->index >= NUMBER_OF_DESCRAMBLERS)
 			{
-				ca_descr_t *descr = (ca_descr_t*) Parameter;
-				dprintk("CA_SET_DESCR\n");
-				if (descr->index >= 16)
-					return -EINVAL;
-				if (descr->parity > 1)
-					return -EINVAL;
-				if (&Context->DvbContext->Lock != NULL)
-					mutex_lock(&Context->DvbContext->Lock);
-				dprintk("index = %d\n", descr->index);
-				dprintk("parity = %d\n", descr->parity);
-				dprintk("cw[0] = %d\n", descr->cw[0]);
-				dprintk("cw[1] = %d\n", descr->cw[1]);
-				dprintk("cw[2] = %d\n", descr->cw[2]);
-				dprintk("cw[3] = %d\n", descr->cw[3]);
-				dprintk("cw[4] = %d\n", descr->cw[4]);
-				dprintk("cw[5] = %d\n", descr->cw[5]);
-				dprintk("cw[6] = %d\n", descr->cw[6]);
-				dprintk("cw[7] = %d\n", descr->cw[7]);
-				if (descr->index < 0 || descr->index >= NUMBER_OF_DESCRAMBLERS)
-				{
-					printk("Error descrambler %d not supported! needs to be in range 0 - %d\n", descr->index, NUMBER_OF_DESCRAMBLERS - 1);
-					return -1;
-				}
-				if (pti_hal_descrambler_set(pSession->session, pSession->descramblers[descr->index], descr->cw, descr->parity) != 0)
-					printk("Error while setting descrambler keys\n");
-				if (&Context->DvbContext->Lock != NULL)
-					mutex_unlock(&Context->DvbContext->Lock);
-				return 0;
-				break;
+				printk("Error descrambler %d not supported! needs to be in range 0 - %d\n", descr->index, NUMBER_OF_DESCRAMBLERS - 1);
+				return -1;
 			}
+			if (pti_hal_descrambler_set(pSession->session, pSession->descramblers[descr->index], descr->cw, descr->parity) != 0)
+				printk("Error while setting descrambler keys\n");
+			if (&Context->DvbContext->Lock != NULL)
+				mutex_unlock(&Context->DvbContext->Lock);
+			return 0;
+			break;
+		}
 		default:
 			printk("%s: Error - invalid ioctl %08x\n", __FUNCTION__, IoctlCode);
 	}
@@ -241,24 +241,24 @@ static int CaIoctl(struct inode*    Inode,
 	switch (IoctlCode)
 	{
 		case    CA_SEND_MSG:
-			{
-				struct ca_msg *msg;
-				msg = (struct ca_msg*)Parameter;
+		{
+			struct ca_msg *msg;
+			msg = (struct ca_msg*)Parameter;
 //if (msg->type==1)
 //    tkdma_set_iv(msg->msg);
 //  else if (msg->type==2)
 //    tkdma_set_key(msg->msg,0);
-				if (msg->type == 3)
-					Context->EncryptionOn = 1;
-				else if (msg->type == 4)
-					Context->EncryptionOn = 0;
-				else if (msg->type == 7)
-					memcpy(&Context->StartOffset, msg->msg, sizeof(Context->StartOffset));
-				else if (msg->type == 8)
-					memcpy(&Context->EndOffset, msg->msg, sizeof(Context->EndOffset));
-				return -ENOIOCTLCMD;
-				return 0;
-			}
+			if (msg->type == 3)
+				Context->EncryptionOn = 1;
+			else if (msg->type == 4)
+				Context->EncryptionOn = 0;
+			else if (msg->type == 7)
+				memcpy(&Context->StartOffset, msg->msg, sizeof(Context->StartOffset));
+			else if (msg->type == 8)
+				memcpy(&Context->EndOffset, msg->msg, sizeof(Context->EndOffset));
+			return -ENOIOCTLCMD;
+			return 0;
+		}
 		default:
 			printk("%s: Error - invalid ioctl %08x\n", __FUNCTION__, IoctlCode);
 	}

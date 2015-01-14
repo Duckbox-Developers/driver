@@ -349,7 +349,7 @@ CollatorStatus_t   Collator_Base_c::DiscardAccumulatedData(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //      This function is called when we enter input
-//  for a specific collator
+//	for a specific collator
 
 CollatorStatus_t   Collator_Base_c::InputEntry(
 	PlayerInputDescriptor_t  *Input,
@@ -366,7 +366,7 @@ CollatorStatus_t   Collator_Base_c::InputEntry(
 // /////////////////////////////////////////////////////////////////////////
 //
 //      Protected - This function is called when we exit input
-//  for a specific collator
+//	for a specific collator
 
 CollatorStatus_t   Collator_Base_c::InputExit(void)
 {

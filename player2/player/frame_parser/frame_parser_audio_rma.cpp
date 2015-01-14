@@ -467,11 +467,11 @@ FrameParserStatus_t   FrameParser_AudioRma_c::ReadStreamParameters(void)
 				break;
 			case CodeToInteger('c', 'o', 'o', 'k'):             /* Rma */
 			case CodeToInteger('a', 't', 'r', 'c'):             /* ATRAC */
-				{
-					StreamParameters->RmaVersion            = Bits.Get(32);
-					StreamParameters->SamplesPerFrame       = Bits.Get(16) / StreamParameters->ChannelCount;
-					break;
-				}
+			{
+				StreamParameters->RmaVersion            = Bits.Get(32);
+				StreamParameters->SamplesPerFrame       = Bits.Get(16) / StreamParameters->ChannelCount;
+				break;
+			}
 			case CodeToInteger('r', 'a', 'a', 'c'):             /* LC-AAC */
 			case CodeToInteger('r', 'a', 'c', 'p'):             /* HE-AAC */
 				break;

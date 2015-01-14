@@ -140,9 +140,7 @@ HavanaStatus_t HavanaPlayback_c::AddDemux(unsigned int                    DemuxI
 		PLAYBACK_ERROR("Unable to create demux context - insufficient memory\n");
 		return HavanaNoMemory;
 	}
-	Status      = Demux[DemuxId]->Init(Player,
-									   PlayerPlayback,
-									   DemuxContext);
+	Status      = Demux[DemuxId]->Init(Player, PlayerPlayback, DemuxContext);
 	if (Status != HavanaNoError)
 	{
 		delete Demux[DemuxId];
@@ -249,7 +247,7 @@ HavanaStatus_t HavanaPlayback_c::AddStream(char*                   Media,
 		OS_UnLockMutex(&Lock);
 		return Status;
 	}
-//	PLAYBACK_DEBUG ("Adding stream %p, %d\n", Stream[i], i);
+	//PLAYBACK_DEBUG ("Adding stream %p, %d\n", Stream[i], i);
 	*HavanaStream       = Stream[i];
 	OS_UnLockMutex(&Lock);
 	return HavanaNoError;
@@ -412,7 +410,7 @@ HavanaStatus_t HavanaPlayback_c::SetOption(play_option_t           Option,
 			PLAYBACK_ERROR("Unknown option %d\n", Option);
 			return HavanaError;
 	}
-	Status  = Player->SetPolicy(PlayerPlayback, PlayerAllStreams, PlayerPolicy, PolicyValue);
+	Status = Player->SetPolicy(PlayerPlayback, PlayerAllStreams, PlayerPolicy, PolicyValue);
 	if (Status != PlayerNoError)
 	{
 		PLAYBACK_ERROR("Unable to set playback option %x, %x\n", PlayerPolicy, PolicyValue);
@@ -459,7 +457,7 @@ HavanaStatus_t HavanaPlayback_c::CheckEvent(struct PlayerEventRecord_s*     Play
 //{{{  GetPlayerEnvironment
 HavanaStatus_t HavanaPlayback_c::GetPlayerEnvironment(PlayerPlayback_t*               PlayerPlayback)
 {
-//	PLAYBACK_DEBUG("\n");
+	//PLAYBACK_DEBUG("\n");
 	if ((this->PlayerPlayback == NULL))
 	{
 		PLAYBACK_ERROR("PlayerPlayback parameter is null. (%p) \n", this->PlayerPlayback);

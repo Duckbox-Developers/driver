@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "codec_mme_audio_aac.h"
 #include "aac_audio.h"
@@ -171,7 +171,7 @@ CodecStatus_t   Codec_MmeAudioAac_c::FillOutSetStreamParametersCommand(void)
 {
 	CodecStatus_t Status;
 	AacAudioCodecStreamParameterContext_t   *Context = (AacAudioCodecStreamParameterContext_t *)StreamParameterContext;
-//AacAudioStreamParameters_t *Parsed = (AacAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
+	//AacAudioStreamParameters_t *Parsed = (AacAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 	//
 	// Examine the parsed stream parameters and determine what type of codec to instanciate
 	//
@@ -274,7 +274,7 @@ CodecStatus_t   Codec_MmeAudioAac_c::ValidateDecodeContext(CodecBaseDecodeContex
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Function to dump out the set stream
-//  parameters from an mme command.
+//	parameters from an mme command.
 //
 
 CodecStatus_t   Codec_MmeAudioAac_c::DumpSetStreamParameters(void   *Parameters)
@@ -286,7 +286,7 @@ CodecStatus_t   Codec_MmeAudioAac_c::DumpSetStreamParameters(void   *Parameters)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Function to dump out the decode
-//  parameters from an mme command.
+//	parameters from an mme command.
 //
 
 CodecStatus_t   Codec_MmeAudioAac_c::DumpDecodeParameters(void  *Parameters)

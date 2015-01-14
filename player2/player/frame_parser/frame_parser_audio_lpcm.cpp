@@ -210,264 +210,264 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	switch (StreamType)
 	{
 		case   TypeLpcmDVDVideo:
+		{
+			///< frame is a DVD video lpcm
+			SubStreamId                  = Bits.Get(8);
+			NbAccessUnits                = Bits.Get(8);
+			FirstAccessUnitPointer       = Bits.Get(16);
+			EmphasisFlag                 = Bits.Get(1);
+			MuteFlag                     = Bits.Get(1);
+			Bits.FlushUnseen(1);
+			AudioFrameNumber             = Bits.Get(5);
+			WordSize1                    = (LpcmWordSize_t) Bits.Get(2);
+			AudioSamplingFrequency1      = (LpcmSamplingFreq_t) Bits.Get(2);
+			Bits.FlushUnseen(1);
+			NumberOfAudioChannels        = Bits.Get(3) + 1;
+			DynamicRangeControl          = Bits.Get(8);
+			// sanity checks...
+			if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
 			{
-				///< frame is a DVD video lpcm
-				SubStreamId                  = Bits.Get(8);
-				NbAccessUnits                = Bits.Get(8);
-				FirstAccessUnitPointer       = Bits.Get(16);
-				EmphasisFlag                 = Bits.Get(1);
-				MuteFlag                     = Bits.Get(1);
-				Bits.FlushUnseen(1);
-				AudioFrameNumber             = Bits.Get(5);
-				WordSize1                    = (LpcmWordSize_t) Bits.Get(2);
-				AudioSamplingFrequency1      = (LpcmSamplingFreq_t) Bits.Get(2);
-				Bits.FlushUnseen(1);
-				NumberOfAudioChannels        = Bits.Get(3) + 1;
-				DynamicRangeControl          = Bits.Get(8);
-				// sanity checks...
-				if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
-				{
-					FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
-					return FrameParserError;
-				}
-				if ((AudioFrameNumber >= 20) && (AudioFrameNumber != 31))
-				{
-					FRAME_ERROR("Invalid audio frame number (%d)\n", AudioFrameNumber);
-					return FrameParserError;
-				}
-				if (WordSize1 > LpcmWordSize24)
-				{
-					FRAME_ERROR("Invalid quantization word length (%d)\n", WordSize1);
-					return FrameParserError;
-				}
-				if (NumberOfAudioChannels > 8)
-				{
-					FRAME_ERROR("Invalid number of audio channels (%d)\n", NumberOfAudioChannels);
-					return FrameParserError;
-				}
-				if (AudioSamplingFrequency1 > LpcmSamplingFreq192)
-				{
-					FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
-					return FrameParserError;
-				}
-				NbSamples          = LpcmDVDVideoSampleCount[AudioSamplingFrequency1];
-				if (WordSize1 == LPCM_DVD_WS_20)
-				{
-					// 20 bits special case: 4 bits of the sample are loacted at the end of a
-					// the first 16 -bit part of two samples ...
-					// DVD Specifications for Read Only Disc / Part 3: Video Specifications
-					// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
-					AudioFrameSize = (NbSamples / 2) * NumberOfAudioChannels * 5;
-				}
-				else
-				{
-					AudioFrameSize = NbSamples * NumberOfAudioChannels * BytesPerSample[WordSize1];
-				}
-				break;
+				FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
+				return FrameParserError;
 			}
+			if ((AudioFrameNumber >= 20) && (AudioFrameNumber != 31))
+			{
+				FRAME_ERROR("Invalid audio frame number (%d)\n", AudioFrameNumber);
+				return FrameParserError;
+			}
+			if (WordSize1 > LpcmWordSize24)
+			{
+				FRAME_ERROR("Invalid quantization word length (%d)\n", WordSize1);
+				return FrameParserError;
+			}
+			if (NumberOfAudioChannels > 8)
+			{
+				FRAME_ERROR("Invalid number of audio channels (%d)\n", NumberOfAudioChannels);
+				return FrameParserError;
+			}
+			if (AudioSamplingFrequency1 > LpcmSamplingFreq192)
+			{
+				FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
+				return FrameParserError;
+			}
+			NbSamples          = LpcmDVDVideoSampleCount[AudioSamplingFrequency1];
+			if (WordSize1 == LPCM_DVD_WS_20)
+			{
+				// 20 bits special case: 4 bits of the sample are loacted at the end of a
+				// the first 16 -bit part of two samples ...
+				// DVD Specifications for Read Only Disc / Part 3: Video Specifications
+				// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
+				AudioFrameSize = (NbSamples / 2) * NumberOfAudioChannels * 5;
+			}
+			else
+			{
+				AudioFrameSize = NbSamples * NumberOfAudioChannels * BytesPerSample[WordSize1];
+			}
+			break;
+		}
 		case TypeLpcmDVDAudio:
+		{
+			///< frame is a DVD audio lpcm
+			SubStreamId                  = Bits.Get(8);
+			Bits.FlushUnseen(3); // reserved
+			// char upc_ean_isrc_number     = Bits.Get(5);
+			// char upc_ean_isrc_data       = Bits.Get(8);
+			Bits.FlushUnseen(13); // replaces the commented code out above...
+			ExtraPrivateHeaderLength     = Bits.Get(8) + LPCM_DVD_AUDIO_PRIVATE_HEADER_LENGTH;
+			FirstAccessUnitPointer       = Bits.Get(16);
+			EmphasisFlag                 = Bits.Get(1);
+			Bits.FlushUnseen(1); // reserved
+			//char StereoPlayBackMode      = Bits.Get(1);
+			//char DownMixCodeValidity     = Bits.Get(1);
+			//char DownMixCode             = Bits.Get(4);
+			Bits.FlushUnseen(6); // replaces the commented code out above...
+			WordSize1                    = (LpcmWordSize_t)Bits.Get(4);
+			WordSize2                    = (LpcmWordSize_t)Bits.Get(4);
+			AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(4);
+			AudioSamplingFrequency2      = (LpcmSamplingFreq_t)Bits.Get(4);
+			Bits.FlushUnseen(4); // reserved
+			Bits.FlushUnseen(4); // char MultiChannelType        = Bits.Get(4);
+			BitShiftChannel2             = Bits.Get(3);
+			ChannelAssignment            = Bits.Get(5);
+			DynamicRangeControl          = Bits.Get(8);
+			// sanity checks...
+			if ((SubStreamId & LPCM_DVD_AUDIO_SUBSTREAM_ID_MASK) != LPCM_DVD_AUDIO_SUBSTREAM_ID)
 			{
-				///< frame is a DVD audio lpcm
-				SubStreamId                  = Bits.Get(8);
-				Bits.FlushUnseen(3); // reserved
-				// char upc_ean_isrc_number     = Bits.Get(5);
-				// char upc_ean_isrc_data       = Bits.Get(8);
-				Bits.FlushUnseen(13); // replaces the commented code out above...
-				ExtraPrivateHeaderLength     = Bits.Get(8) + LPCM_DVD_AUDIO_PRIVATE_HEADER_LENGTH;
-				FirstAccessUnitPointer       = Bits.Get(16);
-				EmphasisFlag                 = Bits.Get(1);
-				Bits.FlushUnseen(1); // reserved
-				//char StereoPlayBackMode      = Bits.Get(1);
-				//char DownMixCodeValidity     = Bits.Get(1);
-				//char DownMixCode             = Bits.Get(4);
-				Bits.FlushUnseen(6); // replaces the commented code out above...
-				WordSize1                    = (LpcmWordSize_t)Bits.Get(4);
-				WordSize2                    = (LpcmWordSize_t)Bits.Get(4);
-				AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(4);
-				AudioSamplingFrequency2      = (LpcmSamplingFreq_t)Bits.Get(4);
-				Bits.FlushUnseen(4); // reserved
-				Bits.FlushUnseen(4); // char MultiChannelType        = Bits.Get(4);
-				BitShiftChannel2             = Bits.Get(3);
-				ChannelAssignment            = Bits.Get(5);
-				DynamicRangeControl          = Bits.Get(8);
-				// sanity checks...
-				if ((SubStreamId & LPCM_DVD_AUDIO_SUBSTREAM_ID_MASK) != LPCM_DVD_AUDIO_SUBSTREAM_ID)
-				{
-					FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
-					return FrameParserError;
-				}
-				if ((WordSize1 > LpcmWordSize24) || ((WordSize2 > LpcmWordSize24) && (WordSize2 != LPCM_DVD_AUDIO_NO_CH_GR2)))
-				{
-					FRAME_ERROR("Invalid quantization word length\n");
-					return FrameParserError;
-				}
-				if (AudioSamplingFrequency1 >= LpcmSamplingFreqLast)
-				{
-					FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
-					return FrameParserError;
-				}
-				// the 'not specified' lies outside the range of LpcmSamplingFreqLast - bring it inside
-				if (AudioSamplingFrequency2 == LpcmSamplingFreqNotSpecififed)
-				{
-					AudioSamplingFrequency2 = LpcmSamplingFreqNone;
-				}
-				if (AudioSamplingFrequency2 >= LpcmSamplingFreqLast)
-				{
-					FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency2);
-					return FrameParserError;
-				}
-				if (ChannelAssignment > 20)
-				{
-					FRAME_ERROR("Invalid channel assignment (%d)\n", ChannelAssignment);
-					return FrameParserError;
-				}
-				//
-				int NbSamples1 = LpcmDVDAudioSampleCount[AudioSamplingFrequency1];
-				int NbSamples2 = LpcmDVDAudioSampleCount[AudioSamplingFrequency2];
-				char NumberOfAudioChannels1 = DVDAudioChannelAssignment2ChannelCount1[ChannelAssignment];
-				char NumberOfAudioChannels2 = DVDAudioChannelAssignment2ChannelCount2[ChannelAssignment];
-				NumberOfAudioChannels = NumberOfAudioChannels2 + NumberOfAudioChannels1;
-				int AudioFrameSize1, AudioFrameSize2;
-				NbSamples = NbSamples1;
-				if (WordSize1 == LPCM_DVD_WS_20)
-				{
-					// 20 bits special case: 4 bits of the sample are located at the end of a
-					// the first 16 -bit part of two samples ...
-					// DVD Specifications for Read Only Disc / Part 3: Video Specifications
-					// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
-					AudioFrameSize1 = (NbSamples1 / 2) * NumberOfAudioChannels1 * 5;
-				}
-				else
-				{
-					AudioFrameSize1 = NbSamples1 * NumberOfAudioChannels1 * BytesPerSample[WordSize1];
-				}
-				if (WordSize2 == LPCM_DVD_WS_20)
-				{
-					// 20 bits special case: 4 bits of the sample are located at the end of a
-					// the first 16 -bit part of two samples ...
-					// DVD Specifications for Read Only Disc / Part 3: Video Specifications
-					// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
-					AudioFrameSize2 = (NbSamples2 / 2) * NumberOfAudioChannels2 * 5;
-				}
-				else
-				{
-					AudioFrameSize2 = NbSamples2 * NumberOfAudioChannels2 * BytesPerSample[WordSize2];
-				}
-				AudioFrameSize = AudioFrameSize1 + AudioFrameSize2;
-				break;
+				FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
+				return FrameParserError;
 			}
+			if ((WordSize1 > LpcmWordSize24) || ((WordSize2 > LpcmWordSize24) && (WordSize2 != LPCM_DVD_AUDIO_NO_CH_GR2)))
+			{
+				FRAME_ERROR("Invalid quantization word length\n");
+				return FrameParserError;
+			}
+			if (AudioSamplingFrequency1 >= LpcmSamplingFreqLast)
+			{
+				FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
+				return FrameParserError;
+			}
+			// the 'not specified' lies outside the range of LpcmSamplingFreqLast - bring it inside
+			if (AudioSamplingFrequency2 == LpcmSamplingFreqNotSpecififed)
+			{
+				AudioSamplingFrequency2 = LpcmSamplingFreqNone;
+			}
+			if (AudioSamplingFrequency2 >= LpcmSamplingFreqLast)
+			{
+				FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency2);
+				return FrameParserError;
+			}
+			if (ChannelAssignment > 20)
+			{
+				FRAME_ERROR("Invalid channel assignment (%d)\n", ChannelAssignment);
+				return FrameParserError;
+			}
+			//
+			int NbSamples1 = LpcmDVDAudioSampleCount[AudioSamplingFrequency1];
+			int NbSamples2 = LpcmDVDAudioSampleCount[AudioSamplingFrequency2];
+			char NumberOfAudioChannels1 = DVDAudioChannelAssignment2ChannelCount1[ChannelAssignment];
+			char NumberOfAudioChannels2 = DVDAudioChannelAssignment2ChannelCount2[ChannelAssignment];
+			NumberOfAudioChannels = NumberOfAudioChannels2 + NumberOfAudioChannels1;
+			int AudioFrameSize1, AudioFrameSize2;
+			NbSamples = NbSamples1;
+			if (WordSize1 == LPCM_DVD_WS_20)
+			{
+				// 20 bits special case: 4 bits of the sample are located at the end of a
+				// the first 16 -bit part of two samples ...
+				// DVD Specifications for Read Only Disc / Part 3: Video Specifications
+				// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
+				AudioFrameSize1 = (NbSamples1 / 2) * NumberOfAudioChannels1 * 5;
+			}
+			else
+			{
+				AudioFrameSize1 = NbSamples1 * NumberOfAudioChannels1 * BytesPerSample[WordSize1];
+			}
+			if (WordSize2 == LPCM_DVD_WS_20)
+			{
+				// 20 bits special case: 4 bits of the sample are located at the end of a
+				// the first 16 -bit part of two samples ...
+				// DVD Specifications for Read Only Disc / Part 3: Video Specifications
+				// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
+				AudioFrameSize2 = (NbSamples2 / 2) * NumberOfAudioChannels2 * 5;
+			}
+			else
+			{
+				AudioFrameSize2 = NbSamples2 * NumberOfAudioChannels2 * BytesPerSample[WordSize2];
+			}
+			AudioFrameSize = AudioFrameSize1 + AudioFrameSize2;
+			break;
+		}
 		case TypeLpcmDVDHD:
+		{
+			///< frame is a DVD HD lpcm
+			SubStreamId                  = Bits.Get(8);
+			NbAccessUnits                = Bits.Get(8);
+			FirstAccessUnitPointer       = Bits.Get(16);
+			EmphasisFlag                 = Bits.Get(1);
+			MuteFlag                     = Bits.Get(1);
+			AudioFrameNumber             = Bits.Get(5);
+			WordSize1                    = (LpcmWordSize_t)Bits.Get(2);
+			AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(3);
+			NumberOfAudioChannels        = Bits.Get(4) + 1;
+			DynamicRangeControl          = Bits.Get(8);
+			Bits.FlushUnseen(3); // reserved
+			//char DownMixCodeValidity     = Bits.Get(1);
+			//char DownMixCode             = Bits.Get(4);
+			Bits.FlushUnseen(5); // replaces the commented code out above...
+			Bits.FlushUnseen(3); // reserved
+			ChannelAssignment            = Bits.Get(5);
+			// sanity checks...
+			if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
 			{
-				///< frame is a DVD HD lpcm
-				SubStreamId                  = Bits.Get(8);
-				NbAccessUnits                = Bits.Get(8);
-				FirstAccessUnitPointer       = Bits.Get(16);
-				EmphasisFlag                 = Bits.Get(1);
-				MuteFlag                     = Bits.Get(1);
-				AudioFrameNumber             = Bits.Get(5);
-				WordSize1                    = (LpcmWordSize_t)Bits.Get(2);
-				AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(3);
-				NumberOfAudioChannels        = Bits.Get(4) + 1;
-				DynamicRangeControl          = Bits.Get(8);
-				Bits.FlushUnseen(3); // reserved
-				//char DownMixCodeValidity     = Bits.Get(1);
-				//char DownMixCode             = Bits.Get(4);
-				Bits.FlushUnseen(5); // replaces the commented code out above...
-				Bits.FlushUnseen(3); // reserved
-				ChannelAssignment            = Bits.Get(5);
-				// sanity checks...
-				if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
-				{
-					FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
-					return FrameParserError;
-				}
-				if ((AudioFrameNumber >= 20) && (AudioFrameNumber != 31))
-				{
-					FRAME_ERROR("Invalid audio frame number (%d)\n", AudioFrameNumber);
-					return FrameParserError;
-				}
-				if (WordSize1 > LpcmWordSize24)
-				{
-					FRAME_ERROR("Invalid quantization word length (%d)\n", WordSize1);
-					return FrameParserError;
-				}
-				if (NumberOfAudioChannels > 8)
-				{
-					FRAME_ERROR("Invalid number of audio channels (%d)\n", NumberOfAudioChannels);
-					return FrameParserError;
-				}
-				if (AudioSamplingFrequency1 > LpcmSamplingFreq192)
-				{
-					FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
-					return FrameParserError;
-				}
-				NbSamples = LpcmDVDAudioSampleCount[AudioSamplingFrequency1];
-				if (WordSize1 == LPCM_DVD_WS_20)
-				{
-					// 20 bits special case: 4 bits of the sample are located at the end of a
-					// the first 16 -bit part of two samples ...
-					// DVD Specifications for Read Only Disc / Part 3: Video Specifications
-					// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
-					AudioFrameSize = (NbSamples / 2) * NumberOfAudioChannels * 5;
-				}
-				else
-				{
-					AudioFrameSize = NbSamples * NumberOfAudioChannels * BytesPerSample[WordSize1];
-				}
-				break;
+				FRAME_ERROR("Invalid sub stream identifier (%x)\n", SubStreamId);
+				return FrameParserError;
 			}
+			if ((AudioFrameNumber >= 20) && (AudioFrameNumber != 31))
+			{
+				FRAME_ERROR("Invalid audio frame number (%d)\n", AudioFrameNumber);
+				return FrameParserError;
+			}
+			if (WordSize1 > LpcmWordSize24)
+			{
+				FRAME_ERROR("Invalid quantization word length (%d)\n", WordSize1);
+				return FrameParserError;
+			}
+			if (NumberOfAudioChannels > 8)
+			{
+				FRAME_ERROR("Invalid number of audio channels (%d)\n", NumberOfAudioChannels);
+				return FrameParserError;
+			}
+			if (AudioSamplingFrequency1 > LpcmSamplingFreq192)
+			{
+				FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
+				return FrameParserError;
+			}
+			NbSamples = LpcmDVDAudioSampleCount[AudioSamplingFrequency1];
+			if (WordSize1 == LPCM_DVD_WS_20)
+			{
+				// 20 bits special case: 4 bits of the sample are located at the end of a
+				// the first 16 -bit part of two samples ...
+				// DVD Specifications for Read Only Disc / Part 3: Video Specifications
+				// 5. Video Object / 5.4 Presentation Data / Figure 5.4.2.1-2
+				AudioFrameSize = (NbSamples / 2) * NumberOfAudioChannels * 5;
+			}
+			else
+			{
+				AudioFrameSize = NbSamples * NumberOfAudioChannels * BytesPerSample[WordSize1];
+			}
+			break;
+		}
 		case TypeLpcmDVDBD:
 		case TypeLpcmSPDIFIN:
+		{
+			unsigned int  Sfreq;
+			unsigned char BitsPerSample;
+			unsigned int  BytesPerSample;
+			///< frame is a BD lpcm or SPDIFIN
+			FrameSize          = Bits.Get(16);
+			ChannelAssignment  = Bits.Get(4);
+			Sfreq              = Bits.Get(4);
+			BitsPerSample      = Bits.Get(2);
+			if ((ChannelAssignment == 0) || (ChannelAssignment > 11))
 			{
-				unsigned int  Sfreq;
-				unsigned char BitsPerSample;
-				unsigned int  BytesPerSample;
-				///< frame is a BD lpcm or SPDIFIN
-				FrameSize          = Bits.Get(16);
-				ChannelAssignment  = Bits.Get(4);
-				Sfreq              = Bits.Get(4);
-				BitsPerSample      = Bits.Get(2);
-				if ((ChannelAssignment == 0) || (ChannelAssignment > 11))
+				FRAME_ERROR("Invalid channel assignment (%d)\n", ChannelAssignment);
+				return FrameParserError;
+			}
+			if (StreamType == TypeLpcmSPDIFIN)
+			{
+				EmphasisFlag            = Bits.Get(1); // Reuse StartFlag from BD spec.
+				WordSize1               = (BitsPerSample) ? /* BD Definition */ (LpcmWordSize_t)(BitsPerSample - 1) : /* SPDIFIN extension */ LpcmWordSize32;
+				NumberOfAudioChannels   = 2;
+				// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
+				AudioSamplingFrequency1 = LpcmSpdifin2DVDSamplingFreq[Sfreq];
+				BytesPerSample          = (WordSize1 < LpcmWordSize24) ? (WordSize1 + 2) : (WordSize1 + 1); /* As per BD : if WordSize == WS24 or WS20 then 3 bytes per sample */
+				if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
 				{
-					FRAME_ERROR("Invalid channel assignment (%d)\n", ChannelAssignment);
+					FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
 					return FrameParserError;
 				}
-				if (StreamType == TypeLpcmSPDIFIN)
-				{
-					EmphasisFlag            = Bits.Get(1); // Reuse StartFlag from BD spec.
-					WordSize1               = (BitsPerSample) ? /* BD Definition */ (LpcmWordSize_t)(BitsPerSample - 1) : /* SPDIFIN extension */ LpcmWordSize32;
-					NumberOfAudioChannels   = 2;
-					// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
-					AudioSamplingFrequency1 = LpcmSpdifin2DVDSamplingFreq[Sfreq];
-					BytesPerSample          = (WordSize1 < LpcmWordSize24) ? (WordSize1 + 2) : (WordSize1 + 1); /* As per BD : if WordSize == WS24 or WS20 then 3 bytes per sample */
-					if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
-					{
-						FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
-						return FrameParserError;
-					}
-				}
-				else
-				{
-					// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
-					AudioSamplingFrequency1     = LpcmBD2DVDSamplingFreq[Sfreq];
-					if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
-					{
-						FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
-						return FrameParserError;
-					}
-					if (BitsPerSample == 0)
-					{
-						FRAME_ERROR("Invalid bits per sample value\n");
-						return FrameParserError;
-					}
-					WordSize1         = (LpcmWordSize_t)(BitsPerSample - 1);
-					BytesPerSample    = ((BitsPerSample >= 2) ? 3 : 2);
-				}
-				NumberOfAudioChannels = BDChannelAssignment2ChannelCount[ChannelAssignment];
-				NbSamples             = FrameSize / (BytesPerSample * NumberOfAudioChannels);
-				AudioFrameSize        = FrameSize;
-				break;
 			}
+			else
+			{
+				// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
+				AudioSamplingFrequency1     = LpcmBD2DVDSamplingFreq[Sfreq];
+				if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
+				{
+					FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
+					return FrameParserError;
+				}
+				if (BitsPerSample == 0)
+				{
+					FRAME_ERROR("Invalid bits per sample value\n");
+					return FrameParserError;
+				}
+				WordSize1         = (LpcmWordSize_t)(BitsPerSample - 1);
+				BytesPerSample    = ((BitsPerSample >= 2) ? 3 : 2);
+			}
+			NumberOfAudioChannels = BDChannelAssignment2ChannelCount[ChannelAssignment];
+			NbSamples             = FrameSize / (BytesPerSample * NumberOfAudioChannels);
+			AudioFrameSize        = FrameSize;
+			break;
+		}
 		default:
 			// should not occur
 			FRAME_ERROR("Internal Error: Unknown LPCM Frame type\n");

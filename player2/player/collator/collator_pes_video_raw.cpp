@@ -264,7 +264,7 @@ CollatorStatus_t   Collator_PesVideoRaw_c::Input(PlayerInputDescriptor_t        
 		COLLATOR_DEBUG("%s: ImageSize          %6d\n", __FUNCTION__, DataRemaining);
 		COLLATOR_DEBUG("%s: ImageWidth         %6d\n", __FUNCTION__, StreamInfo.width);
 		COLLATOR_DEBUG("%s: ImageHeight        %6d\n", __FUNCTION__, StreamInfo.height);
-		COLLATOR_DEBUG("%s: Format           %.4s\n", __FUNCTION__, (char*) &Format);
+		COLLATOR_DEBUG("%s: Format             %.4s\n", __FUNCTION__, (char *) &Format);
 		Status                                  = CollatorNoError;
 	}
 	//}}}

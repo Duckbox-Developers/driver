@@ -46,6 +46,7 @@ Date        Modification                                    Name
 #include <linux/sched.h>
 #include <linux/delay.h>
 #include <linux/version.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,6 +54,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
 #include <linux/unistd.h>
 #include <linux/init.h>
 #include <linux/time.h>
@@ -283,11 +285,11 @@ typedef struct PlatformData_s
     }                                                                                   \
     static struct platform_driver plat_driver = {                                       \
         .driver = {                                                                     \
-                                                                                        .name   = name2,                                                                \
-                                                                                        .owner = THIS_MODULE,                                                           \
-                  },                                                                              \
-                  .probe  = plat_probe,                                                           \
-                            .remove = plat_remove,                                                          \
+            .name   = name2,                                                            \
+            .owner = THIS_MODULE,                                                       \
+        },                                                                              \
+        .probe  = plat_probe,                                                           \
+        .remove = plat_remove,                                                          \
     };                                                                                  \
     static int plat_init(void) {                                                        \
         return platform_driver_register(&plat_driver);                                  \
@@ -904,7 +906,7 @@ STATIC_INLINE void OSDEV_SnoopCacheRange(void *start, int size)
 	 * capabilities are too good to ignore
 	 */
 #ifdef __SH4__
-	extern void sh4_cache_snoop(void * p, unsigned int len);
+	extern void sh4_cache_snoop(void *p, unsigned int len);
 	sh4_cache_snoop(start, size);
 #endif
 }

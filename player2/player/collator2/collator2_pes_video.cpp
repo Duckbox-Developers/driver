@@ -691,8 +691,8 @@ CollatorStatus_t   Collator2_PesVideo_c::ProcessInputBackward(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The overlaod of the accumulate partition function,
-//  adds initialization of pts info to new partition
+//	The overlaod of the accumulate partition function,
+//	adds initialization of pts info to new partition
 //
 
 void   Collator2_PesVideo_c::AccumulateOnePartition(void)

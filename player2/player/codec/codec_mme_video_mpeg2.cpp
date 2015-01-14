@@ -314,33 +314,33 @@ CodecStatus_t   Codec_MmeVideoMpeg2_c::FillOutDecodeCommand(void)
 	switch (Player->PolicyValue(Playback, Stream, PolicyDecimateDecoderOutput))
 	{
 		case PolicyValueDecimateDecoderOutputDisabled:
-			{
-				// Normal Case
-				Param->MainAuxEnable                        = MPEG2_MAINOUT_EN;
-				Param->HorizontalDecimationFactor           = MPEG2_HDEC_1;
-				Param->VerticalDecimationFactor             = MPEG2_VDEC_1;
-				break;
-			}
+		{
+			// Normal Case
+			Param->MainAuxEnable                        = MPEG2_MAINOUT_EN;
+			Param->HorizontalDecimationFactor           = MPEG2_HDEC_1;
+			Param->VerticalDecimationFactor             = MPEG2_VDEC_1;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputHalf:
-			{
-				Param->MainAuxEnable                        = MPEG2_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor           = MPEG2_HDEC_ADVANCED_2;
-				if (Parsed->PictureCodingExtensionHeader.progressive_frame)
-					Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_PROG;
-				else
-					Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                        = MPEG2_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor           = MPEG2_HDEC_ADVANCED_2;
+			if (Parsed->PictureCodingExtensionHeader.progressive_frame)
+				Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_PROG;
+			else
+				Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_INT;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputQuarter:
-			{
-				Param->MainAuxEnable                        = MPEG2_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor           = MPEG2_HDEC_ADVANCED_4;
-				if (Parsed->PictureCodingExtensionHeader.progressive_frame)
-					Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_PROG;
-				else
-					Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                        = MPEG2_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor           = MPEG2_HDEC_ADVANCED_4;
+			if (Parsed->PictureCodingExtensionHeader.progressive_frame)
+				Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_PROG;
+			else
+				Param->VerticalDecimationFactor             = MPEG2_VDEC_ADVANCED_2_INT;
+			break;
+		}
 	}
 	Param->DecodingMode                         = MPEG2_NORMAL_DECODE;
 //    Param->DecodingMode                               = MPEG2_NORMAL_DECODE_WITHOUT_ERROR_RECOVERY;

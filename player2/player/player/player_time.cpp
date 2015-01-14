@@ -280,8 +280,8 @@ PlayerStatus_t   Player_Generic_c::TranslateNativePlaybackTime(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Request a player 2 event to indicate when a particular
-//  stream reaches a specific native playback time.
+//	Request a player 2 event to indicate when a particular
+//	stream reaches a specific native playback time.
 //
 
 PlayerStatus_t   Player_Generic_c::RequestTimeNotification(

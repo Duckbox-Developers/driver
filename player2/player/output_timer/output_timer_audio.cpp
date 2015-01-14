@@ -32,7 +32,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "output_timer_audio.h"
 
@@ -68,7 +68,7 @@ OutputTimer_Audio_c::OutputTimer_Audio_c(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Destructor function, ensures a full halt and reset
-//  are executed for all levels of the class.
+//	are executed for all levels of the class.
 //
 
 OutputTimer_Audio_c::~OutputTimer_Audio_c(void)
@@ -107,7 +107,7 @@ OutputTimerStatus_t   OutputTimer_Audio_c::Reset(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Function to setup the configuration record, after access has been
-//  given to player exported data.
+//	given to player exported data.
 //
 
 OutputTimerStatus_t   OutputTimer_Audio_c::InitializeConfiguration(void)

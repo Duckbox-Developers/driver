@@ -238,7 +238,7 @@ HavanaStatus_t HavanaPlayer_c::RegisterFactory(const char*             Id,
 		PlayerComponent_t       Component,
 		unsigned int            Version,
 		bool                    Force,
-		void * (*NewFactory)(void))
+		void*                  (*NewFactory)(void))
 {
 	HavanaStatus_t              HavanaStatus;
 	class  HavanaFactory_c*     Factory;

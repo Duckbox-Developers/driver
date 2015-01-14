@@ -69,7 +69,7 @@ BufferManager_Generic_c::~BufferManager_Generic_c(void)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Add to defined types
+//	Add to defined types
 //
 
 BufferStatus_t   BufferManager_Generic_c::CreateBufferDataType(
@@ -139,7 +139,7 @@ BufferStatus_t   BufferManager_Generic_c::CreateBufferDataType(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Retrieve the descriptor for a defined type
+//	Retrieve the descriptor for a defined type
 //
 
 BufferStatus_t   BufferManager_Generic_c::FindBufferDataType(

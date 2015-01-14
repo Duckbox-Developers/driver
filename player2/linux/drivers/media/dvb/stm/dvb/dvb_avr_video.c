@@ -575,7 +575,7 @@ int DvpVideoClose(dvp_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to configure the vertical resize coefficients
+//	Nicks function to configure the vertical resize coefficients
 //
 
 static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t   *Context,
@@ -602,7 +602,7 @@ static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t   *Con
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to configure the horizontal resize coefficients
+//	Nicks function to configure the horizontal resize coefficients
 //
 
 static int DvpConfigureHorizontalResizeCoefficients(dvp_v4l2_video_handle_t *Context,
@@ -629,8 +629,8 @@ static int DvpConfigureHorizontalResizeCoefficients(dvp_v4l2_video_handle_t *Con
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to calculate what scalings should be applied to
-//  input data, based on the crop values and the current input mode.
+//	Nicks function to calculate what scalings should be applied to
+//	input data, based on the crop values and the current input mode.
 //
 
 static int DvpRecalculateScaling(dvp_v4l2_video_handle_t    *Context)
@@ -713,7 +713,7 @@ static int DvpRecalculateScaling(dvp_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to get a buffer
+//	Nicks function to get a buffer
 //
 
 static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t    *Context)
@@ -779,7 +779,7 @@ static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to release currently held, but not injected buffers
+//	Nicks function to release currently held, but not injected buffers
 //
 
 static int DvpReleaseBuffers(dvp_v4l2_video_handle_t    *Context)
@@ -804,7 +804,7 @@ static int DvpReleaseBuffers(dvp_v4l2_video_handle_t    *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to inject a buffer to the player
+//	Nicks function to inject a buffer to the player
 //
 
 static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
@@ -895,7 +895,7 @@ static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to configure the capture buffer pointers
+//	Nicks function to configure the capture buffer pointers
 //
 unsigned long capture_address;
 static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t    *Context,
@@ -916,7 +916,7 @@ static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t    *Context,
 	if ((Context->DvpNextBufferToFill + 1) >= Context->DvpNextBufferToGet)
 	{
 		// Is there a buffer to move onto
-//  printk( "DVP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->DvpNextBufferToFill, Context->DvpNextBufferToGet, Context->DvpPreInjectBufferSem.count );
+//		printk( "DVP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->DvpNextBufferToFill, Context->DvpNextBufferToGet, Context->DvpPreInjectBufferSem.count );
 		printk("DVP DF\n");                      // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
 		DroppedAFrame   = true;
 	}
@@ -999,7 +999,7 @@ static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t    *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to halt the capture hardware
+//	Nicks function to halt the capture hardware
 //
 
 static int DvpHaltCapture(dvp_v4l2_video_handle_t   *Context)
@@ -1030,7 +1030,7 @@ static int DvpHaltCapture(dvp_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to configure the capture hardware
+//	Nicks function to configure the capture hardware
 //
 
 static int DvpParseModeValues(dvp_v4l2_video_handle_t   *Context)
@@ -1182,7 +1182,7 @@ static int DvpParseModeValues(dvp_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to configure the capture hardware
+//	Nicks function to configure the capture hardware
 //
 
 static int DvpConfigureCapture(dvp_v4l2_video_handle_t  *Context)
@@ -1257,7 +1257,7 @@ static int DvpConfigureCapture(dvp_v4l2_video_handle_t  *Context)
 }
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to start capturing data
+//	Nicks function to start capturing data
 //
 
 static int DvpStartup(dvp_v4l2_video_handle_t   *Context)
@@ -1294,7 +1294,7 @@ static int DvpStartup(dvp_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to enter the run state, where we capture and move onto the next buffer
+//	Nicks function to enter the run state, where we capture and move onto the next buffer
 //
 
 static int DvpRun(dvp_v4l2_video_handle_t   *Context)
@@ -1312,7 +1312,7 @@ static int DvpRun(dvp_v4l2_video_handle_t   *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to stop capturing data
+//	Nicks function to stop capturing data
 //
 
 static int DvpStop(dvp_v4l2_video_handle_t  *Context)
@@ -1337,10 +1337,10 @@ static int DvpStop(dvp_v4l2_video_handle_t  *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to handle a warm up failure
-//      What warmup failure usually means, is that the
-//      frame rate is either wrong, or the source is
-//      way way out of spec.
+//	Nicks function to handle a warm up failure
+//	What warmup failure usually means, is that the
+//	frame rate is either wrong, or the source is
+//	way way out of spec.
 //
 
 static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
@@ -1431,10 +1431,10 @@ static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks function to handle a warm up failure
-//      What warmup failure usually means, is that the
-//      frame rate is either wrong, or the source is
-//      way way out of spec.
+//	Nicks function to handle a warm up failure
+//	What warmup failure usually means, is that the
+//	frame rate is either wrong, or the source is
+//	way way out of spec.
 //
 
 static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
@@ -1456,7 +1456,7 @@ static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks dvp ancillary data capture interrupt handler
+//	Nicks dvp ancillary data capture interrupt handler
 //
 
 static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
@@ -1572,7 +1572,7 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks dvp interrupt handler
+//	Nicks dvp interrupt handler
 //
 
 #if defined (CONFIG_KERNELVERSION)  // STLinux 2.3
@@ -1630,7 +1630,7 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 			if (!inrange(Context->DvpBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange) , (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
 					(Context->DvpwarmUpSynchronizationAttempts < DVP_WARM_UP_TRIES))
 			{
-//              printk( "DvpInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->DvpBaseTime, DvpTimeForNFrames(1), EstimatedBaseTime, Context->DvpInterruptFrameCount, Context->DvpBaseTime );
+//				printk( "DvpInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->DvpBaseTime, DvpTimeForNFrames(1), EstimatedBaseTime, Context->DvpInterruptFrameCount, Context->DvpBaseTime );
 				Context->DvpBaseTime            = Now;
 				Context->DvpInterruptFrameCount     = 0;
 				Context->DvpTimeAtZeroInterruptFrameCount   = Context->DvpBaseTime;
@@ -1875,7 +1875,7 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks version of the stream event handler
+//	Nicks version of the stream event handler
 //
 
 static void DvpEventHandler(context_handle_t         EventContext,
@@ -1915,7 +1915,7 @@ static void DvpEventHandler(context_handle_t         EventContext,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks version of the function to handle a step in the output crop
+//	Nicks version of the function to handle a step in the output crop
 //
 
 static void   DvpPerformOutputCropStep(dvp_v4l2_video_handle_t  *Context)
@@ -1962,7 +1962,7 @@ static void   DvpPerformOutputCropStep(dvp_v4l2_video_handle_t  *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks version of the video dvp thread, re-written to handle low latency
+//	Nicks version of the video dvp thread, re-written to handle low latency
 //
 
 static int DvpVideoThread(void *data)
@@ -2083,7 +2083,7 @@ static int DvpVideoThread(void *data)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Nicks version of the dvp synchronizer thread, to start the output at a specified time
+//	Nicks version of the dvp synchronizer thread, to start the output at a specified time
 //
 
 static int DvpSynchronizerThread(void *data)
@@ -2176,7 +2176,7 @@ static int DvpSynchronizerThread(void *data)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  The ioctl implementations for video
+//	The ioctl implementations for video
 //
 
 int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
@@ -2243,7 +2243,7 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 //
 	if (Context->VideoRunning)
 	{
-//  printk("DvpVideoIoctlOverlayStart - Capture Thread already started\n" );
+//		printk("DvpVideoIoctlOverlayStart - Capture Thread already started\n" );
 		return 0;
 	}
 //
@@ -2618,59 +2618,59 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 							   Context->DvpControlPixelAspectRatioCorrection);
 			break;
 		case V4L2_CID_STM_DVPIF_PICTURE_ASPECT_RATIO:
+		{
+			dvp_v4l2_video_mode_t    Mode;
+			CheckAndSet("PICTURE_ASPECT_RATIO", DVP_PICTURE_ASPECT_RATIO_4_3,
+						DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
+			// Calculate the pixel aspect ratio coefficients corresponding to the picture aspect ratio.
+			// They are used to set the non progressive zoom format. Only for NTSC and PAL.
+			Mode = Context->DvpCaptureMode->Mode;
+			if (Context->DvpControlPictureAspectRatio == DVP_PICTURE_ASPECT_RATIO_4_3)
 			{
-				dvp_v4l2_video_mode_t    Mode;
-				CheckAndSet("PICTURE_ASPECT_RATIO", DVP_PICTURE_ASPECT_RATIO_4_3,
-							DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
-				// Calculate the pixel aspect ratio coefficients corresponding to the picture aspect ratio.
-				// They are used to set the non progressive zoom format. Only for NTSC and PAL.
-				Mode = Context->DvpCaptureMode->Mode;
-				if (Context->DvpControlPictureAspectRatio == DVP_PICTURE_ASPECT_RATIO_4_3)
+				switch (Mode)
 				{
-					switch (Mode)
-					{
-						case DVP_720_480_I60000:
-						case DVP_720_480_P60000:
-						case DVP_720_480_I59940:
-						case DVP_720_480_P59940:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 8;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 9;
-							break;
-						case DVP_720_576_I50000:
-						case DVP_720_576_P50000:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 16;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 15;
-							break;
-						default:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 1;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 1;
-							break;
-					}
+					case DVP_720_480_I60000:
+					case DVP_720_480_P60000:
+					case DVP_720_480_I59940:
+					case DVP_720_480_P59940:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 8;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 9;
+						break;
+					case DVP_720_576_I50000:
+					case DVP_720_576_P50000:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 16;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 15;
+						break;
+					default:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 1;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 1;
+						break;
 				}
-				else if (Context->DvpControlPictureAspectRatio == DVP_PICTURE_ASPECT_RATIO_16_9)
-				{
-					switch (Mode)
-					{
-						case DVP_720_480_I60000:
-						case DVP_720_480_P60000:
-						case DVP_720_480_I59940:
-						case DVP_720_480_P59940:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 32;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 27;
-							break;
-						case DVP_720_576_I50000:
-						case DVP_720_576_P50000:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 64;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 45;
-							break;
-						default:
-							Context->DeviceContext->PixelAspectRatio.Numerator = 1;
-							Context->DeviceContext->PixelAspectRatio.Denominator = 1;
-							break;
-					}
-				}
-				break;
 			}
+			else if (Context->DvpControlPictureAspectRatio == DVP_PICTURE_ASPECT_RATIO_16_9)
+			{
+				switch (Mode)
+				{
+					case DVP_720_480_I60000:
+					case DVP_720_480_P60000:
+					case DVP_720_480_I59940:
+					case DVP_720_480_P59940:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 32;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 27;
+						break;
+					case DVP_720_576_I50000:
+					case DVP_720_576_P50000:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 64;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 45;
+						break;
+					default:
+						Context->DeviceContext->PixelAspectRatio.Numerator = 1;
+						Context->DeviceContext->PixelAspectRatio.Denominator = 1;
+						break;
+				}
+			}
+			break;
+		}
 		default:
 			printk("Unknown %08x\n", Control);
 			return -1;
@@ -2790,9 +2790,9 @@ int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  The management functions for the Ancillary data capture
+//	The management functions for the Ancillary data capture
 //
-//  Function to request buffers
+//	Function to request buffers
 //
 
 int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
@@ -2876,7 +2876,7 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to query the state of a buffer
+//	Function to query the state of a buffer
 //
 
 int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
@@ -2908,7 +2908,7 @@ int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to queue a buffer
+//	Function to queue a buffer
 //
 
 int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
@@ -2937,7 +2937,7 @@ int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to de-queue a buffer
+//	Function to de-queue a buffer
 //
 
 int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
@@ -2971,7 +2971,7 @@ int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to turn on stream aquisition
+//	Function to turn on stream aquisition
 //
 
 int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t  *Context)
@@ -2982,7 +2982,7 @@ int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t  *Context)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Function to turn off stream aquisition
+//	Function to turn off stream aquisition
 //
 
 int DvpVideoIoctlAncillaryStreamOff(dvp_v4l2_video_handle_t *Context)

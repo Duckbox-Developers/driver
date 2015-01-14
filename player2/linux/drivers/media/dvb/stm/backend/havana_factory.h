@@ -59,7 +59,7 @@ class HavanaFactory_c
 										 PlayerStreamType_t      StreamType,
 										 PlayerComponent_t       Component,
 										 unsigned int            Version,
-										 void * (*NewFactory)(void));
+										 void*                  (*NewFactory)(void));
 		HavanaStatus_t              ReLink(class HavanaFactory_c*  FactoryList);
 		bool                        CanBuild(const char*             Id,
 											 const char*             SubId,

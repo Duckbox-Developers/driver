@@ -151,6 +151,5 @@ class Manifestor_Audio_c : public Manifestor_Base_c
 
 		// Methods to be supplied by this derived classes
 		ManifestorStatus_t   FillOutBufferStructure(BufferStructure_t    *RequestedStructure);
-
 };
 #endif

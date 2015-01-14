@@ -261,8 +261,8 @@ PlayerStatus_t   Player_Generic_c::DetachDemultiplexor(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Given that one stream is suffering from a failure to deliver data in time
-//  what is the status on other streams in the same multiplex.
+//	Given that one stream is suffering from a failure to deliver data in time
+//	what is the status on other streams in the same multiplex.
 //
 
 PlayerStatus_t   Player_Generic_c::CheckForDemuxBufferMismatch(

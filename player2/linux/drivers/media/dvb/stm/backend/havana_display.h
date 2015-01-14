@@ -50,7 +50,7 @@ Date        Modification                                    Name
 #define AVR_VIDEO_BUFFER_MEMORY                 PLAYER2_AVR_VIDEO_BUFFER_MEMORY
 #define MAX_VIDEO_DECODE_BUFFERS                32
 
-/*      Debug printing macros   */
+/* Debug printing macros */
 #ifndef ENABLE_DISPLAY_DEBUG
 #define ENABLE_DISPLAY_DEBUG            0
 #endif

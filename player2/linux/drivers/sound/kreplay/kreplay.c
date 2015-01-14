@@ -99,7 +99,7 @@ static int kreplay(void *unused)
 	}
 	// Let's assume that playback & capture period sizes are exact
 	ksnd_pcm_get_params(capture_handle, &buffer_frames, &period_frames);
-//  printk("period_frames = %lu\n", period_frames);
+//	printk("period_frames = %lu\n", period_frames);
 	ksnd_pcm_start(capture_handle);
 	ksnd_pcm_start(playback_handle);
 	while (!kthread_should_stop())
@@ -111,7 +111,7 @@ static int kreplay(void *unused)
 		capture_frames = ksnd_pcm_avail_update(capture_handle);
 		while (capture_frames < period_frames)
 		{
-//          printk("capture_frames=%lu, waiting for more...\n", capture_frames);
+//			printk("capture_frames=%lu, waiting for more...\n", capture_frames);
 			res = ksnd_pcm_wait(capture_handle, -1);
 			if (res <= 0)
 			{
@@ -129,15 +129,15 @@ static int kreplay(void *unused)
 		if (res < 0)
 			break;
 		capture_frames = capture_frames - (capture_frames % period_frames);
-//      printk("Captured %lu frames...\n", capture_frames);
+//		printk("Captured %lu frames...\n", capture_frames);
 		res = ksnd_pcm_mmap_begin(capture_handle, &capture_areas, &capture_offset, &capture_frames);
 		if (res < 0)
 		{
 			printk("Failed to mmap capture buffer\n");
 			break;
 		}
-//      printk("capture_areas[0].addr=%p, capture_areas[0].first=%d, capture_areas[0].step=%d, capture_offset=%lu, capture_frames=%lu\n",
-//              capture_areas[0].addr, capture_areas[0].first, capture_areas[0].step, capture_offset, capture_frames);
+//		printk("capture_areas[0].addr=%p, capture_areas[0].first=%d, capture_areas[0].step=%d, capture_offset=%lu, capture_frames=%lu\n",
+//				capture_areas[0].addr, capture_areas[0].first, capture_areas[0].step, capture_offset, capture_frames);
 		got_frames = capture_frames;
 		while (got_frames >= period_frames)
 		{
@@ -149,7 +149,7 @@ static int kreplay(void *unused)
 			playback_avail = ksnd_pcm_avail_update(playback_handle);
 			while (playback_avail < period_frames)
 			{
-//              printk("playback_avail=%lu, waiting for more...\n", playback_avail);
+//				printk("playback_avail=%lu, waiting for more...\n", playback_avail);
 				res = ksnd_pcm_wait(playback_handle, -1);
 				if (res <= 0)
 				{
@@ -166,7 +166,7 @@ static int kreplay(void *unused)
 			}
 			if (res < 0)
 				break;
-//          printk("Playback can play %lu frames, %lu frames left...\n", playback_avail, got_frames);
+//			printk("Playback can play %lu frames, %lu frames left...\n", playback_avail, got_frames);
 			if (playback_avail < got_frames)
 				playback_frames = playback_avail;
 			else
@@ -178,12 +178,12 @@ static int kreplay(void *unused)
 				break;
 			}
 			got_frames -= playback_frames;
-//          printk("playback_areas[0].addr=%p, playback_areas[0].first=%d, playback_areas[0].step=%d, playback_offset=%lu, playback_frames=%lu\n",
-//                  playback_areas[0].addr, playback_areas[0].first, playback_areas[0].step, playback_offset, playback_frames);
+//			printk("playback_areas[0].addr=%p, playback_areas[0].first=%d, playback_areas[0].step=%d, playback_offset=%lu, playback_frames=%lu\n",
+//					playback_areas[0].addr, playback_areas[0].first, playback_areas[0].step, playback_offset, playback_frames);
 			size = playback_frames * (sample_depth * nr_channels / 8);
 			src = capture_areas[0].addr + capture_areas[0].first / 8 + capture_offset * capture_areas[0].step / 8;
 			dest = playback_areas[0].addr + playback_areas[0].first / 8 + playback_offset * playback_areas[0].step / 8;
-//          printk("memcpy(dest=%p, src=%p, size=%d)\n", dest, src, size);
+//			printk("memcpy(dest=%p, src=%p, size=%d)\n", dest, src, size);
 			memcpy(dest, src, size);
 			commited_frames = ksnd_pcm_mmap_commit(playback_handle, playback_offset, playback_frames);
 			if (commited_frames < 0 || (snd_pcm_uframes_t) commited_frames != playback_frames)

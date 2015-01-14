@@ -610,7 +610,7 @@ typedef Rational_c Rational_t;
 
 // //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  The inconvenient bunch where the non rational is on the left
+//	The inconvenient bunch where the non rational is on the left
 //
 
 static inline Rational_c   operator+ (int       I,
@@ -647,7 +647,7 @@ static inline Rational_c   operator/ (int       V,
 
 // //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  Supplying the useful extraction bits as standalone functions
+//	Supplying the useful extraction bits as standalone functions
 //
 
 static inline long long   LongLongIntegerPart(Rational_c    R)

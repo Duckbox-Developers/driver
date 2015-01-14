@@ -181,7 +181,7 @@ typedef struct
 	enum eAccFsCode       OutputSamplingFreq;   //the target output sampling frequency at which the audio will be played back
 
 	//! Mixer specific global parameters
-	MME_LxMixerBDTransformerGlobalParams_Extended_t     GlobalParams;
+	MME_LxMixerBDTransformerGlobalParams_Extended_t GlobalParams;
 
 } MME_LxMixerTransformerInitBDParams_Extended_t;
 

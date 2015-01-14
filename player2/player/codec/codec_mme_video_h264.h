@@ -122,7 +122,7 @@ class Codec_MmeVideoH264_c : public Codec_MmeVideo_c
 		h264pp_device_t                       PreProcessorDevice;
 
 		bool                  ReferenceFrameSlotUsed[H264_MAX_REFERENCE_FRAMES];    // A usage array for reference frame slots in the transform data
-	H264_HostData_t                       RecordedHostData[MAX_DECODE_BUFFERS];                 // A record of hostdata for each reference frame
+		H264_HostData_t                       RecordedHostData[MAX_DECODE_BUFFERS];                 // A record of hostdata for each reference frame
 		unsigned int              OutstandingSlotAllocationRequest;
 
 		unsigned int                          NumberOfUsedDescriptors;                              // Map of used descriptors when constructing a reference list

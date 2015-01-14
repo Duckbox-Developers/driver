@@ -32,7 +32,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "frame_parser_audio.h"
 #include "st_relay.h"

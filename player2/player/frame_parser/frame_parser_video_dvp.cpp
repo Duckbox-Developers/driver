@@ -32,7 +32,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "frame_parser_video_dvp.h"
 #include "mpeg4.h"
@@ -139,7 +139,7 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayProcessFrame(void)
 // /////////////////////////////////////////////////////////////////////////
 //
 //  Addition to the base queue a buffer for decode increments
-//  the field index.
+//	the field index.
 //
 
 FrameParserStatus_t   FrameParser_VideoDvp_c::ForPlayQueueFrameForDecode(void)
@@ -149,8 +149,8 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::ForPlayQueueFrameForDecode(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  Specific reverse play implementation of queue for decode
-//  the field index.
+//	Specific reverse play implementation of queue for decode
+//	the field index.
 //
 
 FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayQueueFrameForDecode(void)
@@ -160,8 +160,8 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayQueueFrameForDecode(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  This function is responsible for walking the stacks to handle
-//  reverse decode.
+//	This function is responsible for walking the stacks to handle
+//	reverse decode.
 //
 
 FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayProcessDecodeStacks(void)
@@ -171,8 +171,8 @@ FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayProcessDecodeStacks(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  This function is responsible for walking the stacks to discard
-//  everything on them when we abandon reverse decode.
+//	This function is responsible for walking the stacks to discard
+//	everything on them when we abandon reverse decode.
 //
 
 FrameParserStatus_t   FrameParser_VideoDvp_c::RevPlayPurgeDecodeStacks(void)

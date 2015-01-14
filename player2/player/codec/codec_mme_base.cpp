@@ -1323,8 +1323,8 @@ CodecStatus_t   Codec_MmeBase_c::SendMMEStreamParameters(void)
 	// out pointer to the context data.
 	//
 #ifdef __KERNEL__
-//  DecodeContextBuffer->FlushCache();
-//  OSDEV_FlushCacheRange((void*)&(ParsedFrameParameters->StreamParameterStructure),ParsedFrameParameters->SizeofStreamParameterStructure);
+//	DecodeContextBuffer->FlushCache();
+//	OSDEV_FlushCacheRange((void*)&(ParsedFrameParameters->StreamParameterStructure),ParsedFrameParameters->SizeofStreamParameterStructure);
 #endif
 	Status      = MME_SendCommand(MMEHandle, &StreamParameterContext->MMECommand);
 	if (Status != MME_SUCCESS)

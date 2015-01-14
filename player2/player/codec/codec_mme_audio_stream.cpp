@@ -258,7 +258,7 @@ CodecStatus_t   Codec_MmeAudioStream_c::RegisterOutputBufferRing(Ring_t         
 		//Configuration.CodedMemorySize                   = 4*1024*1024;
 #endif
 		Status          = BufferManager->CreatePool(&TransformCodedFramePool, CodedFrameBufferType,
-													MAX_DECODE_BUFFERS, CodedMemorySize, TransformCodedFrameMemory);
+						MAX_DECODE_BUFFERS, CodedMemorySize, TransformCodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("(%s) - Failed to create the coded frame pool.\n", Configuration.CodecName);

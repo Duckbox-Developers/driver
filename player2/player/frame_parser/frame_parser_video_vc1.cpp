@@ -613,18 +613,18 @@ FrameParserStatus_t   FrameParser_VideoVc1_c::ReadHeaders(void)
 				break;
 			default:
 #if 0
-				{
-					unsigned char* Buff = &BufferData[ExtractStartCodeOffset(Code) - 12];
-					report(severity_info, "::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n    %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
-						   Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
-						   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
-						   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
-						   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
-				}
-				report(severity_error, "Unknown start code %x\n", ExtractStartCodeCode(Code));
+			{
+				unsigned char* Buff = &BufferData[ExtractStartCodeOffset(Code) - 12];
+				report(severity_info, "::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n    %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
+					   Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
+					   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
+					   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
+					   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
+			}
+			report(severity_error, "Unknown start code %x\n", ExtractStartCodeCode(Code));
 #endif
-				Status  = FrameParserUnhandledHeader;
-				break;
+			Status  = FrameParserUnhandledHeader;
+			break;
 		}
 		if ((Status != FrameParserNoError) && (Status != FrameParserUnhandledHeader))
 			return Status;

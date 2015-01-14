@@ -61,40 +61,40 @@ static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle,
 	switch (cmd)
 	{
 		case VIDIOC_ENUMAUDOUT:
+		{
+			struct v4l2_audioout *const audioout = arg;
+			int index = audioout->index - driver->index_offset[device];
+			if (index < 0 || index >= ARRAY_SIZE(g_aoutDevice))
 			{
-				struct v4l2_audioout *const audioout = arg;
-				int index = audioout->index - driver->index_offset[device];
-				if (index < 0 || index >= ARRAY_SIZE(g_aoutDevice))
-				{
-					DVB_ERROR("VIDIOC_ENUMAUDOUT: Output number out of range %d\n", index);
-					return -EINVAL;
-				}
-				strcpy(audioout->name, g_aoutDevice[index].name);
-				break;
+				DVB_ERROR("VIDIOC_ENUMAUDOUT: Output number out of range %d\n", index);
+				return -EINVAL;
 			}
+			strcpy(audioout->name, g_aoutDevice[index].name);
+			break;
+		}
 		case VIDIOC_S_AUDOUT:
+		{
+			const struct v4l2_audioout *const audioout = arg;
+			int index = audioout->index - driver->index_offset[device];
+			if (index < 0 || index >= ARRAY_SIZE(g_aoutDevice))
 			{
-				const struct v4l2_audioout *const audioout = arg;
-				int index = audioout->index - driver->index_offset[device];
-				if (index < 0 || index >= ARRAY_SIZE(g_aoutDevice))
-				{
-					DVB_ERROR("VIDIOC_S_AUDOUT: Output number out of range %d\n", index);
-					return -EINVAL;
-				}
-				/* allocate handle for driver registration */
-				handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle = kmalloc(sizeof(struct v4l2_audioout), GFP_KERNEL);
-				if (handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle == NULL)
-				{
-					DVB_ERROR("VIDIOC_S_AUDOUT: kmalloc failed\n");
-					return -EINVAL;
-				}
-				g_aoutDevice[index].audioId = index;
-				break;
+				DVB_ERROR("VIDIOC_S_AUDOUT: Output number out of range %d\n", index);
+				return -EINVAL;
 			}
+			/* allocate handle for driver registration */
+			handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle = kmalloc(sizeof(struct v4l2_audioout), GFP_KERNEL);
+			if (handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle == NULL)
+			{
+				DVB_ERROR("VIDIOC_S_AUDOUT: kmalloc failed\n");
+				return -EINVAL;
+			}
+			g_aoutDevice[index].audioId = index;
+			break;
+		}
 		default:
-			{
-				return -ENOTTY;
-			}
+		{
+			return -ENOTTY;
+		}
 	}
 	return 0;
 }

@@ -638,7 +638,7 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 	if (Vol->shape != SHAPE_RECTANGULAR)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader shape other than RECTANGULAR not supported\n");
-		//Player->MarkStreamUnPlayable( Stream );
+		//Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
 	// NICK ... The following code is adjusted to only cater for shape == RECTANGULAR
@@ -772,20 +772,20 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 	if (Vol->scalability)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader scalability not supported.\n");
-		//Player->MarkStreamUnPlayable( Stream );
+		//Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
 	//
 	if (!Vol->complexity_estimation_disable)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader complexity_estimation_disable not set\n");
-		//Player->MarkStreamUnPlayable( Stream );
+		//Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
 	if (Vol->data_partitioning)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader data_partitioning not supported.\n");
-		//Player->MarkStreamUnPlayable( Stream );
+		//Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
 #if 0

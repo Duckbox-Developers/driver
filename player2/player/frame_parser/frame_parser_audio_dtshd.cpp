@@ -772,62 +772,39 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader(BitStreamClass
 			switch (nuCodingMode)
 			{
 				case 0:
+				{
+					nuCoreExtensionMask = Bits->Get(12);
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_CORE)
 					{
-						nuCoreExtensionMask = Bits->Get(12);
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_CORE)
-						{
-							ParsedFrameHeader->ExtSubCoreCodingComponentSize[nAst] = Bits->Get(14) + 1; // nuExSSCoreFsize
-						}
-						bool bExSSCoreSyncPresent = Bits->Get(1);
-						if (bExSSCoreSyncPresent)
-						{
-							Bits->FlushUnseen(2);//nuExSSCoreSyncDistInFrames = 1<<(Bits->Get(2));
-						}
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XBR)
-						{
-							Bits->FlushUnseen(14);//nuExSSXBRFsize = Bits->Get(14)+1;
-						}
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XXCH)
-						{
-							Bits->FlushUnseen(14);//nuExSSXXCHFsize = Bits->Get(14)+1;
-						}
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_X96)
-						{
-							Bits->FlushUnseen(12);//nuExSSX96Fsize = Bits->Get(12)+1;
-						}
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_LBR)
-						{
-							Bits->FlushUnseen(14);//nuExSSLBRFsize = Bits->Get(14)+1;
-							bool bExSSLBRSyncPresent = Bits->Get(1);
-							if (bExSSLBRSyncPresent)
-							{
-								Bits->FlushUnseen(2);//nuExSSLBRSyncDistInFrames = 1<<(Bits->Get(2));
-							}
-						}
-						if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XLL)
-						{
-							Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLFsize = Bits->Get(nuBits4ExSSFsize)+1;
-							bool bExSSXLLSyncPresent = Bits->Get(1);
-							if (bExSSXLLSyncPresent)
-							{
-								Bits->FlushUnseen(4); //nuPeakBRCntrlBuffSzkB = Bits->Get(4)<<4;
-								unsigned int nuBitsInitDecDly = Bits->Get(5) + 1;
-								Bits->FlushUnseen(nuBitsInitDecDly); //nuInitLLDecDlyFrames=Bits->Get(nuBitsInitDecDly);
-								Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLSyncOffset=Bits->Get(nuBits4ExSSFsize);
-							}
-						}
-						if (nuCoreExtensionMask & RESERVED_1)
-						{
-							Bits->FlushUnseen(16); //Ignore = Bits->Get(16);
-						}
-						if (nuCoreExtensionMask & RESERVED_2)
-						{
-							Bits->FlushUnseen(16);//Ignore = Bits->Get(16);
-						}
-						ParsedFrameHeader->CodingComponent[nAst] = (DtshdCodingComponentType_t)nuCoreExtensionMask;
-						break;
+						ParsedFrameHeader->ExtSubCoreCodingComponentSize[nAst] = Bits->Get(14) + 1; // nuExSSCoreFsize
 					}
-				case 1:
+					bool bExSSCoreSyncPresent = Bits->Get(1);
+					if (bExSSCoreSyncPresent)
+					{
+						Bits->FlushUnseen(2);//nuExSSCoreSyncDistInFrames = 1<<(Bits->Get(2));
+					}
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XBR)
+					{
+						Bits->FlushUnseen(14);//nuExSSXBRFsize = Bits->Get(14)+1;
+					}
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XXCH)
+					{
+						Bits->FlushUnseen(14);//nuExSSXXCHFsize = Bits->Get(14)+1;
+					}
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_X96)
+					{
+						Bits->FlushUnseen(12);//nuExSSX96Fsize = Bits->Get(12)+1;
+					}
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_LBR)
+					{
+						Bits->FlushUnseen(14);//nuExSSLBRFsize = Bits->Get(14)+1;
+						bool bExSSLBRSyncPresent = Bits->Get(1);
+						if (bExSSLBRSyncPresent)
+						{
+							Bits->FlushUnseen(2);//nuExSSLBRSyncDistInFrames = 1<<(Bits->Get(2));
+						}
+					}
+					if (nuCoreExtensionMask & DTS_EXSUBSTREAM_XLL)
 					{
 						Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLFsize = Bits->Get(nuBits4ExSSFsize)+1;
 						bool bExSSXLLSyncPresent = Bits->Get(1);
@@ -838,31 +815,54 @@ void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader(BitStreamClass
 							Bits->FlushUnseen(nuBitsInitDecDly); //nuInitLLDecDlyFrames=Bits->Get(nuBitsInitDecDly);
 							Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLSyncOffset=Bits->Get(nuBits4ExSSFsize);
 						}
-						ParsedFrameHeader->CodingComponent[nAst] = DTS_EXSUBSTREAM_XLL;
-						break;
 					}
+					if (nuCoreExtensionMask & RESERVED_1)
+					{
+						Bits->FlushUnseen(16); //Ignore = Bits->Get(16);
+					}
+					if (nuCoreExtensionMask & RESERVED_2)
+					{
+						Bits->FlushUnseen(16);//Ignore = Bits->Get(16);
+					}
+					ParsedFrameHeader->CodingComponent[nAst] = (DtshdCodingComponentType_t)nuCoreExtensionMask;
+					break;
+				}
+				case 1:
+				{
+					Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLFsize = Bits->Get(nuBits4ExSSFsize)+1;
+					bool bExSSXLLSyncPresent = Bits->Get(1);
+					if (bExSSXLLSyncPresent)
+					{
+						Bits->FlushUnseen(4); //nuPeakBRCntrlBuffSzkB = Bits->Get(4)<<4;
+						unsigned int nuBitsInitDecDly = Bits->Get(5) + 1;
+						Bits->FlushUnseen(nuBitsInitDecDly); //nuInitLLDecDlyFrames=Bits->Get(nuBitsInitDecDly);
+						Bits->FlushUnseen(nuBits4ExSSFsize); //nuExSSXLLSyncOffset=Bits->Get(nuBits4ExSSFsize);
+					}
+					ParsedFrameHeader->CodingComponent[nAst] = DTS_EXSUBSTREAM_XLL;
+					break;
+				}
 				case 2:
+				{
+					Bits->FlushUnseen(14); //nuExSSLBRFsize = Bits->Get(14)+1;
+					bool bExSSLBRSyncPresent = Bits->Get(1);
+					if (bExSSLBRSyncPresent)
 					{
-						Bits->FlushUnseen(14); //nuExSSLBRFsize = Bits->Get(14)+1;
-						bool bExSSLBRSyncPresent = Bits->Get(1);
-						if (bExSSLBRSyncPresent)
-						{
-							Bits->FlushUnseen(2); //nuExSSLBRSyncDistInFrames = 1<<(Bits->Get(2));
-						}
-						ParsedFrameHeader->CodingComponent[nAst] = DTS_EXSUBSTREAM_LBR;
-						break;
+						Bits->FlushUnseen(2); //nuExSSLBRSyncDistInFrames = 1<<(Bits->Get(2));
 					}
+					ParsedFrameHeader->CodingComponent[nAst] = DTS_EXSUBSTREAM_LBR;
+					break;
+				}
 				case 3:
+				{
+					Bits->FlushUnseen(14); //nuExSSAuxFsize = Bits->Get(14)+1;
+					Bits->FlushUnseen(8); //nuAuxCodecID = Bits->Get(8);
+					bool bExSSAuxSyncPresent = Bits->Get(1);
+					if (bExSSAuxSyncPresent)
 					{
-						Bits->FlushUnseen(14); //nuExSSAuxFsize = Bits->Get(14)+1;
-						Bits->FlushUnseen(8); //nuAuxCodecID = Bits->Get(8);
-						bool bExSSAuxSyncPresent = Bits->Get(1);
-						if (bExSSAuxSyncPresent)
-						{
-							Bits->FlushUnseen(3); //nuExSSAuxSyncDistInFrames = Bits->Get(3)+1;
-						}
-						break;
+						Bits->FlushUnseen(3); //nuExSSAuxSyncDistInFrames = Bits->Get(3)+1;
 					}
+					break;
+				}
 				default:
 					break;
 			}
@@ -1033,67 +1033,67 @@ void FrameParser_AudioDtshd_c::GetSubstreamOnlyNumberOfSamples(BitStreamClass_c 
 	switch (Sync)
 	{
 		case DTSHD_START_CODE_XLL:
+		{
+			Bits->FlushUnseen(4); //nVersion
+			Bits->FlushUnseen(8); //nHeaderSize
+			unsigned int nBits4FrameFsize = Bits->Get(5) + 1;
+			Bits->FlushUnseen(nBits4FrameFsize); //nLLFrameSize
+			Bits->FlushUnseen(4); // nNumChSetsInFrame
+			unsigned int nSegmentsInFrame = 1 << Bits->Get(4);
+			unsigned int nSmplInSeg = 1 << Bits->Get(4);
+			unsigned int NbSamples = nSmplInSeg * nSegmentsInFrame;
+			unsigned int ratio = ParsedFrameHeader->ExtensionSamplingFrequency / 96000;
+			if (ratio)
 			{
-				Bits->FlushUnseen(4); //nVersion
-				Bits->FlushUnseen(8); //nHeaderSize
-				unsigned int nBits4FrameFsize = Bits->Get(5) + 1;
-				Bits->FlushUnseen(nBits4FrameFsize); //nLLFrameSize
-				Bits->FlushUnseen(4); // nNumChSetsInFrame
-				unsigned int nSegmentsInFrame = 1 << Bits->Get(4);
-				unsigned int nSmplInSeg = 1 << Bits->Get(4);
-				unsigned int NbSamples = nSmplInSeg * nSegmentsInFrame;
-				unsigned int ratio = ParsedFrameHeader->ExtensionSamplingFrequency / 96000;
-				if (ratio)
-				{
-					NbSamples *= ratio;
-				}
-				ParsedFrameHeader->NumberOfSamples = NbSamples;
-				break;
+				NbSamples *= ratio;
 			}
-		case DTSHD_START_CODE_LBR:
-			{
-				unsigned int nLBRSampleRateCode = 0;
-				// Extract LBR header type:
-				if (Bits->Get(8) == 2)
-				{
-					// LBR decoder initialization data follows:
-					nLBRSampleRateCode = Bits->Get(8);
-				}
-				unsigned int nSampleRate = DTSHDSampleFreqs[nLBRSampleRateCode];
-				unsigned int FreqRange;
-				if (nSampleRate < 14000)
-				{
-					FreqRange = 0;
-				}
-				else if (nSampleRate < 28000)
-				{
-					FreqRange = 1;
-				}
-				else if (nSampleRate < 50000)
-				{
-					FreqRange = 2;
-				}
-				else if (nSampleRate < 100000)
-				{
-					FreqRange = 3;
-				}
-				else
-				{
-					FreqRange = 4;
-				}
-				// magic function (taken from the firmware to get the number of samples value...)
-				ParsedFrameHeader->NumberOfSamples = 16 * (1 << (6 + FreqRange));
-				//            ParsedFrameHeader->ExtensionSamplingFrequency = nSampleRate;
-				break;
-			}
-		case DTSHD_START_CODE_SUBSTREAM_CORE:
-			{
-				FrameParser_AudioDtshd_c::ParseCoreHeader(Bits,
-						ParsedFrameHeader,
-						DTSHD_START_CODE_CORE);
-				ParsedFrameHeader->NumberOfSamples = ParsedFrameHeader->CoreNumberOfSamples;
-			}
+			ParsedFrameHeader->NumberOfSamples = NbSamples;
 			break;
+		}
+		case DTSHD_START_CODE_LBR:
+		{
+			unsigned int nLBRSampleRateCode = 0;
+			// Extract LBR header type:
+			if (Bits->Get(8) == 2)
+			{
+				// LBR decoder initialization data follows:
+				nLBRSampleRateCode = Bits->Get(8);
+			}
+			unsigned int nSampleRate = DTSHDSampleFreqs[nLBRSampleRateCode];
+			unsigned int FreqRange;
+			if (nSampleRate < 14000)
+			{
+				FreqRange = 0;
+			}
+			else if (nSampleRate < 28000)
+			{
+				FreqRange = 1;
+			}
+			else if (nSampleRate < 50000)
+			{
+				FreqRange = 2;
+			}
+			else if (nSampleRate < 100000)
+			{
+				FreqRange = 3;
+			}
+			else
+			{
+				FreqRange = 4;
+			}
+			// magic function (taken from the firmware to get the number of samples value...)
+			ParsedFrameHeader->NumberOfSamples = 16 * (1 << (6 + FreqRange));
+			//            ParsedFrameHeader->ExtensionSamplingFrequency = nSampleRate;
+			break;
+		}
+		case DTSHD_START_CODE_SUBSTREAM_CORE:
+		{
+			FrameParser_AudioDtshd_c::ParseCoreHeader(Bits,
+					ParsedFrameHeader,
+					DTSHD_START_CODE_CORE);
+			ParsedFrameHeader->NumberOfSamples = ParsedFrameHeader->CoreNumberOfSamples;
+		}
+		break;
 		default:
 			FRAME_ERROR("Found coding component different from xll, lbr or core in extension-only substream (Sync: 0x%x)!\n", Sync);
 			break;

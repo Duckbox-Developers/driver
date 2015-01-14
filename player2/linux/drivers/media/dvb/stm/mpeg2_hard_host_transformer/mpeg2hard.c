@@ -306,10 +306,10 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t                 Handle,
 		else if (FrameParams->verticalDecimationFactor == 4)
 			rcm += (1 << 6);
 		printk("**** RCM D 0x%08x ****\n", rcm);
-//      printk("**** Decimated Luma   0x%08x\n",FrameParams->decimatedLumaDecodeFramebuffer);
-//      printk("**** Decimated Chroma 0x%08x\n",FrameParams->decimatedChromaDecodeFramebuffer);
+//		printk("**** Decimated Luma   0x%08x\n",FrameParams->decimatedLumaDecodeFramebuffer);
+//		printk("**** Decimated Chroma 0x%08x\n",FrameParams->decimatedChromaDecodeFramebuffer);
 		WriteRegister(VID_RCM(0), rcm);
-//      WriteRegister(VID_RCM(0),0x2e);
+//		WriteRegister(VID_RCM(0),0x2e);
 	}
 	else
 		WriteRegister(VID_RCM(0), (unsigned int)(((FrameParams->decodingFlags & PROGRESSIVE) != 0) + 0x04));

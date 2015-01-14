@@ -548,37 +548,37 @@ static ssize_t show_input_format(struct class_device *class_dev, char *buf)
 		{
 			case DTS:
 #ifndef DISABLE_BAD_X96_EXTENSION_REPORTING
+			{
+				/* firmware doesn't correctly report the precence of X96 for some
+				 * stream types. however we can infer its presence from the reported
+				 * sampling frequency.
+				 */
+				int sfreq = TranslateDiscreteSamplingFrequencyToInteger(
+								(enum eAccFsCode) AudioContext->LLDecoderStatus.CurrentSpdifStatus.SamplingFreq);
+				if (sfreq > 48000)
 				{
-					/* firmware doesn't correctly report the precence of X96 for some
-					 * stream types. however we can infer its presence from the reported
-					 * sampling frequency.
-					 */
-					int sfreq = TranslateDiscreteSamplingFrequencyToInteger(
-									(enum eAccFsCode) AudioContext->LLDecoderStatus.CurrentSpdifStatus.SamplingFreq);
-					if (sfreq > 48000)
-					{
-						DVB_TRACE("Deploying DTS 96/24 reporting workaround (sfreq %d)\n", sfreq);
-						attr_size += sprintf(buf + attr_size, " 96/24");
-						break;
-					}
+					DVB_TRACE("Deploying DTS 96/24 reporting workaround (sfreq %d)\n", sfreq);
+					attr_size += sprintf(buf + attr_size, " 96/24");
+					break;
 				}
+			}
 #endif
-				switch ((AudioContext->LLDecoderStatus.CurrentSpdifStatus.Display >> 2) & 0x3)
-				{
-					case DTS_51:
-						/* do nothing */
-						break;
-					case DTS_61_MATRIX:
-						attr_size += sprintf(buf + attr_size, " ES 6.1 Matrix");
-						break;
-					case DTS_61_DISCRETE:
-						attr_size += sprintf(buf + attr_size, " ES 6.1 Discrete");
-						break;
-					case DTS_71_DISCRETE:
-						attr_size += sprintf(buf + attr_size, " ES 8ch Discrete");
-						break;
-				}
-				break;
+			switch ((AudioContext->LLDecoderStatus.CurrentSpdifStatus.Display >> 2) & 0x3)
+			{
+				case DTS_51:
+					/* do nothing */
+					break;
+				case DTS_61_MATRIX:
+					attr_size += sprintf(buf + attr_size, " ES 6.1 Matrix");
+					break;
+				case DTS_61_DISCRETE:
+					attr_size += sprintf(buf + attr_size, " ES 6.1 Discrete");
+					break;
+				case DTS_71_DISCRETE:
+					attr_size += sprintf(buf + attr_size, " ES 8ch Discrete");
+					break;
+			}
+			break;
 			case DTSHD_96k:
 				attr_size += sprintf(buf + attr_size, " 96/24");
 				break;
@@ -804,7 +804,6 @@ static bool is_inconsistant(avr_v4l2_audio_handle_t *AudioContext)
 			return true;
 
 		while (fs1 > fs2) fs2 <<= 1;
-
 		while (fs2 > fs1) fs1 <<= 1;
 
 		if (fs1 != fs2)
@@ -1215,11 +1214,11 @@ static int AvrAudioCalculateSampleRate(avr_v4l2_audio_handle_t *AudioContext,
 	int ret = 0;
 	unsigned int SampleRate;
 	unsigned int DiscreteSampleRate;
-//    if (initial_time == final_time)
-//    {
-//  DVB_ERROR("Initial and final time are equal\n");
-//  return -EINVAL;
-//    }
+//	if (initial_time == final_time)
+//	{
+//		DVB_ERROR("Initial and final time are equal\n");
+//		return -EINVAL;
+//	}
 	SampleRate = (((unsigned long long)(AUDIO_PERIOD_FRAMES - initial_delay + final_delay)) * 1000000ull) / (final_time - initial_time);
 	//DVB_DEBUG("Calculated SampleRate = %llu\n", SampleRate);
 	if (SampleRate <= MID(16000,  22050))
@@ -2338,35 +2337,35 @@ static void MMECallbackLL(MME_Event_t      Event,
 					wake_up(&AudioContext->WaitQueue);
 					break;
 				case MME_SEND_BUFFERS:
+				{
+					BufferEntry_t * TheEntry;
+					MME_DataBuffer_t * DataBuffer = CallbackData->DataBuffers_p[0];
+					unsigned int Size = DataBuffer->ScatterPages_p[0].BytesUsed;
+					int BufferIndex = (int)DataBuffer->UserData_p;
+					TheEntry = AudioContext->BufferEntries[BufferIndex];
+					if (TheEntry)
 					{
-						BufferEntry_t * TheEntry;
-						MME_DataBuffer_t * DataBuffer = CallbackData->DataBuffers_p[0];
-						unsigned int Size = DataBuffer->ScatterPages_p[0].BytesUsed;
-						int BufferIndex = (int)DataBuffer->UserData_p;
-						TheEntry = AudioContext->BufferEntries[BufferIndex];
-						if (TheEntry)
+						TheEntry->IsFree = true;
+						TheEntry->BytesUsed = Size;
+						if (Size)
 						{
-							TheEntry->IsFree = true;
-							TheEntry->BytesUsed = Size;
-							if (Size)
-							{
-								//DVB_DEBUG("Got a correct SendBuffer callback  (%d - %d)\n", BufferIndex, Size);
-								AudioContext->GotSendBufferCommandCallback = true;
-								wake_up(&AudioContext->WaitQueue);
-							}
-							else
-							{
-								DVB_ERROR("Strange: Got a SendBuffer callback but buffer (%d) is empty\n",
-										  BufferIndex);
-							}
+							//DVB_DEBUG("Got a correct SendBuffer callback  (%d - %d)\n", BufferIndex, Size);
+							AudioContext->GotSendBufferCommandCallback = true;
+							wake_up(&AudioContext->WaitQueue);
 						}
 						else
 						{
-							DVB_ERROR("Strange: Got a SendBuffer callback but buffer has a wrong index (%d - %x)\n",
-									  BufferIndex, (unsigned int)TheEntry);
+							DVB_ERROR("Strange: Got a SendBuffer callback but buffer (%d) is empty\n",
+									  BufferIndex);
 						}
-						break;
 					}
+					else
+					{
+						DVB_ERROR("Strange: Got a SendBuffer callback but buffer has a wrong index (%d - %x)\n",
+								  BufferIndex, (unsigned int)TheEntry);
+					}
+					break;
+				}
 				default:
 					DVB_ERROR("Unexpected MME CmdCode (%d)\n", CallbackData->CmdCode);
 					break;

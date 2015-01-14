@@ -32,7 +32,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//  Include any component headers
+//	Include any component headers
 
 #include "codec_mme_video.h"
 
@@ -334,9 +334,9 @@ CodecStatus_t   Codec_MmeVideo_c::Input(Buffer_t      CodedBuffer)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  The intercept to the initialise data types function, that
-//  ensures the video specific type is recorded in the configuration
-//  record.
+//	The intercept to the initialise data types function, that
+//	ensures the video specific type is recorded in the configuration
+//	record.
 //
 
 CodecStatus_t   Codec_MmeVideo_c::InitializeDataTypes(void)
@@ -354,8 +354,8 @@ CodecStatus_t   Codec_MmeVideo_c::InitializeDataTypes(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  The generic video function used to fill out a buffer structure
-//  request.
+//	The generic video function used to fill out a buffer structure
+//	request.
 //
 
 CodecStatus_t   Codec_MmeVideo_c::FillOutDecodeBufferRequest(BufferStructure_t   *Request)

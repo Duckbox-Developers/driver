@@ -180,7 +180,7 @@ CodecStatus_t Codec_MmeAudioDtshd_c::FillOutTransformerGlobalParameters(MME_LxAu
 	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
 //
 	MME_LxDtsConfig_t &Config = *((MME_LxDtsConfig_t *) GlobalParams.DecConfig);
-	memset(&Config.Config, 0, sizeof(MME_LxDtsConfig_t));
+	memset(&Config, 0, sizeof(MME_LxDtsConfig_t));
 	Config.DecoderId = ACC_DTS_ID;
 	Config.StructSize = sizeof(MME_LxDtsConfig_t);
 	// set the common fields

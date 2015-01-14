@@ -352,8 +352,8 @@ FrameParserStatus_t   FrameParser_VideoH264_c::RegisterOutputBufferRing(Ring_t  
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The three helper functions for the collator, to allow it to
-//  determine which headers form frame boundaries.
+//	The three helper functions for the collator, to allow it to
+//	determine which headers form frame boundaries.
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::ResetCollatedHeaderState(void)
@@ -854,7 +854,7 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ReadScalingList(
 	report(severity_info, "\n");
 #endif
 //
-	AssertAntiEmulationOk("ParseScalingList");
+	AssertAntiEmulationOk("ReadScalingList");
 //
 	return FrameParserNoError;
 }
@@ -1229,9 +1229,9 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer      = SPSBuffer;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].Header      = Header;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].ExtensionHeader = &HeaderPair->SequenceParameterSetExtensionHeader;
-//
-// Dump this header
-//
+	//
+	// Dump this header
+	//
 	if (CpbDpbDelaysPresentFlag != LastCpbDpbDelaysPresentFlag)
 	{
 		if (CpbDpbDelaysPresentFlag)
@@ -4093,12 +4093,12 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayPurgeQueuedPostDecodeParam
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to process deferred post decode parameter
-//      settings, these consist of the display frame index, and presentation
-//      time, if we have an IDR or a B frame, we can process any frames with a
-//  lower pic order count, we also allow the processing of all frames upto
-//  a pic order cnt when a reference frame falls out of the sliding window
-//  in reference framme marking.
+//	Stream specific function to process deferred post decode parameter
+//	settings, these consist of the display frame index, and presentation
+//	time, if we have an IDR or a B frame, we can process any frames with a
+//	lower pic order count, we also allow the processing of all frames up to
+//	a pic order cnt when a reference frame falls out of the sliding window
+//	in reference framme marking.
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayProcessQueuedPostDecodeParameterSettings(void)
@@ -4116,12 +4116,12 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayProcessQueuedPostDecodePar
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to generate the post decode parameter
-//      settings, these consist of the display frame index, and presentation
-//      time, both of which may be deferred if the information is unavailable.
+//	Stream specific function to generate the post decode parameter
+//	settings, these consist of the display frame index, and presentation
+//	time, both of which may be deferred if the information is unavailable.
 //
-//      For h264, we allow the processing of all frames that are IDRs or
-//  non-reference frames, all others are deferred
+//	For h264, we allow the processing of all frames that are IDRs or
+//	non-reference frames, all others are deferred
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayGeneratePostDecodeParameterSettings(void)
@@ -4141,11 +4141,11 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayGeneratePostDecodeParamete
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific override function for doing a decode, we force
-//  the appropriate record to be generated in the extended picorder
-//  cnt table, then pass to the usual fn.
+//	Stream specific override function for doing a decode, we force
+//	the appropriate record to be generated in the extended picorder
+//	cnt table, then pass to the usual fn.
 //
-//  Note we only enter the deferred PTS tanble if the queue was sucessful
+//	Note we only enter the deferred PTS tanble if the queue was sucessful
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayQueueFrameForDecode(void)
@@ -4165,8 +4165,8 @@ FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayQueueFrameForDecode(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific override function for processing decode stacks, performs the
-//  standard play, then reinitializes variables appropriate for the next block.
+//	Stream specific override function for processing decode stacks, performs the
+//	standard play, then reinitializes variables appropriate for the next block.
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayProcessDecodeStacks(void)
@@ -4234,9 +4234,9 @@ FrameParserStatus_t   FrameParser_VideoH264_c::ForPlayUpdateReferenceFrameList(v
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to add a frame to the reference
-//      frame list in reverse play. In H264 this is identical to
-//  the forward play mechanism.
+//	Stream specific function to add a frame to the reference
+//	frame list in reverse play. In H264 this is identical to
+//	the forward play mechanism.
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayAppendToReferenceFrameList(void)
@@ -4294,11 +4294,11 @@ FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayJunkReferenceFrameList(voi
 //
 //      Stream specific function for reverse play
 //
-//  I really struggle to explain what this does. Put simply when we jump
-//  backwards a sequence at a time, any positive jump in the pic order
-//  counts that occurs during the processing of a sequence, needs
-//  to be reflected in those frames from the follow on sequence that
-//  were held due to unsatisfied reference frames (IE Open groups)
+//	I really struggle to explain what this does. Put simply when we jump
+//	backwards a sequence at a time, any positive jump in the pic order
+//	counts that occurs during the processing of a sequence, needs
+//	to be reflected in those frames from the follow on sequence that
+//	were held due to unsatisfied reference frames (IE Open groups)
 //
 
 FrameParserStatus_t   FrameParser_VideoH264_c::RevPlayNextSequenceFrameProcess(void)
@@ -4494,28 +4494,28 @@ FrameParserStatus_t   FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	}
 	else
 #endif
-		if (FixDeducedFlags)
-		{
-			// Leave flags as set
-		}
-		else if (Frame)
-		{
-			DeducedInterlacedFlag       = SliceHeader->PicOrderCntTop != SliceHeader->PicOrderCntBot;
-			DeducedTopFieldFirst        = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
-		}
-		else if (!FirstFieldSeen)
-		{
-			DeducedInterlacedFlag       = true;
-			DeducedTopFieldFirst        = SliceHeader->bottom_field_flag == 0;
-		}
-		else if (!FirstDecodeOfFrame)
-		{
-			DeducedInterlacedFlag   = true;
-			if (SliceHeader->bottom_field_flag != 0)
-				DeducedTopFieldFirst    = LastFieldExtendedPicOrderCnt <= SliceHeader->ExtendedPicOrderCnt;
-			else
-				DeducedTopFieldFirst    = SliceHeader->ExtendedPicOrderCnt <= LastFieldExtendedPicOrderCnt;
-		}
+	if (FixDeducedFlags)
+	{
+		// Leave flags as set
+	}
+	else if (Frame)
+	{
+		DeducedInterlacedFlag       = SliceHeader->PicOrderCntTop != SliceHeader->PicOrderCntBot;
+		DeducedTopFieldFirst        = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
+	}
+	else if (!FirstFieldSeen)
+	{
+		DeducedInterlacedFlag       = true;
+		DeducedTopFieldFirst        = SliceHeader->bottom_field_flag == 0;
+	}
+	else if (!FirstDecodeOfFrame)
+	{
+		DeducedInterlacedFlag   = true;
+		if (SliceHeader->bottom_field_flag != 0)
+			DeducedTopFieldFirst    = LastFieldExtendedPicOrderCnt <= SliceHeader->ExtendedPicOrderCnt;
+		else
+			DeducedTopFieldFirst    = SliceHeader->ExtendedPicOrderCnt <= LastFieldExtendedPicOrderCnt;
+	}
 	FirstFieldSeen          = true;
 	LastFieldExtendedPicOrderCnt    = SliceHeader->ExtendedPicOrderCnt;
 	//
@@ -4560,8 +4560,8 @@ FrameParserStatus_t   FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
 	Policy                              = Player->PolicyValue(Playback, Stream, PolicyH264AllowNonIDRResynchronization);
 	ParsedFrameParameters->KeyFrame                 = (Policy != PolicyValueApply) ?
-													  (SliceHeader->nal_unit_type == NALU_TYPE_IDR) :
-													  (SliceType == SliceTypeI);
+							  (SliceHeader->nal_unit_type == NALU_TYPE_IDR) :
+							  (SliceType == SliceTypeI);
 	ParsedFrameParameters->IndependentFrame             = ParsedFrameParameters->KeyFrame || (SliceType == SliceTypeI);
 	ParsedFrameParameters->ReferenceFrame                               = (SliceHeader->nal_ref_idc != 0);
 //
@@ -4570,7 +4570,7 @@ FrameParserStatus_t   FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	ParsedVideoParameters->Content.Width                = (SPS->pic_width_in_mbs_minus1 + 1) * 16;
 	ParsedVideoParameters->Content.Height               = (SPS->pic_height_in_map_units_minus1 + 1) * 16;
 	if (!SPS->frame_mbs_only_flag)
-		ParsedVideoParameters->Content.Height          *= 2;
+		ParsedVideoParameters->Content.Height      *= 2;
 	//
 	// Adjust width and height by crop values.  As this applies only to right and bottom_offset
 	// we error if left_offset or top_offset are non-zero.
@@ -4674,10 +4674,10 @@ FrameParserStatus_t   FrameParser_VideoH264_c::CommitFrameForDecode(void)
 			pic_struct  = (SliceHeader->bottom_field_flag == 0) ?
 						  SEI_PICTURE_TIMING_PICSTRUCT_TOP_FIELD :
 						  SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_FIELD;
-		else if (SPS->frame_mbs_only_flag || (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot))
+		else if (SPS->frame_mbs_only_flag && (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot))
 			pic_struct  = SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
 		else
-			pic_struct  = (SliceHeader->PicOrderCntTop < SliceHeader->PicOrderCntBot) ?
+			pic_struct  = (SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot) ?
 						  SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM :
 						  SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP;
 	}
@@ -4898,8 +4898,8 @@ FrameParserStatus_t   FrameParser_VideoH264_c::PrepareNewStreamParameters(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to insert an entry into the deferred DFI/PTS list
-//  in an ordered position
+//	Function to insert an entry into the deferred DFI/PTS list
+//	in an ordered position
 //
 
 void    FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
@@ -5007,7 +5007,7 @@ void    FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to process entries in the deferred DFI/PTS list
+//	Function to process entries in the deferred DFI/PTS list
 //
 
 void   FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long      ExtendedPicOrderCnt)
@@ -5052,7 +5052,7 @@ void   FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long 
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to process entries in the deferred DFI/PTS list
+//	Function to process entries in the deferred DFI/PTS list
 //
 
 void   FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long    ExtendedPicOrderCnt)

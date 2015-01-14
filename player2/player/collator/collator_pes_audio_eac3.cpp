@@ -56,7 +56,6 @@ Date        Modification                                    Name
 //
 // Locally defined structures
 //
-
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Initialize the class by resetting it.

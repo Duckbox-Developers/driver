@@ -640,28 +640,28 @@ static int AudioIoctlSetEncoding(struct DeviceContext_s* Context, unsigned int E
 			 * stream to be fully populated so we can reissue the play. */
 			return AudioIoctlPlay(Context);
 		default:
+		{
+			int         Result  = 0;
+			sigset_t    Newsigs;
+			sigset_t    Oldsigs;
+			if ((Encoding <= AUDIO_ENCODING_AUTO) || (Encoding >= AUDIO_ENCODING_NONE))
 			{
-				int         Result  = 0;
-				sigset_t    Newsigs;
-				sigset_t    Oldsigs;
-				if ((Encoding <= AUDIO_ENCODING_AUTO) || (Encoding >= AUDIO_ENCODING_NONE))
-				{
-					DVB_ERROR("Cannot switch to undefined encoding after play has started\n");
-					return  -EINVAL;
-				}
-				/* a signal received in here can cause issues. Turn them off, just for this bit... */
-				sigfillset(&Newsigs);
-				sigprocmask(SIG_BLOCK, &Newsigs, &Oldsigs);
-				Result      = DvbStreamSwitch(Context->AudioStream,
-											  BACKEND_PES_ID,
-											  AudioContent[Context->AudioEncoding]);
-				sigprocmask(SIG_SETMASK, &Oldsigs, NULL);
-				/*
-				if (Result == 0)
-				    Result  = AudioIoctlSetId            (Context, Context->AudioId);
-				*/
-				return Result;
+				DVB_ERROR("Cannot switch to undefined encoding after play has started\n");
+				return  -EINVAL;
 			}
+			/* a signal received in here can cause issues. Turn them off, just for this bit... */
+			sigfillset(&Newsigs);
+			sigprocmask(SIG_BLOCK, &Newsigs, &Oldsigs);
+			Result      = DvbStreamSwitch(Context->AudioStream,
+										  BACKEND_PES_ID,
+										  AudioContent[Context->AudioEncoding]);
+			sigprocmask(SIG_SETMASK, &Oldsigs, NULL);
+			/*
+			if (Result == 0)
+			    Result  = AudioIoctlSetId            (Context, Context->AudioId);
+			*/
+			return Result;
+		}
 	}
 }
 #endif

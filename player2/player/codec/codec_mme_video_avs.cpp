@@ -473,30 +473,30 @@ CodecStatus_t   Codec_MmeVideoAvs_c::FillOutDecodeCommand(void)
 	switch (Player->PolicyValue(Playback, this->Stream, PolicyDecimateDecoderOutput))
 	{
 		case PolicyValueDecimateDecoderOutputDisabled:
-			{
-				// Normal Case
-				Param->MainAuxEnable                = AVS_MAINOUT_EN;
-				Param->HorizontalDecimationFactor   = AVS_HDEC_1;
-				Param->VerticalDecimationFactor     = AVS_VDEC_1;
-				break;
-			}
+		{
+			// Normal Case
+			Param->MainAuxEnable                = AVS_MAINOUT_EN;
+			Param->HorizontalDecimationFactor   = AVS_HDEC_1;
+			Param->VerticalDecimationFactor     = AVS_VDEC_1;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputHalf:
-			{
-				Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_2;
-				if (Param->Progressive_frame)
-					Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_PROG;
-				else
-					Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_2;
+			if (Param->Progressive_frame)
+				Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_PROG;
+			else
+				Param->VerticalDecimationFactor = AVS_VDEC_ADVANCED_2_INT;
+			break;
+		}
 		case PolicyValueDecimateDecoderOutputQuarter:
-			{
-				Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
-				Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_4;
-				Param->VerticalDecimationFactor     = AVS_VDEC_ADVANCED_2_INT;
-				break;
-			}
+		{
+			Param->MainAuxEnable                = AVS_AUX_MAIN_OUT_EN;
+			Param->HorizontalDecimationFactor   = AVS_HDEC_ADVANCED_4;
+			Param->VerticalDecimationFactor     = AVS_VDEC_ADVANCED_2_INT;
+			break;
+		}
 	}
 	//}}}
 	//{{{  Fill out slice list if HD decode

@@ -243,17 +243,17 @@ PlayerStatus_t   Player_Generic_c::PerformInSequenceCall(
 			Status  = Stream->Manifestor->QueueEventSignal(&ControlStructure->InSequence.Event);
 			break;
 		case ManifestorVideoFnSetInputWindow:
-			{
-				unsigned int *Words = (unsigned int *)ControlStructure->InSequence.Block;
-				Status      = ((Manifestor_Video_c *)Stream->Manifestor)->SetInputWindow(Words[0], Words[1], Words[2], Words[3]);
-			}
-			break;
+		{
+			unsigned int *Words = (unsigned int *)ControlStructure->InSequence.Block;
+			Status      = ((Manifestor_Video_c *)Stream->Manifestor)->SetInputWindow(Words[0], Words[1], Words[2], Words[3]);
+		}
+		break;
 		case ManifestorVideoFnSetOutputWindow:
-			{
-				unsigned int *Words = (unsigned int *)ControlStructure->InSequence.Block;
-				Status      = ((Manifestor_Video_c *)Stream->Manifestor)->SetOutputWindow(Words[0], Words[1], Words[2], Words[3]);
-			}
-			break;
+		{
+			unsigned int *Words = (unsigned int *)ControlStructure->InSequence.Block;
+			Status      = ((Manifestor_Video_c *)Stream->Manifestor)->SetOutputWindow(Words[0], Words[1], Words[2], Words[3]);
+		}
+		break;
 		case OutputTimerFnResetTimeMapping:
 			Status  = Stream->OutputTimer->ResetTimeMapping();
 			break;
