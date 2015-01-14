@@ -215,6 +215,7 @@ class Mixer_Mme_c: public Mixer_c
 		OS_Event_t PlaybackThreadTerminated;
 
 		MME_TransformerHandle_t MMEHandle;
+		MME_TransformerInitParams_t MMEInitParams;
 		bool MMEInitialized;
 		OS_Semaphore_t MMECallbackSemaphore;
 		OS_Semaphore_t MMEParamCallbackSemaphore;
@@ -274,6 +275,11 @@ class Mixer_Mme_c: public Mixer_c
 
 		/// Index of the primary client. The primary client is the one that dictacts the hardware settings.
 		unsigned int PrimaryClient;
+
+		/// MixerParams as used by InitializeMMETransformer
+		/// This would not normally be a class member but at 2920 bytes we shouldn't allocate
+		/// it on the stack, and neither do we want to be adding in malloc/free calls.
+		MME_LxMixerTransformerInitBDParams_Extended_t MixerParams;
 
 		struct
 		{
