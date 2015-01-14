@@ -41,6 +41,7 @@ Date        Modification                                    Name
 #include <linux/device.h>
 #include <linux/file.h>
 #include <linux/kthread.h>
+#include <linux/autoconf.h>
 #include <linux/cdev.h>
 #include <asm/uaccess.h>
 #include <linux/platform_device.h>

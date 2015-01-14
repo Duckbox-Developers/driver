@@ -233,10 +233,10 @@ static void     TransformerCallback(MME_Event_t             Event,
 	switch (CallbackData->CmdCode)
 	{
 		case MME_TRANSFORM:
-			{
-				up(&(Context->EventReceived));
-				break;
-			}
+		{
+			up(&(Context->EventReceived));
+			break;
+		}
 		default:
 			break;
 	}
