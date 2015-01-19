@@ -127,9 +127,9 @@
 
 typedef struct
 {
-  UINT8 regAddr;
-  UINT8 mask;
-  UINT8 data;
+	UINT8 regAddr;
+	UINT8 mask;
+	UINT8 data;
 } MXL603_REG_CTRL_INFO_T, *PMXL603_REG_CTRL_INFO_T;
 
 /******************************************************************************
@@ -150,7 +150,4 @@ MXL_STATUS MxL603_Ctrl_ProgramRegisters(UINT32 devId, PMXL603_REG_CTRL_INFO_T ct
 MXL_STATUS MxL603_Ctrl_WriteRegField(UINT32 devId, PMXL603_REG_CTRL_INFO_T ctrlRegInfoPtr);
 
 #endif /* __MXL603_TUNER_CFG_H__*/
-
-
-
 

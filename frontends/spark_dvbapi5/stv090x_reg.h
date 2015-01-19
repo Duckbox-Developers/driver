@@ -2374,8 +2374,8 @@
 #define STV090x_OFFST_Px_TSTDISRX_SELECT_FIELD		3
 #define STV090x_WIDTH_Px_TSTDISRX_SELECT_FIELD		1
 
-#define STV090x_Px_U1(__x)			(0xf5d8 - (__x - 0x100) * 0x2)
-#define STV090x_P1_U1				STV090x_Px_U1(1)
-#define STV090x_P2_U1				STV090x_Px_U1(2)
+#define STV090x_Px_U1(__x)				(0xf5d8 - (__x - 0x100) * 0x2)
+#define STV090x_P1_U1					STV090x_Px_U1(1)
+#define STV090x_P2_U1					STV090x_Px_U1(2)
 
 #endif /* __STV090x_REG_H */

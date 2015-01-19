@@ -63,74 +63,73 @@ typedef unsigned char        bool;
 
 #endif
 
-
-
 typedef enum
 {
-  MXL_TRUE = 0,
-  MXL_FALSE = 1,
-  MXL_SUCCESS = 0,
-  MXL_FAILED,
-  MXL_BUSY,
-  MXL_NULL_PTR,
-  MXL_INVALID_PARAMETER,
-  MXL_NOT_INITIALIZED,
-  MXL_ALREADY_INITIALIZED,
-  MXL_BUFFER_TOO_SMALL,
-  MXL_NOT_SUPPORTED,
-  MXL_TIMEOUT
+	MXL_TRUE = 0,
+	MXL_FALSE = 1,
+	MXL_SUCCESS = 0,
+	MXL_FAILED,
+	MXL_BUSY,
+	MXL_NULL_PTR,
+	MXL_INVALID_PARAMETER,
+	MXL_NOT_INITIALIZED,
+	MXL_ALREADY_INITIALIZED,
+	MXL_BUFFER_TOO_SMALL,
+	MXL_NOT_SUPPORTED,
+	MXL_TIMEOUT
 } MXL_STATUS;
 
-typedef enum{
-	MxL_OK					        =  0x0,
-	MxL_ERR_INIT			      =  0x1,
-	MxL_ERR_RFTUNE			    =  0x2,
-	MxL_ERR_SET_REG			    =  0x3,
-	MxL_ERR_GET_REG			    =  0x4,
-	MxL_ERR_MODE			      =  0x10,
-	MxL_ERR_IF_FREQ			    =  0x11,
-	MxL_ERR_XTAL_FREQ		    =  0x12,
-	MxL_ERR_BANDWIDTH		    =  0x13,
-	MxL_GET_ID_FAIL			    =  0x14,
-	MxL_ERR_DEMOD_LOCK		  =  0x20,
-	MxL_NOREADY_DEMOD_LOCK	=  0x21,
-	MxL_ERR_OTHERS			    =  0x0A
-}MxL_ERR_MSG;
+typedef enum
+{
+	MxL_OK                          =  0x0,
+	MxL_ERR_INIT                  =  0x1,
+	MxL_ERR_RFTUNE              =  0x2,
+	MxL_ERR_SET_REG             =  0x3,
+	MxL_ERR_GET_REG             =  0x4,
+	MxL_ERR_MODE                  =  0x10,
+	MxL_ERR_IF_FREQ             =  0x11,
+	MxL_ERR_XTAL_FREQ           =  0x12,
+	MxL_ERR_BANDWIDTH           =  0x13,
+	MxL_GET_ID_FAIL             =  0x14,
+	MxL_ERR_DEMOD_LOCK        =  0x20,
+	MxL_NOREADY_DEMOD_LOCK  =  0x21,
+	MxL_ERR_OTHERS              =  0x0A
+} MxL_ERR_MSG;
 
 typedef enum
 {
-  MXL_DISABLE = 0,
-  MXL_ENABLE,
+	MXL_DISABLE = 0,
+	MXL_ENABLE,
 
-  MXL_UNLOCKED = 0,
-  MXL_LOCKED,
+	MXL_UNLOCKED = 0,
+	MXL_LOCKED,
 
-  MXL_INVALID = 0,
-  MXL_VALID,
+	MXL_INVALID = 0,
+	MXL_VALID,
 
-  MXL_PORT_LOW = 0,
-  MXL_PORT_HIGH,
+	MXL_PORT_LOW = 0,
+	MXL_PORT_HIGH,
 
-  MXL_START = 0,
-  MXL_FINISH,
+	MXL_START = 0,
+	MXL_FINISH,
 
-  MXL_ABORT_TUNE = 0,
-  MXL_START_TUNE,
+	MXL_ABORT_TUNE = 0,
+	MXL_START_TUNE,
 
-  MXL_FINE_TUNE_STEP_DOWN,
-  MXL_FINE_TUNE_STEP_UP
+	MXL_FINE_TUNE_STEP_DOWN,
+	MXL_FINE_TUNE_STEP_UP
 
 } MXL_BOOL;
 
 typedef enum
 {
-  IFX_SUCCESS = 0,
-  IFX_FAILED,
-  IFX_BUSY,
-  IFX_NULL_PTR,
-  IFX_INVALID_PARAMETER,
-  IFX_BUFFER_TOO_SMALL,
-  IFX_TIMEOUT
+	IFX_SUCCESS = 0,
+	IFX_FAILED,
+	IFX_BUSY,
+	IFX_NULL_PTR,
+	IFX_INVALID_PARAMETER,
+	IFX_BUFFER_TOO_SMALL,
+	IFX_TIMEOUT
 } IFX_STATUS;
 
 /******************************************************************************

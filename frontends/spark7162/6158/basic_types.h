@@ -4,13 +4,13 @@
 //			Copyright (C), 2013-2018, AV Frontier Tech. Co., Ltd.
 //
 //
-// 文 件 名：	$RCSfile$
+// 文 件 名：   $RCSfile$
 //
-// 创 建 者：	D26LF
+// 创 建 者：   D26LF
 //
-// 创建时间：	2013.12.12
+// 创建时间：   2013.12.11
 //
-// 最后更新：	$Date$
+// 最后更新：   $Date$
 //
 //				$Author$
 //
@@ -18,37 +18,18 @@
 //
 //				$State$
 //
-// 文件描述：	types
+// 文件描述：   basic types
 //
 /******************************************************************************/
 
-#ifndef __TYPES_H
-#define __TYPES_H
+#ifndef __BASIC_TYPES_H
+#define __BASIC_TYPES_H
 
 /********************************  文件包含************************************/
-
-#include <basic_types.h>
-
-#if !defined(MODULE)
-#include <stdlib.h>
-#include <string.h>
-#endif
-
-#include "ywdefs.h"
-#include "ywos.h"
-#include "ywlib.h"
-#include "ywtuner_ext.h"
-#include "tuner_def.h"
-#include "ioarch.h"
-#include "ioreg.h"
-#include "tuner_interface.h"
-#include "d6158_inner.h"
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /********************************  常量定义************************************/
 
@@ -64,14 +45,29 @@ extern "C" {
 
 /********************************  函数定义************************************/
 
+#ifndef INTTYPE
+typedef char            INT8;
+typedef unsigned char   UINT8;
 
+typedef short           INT16;
+typedef unsigned short  UINT16;
+
+typedef int             INT32;
+typedef unsigned int    UINT32;
+
+typedef unsigned long long  UINT64;
+typedef unsigned long long  U64;
+
+typedef long long INT64;
+typedef long long S64;
+#define INTTYPE
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif  /* __TYPES_H */
+#endif  /* __BASIC_TYPES_H */
 /* EOF------------------------------------------------------------------------*/
 
 /* BOL-------------------------------------------------------------------*/

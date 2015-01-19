@@ -31,17 +31,17 @@
 ******************************************************************************/
 //typedef struct
 //{
-//	MxL5007_I2CAddr		I2C_Addr;
-//	MxL5007_Mode		Mode;
-//	SINT32				IF_Diff_Out_Level;
-//	MxL5007_Xtal_Freq	Xtal_Freq;
-//	MxL5007_IF_Freq	    IF_Freq;
+//	MxL5007_I2CAddr      I2C_Addr;
+//	MxL5007_Mode     Mode;
+//	SINT32               IF_Diff_Out_Level;
+//	MxL5007_Xtal_Freq    Xtal_Freq;
+//	MxL5007_IF_Freq      IF_Freq;
 //	MxL5007_IF_Spectrum IF_Spectrum;
-//	MxL5007_ClkOut		ClkOut_Setting;
-//    MxL5007_ClkOut_Amp	ClkOut_Amp;
-//	MxL5007_BW_MHz		BW_MHz;
-//	MxL5007_LoopThru	LoopThru;
-//	UINT32				RF_Freq_Hz;
+//	MxL5007_ClkOut       ClkOut_Setting;
+//    MxL5007_ClkOut_Amp    ClkOut_Amp;
+//	MxL5007_BW_MHz       BW_MHz;
+//	MxL5007_LoopThru LoopThru;
+//	UINT32               RF_Freq_Hz;
 //	UINT32              tuner_id;
 //} MXL603_PARAMETER;
 
@@ -58,7 +58,4 @@ MXL_STATUS MxLWare603_OEM_ReadRegister(UINT32 tuner_id, UINT8 regAddr, UINT8 *re
 void MxLWare603_OEM_Sleep(UINT16 delayTimeInMs);
 
 #endif /* __TUN_MXL603_H__*/
-
-
-
 

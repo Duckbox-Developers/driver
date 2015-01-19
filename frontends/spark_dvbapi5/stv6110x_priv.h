@@ -48,14 +48,15 @@
 #define REFCLOCK_kHz				(stv6110x->config->refclk /    1000)
 #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
 
-struct stv6110x_state {
-	struct i2c_adapter		*i2c;
-	const struct stv6110x_config	*config;
+struct stv6110x_state
+{
+	struct i2c_adapter *i2c;
+	const struct stv6110x_config *config;
 
-	struct stv6110x_devctl		*devctl;
+	struct stv6110x_devctl *devctl;
 	struct dvb_frontend *fe;
 
-    u32 gain;
+	u32 gain;
 };
 
 #endif /* __STV6110x_PRIV_H */

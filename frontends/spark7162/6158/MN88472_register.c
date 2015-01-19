@@ -8,7 +8,7 @@ Demodulator IC control functions
 '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz.
 '11/08/12 : OKAMOTO Implement IF 4.5MHz for DVB-T/T2 7MHz.
 '11/08/05 : OKAMOTO Update to "MN88472_Device_Driver_110802"
-'11/07/29 : OKAMOTO	Update to "MN88472_Device_Driver_110715"
+'11/07/29 : OKAMOTO Update to "MN88472_Device_Driver_110715"
 ----------------------------------------------------
 Copyright(C) 2011 SHARP CORPORATION
 ******************************************************/
@@ -26,7 +26,7 @@ DMD_u32_t DMD_RegSet_Rev = 110826;
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 UINT32 DMD_RegSet_Rev = 111011;
 
 // File : MN88472_DVBT2_8MHz_111011.rgs
@@ -35,8 +35,9 @@ UINT32 DMD_RegSet_Rev = 111011;
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
 #endif
-DMD_I2C_Register_t	MN88472_REG_COMMON[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_COMMON[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -229,10 +230,10 @@ DMD_I2C_Register_t	MN88472_REG_COMMON[] = {
 	{ 0x1c , 0xF5 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0xF6 , 0x0 , DMD_E_ARRAY },
 #if 0
-/* "MN88472_Device_Driver_110826" */
+	/* "MN88472_Device_Driver_110826" */
 	{ 0x1c , 0xF7 , 0x0 , DMD_E_ARRAY },
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+	/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 #endif
 	{ 0x1c , 0xF8 , 0x9F , DMD_E_ARRAY },
 	{ 0x1c , 0xF9 , 0xD4 , DMD_E_ARRAY },
@@ -291,10 +292,10 @@ DMD_I2C_Register_t	MN88472_REG_COMMON[] = {
 	{ 0x18 , 0x2E , 0x87 , DMD_E_ARRAY },
 	{ 0x18 , 0x2F , 0xD3 , DMD_E_ARRAY },
 #if 0
-/* "MN88472_Device_Driver_110826" */
+	/* "MN88472_Device_Driver_110826" */
 	{ 0x18 , 0x30 , 0xC0 , DMD_E_ARRAY },
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+	/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 	{ 0x18 , 0x30 , 0x0 , DMD_E_ARRAY },
 #endif
 	{ 0x18 , 0x31 , 0x55 , DMD_E_ARRAY },
@@ -600,23 +601,24 @@ DMD_I2C_Register_t	MN88472_REG_COMMON[] = {
 	{ 0x1a , 0xFE , 0x0 , DMD_E_ARRAY },
 	{ 0x1a , 0xFF , 0x2 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT2_7MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT2_7MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT2_7MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT2_7MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -638,11 +640,12 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 
 /* '11/08/12 : OKAMOTO Implement IF 4.5MHz for DVB-T/T2 7MHz. */
-DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT2_7MHZ_IF4500KHZ[] = {
+DMD_I2C_Register_t  MN88472_REG_DIFF_DVBT2_7MHZ_IF4500KHZ[] =
+{
 	{ 0x1c , 0x10 , 0x38 , DMD_E_ARRAY },
 	{ 0x1c , 0x11 , 0x40 , DMD_E_ARRAY },
 	{ 0x1c , 0x12 , 0x00 , DMD_E_ARRAY },
@@ -654,9 +657,8 @@ DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT2_7MHZ_IF4500KHZ[] = {
 	{ 0x1c , 0x18 , 0x0F , DMD_E_ARRAY },
 	{ 0x1c , 0x19 , 0x21 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
 };
-
 
 #if 0
 /* "MN88472_Device_Driver_110826" */
@@ -664,15 +666,16 @@ DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT2_7MHZ_IF4500KHZ[] = {
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT_6MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT_6MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT_6MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -694,23 +697,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBT_6MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT_7MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT_7MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT_7MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT_7MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -732,11 +736,12 @@ DMD_I2C_Register_t	MN88472_REG_DVBT_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 
 /* '11/08/12 : OKAMOTO Implement IF 4.5MHz for DVB-T/T2 7MHz. */
-DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT_7MHZ_IF4500KHZ[] = {
+DMD_I2C_Register_t  MN88472_REG_DIFF_DVBT_7MHZ_IF4500KHZ[] =
+{
 	{ 0x1c , 0x10 , 0x38 , DMD_E_ARRAY },
 	{ 0x1c , 0x11 , 0x40 , DMD_E_ARRAY },
 	{ 0x1c , 0x12 , 0x00 , DMD_E_ARRAY },
@@ -748,7 +753,7 @@ DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT_7MHZ_IF4500KHZ[] = {
 	{ 0x1c , 0x18 , 0x0F , DMD_E_ARRAY },
 	{ 0x1c , 0x19 , 0x21 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
 };
 
 #if 0
@@ -757,15 +762,16 @@ DMD_I2C_Register_t	MN88472_REG_DIFF_DVBT_7MHZ_IF4500KHZ[] = {
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT2_6MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT2_6MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT2_6MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -787,23 +793,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_6MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT2_8MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT2_8MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT2_8MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT2_8MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -820,7 +827,7 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_8MHZ[] = {
 	{ 0x1c , 0x18 , 0x8 , DMD_E_ARRAY },
 	{ 0x1c , 0x19 , 0xEE , DMD_E_ARRAY },
 #else
-/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
+	/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
 	{ 0x1c , 0x10 , 0x3E , DMD_E_ARRAY },
 	{ 0x1c , 0x11 , 0x80 , DMD_E_ARRAY },
 	{ 0x1c , 0x12 , 0x00 , DMD_E_ARRAY },
@@ -839,23 +846,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_8MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT2_5MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT2_5MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT2_5MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT2_5MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -877,23 +885,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_5MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT2_1.7MHz_IF5MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT2_1.7MHz_IF5MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT2_1_7MHZ[] = {
-		{ 0x1c , 0x0 , 0x6D , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT2_1_7MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x6D , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -910,7 +919,7 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_1_7MHZ[] = {
 	{ 0x1c , 0x18 , 0x1C , DMD_E_ARRAY },
 	{ 0x1c , 0x19 , 0x0 , DMD_E_ARRAY },
 #else
-/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
+	/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
 	{ 0x1c , 0x10 , 0xB5 , DMD_E_ARRAY },
 	{ 0x1c , 0x11 , 0xD1 , DMD_E_ARRAY },
 	{ 0x1c , 0x12 , 0x74 , DMD_E_ARRAY },
@@ -929,23 +938,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBT2_1_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBC_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBC_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBC[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBC[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x4 , DMD_E_ARRAY },
@@ -967,23 +977,24 @@ DMD_I2C_Register_t	MN88472_REG_DVBC[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 #if 0
 /* "MN88472_Device_Driver_110826" */
 // File : MN88472_DIFF_DVBT_8MHz_110826.rgs
 // Date : 2011/08/26
 // Time : 09:38:42
 #else
-/* '11/10/24 : OKAMOTO	Update to "MN88472_Device_Driver_111012" */
+/* '11/10/24 : OKAMOTO  Update to "MN88472_Device_Driver_111012" */
 // File : MN88472_DIFF_DVBT_8MHz_111011.rgs
 // Date : 2011/10/11
 // Time : 14:01:59
 #endif
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_DVBT_8MHZ[] = {
-		{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_DVBT_8MHZ[] =
+{
+	{ 0x1c , 0x0 , 0x66 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x0 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -1000,7 +1011,7 @@ DMD_I2C_Register_t	MN88472_REG_DVBT_8MHZ[] = {
 	{ 0x1c , 0x18 , 0x8 , DMD_E_ARRAY },
 	{ 0x1c , 0x19 , 0xEE , DMD_E_ARRAY },
 #else
-/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
+	/* '11/08/12 : OKAMOTO Correct IF 5MHz setting for DVB-T2 8/1.7MHz, DVB-T 8MHz. */
 	{ 0x1c , 0x10 , 0x3E , DMD_E_ARRAY },
 	{ 0x1c , 0x11 , 0x80 , DMD_E_ARRAY },
 	{ 0x1c , 0x12 , 0x00 , DMD_E_ARRAY },
@@ -1019,8 +1030,8 @@ DMD_I2C_Register_t	MN88472_REG_DVBT_8MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 
 // File : MN88472_DVBT2_8MHz_120116.rgs
 // Date : 2012/01/16
@@ -1030,7 +1041,8 @@ DMD_I2C_Register_t	MN88472_REG_DVBT_8MHZ[] = {
 // PLLSET1(1st,addr. 0x00) : 0x66 -> 0xA6
 // PLLSET2(1st,addr. 0x01) : 0x00 -> 0x45
 // CLKSET1(2nd,addr.0xAE) : 0x00 -> 0x07
-DMD_I2C_Register_t	MN88472_REG_24MHZ_COMMON[] = {
+DMD_I2C_Register_t  MN88472_REG_24MHZ_COMMON[] =
+{
 	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
@@ -1581,15 +1593,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_COMMON[] = {
 	{ 0x1a , 0xFE , 0x0 , DMD_E_ARRAY },
 	{ 0x1a , 0xFF , 0x2 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT2_7MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_7MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT2_7MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -1611,15 +1624,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT_6MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_6MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT_6MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -1641,15 +1655,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_6MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT_7MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_7MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT_7MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -1671,14 +1686,15 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT2_6MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_6MHZ[] = {
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT2_6MHZ[] =
+{
 	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
@@ -1701,16 +1717,17 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_6MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 
 // File : MN88472_DIFF_DVBT2_8MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_8MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT2_8MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -1732,15 +1749,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_8MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT2_5MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_5MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT2_5MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x3 , DMD_E_ARRAY },
@@ -1762,14 +1780,15 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_5MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVB-T2_1.7MHz_IF5MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=20.5MHz, fIF=5MHz, TS Parallel
 //[ !!]If you want to use 1.7Mhz BW, pls. ask us to change relative registers.
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_1_7MHZ[] = {
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT2_1_7MHZ[] =
+{
 	{ 0x1c , 0x0 , 0x6D , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x60 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
@@ -1792,15 +1811,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT2_1_7MHZ[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x46 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBC_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:31
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBC[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBC[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x4 , DMD_E_ARRAY },
@@ -1822,15 +1842,16 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBC[] = {
 	{ 0x18 , 0xD4 , 0x9 , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 // File : MN88472_DIFF_DVBT_8MHz_111205.rgs
 // Date : 2011/12/05
 // Time : 12:48:30
 // Comment : fXtal=24MHz, fIF=5MHz, TS Parallel
 //
-DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_8MHZ[] = {
-		{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
+DMD_I2C_Register_t  MN88472_REG_24MHZ_DVBT_8MHZ[] =
+{
+	{ 0x1c , 0x0 , 0xA6 , DMD_E_ARRAY },
 	{ 0x1c , 0x1 , 0x45 , DMD_E_ARRAY },
 	{ 0x1c , 0x2 , 0x1 , DMD_E_ARRAY },
 	{ 0x1c , 0x3 , 0x2 , DMD_E_ARRAY },
@@ -1852,6 +1873,6 @@ DMD_I2C_Register_t	MN88472_REG_24MHZ_DVBT_8MHZ[] = {
 	{ 0x18 , 0xD4 , 0x0A , DMD_E_ARRAY },
 	{ 0x18 , 0xD6 , 0x48 , DMD_E_ARRAY },
 
-	{0,0,0,DMD_E_END_OF_ARRAY}
-	};
+	{0, 0, 0, DMD_E_END_OF_ARRAY}
+};
 

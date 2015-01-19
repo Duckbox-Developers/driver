@@ -4,13 +4,13 @@
 //			Copyright (C), 2011-2016, AV Frontier Tech. Co., Ltd.
 //
 //
-// 文 件 名：	$RCSfile$
+// 文 件 名：   $RCSfile$
 //
-// 创 建 者：	Administrator
+// 创 建 者：   Administrator
 //
-// 创建时间：	2011.05.09
+// 创建时间：   2011.05.09
 //
-// 最后更新：	$Date$
+// 最后更新：   $Date$
 //
 //				$Author$
 //
@@ -18,7 +18,7 @@
 //
 //				$State$
 //
-// 文件描述：	d0367内部头文件
+// 文件描述：   d0367内部头文件
 //
 /******************************************************************************/
 
@@ -27,11 +27,9 @@
 
 /********************************  文件包含************************************/
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /********************************  常量定义************************************/
 
@@ -51,24 +49,20 @@ int ChipGetFieldSign(U32 FieldId);
 int ChipGetFieldPosition(U8 Mask);
 int ChipGetFieldBits(int mask, int Position);
 S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							IOARCH_Handle_t IOHandle, U16 RegId);
+						 IOARCH_Handle_t IOHandle, U16 RegId);
 
 void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
-									IOARCH_Handle_t IOHandle,
-									unsigned char *pcData, int nbdata);
+				 IOARCH_Handle_t IOHandle,
+				 unsigned char *pcData, int nbdata);
 void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
-									IOARCH_Handle_t IOHandle,
-									unsigned char *pcData, int NbRegs);
+				IOARCH_Handle_t IOHandle,
+				unsigned char *pcData, int NbRegs);
 
 /********************************  函数定义************************************/
-
-
-
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif  /* __D0367_INNER_H */
 /* EOF------------------------------------------------------------------------*/

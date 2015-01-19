@@ -3,7 +3,6 @@
 #ifndef  __TUNER_DEF_H__
 #define  __TUNER_DEF_H__
 
-
 /* STAPI Driver ID */
 #define TUNER_DRIVER_ID 6
 
@@ -23,11 +22,8 @@ S32 TUNER_Util_PowOf2(S32 number);
 S32 TUNER_Util_LongSqrt(S32 Value);
 S32 TUNER_Util_BinaryFloatDiv(S32 n1, S32 n2, S32 precision);
 
-
-
 BOOL  TUNER_WaitTime(U32  Index,  S32  TimeOut);
 void  *TUNER_MemAlloc(S32  size);
 void  TUNER_MemFree(void *p);
-
 
 #endif
