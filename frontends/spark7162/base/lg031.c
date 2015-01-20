@@ -8,16 +8,17 @@
 #include "dvb_frontend.h"
 #include "lg031.h"
 
-struct lg031_state {
-	struct dvb_frontend		*fe;
-	struct i2c_adapter		*i2c;
-	const struct lg031_config	*config;
+struct lg031_state
+{
+	struct dvb_frontend       *fe;
+	struct i2c_adapter        *i2c;
+	const struct lg031_config *config;
 
-	u32 					frequency;
-	u32 					bandwidth;
-	u32 					IF;
-	u32 					TunerStep;
-	unsigned char			IOBuffer[6];
+	u32                       frequency;
+	u32                       bandwidth;
+	u32                       IF;
+	u32                       TunerStep;
+	unsigned char             IOBuffer[6];
 };
 
 static int lg031_read(struct lg031_state *state, u8 *buf)
@@ -43,7 +44,7 @@ static int lg031_write(struct lg031_state *state, u8 *buf, u8 length)
 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = length };
 
 	//printk(KERN_ERR "%s: state->i2c=<0x%x>, config->addr = %d\n",
-	//		__func__, (int)state->i2c, config->addr);
+	//      __func__, (int)state->i2c, config->addr);
 
 	err = i2c_transfer(state->i2c, &msg, 1);
 	if (err != 1)
@@ -79,81 +80,75 @@ exit:
 	return err;
 }
 
-void  tuner_lg031_CalWrBuffer(	struct lg031_state *TunerConfig,
-										u32  Frequency,
-										u32  *NewFrequency)
+void  tuner_lg031_CalWrBuffer(struct lg031_state *TunerConfig, u32  Frequency, u32  *NewFrequency)
 {
-	u32		uFreqPll;
+	u32     uFreqPll;
 
 	// calculate N0-N14
 	// Note: ex)IF = 36.125 MHz
-	#if 1
-	uFreqPll = ((Frequency) + TunerConfig->IF)*1000;
-	uFreqPll += TunerConfig->TunerStep/2;
+#if 1
+	uFreqPll = ((Frequency) + TunerConfig->IF) * 1000;
+	uFreqPll += TunerConfig->TunerStep / 2;
 	uFreqPll /= TunerConfig->TunerStep;
-    #else
-	uFreqPll = ((Frequency) + TunerConfig->IF)*10;
-    TunerConfig->TunerStep /= 100;
+#else
+	uFreqPll = ((Frequency) + TunerConfig->IF) * 10;
+	TunerConfig->TunerStep /= 100;
 	uFreqPll /= TunerConfig->TunerStep;
-    #endif
+#endif
 
-
-    //printf(" Freq 3 is %d .\n" , TunerConfig->Frequency );
+	//printf(" Freq 3 is %d .\n" , TunerConfig->Frequency );
 
 	// real frequency programmed
-	*NewFrequency = (uFreqPll * TunerConfig->TunerStep) - TunerConfig->IF*1000;
+	*NewFrequency = (uFreqPll * TunerConfig->TunerStep) - TunerConfig->IF * 1000;
 
 	//-------------
-	// byte 0 and 1	//DB1,DB2
+	// byte 0 and 1 //DB1,DB2
 	//-------------
 	// divider ratio
 	TunerConfig->IOBuffer[0] = (u8)(uFreqPll >> 8);
 	TunerConfig->IOBuffer[1] = (u8)uFreqPll;
 
 	//-------
-	// byte 2	//CB1
+	// byte 2   //CB1
 	//-------
 	TunerConfig->IOBuffer[2] = 0x93;
 
 	//-------
-	// byte 3	//CB2
+	// byte 3   //CB2
 	//-------
-	if( Frequency <= 143000 )//148
-    {
-        TunerConfig->IOBuffer[3] = 0x01;
-    }
-    else
-    {
-         if( Frequency <= 426000 )//430
-         {
-            TunerConfig->IOBuffer[3] = 0x02;
-         }
-         else
-         {
-            TunerConfig->IOBuffer[3] = 0x08;
-         }
-    }
+	if (Frequency <= 143000) //148
+	{
+		TunerConfig->IOBuffer[3] = 0x01;
+	}
+	else
+	{
+		if (Frequency <= 426000) //430
+		{
+			TunerConfig->IOBuffer[3] = 0x02;
+		}
+		else
+		{
+			TunerConfig->IOBuffer[3] = 0x08;
+		}
+	}
 
 	//-------
-	// byte 4	//AB
+	// byte 4   //AB
 	//-------
-	TunerConfig->IOBuffer[4] = 0xc3;	//0xc2
-
+	TunerConfig->IOBuffer[4] = 0xc3;    //0xc2
 }
 
-
-static int lg031_set_params(struct dvb_frontend* fe,
-									struct dvb_frontend_parameters *params)
+static int lg031_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters *params)
 {
 	struct lg031_state *state = fe->tuner_priv;
 	int err = 0;
 	u32 status = 0;
 	u32 f = params->frequency;
-	u32	NewFrequency;
+	u32 NewFrequency;
 
 	//printk(KERN_ERR "%s: f = %d\n", __func__, f);
 
-	tuner_lg031_CalWrBuffer(state, f/1000, &NewFrequency);
+	tuner_lg031_CalWrBuffer(state, f / 1000, &NewFrequency);
 
 	/*open i2c repeater gate*/
 	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
@@ -185,20 +180,17 @@ static int lg031_release(struct dvb_frontend *fe)
 	return 0;
 }
 
-
 static struct dvb_tuner_ops lg031_ops =
 {
 	.info = {
 		.name = "lg031",
 		.frequency_step =     62500
 	},
-	.set_params	= lg031_set_params,
+	.set_params = lg031_set_params,
 	.release = lg031_release,
 };
 
-struct dvb_frontend *lg031_attach(struct dvb_frontend *fe,
-				    const struct lg031_config *config,
-				    struct i2c_adapter *i2c)
+struct dvb_frontend *lg031_attach(struct dvb_frontend *fe, const struct lg031_config *config, struct i2c_adapter *i2c)
 {
 	struct lg031_state *state = NULL;
 	struct dvb_tuner_info *info;
@@ -207,14 +199,14 @@ struct dvb_frontend *lg031_attach(struct dvb_frontend *fe,
 	if (state == NULL)
 		goto exit;
 
-	state->config	= config;
-	state->i2c		= i2c;
-	state->fe		= fe;
-	state->IF		= 36125;
-	state->TunerStep	= 62500;
-	fe->tuner_priv		= state;
-	fe->ops.tuner_ops	= lg031_ops;
-	info			 = &fe->ops.tuner_ops.info;
+	state->config     = config;
+	state->i2c        = i2c;
+	state->fe         = fe;
+	state->IF         = 36125;
+	state->TunerStep  = 62500;
+	fe->tuner_priv    = state;
+	fe->ops.tuner_ops = lg031_ops;
+	info              = &fe->ops.tuner_ops.info;
 
 	memcpy(info->name, config->name, sizeof(config->name));
 
