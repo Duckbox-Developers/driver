@@ -194,8 +194,11 @@ int ESI88_WriteFront(unsigned char* data, unsigned char len )
 
   while ((i< len) && (j < 8 + 16))
 	{
-	//j++;
-	if (data[i] < 0x80) {
+	if (data[i] == '\n' || data[i] == 0x0d ) {
+		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, data[i]);
+		i++;
+	}
+	else if (data[i] < 0x80) {
 		wdata[j]=data[i];
 		DBG("[%s] data[%i] = '0x%X'\n", __func__, j, data[i]);
 		j++;
@@ -240,7 +243,6 @@ int ESI88_WriteFront(unsigned char* data, unsigned char len )
 			i+=4;
 		else
 			i+=5;
-		//wdata[j]=0x20;
 	}
 	i++;
     }
@@ -343,72 +345,11 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 }
 
 static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t len, loff_t *off ) {
-  unsigned char  kbuf[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  int i = 0;
-  int wlen = 0;
-
-  DBG("[%s] initial text = '%s', len= %d\n",__func__, buf,len);
-
-  if ( len == 0 ) return len;
-
-  while ((i< len) && (wlen < 16))
-	{
-	if (buf[i] == '\n' || buf[i] == '\n') {
-		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, buf[i]);
-		i++;
-	}
-	else if (buf[i] < 0x80) {
-		kbuf[wlen]=buf[i];
-		DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, buf[i]);
-		wlen++;
-	}
-	else if (buf[i] < 0xE0) {
-		DBG("[%s] UTF_Char_Table= 0x%X",__func__, buf[i]);
-		switch (buf[i])	{
-			case 0xc2:
-				UTF_Char_Table = UTF_C2;
-				break;
-			case 0xc3:
-				UTF_Char_Table = UTF_C3;
-				break;
-			case 0xc4:
-				UTF_Char_Table = UTF_C4;
-				break;
-			case 0xc5:
-				UTF_Char_Table = UTF_C5;
-				break;
-			case 0xd0:
-				UTF_Char_Table = UTF_D0;
-				break;
-			case 0xd1:
-				UTF_Char_Table = UTF_D1;
-				break;
-			default:
-				UTF_Char_Table = NULL;
-		}
-		i++;
-		if (UTF_Char_Table) {
-			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[buf[i] & 0x3f], i);
-			kbuf[wlen]=UTF_Char_Table[buf[i] & 0x3f];			
-			wlen++;
-		}
-	}
-	else {
-		if (buf[i] < 0xF0)
-			i+=2;
-		else if (buf[i] < 0xF8)
-			i+=3;
-		else if (buf[i] < 0xFC)
-			i+=4;
-		else
-			i+=5;
-	}
-	i++;
-    }
-
-  DBG("[%s] initial length= %d, text length = %d, text = '%s'",__func__, len, wlen, kbuf);
-
-  ESI88_WriteFront(kbuf,wlen);
+  DBG("[%s] text = '%s', len= %d\n",__func__, buf,len);
+  if ( len == 0 )
+    ESI88_WriteFront("                ",16);
+  else
+    ESI88_WriteFront(buf,len);
 
   return len;
 }

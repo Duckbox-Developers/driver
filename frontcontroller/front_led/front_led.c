@@ -327,33 +327,98 @@ int WriteChars(unsigned char* aData, int aSize)
 		printf("[0x%x]",aData[iii]);
 
 	}
-//
+
 	printf("\n");*/
 	return 0;
 	
 }
 
 
-int ESI88_WriteFront(unsigned char* data, unsigned char len )
+int UHD88_WriteFront(unsigned char* data, unsigned char len )
 {
-unsigned char wdata[8] = {0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-int i = 0;
-unsigned char crc=0xff;
-int doton3 = 0; //by using doton3 we safe one segment and use human style of writing e.g. "23:54, or PL.TV"
+	/* eliminating UTF-8 chars first */
+	unsigned char  kbuf[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+	int i = 0;
+	int wlen = 0;
 
-  if (len >= 5){
-    if (data[2] == '.'){doton3 = 1;wdata[5] = 0x02;}//lower dot
-    else
-    if (data[2] == "'"){doton3 = 1;wdata[5] = 0x01;}//upper dot
-    else
-    if (data[2] == ':'){doton3 = 1;wdata[5] = 0x03;}//two dots
-  }
+	while ((i< len) && (wlen < 8))
+	{
+		if (data[i] == '\n' || data[i] == 0x0d) 
+		{
+			DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, data[i]);
+			i++;
+		}
+		else if (data[i] < 0x80)
+		{
+			kbuf[wlen]=data[i];
+			DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, data[i]);
+			wlen++;
+		}
+		else if (data[i] < 0xE0) 
+		{
+			DBG("[%s] UTF_Char_Table= 0x%X",__func__, data[i]);
+			switch (data[i])
+			{
+				case 0xc2:
+					UTF_Char_Table = UTF_C2;
+					break;
+				case 0xc3:
+					UTF_Char_Table = UTF_C3;
+					break;
+				case 0xc4:
+					UTF_Char_Table = UTF_C4;
+					break;
+				case 0xc5:
+					UTF_Char_Table = UTF_C5;
+					break;
+				case 0xd0:
+					UTF_Char_Table = UTF_D0;
+					break;
+				case 0xd1:
+					UTF_Char_Table = UTF_D1;
+					break;
+				default:
+					UTF_Char_Table = NULL;
+			}
+			i++;
+			if (UTF_Char_Table) 
+			{
+				DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[data[i] & 0x3f], i);
+				kbuf[wlen]=UTF_Char_Table[data[i] & 0x3f];			
+				wlen++;
+			}
+		}
+		else
+		{
+			if (data[i] < 0xF0)
+				i+=2;
+			else if (data[i] < 0xF8)
+				i+=3;
+			else if (data[i] < 0xFC)
+				i+=4;
+			else
+				i+=5;
+		}
+		i++;
+	}
+	/* end */
+	unsigned char wdata[8] = {0x81,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+	i = 0;
+	unsigned char crc=0xff;
+	int doton3 = 0; //by using doton3 we safe one segment and use human style of writing e.g. "23:54, or PL.TV"
+
+    if (wlen >= 5)
+    {
+		 if (kbuf[2] == '.'){doton3 = 1;wdata[5] = 0x02;} //lower dot
+	    else if (kbuf[2] == "'"){doton3 = 1;wdata[5] = 0x01;} //upper dot
+	    else if (kbuf[2] == ':'){doton3 = 1;wdata[5] = 0x03;} //two dots
+    }
 
   //assigning correct chars
-  if (len >= 1) wdata[1] = rom[data[0]];
-  if (len >= 2) wdata[2] = rom[data[1]];
-  if (len >= 3) wdata[3] = rom[data[2 + doton3]];
-  if (len >= 4) wdata[4] = rom[data[3 + doton3]];
+  if (wlen >= 1) wdata[1] = rom[kbuf[0]];
+  if (wlen >= 2) wdata[2] = rom[kbuf[1]];
+  if (wlen >= 3) wdata[3] = rom[kbuf[2 + doton3]];
+  if (wlen >= 4) wdata[4] = rom[kbuf[3 + doton3]];
 
   //calculating crc with previously set dot(s)
   crc=crc^wdata[0];
@@ -362,18 +427,7 @@ int doton3 = 0; //by using doton3 we safe one segment and use human style of wri
   crc=crc^wdata[3];
   crc=crc^wdata[4];
   crc=crc^wdata[5];
-/*
-  if(len>5)
-  {
-	if(data[5]=='0') {wdata[6] = 0x00;crc=crc^wdata[6];}//jasnosc
-	  else
-	if(data[5]=='1') {wdata[6] = 0x01;crc=crc^wdata[6];}//jasnosc
-	  else
-		{wdata[6] = 0x00;crc=crc^wdata[6];}//jasnosc
-  }
-	else
-		{wdata[6] = 0x01;crc=crc^wdata[6];}//jasnosc 1=jasniejszy
-*/
+  
 	if (jasnosc==0) 
 		{wdata[6] = 0x00;crc=crc^wdata[6];}
 	else
@@ -384,7 +438,7 @@ int doton3 = 0; //by using doton3 we safe one segment and use human style of wri
   return 0;
 }
 
-static void ESI88_set_icon(unsigned char *kbuf, unsigned char len)
+static void UHD88_set_icon(unsigned char *kbuf, unsigned char len)
 {
         spin_lock(&mr_lock);
 
@@ -408,17 +462,17 @@ static void ESI88_set_icon(unsigned char *kbuf, unsigned char len)
 }
 
 
-static int ESI88_ShowBuf(unsigned char *kbuf, unsigned char len)
+static int UHD88_ShowBuf(unsigned char *kbuf, unsigned char len)
 {
 return 0;
 }
 
-static void ESI88_setup(void)
+static void UHD88_setup(void)
 {
   return 0;
 }
 
-static void ESI88_set_brightness(int level )
+static void UHD88_set_brightness(int level )
 {
 	spin_lock(&mr_lock);
 
@@ -428,7 +482,7 @@ static void ESI88_set_brightness(int level )
 	spin_unlock(&mr_lock);	
 }
 
-static void ESI88_set_lights(int onoff )
+static void UHD88_set_lights(int onoff )
 {
 	spin_lock(&mr_lock);
 	
@@ -454,22 +508,22 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
   switch( cmd ) {
   case VFDIOC_DCRAMWRITE:
     copy_from_user( &vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
-    return ESI88_WriteFront(vfddata.data,vfddata.length);
+    return UHD88_WriteFront(vfddata.data,vfddata.length);
     break;
   case VFDIOC_BRIGHTNESS:
     copy_from_user( &vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
-    ESI88_set_brightness(vfddata.address );
+    UHD88_set_brightness(vfddata.address );
     break;
   case VFDIOC_DISPLAYWRITEONOFF:
 //    copy_from_user( &vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
-//    ESI88_set_lights(vfddata.address );
+//    UHD88_set_lights(vfddata.address );
     break;
   case VFDIOC_ICONDISPLAYONOFF:
     copy_from_user(&vfddata, (void*)arg, sizeof( struct vfd_ioctl_data ) );
-    ESI88_set_icon(vfddata.data,vfddata.length);
+    UHD88_set_icon(vfddata.data,vfddata.length);
 	break;
   case VFDIOC_DRIVERINIT:
-    //ESI88_setup();
+    //UHD88_setup();
     break;
   default:
     ERR("[%s] unknown ioctl %08x",__func__, cmd );
@@ -480,73 +534,11 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 }
 
 static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t len, loff_t *off ) {
-  unsigned char  kbuf[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-  int i = 0;
-  int wlen = 0;
-
-  DBG("[%s] initial text = '%s', len= %d\n",__func__, buf,len);
-
-  if ( len == 0 ) return len;
-
-  while ((i< len) && (wlen < 8))
-	{
-	if (buf[i] == '\n' || buf[i] == '\n') {
-		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, buf[i]);
-		i++;
-	}
-	else if (buf[i] < 0x80) {
-		kbuf[wlen]=buf[i];
-		DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, buf[i]);
-		wlen++;
-	}
-	else if (buf[i] < 0xE0) {
-		DBG("[%s] UTF_Char_Table= 0x%X",__func__, buf[i]);
-		switch (buf[i])	{
-			case 0xc2:
-				UTF_Char_Table = UTF_C2;
-				break;
-			case 0xc3:
-				UTF_Char_Table = UTF_C3;
-				break;
-			case 0xc4:
-				UTF_Char_Table = UTF_C4;
-				break;
-			case 0xc5:
-				UTF_Char_Table = UTF_C5;
-				break;
-			case 0xd0:
-				UTF_Char_Table = UTF_D0;
-				break;
-			case 0xd1:
-				UTF_Char_Table = UTF_D1;
-				break;
-			default:
-				UTF_Char_Table = NULL;
-		}
-		i++;
-		if (UTF_Char_Table) {
-			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[buf[i] & 0x3f], i);
-			kbuf[wlen]=UTF_Char_Table[buf[i] & 0x3f];			
-			wlen++;
-		}
-	}
-	else {
-		if (buf[i] < 0xF0)
-			i+=2;
-		else if (buf[i] < 0xF8)
-			i+=3;
-		else if (buf[i] < 0xFC)
-			i+=4;
-		else
-			i+=5;
-	}
-	i++;
-    }
-
-  DBG("[%s] initial length= %d, text length = %d, text = '%s'",__func__, len, wlen, kbuf);
-
-  ESI88_WriteFront(kbuf,wlen);
-
+  DBG("[%s] text = '%s', len= %d\n",__func__, buf,len);
+  if ( len == 0 )
+    UHD88_WriteFront("    ",4);
+  else
+    UHD88_WriteFront(buf,len);
   return len;
 }
 
@@ -680,7 +672,7 @@ gpio_direction_input(KEY_PWR);
 	}
 #endif
     //Clean display during init
-    ESI88_WriteFront("    ",4);
+    UHD88_WriteFront("    ",4);
     return 0;
 
     led_init_fail:
