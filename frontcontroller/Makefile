@@ -137,3 +137,9 @@ ifdef SAGEMCOM88
 obj-y += front_led/
 obj-y += front_vfd/
 endif
+
+ifdef ARIVALINK200
+ifeq (,$(wildcard $(DRIVER_TOPDIR)/front_ArivaLink200 ))
+obj-y += front_ArivaLink200/
+endif
+endif
