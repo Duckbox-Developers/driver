@@ -309,6 +309,8 @@ obj-y += sagemcomtype/
 endif
 ifdef ARIVALINK200
 obj-y += smartcard/
+obj-y += cec_adb_box/
+obj-y += dvbt/as102/
 endif
 
 endif
