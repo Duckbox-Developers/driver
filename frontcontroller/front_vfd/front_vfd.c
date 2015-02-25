@@ -13,7 +13,7 @@
 #include <linux/gpio.h>
 #include <linux/stm/gpio.h>
 #include "asc.h"
-#include "utf.h"
+#include "../vfd/utf.h"
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
@@ -52,10 +52,10 @@ struct vfd_driver {
 spinlock_t mr_lock = SPIN_LOCK_UNLOCKED;
 
 static struct vfd_driver vfd;
-static int debug  = 0;
+static short paramDebug = 0;
 static unsigned char jasnosc = 0xff;
 
-#define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
+#define DBG(fmt, args...) if ( paramDebug > 0 ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
 #define ERR(fmt, args...) printk(KERN_ERR "[vfd] :: " fmt "\n", ## args )
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
@@ -342,24 +342,71 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 
 }
 
-static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t *off ) {
-  unsigned char  kbuf[20];
-  size_t         wlen;
+static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t len, loff_t *off ) {
+  unsigned char  kbuf[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  int i = 0;
+  int wlen = 0;
 
-  DBG("vfd_write");
-
-  DBG("write : len = %d (%d), off = %d.\n", len, 4, (int)*off);
+  DBG("[%s] initial text = '%s', len= %d\n",__func__, buf,len);
 
   if ( len == 0 ) return len;
 
-  if(len>16) len=16;
+  while ((i< len) && (wlen < 16))
+	{
+	if (buf[i] == '\n' || buf[i] == '\n') {
+		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, buf[i]);
+		i++;
+	}
+	else if (buf[i] < 0x80) {
+		kbuf[wlen]=buf[i];
+		DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, buf[i]);
+		wlen++;
+	}
+	else if (buf[i] < 0xE0) {
+		DBG("[%s] UTF_Char_Table= 0x%X",__func__, buf[i]);
+		switch (buf[i])	{
+			case 0xc2:
+				UTF_Char_Table = UTF_C2;
+				break;
+			case 0xc3:
+				UTF_Char_Table = UTF_C3;
+				break;
+			case 0xc4:
+				UTF_Char_Table = UTF_C4;
+				break;
+			case 0xc5:
+				UTF_Char_Table = UTF_C5;
+				break;
+			case 0xd0:
+				UTF_Char_Table = UTF_D0;
+				break;
+			case 0xd1:
+				UTF_Char_Table = UTF_D1;
+				break;
+			default:
+				UTF_Char_Table = NULL;
+		}
+		i++;
+		if (UTF_Char_Table) {
+			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[buf[i] & 0x3f], i);
+			kbuf[wlen]=UTF_Char_Table[buf[i] & 0x3f];			
+			wlen++;
+		}
+	}
+	else {
+		if (buf[i] < 0xF0)
+			i+=2;
+		else if (buf[i] < 0xF8)
+			i+=3;
+		else if (buf[i] < 0xFC)
+			i+=4;
+		else
+			i+=5;
+	}
+	i++;
+    }
 
-  copy_from_user(kbuf, buf, len);
-
-  wlen = len;
-  if ( kbuf[len-1] == '\n' ) { kbuf[len-1] = '\0'; wlen--; }
-
-  DBG("write : len = %d, wlen = %d, kbuf = '%s'.\n", len, wlen, kbuf);
+  DBG("[%s] initial length= %d, text length = %d, text = '%s'",__func__, len, wlen, kbuf);
 
   ESI88_WriteFront(kbuf,wlen);
 
@@ -508,3 +555,6 @@ module_exit(led_module_exit);
 MODULE_DESCRIPTION("SagemCom88 front vfd driver");
 MODULE_AUTHOR("Nemo");
 MODULE_LICENSE("GPL");
+
+module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled, 1=enabled");

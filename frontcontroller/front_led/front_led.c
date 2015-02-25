@@ -13,7 +13,7 @@
 #include <linux/gpio.h>
 #include <linux/stm/gpio.h>
 #include "asc.h"
-#include "utf.h"
+#include "../vfd/utf.h"
 
 #if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
@@ -173,145 +173,6 @@ static const unsigned char rom[128] =
         0x7d,//0x7d,}  
         0x7e,//0x7e,~  
         0x7f,//0x7f, <DEL>--> all light on
-
-#if 0
-        0x84,//0x80,a -umulaut  
-        0x94,//0x81,o -umulaut  
-        0x81,//0x82,u -umulaut  
-        0x8e,//0x83,A -umulaut  
-        0x99,//0x84,O -umulaut  
-        0x9a,//0x85,U -umulaut  
-        0xb1,//0x86,��- estset  
-        0x10,//0x87,reserved  
-        0x10,//0x88,reserved   
-        0x10,//0x89,reserved  
-        0x10,//0x8a,reserved  
-        0x10,//0x8b,reserved  
-        0x10,//0x8c,reserved  
-        0x10,//0x8d,reserved  
-        0x10,//0x8e,reserved  
-        0x10,//0x8f,  reserved 
-
-        0x10,//0x90,reserved 
-        0x10,//0x91,reserved  
-        0x10,//0x92,reserved 
-        0x10,//0x93,reserved 
-        0x10,//0x94,reserved 
-        0x10,//0x95,reserved 
-        0x10,//0x96,reserved 
-        0x10,//0x97,reserved 
-        0x10,//0x98,reserved 
-        0x10,//0x99,reserved 
-        0x10,//0x9a,reserved  
-        0x10,//0x9b,reserved 
-        0x10,//0x9c,reservedr
-        0x10,//0x9d,reserved 
-        0x10,//0x9e,reserved 
-        0x10,//0x9f, reserved
-
-        0x10,//0xa0,reserved  
-        0x10,//0xa1,reserved   
-        0x10,//0xa2,reserved   
-        0x10,//0xa3,reserved   
-        0x10,//0xa4,reserved   
-        0x10,//0xa5,reserved   
-        0x10,//0xa6,reserved   
-        0x10,//0xa7,reserved   
-        0x10,//0xa8,reserved   
-        0x10,//0xa9,reserved   
-        0x10,//0xaa,reserved   
-        0x10,//0xab,reserved   
-        0x10,//0xac,eserved   
-        0x10,//0xad,reserved   
-        0x10,//0xae,reserved   
-        0x10,//0xaf, reserved 
-
-        0x10,//0xb0, reserved 
-        0x10,//0xb1, reserved 
-        0x10,//0xb2, reserved 
-        0x10,//0xb3, reserved 
-        0x10,//0xb4, reserved 
-        0x10,//0xb5, reserved 
-        0x10,//0xb6, reserved 
-        0x10,//0xb7, reserved 
-        0x10,//0xb8, reserved 
-        0x10,//0xb9, reserved 
-        0x10,//0xba, reserved 
-        0x10,//0xbb, reserved 
-        0x10,//0xbc,reserved 
-        0x10,//0xbd, reserved 
-        0x10,//0xbe, reserved 
-        0x10,//0xbf, reserved
-
-        0x10,//0xc0, reserved  
-        0x10,//0xc1, reserved  
-        0x10,//0xc2, reserved  
-        0x10,//0xc3, reserved  
-        0x10,//0xc4, reserved  
-        0x10,//0xc5, reserved  
-        0x10,//0xc6, reserved  
-        0x10,//0xc7, reserved  
-        0x10,//0xc8, reserved  
-        0x10,//0xc9, reserved  
-        0x10,//0xca, reserved  
-        0x10,//0xcb, reserved  
-        0x10,//0xcc, reserved 
-        0x10,//0xcd, reserved  
-        0x10,//0xce, reserved  
-        0x10,//0xcf, reserved 
-
-        0x10,//0xd0, reserved  
-        0x10,//0xd1, reserved  
-        0x10,//0xd2, reserved  
-        0x10,//0xd3, reserved  
-        0x10,//0xd4, reserved  
-        0x10,//0xd5, reserved  
-        0x10,//0xd6, reserved  
-        0x10,//0xd7, reserved  
-        0x10,//0xd8, reserved  
-        0x10,//0xd9, reserved  
-        0x10,//0xda, reserved  
-        0x10,//0xdb, reserved  
-        0x10,//0xdc,reserved  
-        0x10,//0xdd, reserved  
-        0x10,//0xde, reserved  
-        0x10,//0xdf, reserved 
-
-        0x10,//0xe0, reserved  
-        0x10,//0xe1, reserved  
-        0x10,//0xe2, reserved  
-        0x10,//0xe3, reserved  
-        0x10,//0xe4, reserved  
-        0x10,//0xe5, reserved  
-        0x10,//0xe6, reserved  
-        0x10,//0xe7, reserved  
-        0x10,//0xe8, reserved  
-        0x10,//0xe9, reserved  
-        0x10,//0xea, reserved  
-        0x10,//0xeb, reserved  
-        0x10,//0xec,reserved  
-        0x10,//0xed, reserved  
-        0x10,//0xee, reserved  
-        0x10,//0xef, reserved 
-
-	//kolejne segmenty wyswietlacza
-        0x01,//0xf0,  reserved
-        0x02,//0xf1,  reserved
-        0x04,//0xf2,  reserved
-        0x08,//0xf3,  reserved
-        0x10,//0xf4,  reserved
-        0x20,//0xf5,  reserved
-        0x40,//0xf6,  reserved
-        0x80,//0xf7,  reserved
-        0x10,//0xf8,  reserved
-        0x10,//0xf9,  reserved
-        0x10,//0xfa,  reserved
-        0x10,//0xfb,  reserved
-        0x10,//0xfc, reserved
-        0x10,//0xfd,  reserved
-        0x10,//0xfe,  reserved
-        0x10,//0xff, reservedr
-#endif
 };
 
 #define VFD_MAJOR	147
@@ -330,10 +191,10 @@ struct vfd_driver {
 spinlock_t mr_lock = SPIN_LOCK_UNLOCKED;
 
 static struct vfd_driver vfd;
-static int debug = 1;
+static short paramDebug = 0;
 static jasnosc = 1;
 
-#define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[front_led]::" fmt "\n", ## args )
+#define DBG(fmt, args...) if ( paramDebug > 0 ) printk(KERN_INFO "[front_led]::" fmt "\n", ## args )
 #define ERR(fmt, args...) printk(KERN_ERR "[front_led]::" fmt "\n", ## args )
 
 
@@ -620,21 +481,23 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 
 static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t len, loff_t *off ) {
   unsigned char  kbuf[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-  size_t         wlen;
-  int i =0;
-  int j =0;
+  int i = 0;
+  int wlen = 0;
 
-  DBG("[%s] initial text = '%s'\n",__func__, buf);
+  DBG("[%s] initial text = '%s', len= %d\n",__func__, buf,len);
 
   if ( len == 0 ) return len;
 
-  while ((i< len) && (j < 8))
+  while ((i< len) && (wlen < 8))
 	{
-	//j++;
-	if (buf[i] < 0x80) {
-		kbuf[j]=buf[i];
-		DBG("[%s] buf[%i] = '0x%X'\n", __func__, j, buf[i]);
-		j++;
+	if (buf[i] == '\n' || buf[i] == '\n') {
+		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, buf[i]);
+		i++;
+	}
+	else if (buf[i] < 0x80) {
+		kbuf[wlen]=buf[i];
+		DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, buf[i]);
+		wlen++;
 	}
 	else if (buf[i] < 0xE0) {
 		DBG("[%s] UTF_Char_Table= 0x%X",__func__, buf[i]);
@@ -663,8 +526,8 @@ static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t le
 		i++;
 		if (UTF_Char_Table) {
 			DBG("[%s] UTF_Char= 0x%X, index=%i",__func__, UTF_Char_Table[buf[i] & 0x3f], i);
-			kbuf[j]=UTF_Char_Table[buf[i] & 0x3f];			
-			j++;
+			kbuf[wlen]=UTF_Char_Table[buf[i] & 0x3f];			
+			wlen++;
 		}
 	}
 	else {
@@ -676,13 +539,9 @@ static ssize_t vfd_write( struct file *filp, const unsigned char *buf, size_t le
 			i+=4;
 		else
 			i+=5;
-		//kbuf[j]=0x20;
 	}
 	i++;
     }
-  
-  wlen = len;
-  if ( kbuf[len-1] == '\n' ) { kbuf[len-1] = '\0'; wlen--; }
 
   DBG("[%s] initial length= %d, text length = %d, text = '%s'",__func__, len, wlen, kbuf);
 
@@ -835,3 +694,6 @@ module_exit(led_module_exit);
 MODULE_DESCRIPTION("SagemCom88 front_led driver");
 MODULE_AUTHOR("Nemo mod j00zek");
 MODULE_LICENSE("GPL");
+
+module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled, 1=enabled");
