@@ -405,13 +405,13 @@ static int pt6302_write_dcram(unsigned char addr, unsigned char* data, unsigned 
 	{
 		if (data[i] == '\n' || data[i] == 0x0d) 
 		{
-			DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, data[i]);
+			DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, data[i]);
 			i++;
 		}
 		else if (data[i] < 0x80)
 		{
 			kbuf[wlen]=data[i];
-			DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, wlen, data[i]);
+			DBG("[%s] ANSI_Char_Table '0x%X'\n", __func__, data[i]);
 			wlen++;
 		}
 		else if (data[i] < 0xE0) 
