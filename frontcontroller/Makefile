@@ -51,6 +51,8 @@ endif
 
 ifdef ADB_BOX
 obj-y += adb_box_vfd/
+obj-y += adb_box_vfd/front_bska/
+obj-y += adb_box_vfd/front_bsla/
 endif
 
 ifdef UFS912
