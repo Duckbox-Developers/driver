@@ -49,6 +49,10 @@ int proc_info_model_read(char *page, char **start, off_t off, int count, int *eo
 	len = sprintf(page, "vitamin_hd5000\n");
 #elif defined(SAGEMCOM88)
 	len = sprintf(page, "sagemcom88\n");
+#elif defined(ARIVALINK200)
+	len = sprintf(page, "ariva@link200\n");
+#elif defined(FORTIS_DP7000)
+	len = sprintf(page, "dp7000\n");
 #elif defined(UFS910)
 	len = sprintf(page, "ufs910\n");
 #else
