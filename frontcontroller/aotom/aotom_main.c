@@ -322,7 +322,7 @@ int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	YWPANEL_VFD_ShowString(buf);
 	} else {
 	draw_thread_stop = 2;
-	draw_task = kthread_run(draw_thread,draw_data,"draw thread");
+	draw_task = kthread_run(draw_thread,draw_data,"draw_thread");
 
 	//wait until thread has copied the argument
 	while(draw_thread_stop == 2)
@@ -960,7 +960,7 @@ static int __init aotom_init_module(void)
 		led_state[i].period = 0;
 		led_state[i].stop = 1;
 		sema_init(&led_state[i].led_sem, 0);
-		led_state[i].led_task = kthread_run(led_thread, (void *) i, "led thread");
+		led_state[i].led_task = kthread_run(led_thread, (void *) i, "led_thread");
 	}
 
 

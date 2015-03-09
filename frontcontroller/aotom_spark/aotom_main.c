@@ -328,7 +328,7 @@ static int run_draw_thread(struct vfd_ioctl_data *draw_data)
 			msleep(1);
 	}
 	draw_thread_status = DRAW_THREAD_STATUS_INIT;
-	draw_task = kthread_run(draw_thread, draw_data, "draw thread");
+	draw_task = kthread_run(draw_thread, draw_data, "draw_thread");
 	//wait until thread has copied the argument
 	while (draw_thread_status == DRAW_THREAD_STATUS_INIT)
 		msleep(1);
@@ -963,7 +963,7 @@ static int __init aotom_init_module(void)
 		led_state[i].period = 0;
 		led_state[i].stop = 1;
 		sema_init(&led_state[i].led_sem, 0);
-		led_state[i].led_task = kthread_run(led_thread, (void *) i, "led thread");
+		led_state[i].led_task = kthread_run(led_thread, (void *) i, "led_thread");
 	}
 	if (panel_version.DisplayInfo == YWPANEL_FP_DISPTYPE_VFD)
 	{
@@ -981,8 +981,7 @@ static int __init aotom_init_module(void)
 	else
 		rtc_pdev = platform_device_register_simple(RTC_NAME, -1, NULL, 0);
 	if (IS_ERR(rtc_pdev))
-		printk(KERN_ERR "%s platform_device_register_simple failed: %ld\n",
-			   __func__, PTR_ERR(rtc_pdev));
+		printk(KERN_ERR "%s platform_device_register_simple failed: %ld\n", __func__, PTR_ERR(rtc_pdev));
 	dprintk(5, "%s <\n", __func__);
 	return 0;
 }

@@ -797,7 +797,7 @@ int run_draw_thread(struct vfd_ioctl_data *draw_data)
 
   
     thread_stop = 2;
-    thread=kthread_run(draw_thread,draw_data,"draw thread",NULL,true);
+    thread=kthread_run(draw_thread,draw_data,"draw_thread",NULL,true);
 
     //wait thread run
     while(thread_stop == 2)
