@@ -341,8 +341,7 @@ obj-m += stv090x.o
 endif
 
 ifdef ARIVALINK200
-#cx24116-objs += cx24116_dvbapi5/cx24116.o
-cx24116-objs += cx24116/cx24116.o
+cx24116-objs += cx24116_dvbapi5/cx24116.o
 obj-m += cx24116.o
 endif
 
