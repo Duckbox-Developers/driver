@@ -180,9 +180,7 @@ static int bpamem_ioctl(struct inode *inode, struct file *filp, unsigned int ioc
 	dev = MINOR(inode->i_rdev);
 	switch (ioctl_num) 
 	{
-		case BPAMEMIO_ALLOCMEM:
-			filp->f_pos = -42;
-			return bpamemio_allocmem((BPAMemAllocMemData *)ioctl_param);
+		case BPAMEMIO_ALLOCMEM:   return bpamemio_allocmem((BPAMemAllocMemData *)ioctl_param);
 		case BPAMEMIO_MAPMEM:     return bpamemio_mapmem((BPAMemMapMemData *)ioctl_param);
 
 		case BPAMEMIO_FREEMEM:    return bpamemio_deallocmem(dev);
@@ -198,11 +196,7 @@ static int bpamem_open(struct inode *inode, struct file *filp)
 
 static int bpamem_release (struct inode *inode, struct file *filp)
 {
-	unsigned int dev;
-	if (filp->f_pos == -42)
-		return 0;
-	dev = MINOR(inode->i_rdev);
-	return bpamemio_deallocmem(dev);
+	return 0;
 }
 
 
@@ -291,7 +285,7 @@ static void __exit bpamem_exit(void)
 {
 	int i;
 
-	printk("Unregistering device '%s', major '%d'\n", DEVICE_NAME, BPAMEM_MAJOR);
+	printk("Unregistering device '%s', major '%d'", DEVICE_NAME, BPAMEM_MAJOR);
 
 	for(i = 0; i < MAX_BPA_ALLOCS; i++)
 		bpamemio_deallocmem(i);
