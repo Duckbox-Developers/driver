@@ -69,6 +69,12 @@ static short useUnknown = 0;
 module_param(useUnknown, short, 0644);
 MODULE_PARM_DESC(useUnknown, "Activates alternative tuner routines (default: 0)");
 
+#if defined(ARIVALINK200)
+static short DVBS2mode = 2;
+module_param(DVBS2mode, short, 0644);
+MODULE_PARM_DESC(DVBS2mode, "Activates alternative DVB-S2 tunnig routines (default: 2)");
+#endif
+
 #define dprintk(args...) \
 	do { \
 		if (debug) \
@@ -1453,8 +1459,12 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 	struct dtv_frontend_properties *c = &fe->dtv_property_cache;
 	struct cx24116_cmd cmd;
 	fe_status_t tunerstat;
-	int i, status, ret, retune = 2;
-
+	int i, status, ret;
+#if !defined(ARIVALINK200)
+	int retune = 2;
+#else
+	int retune = 3;
+#endif
 	dprintk("%s()\n", __func__);
 
 	switch (c->delivery_system) {
@@ -1672,12 +1682,45 @@ static int cx24116_set_frontend(struct dvb_frontend *fe,
 		dprintk("%s: Not tuned\n", __func__);
 
 		/* Toggle pilot bit when in auto-pilot */
+#if !defined(ARIVALINK200)
 		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
 			if (state->dcur.pilot == CX24116_PILOT_OFF)
 				cmd.args[0x07] ^= CX24116_PILOT_ON;
 			else
 				cmd.args[0x07] ^= CX24116_PILOT_OFF;
 		}
+#else
+		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
+			switch (DVBS2mode) {
+			  case 0:
+				printk("Neutrino toggle pilot style\n");
+				if (state->dcur.pilot == CX24116_PILOT_OFF)
+					cmd.args[0x07] ^= CX24116_PILOT_ON;
+				else
+					cmd.args[0x07] ^= CX24116_PILOT_OFF;
+				break;
+			  case 1:
+				printk("E2 toggle pilot style\n");
+				cmd.args[0x07] ^= CX24116_PILOT_ON;
+				break;
+			  case 2:
+				if (retune = 3) {
+					printk("E2 auto toggle pilot style\n");
+					cmd.args[0x07] ^= CX24116_PILOT_ON;
+				}
+				else {
+					printk("Neutrino auto toggle pilot style\n");
+					if (retune = 2)
+					      cmd.args[0x07] ^= CX24116_PILOT_ON;
+					if (state->dcur.pilot == CX24116_PILOT_OFF)
+						cmd.args[0x07] ^= CX24116_PILOT_ON;
+					else
+						cmd.args[0x07] ^= CX24116_PILOT_OFF;
+				}
+			}
+		}
+#endif
+
 	} while (--retune);
 
 tuned:  /* Set/Reset B/W */
