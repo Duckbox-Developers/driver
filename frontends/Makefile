@@ -346,8 +346,9 @@ obj-m += cx24116.o
 endif
 
 ifdef SAGEMCOM88
-ifeq (,$(wildcard $(DRIVER_TOPDIR)/sagemcom88 ))
-fe-core-objs +=        sagemcom88/ix7306.o
+ifneq (,$(wildcard $(DRIVER_TOPDIR)/frontends/sagemcom88 ))
+fe_core-objs +=        sagemcom88/tda18218.o
+fe_core-objs +=        sagemcom88/tda10048.o
 fe-core-objs +=        sagemcom88/stv090x.o
 fe-core-objs +=        sagemcom88/stv6110x.o
 fe-core-objs +=        sagemcom88/core.o
