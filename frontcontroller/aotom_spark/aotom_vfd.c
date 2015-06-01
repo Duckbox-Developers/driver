@@ -1699,7 +1699,7 @@ static int YWPANEL_VFD_SetBrightness_StandBy(int level)
 		level = 7;
 	data.dataType = YWPANEL_DATATYPE_VFD;
 	data.data.vfdData.type = YWPANEL_VFD_SETTING;
-	data.data.vfdData.setValue = level | 0x78;
+	data.data.vfdData.setValue = level | 0x88;
 	if (YWPANEL_FP_SendData(&data) != true)
 	{
 		ywtrace_print(TRACE_ERROR, "SetBrightness wrong!!\n");
@@ -1717,7 +1717,7 @@ static int YWPANEL_VFD_SetBrightness_Common(int level)
 	else if (level > 7)
 		level = 7;
 	VFD_CS_CLR();
-	YWPANEL_VFD_WR(0x78 | level);
+	YWPANEL_VFD_WR(0x88 | level);
 	VFD_CS_SET();
 	return ST_ErrCode;
 }
