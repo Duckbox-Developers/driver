@@ -92,7 +92,6 @@ typedef struct YWGPIO_OpenParams_s
 	void                *PrivateData;
 } YWGPIO_OpenParams_T;
 
-
 typedef void (* YWGPIO_ISRFunc_T)(YWGPIO_Handle_T GpioHandle);
 
 YW_ErrorType_T YWGPIO_Init(void);

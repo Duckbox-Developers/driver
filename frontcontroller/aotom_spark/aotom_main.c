@@ -30,7 +30,6 @@
  *
  */
 
-
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <asm/termbits.h>
@@ -58,8 +57,8 @@ static short paramDebug = 0;
 #define TAGDEBUG "[aotom] "
 
 #define dprintk(level, x...) do { \
-if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
+	} while (0)
 
 #define DISPLAYWIDTH_MAX 8
 
@@ -523,72 +522,72 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 					}
 					break;
 				default:
+				{
+					int icon_nr = aotom_data.u.icon.icon_nr;
+					if (icon_nr & ~0xff)
 					{
-						int icon_nr = aotom_data.u.icon.icon_nr;
-						if (icon_nr & ~0xff)
-						{
-							icon_nr >>= 8;
-							switch (icon_nr)
-							{
-								case 0x11:
-									icon_nr = AOTOM_DOUBLESCREEN;
-									break;
-								case 0x13:
-									icon_nr = AOTOM_CA;
-									break;
-								case 0x15:
-									icon_nr = AOTOM_MP3;
-									break;
-								case 0x17:
-									icon_nr = AOTOM_AC3;
-									break;
-								case 0x1A:
-									icon_nr = AOTOM_PLAY_LOG;
-									break;
-								case 0x1e:
-									icon_nr = AOTOM_REC1;
-									break;
-								case 38:
-									// AOTOM_DISK_S3
-									break; //cd part1
-								case 39:
-									// AOTOM_DISK_S2
-									break; //cd part2
-								case 40:
-									// AOTOM_DISK_S1
-									break; //cd part3
-								case 41:
-									// AOTOM_DISK_S0
-									break; //cd part4
-								default:
-									icon_nr = -1; //no additional symbols at the moment
-									break;
-							}
-						}
+						icon_nr >>= 8;
 						switch (icon_nr)
 						{
-							case 46:
-							case AOTOM_ALL:
-								VFD_set_all_icons(aotom_data.u.icon.on);
-								res = 0;
-							case -1:
+							case 0x11:
+								icon_nr = AOTOM_DOUBLESCREEN;
 								break;
+							case 0x13:
+								icon_nr = AOTOM_CA;
+								break;
+							case 0x15:
+								icon_nr = AOTOM_MP3;
+								break;
+							case 0x17:
+								icon_nr = AOTOM_AC3;
+								break;
+							case 0x1A:
+								icon_nr = AOTOM_PLAY_LOG;
+								break;
+							case 0x1e:
+								icon_nr = AOTOM_REC1;
+								break;
+							case 38:
+								// AOTOM_DISK_S3
+								break; //cd part1
+							case 39:
+								// AOTOM_DISK_S2
+								break; //cd part2
+							case 40:
+								// AOTOM_DISK_S1
+								break; //cd part3
+							case 41:
+								// AOTOM_DISK_S0
+								break; //cd part4
 							default:
-								res = aotomSetIcon(icon_nr, aotom_data.u.icon.on);
+								icon_nr = -1; //no additional symbols at the moment
+								break;
 						}
 					}
-					mode = 0;
-					break;
+					switch (icon_nr)
+					{
+						case 46:
+						case AOTOM_ALL:
+							VFD_set_all_icons(aotom_data.u.icon.on);
+							res = 0;
+						case -1:
+							break;
+						default:
+							res = aotomSetIcon(icon_nr, aotom_data.u.icon.on);
+					}
+				}
+				mode = 0;
+				break;
 			}
 			break;
 		case VFDSETPOWERONTIME:
-			{
-				u32 uTime = 0;
-				get_user(uTime, (int *) arg);
-				YWPANEL_FP_SetPowerOnTime(uTime);
-				res = 0;
-				break;
-			}
+		{
+			u32 uTime = 0;
+			get_user(uTime, (int *) arg);
+			YWPANEL_FP_SetPowerOnTime(uTime);
+			res = 0;
+			break;
+		}
 		case VFDPOWEROFF:
 			clear_display();
 			YWPANEL_FP_ControlTimer(true);

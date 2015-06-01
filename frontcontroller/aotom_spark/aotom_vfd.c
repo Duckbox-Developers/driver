@@ -92,7 +92,6 @@ static u8 YWPANEL_CharArray[] =
 /*address 0 8bit g i m c r p n e */
 /*address 1 7bit   d a b f k j h */
 
-
 static u8 CharLib[0x37][2] =
 {
 	{0xF1, 0x38},   //A 00
@@ -274,7 +273,6 @@ enum
 {
 	YWPANEL_INIT_INSTR_GETVERSION = 0x50,
 
-
 	YWPANEL_INIT_INSTR_GETCPUSTATE = 0x52,
 	YWPANEL_INIT_INSTR_SETCPUSTATE,
 
@@ -298,7 +296,6 @@ enum
 
 	YWPANEL_INIT_INSTR_GETENCRYPTKEY,       /* 0x62 */
 	YWPANEL_INIT_INSTR_SETENCRYPTKEY,
-
 
 	YWPANEL_INIT_INSTR_GETVERIFYSTATE,      /* 0x64 */
 	YWPANEL_INIT_INSTR_SETVERIFYSTATE,
@@ -445,14 +442,14 @@ static void YWPANEL_FP_DvfdFillData(YWPANEL_FPData_t *data, YWPANEL_I2CData_t *I
 	switch (data->data.dvfdData.type)
 	{
 		case YWPANEL_DVFD_DISPLAYSTRING:
-			{
-				u8  uMax = data->data.dvfdData.ulen;
-				if (uMax > 4)
-					uMax = 4;
-				I2CData->writeBuff[2] = uMax;
-				YWPANEL_FP_DvfdFillString(data, I2CData, uMax);
-				break;
-			}
+		{
+			u8  uMax = data->data.dvfdData.ulen;
+			if (uMax > 4)
+				uMax = 4;
+			I2CData->writeBuff[2] = uMax;
+			YWPANEL_FP_DvfdFillString(data, I2CData, uMax);
+			break;
+		}
 		case YWPANEL_DVFD_SETTIMEMODE:
 			I2CData->writeBuff[2] = data->data.dvfdData.setValue;
 		default:
@@ -636,15 +633,15 @@ static int YWPANEL_FP_SetI2cData(YWPANEL_FPData_t  *data, YWPANEL_I2CData_t   *I
 					I2CData->writeBuff[3] = data->data.vfdData.key;
 					break;
 				case YWPANEL_VFD_DISPLAYSTRING:
+				{
+					int i;
+					for (i = 0; i < 16; i++)
 					{
-						int i;
-						for (i = 0; i < 16; i++)
-						{
-							I2CData->writeBuff[4 + 2 * i] = data->data.vfdData.address[i];
-							I2CData->writeBuff[4 + 2 * i + 1] = data->data.vfdData.DisplayValue[i];
-						}
-						break;
+						I2CData->writeBuff[4 + 2 * i] = data->data.vfdData.address[i];
+						I2CData->writeBuff[4 + 2 * i + 1] = data->data.vfdData.DisplayValue[i];
 					}
+					break;
+				}
 			}
 			break;
 		case YWPANEL_DATATYPE_DVFD:
@@ -933,9 +930,9 @@ static int YWPANEL_FP_ParseI2cData(YWPANEL_FPData_t  *data, YWPANEL_I2CData_t   
 		case YWPANEL_INIT_INSTR_GETSTBYKEY4:
 		case YWPANEL_INIT_INSTR_GETSTBYKEY5:
 			data->data.stbyKey.key = ((I2CData->readBuff[2] << 24) & 0xff000000)
-									 | ((I2CData->readBuff[3] << 16) & 0xff0000)
-									 | ((I2CData->readBuff[4] << 8) & 0xff00)
-									 | ((I2CData->readBuff[5]) & 0xff);
+						 | ((I2CData->readBuff[3] << 16) & 0xff0000)
+						 | ((I2CData->readBuff[4] << 8) & 0xff00)
+						 | ((I2CData->readBuff[5]) & 0xff);
 			data->ack = true;
 			break;
 		case YWPANEL_INIT_INSTR_GETSTARTUPSTATE: /*get vfd state*/
@@ -952,26 +949,26 @@ static int YWPANEL_FP_ParseI2cData(YWPANEL_FPData_t  *data, YWPANEL_I2CData_t   
 		case YWPANEL_INIT_INSTR_GETPOWERONTIME:
 		case YWPANEL_INIT_INSTR_GETTIME:
 			data->data.time.second = ((I2CData->readBuff[2] << 24) & 0xff000000)
-									 | ((I2CData->readBuff[3] << 16) & 0xff0000)
-									 | ((I2CData->readBuff[4] << 8) & 0xff00)
-									 | ((I2CData->readBuff[5]) & 0xff);
+						 | ((I2CData->readBuff[3] << 16) & 0xff0000)
+						 | ((I2CData->readBuff[4] << 8) & 0xff00)
+						 | ((I2CData->readBuff[5]) & 0xff);
 			data->ack = true;
 			break;
 		default:
-			{
-				ywtrace_print(TRACE_ERROR, "%s::error @%d\n", __FUNCTION__, __LINE__);
-				return false;
-			}
+		{
+			ywtrace_print(TRACE_ERROR, "%s::error @%d\n", __FUNCTION__, __LINE__);
+			return false;
+		}
 	}
 	return true;
 }
 
 #ifdef CONFIG_CPU_SUBTYPE_STX7105
 static int YWPANEL_FPWriteDataToI2c(struct i2c_adapter *I2CHandle,
-									u8 *writeBuffer,
-									u32 writeBufLen,
-									u8 *readBuffer,
-									u32 readBufLen)
+				    u8 *writeBuffer,
+				    u32 writeBufLen,
+				    u8 *readBuffer,
+				    u32 readBufLen)
 {
 	if (!isofti2c_write(writeBuffer, writeBufLen))
 		return false;
@@ -982,10 +979,10 @@ static int YWPANEL_FPWriteDataToI2c(struct i2c_adapter *I2CHandle,
 }
 #else
 static int YWPANEL_FPWriteDataToI2c(struct i2c_adapter *I2CHandle,
-									u8 *writeBuffer,
-									u32 writeBufLen,
-									u8 *readBuffer,
-									u32 readBufLen)
+				    u8 *writeBuffer,
+				    u32 writeBufLen,
+				    u8 *readBuffer,
+				    u32 readBufLen)
 {
 	int ret = 0;
 	struct i2c_msg i2c_msg[] = {{ .addr = I2C_BUS_ADD, .flags = 0, .buf = writeBuffer, .len = writeBufLen},
@@ -1039,10 +1036,10 @@ int YWPANEL_FP_SendData(YWPANEL_FPData_t  *data)
 	}
 	//printk("%s:%d\n", __FUNCTION__, __LINE__);
 	ret = YWPANEL_FPWriteDataToI2c(panel_i2c_adapter,
-								   I2CData.writeBuff,
-								   I2CData.writeBuffLen,
-								   I2CData.readBuff,
-								   YWPANEL_FP_INFO_MAX_LENGTH);
+				       I2CData.writeBuff,
+				       I2CData.writeBuffLen,
+				       I2CData.readBuff,
+				       YWPANEL_FP_INFO_MAX_LENGTH);
 	if (ret != true)
 	{
 		ywtrace_print(TRACE_ERROR, "YWPANEL_FPWriteDataToI2c @ %d\n", __LINE__);
@@ -1349,23 +1346,23 @@ int YWPANEL_VFD_SetLed(int which, int on)
 	switch (which)
 	{
 		case 0:
-			{
-				if (on)
-					lbdValue |= YWPANEL_LBD_TYPE_POWER;
-				else
-					lbdValue &= ~(YWPANEL_LBD_TYPE_POWER);
-				break;
-			}
+		{
+			if (on)
+				lbdValue |= YWPANEL_LBD_TYPE_POWER;
+			else
+				lbdValue &= ~(YWPANEL_LBD_TYPE_POWER);
+			break;
+		}
 		case 1:
-			{
-				if (panel_disp_type == YWPANEL_FP_DISPTYPE_VFD)
-					return YWPANEL_VFD_ShowIcon(AOTOM_DOT2, on); // green LED not available
-				if (on)
-					lbdValue |= YWPANEL_LBD_TYPE_SIGNAL;
-				else
-					lbdValue &= ~(YWPANEL_LBD_TYPE_SIGNAL);
-				break;
-			}
+		{
+			if (panel_disp_type == YWPANEL_FP_DISPTYPE_VFD)
+				return YWPANEL_VFD_ShowIcon(AOTOM_DOT2, on); // green LED not available
+			if (on)
+				lbdValue |= YWPANEL_LBD_TYPE_SIGNAL;
+			else
+				lbdValue &= ~(YWPANEL_LBD_TYPE_SIGNAL);
+			break;
+		}
 	}
 	data.data.lbdData.value = lbdValue;
 	if (YWPANEL_FP_SendData(&data) != true)
@@ -1497,7 +1494,6 @@ static int YWPANEL_VFD_ShowContentOff(void)
 	return ST_ErrCode;
 }
 #endif
-
 
 static void YWPANEL_VFD_ClearAll(void)
 {
@@ -1656,7 +1652,6 @@ static int YWPANEL_VFD_ShowTime_Common(u8 hh, u8 mm)
 	up(&vfd_sem);
 	return ErrorCode;
 }
-
 
 static int YWPANEL_VFD_ShowTime_Unknown(u8 hh, u8 mm)
 {
@@ -1863,7 +1858,6 @@ int YWPANEL_VFD_GetKeyValue(void)
 	up(&vfd_sem);
 	return key_val;
 }
-
 
 static int  bTimeMode = 1;
 static char strDvfd[16][5];
@@ -2458,12 +2452,12 @@ int YWPANEL_VFD_Init(void)
 				YWPANEL_VFD_ShowString = YWPANEL_VFD_ShowString_StandBy;
 				break;
 			case YWPANEL_FP_DISPTYPE_DVFD:
-				{
-					int bOn;
-					YWPANEL_FP_DvfdGetTimeMode(&bOn);
-					YWPANEL_VFD_ShowString = YWVFD_STANDBY_DvfdShowString;
-					break;
-				}
+			{
+				int bOn;
+				YWPANEL_FP_DvfdGetTimeMode(&bOn);
+				YWPANEL_VFD_ShowString = YWVFD_STANDBY_DvfdShowString;
+				break;
+			}
 			case YWPANEL_FP_DISPTYPE_LED:
 				YWPANEL_width = 4;
 				YWPANEL_VFD_ShowString = YWVFD_LED_ShowString;

@@ -51,7 +51,6 @@
 #define YWOSTRACE(x)
 #endif
 
-
 #define YWOS_WAIT_INFINITY      (0xFFFFFFFF)
 #define YWI2CSOFT_MAX_DEVICE    4
 #define YWI2CSOFT_MAX_HANDLE    16
@@ -89,9 +88,7 @@ typedef struct YWI2CSoft_Device_s
 
 	YWOS_SemaphoreID_T  SoftI2cLock;
 
-
 } YWI2CSoft_Device_t;
-
 
 static YWI2CSoft_Device_t  I2CSoftDevice[YWI2CSOFT_MAX_DEVICE] =
 {
@@ -100,7 +97,6 @@ static YWI2CSoft_Device_t  I2CSoftDevice[YWI2CSOFT_MAX_DEVICE] =
 	{"\0", FALSE, 0, 0, (YWGPIO_Handle_T)NULL, (YWGPIO_Handle_T)NULL},
 	{"\0", FALSE, 0, 0, (YWGPIO_Handle_T)NULL, (YWGPIO_Handle_T)NULL}
 };
-
 
 typedef struct YWI2C_SoftParam_s
 {
@@ -117,15 +113,12 @@ typedef struct YWI2C_SoftParam_s
 	U32     Speed; //hz
 	U8      SlaveAddr; //hz
 
-
 } YWI2C_SoftParam_t;
-
 
 static void iic_delay(int micros)
 {
 	udelay(micros * 2);
 }
-
 
 /*=====================================================================*/
 /*                         Public Functions                            */
@@ -165,8 +158,7 @@ void *YWLIB_Memset(void *s, int c, U32 n)
 	return memset(s, c, n);
 }
 
-YW_ErrorType_T YWOS_SemaphoreCreate(S8 *Name, U32 Count,
-									YWOS_SemaphoreID_T *SemaphoreID)
+YW_ErrorType_T YWOS_SemaphoreCreate(S8 *Name, U32 Count, YWOS_SemaphoreID_T *SemaphoreID)
 {
 	Name = Name;
 	Count = Count;
@@ -193,13 +185,12 @@ YW_ErrorType_T YWOS_SemaphoreDelete(YWOS_SemaphoreID_T  SemaphoreID)
 	return YW_NO_ERROR;
 }
 
-YW_ErrorType_T YWGPIO_Open(YWGPIO_Handle_T *pGpioHandle,
-						   YWGPIO_OpenParams_T *GpioOpenParams)
+YW_ErrorType_T YWGPIO_Open(YWGPIO_Handle_T *pGpioHandle, YWGPIO_OpenParams_T *GpioOpenParams)
 {
 	struct stpio_pin *pPio = NULL;
 	pPio = stpio_request_pin(GpioOpenParams->GpioIndex / PIO_BITS,
-							 GpioOpenParams->GpioIndex % PIO_BITS,
-							 "LED", STPIO_OUT);
+				 GpioOpenParams->GpioIndex % PIO_BITS,
+				 "LED", STPIO_OUT);
 	//printk("pPio = 0x%x\n", (int)pPio);
 	if (pPio)
 	{
@@ -229,8 +220,7 @@ YW_ErrorType_T YWGPIO_Read(YWGPIO_Handle_T GpioHandle, U8 *pPioValue)
 	return YW_NO_ERROR;
 }
 
-YW_ErrorType_T YWGPIO_SetIoMode(YWGPIO_Handle_T GpioHandle,
-								YWGPIO_IOMode_T IoMode)
+YW_ErrorType_T YWGPIO_SetIoMode(YWGPIO_Handle_T GpioHandle, YWGPIO_IOMode_T IoMode)
 {
 	struct stpio_pin *pPio = (struct stpio_pin *)GpioHandle;
 	switch (IoMode)
@@ -309,13 +299,10 @@ static void i2csoft_lock(U32 DeviceIndex)
 	YWOS_SemaphoreWait(I2CSoftDevice[DeviceIndex].SoftI2cLock, YWOS_WAIT_INFINITY);
 }
 
-
 static void i2csoft_unlock(U32 DeviceIndex)
 {
 	YWOS_SemaphoreSend(I2CSoftDevice[DeviceIndex].SoftI2cLock);
 }
-
-
 
 static void i2csoft_reset(YWGPIO_Handle_T SCL, YWGPIO_Handle_T SDA)
 {
@@ -335,9 +322,6 @@ static void i2csoft_reset(YWGPIO_Handle_T SCL, YWGPIO_Handle_T SDA)
 	i2csoft_sendstop(SCL, SDA);
 	I2C_TRISTATE;
 }
-
-
-
 
 static void i2csoft_sendstart(YWGPIO_Handle_T SCL, YWGPIO_Handle_T SDA)
 {
@@ -648,7 +632,6 @@ YW_ErrorType_T i2c_soft_init(char *DeviceName, YWI2cSoft_InitParam_t *InitParam)
 	return YW_NO_ERROR;
 }
 
-
 YW_ErrorType_T i2c_soft_term(char *DeviceName)
 {
 	int                     i;
@@ -747,10 +730,10 @@ YW_ErrorType_T i2c_soft_close(YWI2CSoft_Handle_t Handle)
 }
 
 YW_ErrorType_T i2c_soft_read(YWI2CSoft_Handle_t Handle,
-							 U8              *Buffer_p,
-							 U32             MaxLen,
-							 U32             Timeout,
-							 U32             *ActLen_p)
+			     U8              *Buffer_p,
+			     U32             MaxLen,
+			     U32             Timeout,
+			     U32             *ActLen_p)
 {
 	int                     ret;
 	//YW_ErrorType_T          ErrorType = YW_NO_ERROR;
@@ -776,10 +759,10 @@ YW_ErrorType_T i2c_soft_read(YWI2CSoft_Handle_t Handle,
 }
 
 YW_ErrorType_T i2c_soft_write(YWI2CSoft_Handle_t Handle,
-							  U8              *Buffer_p,
-							  U32             MaxLen,
-							  U32             Timeout,
-							  U32             *ActLen_p)
+			      U8              *Buffer_p,
+			      U32             MaxLen,
+			      U32             Timeout,
+			      U32             *ActLen_p)
 {
 	int                     ret;
 	//YW_ErrorType_T          ErrorType = YW_NO_ERROR;
@@ -819,10 +802,10 @@ YW_ErrorType_T i2c_soft_write(YWI2CSoft_Handle_t Handle,
 }
 
 YW_ErrorType_T i2c_soft_readnostop(YWI2CSoft_Handle_t Handle,
-								   U8              *Buffer_p,
-								   U32             MaxLen,
-								   U32             Timeout,
-								   U32             *ActLen_p)
+				   U8              *Buffer_p,
+				   U32             MaxLen,
+				   U32             Timeout,
+				   U32             *ActLen_p)
 {
 	int                     ret;
 	//YW_ErrorType_T          ErrorType = YW_NO_ERROR;
@@ -848,10 +831,10 @@ YW_ErrorType_T i2c_soft_readnostop(YWI2CSoft_Handle_t Handle,
 }
 
 YW_ErrorType_T i2c_soft_writenostop(YWI2CSoft_Handle_t Handle,
-									U8              *Buffer_p,
-									U32             MaxLen,
-									U32             Timeout,
-									U32             *ActLen_p)
+				    U8              *Buffer_p,
+				    U32             MaxLen,
+				    U32             Timeout,
+				    U32             *ActLen_p)
 {
 	int                     ret;
 	//YW_ErrorType_T          ErrorType = YW_NO_ERROR;
@@ -889,9 +872,9 @@ int softi2c_init(void)
 		YWI2cSoft_InitParam_t InitParam;
 		InitParam.IsSlaveDevice = FALSE;
 		InitParam.SCLPioIndex   = GPIO_SIMULATE_I2C_SCL_PORT * PIO_BITS +
-								  GPIO_SIMULATE_I2C_SCL_BIT;
+					  GPIO_SIMULATE_I2C_SCL_BIT;
 		InitParam.SDAPioIndex   = GPIO_SIMULATE_I2C_SDA_PORT * PIO_BITS +
-								  GPIO_SIMULATE_I2C_SDA_BIT;
+					  GPIO_SIMULATE_I2C_SDA_BIT;
 		InitParam.Speed         = 100000;
 		YWI2C_INTERFACE(("InitParam.SCLPioIndex = %d\n", InitParam.SCLPioIndex));
 		YWI2C_INTERFACE(("InitParam.SDAPioIndex = %d\n", InitParam.SDAPioIndex));
@@ -914,8 +897,7 @@ int softi2c_init(void)
 		}
 		else
 		{
-			YWOSTRACE(("[ERROR][YWI2C_Open]I2C Open[%d] failed ! Error %d\n",
-					   0, YW_ErrorCode));
+			YWOSTRACE(("[ERROR][YWI2C_Open]I2C Open[%d] failed ! Error %d\n", 0, YW_ErrorCode));
 			return (YW_ErrorCode);
 		}
 	}
