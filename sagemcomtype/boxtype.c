@@ -38,7 +38,7 @@
 #include <linux/i2c.h>
 #include <linux/delay.h>
 
-#include "sagemcomtype.h"
+#include "boxtype.h"
 #include "pio.h"
 
 #define procfs_name "boxtype"

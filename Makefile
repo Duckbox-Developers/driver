@@ -142,7 +142,9 @@ ifndef FORTIS_DP7000 #temporary due to wrong definitions
 obj-y += stgfb/
 obj-y += player2/
 endif
+ifndef SAGEMCOM88 #Sagemcom88 has own boxtype
 obj-y += boxtype/
+endif
 obj-y += simu_button/
 obj-y += e2_proc/
 obj-y += frontends/
