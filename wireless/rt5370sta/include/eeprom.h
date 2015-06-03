@@ -28,9 +28,6 @@
 #ifndef __EEPROM_H__
 #define __EEPROM_H__
 
-/* For ioctl check usage */
-#define EEPROM_IS_PROGRAMMED		0x80
-
 
 #ifdef RTMP_MAC_USB
 #define EEPROM_SIZE					0x400

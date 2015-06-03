@@ -32,9 +32,8 @@
 #include "rtmp_comm.h"
 #include "rtmp_osabl.h"
 #include "rt_os_util.h"
-#include <linux/rtnetlink.h>
 
-#if defined(CONFIG_RA_HW_NAT) || defined(CONFIG_RA_HW_NAT_MODULE)
+#if defined (CONFIG_RA_HW_NAT) || defined (CONFIG_RA_HW_NAT_MODULE)
 #include "../../../../../../net/nat/hw_nat/ra_nat.h"
 #include "../../../../../../net/nat/hw_nat/frame_engine.h"
 #endif
@@ -52,7 +51,6 @@
 #endif
 
 ULONG RTDebugLevel = RT_DEBUG_ERROR;
-ULONG RTDebugFunc = 0;
 
 #ifdef OS_ABL_FUNC_SUPPORT
 ULONG RTPktOffsetData = 0, RTPktOffsetLen = 0, RTPktOffsetCB = 0;
@@ -73,11 +71,6 @@ ULONG OS_NumOfPktAlloc = 0, OS_NumOfPktFree = 0;
 BOOLEAN FlgIsUtilInit = FALSE;
 OS_NDIS_SPIN_LOCK UtilSemLock;
 
-
-BOOLEAN RTMP_OS_Alloc_RscOnly(IN VOID *pRscSrc,
-						IN UINT32 RscLen);
-BOOLEAN RTMP_OS_Remove_Rsc(IN LIST_HEADER *pRscList,
-						IN VOID *pRscSrc);
 
 /*
 ========================================================================
@@ -108,15 +101,8 @@ static inline VOID __RTMP_SetPeriodicTimer(
 	IN unsigned long timeout)
 {
 	timeout = ((timeout * OS_HZ) / 1000);
-        if(timer_pending(pTimer))
-        {
-            mod_timer(pTimer,jiffies+timeout);
-        }
-        else
-        {
-		pTimer->expires = jiffies + timeout;
-		add_timer(pTimer);
-	}
+	pTimer->expires = jiffies + timeout;
+	add_timer(pTimer);
 }
 
 /* convert NdisMInitializeTimer --> RTMP_OS_Init_Timer */
@@ -436,7 +422,6 @@ VOID RTMPFreeNdisPacket(
 	dev_kfree_skb_any(RTPKT_TO_OSPKT(pPacket));
 	MEM_DBG_PKT_FREE_INC(pPacket);
 }
-
 
 /* IRQL = DISPATCH_LEVEL */
 /* NOTE: we do have an assumption here, that Byte0 and Byte1
@@ -1387,7 +1372,7 @@ static UINT32 RtmpOSWirelessEventTranslate(IN UINT32 eventType) {
 		break;
 
 	default:
-		printk("Unknown event: 0x%x\n", eventType);
+		printk("Unknown event: %d\n", eventType);
 		break;
 	}
 
@@ -1399,8 +1384,7 @@ int RtmpOSWrielessEventSend(IN PNET_DEV pNetDev,
 			    IN INT flags,
 			    IN PUCHAR pSrcMac,
 			    IN PUCHAR pData,
-			    IN UINT32 dataLen) 
-{
+			    IN UINT32 dataLen) {
 	union iwreq_data wrqu;
 
 	/* translate event type */
@@ -1416,8 +1400,6 @@ int RtmpOSWrielessEventSend(IN PNET_DEV pNetDev,
 
 	if ((pData != NULL) && (dataLen > 0))
 		wrqu.data.length = dataLen;
-	else
-		wrqu.data.length = 0;
 
 	wireless_send_event(pNetDev, eventType, &wrqu, (char *)pData);
 	return 0;
@@ -1503,12 +1485,8 @@ static int RtmpOSNetDevRequestName(IN INT32 MC_RowID,
 		strncpy(&desiredName[0], pPrefixStr, prefixLen);
 
 #ifdef MULTIPLE_CARD_SUPPORT
-		/*
 		if (MC_RowID >= 0)
 			sprintf(suffixName, "%02d_%d", MC_RowID, ifNameIdx);
-		*/
-		if (MC_RowID > 0)
-			sprintf(suffixName, "i%d", ifNameIdx);
 		else
 #endif /* MULTIPLE_CARD_SUPPORT */
 			sprintf(suffixName, "%d", ifNameIdx);
@@ -1540,37 +1518,18 @@ static int RtmpOSNetDevRequestName(IN INT32 MC_RowID,
 	return Status;
 }
 
-void RtmpOSNetDevClose(IN PNET_DEV pNetDev)
-{
+void RtmpOSNetDevClose(IN PNET_DEV pNetDev) {
 	dev_close(pNetDev);
 }
 
-void RtmpOSNetDevFree(PNET_DEV pNetDev)
-{
-	DEV_PRIV_INFO *pDevInfo = NULL;
-
-
+void RtmpOSNetDevFree(PNET_DEV pNetDev) {
 	ASSERT(pNetDev);
-
-	/* free assocaited private information */
-	pDevInfo = _RTMP_OS_NETDEV_GET_PRIV(pNetDev);
-	if (pDevInfo != NULL)
-		os_free_mem(NULL, pDevInfo);
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
 	free_netdev(pNetDev);
 #else
 	kfree(pNetDev);
 #endif
-
-#ifdef VENDOR_FEATURE4_SUPPORT
-	printk("OS_NumOfMemAlloc = %ld, OS_NumOfMemFree = %ld\n",
-			OS_NumOfMemAlloc, OS_NumOfMemFree);
-#endif /* VENDOR_FEATURE4_SUPPORT */
-#ifdef VENDOR_FEATURE2_SUPPORT
-	printk("OS_NumOfPktAlloc = %ld, OS_NumOfPktFree = %ld\n",
-			OS_NumOfPktAlloc, OS_NumOfPktFree);
-#endif /* VENDOR_FEATURE2_SUPPORT */
 }
 
 INT RtmpOSNetDevAlloc(IN PNET_DEV *new_dev_p,
@@ -1637,8 +1596,7 @@ PNET_DEV RtmpOSNetDevGetByName(PNET_DEV pNetDev,
 	return pTargetNetDev;
 }
 
-void RtmpOSNetDeviceRefPut(PNET_DEV pNetDev)
-{
+void RtmpOSNetDeviceRefPut(PNET_DEV pNetDev) {
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,5,0)
 	/* 
 	   every time dev_get_by_name is called, and it has returned a valid struct 
@@ -1651,8 +1609,7 @@ void RtmpOSNetDeviceRefPut(PNET_DEV pNetDev)
 }
 
 INT RtmpOSNetDevDestory(IN VOID *pReserved,
-			IN PNET_DEV pNetDev)
-{
+			IN PNET_DEV pNetDev) {
 
 	/* TODO: Need to fix this */
 	printk("WARNING: This function(%s) not implement yet!!!\n",
@@ -1665,9 +1622,6 @@ void RtmpOSNetDevDetach(PNET_DEV pNetDev) {
 	struct net_device_ops *pNetDevOps = (struct net_device_ops *)pNetDev->netdev_ops;
 #endif
 
-	if (RT_DEV_PRIV_FLAGS_GET(pNetDev) != 0x0100)
-		unregister_netdevice(pNetDev);
-    else
 	unregister_netdev(pNetDev);
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
@@ -1675,20 +1629,9 @@ void RtmpOSNetDevDetach(PNET_DEV pNetDev) {
 #endif
 }
 
-
-void RtmpOSNetDevProtect(BOOLEAN lock_it)
-{
-	if (lock_it)
-		rtnl_lock();
-	else
-		rtnl_unlock();
-}
-
-
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
 static void RALINK_ET_DrvInfoGet(IN struct net_device *pDev,
-				 IN struct ethtool_drvinfo *pInfo)
-{
+				 IN struct ethtool_drvinfo *pInfo) {
 	strcpy(pInfo->driver, "RALINK WLAN");
 
 
@@ -1699,11 +1642,9 @@ static void RALINK_ET_DrvInfoGet(IN struct net_device *pDev,
 .get_drvinfo = RALINK_ET_DrvInfoGet,};
 #endif /* LINUX_VERSION_CODE */
 
-int RtmpOSNetDevAttach(
-	IN UCHAR OpMode,
+int RtmpOSNetDevAttach(IN UCHAR OpMode,
 		       IN PNET_DEV pNetDev,
-	IN RTMP_OS_NETDEV_OP_HOOK *pDevOpHook)
-{
+		       IN RTMP_OS_NETDEV_OP_HOOK *pDevOpHook) {
 	int ret,
 	 rtnl_locked = FALSE;
 
@@ -1748,8 +1689,7 @@ int RtmpOSNetDevAttach(
 #endif
 
 		/* OS specific flags, here we used to indicate if we are virtual interface */
-/*		pNetDev->priv_flags = pDevOpHook->priv_flags; */
-		RT_DEV_PRIV_FLAGS_SET(pNetDev, pDevOpHook->priv_flags);
+		pNetDev->priv_flags = pDevOpHook->priv_flags;
 
 #if (WIRELESS_EXT < 21) && (WIRELESS_EXT >= 12)
 /*		pNetDev->get_wireless_stats = rt28xx_get_wireless_stats; */
@@ -1809,8 +1749,7 @@ PNET_DEV RtmpOSNetDevCreate(IN INT32 MC_RowID,
 			    IN INT devType,
 			    IN INT devNum,
 			    IN INT privMemSize,
-			    IN PSTRING pNamePrefix)
-{
+			    IN PSTRING pNamePrefix) {
 	struct net_device *pNetDev = NULL;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
 	struct net_device_ops *pNetDevOps = NULL;
@@ -1821,7 +1760,9 @@ PNET_DEV RtmpOSNetDevCreate(IN INT32 MC_RowID,
 	status = RtmpOSNetDevAlloc(&pNetDev, 0 /*privMemSize */ );
 	if (status != NDIS_STATUS_SUCCESS) {
 		/* allocation fail, exit */
-		DBGPRINT(RT_DEBUG_ERROR, ("Allocate network device fail (%s)...\n", pNamePrefix));
+		DBGPRINT(RT_DEBUG_ERROR,
+			 ("Allocate network device fail (%s)...\n",
+			  pNamePrefix));
 		return NULL;
 	}
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
@@ -1833,21 +1774,26 @@ PNET_DEV RtmpOSNetDevCreate(IN INT32 MC_RowID,
 
 		return NULL;
 	} else {
-		DBGPRINT(RT_DEBUG_TRACE, ("Allocate net device ops success!\n"));
+		DBGPRINT(RT_DEBUG_TRACE,
+			 ("Allocate net device ops success!\n"));
 		pNetDev->netdev_ops = pNetDevOps;
 	}
 #endif
 	/* find a available interface name, max 32 interfaces */
-	status = RtmpOSNetDevRequestName(MC_RowID, pIoctlIF, pNetDev, pNamePrefix, devNum);
+	status =
+	    RtmpOSNetDevRequestName(MC_RowID, pIoctlIF, pNetDev, pNamePrefix,
+				    devNum);
 	if (status != NDIS_STATUS_SUCCESS) {
 		/* error! no any available ra name can be used! */
-		DBGPRINT(RT_DEBUG_ERROR, ("Assign interface name (%s with suffix 0~32) failed...\n",
+		DBGPRINT(RT_DEBUG_ERROR,
+			 ("Assign interface name (%s with suffix 0~32) failed...\n",
 			  pNamePrefix));
 		RtmpOSNetDevFree(pNetDev);
 
 		return NULL;
 	} else {
-		DBGPRINT(RT_DEBUG_TRACE, ("The name of the new %s interface is %s...\n",
+		DBGPRINT(RT_DEBUG_TRACE,
+			 ("The name of the new %s interface is %s...\n",
 			  pNamePrefix, pNetDev->name));
 	}
 
@@ -2018,7 +1964,7 @@ VOID RtmpDrvAllE2PPrint(IN VOID *pReserved,
 
 					printk("%s", msg);
 					eepAddr += AddrStep;
-					pMacContent += (AddrStep >> 1);
+					pMacContent += (AddrStep/2);
 				}
 				sprintf(msg, "\nDump all EEPROM values to %s\n",
 					fileName);
@@ -2297,20 +2243,6 @@ Note:
 */
 VOID RtmpOsPktRcvHandle(IN PNDIS_PACKET pNetPkt) {
 	struct sk_buff *pRxPkt = RTPKT_TO_OSPKT(pNetPkt);
-#ifdef CONFIG_TSO_SUPPORT
-	struct net_device *pNetDev =  GET_OS_PKT_NETDEV(pNetPkt);
-#endif /* CONFIG_TSO_SUPPORT */
-
-#ifdef CONFIG_TSO_SUPPORT
-	if (pNetDev->features & NETIF_F_HW_CSUM)
-	{
-		if (RTMP_GET_TCP_CHKSUM_FAIL(pNetPkt))
-			pRxPkt->ip_summed = CHECKSUM_NONE;
-		else
-			pRxPkt->ip_summed = CHECKSUM_UNNECESSARY;
-	}
-#endif /* CONFIG_TSO_SUPPORT */
-
 	netif_rx(pRxPkt);
 }
 
@@ -2391,20 +2323,9 @@ PNDIS_PACKET RtmpOsPktIappMakeUp(IN PNET_DEV pNetDev,
 #endif /* IAPP_SUPPORT */
 
 VOID RtmpOsPktNatMagicTag(IN PNDIS_PACKET pNetPkt) {
-#if !defined(CONFIG_RA_NAT_NONE)
-#if defined (CONFIG_RA_HW_NAT)  || defined (CONFIG_RA_HW_NAT_MODULE)
-	struct sk_buff *pRxPkt = RTPKT_TO_OSPKT(pNetPkt);
-	FOE_MAGIC_TAG(pRxPkt) = FOE_MAGIC_WLAN;
-#endif /* CONFIG_RA_HW_NAT || CONFIG_RA_HW_NAT_MODULE */
-#endif /* CONFIG_RA_NAT_NONE */
 }
 
 VOID RtmpOsPktNatNone(IN PNDIS_PACKET pNetPkt) {
-#if defined(CONFIG_RA_NAT_NONE)
-#if defined (CONFIG_RA_HW_NAT)  || defined (CONFIG_RA_HW_NAT_MODULE)
-	FOE_AI(((struct sk_buff *)pNetPkt)) = UN_HIT;
-#endif /* CONFIG_RA_HW_NAT || CONFIG_RA_HW_NAT_MODULE */
-#endif /* CONFIG_RA_NAT_NONE */
 }
 
 
@@ -2538,6 +2459,7 @@ VOID CFG80211OS_UnRegister(
 	struct net_device *pNetDev = (struct net_device *)pNetDevOrg;
 
 
+
 	/* unregister */
 	if (pCfg80211_CB->pCfg80211_Wdev != NULL)
 	{
@@ -2553,14 +2475,14 @@ VOID CFG80211OS_UnRegister(
 #endif /* RFKILL_HW_SUPPORT */
 		wiphy_unregister(pCfg80211_CB->pCfg80211_Wdev->wiphy);
 		wiphy_free(pCfg80211_CB->pCfg80211_Wdev->wiphy);
-		kfree(pCfg80211_CB->pCfg80211_Wdev);
+		os_free_mem(NULL, pCfg80211_CB->pCfg80211_Wdev);
 
 		if (pCfg80211_CB->pCfg80211_Channels != NULL)
-			kfree(pCfg80211_CB->pCfg80211_Channels);
+			os_free_mem(NULL, pCfg80211_CB->pCfg80211_Channels);
 		/* End of if */
 
 		if (pCfg80211_CB->pCfg80211_Rates != NULL)
-			kfree(pCfg80211_CB->pCfg80211_Rates);
+			os_free_mem(NULL, pCfg80211_CB->pCfg80211_Rates);
 		/* End of if */
 
 		pCfg80211_CB->pCfg80211_Wdev = NULL;
@@ -2573,7 +2495,7 @@ VOID CFG80211OS_UnRegister(
 	} /* End of if */
 
 	os_free_mem(NULL, pCfg80211_CB);
-} /* End of CFG80211OS_UnRegister */
+} /* End of CFG80211_UnRegister */
 
 
 /*
@@ -2682,21 +2604,8 @@ BOOLEAN CFG80211_SupBandInit(
 	/* init channel */
 	for(IdLoop=0; IdLoop<NumOfChan; IdLoop++)
 	{
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-		if (IdLoop > 14)
-		{
 		pChannels[IdLoop].center_freq = \
-			    		ieee80211_channel_to_frequency(Cfg80211_Chan[IdLoop], IEEE80211_BAND_5GHZ);
-		}
-		else
-		{
-		    pChannels[IdLoop].center_freq = \
-			    		ieee80211_channel_to_frequency(Cfg80211_Chan[IdLoop], IEEE80211_BAND_2GHZ);		
-		}
-#else
-		pChannels[IdLoop].center_freq = ieee80211_channel_to_frequency(Cfg80211_Chan[IdLoop]);
-#endif
+					ieee80211_channel_to_frequency(Cfg80211_Chan[IdLoop]);
 		pChannels[IdLoop].hw_value = IdLoop;
 
 		if (IdLoop < CFG80211_NUM_OF_CHAN_2GHZ)
@@ -3077,33 +2986,45 @@ BOOLEAN CFG80211OS_ChanInfoGet(
 /*
 ========================================================================
 Routine Description:
-	Initialize a channel information used in scan inform.
+	Inform us that a scan is got.
 
 Arguments:
+	pAdCB				- WLAN control block pointer
 
 Return Value:
-	TRUE		- Successful
-	FALSE		- Fail
+	NONE
 
 Note:
+	Call RT_CFG80211_SCANNING_INFORM, not CFG80211_Scaning
 ========================================================================
 */
-BOOLEAN CFG80211OS_ChanInfoInit(
+VOID CFG80211OS_Scaning(
 	IN VOID						*pCB,
-	IN UINT32					InfoIndex,
-	IN UCHAR					ChanId,
-	IN UCHAR					MaxTxPwr,
+	IN VOID						**pChanOrg,
+	IN UINT32					ChanId,
+	IN UCHAR					*pFrame,
+	IN UINT32					FrameLen,
+	IN INT32					RSSI,
 	IN BOOLEAN					FlgIsNMode,
-	IN BOOLEAN					FlgIsBW20M)
+	IN UINT8					BW)
 {
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
+#ifdef CONFIG_STA_SUPPORT
 	CFG80211_CB *pCfg80211_CB = (CFG80211_CB *)pCB;
 	struct ieee80211_channel *pChan;
 
 
-	if (InfoIndex >= MAX_NUM_OF_CHANNELS)
-		return FALSE;
+	if ((*pChanOrg) == NULL)
+	{
+		os_alloc_mem(NULL, (UCHAR **)pChanOrg, sizeof(struct ieee80211_channel));
+		if ((*pChanOrg) == NULL)
+		{
+			DBGPRINT(RT_DEBUG_ERROR, ("80211> Allocate chan fail!\n"));
+			return;
+		}
+	}
 
-	pChan = (struct ieee80211_channel *)&(pCfg80211_CB->ChanInfo[InfoIndex]);
+	pChan = (struct ieee80211_channel *)(*pChanOrg);
 	memset(pChan, 0, sizeof(*pChan));
 
 	if (ChanId > 14)
@@ -3112,16 +3033,12 @@ BOOLEAN CFG80211OS_ChanInfoInit(
 		pChan->band = IEEE80211_BAND_2GHZ;
 	/* End of if */
 
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-	pChan->center_freq = ieee80211_channel_to_frequency(ChanId, pChan->band);
-#else
 	pChan->center_freq = ieee80211_channel_to_frequency(ChanId);
-#endif
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,32))
 	if (FlgIsNMode == TRUE)
 	{
-		if (FlgIsBW20M == TRUE)
+		if (BW == 0)
 			pChan->max_bandwidth = 20; /* 20MHz */
 		else
 			pChan->max_bandwidth = 40; /* 40MHz */
@@ -3137,81 +3054,17 @@ BOOLEAN CFG80211OS_ChanInfoInit(
 /*		pChan->beacon_found = 1; */
 	/* End of if */
 
-	return TRUE;
-}
-
-
-/*
-========================================================================
-Routine Description:
-	Inform us that a scan is got.
-
-Arguments:
-	pAdCB				- WLAN control block pointer
-
-Return Value:
-	NONE
-
-Note:
-	Call RT_CFG80211_SCANNING_INFORM, not CFG80211_Scaning
-========================================================================
-*/
-VOID CFG80211OS_Scaning(
-	IN VOID						*pCB,
-	IN UINT32					ChanId,
-	IN UCHAR					*pFrame,
-	IN UINT32					FrameLen,
-	IN INT32					RSSI,
-	IN BOOLEAN					FlgIsNMode,
-	IN UINT8					BW)
-{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
-#ifdef CONFIG_STA_SUPPORT
-	CFG80211_CB *pCfg80211_CB = (CFG80211_CB *)pCB;
-	UINT32 IdChan;
-	UINT32 CenFreq;
-	struct wiphy *pWiphy = pCfg80211_CB->pCfg80211_Wdev->wiphy;
-
-	/* get channel information */
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,39))
-	if (ChanId > 14)
-	        CenFreq = ieee80211_channel_to_frequency(ChanId, IEEE80211_BAND_5GHZ);
-	else
-		CenFreq = ieee80211_channel_to_frequency(ChanId, IEEE80211_BAND_2GHZ); 
-#else
-	CenFreq = ieee80211_channel_to_frequency(ChanId);
-#endif
-
-
-	for(IdChan=0; IdChan<MAX_NUM_OF_CHANNELS; IdChan++)
-	{
-		if (pCfg80211_CB->ChanInfo[IdChan].center_freq == CenFreq)
-			break;
-	}
-	
-	if (IdChan >= MAX_NUM_OF_CHANNELS)
-	{
-		printk("80211> Can not find any chan info! ==> %d >= %d[%d],[%d] \n", IdChan, MAX_NUM_OF_CHANNELS, CenFreq, ChanId);
-		return;
-	}
-
-	if(pWiphy->signal_type == CFG80211_SIGNAL_TYPE_MBM)
-	{
-		/* CFG80211_SIGNAL_TYPE_MBM: signal strength in mBm (100*dBm) */
-		RSSI = RSSI * 100;  
-	}
-	
 	/* inform 80211 a scan is got */
 	/* we can use cfg80211_inform_bss in 2.6.31, it is easy more than the one */
 	/* in cfg80211_inform_bss_frame(), it will memcpy pFrame but pChan */
 	cfg80211_inform_bss_frame(pCfg80211_CB->pCfg80211_Wdev->wiphy,
-								&pCfg80211_CB->ChanInfo[IdChan],
+								pChan,
 								(struct ieee80211_mgmt *)pFrame,
 								FrameLen,
 								RSSI,
 								GFP_ATOMIC);
 
-	//CFG80211DBG(RT_DEBUG_ERROR, ("80211> cfg80211_inform_bss_frame %d\n", RSSI));
+	CFG80211DBG(RT_DEBUG_ERROR, ("80211> cfg80211_inform_bss_frame\n"));
 #endif /* CONFIG_STA_SUPPORT */
 #endif /* LINUX_VERSION_CODE */
 }
@@ -3306,254 +3159,10 @@ void CFG80211OS_ConnectResultInform(
 	} /* End of if */
 #endif /* LINUX_VERSION_CODE */
 } /* End of CFG80211_ConnectResultInform */
-
-
-BOOLEAN CFG80211OS_RxMgmt(IN PNET_DEV pNetDev, IN INT32 freq, IN PUCHAR frame, IN UINT32 len) 
-{
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
-        return cfg80211_rx_mgmt(pNetDev, freq, frame, len, GFP_ATOMIC);
-#else
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
-	return cfg80211_rx_action(pNetDev, freq, frame, len, GFP_ATOMIC);
-#else
-	return FALSE;
-#endif /*2.6.34*/
-
-#endif /*2.6.37*/
-
-}
-
-VOID CFG80211OS_TxStatus(IN PNET_DEV pNetDev, IN INT32 cookie, IN PUCHAR frame, IN UINT32 len, IN BOOLEAN ack)
-{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,37))
-	return cfg80211_mgmt_tx_status(pNetDev, cookie, frame, len, ack, GFP_ATOMIC);
-#else
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))
-	return cfg80211_action_tx_status(pNetDev, cookie, frame, len, ack, GFP_ATOMIC);
-#else
-	return FALSE;
-#endif /*2.6.34*/
-
-#endif /*2.6.37*/
-
-}
-
-VOID CFG80211OS_NewSta(IN PNET_DEV pNetDev, IN const PUCHAR mac_addr, IN const PUCHAR assoc_frame, IN UINT32 assoc_len)
-{
-	struct station_info sinfo;
-	struct ieee80211_mgmt *mgmt;
-
-	NdisZeroMemory(&sinfo, sizeof(sinfo));
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,2,0)
-	sinfo.filled = STATION_INFO_ASSOC_REQ_IES;
-#else
-	sinfo.filled = 0;
-#endif
-
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,8)
-	mgmt = (struct ieee80211_mgmt *) assoc_frame;	
-	sinfo.assoc_req_ies_len = assoc_len - 24 - 4;
-	sinfo.assoc_req_ies = mgmt->u.assoc_req.variable;
-#endif
-
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34))	
-	return cfg80211_new_sta(pNetDev, mac_addr, &sinfo, GFP_KERNEL);
-#endif
-
-}
-
-VOID CFG80211OS_DelSta(IN PNET_DEV pNetDev, IN const PUCHAR mac_addr)
-{
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,0,0))
-	return cfg80211_del_sta(pNetDev, mac_addr, GFP_KERNEL);
-#endif
-}
-
 #endif /* RT_CFG80211_SUPPORT */
 
 
-/*
-========================================================================
-Routine Description:
-	Flush a data cache line.
 
-Arguments:
-	AddrStart		- the start address
-	Size			- memory size
-
-Return Value:
-	None
-
-Note:
-========================================================================
-*/
-VOID RtmpOsDCacheFlush(
-	IN	ULONG					AddrStart,
-	IN	ULONG					Size)
-{
-	RTMP_UTIL_DCACHE_FLUSH(AddrStart, Size);
-}
-
-
-/*
-========================================================================
-Routine Description:
-	Assign private data pointer to the network interface.
-
-Arguments:
-	pDev			- the device
-	pPriv			- the pointer
-
-Return Value:
-	None
-
-Note:
-========================================================================
-*/
-VOID RtmpOsSetNetDevPriv(IN VOID *pDev,
-			 IN VOID *pPriv) {
-
-	DEV_PRIV_INFO *pDevInfo = NULL;
-
-
-	pDevInfo = (DEV_PRIV_INFO *) _RTMP_OS_NETDEV_GET_PRIV((PNET_DEV) pDev);
-
-	if (pDevInfo == NULL)
-	{
-		os_alloc_mem(NULL, (UCHAR **)&pDevInfo, sizeof(DEV_PRIV_INFO));
-		if (pDevInfo == NULL)
-			return;
-	}
-
-	pDevInfo->pPriv = (VOID *)pPriv;
-	pDevInfo->priv_flags = 0;
-
-	_RTMP_OS_NETDEV_SET_PRIV((PNET_DEV) pDev, pDevInfo);
-}
-
-
-/*
-========================================================================
-Routine Description:
-	Get private data pointer from the network interface.
-
-Arguments:
-	pDev			- the device
-	pPriv			- the pointer
-
-Return Value:
-	None
-
-Note:
-========================================================================
-*/
-VOID *RtmpOsGetNetDevPriv(IN VOID *pDev) {
-
-	DEV_PRIV_INFO *pDevInfo = NULL;
-
-
-	pDevInfo = (DEV_PRIV_INFO *) _RTMP_OS_NETDEV_GET_PRIV((PNET_DEV) pDev);
-	if (pDevInfo != NULL)
-		return pDevInfo->pPriv;
-	return NULL;
-}
-
-
-/*
-========================================================================
-Routine Description:
-	Get private flags from the network interface.
-
-Arguments:
-	pDev			- the device
-
-Return Value:
-	pPriv			- the pointer
-
-Note:
-========================================================================
-*/
-USHORT RtmpDevPrivFlagsGet(IN VOID *pDev) {
-
-	DEV_PRIV_INFO *pDevInfo = NULL;
-
-
-	pDevInfo = (DEV_PRIV_INFO *) _RTMP_OS_NETDEV_GET_PRIV((PNET_DEV) pDev);
-	if (pDevInfo != NULL)
-		return pDevInfo->priv_flags;
-	return 0;
-}
-
-
-/*
-========================================================================
-Routine Description:
-	Get private flags from the network interface.
-
-Arguments:
-	pDev			- the device
-
-Return Value:
-	pPriv			- the pointer
-
-Note:
-========================================================================
-*/
-VOID RtmpDevPrivFlagsSet(IN VOID *pDev, IN USHORT PrivFlags) {
-
-	DEV_PRIV_INFO *pDevInfo = NULL;
-
-
-	pDevInfo = (DEV_PRIV_INFO *) _RTMP_OS_NETDEV_GET_PRIV((PNET_DEV) pDev);
-	if (pDevInfo != NULL)
-		pDevInfo->priv_flags = PrivFlags;
-}
-
-
-#ifdef CONFIG_STA_SUPPORT
-INT RtmpOSNotifyRawData(
-	IN PNET_DEV pNetDev, 
-	IN PUCHAR buff,
-	IN INT len, 
-	IN ULONG type,
-	IN USHORT protocol)
-{
-	struct sk_buff *skb = NULL;
-	
-	skb = dev_alloc_skb(len + 2);
-	
-	if (!skb) 
-	{
-		DBGPRINT(RT_DEBUG_ERROR,( "%s: failed to allocate sk_buff for notification\n", pNetDev->name));		
-		return -ENOMEM;		
-	} 
-	else 
-	{		
-		skb_reserve(skb, 2);		
-		memcpy(skb_put(skb, len), buff, len);		
-		skb->len = len;
-		skb->dev = pNetDev;
-#if (LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,21))
-		skb->mac.raw = skb->data;
-#else
-		skb_set_mac_header(skb, 0);
-#endif
-		skb->ip_summed = CHECKSUM_UNNECESSARY;
-		skb->pkt_type = PACKET_OTHERHOST;
-		skb->protocol = htons(protocol);
-		memset(skb->cb, 0, sizeof(skb->cb));
-
-		netif_rx(skb);
-	}
-	return 0;
-}
-
-
-#endif /* CONFIG_STA_SUPPORT */
 
 #ifdef OS_ABL_FUNC_SUPPORT
 /*
@@ -3650,7 +3259,7 @@ BOOLEAN RtmpOsTaskletInit(IN RTMP_NET_TASK_STRUCT *pTasklet,
 			  IN ULONG Data,
 			  IN LIST_HEADER * pTaskletList) {
 #ifdef WORKQUEUE_BH
-	if (RTMP_OS_Alloc_RscOnly(pTasklet,
+	if (RTMP_OS_Alloc_Rsc(pTaskletList, pTasklet,
 			      sizeof (struct work_struct)) == FALSE) {
 		return FALSE;	/* allocate fail */
 	}
@@ -3658,7 +3267,7 @@ BOOLEAN RtmpOsTaskletInit(IN RTMP_NET_TASK_STRUCT *pTasklet,
 	INIT_WORK((struct work_struct *)(pTasklet->pContent), pFunc);
 #else
 
-	if (RTMP_OS_Alloc_RscOnly(pTasklet,
+	if (RTMP_OS_Alloc_Rsc(pTaskletList, pTasklet,
 			      sizeof (OS_NET_TASK_STRUCT)) == FALSE) {
 		return FALSE;	/* allocate fail */
 	}
@@ -3689,8 +3298,9 @@ BOOLEAN RtmpOsTaskletKill(IN RTMP_NET_TASK_STRUCT *pTasklet) {
 		tasklet_kill((OS_NET_TASK_STRUCT *) (pTasklet->pContent));
 #endif /* WORKQUEUE_BH */
 
-		os_free_mem(NULL, pTasklet->pContent);
-		pTasklet->pContent = NULL;
+		/* we will free all tasks memory in RTMP_OS_FREE_TASKLET() */
+/*		os_free_mem(NULL, pTasklet->pContent); */
+/*		pTasklet->pContent = NULL; */
 	}
 
 	return TRUE;
@@ -3780,7 +3390,7 @@ VOID RTMP_OS_Init_Timer(IN VOID *pReserved,
 			IN LIST_HEADER *pTimerList) {
 	OS_NDIS_MINIPORT_TIMER *pTimer;
 
-	if (RTMP_OS_Alloc_RscOnly(pTimerOrg,
+	if (RTMP_OS_Alloc_Rsc(pTimerList, pTimerOrg,
 			      sizeof (OS_NDIS_MINIPORT_TIMER)) == FALSE) {
 		return;		/* allocate fail */
 	}
@@ -3897,82 +3507,6 @@ BOOLEAN RTMP_OS_Alloc_Rsc(IN LIST_HEADER *pRscList,
 /*
 ========================================================================
 Routine Description:
-	Allocate a OS resource.
-
-Arguments:
-	pAd				- WLAN control block pointer
-	pRsc			- the resource
-	RscLen			- resource length
-
-Return Value:
-	TRUE or FALSE
-
-Note:
-========================================================================
-*/
-BOOLEAN RTMP_OS_Alloc_RscOnly(IN VOID *pRscSrc,
-						IN UINT32 RscLen) {
-	OS_RSTRUC *pRsc = (OS_RSTRUC *) pRscSrc;
-
-	if (pRsc->pContent == NULL) {
-		/* new entry */
-		os_alloc_mem(NULL, (UCHAR **) & (pRsc->pContent), RscLen);
-		if (pRsc->pContent == NULL) {
-			DBGPRINT(RT_DEBUG_ERROR,
-				 ("%s: alloc timer fail!\n", __FUNCTION__));
-			return FALSE;
-		}
-		memset(pRsc->pContent, 0, RscLen);
-	}
-
-	return TRUE;
-}
-
-/*
-========================================================================
-Routine Description:
-	Remove a OS resource.
-
-Arguments:
-	pAd				- WLAN control block pointer
-	pRsc			- the resource
-
-Return Value:
-	TRUE or FALSE
-
-Note:
-========================================================================
-*/
-BOOLEAN RTMP_OS_Remove_Rsc(IN LIST_HEADER *pRscList,
-			  IN VOID *pRscSrc) {
-	LIST_RESOURCE_OBJ_ENTRY *pObj;
-	OS_RSTRUC *pRscHead, *pRsc, *pRscRev = (OS_RSTRUC *) pRscSrc;
-	pRscHead = NULL;
-
-	OS_SEM_LOCK(&UtilSemLock);
-	while(TRUE)
-	{
-		pObj = (LIST_RESOURCE_OBJ_ENTRY *) removeHeadList(pRscList);
-		if (pRscHead == NULL)
-			pRscHead = pObj->pRscObj; /* backup first entry */
-		else if (((ULONG)pRscHead) == ((ULONG)(pObj->pRscObj)))
-			break; /* has searched all entries */
-
-		pRsc = (OS_RSTRUC *) (pObj->pRscObj);
-		if ((ULONG)pRsc == (ULONG)pRscRev)
-			break; /* find it */
-
-		/* re-insert it */
-		insertTailList(pRscList, (LIST_ENTRY *) pObj);
-	}
-	OS_SEM_UNLOCK(&UtilSemLock);
-
-	return TRUE;
-}
-
-/*
-========================================================================
-Routine Description:
 	Free all timers.
 
 Arguments:
@@ -4031,7 +3565,7 @@ Note:
 */
 BOOLEAN RtmpOSTaskAlloc(IN RTMP_OS_TASK *pTask,
 			IN LIST_HEADER *pTaskList) {
-	if (RTMP_OS_Alloc_RscOnly(pTask, sizeof (OS_TASK)) == FALSE) {
+	if (RTMP_OS_Alloc_Rsc(pTaskList, pTask, sizeof (OS_TASK)) == FALSE) {
 		DBGPRINT(RT_DEBUG_ERROR,
 			 ("%s: alloc task fail!\n", __FUNCTION__));
 		return FALSE;	/* allocate fail */
@@ -4054,14 +3588,8 @@ Return Value:
 Note:
 ========================================================================
 */
-VOID RtmpOSTaskFree(IN RTMP_OS_TASK *pTaskOrg) {
-	OS_TASK *pTask;
-
-	pTask = (OS_TASK *) (pTaskOrg->pContent);
-	if (pTask != NULL) {
-		os_free_mem(NULL, pTask);
-		pTaskOrg->pContent = NULL;
-	}
+VOID RtmpOSTaskFree(IN RTMP_OS_TASK *pTask) {
+	/* we will free all tasks memory in RTMP_OS_FREE_TASK() */
 }
 
 /*
@@ -4263,7 +3791,7 @@ Note:
 */
 BOOLEAN RtmpOsAllocateLock(IN NDIS_SPIN_LOCK *pLock,
 			   IN LIST_HEADER *pLockList) {
-	if (RTMP_OS_Alloc_RscOnly(pLock,
+	if (RTMP_OS_Alloc_Rsc(pLockList, pLock,
 			      sizeof (OS_NDIS_SPIN_LOCK)) == FALSE) {
 		DBGPRINT(RT_DEBUG_ERROR,
 			 ("%s: alloc lock fail!\n", __FUNCTION__));
@@ -4289,16 +3817,9 @@ Note:
 ========================================================================
 */
 VOID RtmpOsFreeSpinLock(IN NDIS_SPIN_LOCK *pLockOrg) {
+	OS_NdisFreeSpinLock(pLock);
+
 	/* we will free all locks memory in RTMP_OS_FREE_LOCK() */
-	OS_NDIS_SPIN_LOCK *pLock;
-
-	pLock = (OS_NDIS_MINIPORT_TIMER *) (pLockOrg->pContent);
-	if (pLock != NULL) {
-		OS_NdisFreeSpinLock(pLock);
-
-		os_free_mem(NULL, pLock);
-		pLockOrg->pContent = NULL;
-	}
 }
 
 /*
@@ -4491,6 +4012,45 @@ Note:
 VOID RtmpOsSetPktNetDev(IN VOID *pPkt,
 			IN VOID *pDev) {
 	SET_OS_PKT_NETDEV(pPkt, (PNET_DEV) pDev);
+}
+
+/*
+========================================================================
+Routine Description:
+	Assign private data pointer to the network interface.
+
+Arguments:
+	pDev			- the device
+	pPriv			- the pointer
+
+Return Value:
+	None
+
+Note:
+========================================================================
+*/
+VOID RtmpOsSetNetDevPriv(IN VOID *pDev,
+			 IN VOID *pPriv) {
+	RTMP_OS_NETDEV_SET_PRIV((PNET_DEV) pDev, pPriv);
+}
+
+/*
+========================================================================
+Routine Description:
+	Get private data pointer from the network interface.
+
+Arguments:
+	pDev			- the device
+	pPriv			- the pointer
+
+Return Value:
+	None
+
+Note:
+========================================================================
+*/
+VOID *RtmpOsGetNetDevPriv(IN VOID *pDev) {
+	return (VOID *) RTMP_OS_NETDEV_GET_PRIV((PNET_DEV) pDev);
 }
 
 /*
@@ -4850,7 +4410,7 @@ Note:
 */
 BOOLEAN RtmpOsSemaInitLocked(IN RTMP_OS_SEM *pSem,
 			     IN LIST_HEADER *pSemList) {
-	if (RTMP_OS_Alloc_RscOnly(pSem, sizeof (OS_SEM)) == FALSE) {
+	if (RTMP_OS_Alloc_Rsc(pSemList, pSem, sizeof (OS_SEM)) == FALSE) {
 		DBGPRINT(RT_DEBUG_ERROR,
 			 ("%s: alloc semaphore fail!\n", __FUNCTION__));
 		return FALSE;	/* allocate fail */
@@ -4877,7 +4437,7 @@ Note:
 */
 BOOLEAN RtmpOsSemaInit(IN RTMP_OS_SEM *pSem,
 		       IN LIST_HEADER *pSemList) {
-	if (RTMP_OS_Alloc_RscOnly(pSem, sizeof (OS_SEM)) == FALSE) {
+	if (RTMP_OS_Alloc_Rsc(pSemList, pSem, sizeof (OS_SEM)) == FALSE) {
 		DBGPRINT(RT_DEBUG_ERROR,
 			 ("%s: alloc semaphore fail!\n", __FUNCTION__));
 		return FALSE;	/* allocate fail */
@@ -4909,8 +4469,9 @@ BOOLEAN RtmpOsSemaDestory(IN RTMP_OS_SEM *pSemOrg) {
 	if (pSem != NULL) {
 		OS_SEM_EVENT_DESTORY(pSem);
 
-		os_free_mem(NULL, pSem);
-		pSemOrg->pContent = NULL;
+		/* we will free all tasks memory in RTMP_OS_FREE_SEM() */
+/*		os_free_mem(NULL, pSem); */
+/*		pSemOrg->pContent = NULL; */
 	} else
 		printk("sem> warning! double-free sem!\n");
 	return TRUE;
@@ -5222,6 +4783,9 @@ INT32 RtmpThreadPidKill(IN RTMP_OS_PID PID) {
 }
 
 long RtmpOsSimpleStrtol(IN const char *cp, IN char **endp, IN unsigned int base) {
+	return simple_strtol(cp,
+			     endp,
+			     base);
 	return simple_strtol(cp, endp, base);
 }
 
@@ -5267,36 +4831,13 @@ Note:
 */
 BOOLEAN RtmpOsAtomicInit(IN RTMP_OS_ATOMIC *pAtomic,
 			 IN LIST_HEADER *pAtomicList) {
-	if (RTMP_OS_Alloc_RscOnly(pAtomic, sizeof (atomic_t)) == FALSE) {
+	if (RTMP_OS_Alloc_Rsc(pAtomicList, pAtomic, sizeof (atomic_t)) == FALSE) {
 		DBGPRINT(RT_DEBUG_ERROR,
 			 ("%s: alloc atomic fail!\n", __FUNCTION__));
 		return FALSE;	/* allocate fail */
 	}
 
 	return TRUE;
-}
-
-/*
-========================================================================
-Routine Description:
-	Initialize the OS atomic_t.
-
-Arguments:
-	pAtomic			- the atomic
-
-Return Value:
-	TRUE			- allocation successfully
-	FALSE			- allocation fail
-
-Note:
-========================================================================
-*/
-VOID RtmpOsAtomicDestroy(IN RTMP_OS_ATOMIC *pAtomic) {
-	if (pAtomic->pContent != NULL) {
-
-		os_free_mem(NULL, pAtomic->pContent);
-		pAtomic->pContent = NULL;
-	}
 }
 
 /*
@@ -5391,6 +4932,8 @@ VOID RtmpOsOpsInit(IN RTMP_OS_ABL_OPS *pOps) {
 	pOps->ra_printk = (RTMP_PRINTK)printk;
 	pOps->ra_snprintf = (RTMP_SNPRINTF)snprintf;
 }
+
+
 #else /* OS_ABL_FUNC_SUPPORT */
 
 void RtmpOSFSInfoChange(IN RTMP_OS_FS_INFO *pOSFSInfoOrg,

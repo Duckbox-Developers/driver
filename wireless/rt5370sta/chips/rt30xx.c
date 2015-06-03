@@ -60,30 +60,7 @@ REG_PAIR   RT3020_RFRegTable[] = {
 
 UCHAR NUM_RF_3020_REG_PARMS = (sizeof(RT3020_RFRegTable) / sizeof(REG_PAIR));
 
-#ifdef RTMP_FLASH_SUPPORT
-UCHAR RT3090_EeBuffer[EEPROM_SIZE] = { 
-0x92, 0x30, 0x02, 0x01, 0x00, 0x0c, 0x43, 0x30, 0x92, 0x00, 0x92, 0x30, 0x14, 0x18, 0x01, 0x80, 
-0x00, 0x00, 0x92, 0x30, 0x14, 0x18, 0x00, 0x00, 0x01, 0x00, 0x6a, 0xff, 0x13, 0x02, 0xff, 0xff, 
-0xff, 0xff, 0xc1, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0x8e, 0x75, 0x01, 0x43, 0x22, 0x08, 0x27, 0x00, 0xff, 0xff, 0x16, 0x01, 0xff, 0xff, 0xd9, 0xfa, 
-0xcc, 0x88, 0xff, 0xff, 0x0a, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 
-0xff, 0xff, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 
-0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x05, 0x1d, 0x1a, 
-0x15, 0x11, 0x0f, 0x0d, 0x0a, 0x07, 0x04, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x88, 0x88, 
-0xcc, 0xcc, 0xaa, 0x88, 0xcc, 0xcc, 0xaa, 0x88, 0xcc, 0xcc, 0xaa, 0x88, 0xcc, 0xcc, 0xaa, 0x88, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, };
-#endif /* RTMP_FLASH_SUPPORT */
+
 
 
 /*
@@ -114,15 +91,15 @@ VOID RT30xx_Init(
 	*/
 	pChipCap->pRFRegTable = RT3020_RFRegTable;
 	pChipCap->MaxNumOfBbpId = 185;
-	pChipCap->TXWISize = 16;
-	pChipCap->RXWISize = 16;
+ 
 
 	/* init operator */
+	if((IS_RT3070(pAd) || IS_RT3071(pAd)) || IS_RT3090(pAd))
+	{
 #ifdef RT3070
 		if (pAd->infType == RTMP_DEV_INF_USB)
 		{
 			pChipOps->AsicRfInit = NICInitRT3070RFRegisters;
-			pChipOps->HighPowerTuning = RT3070_PowerTuning;
 		}
 #endif /* RT3070 */
 
@@ -130,27 +107,27 @@ VOID RT30xx_Init(
 		pChipOps->AsicRfTurnOff = RT30xxLoadRFSleepModeSetup;
 		pChipOps->AsicReverseRfFromSleepMode = RT30xxReverseRFSleepModeSetup;
 		pChipOps->ChipSwitchChannel = RT30xx_ChipSwitchChannel;
-		pChipOps->AsicAdjustTxPower = AsicAdjustTxPower;
 		pChipOps->ChipBBPAdjust = RT30xx_ChipBBPAdjust;
-		pChipOps->ChipAGCInit = RT30xx_ChipAGCInit;
+		pChipOps->RTMPSetAGCInitValue = RT30xx_RTMPSetAGCInitValue;
+
 		/* 1T1R only */
-		if (pAd->RfIcType == RFIC_3020)
+		if (!IS_RT3071(pAd))
 		{
 			pChipOps->SetRxAnt = RT30xxSetRxAnt; 
 			pAd->Mlme.bEnableAutoAntennaCheck = FALSE;
 		}
-		pChipOps->AsicGetTxPowerOffset = AsicGetTxPowerOffset;
-		pChipOps->AsicTxAlcGetAutoAgcOffset = AsicGetAutoAgcOffsetForExternalTxAlc;	
-		
-		pChipCap->FlgIsHwAntennaDiversitySup = FALSE; 
-		/*pChipOps->ChipResumeMsduTransmission = NULL; */
-		/*pChipOps->VdrTuning1 = NULL; */
-		pChipOps->RxSensitivityTuning = NULL;	
-#ifdef CONFIG_STA_SUPPORT
+
+		pChipOps->ChipResumeMsduTransmission = NULL;
+		pChipOps->VdrTuning1 = NULL;
+		pChipOps->RxSensitivityTuning = NULL;
 #ifdef RTMP_FREQ_CALIBRATION_SUPPORT
-		pChipCap->FreqCalibrationSupport = FALSE;
+		pChipOps->AsicFreqCalInit = NULL;
+		pChipOps->AsicFreqCalStop = NULL;
+		pChipOps->AsicFreqCal = NULL;
+		pChipOps->AsicFreqOffsetGet = NULL;
 #endif /* RTMP_FREQ_CALIBRATION_SUPPORT */
-#endif /* CONFIG_STA_SUPPORT */
+
+	}
 }
 
 
@@ -180,35 +157,35 @@ VOID RT30xxSetRxAnt(
 	if (IS_RT2070(pAd) || (IS_RT3070(pAd) && pAd->RfIcType == RFIC_3020) ||
 			(IS_RT3090(pAd) && pAd->RfIcType == RFIC_3020))
 	{
-	if (Ant == 0)
-	{
-		/*
-			Main antenna
-			E2PROM_CSR only in PCI bus Reg., USB Bus need MCU commad to control the EESK pin.
-		*/
+		if (Ant == 0)
+		{
+			/*
+				Main antenna
+				E2PROM_CSR only in PCI bus Reg., USB Bus need MCU commad to control the EESK pin.
+			*/
 #ifdef RTMP_MAC_USB
-		AsicSendCommandToMcu(pAd, 0x73, 0xFF, 0x1, 0x0, FALSE);
+			AsicSendCommandToMcu(pAd, 0x73, 0xFF, 0x1, 0x0);
 #endif /* RTMP_MAC_USB */
 
-		RTMP_IO_READ32(pAd, GPIO_CTRL_CFG, &Value);
-		Value &= ~(0x0808);
-		RTMP_IO_WRITE32(pAd, GPIO_CTRL_CFG, Value);
-		DBGPRINT_RAW(RT_DEBUG_TRACE, ("AsicSetRxAnt, switch to main antenna\n"));
-	}
-	else
-	{
-		/*
-			Aux antenna
-		 	E2PROM_CSR only in PCI bus Reg., USB Bus need MCU commad to control the EESK pin.
-		*/
+			RTMP_IO_READ32(pAd, GPIO_CTRL_CFG, &Value);
+			Value &= ~(0x0808);
+			RTMP_IO_WRITE32(pAd, GPIO_CTRL_CFG, Value);
+			DBGPRINT(RT_DEBUG_TRACE, ("AsicSetRxAnt, switch to main antenna\n"));
+		}
+		else
+		{
+			/*
+				Aux antenna
+			 	E2PROM_CSR only in PCI bus Reg., USB Bus need MCU commad to control the EESK pin.
+			*/
 #ifdef RTMP_MAC_USB
-		AsicSendCommandToMcu(pAd, 0x73, 0xFF, 0x0, 0x0, FALSE);
+			AsicSendCommandToMcu(pAd, 0x73, 0xFF, 0x0, 0x0);
 #endif /* RTMP_MAC_USB */
-		RTMP_IO_READ32(pAd, GPIO_CTRL_CFG, &Value);
-		Value &= ~(0x0808);
-		Value |= 0x08;
-		RTMP_IO_WRITE32(pAd, GPIO_CTRL_CFG, Value);
-		DBGPRINT_RAW(RT_DEBUG_TRACE, ("AsicSetRxAnt, switch to aux antenna\n"));
+			RTMP_IO_READ32(pAd, GPIO_CTRL_CFG, &Value);
+			Value &= ~(0x0808);
+			Value |= 0x08;
+			RTMP_IO_WRITE32(pAd, GPIO_CTRL_CFG, Value);
+			DBGPRINT(RT_DEBUG_TRACE, ("AsicSetRxAnt, switch to aux antenna\n"));
 		}
 	}
 }
@@ -240,6 +217,7 @@ VOID RTMPFilterCalibration(
 	/* Give bbp filter initial value */
 	pAd->Mlme.CaliBW20RfR24 = 0x1F;
 	pAd->Mlme.CaliBW40RfR24 = 0x2F; /* Bit[5] must be 1 for BW 40 */
+
 
 	do 
 	{
@@ -477,7 +455,10 @@ VOID RT30xxLoadRFSleepModeSetup(
 	UCHAR RFValue;
 	UINT32 MACValue;
 
+
+	if(!IS_RT3572(pAd))
 	{
+		{
 			/* RF_BLOCK_en. RF R1 register Bit 0 to 0*/
 			RT30xxReadRFRegister(pAd, RF_R01, &RFValue);
 			RFValue &= (~0x01);
@@ -497,6 +478,25 @@ VOID RT30xxLoadRFSleepModeSetup(
 			RT30xxReadRFRegister(pAd, RF_R21, &RFValue);
 			RFValue &= (~0x80);
 			RT30xxWriteRFRegister(pAd, RF_R21, RFValue);
+		}
+	}
+
+
+	/* Don't touch LDO_CFG0 for 3090F & 3593, possibly the board is single power scheme*/
+	if (IS_RT3090(pAd) ||	/*IS_RT3090 including RT309x and RT3071/72*/
+		IS_RT3572(pAd) ||
+		(IS_RT3070(pAd) && ((pAd->MACVersion & 0xffff) < 0x0201)))
+	{
+		if (!IS_RT3572(pAd))
+		{
+			RT30xxReadRFRegister(pAd, RF_R27, &RFValue);
+			RFValue |= 0x77;
+			RT30xxWriteRFRegister(pAd, RF_R27, RFValue);
+		}
+
+		RTMP_IO_READ32(pAd, LDO_CFG0, &MACValue);
+		MACValue |= 0x1D000000;
+		RTMP_IO_WRITE32(pAd, LDO_CFG0, MACValue);
 	}
 }
 
@@ -517,32 +517,36 @@ VOID RT30xxReverseRFSleepModeSetup(
 
 	if(!IS_RT3572(pAd))
 	{
+		{
+			/* RF_BLOCK_en, RF R1 register Bit 0 to 1*/
+			RT30xxReadRFRegister(pAd, RF_R01, &RFValue);
+			RFValue |= 0x01;
+			RT30xxWriteRFRegister(pAd, RF_R01, RFValue);
 
-		/* RF_BLOCK_en, RF R1 register Bit 0 to 1*/
-		RT30xxReadRFRegister(pAd, RF_R01, &RFValue);
-		RFValue |= 0x01;
-		RT30xxWriteRFRegister(pAd, RF_R01, RFValue);
+			/* VCO_IC, RF R7 register Bit 4 & Bit 5 to 1*/
+			RT30xxReadRFRegister(pAd, RF_R07, &RFValue);
+			RFValue |= 0x20;
+			RT30xxWriteRFRegister(pAd, RF_R07, RFValue);
 
-		/* VCO_IC, RF R7 register Bit 4 & Bit 5 to 1*/
-		RT30xxReadRFRegister(pAd, RF_R07, &RFValue);
-		RFValue |= 0x20;
-		RT30xxWriteRFRegister(pAd, RF_R07, RFValue);
+			/* Idoh, RF R9 register Bit 1, Bit 2 & Bit 3 to 1*/
+			RT30xxReadRFRegister(pAd, RF_R09, &RFValue);
+			RFValue |= 0x0E;
+			RT30xxWriteRFRegister(pAd, RF_R09, RFValue);
 
-		/* Idoh, RF R9 register Bit 1, Bit 2 & Bit 3 to 1*/
-		RT30xxReadRFRegister(pAd, RF_R09, &RFValue);
-		RFValue |= 0x0E;
-		RT30xxWriteRFRegister(pAd, RF_R09, RFValue);
-
-		/* RX_CTB_en, RF R21 register Bit 7 to 1*/
-		RT30xxReadRFRegister(pAd, RF_R21, &RFValue);
-		RFValue |= 0x80;
-		RT30xxWriteRFRegister(pAd, RF_R21, RFValue);
+			/* RX_CTB_en, RF R21 register Bit 7 to 1*/
+			RT30xxReadRFRegister(pAd, RF_R21, &RFValue);
+			RFValue |= 0x80;
+			RT30xxWriteRFRegister(pAd, RF_R21, RFValue);
+		}
 	}
 
 	if (IS_RT3090(pAd) ||	/* IS_RT3090 including RT309x and RT3071/72*/
+		IS_RT3572(pAd) ||
 		IS_RT3390(pAd) ||
+		IS_RT3593(pAd) ||
 		(IS_RT3070(pAd) && ((pAd->MACVersion & 0xffff) < 0x0201)))
 	{
+		if ((!IS_RT3572(pAd)) && (!IS_RT3593(pAd)))
 		{
 			RT30xxReadRFRegister(pAd, RF_R27, &RFValue);
 			if ((pAd->MACVersion & 0xffff) < 0x0211)
@@ -553,8 +557,23 @@ VOID RT30xxReverseRFSleepModeSetup(
 		}
 
 		/* RT3071 version E has fixed this issue*/
+		if ((pAd->NicConfig2.field.DACTestBit == 1) && ((pAd->MACVersion & 0xffff) < 0x0211))
+		{
+			/* patch tx EVM issue temporarily*/
+			RTMP_IO_READ32(pAd, LDO_CFG0, &MACValue);
+			MACValue = ((MACValue & 0xE0FFFFFF) | 0x0D000000);
+			RTMP_IO_WRITE32(pAd, LDO_CFG0, MACValue);
+		}
+		else if ((!IS_RT3090(pAd) && !IS_RT3593(pAd)))
+		{
+			RTMP_IO_READ32(pAd, LDO_CFG0, &MACValue);
+			MACValue = ((MACValue & 0xE0FFFFFF) | 0x01000000);
+			RTMP_IO_WRITE32(pAd, LDO_CFG0, MACValue);
+		}
 	}
 
+	if(IS_RT3572(pAd))
+		RT30xxWriteRFRegister(pAd, RF_R08, 0x80);
 }
 /* end johnli*/
 
@@ -566,6 +585,8 @@ VOID RT30xxHaltAction(
 
 	/* Turn off LNA_PE or TRSW_POL*/
 
+	if (IS_RT3070(pAd) || IS_RT3071(pAd) || IS_RT3572(pAd))
+	{
 		if ((IS_RT3071(pAd) || IS_RT3572(pAd))
 #ifdef RTMP_EFUSE_SUPPORT
 			&& (pAd->bUseEfuse)
@@ -578,12 +599,9 @@ VOID RT30xxHaltAction(
 		{
 			TxPinCfg &= 0xFFFFF0F0;
 		}
-#ifdef RT35xx
-		if (IS_RT3572(pAd))
-			RT30xxWriteRFRegister(pAd, RF_R08, (UCHAR)0x00);
-#endif /* RT35xx */
 
 		RTMP_IO_WRITE32(pAd, TX_PIN_CFG, TxPinCfg);   
+	}
 }
 
 
@@ -597,8 +615,9 @@ VOID RT30xx_ChipSwitchChannel(
 	UINT32 	Value = 0; /*BbpReg, Value;*/
 	UCHAR 	RFValue;
 	UINT32 i = 0;
-#ifdef RT33xx
-#endif
+	UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
+	BBP_R109_STRUC BbpR109 = {{0}};
+
 
 	i = i; /* avoid compile warning */
 	RFValue = 0;
@@ -627,6 +646,9 @@ VOID RT30xx_ChipSwitchChannel(
 	}
 #ifdef RT30xx
 	/* The RF programming sequence is difference between 3xxx and 2xxx*/
+	if ((IS_RT30xx(pAd)) && 
+		((pAd->RfIcType == RFIC_3020) || (pAd->RfIcType == RFIC_2020) ||
+		(pAd->RfIcType == RFIC_3021) || (pAd->RfIcType == RFIC_3022) || (pAd->RfIcType == RFIC_3320)))
 	{
 		/* modify by WY for Read RF Reg. error */
 		UCHAR	calRFValue;
@@ -674,6 +696,13 @@ VOID RT30xx_ChipSwitchChannel(
 				else if (pAd->Antenna.field.RxPath == 2)
 					RFValue |= 0x40;
 				RT30xxWriteRFRegister(pAd, RF_R01, RFValue);
+
+				RT30xxReadRFRegister(pAd, RF_R30, (PUCHAR)&RFValue);
+				RFValue |= 0x80;
+				RT30xxWriteRFRegister(pAd, RF_R30, (UCHAR)RFValue);
+				RTMPusecDelay(1000);
+				RFValue &= 0x7F;
+				RT30xxWriteRFRegister(pAd, RF_R30, (UCHAR)RFValue);
 
 				/* Set RF offset*/
 				RT30xxReadRFRegister(pAd, RF_R23, &RFValue);
@@ -724,7 +753,7 @@ VOID RT30xx_ChipSwitchChannel(
 				RT30xxReadRFRegister(pAd, RF_R07, &RFValue);
 				RFValue = RFValue | 0x1;
 				RT30xxWriteRFRegister(pAd, RF_R07, RFValue);
-
+				
                                 RT30xxReadRFRegister(pAd, RF_R30, (PUCHAR)&RFValue);
                                 RFValue |= 0x80;
                                 RT30xxWriteRFRegister(pAd, RF_R30, (UCHAR)RFValue);
@@ -748,8 +777,18 @@ VOID RT30xx_ChipSwitchChannel(
 				break;
 			}
 		}
-	}	
+	}
+	else
 #endif /* RT30xx */
+	{
+		switch (pAd->RfIcType)
+		{
+			default:
+				DBGPRINT(RT_DEBUG_TRACE, ("SwitchChannel#%d : unknown RFIC=%d\n",
+					  Channel, pAd->RfIcType));
+				break;
+		}	
+	}
 
 	/* Change BBP setting during siwtch from a->g, g->a*/
 	if (Channel <= 14)
@@ -795,8 +834,52 @@ VOID RT30xx_ChipSwitchChannel(
 
 		RTMP_IO_WRITE32(pAd, TX_PIN_CFG, TxPinCfg);
 
+	}
+	else
+	{
+		ULONG	TxPinCfg = 0x00050F05;/*Gary 2007/8/9 0x050505*/
+		UINT8	bbpValue;
+		
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R62, (0x37 - GET_LNA_GAIN(pAd)));
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R63, (0x37 - GET_LNA_GAIN(pAd)));
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R64, (0x37 - GET_LNA_GAIN(pAd)));
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R86, 0);/*(0x44 - GET_LNA_GAIN(pAd)));    According the Rory's suggestion to solve the middle range issue.*/   
 
-		RtmpUpdateFilterCoefficientControl(pAd, Channel);
+		/* Set the BBP_R82 value here */
+		bbpValue = 0xF2;
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R82, bbpValue);
+
+
+		/* Rx High power VGA offset for LNA select*/
+		if (pAd->NicConfig2.field.ExternalLNAForA)
+		{
+			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R75, 0x46);
+		}
+		else
+		{
+			RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R75, 0x50);
+		}
+
+		/* 5G band selection PIN, bit1 and bit2 are complement*/
+		RTMP_IO_READ32(pAd, TX_BAND_CFG, &Value);
+		Value &= (~0x6);
+		Value |= (0x02);
+		RTMP_IO_WRITE32(pAd, TX_BAND_CFG, Value);
+
+		/* Turn off unused PA or LNA when only 1T or 1R*/
+		{
+			/* Turn off unused PA or LNA when only 1T or 1R*/
+			if (pAd->Antenna.field.TxPath == 1)
+			{
+				TxPinCfg &= 0xFFFFFFF3;
+			}
+			if (pAd->Antenna.field.RxPath == 1)
+			{
+				TxPinCfg &= 0xFFFFF3FF;
+			}
+		}
+
+		RTMP_IO_WRITE32(pAd, TX_PIN_CFG, TxPinCfg);
 	}
 
 	/* R66 should be set according to Channel and use 20MHz when scanning*/
@@ -847,7 +930,7 @@ VOID RT30xx_ChipBBPAdjust(
 
 
 		/* request by Gary 20070208 for middle and long range G Band*/
-		AsicBBPWriteWithRxChain(pAd, BBP_R66, 0x38, RX_CHAIN_ALL);
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R66, 0x38);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x12);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x0A);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x10);
@@ -887,7 +970,7 @@ VOID RT30xx_ChipBBPAdjust(
 		
 
 	 	/* request by Gary 20070208 for middle and long range G band*/
-		AsicBBPWriteWithRxChain(pAd, BBP_R66, 0x38, RX_CHAIN_ALL);
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R66, 0x38);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x12);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x0A);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x10);
@@ -916,10 +999,9 @@ VOID RT30xx_ChipBBPAdjust(
 		/* 20 MHz bandwidth*/
 
 		/* request by Gary 20070208*/
-		/*AsicBBPWriteWithRxChain(pAd, BBP_R66, 0x30, RX_CHAIN_ALL);*/
 		/*RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R66, 0x30);*/
 		/* request by Brian 20070306*/
-		AsicBBPWriteWithRxChain(pAd, BBP_R66, 0x38, RX_CHAIN_ALL);
+		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R66, 0x38);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R69, 0x12);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R70, 0x0a);
 		RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R73, 0x10);
@@ -944,7 +1026,7 @@ VOID RT30xx_ChipBBPAdjust(
 
 }	
 
-VOID RT30xx_ChipAGCInit(
+VOID RT30xx_RTMPSetAGCInitValue(
 	IN PRTMP_ADAPTER		pAd,
 	IN UCHAR				BandWidth)
 {
@@ -954,28 +1036,14 @@ VOID RT30xx_ChipAGCInit(
 	if (pAd->LatchRfRegs.Channel <= 14)
 	{	/* BG band*/
 		/* Gary was verified Amazon AP and find that RT307x has BBP_R66 invalid default value */
-		if (IS_RT3070(pAd)||IS_RT3090(pAd) || IS_RT3390(pAd))
+		if (IS_RT3070(pAd)||IS_RT3090(pAd) || IS_RT3390(pAd) || IS_RT3593(pAd))
 		{
 			R66 = 0x1C + 2*GET_LNA_GAIN(pAd);
-			AsicBBPWriteWithRxChain(pAd, BBP_R66, R66, RX_CHAIN_ALL);
+			{
+				RTMP_BBP_IO_WRITE8_BY_REG_ID(pAd, BBP_R66, R66);
+			}
 		}
-	}
-	else
-	{
-		/* A band */
-		if (BandWidth == BW_20)
-		{
-			R66 = (UCHAR)(0x32 + (GET_LNA_GAIN(pAd)*5)/3);
-			AsicBBPWriteWithRxChain(pAd, BBP_R66, R66, RX_CHAIN_ALL);
-		}
-#ifdef DOT11_N_SUPPORT
-		else
-		{
-			R66 = (UCHAR)(0x3A + (GET_LNA_GAIN(pAd)*5)/3);
-			AsicBBPWriteWithRxChain(pAd, BBP_R66, R66, RX_CHAIN_ALL);
-		}
-#endif // DOT11_N_SUPPORT //
-	}
+	}	
 
 
 }

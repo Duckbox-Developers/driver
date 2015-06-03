@@ -48,7 +48,7 @@ VOID RT30xx_ChipSwitchChannel(
 VOID RT30xx_ChipBBPAdjust(
 	IN struct _RTMP_ADAPTER	*pAd);
 
-VOID RT30xx_ChipAGCInit(
+VOID RT30xx_RTMPSetAGCInitValue(
 	IN struct _RTMP_ADAPTER		*pAd,
 	IN UCHAR					BandWidth);
 

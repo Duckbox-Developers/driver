@@ -30,17 +30,24 @@
 
 
 extern UCHAR AGS1x1HTRateTable[];
+
 extern UCHAR AGS2x2HTRateTable[];
+
 extern UCHAR AGS3x3HTRateTable[];
+
 
 
 #define AGS_TX_QUALITY_WORST_BOUND       8
     
+/* */
 /* The size, in bytes, of an AGS entry in the rate switch table */
+/* */
 #define SIZE_OF_AGS_RATE_TABLE_ENTRY	9
     
 
 typedef struct _RTMP_TX_RATE_SWITCH_AGS {
+	
+
 	UCHAR	ItemNo;
 	
 #ifdef RT_BIG_ENDIAN
@@ -68,16 +75,20 @@ typedef struct _RTMP_TX_RATE_SWITCH_AGS {
 	UCHAR	upMcs1;
 } RTMP_TX_RATE_SWITCH_AGS, *PRTMP_TX_RATE_SWITCH_AGS;
 
-
+/* */
 /* AGS control */
+/* */
 typedef struct _AGS_CONTROL {
+
 	UCHAR MCSGroup; /* The MCS group under testing */
 	UCHAR lastRateIdx;
 } AGS_CONTROL,*PAGS_CONTROL;
 
-
+/* */
 /* The statistics information for AGS */
+/* */
 typedef struct _AGS_STATISTICS_INFO {
+
 	CHAR	RSSI;
 	ULONG	TxErrorRatio;
 	ULONG	AccuTxTotalCnt;
@@ -88,13 +99,17 @@ typedef struct _AGS_STATISTICS_INFO {
 } AGS_STATISTICS_INFO, *PAGS_STATISTICS_INFO;
 
 
+/* */
 /* Support AGS (Adaptive Group Switching) */
+/* */
 #define SUPPORT_AGS(__pAd)			(IS_RT3593(__pAd))
+    
 #define AGS_IS_USING(__pAd, __pRateTable)			\
     (SUPPORT_AGS(__pAd) && \
      ((__pRateTable == AGS1x1HTRateTable) || \
       (__pRateTable == AGS2x2HTRateTable) || \
       (__pRateTable == AGS3x3HTRateTable))) 
+ 
 
 #endif /* __AGS_H__ */
     

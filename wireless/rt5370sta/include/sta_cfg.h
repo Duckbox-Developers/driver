@@ -33,5 +33,4 @@ INT RTMPSTAPrivIoctlSet(
 	IN PSTRING SetProcName,
 	IN PSTRING ProcArg);
 
-
 #endif /* __STA_CFG_H__ */

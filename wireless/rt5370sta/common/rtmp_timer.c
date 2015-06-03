@@ -35,15 +35,9 @@ BUILD_TIMER_FUNCTION(APSDPeriodicExec);
 BUILD_TIMER_FUNCTION(EnqueueStartForPSKExec);
 #ifdef CONFIG_STA_SUPPORT
 #endif /* CONFIG_STA_SUPPORT */
-
-
 #ifdef RTMP_MAC_USB
 BUILD_TIMER_FUNCTION(BeaconUpdateExec);
 #endif /* RTMP_MAC_USB */
-#ifdef CONFIG_MULTI_CHANNEL
-BUILD_TIMER_FUNCTION(EDCA_ActionTimeout);
-BUILD_TIMER_FUNCTION(HCCA_ActionTimeout);
-#endif /* CONFIG_MULTI_CHANNEL */
 
 
 #ifdef CONFIG_STA_SUPPORT
@@ -72,7 +66,6 @@ BUILD_TIMER_FUNCTION(RtmpUsbStaAsicForceWakeupTimeout);
 
 
 #endif /* CONFIG_STA_SUPPORT */
-
 
 
 
@@ -286,7 +279,7 @@ void RtmpTimerQExit(RTMP_ADAPTER *pAd)
 	pAd->TimerQ.status = RTMP_TASK_STAT_STOPED;
 /*#endif*/
 	RTMP_INT_UNLOCK(&pAd->TimerQLock, irqFlags);
-/*	NdisFreeSpinLock(&pAd->TimerQLock); */
+	NdisFreeSpinLock(&pAd->TimerQLock);
 }
 
 

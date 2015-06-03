@@ -341,15 +341,6 @@ INT RtmpOSNetDevAlloc(
 INT RtmpOSNetDevOpsAlloc(
 	IN	PVOID					*pNetDevOps);
 
-#ifdef CONFIG_STA_SUPPORT
-INT RtmpOSNotifyRawData(
-	IN PNET_DEV pNetDev, 
-	IN PUCHAR buff,
-	IN INT len, 
-	IN ULONG type,
-	IN USHORT protocol);
-
-#endif /* CONFIG_STA_SUPPORT */
 
 PNET_DEV RtmpOSNetDevGetByName(
 	IN	PNET_DEV				pNetDev,
@@ -369,9 +360,6 @@ int RtmpOSNetDevAttach(
 	IN	UCHAR					OpMode,
 	IN	PNET_DEV				pNetDev, 
 	IN	RTMP_OS_NETDEV_OP_HOOK	*pDevOpHook);
-
-void RtmpOSNetDevProtect(
-	IN BOOLEAN lock_it);
 
 PNET_DEV RtmpOSNetDevCreate(
 	IN	INT32					MC_RowID,
@@ -412,13 +400,6 @@ VOID RtmpOsSetNetDevPriv(
 
 VOID *RtmpOsGetNetDevPriv(
 	IN	VOID					*pDev);
-
-USHORT RtmpDevPrivFlagsGet(
-	IN	VOID					*pDev);
-
-VOID RtmpDevPrivFlagsSet(
-	IN	VOID					*pDev,
-	IN	USHORT					PrivFlags);
 
 VOID RtmpOsSetNetDevType(
 	IN	VOID					*pDev,
@@ -515,11 +496,6 @@ VOID *RtmpOsTaskDataGet(
 
 INT32 RtmpThreadPidKill(
 	IN	RTMP_OS_PID				PID);
-
-/* OS Cache */
-VOID RtmpOsDCacheFlush(
-	IN	ULONG					AddrStart,
-	IN	ULONG					Size);
 
 /* OS Timer */
 VOID RTMP_SetPeriodicTimer(
@@ -661,9 +637,6 @@ ULONG RtmpOsUsbUrbLenGet(
 BOOLEAN RtmpOsAtomicInit(
 	IN	RTMP_OS_ATOMIC		*pAtomic,
 	IN	LIST_HEADER			*pAtomicList);
-
-VOID RtmpOsAtomicDestroy(
-	IN	RTMP_OS_ATOMIC		*pAtomic);
 
 LONG RtmpOsAtomicRead(
 	IN	RTMP_OS_ATOMIC		*pAtomic);
@@ -923,7 +896,7 @@ void rausb_kill_urb(VOID *urb);
 VOID RtmpOsUsbEmptyUrbCheck(
 	IN	VOID				**ppWait,
 	IN	NDIS_SPIN_LOCK		*pBulkInLock,
-	IN	UCHAR				*pPendingRx);
+	IN	UCHAR				PendingRx);
 
 typedef VOID (*USB_COMPLETE_HANDLER)(VOID *);
 
@@ -957,17 +930,6 @@ VOID RtmpOsUsbDmaMapping(
 	IN	VOID			*pUrb);
 #endif /* RTMP_MAC_USB */
 
-#if defined(RTMP_RBUS_SUPPORT) || defined(RTMP_FLASH_SUPPORT)
-void RtmpFlashRead(
-	UCHAR * p,
-	ULONG a,
-	ULONG b);
-
-void RtmpFlashWrite(
-	UCHAR * p,
-	ULONG a,
-	ULONG b);
-#endif /* defined(RTMP_RBUS_SUPPORT) || defined(RTMP_FLASH_SUPPORT) */
 
 UINT32 RtmpOsGetUsbDevVendorID(
 	IN VOID *pUsbDev);
@@ -1037,16 +999,9 @@ BOOLEAN CFG80211OS_ChanInfoGet(
 	OUT UINT32					*pPower,
 	OUT BOOLEAN					*pFlgIsRadar);
 
-BOOLEAN CFG80211OS_ChanInfoInit(
-	IN VOID						*pCB,
-	IN UINT32					InfoIndex,
-	IN UCHAR					ChanId,
-	IN UCHAR					MaxTxPwr,
-	IN BOOLEAN					FlgIsNMode,
-	IN BOOLEAN					FlgIsBW20M);
-
 VOID CFG80211OS_Scaning(
 	IN VOID						*pCB,
+	IN VOID						**pChanOrg,
 	IN UINT32					ChanId,
 	IN UCHAR					*pFrame,
 	IN UINT32					FrameLen,
@@ -1066,25 +1021,9 @@ void CFG80211OS_ConnectResultInform(
 	IN UCHAR					*pRspIe,
 	IN UINT32					RspIeLen,
 	IN UCHAR					FlgIsSuccess);
-
-BOOLEAN CFG80211OS_RxMgmt(IN PNET_DEV pNetDev, IN INT32 freq, IN PUCHAR frame, IN UINT32 len);
-VOID CFG80211OS_TxStatus(IN PNET_DEV pNetDev, IN INT32 cookie, 	IN PUCHAR frame, IN UINT32 len, IN BOOLEAN ack);
-VOID CFG80211OS_SendRxAuth(IN PNET_DEV pNetDev, IN const PUCHAR frame, 	IN UINT32 len);
-VOID CFG80211OS_NewSta(IN PNET_DEV pNetDev, IN const PUCHAR mac_addr, IN const PUCHAR assoc_frame, IN UINT32 assoc_len);
-VOID CFG80211OS_DelSta(IN PNET_DEV pNetDev, IN const PUCHAR mac_addr);
-
 #endif /* RT_CFG80211_SUPPORT */
 
-
-
-
-/* ================================ MACRO =================================== */
-#define RTMP_UTIL_DCACHE_FLUSH(__AddrStart, __Size)
-
-
-
-
-/* ================================ EXTERN ================================== */
+/* ========================================================================== */
 extern UCHAR SNAP_802_1H[6];
 extern UCHAR SNAP_BRIDGE_TUNNEL[6];
 extern UCHAR EAPOL[2];
@@ -1098,11 +1037,5 @@ extern ULONG OS_NumOfMemAlloc, OS_NumOfMemFree;
 
 extern INT32 ralinkrate[];
 extern UINT32 RT_RateSize;
-
-#ifdef PLATFORM_UBM_IPX8
-#include "vrut_ubm.h"
-#endif /* PLATFORM_UBM_IPX8 */
-
-INT32  RtPrivIoctlSetVal(VOID);
 
 #endif /* __RT_OS_UTIL_H__ */

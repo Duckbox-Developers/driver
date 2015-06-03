@@ -44,9 +44,6 @@ typedef struct __CFG80211_CB {
 
 	/* monitor filter */
 	UINT32 MonFilterFlag;
-
-	/* channel information */
-	struct ieee80211_channel ChanInfo[MAX_NUM_OF_CHANNELS];
 } CFG80211_CB;
 
 
