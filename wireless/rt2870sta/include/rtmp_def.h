@@ -1514,13 +1514,13 @@
 #define IS_OPMODE_AP(_x)		((_x)->OpMode == OPMODE_AP)
 #define IS_OPMODE_STA(_x)		((_x)->OpMode == OPMODE_STA)
 
-#ifdef ANDROID_SUPPORT
+//#ifdef ANDROID_SUPPORT
 #define INF_MAIN_DEV_NAME		"wlan"
 #define INF_MBSSID_DEV_NAME		"wlan"
-#else
-#define INF_MAIN_DEV_NAME		"ra"
-#define INF_MBSSID_DEV_NAME		"ra"
-#endif /* ANDROID_SUPPORT */
+//#else
+//#define INF_MAIN_DEV_NAME		"ra"
+//#define INF_MBSSID_DEV_NAME		"ra"
+//#endif /* ANDROID_SUPPORT */
 
 #define INF_WDS_DEV_NAME		"wds"
 #define INF_APCLI_DEV_NAME		"apcli"
