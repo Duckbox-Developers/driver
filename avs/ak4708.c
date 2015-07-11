@@ -185,7 +185,6 @@ int ak4708_set_volume( struct i2c_client *client, int vol )
  
 	c = vol;
 
-	//fix ESI88
 //	if (c > 63 || c < 0)
 //		return -EINVAL;
 // 	ak4708_data.R02L50 = c;

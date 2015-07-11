@@ -40,6 +40,7 @@
 
 #include "avs_core.h"
 #include "ak4705.h"
+#include "ak4708.h"
 #include "stv6412.h"
 #include "stv6417.h"
 #include "stv6418.h"
@@ -54,6 +55,7 @@
 enum
 {
 	AK4705,
+	AK4708,
 	STV6412,
 	STV6417,
 	STV6418,
@@ -71,6 +73,7 @@ enum
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct i2c_device_id avs_id[] = {
         { "ak4705", AK4705 },
+        { "ak4708", AK4708 },
         { "stv6412", STV6412 },
         { "stv6417", STV6417 },
         { "stv6418", STV6418 },
@@ -130,6 +133,7 @@ static int avs_newprobe(struct i2c_client *client, const struct i2c_device_id *i
 	switch(devType)
 	{
 	case AK4705:   ak4705_init(client);   break;
+	case AK4708:   ak4708_init(client);   break;
 	case STV6412:  stv6412_init(client);  break;
 	case STV6417:  stv6417_init(client);  break;
 	case STV6418:  stv6418_init(client);  break;
@@ -226,6 +230,7 @@ static int avs_command_ioctl(struct i2c_client *client, unsigned int cmd, void *
 	switch(devType)
 	{
 	case AK4705:   err = ak4705_command(client, cmd, arg);   break;
+	case AK4708:   err = ak4708_command(client, cmd, arg);   break;
 	case STV6412:  err = stv6412_command(client, cmd, arg);  break;
 	case STV6417:  err = stv6417_command(client, cmd, arg);  break;
 	case STV6418:  err = stv6418_command(client, cmd, arg);  break;
@@ -261,6 +266,7 @@ int avs_command_kernel(unsigned int cmd, void *arg)
 	case VIP1_AVS: 		err = vip1_avs_command_kernel(cmd, arg); 	break;
 #else
 	case AK4705:   err = ak4705_command_kernel(client, cmd, arg);   break;
+	case AK4708:   err = ak4705_command_kernel(client, cmd, arg);   break;
 	case STV6412:  err = stv6412_command_kernel(client, cmd, arg);  break;
 	case STV6417:  err = stv6417_command_kernel(client, cmd, arg);  break;
 	case STV6418:  err = stv6418_command_kernel(client, cmd, arg);  break;
@@ -321,6 +327,8 @@ static int avs_detect(struct i2c_client *client, int kind, struct i2c_board_info
 	if (kind < 0) { /* detection and identification */
 		if (!type || !strcmp("ak4705", type))
 			kind = AK4705;
+		else if (!strcmp("ak4708", type))
+			kind = AK4708;
 		else if (!strcmp("stv6412", type))
 			kind = STV6412;
 		else if(!strcmp("stv6417", type))
@@ -346,6 +354,7 @@ static int avs_detect(struct i2c_client *client, int kind, struct i2c_board_info
 	}
 	switch (kind) {
 	case AK4705:   		name = "ak4705";   		break;
+	case AK4708:   		name = "ak4708";   		break;
 	case STV6412:  		name = "stv6412";  		break;
 	case STV6417:  		name = "stv6417";  		break;
 	case STV6418:  		name = "stv6418";  		break;
@@ -477,5 +486,5 @@ MODULE_DESCRIPTION("Multiplatform A/V scart switch driver");
 MODULE_LICENSE("GPL");
 
 module_param(type,charp,0);
-MODULE_PARM_DESC(type, "device type (ak4705, stv6412, cxa2161, stv6417, stv6418, stv6419, vip2_avs, vip1_avs, fake_avs, avs_pio, avs_none)");
+MODULE_PARM_DESC(type, "device type (ak4705, ak4708, stv6412, cxa2161, stv6417, stv6418, stv6419, vip2_avs, vip1_avs, fake_avs, avs_pio, avs_none)");
 
