@@ -231,8 +231,8 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
 		goto failed;
 	}
 
-//bez demuxa, bedzie brany z player2
-/*
+/*j00zek comment: We don't initiate demux here as we use one from player2*/
+#if 0
 
 	as102_dev->dvb_dmx.priv = as102_dev;
 	as102_dev->dvb_dmx.filternum = pid_filtering ? 16 : 256;
@@ -266,7 +266,7 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
 		    ret);
 		goto failed;
 	}
-*/
+#endif
 
 	dprintk(debug,"2 dvb_register_frontend\n");
 	ret = as102_dvb_register_fe(as102_dev, &as102_dev->dvb_fe);
@@ -292,8 +292,8 @@ int as102_dvb_register(struct as102_dev_t *as102_dev)
 				"firmware_class");
 #endif
 
-	//start/stop pid z dvb_demux.c
-	as102_dev_ = as102_dev;//musimy zapamietac dvb_adarper bo feed bedzie brany z demux_player2
+	/* start/stop pid from dvb_demux.c */
+	as102_dev_ = as102_dev;//store dvb_adapter to use later when feeding from demux_player2
 	extern_startfeed_init(as102_dvb_dmx_start_feed,as102_dvb_dmx_stop_feed);
 
 failed:
@@ -318,29 +318,10 @@ void as102_dvb_unregister(struct as102_dev_t *as102_dev)
 	LEAVE();
 }
 
-#define PIO_PORT_SIZE                   0x1000
-#define PIO_BASE                        0xb8020000
-#define STPIO_SET_OFFSET                0x4
-#define STPIO_CLEAR_OFFSET              0x8
-#define STPIO_POUT_OFFSET               0x00
-
-#define STPIO_SET_PIN(PIO_ADDR, PIN, V) writel(1<<PIN, PIO_ADDR + STPIO_POUT_OFFSET + ((V)? STPIO_SET_OFFSET : STPIO_CLEAR_OFFSET))
-#define PIO_PORT(n) (((n)*PIO_PORT_SIZE) + PIO_BASE)
-
-
 static int __init as102_driver_init(void)
 {
 	int ret = 0;
 	ENTER();
-#if 1
-	printk("%s\n",__func__);
-	printk("USB PWR OFF\n");
-	STPIO_SET_PIN(PIO_PORT(5),7, 0);
-	mdelay(1000);
-	printk("USB PWR ON\n");
-	STPIO_SET_PIN(PIO_PORT(5),7, 1);
-	mdelay(1000);
-#endif
 	/* register this driver with the low level subsystem */
 	ret = usb_register(&as102_usb_driver);
 	if (ret)
