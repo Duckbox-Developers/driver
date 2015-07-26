@@ -100,6 +100,10 @@ extern void pti_hal_init(struct stpti *pti , struct dvb_demux* demux, void (*_de
 
 extern int swts;
 
+#if defined(SAGEMCOM88)
+extern int hasdvbt;
+#endif
+
 int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 					 struct DeviceContext_s *DeviceContext)
 {
@@ -116,14 +120,14 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	   if playback via SWTS is activated. Otherwise playback would
 	   unnecessarily waste a buffer (might lead to loss of a second
 	   recording). */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88) && !defined(ARIVALINK200)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source < DMX_SOURCE_FRONT3)) ||
+			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #endif
@@ -286,14 +290,14 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 	}
 	/* PTI was only started if the source is one of two frontends or
 	   if playback via SWTS was activated. */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88) && !defined(ARIVALINK200)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source < DMX_SOURCE_FRONT3)) ||
+			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #endif
@@ -383,8 +387,10 @@ static int convert_source(const dmx_source_t source)
 			{
 				tag = TSIN0;
 			}
-#elif defined(UFS913) || defined(SAGEMCOM88)
+#elif defined(UFS913)
 			tag = 3;//TSIN2; //TSIN3
+#elif defined(SAGEMCOM88)
+			tag = TSIN3;
 #else
 			tag = TSIN1;
 #endif
@@ -394,16 +400,20 @@ static int convert_source(const dmx_source_t source)
 			tag = TSIN0;
 			break;
 		case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
-#elif defined(SAGEMCOM88)
-		case DMX_SOURCE_FRONT2:
-			tag = TSIN0;
-			break;
-#endif
-#if !defined(ADB_BOX)
 		case DMX_SOURCE_DVR0:
 			tag = SWTS0;
 			break;
-#else //defined(ADB_BOX)
+#elif defined(SAGEMCOM88)
+		case DMX_SOURCE_FRONT2:
+			if (hasdvbt==1) tag = TSIN0;	//Internal DVBT on uhd88
+			if (hasdvbt==0) tag = SWTS0;	//DVBT-USB on esi88
+			break;
+		case DMX_SOURCE_FRONT3:
+		case DMX_SOURCE_DVR0:
+			if (hasdvbt==1) tag = SWTS0;	//DVBT-USB on uhd88
+			if (hasdvbt==0) tag = SWTS1;	//fake tsin for DVR (DVBT-USB at swts0)
+			break;
+#elif defined(ADB_BOX)
 		case DMX_SOURCE_FRONT2:
 			if (glowica == SINGLE)
 			{
@@ -415,7 +425,11 @@ static int convert_source(const dmx_source_t source)
 			}
 			break;
 		case DMX_SOURCE_DVR0:
-			tag = TSIN1;    //fake tsin dla DVR, nie moze byc swts bo jest uzywane w dvbt
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+			break;
+#else
+		case DMX_SOURCE_DVR0:
+			tag = SWTS0;
 			break;
 #endif
 		default:
@@ -482,7 +496,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 		 * Setup the transport stream merger based on the configuration
 		 */
 		stm_tsm_init(/*config */ 1);
-#if defined(ARIVALINK200) ||  defined(SAGEMCOM88) ||  defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913)
+#if defined(ARIVALINK200) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(FORTIS_HDBOX) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX) || defined(UFS913) || defined(SAGEMCOM88)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 2);
 #elif defined(SPARK7162)
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 3);
@@ -552,6 +566,20 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
 #ifdef VERY_VERBOSE
 	printk("SetSource(%p, %d)\n", pDvbDemux, *src);
 #endif
+
+#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200)
+	printk("SetSource(%p, %d) >> ", pDvbDemux, *src);
+	if (*src == DMX_SOURCE_FRONT0) printk("DMX_SOURCE_FRONT0\n");
+	else
+	if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");
+	else
+	if (*src == DMX_SOURCE_FRONT2) printk("DMX_SOURCE_FRONT2\n");
+	else
+	if (*src == DMX_SOURCE_FRONT3) printk("DMX_SOURCE_FRONT3\n");
+	else
+	if (*src == DMX_SOURCE_DVR0) printk("DMX_SOURCE_DVR0\n");
+#endif
+
 	pContext->pPtiSession->source = *src;
 	if (((*src >= DMX_SOURCE_FRONT0) && (*src <= DMX_SOURCE_FRONT3)) || (*src == DMX_SOURCE_DVR0))
 	{

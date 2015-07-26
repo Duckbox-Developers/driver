@@ -42,8 +42,10 @@ unsigned long TSM_NUM_1394_ALT_OUT;
 
 #if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
 #define TSMergerBaseAddress     0xFE242000
+#define SWTS_BASE_ADDRESS       0xFE900000 //STi7105 STi7111
 #else
 #define TSMergerBaseAddress     0x19242000
+#define SWTS_BASE_ADDRESS       0x1A300000
 #endif
 
 #define TSM_STREAM0_CFG         0x0000
@@ -126,7 +128,7 @@ unsigned long tsm_io = 0;
 void* tsm_io = NULL;
 #endif
 
-#if defined(ADB_BOX) || defined(SAGEMCOM88)
+#if defined(ADB_BOX)
 extern int TsinMode;
 enum
 {
@@ -187,7 +189,10 @@ struct stm_dma_req_config fdma_req_config =
 static const char *fdmac_id[]    = { STM_DMAC_ID, NULL };
 static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
 
-#if defined(ADB_BOX) || defined(SAGEMCOM88)
+/* >>> DVBT-USB
+  Step2-Driver injects data to SWTS here
+  When properly registered, driver should be visible in list of frontends,  if next steps does not fit, scanning will fail*/ 
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
@@ -198,8 +203,10 @@ void extern_inject_data(u32 *data, off_t size)
 	int n;
 	int m;
 	u32 *addr = (u32*)tsm_handle.tsm_swts;
-//paceSwtsByPti();
+
+	//paceSwtsByPti();
 	//dprintk("%s > size = %d, block %d\n", __FUNCTION__, (int) size, blocks);
+
 	for (n = 0; n < blocks; n++)
 	{
 		while (!(readl(tsm_handle.tsm_io + SWTS_CFG(0)) & TSM_SWTS_REQ))
@@ -210,13 +217,16 @@ void extern_inject_data(u32 *data, off_t size)
 			words = 128 / 4;
 		else
 			words = count / 4;
+
 		count -= words * 4;
 		for (m = 0; m < words; m++)
 			*addr = *p++;
 	}
 }
 EXPORT_SYMBOL(extern_inject_data);
+
 #endif
+/* <<< DVBT-USB */
 
 void stm_tsm_inject_data(struct stm_tsm_handle *handle, u32 *data, off_t size)
 {
@@ -1202,54 +1212,59 @@ void stm_tsm_init(int use_cimax)
 			tsm_io = ioremap(/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
 		}
+/* >>> DVBT-USB */
 #if defined(SAGEMCOM88)
-		//dvbt usb
+		printk(">>Init SAGEMCOM88 DVBT-USB\n");
+		// STi7105
+		// 0-3 - 4xTS
+		// 4-6 - 3xSWTS
+		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 0x12, tsm_io + TSM_SWTS_CFG(0));
+		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
+		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
-		tsm_handle.tsm_swts = (unsigned long)ioremap(0x1A300000, 0x1000);
-		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 12, tsm_io + TSM_SWTS_CFG(0)); //12
-		ctrl_outl(0, tsm_io + TSM_SWTS_CFG(1));
-		ctrl_outl(0, tsm_io + TSM_SWTS_CFG(2));
+		tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
 		// pio12
 		ctrl_outl(0x0, 0xfe015020);
 		ctrl_outl(0x0, 0xfe015030);
 		ctrl_outl(0x0, 0xfe015040);
-		//alternate 1
+		// alternate 1
 		ctrl_outl(0x0, reg_sys_config + 0x1c0); // sys_cfg48/
-		//pio6
+		// pio6
 		ctrl_outl(0x0, 0xfd026020);
 		ctrl_outl(0x0, 0xfd026030);
 		ctrl_outl(0x0, 0xfd026040);
-		//alternate 2
+		// alternate 2
 		ctrl_outl(0x00ff, reg_sys_config + 0x190); // sys_cfg36/
-		//pio6 = TSIN2
+		// pio6 = TSIN2
 		ret = ctrl_inl(reg_sys_config + 0x110);
 		ctrl_outl((ret & ~(1 << 10)), reg_sys_config + 0x110); // sys_cfg4
-		//pio6/0 not used PCI mode
+		// pio6/0 not used PCI mode
 		ret = ctrl_inl(reg_sys_config + 0x114);
 		ctrl_outl((ret | (1 << 27)), reg_sys_config + 0x114); // sys_cfg5/
-		//route
-		ctrl_outl(0x8, reg_sys_config + SYS_CFG0);//tsin2>2 and tsin3>3
-#endif
-#if defined(ADB_BOX)
-		//dvbt dla NBOX
+		// route
+		ctrl_outl(0x8, reg_sys_config + SYS_CFG0); //tsin2>2 and tsin3>3
+#elif defined(ADB_BOX) || defined(ARIVALINK200)
+		printk(">>Init DVBT-USB\n");
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
 		tsm_handle.swts_channel = 3;
 		tsm_handle.tsm_swts = (unsigned long)ioremap(0x1A300000, 0x1000);
-//    ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 8, tsm_io + TSM_SWTS_CFG(0));
+		//ctrl_outl( TSM_SWTS_REQ_TRIG(128/16) | 8, tsm_io + TSM_SWTS_CFG(0));
 		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 12, tsm_io + TSM_SWTS_CFG(0));
 		tsm_handle.fdma_reqline = 30;
 		tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
 		tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
 		/*
-		      // Initilise the parameters for the FDMA SWTS data injection
-		      for (n=0;n<3;n++) {
-		//      for (n=0;n<MAX_SWTS_PAGES;n++) {
-		         dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
-		         dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
-		         dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
-		      }
-		     */
+		// Initilise the parameters for the FDMA SWTS data injection
+		for (n=0;n<3;n++) {
+		//for (n=0;n<MAX_SWTS_PAGES;n++) {
+			dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
+			dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
+			dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
+		}
+		*/
 #endif
+/* <<< DVBT-USB */
+
 #ifdef LOAD_TSM_DATA
 		TSM_NUM_PTI_ALT_OUT  = 1/* config->tsm_num_pti_alt_out*/;
 		TSM_NUM_1394_ALT_OUT = 1/*config->tsm_num_1394_alt_out */;
@@ -1300,13 +1315,22 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x1D00, tsm_io + TSM_STREAM5_CFG); // 0x1D00-0x1DFF
 		ctrl_outl(0x1E00, tsm_io + TSM_STREAM6_CFG); // 0x1E00-0x1EFF
 		ctrl_outl(0x1F00, tsm_io + TSM_STREAM7_CFG); // 0x1F00-0x1FFF
+#elif defined(SAGEMCOM88)
+		for (n = 0; n < 6; n++)		//4TS + 3SWTS at STi7105
+		{
+			writel(TSM_RAM_ALLOC_START(0x4 * n), tsm_io + TSM_STREAM_CONF(n));
+		}
 #else // !defined(SPARK) && !defined(HS7110) && !defined(HS7119) && !defined(ATEMIO520) && !defined(ATEMIO530)
 		for (n = 0; n < 5; n++)
 		{
 			writel(TSM_RAM_ALLOC_START(0x3 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
 #endif // defined(SPARK) || defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
-		for (n = 0; n < 4/* config->nr_channels */; n++)
+#if defined(SAGEMCOM88)
+		for (n = 0; n < 6/* config->nr_channels */; n++)		//4TS + 3SWTS at STi7105
+#else
+		for (n = 0; n < 4/* config->nr_channels */; n++) 
+#endif
 		{
 #ifdef alt
 			enum plat_frontend_options options = config->channels[n].option;
@@ -1350,7 +1374,7 @@ void stm_tsm_init(int use_cimax)
 				   TSM_ALIGN_BYTE_SOP |
 				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
 				   tsm_io + TSM_STREAM_CONF(chan));
-#else // !defined(ADB_BOX) && !defined(SAGEMCOM88)
+#else
 			printk("TsinMode = Parallel *st-merger*\n\t");
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
 				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
@@ -1359,7 +1383,7 @@ void stm_tsm_init(int use_cimax)
 				   TSM_ALIGN_BYTE_SOP |
 				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
 				   tsm_io + TSM_STREAM_CONF(chan));
-#endif // defined(ADB_BOX)
+#endif
 #ifdef alt
 			writel(TSM_SYNC(config->channels[n].lock) |
 				   TSM_DROP(config->channels[n].drop) |

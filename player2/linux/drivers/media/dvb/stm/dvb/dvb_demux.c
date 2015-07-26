@@ -81,7 +81,12 @@ enum
 extern void stm_tsm_init(int cfg);
 extern int reset_tsm;
 
-#if defined(ADB_BOX)
+/* >>> DVBT USB */ 
+/* j00zek comment: To enable DVBT USB we need to integrate it with player2. take demuxes from it and inject data through SWTS
+    To make it working, dvbt driver needs to be modded too. See dvbt/as102 for reference
+    Step1: enabling feeding from player2, needs changes in driver, see more comments in dvbt/as102
+    Step2 in st-merger*/ 
+#if defined(ADB_BOX) || defined(ARIVALINK200) || defined(SAGEMCOM88)
 int (*StartFeed_)(struct dvb_demux_feed* Feed);
 int (*StopFeed_)(struct dvb_demux_feed* Feed);
 
@@ -90,8 +95,13 @@ void extern_startfeed_init(int(*StartFeed)(struct dvb_demux_feed* Feed), int(*St
 	StartFeed_ = StartFeed;
 	StopFeed_ = StopFeed;
 };
+/* Sagemcom88 has 2 models with and without internal DVB-T. In both, DVB-T USB should be configured different way */
+#if defined(SAGEMCOM88)
+extern int hasdvbt;
+#endif
 
 EXPORT_SYMBOL(extern_startfeed_init);
+/* <<< DVBT-USB */
 #endif
 
 static const unsigned int AudioId[DVB_MAX_DEVICES_PER_ADAPTER]  = {DMX_TS_PES_AUDIO0, DMX_TS_PES_AUDIO1, DMX_TS_PES_AUDIO2, DMX_TS_PES_AUDIO3};
@@ -135,7 +145,8 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		stm_tsm_init(1);
 	}
 #endif
-#if defined(ADB_BOX)//tutaj
+/* >>> DVBT USB */ 
+#if defined(ADB_BOX)
 	if (glowica == SINGLE)
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
@@ -146,7 +157,22 @@ int StartFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
 			StartFeed_(Feed);
 	}
+#elif defined(ARIVALINK200)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StartFeed_ != NULL))
+		StartFeed_(Feed);
+#elif defined(SAGEMCOM88)
+	if (hasdvbt == 0) //model without internal DVB-T (esi88)
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
+	else if (hasdvbt == 1) //model with internal DVB-T (uhd88), our DVB-T USB will be available as fourth FE
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StartFeed_ != NULL))
+			StartFeed_(Feed);
+	}
 #endif
+/* <<< DVBT USB */ 
 #ifdef __TDT__
 #ifdef no_subtitles
 	if ((Feed->type == DMX_TYPE_TS) && (Feed->pes_type > DMX_TS_PES_OTHER))
@@ -331,7 +357,8 @@ int StopFeed(struct dvb_demux_feed *Feed)
 #ifdef __TDT__
 	int                         i               = 0;
 #endif
-#if defined(ADB_BOX)//tutaj
+/* >>> DVBT USB */ 
+#if defined(ADB_BOX)
 	if (glowica == SINGLE)
 	{
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
@@ -342,7 +369,22 @@ int StopFeed(struct dvb_demux_feed *Feed)
 		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
 			StopFeed_(Feed);
 	}
+#elif defined(ARIVALINK200)
+	if ((Context->pPtiSession->source == DMX_SOURCE_FRONT1) && (StopFeed_ != NULL))
+		StopFeed_(Feed);
+#elif defined(SAGEMCOM88)
+	if (hasdvbt == 0) //model without internal DVB-T (esi88)
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT2) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
+	else if (hasdvbt == 1) //model with internal DVB-T (uhd88), our DVB-T USB will be available as fourth FE
+	{
+		if ((Context->pPtiSession->source == DMX_SOURCE_FRONT3) && (StopFeed_ != NULL))
+			StopFeed_(Feed);
+	}
 #endif
+/* <<< DVBT USB */ 
 	switch (Feed->type)
 	{
 		case DMX_TYPE_TS:

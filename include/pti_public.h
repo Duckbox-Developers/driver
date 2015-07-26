@@ -46,7 +46,15 @@ typedef enum
   TSIN0 = 0,
   TSIN1,
   TSIN2,
+#if defined(SAGEMCOM88)
+// 4-TS and 3-SWTS in STi7105
+  TSIN3,
   SWTS0,
+  SWTS1,
+  SWTS2,
+#else
+  SWTS0,
+#endif  
   TS_NOTAGS = 0x80
 } tInputSource;
 

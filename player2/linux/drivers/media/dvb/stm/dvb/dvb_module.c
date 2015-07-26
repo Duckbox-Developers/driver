@@ -87,17 +87,22 @@ MODULE_PARM_DESC(highSR, "Start Driver with support for Symbol Rates 30000.\nIf 
 
 module_param(swts, int, 0444);
 MODULE_PARM_DESC(swts, "Do not route injected data through the tsm/pti.\n");
+
+#if defined(SAGEMCOM88)
+int hasdvbt = 1;
+
+module_param(hasdvbt, int, 0444);
+MODULE_PARM_DESC(hasdvbt, "Internal DVB-T available\n");
+#endif
 #endif
 
-#if defined(UFS910) || defined(ADB_BOX)
+#if defined(UFS910) || defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200)
 int reset_tsm = 0;
-#else
-int reset_tsm = 1;
-#endif
 module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
-#if defined(UFS910) || defined(ADB_BOX)
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=0)\n");
 #else
+int reset_tsm = 1;
+module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=1)\n");
 #endif
 
