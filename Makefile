@@ -175,6 +175,7 @@ obj-y += smartcard/
 obj-y += adb_box_fan/
 obj-y += cec_adb_box/
 obj-y += dvbt/as102/
+obj-y += dvbt/siano/
 endif
 
 ifndef VIP2_V1
@@ -308,11 +309,14 @@ ifdef SAGEMCOM88
 obj-y += cec/
 obj-y += smartcard/
 obj-y += sagemcomtype/
+obj-y += dvbt/as102/
+obj-y += dvbt/siano/
 endif
 ifdef ARIVALINK200
 obj-y += smartcard/
 obj-y += cec_adb_box/
 obj-y += dvbt/as102/
+obj-y += dvbt/siano/
 endif
 
 endif
