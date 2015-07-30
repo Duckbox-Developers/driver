@@ -120,7 +120,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	   if playback via SWTS is activated. Otherwise playback would
 	   unnecessarily waste a buffer (might lead to loss of a second
 	   recording). */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88) && !defined(ARIVALINK200)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
@@ -290,7 +290,7 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 	}
 	/* PTI was only started if the source is one of two frontends or
 	   if playback via SWTS was activated. */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88) && !defined(ARIVALINK200)
+#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
 			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
@@ -391,6 +391,8 @@ static int convert_source(const dmx_source_t source)
 			tag = 3;//TSIN2; //TSIN3
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
+#elif defined(ARIVALINK200)
+                       tag = SWTS0;
 #else
 			tag = TSIN1;
 #endif
@@ -427,6 +429,10 @@ static int convert_source(const dmx_source_t source)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
 			break;
+#elif defined(ARIVALINK200)
+                case DMX_SOURCE_DVR0:
+                        tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+                        break;
 #else
 		case DMX_SOURCE_DVR0:
 			tag = SWTS0;

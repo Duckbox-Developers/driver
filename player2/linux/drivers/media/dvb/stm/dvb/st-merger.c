@@ -191,7 +191,8 @@ static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
 
 /* >>> DVBT-USB
   Step2-Driver injects data to SWTS here
-  When properly registered, driver should be visible in list of frontends,  if next steps does not fit, scanning will fail*/ 
+  When properly registered, driver should be visible in list of frontends,
+  if you get error just after start of manual scan, you have neighter correct frontendX defined nor incorrect tsm definitions in this file */ 
 #if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
