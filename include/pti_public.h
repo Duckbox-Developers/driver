@@ -46,7 +46,7 @@ typedef enum
   TSIN0 = 0,
   TSIN1,
   TSIN2,
-#if defined(SAGEMCOM88)
+#if defined(SAGEMCOM88) || defined(SPARK7162)
 // 4-TS and 3-SWTS in STi7105
   TSIN3,
   SWTS0,

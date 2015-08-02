@@ -120,14 +120,14 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	   if playback via SWTS is activated. Otherwise playback would
 	   unnecessarily waste a buffer (might lead to loss of a second
 	   recording). */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source <= DMX_SOURCE_FRONT2)) ||
+			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source <= DMX_SOURCE_FRONT3)) ||
+			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #endif
@@ -290,14 +290,14 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 	}
 	/* PTI was only started if the source is one of two frontends or
 	   if playback via SWTS was activated. */
-#if !defined(ADB_BOX) && !defined(SAGEMCOM88)
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(SPARK7162)
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source <= DMX_SOURCE_FRONT2)) ||
+			(pSession->source <= DMX_SOURCE_FRONT3)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #else
 	if (!(((pSession->source >= DMX_SOURCE_FRONT0) &&
-			(pSession->source <= DMX_SOURCE_FRONT3)) ||
+			(pSession->source <= DMX_SOURCE_FRONT2)) ||
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #endif
@@ -402,8 +402,11 @@ static int convert_source(const dmx_source_t source)
 			tag = TSIN0;
 			break;
 		case (dmx_source_t)3: /* for ptiInit() which passes 0,1,2,3 instead of DVR0 */
-		case DMX_SOURCE_DVR0:
 			tag = SWTS0;
+			break;
+		case DMX_SOURCE_DVR0:
+			tag = SWTS1;	//fake tsin for DVR (DVBT-USB at swts0)
+			//tag = SWTS0;
 			break;
 #elif defined(SAGEMCOM88)
 		case DMX_SOURCE_FRONT2:
@@ -571,10 +574,7 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
 	}
 #ifdef VERY_VERBOSE
 	printk("SetSource(%p, %d)\n", pDvbDemux, *src);
-#endif
-
-#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200)
-	printk("SetSource(%p, %d) >> ", pDvbDemux, *src);
+#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200) || defined(SPARK7162)
 	if (*src == DMX_SOURCE_FRONT0) printk("DMX_SOURCE_FRONT0\n");
 	else
 	if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");
@@ -584,6 +584,7 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
 	if (*src == DMX_SOURCE_FRONT3) printk("DMX_SOURCE_FRONT3\n");
 	else
 	if (*src == DMX_SOURCE_DVR0) printk("DMX_SOURCE_DVR0\n");
+#endif
 #endif
 
 	pContext->pPtiSession->source = *src;

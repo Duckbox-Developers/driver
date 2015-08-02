@@ -193,7 +193,7 @@ static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
   Step2-Driver injects data to SWTS here
   When properly registered, driver should be visible in list of frontends,
   if you get error just after start of manual scan, you have neighter correct frontendX defined nor incorrect tsm definitions in this file */ 
-#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200)
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(SPARK7162)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
@@ -1213,9 +1213,10 @@ void stm_tsm_init(int use_cimax)
 			tsm_io = ioremap(/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
 		}
-/* >>> DVBT-USB */
-#if defined(SAGEMCOM88)
-		printk(">>Init SAGEMCOM88 DVBT-USB\n");
+/* >>> DVBT-USB
+  j00zek: when tuner hangs starting streaming from DVB-T USB, something wrong is with this section */ 
+#if defined(SAGEMCOM88) || defined(SPARK7162)
+		printk(">>Init st7105 DVBT-USB\n");
 		// STi7105
 		// 0-3 - 4xTS
 		// 4-6 - 3xSWTS
@@ -1316,19 +1317,19 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x1D00, tsm_io + TSM_STREAM5_CFG); // 0x1D00-0x1DFF
 		ctrl_outl(0x1E00, tsm_io + TSM_STREAM6_CFG); // 0x1E00-0x1EFF
 		ctrl_outl(0x1F00, tsm_io + TSM_STREAM7_CFG); // 0x1F00-0x1FFF
-#elif defined(SAGEMCOM88)
+#elif defined(SAGEMCOM88) || defined(SPARK7162)
 		for (n = 0; n < 6; n++)		//4TS + 3SWTS at STi7105
 		{
 			writel(TSM_RAM_ALLOC_START(0x4 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
-#else // !defined(SPARK) && !defined(HS7110) && !defined(HS7119) && !defined(ATEMIO520) && !defined(ATEMIO530)
+#else /* !defined(SPARK) && !defined(HS7110) && !defined(HS7119) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(VITAMIN_HD5000) && !defined(SAGEMCOM88) && !defined(SPARK7162)*/
 		for (n = 0; n < 5; n++)
 		{
 			writel(TSM_RAM_ALLOC_START(0x3 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
 #endif // defined(SPARK) || defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
-#if defined(SAGEMCOM88)
-		for (n = 0; n < 6/* config->nr_channels */; n++)		//4TS + 3SWTS at STi7105
+#if defined(SAGEMCOM88) || defined(SPARK7162)
+		for (n = 0; n < 6/* config->nr_channels */; n++)	//4TS + 3SWTS at STi7105
 #else
 		for (n = 0; n < 4/* config->nr_channels */; n++) 
 #endif
