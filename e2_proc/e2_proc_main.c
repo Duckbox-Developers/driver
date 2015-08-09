@@ -719,6 +719,8 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/switch_type"                                            , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/switch"                                                 , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/video/switch_choices"                                         , NULL, NULL, NULL, NULL, ""},
+#elif defined(ARIVALINK200)
+        {cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
 #endif
 
 	{cProcDir  , "stb/player"                                                       , NULL, NULL, NULL, NULL, ""},
