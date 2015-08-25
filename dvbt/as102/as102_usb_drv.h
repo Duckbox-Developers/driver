@@ -46,6 +46,11 @@
 #define ELGATO_EYETV_DTT_USB_VID	0x0fd9
 #define ELGATO_EYETV_DTT_USB_PID	0x002c
 
+/* Sky Italia: Digital Key (green led) */
+#define AS102_SKY_IT_DIGITAL_KEY_NAME   "Sky IT Digital Key (green led)"
+#define SKY_IT_DIGITAL_KEY_USB_VID      0x2137
+#define SKY_IT_DIGITAL_KEY_USB_PID      0x0001
+
 void as102_urb_stream_irq(struct urb *urb);
 
 
