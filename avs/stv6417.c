@@ -337,6 +337,9 @@ inline int stv6417_set_vsw( struct i2c_client *client, int sw, int type )
 
 inline int stv6417_set_asw( struct i2c_client *client, int sw, int type )
 {
+	unsigned char tmp_tv_value;
+	unsigned char tmp_vcr_value;
+
         dprintk("%s >\n", __func__);
 	// I don't get what this does, seems to be not used
 	return 0;
@@ -350,13 +353,12 @@ inline int stv6417_set_asw( struct i2c_client *client, int sw, int type )
 			}
 
 			/* if muted ? yes: save in temp */
-		unsigned char tmp_tv_value  = get_bits(regs, AOS_TV_REG,  AOS_TV_START,  AOS_TV_SIZE);
-		unsigned char tmp_vcr_value = get_bits(regs, AOS_VCR_REG, AOS_VCR_START, AOS_VCR_SIZE);
+			tmp_tv_value  = get_bits(regs, AOS_TV_REG,  AOS_TV_START,  AOS_TV_SIZE);
+			tmp_vcr_value = get_bits(regs, AOS_VCR_REG, AOS_VCR_START, AOS_VCR_SIZE);
 			if ( vcr_value == 0xff )
-	                        set_bits(regs, cReg1, type, 3, 2);
+				set_bits(regs, cReg1, type, 3, 2);
 			else
 				vcr_value = type;
-
 			break;
 		case 1:
 		case 2:
