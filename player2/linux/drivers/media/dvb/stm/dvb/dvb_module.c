@@ -171,8 +171,8 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
 		DvbDemux->dmx.capabilities = DMX_TS_FILTERING | DMX_SECTION_FILTERING | DMX_MEMORY_BASED_FILTERING;
 #endif
 		DvbDemux->priv = DeviceContext;
-		DvbDemux->filternum = 32;
-		DvbDemux->feednum = 32;
+		DvbDemux->filternum = 48;
+		DvbDemux->feednum = 48;
 		DvbDemux->start_feed = StartFeed;
 		DvbDemux->stop_feed = StopFeed;
 #ifdef __TDT__

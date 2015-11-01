@@ -26,7 +26,7 @@ extern int debug ;
 
 /* Maximum number of channels */
 #define STFE_MAXADAPTER (4)
-#define STFE_MAXCHANNEL 40
+#define STFE_MAXCHANNEL 48
 
 struct stfe
 {
