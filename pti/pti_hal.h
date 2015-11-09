@@ -5,6 +5,7 @@
 #include <linux/init.h>
 
 extern int pti_hal_descrambler_set(int session_handle, int descrambler_handle,u8 * Data, int parity);
+extern int pti_hal_descrambler_set_aes(int session_handle, int descrambler_handle,u8 * Data, int parity, int data_type);
 extern int pti_hal_descrambler_link(int session_handle, int descrambler_handle, int slot_handle);
 extern int pti_hal_get_new_slot_handle(int session_handle, int dvb_type,
 				  int dvb_pes_type, struct dvb_demux *demux,

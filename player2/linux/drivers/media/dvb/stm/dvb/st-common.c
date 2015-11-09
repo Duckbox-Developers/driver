@@ -48,7 +48,7 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
 
 //__TDT__ ->file moved in this directory
 
-int debug = 0;
+int debug = 1;
 
 struct stfe_channel *stfe_channel_allocate(struct stfe *stfe)
 {

@@ -131,11 +131,11 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 			((pSession->source == DMX_SOURCE_DVR0) && swts)))
 		return -1;
 #endif
-#ifdef VERY_VERBOSE
+//#ifdef VERY_VERBOSE
 	printk("start dmx %p, sh %d, pid %d, t %d, pt %d\n", demux,
 		   pSession->session, dvbdmxfeed->pid, dvbdmxfeed->type,
 		   dvbdmxfeed->pes_type);
-#endif
+//#endif
 	switch (dvbdmxfeed->type)
 	{
 		case DMX_TYPE_TS:
@@ -271,7 +271,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 			   pSession->references[vLoop]);
 	}
 #endif
-	dprintk("%s: <\n", __FUNCTION__);
+	//dprintk("%s: <\n", __FUNCTION__);
 	return 0;
 }
 
@@ -550,7 +550,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 	// get new descrambler handle
 	pSession->descrambler = pti_hal_get_new_descrambler(pSession->session);
 	pSession->descramblers[0] = pSession->descrambler;
-	for (i = 1; i < NUMBER_OF_DESCRAMBLERS; i++)
+	for (i = 1; i < NUMBER_OF_DESCRAMBLERS - 1; i++)
 		pSession->descramblers[i] = pti_hal_get_new_descrambler(pSession->session);
 	printk("Descrambler Handler = %d\n", pSession->descrambler);
 	for (i = 0; i < 8192; i++)
