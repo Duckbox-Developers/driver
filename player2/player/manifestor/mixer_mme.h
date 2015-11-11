@@ -73,7 +73,7 @@ Date        Modification                                    Name
 #define MIXER_NUM_PERIODS 2
 #elif defined(CUBEREVO) || \
     defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA)
+    defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 #define MIXER_NUM_PERIODS 4
 #elif defined(__TDT__)
 #define MIXER_NUM_PERIODS 3

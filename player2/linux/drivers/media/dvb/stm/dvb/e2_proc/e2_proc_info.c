@@ -23,6 +23,8 @@ int proc_info_model_read(char *page, char **start, off_t off, int count, int *eo
 	len = sprintf(page, "cuberevo-2000hd\n");
 #elif defined(CUBEREVO_9500HD)
 	len = sprintf(page, "cuberevo-9500hd\n");
+#elif defined(CUBEREVO_3000HD)
+	len = sprintf(page, "cuberevo-3000hd\n");
 #elif defined(TF7700)
 	len = sprintf(page, "tf7700\n");
 #elif defined(HL101)

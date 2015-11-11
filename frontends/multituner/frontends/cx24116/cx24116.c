@@ -2319,7 +2319,7 @@ static int cx24116_set_frontend (struct dvb_frontend *fe, struct dvb_frontend_pa
     printk("retuned %d\n", retune);
 
 	/* Toggle pilot bit when in auto-pilot */
-#if defined (CUBEREVO) || defined (CUBEREVO_MINI2)
+#if defined (CUBEREVO) || defined (CUBEREVO_MINI2) || defined (CUBEREVO_3000HD)
 		if ((state->dcur.pilot == PILOT_AUTO) || (c->delivery_system == SYS_DVBS2)) {
 			cmd.args[0x07] ^= CX24116_PILOT_ON;
 			printk("toggle pilot\n");

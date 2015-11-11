@@ -558,9 +558,9 @@ void stm_tsm_init(int use_cimax)
 	int n;
 	int reinit = 0;
 #if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(HOMECAST5101) && \
-    !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
-    !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
-    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(VITAMIN_HD5000)
+    !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && \
+    !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && \
+    !defined(CUBEREVO_MINI_FTA) && !defined(CUBEREVO_3000HD) && !defined(VITAMIN_HD5000)
 	unsigned int stream_sync = 0xbc4733;
 #else
 	unsigned int stream_sync = 0xbc4722;
@@ -762,7 +762,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + PTI_ALT_OUT_CFG);
 		ctrl_outl(0x0, tsm_io + TS_1394_CFG);
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(0));
-#if defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(IPBOX9900) ||  defined(ARIVALINK200) || defined(VITAMIN_HD5000)
+#if defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(TF7700) || defined(HL101) || defined(VIP1_V2) || defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(IPBOX9900) ||  defined(ARIVALINK200) || defined(VITAMIN_HD5000)
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x0, tsm_io + SWTS_CFG(2));
 #endif
@@ -864,7 +864,7 @@ void stm_tsm_init(int use_cimax)
 #endif
 		/* configure streams: */
 		/* add tag bytes to stream + stream priority */
-#if  defined(FORTIS_HDBOX) || defined(OCTAGON1008) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA)
+#if  defined(FORTIS_HDBOX) || defined(OCTAGON1008) || defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 		ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
 		ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM0_CFG);
 		ret = ctrl_inl(tsm_io + TSM_STREAM4_CFG);
@@ -917,7 +917,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM4_CFG);
 		ctrl_outl(0x00 , tsm_io + TSM_STREAM5_SYNC);
 		ctrl_outl(0x00 , tsm_io + TSM_STREAM6_SYNC);
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(IPBOX9900) || defined(ARIVALINK200)
+#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD) || defined(IPBOX9900) || defined(ARIVALINK200)
 		/* configure streams: */
 		/* add tag bytes to stream + stream priority */
 		ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
@@ -928,21 +928,21 @@ void stm_tsm_init(int use_cimax)
 #endif
 		ctrl_outl(stream_sync, tsm_io + TSM_STREAM3_SYNC);
 		ctrl_outl(0x0, tsm_io + 0x78 /* reserved ??? */);
-#if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(IPBOX9900) && !defined(ARIVALINK200) && !defined(VITAMIN_HD5000)
+#if !defined(FORTIS_HDBOX) && !defined(UFS912) && !defined(UFS913) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(CUBEREVO_3000HD) && !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(IPBOX9900) && !defined(ARIVALINK200) && !defined(VITAMIN_HD5000)
 		/* swts_req_trigger + pace cycles (1101) */
 		ctrl_outl(0x800000d, tsm_io + SWTS_CFG(0));
 #elif defined (UFS912) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000)
 		ctrl_outl(0x8f0000e, tsm_io + SWTS_CFG(0));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD)
+#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_3000HD)
 		ctrl_outl(0x88000010, tsm_io + SWTS_CFG(0));
 #elif !defined(UFS913)
 		ctrl_outl(0x8000010, tsm_io + SWTS_CFG(0));
 #endif
 		/* auto count */
 		ctrl_outl(0x0, tsm_io + TSM_PROG_CNT0);
-#if !defined(TF7700) && !defined(UFS922) && !defined(UFC960) && !defined(FORTIS_HDBOX) && !defined(HL101) && !defined(VIP1_V2) && !defined(HOMECAST5101) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(IPBOX9900) && !defined(ARIVALINK200) && !defined(VITAMIN_HD5000)
+#if !defined(TF7700) && !defined(UFS922) && !defined(UFC960) && !defined(FORTIS_HDBOX) && !defined(HL101) && !defined(VIP1_V2) && !defined(HOMECAST5101) && !defined(UFS912) && !defined(UFS913) && !defined(SPARK) && !defined(OCTAGON1008) && !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(CUBEREVO_3000HD) && !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(IPBOX9900) && !defined(ARIVALINK200) && !defined(VITAMIN_HD5000)
 		/* UFS910 stream configuration */
 		/* route stream 2 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
@@ -1026,7 +1026,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x00, tsm_io + TSM_STREAM6_SYNC);
 		ret = ctrl_inl(tsm_io + TSM_1394_DEST);
 		ctrl_outl(ret | 0x38 , tsm_io + TSM_1394_DEST);
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA)
+#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 		/* route stream 1 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
 		ctrl_outl(ret | 0x2, tsm_io + TSM_PTI_SEL);
@@ -1161,7 +1161,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(ret | 0x80, tsm_io + TSM_STREAM0_CFG);
 #if !defined(CUBEREVO) && !defined(CUBEREVO_MINI2) && \
     !defined(CUBEREVO_MINI) && !defined(CUBEREVO_250HD) && !defined(CUBEREVO_2000HD) && \
-    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && \
+    !defined(CUBEREVO_9500HD) && !defined(CUBEREVO_MINI_FTA) && !defined(CUBEREVO_3000HD) && \
     !defined(HS7110) && !defined(HS7119) && !defined(ATEMIO520) && !defined(ATEMIO530) && !defined(UFS913)     /* Dagobert: set-up swts */
 		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 0x10, tsm_io + TSM_SWTS_CFG(0));
 		/* SWTS0 to PTI */
