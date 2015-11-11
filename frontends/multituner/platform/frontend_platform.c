@@ -42,7 +42,7 @@
 #include "ufs922_platform.h"
 
 #elif defined (CUBEREVO_MINI2)  || defined (CUBEREVO_MINI) || \
-      defined (CUBEREVO_250HD)  || defined (CUBEREVO_MINI_FTA)
+      defined (CUBEREVO_250HD)  || defined (CUBEREVO_MINI_FTA) || defined (CUBEREVO_3000HD)
 
 #include "cuberevo_mini_platform.h"
 

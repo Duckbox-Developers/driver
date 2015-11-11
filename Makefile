@@ -47,6 +47,9 @@ endif
 ifdef CUBEREVO_MINI_FTA
 CCFLAGSY += -DCUBEREVO_MINI_FTA
 endif
+ifdef CUBEREVO_3000HD
+CCFLAGSY += -DCUBEREVO_3000HD
+endif
 ifdef TF7700
 CCFLAGSY += -DTF7700
 endif
@@ -301,6 +304,9 @@ ifdef CUBEREVO_2000HD
 obj-y += smartcard/
 endif
 ifdef CUBEREVO_9500HD
+obj-y += smartcard/
+endif
+ifdef CUBEREVO_3000HD
 obj-y += smartcard/
 endif
 ifdef VITAMIN_HD5000

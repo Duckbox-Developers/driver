@@ -57,7 +57,7 @@ struct stpio_pin*	module_B_pin = NULL;
 
 #if defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || \
     defined(CUBEREVO_250HD) || defined(CUBEREVO_9500HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_MINI_FTA)
+    defined(CUBEREVO_2000HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
 #define CUBEBOX
 #else
 #undef  CUBEBOX

@@ -46,6 +46,9 @@ endif
 ifdef CUBEREVO_MINI_FTA
  PART1=1
 endif
+ifdef CUBEREVO_3000HD
+ PART1=1
+endif
 ifdef IPBOX9900
  PART1=1
 endif

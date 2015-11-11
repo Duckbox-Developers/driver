@@ -96,4 +96,12 @@ stv090x-objs +=        frontends/stv090x/stv090x.o
 stv090x-objs +=        frontends/stv090x/stv6110x.o
 stv090x-objs +=        frontends/stv090x/core.o
 obj-m += stv090x.o
+else ifdef CUBEREVO_3000HD
+cx24116-objs +=        frontends/cx24116/cx24116.o
+obj-m += cx24116.o
+
+stv090x-objs +=        frontends/stv090x/stv090x.o
+stv090x-objs +=        frontends/stv090x/stv6110x.o
+stv090x-objs +=        frontends/stv090x/core.o
+obj-m += stv090x.o
 endif

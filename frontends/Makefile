@@ -307,6 +307,10 @@ ifdef CUBEREVO_MINI_FTA
 obj-y += multituner/
 endif
 
+ifdef CUBEREVO_3000HD
+obj-y += multituner/
+endif
+
 ifdef ADB_BOX
 # Single ----------------------------------
 # stb0899

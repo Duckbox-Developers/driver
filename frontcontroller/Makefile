@@ -129,6 +129,8 @@ else ifdef CUBEREVO_2000HD
 obj-y += ipbox/
 else ifdef CUBEREVO_MINI_FTA
 obj-y += ipbox/
+else ifdef CUBEREVO_3000HD
+obj-y += ipbox/
 endif
 
 ifdef VITAMIN_HD5000
