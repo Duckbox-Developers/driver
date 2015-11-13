@@ -241,13 +241,22 @@ static int CaIoctl(struct inode*    Inode,
 		}
 		case CA_SET_DESCR_DATA:
 		{
-			int i;
+			int i, altDescr = 40000, sess = 10000;
+			bool useAlt = false;
 			ca_descr_data_t *descr = (ca_descr_data_t*) Parameter;
 			dprintk("CA_SET_DESCR_DATA\n");
+			if (descr->index & 0x100)
+			{
+				descr->index &= 0xFF;
+				sess += descr->index;
+				altDescr += 1000 * descr->index;
+				useAlt = true;
+			}
 			if (descr->index >= 16)
 				return -EINVAL;
 			if (descr->parity > 1)
 				return -EINVAL;
+#if 0
 			if (debug)
 			{
 				printk("Descrambler Index: %d Parity: %d Type: %d\n", descr->index, descr->parity, descr->data_type);
@@ -255,6 +264,7 @@ static int CaIoctl(struct inode*    Inode,
 					printk("%02x ", descr->data[i]);
 				printk("\n");
 			}
+#endif
 			if (descr->index < 0 || descr->index >= NUMBER_OF_DESCRAMBLERS)
 			{
 				printk("Error descrambler %d not supported! needs to be in range 0 - %d\n", descr->index, NUMBER_OF_DESCRAMBLERS - 1);
@@ -262,8 +272,13 @@ static int CaIoctl(struct inode*    Inode,
 			}
 			if (&Context->DvbContext->Lock != NULL)
 				mutex_lock(&Context->DvbContext->Lock);
-			if (pti_hal_descrambler_set_aes(pSession->session, pSession->descramblers[descr->index], descr->data, descr->parity, descr->data_type) != 0)
-				printk("Error while setting descrambler keys\n");
+			if (useAlt) {
+				if (pti_hal_descrambler_set_aes(sess, altDescr, descr->data, descr->parity, descr->data_type) != 0)
+					printk("Error while setting descrambler keys\n");
+			} else {
+				if (pti_hal_descrambler_set_aes(pSession->session, pSession->descramblers[descr->index], descr->data, descr->parity, descr->data_type) != 0)
+					printk("Error while setting descrambler keys\n");
+			}
 			if (&Context->DvbContext->Lock != NULL)
 				mutex_unlock(&Context->DvbContext->Lock);
 
