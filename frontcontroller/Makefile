@@ -143,7 +143,7 @@ obj-y += front_vfd/
 endif
 
 ifdef ARIVALINK200
-ifeq (,$(wildcard $(DRIVER_TOPDIR)/front_ArivaLink200 ))
+ifneq (,$(wildcard $(DRIVER_TOPDIR)/frontcontroller/front_ArivaLink200 ))
 obj-y += front_ArivaLink200/
 endif
 endif
