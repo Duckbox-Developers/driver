@@ -2103,6 +2103,16 @@ static int lookup_utf8(unsigned char *str, int *v1, int *v2)
 	// UTF+0400 to 047F
 	switch (*str)
 	{
+		case 0xc4:
+			str++;
+			*v1 = UTF_C4[*str & 0x3f][0];
+			*v2 = UTF_C4[*str & 0x3f][1];
+			break;
+		case 0xc5:
+			str++;
+			*v1 = UTF_C5[*str & 0x3f][0];
+			*v2 = UTF_C5[*str & 0x3f][1];
+			break;
 		case 0xd0:
 			str++;
 			*v1 = UTF_D0[*str & 0x3f][0];
