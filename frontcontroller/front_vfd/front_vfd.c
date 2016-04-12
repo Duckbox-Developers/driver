@@ -192,10 +192,15 @@ int ESI88_WriteFront(unsigned char* data, unsigned char len )
   wdata[3]=jasnosc;
   wdata[5]=jasnosc;
 
-  while ((i< len) && (j < 8 + 16))
+  while ((i< len) && (j < 8 + 16)) {
+	if (data[i] == '\n' || data[i] == 0) 
 	{
-	if (data[i] == '\n' || data[i] == 0x0d ) {
-		DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, len, data[i]);
+		DBG("[%s] BREAK CHAR detected (0x%X)\n", __func__, data[i]);
+		break;
+	}
+	else if (data[i] < 0x20)
+	{
+		DBG("[%s] NON_PRINTABLE_CHAR '0x%X'\n", __func__, data[i]);
 		i++;
 	}
 	else if (data[i] < 0x80) {
@@ -247,6 +252,11 @@ int ESI88_WriteFront(unsigned char* data, unsigned char len )
 	i++;
     }
 
+    if (j < 8 + 16) {
+      for(i=j;i<8 + 16;i++) {
+	wdata[i] = 0x20;
+      }
+    }
     WriteChars(wdata,24);
     return 0;
 }
