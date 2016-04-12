@@ -41,7 +41,7 @@ static struct vfd_driver vfd;
 
 static int bad_polling = 1;
 
-static int debug  = 0;
+static short paramDebug = 0;
 
 static char ICON1	=	0;
 static char ICON2	=	0;
@@ -54,7 +54,7 @@ static struct workqueue_struct *wq;
 
 
 
-#define DBG(fmt, args...) if ( debug ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
+#define DBG(fmt, args...) if ( paramDebug ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
 #define ERR(fmt, args...) printk(KERN_ERR "[vfd] :: " fmt "\n", ## args )
 
 #define	PORT_CSB	1
@@ -397,15 +397,23 @@ static void pt6958_set_lights(int onoff )
 
 static int pt6302_write_dcram(unsigned char addr, unsigned char* data, unsigned char len ) {
 	/* eliminating UTF-8 chars first */
-	unsigned char  kbuf[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	int i = 0;
-	int wlen = 0;
+	unsigned char  kbuf[16] = {0x20};
+	int i=0;
+	int j=0;
+	int wlen=0;
+	if (len == 0)
+		return 0;
 
 	while ((i< len) && (wlen < 16))
 	{
-		if (data[i] == '\n' || data[i] == 0x0d) 
+		if (data[i] == '\n' || data[i] == 0) 
 		{
-			DBG("[%s] SPECIAL_CHAR (0x%X)\n", __func__, data[i]);
+			DBG("[%s] BREAK CHAR detected (0x%X)\n", __func__, data[i]);
+			break;
+		}
+		else if (data[i] < 0x20)
+		{
+			DBG("[%s] NON_PRINTABLE_CHAR '0x%X'\n", __func__, data[i]);
 			i++;
 		}
 		else if (data[i] < 0x80)
@@ -463,7 +471,7 @@ static int pt6302_write_dcram(unsigned char addr, unsigned char* data, unsigned 
 	}
 	/* end */
   pt6302_command_t cmd;
-  uint8_t	   wdata[20];
+  uint8_t wdata[20];
 
   DBG("pt6302_write_dcram");
 
@@ -475,12 +483,25 @@ static int pt6302_write_dcram(unsigned char addr, unsigned char* data, unsigned 
 
   wdata[0] = cmd.all;
 
-  i = 0;
+  /* Center text */
+  j = 0;
+  
+  if (wlen < 15) {
+    for(i=0;i<((16 - wlen)/2);i++) {
+      wdata[i+1] = pt6302_007_rom_table[0x20];
+      j += 1;
+    }
+  }
   for( i=0; i < wlen; i++ ) {
-  wdata[i+1] = pt6302_007_rom_table[kbuf[(wlen-1)-i]];
+    wdata[i+1+j] = pt6302_007_rom_table[kbuf[(wlen-1)-i]];
   }
 
-  PT6302_WriteData(wdata, wlen+1);
+  if (wlen < 16) {
+    for(i=j+wlen;i<16;i++) {
+      wdata[i+1] = pt6302_007_rom_table[0x20];
+    }
+  }
+  PT6302_WriteData(wdata, 1 + 16); //j00zek: cmd + kbuf size
 
   spin_unlock(&mr_lock);
   
@@ -930,11 +951,11 @@ static int vfd_ioctl( struct inode *inode, struct file *file, unsigned int cmd, 
 static ssize_t vfd_write( struct file *filp, const char *buf, size_t len, loff_t *off ) {
   DBG("[%s] text = '%s', len= %d\n",__func__, buf,len);
   if ( len == 0 )
-	pt6302_write_dcram( 0, "                ", 16 );
+    pt6302_write_dcram( 0, "                ", 16 );
   else
-  pt6302_write_dcram( 0, "                ", 16 );
-  pt6302_write_dcram( 0, buf, len );
-  return len;
+    pt6302_write_dcram( 0, "                ", 16 );
+    pt6302_write_dcram( 0, buf, len );
+    return len;
 }
 
 static ssize_t vfd_read(struct file *filp, char *buf, size_t len, loff_t *off ) {
@@ -1096,3 +1117,6 @@ module_exit(vfd_module_exit);
 MODULE_DESCRIPTION("PT6958+PT6302 frontpanel driver");
 MODULE_AUTHOR("freebox");
 MODULE_LICENSE("GPL");
+
+module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
+MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled, 1=enabled");
