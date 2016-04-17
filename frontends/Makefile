@@ -334,6 +334,13 @@ fe-core-twin2-objs += adb_stv900/stb6100.o
 fe-core-twin2-objs += adb_stv900/core.o
 obj-m += fe-core-twin2.o
 
+# DVB-C ----------------------------------
+# stv0297 + mt2060
+fe-mmp-objs +=        adb_mmp/mt2060.o
+fe-mmp-objs +=        adb_mmp/stv0297.o
+fe-mmp-objs +=        adb_mmp/core.o
+obj-m += fe-mmp.o
+
 #------------------------------------------------- 
 endif
 
