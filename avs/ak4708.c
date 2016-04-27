@@ -322,7 +322,7 @@ int ak4708_src_sel( struct i2c_client *client, int src )
 		ak4708_data.R04VTV20 = 4;
 		ak4708_data.R04VVCR20 = 0;
 	 	ak4708_data.R01TV10 = 1;
-		k4708_data.R01VCR10 = 2;
+		ak4708_data.R01VCR10 = 2;
 	}
 	else
 	{
