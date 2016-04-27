@@ -23,7 +23,15 @@ ifdef HS7119
 EXTRA_CFLAGS += -DSTx7111
 endif
 
+ifdef HS7420
+EXTRA_CFLAGS += -DSTx7111
+endif
+
 ifdef HS7810A
+EXTRA_CFLAGS += -DSTx7111
+endif
+
+ifdef HS7429
 EXTRA_CFLAGS += -DSTx7111
 endif
 

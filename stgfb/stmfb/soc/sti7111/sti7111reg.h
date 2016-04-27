@@ -12,7 +12,18 @@
 #ifndef _STI7111REG_H
 #define _STI7111REG_H
 
-#if defined(__TDT__) && (defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000))
+#if defined(__TDT__) \
+ && (defined(UFS912) \
+ || defined(SPARK) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000))
 #define USE_FS1_FOR_SD
 
 #define CKGB_FS1_EN3	0x88

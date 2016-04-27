@@ -292,6 +292,10 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "hs7110\n");
 #elif defined(HS7119)
 	int len = sprintf(page, "hs7119\n");
+#elif defined(HS7420)
+	int len = sprintf(page, "hs7420\n");
+#elif defined(HS7429)
+	int len = sprintf(page, "hs7429\n");
 #elif defined(HS7810A)
 	int len = sprintf(page, "hs7810a\n");
 #elif defined(HS7819)
@@ -325,13 +329,45 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 
 static int info_chipset_read(char *page, char **start, off_t off, int count, int *eof, void *data)
 {
-#if defined(UFS910) || defined(ADB_BOX)
+#if defined(UFS910) \
+ || defined(ADB_BOX)
 	int len = sprintf(page, "STi7100\n");
-#elif defined(ATEVIO7500) || defined(UFS913) || defined(SAGEMCOM88)
+#elif defined(ATEVIO7500) \
+ || defined(UFS913) \
+ || defined(SAGEMCOM88)
 	int len = sprintf(page, "STi7105\n");
-#elif defined(FORTIS_HDBOX) || defined(HL101) || defined(OCTAGON1008) || defined(TF7700) || defined(UFS922) || defined(UFC960) || defined(VIP1_V2) || defined(VIP2_V1) || defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_250HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_3000HD) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ARIVALINK200)
+#elif defined(FORTIS_HDBOX) \
+ || defined(HL101) \
+ || defined(OCTAGON1008) \
+ || defined(TF7700) \
+ || defined(UFS922) \
+ || defined(UFC960) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_3000HD) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(ARIVALINK200)
 	int len = sprintf(page, "STi7109\n");
-#elif defined(UFS912) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK) || defined(VITAMIN_HD5000)
+#elif defined(UFS912) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(SPARK) \
+ || defined(VITAMIN_HD5000)
 	int len = sprintf(page, "STi7111\n");
 #elif defined(SPARK7162)
 	int len = sprintf(page, "STi7162\n");
@@ -468,7 +504,8 @@ static int wakeup_time_write(struct file *file, const char __user *buf, unsigned
 out:
 	free_page((unsigned long)page);
 
-	if (wakeup_time != myString) kfree(myString);
+	if (wakeup_time != myString)
+		kfree(myString);
 
 	return ret;
 }
@@ -690,7 +727,21 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/plane/psi_contrast"                                     , NULL, NULL, NULL, NULL, "psi_contrast"},
 	{cProcEntry, "stb/video/plane/psi_tint"                                         , NULL, NULL, NULL, NULL, "psi_tint"},
 	{cProcEntry, "stb/video/plane/psi_apply"                                        , NULL, NULL, NULL, NULL, "psi_apply"},
-#if defined(UFS912) || defined(UFS913) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530) || defined(HS7810A) || defined(HS7819) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)  || defined(VITAMIN_HD5000)
+#if defined(UFS912) \
+ || defined(UFS913) \
+ || defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819) \
+ || defined(SPARK) \
+ || defined(SPARK7162) \
+ || defined(SAGEMCOM88) \
+ || defined(VITAMIN_HD5000)
 	{cProcDir  , "stb/cec"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_activesource"                                       , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_standby"                                            , NULL, NULL, NULL, NULL, ""},
@@ -736,11 +787,13 @@ static int cpp_read_proc(char *page, char **start, off_t off, int count, int *eo
 	/* find the entry */
 	for (i = 0; i < sizeof(e2Proc) / sizeof(e2Proc[0]); i++)
 	{
-		if (e2Proc[i].identifier != NULL)
-			if (strlen(e2Proc[i].identifier) > 0)
-				if (strcmp(e2Proc[i].identifier, data) == 0)
-					if (e2Proc[i].read_proc != NULL)
-						return e2Proc[i].read_proc(page, start, off, count, eof, e2Proc[i].instance);
+		if ((e2Proc[i].identifier != NULL)
+		&& (strlen(e2Proc[i].identifier) > 0)
+		&& (strcmp(e2Proc[i].identifier, data) == 0)
+		&& (e2Proc[i].read_proc != NULL))
+		{
+			return e2Proc[i].read_proc(page, start, off, count, eof, e2Proc[i].instance);
+		}
 	}
 
 	return 0;
@@ -771,11 +824,13 @@ static int cpp_write_proc(struct file *file, const char __user *buf, unsigned lo
 		/* find the entry */
 		for (i = 0; i < sizeof(e2Proc) / sizeof(e2Proc[0]); i++)
 		{
-			if (e2Proc[i].identifier != NULL)
-				if (strlen(e2Proc[i].identifier) > 0)
-					if (strcmp(e2Proc[i].identifier, data) == 0)
-						if (e2Proc[i].write_proc != NULL)
-							ret = e2Proc[i].write_proc(file, (const char __user *) page, count, e2Proc[i].instance);
+			if ((e2Proc[i].identifier != NULL)
+			&& (strlen(e2Proc[i].identifier) > 0)
+			&& (strcmp(e2Proc[i].identifier, data) == 0)
+			&& (e2Proc[i].write_proc != NULL))
+			{
+				ret = e2Proc[i].write_proc(file, (const char __user *) page, count, e2Proc[i].instance);
+			}
 		}
 
 	}
@@ -848,8 +903,7 @@ int install_e2_procs(char *path, read_proc_t *read_func, write_proc_t *write_fun
 	/* find the entry */
 	for (i = 0; i < sizeof(e2Proc) / sizeof(e2Proc[0]); i++)
 	{
-		if ((e2Proc[i].type == cProcEntry) &&
-				(strcmp(path, e2Proc[i].name) == 0))
+		if ((e2Proc[i].type == cProcEntry) && (strcmp(path, e2Proc[i].name) == 0))
 		{
 			if (e2Proc[i].entry == NULL)
 			{
@@ -980,8 +1034,7 @@ int cpp_remove_e2_procs(const char *path, read_proc_t *read_func, write_proc_t *
 	/* find the entry */
 	for (i = 0; i < sizeof(e2Proc) / sizeof(e2Proc[0]); i++)
 	{
-		if ((e2Proc[i].type == cProcEntry) &&
-				(strcmp(path, e2Proc[i].name) == 0))
+		if ((e2Proc[i].type == cProcEntry) && (strcmp(path, e2Proc[i].name) == 0))
 		{
 			if (e2Proc[i].entry == NULL)
 			{

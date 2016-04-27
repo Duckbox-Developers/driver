@@ -1006,13 +1006,10 @@ bool CGammaCompositorGDP::setNodeResizeAndFilters(GENERIC_GDP_LLU_NODE    &topNo
          * starts >1 source bitmap line lower then this will get dealt
          * with in the memory setup by adjusting the source bitmap address.
          */
-        ULONG bottomfieldinc   = ScaleVerticalSamplePosition(m_fixedpointONE,
-                                                             qbinfo);
+        ULONG bottomfieldinc   = ScaleVerticalSamplePosition(m_fixedpointONE, qbinfo);
         ULONG integerinc       = bottomfieldinc / m_fixedpointONE;
-        ULONG fractionalinc    = bottomfieldinc - (integerinc
-                                                   * m_fixedpointONE);
-        ULONG bottomfieldphase = (((fractionalinc * 8) + (m_fixedpointONE / 2))
-                                  / m_fixedpointONE) % 8;
+        ULONG fractionalinc    = bottomfieldinc - (integerinc * m_fixedpointONE);
+        ULONG bottomfieldphase = (((fractionalinc * 8) + (m_fixedpointONE / 2)) / m_fixedpointONE) % 8;
 
         botNode.GDPn_VSRC |= (bottomfieldphase<<GDP_VSRC_INITIAL_PHASE_SHIFT);
       }

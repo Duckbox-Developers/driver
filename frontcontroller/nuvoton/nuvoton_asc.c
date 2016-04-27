@@ -26,6 +26,7 @@
  * --------------------------------------------------------------------------------------
  * 20140416 Audioniek       Added HS7119 and HS7819
  * 20140920 Audioniek       Corrected HS7119 ASC address and IRQ
+ * 20151231 Audioniek       Added HS7420 and HS7429
  *
  ****************************************************************************************/
 
@@ -55,7 +56,11 @@
 #if defined(ATEVIO7500)
 unsigned int InterruptLine = 120;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
-#elif defined(HS7110) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+   || defined(HS7420) \
+   || defined(HS7429) \
+   || defined(HS7810A) \
+   || defined(HS7819)
 unsigned int InterruptLine = 274;
 unsigned int ASCXBaseAddress = ASC3BaseAddress;
 #elif defined(HS7119)
@@ -70,7 +75,7 @@ unsigned int ASCXBaseAddress = ASC2BaseAddress;
 
 void serial_init(void)
 {
-#ifdef OCTAGON1008
+#if defined(OCTAGON1008) //|| defined(HS7420) || defined(HS7429)
 	/* Configure the PIO pins */
 	stpio_request_pin(4, 3,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
 	stpio_request_pin(4, 2,  "ASC_RX", STPIO_IN);      /* Rx */

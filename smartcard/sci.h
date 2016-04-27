@@ -20,11 +20,24 @@
 #ifndef _SCI_H
 #define _SCI_H
 
-#if defined(CONFIG_CPU_SUBTYPE_STB7100) || defined(CONFIG_CPU_SUBTYPE_STX7100) || defined(CONFIG_SH_ST_MB442) || defined(CONFIG_SH_ST_MB411)
+#if defined(CONFIG_CPU_SUBTYPE_STB7100) \
+ || defined(CONFIG_CPU_SUBTYPE_STX7100) \
+ || defined(CONFIG_SH_ST_MB442) \
+ || defined(CONFIG_SH_ST_MB411)
 #include "sci_7100.h"
-#elif defined(CONFIG_CPU_SUBTYPE_STX7111) || defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000)
+#elif defined(CONFIG_CPU_SUBTYPE_STX7111) \
+ || defined(UFS912) \
+ || defined(SPARK) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7810A) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000)
 #include "sci_7111.h"
-#elif defined(CONFIG_CPU_SUBTYPE_STX7105) || defined(ATEVIO7500)
+#elif defined(CONFIG_CPU_SUBTYPE_STX7105) \
+ || defined(ATEVIO7500)
 #include "sci_7105.h"
 #endif
 
@@ -54,7 +67,13 @@
 
 /******* SC generic *******/
 
-#if defined(HL101) || defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(CUBEREVO) || defined(ADB_BOX) || defined(SPARK7162) || defined(IPBOX9900)
+#if defined(HL101) \
+ || defined(ATEVIO7500) \
+ || defined(FORTIS_HDBOX) \
+ || defined(CUBEREVO) \
+ || defined(ADB_BOX) \
+ || defined(SPARK7162) \
+ || defined(IPBOX9900)
 #define SCI_NUMBER_OF_CONTROLLERS   2           /* Num of SC controllers */
 #else
 #define SCI_NUMBER_OF_CONTROLLERS   1           /* Num of SC controllers */

@@ -92,6 +92,12 @@ endif
 ifdef HS7119
 CCFLAGSY += -DHS7119
 endif
+ifdef HS7420
+CCFLAGSY += -DHS7420
+endif
+ifdef HS7429
+CCFLAGSY += -DHS7429
+endif
 ifdef HS7810A
 CCFLAGSY += -DHS7810A
 endif
@@ -227,6 +233,16 @@ obj-y += cec/
 obj-y += smartcard/
 endif
 
+ifdef HS7420
+obj-y += cec/
+obj-y += smartcard/
+endif
+
+ifdef HS7429
+obj-y += cec/
+obj-y += smartcard/
+endif
+
 ifdef HS7810A
 obj-y += cec/
 obj-y += smartcard/
@@ -313,6 +329,7 @@ ifdef VITAMIN_HD5000
 obj-y += cec/
 obj-y += smartcard/
 endif
+
 ifdef SAGEMCOM88
 obj-y += cec/
 obj-y += smartcard/
@@ -321,6 +338,7 @@ obj-y += fan_sagemcom88/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
 endif
+
 ifdef ARIVALINK200
 obj-y += smartcard/
 obj-y += cec_adb_box/

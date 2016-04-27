@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  *
  *
- * Fortis HDBOX FS9000/9200 / HS9510 / HS7X1X Front panel driver.
+ * Fortis HDBOX FS9000/9200 / HS9510 / HS7XXX Front panel driver.
  *
  * Devices:
  *  - /dev/vfd (vfd ioctls and read/write function)

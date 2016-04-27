@@ -757,7 +757,21 @@ void pti_hal_init ( struct stpti *pti , struct dvb_demux* demux, void (*_demulti
      printk("error allocating back buffer !!!!!!!!!!!!!!!!!!!!!!!!\n");
 
   /* ioremap the pti address space */
-#if defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(UFS912) \
+ || defined(UFS913) \
+ || defined(SPARK) \
+ || defined(SPARK7162) \
+ || defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000) \
+ || defined(SAGEMCOM88)
   start = 0xfe230000;
 #else
   start = 0x19230000;
@@ -846,7 +860,6 @@ void pti_hal_init ( struct stpti *pti , struct dvb_demux* demux, void (*_demulti
   add_timer(&ptiTimer);
 
   return;
-
 }
 
 int pti_hal_descrambler_set_aes ( int session_handle, int descrambler_handle,

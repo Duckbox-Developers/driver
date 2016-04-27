@@ -49,15 +49,27 @@ static int extmoduldetect = 0;
 		if (debug) printk (args); \
 	} while (0)
 
-#if defined(FORTIS_HDBOX) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(FORTIS_HDBOX) \
+ || defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
 struct stpio_pin*	cic_enable_pin = NULL;
 struct stpio_pin*	module_A_pin = NULL;
 struct stpio_pin*	module_B_pin = NULL;
 #endif
 
-#if defined(CUBEREVO) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || \
-    defined(CUBEREVO_250HD) || defined(CUBEREVO_9500HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
+#if defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_3000HD)
 #define CUBEBOX
 #else
 #undef  CUBEBOX
@@ -127,7 +139,12 @@ unsigned char default_values[33] =
   0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
   0x00, 0x00, 0x00, 0x03, 0x06, 0x00, 0x03, 0x01
 };
-#elif defined(HS7110)|| defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
 unsigned char default_values[33] =
 {
   0x00,
@@ -151,11 +168,24 @@ unsigned char default_values[33] =
 unsigned long reg_config = 0;
 unsigned long reg_buffer = 0;
 
-#if defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
 unsigned long reg_sysconfig = 0;
 #endif
 
-#if defined(FORTIS_HDBOX) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(FORTIS_HDBOX) \
+ || defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
 static unsigned char *slot_membase[2];
 #else
 /* for whatever reason the access has to be done though a short pointer */
@@ -191,7 +221,13 @@ static unsigned short *slot_membase[2];
 #define EMI_DATA2_BEE1_WRITE(a)		(a<<4)
 #define EMI_DATA2_BEE2_WRITE(a)		(a<<0)
 
-#if defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
 #define EMIConfigBaseAddress 0xfe700000
 #define SysConfigBaseAddress 0xFE001000
 #else
@@ -347,7 +383,13 @@ static int starci_readreg(struct dvb_ca_state* state, u8 reg)
 */
 void getCiSource(int slot, int* source)
 {
-#if !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7810A) && !defined(HS7119) && !defined(HS7819)
+#if !defined(ATEVIO7500) \
+ && !defined(HS7110) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7119) \
+ && !defined(HS7819)
   int val;
   val = starci_readreg(&ca_state, TWIN_MODE_CTRL_REG);
   val &= 0x20;
@@ -587,7 +629,14 @@ static int starci_slot_reset(struct dvb_ca_en50221 *ca, int slot)
     starci_writereg(state, reg[slot], result | 0x80);
 
     starci_writereg(state, DEST_SEL_REG, 0x0);
-#if defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(ATEVIO7500) \
+ || defined(FORTIS_HDBOX) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
     msleep(200);
 #else
     msleep(60);
@@ -752,7 +801,15 @@ static int starci_slot_ts_enable(struct dvb_ca_en50221 *ca, int slot)
 
   result = starci_readreg(state, reg[slot]);
 
-#if !defined(ATEVIO7500) && !defined(FORTIS_HDBOX) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819) && !defined(CUBEBOX) 
+#if !defined(ATEVIO7500) \
+ && !defined(FORTIS_HDBOX) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819) \
+ && !defined(CUBEBOX) 
   starci_writereg(state, reg[slot], 0x23);
 #else
   starci_writereg(state, reg[slot], 0x21);
@@ -785,7 +842,12 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 
 #if defined(FORTIS_HDBOX) || defined(ATEVIO7500)
   state->i2c = i2c_get_adapter(2);
-#elif defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   state->i2c = i2c_get_adapter(1);
   state->i2c_addr = 0x43;
 #else
@@ -814,17 +876,35 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 
   reg_config = (unsigned long)ioremap(EMIConfigBaseAddress, 0x7ff);
 
-#if !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819)
+#if !defined(ATEVIO7500) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819)
   reg_buffer = (unsigned long)ioremap(EMIBufferBaseAddress, 0x40);
 #endif
 
-#if defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#if defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   reg_sysconfig = (unsigned long)ioremap(SysConfigBaseAddress, 0x200);
 #endif
 
   dprintk (KERN_ERR "ioremap 0x%.8x -> 0x%.8lx\n", EMIConfigBaseAddress, reg_config);
 
-#if !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819)
+#if !defined(ATEVIO7500) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819)
   dprintk (KERN_ERR "ioremap 0x%.8x -> 0x%.8lx\n", EMIBufferBaseAddress, reg_buffer);
 #endif
 
@@ -861,7 +941,12 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   stpio_set_pin (module_A_pin, 0);
   stpio_set_pin (module_B_pin, 0);
 
-#elif defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   /* the magic potion - some clkb settings */
   ctrl_outl(0x0000c0de, 0xfe000010);
   ctrl_outl(0x00000008, 0xfe0000b4);
@@ -885,13 +970,28 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   /* power on (only possible with LOCK = 1)
      other bits cannot be set when LOCK is = 1 */
 
-#if defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819) || defined(CUBEBOX)
+#if defined(ATEVIO7500) \
+ || defined(FORTIS_HDBOX) \
+ || defined(HS7110) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7810A) \
+ || defined(HS7819) \
+ || defined(CUBEBOX)
   starci_writereg(state, 0x18, 0x21);
 #else
   starci_writereg(state, 0x18, 0x01);
 #endif
 
-#if !defined(ATEVIO7500) && !defined(FORTIS_HDBOX) && !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819)
+#if !defined(ATEVIO7500) \
+ && !defined(FORTIS_HDBOX) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819)
   ctrl_outl(0x0, reg_config + EMI_LCK);
   ctrl_outl(0x0, reg_config + EMI_GEN_CFG);
 #endif
@@ -905,7 +1005,13 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   ctrl_outl(0x9d220000,reg_config + EMIBank1 + EMI_CFG_DATA2);
   ctrl_outl(0x8,reg_config + EMIBank1 + EMI_CFG_DATA3);
 
-#elif defined(ATEVIO7500) || defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   ctrl_outl(0x8486d9, reg_config + EMIBank3 + EMI_CFG_DATA0);
   ctrl_outl(0x9d220000,reg_config + EMIBank3 + EMI_CFG_DATA2);
   ctrl_outl(0x8,reg_config + EMIBank3 + EMI_CFG_DATA3);
@@ -919,7 +1025,7 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 
 #else /* Cuberevo & TF7700  */
   ctrl_outl(	EMI_DATA0_WE_USE_OE(0x0) 	|
-		  EMI_DATA0_WAIT_POL(0x0)		|
+		  EMI_DATA0_WAIT_POL(0x0)	|
 		  EMI_DATA0_LATCH_POINT(30)	|
 		  EMI_DATA0_DATA_DRIVE(12)	|
 		  EMI_DATA0_BUS_RELEASE(50)	|
@@ -927,19 +1033,19 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 		  EMI_DATA0_OE_ACTIVE(0x1)	|
 		  EMI_DATA0_BE_ACTIVE(0x2)	|
 		  EMI_DATA0_PORT_SIZE(0x2)	|
-		  EMI_DATA0_DEVICE_TYPE(0x1)	,reg_config + EMIBank2 + EMI_CFG_DATA0);
+		  EMI_DATA0_DEVICE_TYPE(0x1),reg_config + EMIBank2 + EMI_CFG_DATA0);
   ctrl_outl(	EMI_DATA1_CYCLE(0x1)		|
 		  EMI_DATA1_ACCESS_READ(100)	|
-		  EMI_DATA1_CSE1_READ(0)		|
-		  EMI_DATA1_CSE2_READ(0)		|
-		  EMI_DATA1_OEE1_READ(10)		|
-		  EMI_DATA1_OEE2_READ(10)		|
-		  EMI_DATA1_BEE1_READ(10)		|
+		  EMI_DATA1_CSE1_READ(0)	|
+		  EMI_DATA1_CSE2_READ(0)	|
+		  EMI_DATA1_OEE1_READ(10)	|
+		  EMI_DATA1_OEE2_READ(10)	|
+		  EMI_DATA1_BEE1_READ(10)	|
 		  EMI_DATA1_BEE2_READ(10),reg_config + EMIBank2 + EMI_CFG_DATA1);
   ctrl_outl(	EMI_DATA2_CYCLE(1)		|
 		  EMI_DATA2_ACCESS_WRITE(100)	|
-		  EMI_DATA2_CSE1_WRITE(0)		|
-		  EMI_DATA2_CSE2_WRITE(0)		|
+		  EMI_DATA2_CSE1_WRITE(0)	|
+		  EMI_DATA2_CSE2_WRITE(0)	|
 		  EMI_DATA2_OEE1_WRITE(10)	|
 		  EMI_DATA2_OEE2_WRITE(10)	|
 		  EMI_DATA2_BEE1_WRITE(10)	|
@@ -966,7 +1072,12 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   slot_membase[0] = ioremap( 0xa3000000, 0x1000 );
 #elif defined(ATEVIO7500)
   slot_membase[0] = ioremap( 0x06800000, 0x1000 );
-#elif defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   slot_membase[0] = ioremap( 0x06000000, 0x1000 );
 #elif defined(CUBEBOX)
   slot_membase[0] = ioremap( 0x3000000, 0x1000 );
@@ -988,7 +1099,12 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   slot_membase[1] = ioremap( 0xa3010000, 0x1000 );
 #elif defined(ATEVIO7500)
   slot_membase[1] = ioremap( 0x06810000, 0x1000 );
-#elif defined(HS7110) || defined(HS7119) || defined(HS7810A) || defined(HS7819)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7819)
   slot_membase[1] = ioremap( 0x06010000, 0x1000 );
 #elif defined(CUBEBOX)
   slot_membase[1] = ioremap( 0x3010000, 0x1000 );
@@ -1003,7 +1119,14 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 	  goto error;
   }
 
-#if !defined(ATEVIO7500) && !defined(HS7110) && !defined(HS7119) && !defined(FORTIS_HDBOX) && !defined(HS7810A) && !defined(HS7819)
+#if !defined(ATEVIO7500) \
+ && !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(FORTIS_HDBOX) \
+ && !defined(HS7420) \
+ && !defined(HS7429) \
+ && !defined(HS7810A) \
+ && !defined(HS7819)
   ctrl_outl(0x1F,reg_config + EMI_LCK);
 #endif
 

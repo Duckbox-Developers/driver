@@ -76,11 +76,36 @@ extern void cx24116_register_frontend(struct dvb_adapter *dvb_adap);
 extern void avl2108_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(UFC960)
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
-#elif defined(FORTIS_HDBOX) || defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#elif defined(FORTIS_HDBOX) \
+ || defined(UFS912) \
+ || defined(SPARK) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000) \
+ || defined(SAGEMCOM88)
 extern void stv090x_register_frontend(struct dvb_adapter *dvb_adap);
-#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX)
+#elif defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(ADB_BOX)
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
+#elif defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_3000HD)
 extern void socket_register_adapter(struct dvb_adapter *dvb_adap);
 #elif defined(OCTAGON1008)
 extern void avl2108_register_frontend(struct dvb_adapter *dvb_adap);
@@ -104,8 +129,7 @@ extern int swts;
 extern int hasdvbt;
 #endif
 
-int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
-					 struct DeviceContext_s *DeviceContext)
+int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed, struct DeviceContext_s *DeviceContext)
 {
 	struct dvb_demux *demux = dvbdmxfeed->demux;
 	int vLoop, my_pes_type;
@@ -263,7 +287,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	pSession->num_pids++;
 	dprintk("%s: pid = %d, num_pids = %d \n", __FUNCTION__, dvbdmxfeed->pid,
 			pSession->num_pids);
-#ifdef VERY_VERBOSE
+#if 0
 	printk("#  pid t pt ref\n");
 	for (vLoop = 0; vLoop < (pSession->num_pids); vLoop++)
 	{
@@ -456,7 +480,21 @@ static struct stpti pti;
 
 void ptiInit(struct DeviceContext_s *pContext)
 {
-#if defined(SAGEMCOM88) ||  defined(UFS912) || defined(UFS913) || defined(SPARK) || defined(SPARK7162) || defined(ATEVIO7500) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000)
+#if defined(SAGEMCOM88) \
+ || defined(UFS912) \
+ || defined(UFS913) \
+ || defined(SPARK) \
+ || defined(SPARK7162) \
+ || defined(ATEVIO7500) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000)
 	unsigned long start = 0xfe230000;
 #else
 	unsigned long start = 0x19230000;
@@ -512,11 +550,36 @@ void ptiInit(struct DeviceContext_s *pContext)
 #else
 		pti_hal_init(&pti, &pContext->DvbDemux, demultiplexDvbPackets, 1);
 #endif
-#if defined(FORTIS_HDBOX) || defined(UFS912) || defined(SPARK) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(VITAMIN_HD5000) || defined(SAGEMCOM88)
+#if defined(FORTIS_HDBOX) \
+ || defined(UFS912) \
+ || defined(SPARK) \
+ || defined(HS7110) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7810A) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(VITAMIN_HD5000) \
+ || defined(SAGEMCOM88)
 		stv090x_register_frontend(&pContext->DvbContext->DvbAdapter);
-#elif defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(ADB_BOX)
+#elif defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(ADB_BOX)
 		fe_core_register_frontend(&pContext->DvbContext->DvbAdapter);
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
+#elif defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_3000HD)
 		socket_register_adapter(&pContext->DvbContext->DvbAdapter);
 #elif defined(OCTAGON1008)
 		avl2108_register_frontend(&pContext->DvbContext->DvbAdapter);
@@ -574,16 +637,15 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
 	}
 #ifdef VERY_VERBOSE
 	printk("SetSource(%p, %d)\n", pDvbDemux, *src);
-#if defined(SAGEMCOM88) || defined(ADB_BOX) || defined(ARIVALINK200) || defined(SPARK7162)
+#if defined(SAGEMCOM88) \
+ || defined(ADB_BOX) \
+ || defined(ARIVALINK200) \
+ || defined(SPARK7162)
 	if (*src == DMX_SOURCE_FRONT0) printk("DMX_SOURCE_FRONT0\n");
-	else
-	if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");
-	else
-	if (*src == DMX_SOURCE_FRONT2) printk("DMX_SOURCE_FRONT2\n");
-	else
-	if (*src == DMX_SOURCE_FRONT3) printk("DMX_SOURCE_FRONT3\n");
-	else
-	if (*src == DMX_SOURCE_DVR0) printk("DMX_SOURCE_DVR0\n");
+	else if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");
+	else if (*src == DMX_SOURCE_FRONT2) printk("DMX_SOURCE_FRONT2\n");
+	else if (*src == DMX_SOURCE_FRONT3) printk("DMX_SOURCE_FRONT3\n");
+	else if (*src == DMX_SOURCE_DVR0) printk("DMX_SOURCE_DVR0\n");
 #endif
 #endif
 

@@ -69,7 +69,7 @@ int __init cec_init(void)
     /* ********* */
     /* irq setup */
 
-    dprintk(2, "init - starting intterrupt (%d)\n", CEC_IRQ);
+    dprintk(2, "init - starting interrupt (%d)\n", CEC_IRQ);
 
 #if defined (CONFIG_KERNELVERSION) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
     if (!request_irq(CEC_IRQ, (void*)cec_interrupt, IRQF_DISABLED, "cec", NULL))

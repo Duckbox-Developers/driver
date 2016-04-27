@@ -83,11 +83,19 @@ ifdef HS7110
 obj-y += nuvoton/
 endif
 
-ifdef HS7810A
+ifdef HS7119
 obj-y += nuvoton/
 endif
 
-ifdef HS7119
+ifdef HS7420
+obj-y += nuvoton/
+endif
+
+ifdef HS7429
+obj-y += nuvoton/
+endif
+
+ifdef HS7810A
 obj-y += nuvoton/
 endif
 

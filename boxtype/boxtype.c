@@ -204,18 +204,19 @@ static struct device_driver boxtype_driver = {
   .remove = boxtype_remove,
 };
 
-int procfile_read(char *buffer, char **buffer_location,
-	          off_t offset, int buffer_length, int *eof, void *data)
+int procfile_read(char *buffer, char **buffer_location, off_t offset, int buffer_length, int *eof, void *data)
 {
 	int ret;
 
-	if (offset > 0) {
+	if (offset > 0)
+	{
 		ret  = 0;
-	} else {
+	}
+	else
+	{
 #if !defined(ADB_BOX)
 		ret = sprintf(buffer, "%d\n", boxtype);
-#endif
-#if defined(ADB_BOX)
+#else
 		if (boxtype==1) ret = sprintf(buffer, "bska\n");
 		else
 		if (boxtype==2) ret = sprintf(buffer, "bsla\n");
@@ -241,17 +242,16 @@ int __init boxtype_init(void)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	if (driver_register (&boxtype_driver) < 0)
 	{
-	  printk ("%s(): error registering device driver\n", __func__);
+		printk ("%s(): error registering device driver\n", __func__);
 	}
 #endif
 
-	if(boxtype == 0)
+	if (boxtype == 0)
 	{
 #if !defined(ADB_BOX)
-	  /* no platform data found, assume ufs910 */
-	  boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
-#endif
-#if defined(ADB_BOX)
+		/* no platform data found, assume ufs910 */
+		boxtype = (STPIO_GET_PIN(PIO_PORT(4),5) << 1) | STPIO_GET_PIN(PIO_PORT(4), 4);
+#else
 		ret=stv6412_boxtype();
 		dprintk("ret1 = %d\n", ret);//ret 1=ok
 		if (ret!=1) boxtype=3;	//BXZB
