@@ -233,6 +233,11 @@ obj-y += cec/
 obj-y += smartcard/
 endif
 
+ifdef HS7119
+obj-y += cec/
+obj-y += smartcard/
+endif
+
 ifdef HS7420
 obj-y += cec/
 obj-y += smartcard/
@@ -244,11 +249,6 @@ obj-y += smartcard/
 endif
 
 ifdef HS7810A
-obj-y += cec/
-obj-y += smartcard/
-endif
-
-ifdef HS7119
 obj-y += cec/
 obj-y += smartcard/
 endif

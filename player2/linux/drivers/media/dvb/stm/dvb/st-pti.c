@@ -395,7 +395,13 @@ static int convert_source(const dmx_source_t source)
 	switch (source)
 	{
 		case DMX_SOURCE_FRONT0:
-#if defined(UFS910) || defined(OCTAGON1008) || defined(UFS912) || defined(ADB_BOX) || defined(SPARK) || defined(SPARK7162) || defined(SAGEMCOM88)
+#if defined(UFS910) \
+ || defined(OCTAGON1008) \
+ || defined(UFS912) \
+ || defined(ADB_BOX) \
+ || defined(SPARK) \
+ || defined(SPARK7162) \
+ || defined(SAGEMCOM88)
 			tag = TSIN2;
 #else
 			tag = TSIN0;
@@ -416,7 +422,7 @@ static int convert_source(const dmx_source_t source)
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
 #elif defined(ARIVALINK200)
-                       tag = SWTS0;
+			tag = SWTS0;
 #else
 			tag = TSIN1;
 #endif
@@ -457,9 +463,9 @@ static int convert_source(const dmx_source_t source)
 			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
 			break;
 #elif defined(ARIVALINK200)
-                case DMX_SOURCE_DVR0:
-                        tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
-                        break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN1;    //fake tsin for DVR (DVBT-USB at swts0)
+			break;
 #else
 		case DMX_SOURCE_DVR0:
 			tag = SWTS0;
@@ -641,11 +647,26 @@ int SetSource(struct dmx_demux* demux, const dmx_source_t *src)
  || defined(ADB_BOX) \
  || defined(ARIVALINK200) \
  || defined(SPARK7162)
-	if (*src == DMX_SOURCE_FRONT0) printk("DMX_SOURCE_FRONT0\n");
-	else if (*src == DMX_SOURCE_FRONT1) printk("DMX_SOURCE_FRONT1\n");
-	else if (*src == DMX_SOURCE_FRONT2) printk("DMX_SOURCE_FRONT2\n");
-	else if (*src == DMX_SOURCE_FRONT3) printk("DMX_SOURCE_FRONT3\n");
-	else if (*src == DMX_SOURCE_DVR0) printk("DMX_SOURCE_DVR0\n");
+	if (*src == DMX_SOURCE_FRONT0)
+	{
+		printk("DMX_SOURCE_FRONT0\n");
+	}
+	else if (*src == DMX_SOURCE_FRONT1)
+	{
+		printk("DMX_SOURCE_FRONT1\n");
+	}
+	else if (*src == DMX_SOURCE_FRONT2)
+	{
+		printk("DMX_SOURCE_FRONT2\n");
+	}
+	else if (*src == DMX_SOURCE_FRONT3)
+	{
+		printk("DMX_SOURCE_FRONT3\n");
+	}
+	else if (*src == DMX_SOURCE_DVR0)
+	{
+		printk("DMX_SOURCE_DVR0\n");
+	}
 #endif
 #endif
 

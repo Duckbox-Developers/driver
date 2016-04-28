@@ -888,7 +888,10 @@ int nuvotonSetLED(int which, int level)
 /* export for later use in e2_proc */
 EXPORT_SYMBOL(nuvotonSetLED);
 
-#if !defined(HS7110) && !defined(HS7119) && !defined(HS7810A) && !defined(HS7819)
+#if !defined(HS7110) \
+ && !defined(HS7119) \
+ && !defined(HS7810A) \
+ && !defined(HS7819)
 int nuvotonSetBrightness(int level)
 {
 	char buffer[5];

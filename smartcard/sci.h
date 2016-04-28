@@ -30,6 +30,8 @@
  || defined(SPARK) \
  || defined(HS7110) \
  || defined(HS7119) \
+ || defined(HS7420) \
+ || defined(HS7429) \
  || defined(HS7810A) \
  || defined(HS7819) \
  || defined(ATEMIO520) \

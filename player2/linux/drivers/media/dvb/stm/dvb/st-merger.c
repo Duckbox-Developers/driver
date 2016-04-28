@@ -867,7 +867,11 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + TSM_SYS_CFG);
 		ctrl_outl(0x0, tsm_io + TSM_SYS_CFG); /* 2 times ? */
 		/* RAM partitioning of streams max 1984kb (31*64) */
-#if  defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || defined(VIP1_V2)
+#if defined(FORTIS_HDBOX) \
+ || defined(UFS922) \
+ || defined(UFC960) \
+ || defined(HL101) \
+ || defined(VIP1_V2)
 		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);      //320kb (5*64)
 		ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);      //320kb (5*64)
 		ctrl_outl(0xa00,  tsm_io + TSM_STREAM2_CFG);      //256kb (4*64)
