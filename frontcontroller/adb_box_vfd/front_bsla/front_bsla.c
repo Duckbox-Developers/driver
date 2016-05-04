@@ -18,8 +18,7 @@
 #include "front_bsla.h"
 #include "../../vfd/utf.h"
 
-//static int buttoninterval = HZ / 4; //1000/4=250ms
-static int buttoninterval = HZ / 3;
+static int buttoninterval = 350/*ms*/;
 static struct timer_list button_timer;
 
 static Global_Status_t status;
