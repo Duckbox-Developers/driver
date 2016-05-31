@@ -56,11 +56,6 @@ obj-m += starci.o
 starci-objs:= starci2win/starci2win.o
 endif
 
-ifdef HOMECAST5101
-obj-m += starci.o
-starci-objs:= starci2win/starci2win.o
-endif
-
 ifdef CUBEREVO
 obj-m += starci.o
 starci-objs:= starci2win/starci2win.o

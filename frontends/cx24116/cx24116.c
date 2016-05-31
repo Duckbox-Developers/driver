@@ -2941,13 +2941,9 @@ init_cx24116_device (struct dvb_adapter *adapter,
   cfg->i2c_adap = i2c_get_adapter (tuner_cfg->i2c_bus);
   cfg->i2c_bus = tuner_cfg->i2c_bus;
   cfg->i2c_addr = tuner_cfg->i2c_addr;
-#if defined(HOMECAST5101)
-  cfg->tuner_enable_pin = NULL;
-#else
   cfg->tuner_enable_pin = stpio_request_pin (tuner_cfg->tuner_enable[0],
                                           tuner_cfg->tuner_enable[1],
                                           "tuner enabl", STPIO_OUT);
-#endif
 
 #ifdef UFS922
 //hacky
@@ -2968,7 +2964,7 @@ init_cx24116_device (struct dvb_adapter *adapter,
 #endif
 
   if ((cfg->i2c_adap == NULL) || 
-#if !defined(HOMECAST5101) && !defined(ARIVALINK200)
+#if !defined(ARIVALINK200)
       (cfg->tuner_enable_pin == NULL) ||
 #endif
 #ifndef UFS922
@@ -3207,16 +3203,6 @@ struct plat_tuner_config tuner_resources[] = {
                 .lnb_enable = {1, 0, 1},
                 .lnb_vsel = {1, 3, 1},
         },
-#elif defined(HOMECAST5101)
-        /* Homecast 5101 tuner resources */
-        [0] = {
-                .adapter = 0,
-                .i2c_bus = 0,
-                .i2c_addr = 0x55,
-                .tuner_enable = {5, 3, 0}, // looks like the homecast 5101 has no tuner enable
-                .lnb_enable = {5, 2, 0},   // port5,pin2, 1=Off(~0V), 0=On(vsel), sel_act->On
-                .lnb_vsel = {5, 0, 0},     // port5,pin0, 1=V(13.9V), 0=H(19.1V), sel_act->H
-        }
 #elif defined(ARIVALINK200)
         [0] = {
                 .adapter = 0,

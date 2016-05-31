@@ -7,5 +7,5 @@ else
 CFLAGS += $(CCFLAGSY)
 endif
 
-obj-m 		+= cec_ctrl.o
-cec_ctrl-objs	+= cec.o
+obj-m += cec_ctrl.o
+cec_ctrl-objs += cec.o

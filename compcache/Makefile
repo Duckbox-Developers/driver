@@ -1,8 +1,9 @@
-EXTRA_CFLAGS	:=	-g -Wall
+EXTRA_CFLAGS := -g -Wall
 
-obj-m +=	lzo-kmod/lzo1x_compress.o \
-		lzo-kmod/lzo1x_decompress.o \
-		ramzswap.o
+obj-m += \
+	lzo-kmod/lzo1x_compress.o \
+	lzo-kmod/lzo1x_decompress.o \
+	ramzswap.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

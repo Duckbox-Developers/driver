@@ -72,19 +72,19 @@ enum
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30)
 static const struct i2c_device_id avs_id[] = {
-        { "ak4705", AK4705 },
-        { "ak4708", AK4708 },
-        { "stv6412", STV6412 },
-        { "stv6417", STV6417 },
-        { "stv6418", STV6418 },
-        { "stv6419", STV6419 },
-        { "cxa2161", CXA2161 },
-        { "vip2_avs", VIP2_AVS },
-		{ "vip1_avs", VIP1_AVS },
-        { "fake_avs", FAKE_AVS },
-        { "avs_pio", AVS_PIO },
-        { "avs_none", AVS_NONE },
-        { }
+	{ "ak4705", AK4705 },
+	{ "ak4708", AK4708 },
+	{ "stv6412", STV6412 },
+	{ "stv6417", STV6417 },
+	{ "stv6418", STV6418 },
+	{ "stv6419", STV6419 },
+	{ "cxa2161", CXA2161 },
+	{ "vip2_avs", VIP2_AVS },
+	{ "vip1_avs", VIP1_AVS },
+	{ "fake_avs", FAKE_AVS },
+	{ "avs_pio", AVS_PIO },
+	{ "avs_none", AVS_NONE },
+	{ }
 };
 MODULE_DEVICE_TABLE(i2c, avs_id);
 #endif
@@ -96,9 +96,7 @@ static char *type = "ak4705";
  * Addresses to scan
  */
 static unsigned short normal_i2c[] = {
-#if defined(HOMECAST5101)
-	I2C_ADDRESS_CXA2161, /* cxa2161, 0x48 */
-#elif defined(UFS922) \
+#if defined(UFS922) \
  || defined(CUBEREVO) \
  || defined(VITAMIN_HD5000) \
  || defined(CUBEREVO_MINI) \

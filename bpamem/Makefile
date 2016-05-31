@@ -4,4 +4,4 @@ else
 CFLAGS += $(CCFLAGSY)
 endif
 
-obj-m 		+= bpamem.o
+obj-m += bpamem.o

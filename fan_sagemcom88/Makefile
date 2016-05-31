@@ -7,5 +7,5 @@ else
 CFLAGS += $(CCFLAGSY)
 endif
 
-obj-m 		+= fan_ctrl.o
-fan_ctrl-objs	+= fan.o
+obj-m += fan_ctrl.o
+fan_ctrl-objs += fan.o

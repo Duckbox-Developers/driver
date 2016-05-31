@@ -7,5 +7,5 @@ else
 CFLAGS += $(CCFLAGSY)
 endif
 
-obj-m 		+= cooler.o
-cooler-objs	+= adb_box_fan.o
+obj-m += cooler.o
+cooler-objs += adb_box_fan.o

@@ -1,11 +1,13 @@
 TREE_ROOT?=$(DRIVER_TOPDIR)/
 CONFIG_STGFB_PATH?=$(DRIVER_TOPDIR)/stgfb/stmfb
-CCFLAGSY += -I$(TREE_ROOT)/linux/include/linux/stm/
-CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/media/video/stm/
+
+CCFLAGSY += -I$(TREE_ROOT)/player2/linux/include/linux/stm/
+CCFLAGSY += -I$(TREE_ROOT)/player2/linux/drivers/media/video/stm/
 CCFLAGSY += -I$(KERNEL_LOCATION)/drivers/media/dvb/dvb-core
 CCFLAGSY += -I$(CONFIG_STGFB_PATH)/include
-CCFLAGSY += -DDEBUG_DVB
 CCFLAGSY += -I$(TREE_ROOT)/include
+CCFLAGSY += -DDEBUG_DVB
+
 
 ifdef SPARK
 CCFLAGSY += -I$(TREE_ROOT)/frontends/spark_dvbapi5
@@ -271,29 +273,29 @@ obj-y += multituner/
 endif
 
 ifdef IPBOX9900
-fe-core-objs +=        ipbox/stv090x.o
-fe-core-objs +=        ipbox/stv6110x.o
-fe-core-objs +=        ipbox/zl10353.o
-fe-core-objs +=        ipbox/mxl5007t.o
-fe-core-objs +=        ipbox/tda10023.o
-fe-core-objs +=        ipbox/core.o
+fe-core-objs +=  ipbox/stv090x.o
+fe-core-objs += ipbox/stv6110x.o
+fe-core-objs += ipbox/zl10353.o
+fe-core-objs += ipbox/mxl5007t.o
+fe-core-objs += ipbox/tda10023.o
+fe-core-objs += ipbox/core.o
 obj-m += fe-core.o
 endif
 
 ifdef IPBOX99
-fe-core-objs +=        ipbox/stv090x.o
-fe-core-objs +=        ipbox/stv6110x.o
-fe-core-objs +=        ipbox/zl10353.o
-fe-core-objs +=        ipbox/mxl5007t.o
-fe-core-objs +=        ipbox/tda10023.o
-fe-core-objs +=        ipbox/core.o
+fe-core-objs += ipbox/stv090x.o
+fe-core-objs += ipbox/stv6110x.o
+fe-core-objs += ipbox/zl10353.o
+fe-core-objs += ipbox/mxl5007t.o
+fe-core-objs += ipbox/tda10023.o
+fe-core-objs += ipbox/core.o
 obj-m += fe-core.o
 endif
 
 ifdef IPBOX55
-fe-core-objs +=        ipbox/stv090x.o
-fe-core-objs +=        ipbox/stv6110x.o
-fe-core-objs +=        ipbox/core.o
+fe-core-objs += ipbox/stv090x.o
+fe-core-objs += ipbox/stv6110x.o
+fe-core-objs += ipbox/core.o
 obj-m += fe-core.o
 endif
 
@@ -332,19 +334,19 @@ endif
 ifdef ADB_BOX
 # Single ----------------------------------
 # stb0899
-fe-core-objs +=        adb/stb0899_algo.o
-fe-core-objs +=        adb/stb0899_drv.o
-fe-core-objs +=        adb/stb6100.o
-fe-core-objs +=        adb/core.o
+fe-core-objs += adb/stb0899_algo.o
+fe-core-objs += adb/stb0899_drv.o
+fe-core-objs += adb/stb6100.o
+fe-core-objs += adb/core.o
 obj-m += fe-core.o
 
 # Dual -------------------------------------
 # stb0899
-fe-core-twin1-objs +=        adb_dual/stb0899_algo.o
-fe-core-twin1-objs +=        adb_dual/stb0899_drv.o
-fe-core-twin1-objs +=        adb_dual/stb6100.o
-fe-core-twin1-objs +=        adb_dual/core.o
-obj-m += fe-core-twin1.o 
+fe-core-twin1-objs += adb_dual/stb0899_algo.o
+fe-core-twin1-objs += adb_dual/stb0899_drv.o
+fe-core-twin1-objs += adb_dual/stb6100.o
+fe-core-twin1-objs +=  adb_dual/core.o
+obj-m += fe-core-twin1.o
 
 # stv0900
 fe-core-twin2-objs += adb_stv900/stv090x.o
@@ -354,9 +356,9 @@ obj-m += fe-core-twin2.o
 
 # DVB-C ----------------------------------
 # stv0297 + mt2060
-fe-mmp-objs +=        adb_mmp/mt2060.o
-fe-mmp-objs +=        adb_mmp/stv0297.o
-fe-mmp-objs +=        adb_mmp/core.o
+fe-mmp-objs += adb_mmp/mt2060.o
+fe-mmp-objs += adb_mmp/stv0297.o
+fe-mmp-objs += adb_mmp/core.o
 obj-m += fe-mmp.o
 
 #------------------------------------------------- 
@@ -376,11 +378,11 @@ endif
 
 ifdef SAGEMCOM88
 ifneq (,$(wildcard $(DRIVER_TOPDIR)/frontends/sagemcom88 ))
-fe_core-objs +=        sagemcom88/tda18218.o
-fe_core-objs +=        sagemcom88/tda10048.o
-fe_core-objs +=        sagemcom88/stv090x.o
-fe_core-objs +=        sagemcom88/stv6110x.o
-fe_core-objs +=        sagemcom88/core.o
+fe_core-objs += sagemcom88/tda18218.o
+fe_core-objs += sagemcom88/tda10048.o
+fe_core-objs += sagemcom88/stv090x.o
+fe_core-objs += sagemcom88/stv6110x.o
+fe_core-objs += sagemcom88/core.o
 obj-m += fe_core.o
 endif
 endif

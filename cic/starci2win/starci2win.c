@@ -153,15 +153,6 @@ unsigned char default_values[33] =
   0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
   0x00, 0x00, 0x00, 0x03, 0x06, 0x00, 0x03, 0x01
 };
-#elif defined (HOMECAST5101)
-unsigned char default_values[33] =
-{
-  0x00, /* register address for block transfer */
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
 #endif
 
 /* EMI configuration */
@@ -1016,13 +1007,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   ctrl_outl(0x9d220000,reg_config + EMIBank3 + EMI_CFG_DATA2);
   ctrl_outl(0x8,reg_config + EMIBank3 + EMI_CFG_DATA3);
   ctrl_outl(0x0, reg_config + EMI_GEN_CFG);
-#elif defined(HOMECAST5101)
-/* FIXME: Not sure about this at the moment */
-  ctrl_outl(0x002046f9, reg_config + EMIBank2 + EMI_CFG_DATA0);
-  ctrl_outl(0xa5a00000, reg_config + EMIBank2 + EMI_CFG_DATA1);
-  ctrl_outl(0xa5a20000, reg_config + EMIBank2 + EMI_CFG_DATA2);
-  ctrl_outl(0x00000000, reg_config + EMIBank2 + EMI_CFG_DATA3);
-
 #else /* Cuberevo & TF7700  */
   ctrl_outl(	EMI_DATA0_WE_USE_OE(0x0) 	|
 		  EMI_DATA0_WAIT_POL(0x0)	|
@@ -1052,7 +1036,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 		  EMI_DATA2_BEE2_WRITE(10),reg_config + EMIBank2 + EMI_CFG_DATA2);
 
   ctrl_outl(0x0, reg_config + EMIBank2 + EMI_CFG_DATA3);
-
 #if defined(CUBEBOX)
   ctrl_outl(0x2, reg_config + EMI_FLASH_CLK_SEL);
 #else
@@ -1068,8 +1051,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 #if defined(FORTIS_HDBOX)
 //is [0] = top slot?
   slot_membase[0] = ioremap( 0xa2000000, 0x1000 );
-#elif defined(HOMECAST5101)
-  slot_membase[0] = ioremap( 0xa3000000, 0x1000 );
 #elif defined(ATEVIO7500)
   slot_membase[0] = ioremap( 0x06800000, 0x1000 );
 #elif defined(HS7110) \
@@ -1095,8 +1076,6 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
 #elif defined(FORTIS_HDBOX)
 //is [1] = bottom slot?
   slot_membase[1] = ioremap( 0xa2010000, 0x1000 );
-#elif defined(HOMECAST5101)
-  slot_membase[1] = ioremap( 0xa3010000, 0x1000 );
 #elif defined(ATEVIO7500)
   slot_membase[1] = ioremap( 0x06810000, 0x1000 );
 #elif defined(HS7110) \
@@ -1133,11 +1112,9 @@ int init_ci_controller(struct dvb_adapter* dvb_adap)
   dprintk("init_startci: call dvb_ca_en50221_init\n");
 
 #if defined(CUBEREVO_250HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_MINI_FTA)
-  if ((result = dvb_ca_en50221_init(state->dvb_adap,
-                    &state->ca, 0, 1)) != 0) {
+  if ((result = dvb_ca_en50221_init(state->dvb_adap, &state->ca, 0, 1)) != 0) {
 #else
-  if ((result = dvb_ca_en50221_init(state->dvb_adap,
-				    &state->ca, 0, 2)) != 0) {
+  if ((result = dvb_ca_en50221_init(state->dvb_adap, &state->ca, 0, 2)) != 0) {
 #endif
 	  printk(KERN_ERR "ca0 initialisation failed.\n");
 	  goto error;
