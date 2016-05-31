@@ -9,7 +9,7 @@ typedef struct
 
 typedef struct
 {
-	int  SamplingFreq;
+	int SamplingFreq;
 	long PacketSize;
 	long SizeOf_s_header_obj;
 	long SizeOf_s_asf_header_type;
@@ -20,15 +20,14 @@ typedef struct
 	long long nAudioDelayBuffer;
 	long long SamplesPerPack;
 
-}MME_WmaeAsfPostProcessing_t;
+} MME_WmaeAsfPostProcessing_t;
 
 typedef struct
 {
 	long long ErrorCode;
 	MME_WmaeAsfPostProcessing_t AsfPostProcessing;
 
-}MME_WmaeStatus_t;
-
+} MME_WmaeStatus_t;
 
 #endif //_WMAE_ENCODER_TYPES_H_
 

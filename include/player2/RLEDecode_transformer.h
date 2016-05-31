@@ -5,7 +5,6 @@
 
 #define RLEDECODE_TRANSFORMER_RELEASE "RLEDECODE Firmware RLEDecode_0.0.1"
 
-
 MME_ERROR RLEDecode_GetTransformerCapability(MME_TransformerCapability_t *capability);
 MME_ERROR RLEDecode_InitTransformer(MME_UINT size, MME_GenericParams_t params, void **handle);
 MME_ERROR RLEDecode_ProcessCommand(void *handle, MME_Command_t *commandInfo);

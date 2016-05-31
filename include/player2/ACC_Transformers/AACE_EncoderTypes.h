@@ -15,15 +15,14 @@ typedef struct
 {
 	enum eEncoderAACSubType SubType;
 
-	unsigned long           quantqual;
-	int                     VbrOn;
+	unsigned long quantqual;
+	int VbrOn;
 } tMMEAaceConfig;
 
 typedef struct
 {
 	U32 Status;
-}MME_AaceStatus_t;
-
+} MME_AaceStatus_t;
 
 #endif //_MP3ELC_ENCODER_TYPES_H_
 

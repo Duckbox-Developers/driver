@@ -38,9 +38,9 @@ enum e_MME_AccDdceErrorCode
 };
 enum e_MME_AccDdceErrorLevel
 {
-	MME_DDCE_OK      = 0,
+	MME_DDCE_OK = 0,
 	MME_DDCE_WARNING = 1,
-	MME_DDCE_FATAL   = 2
+	MME_DDCE_FATAL = 2
 };
 
 typedef struct
@@ -48,9 +48,7 @@ typedef struct
 	enum e_MME_AccDdceErrorLevel ErrorLevel;
 	enum e_MME_AccDdceErrorCode ErrorCode;
 
-}MME_DdceStatus_t;
-
+} MME_DdceStatus_t;
 
 #endif //_DDCE_ENCODER_TYPES_H_
-
 

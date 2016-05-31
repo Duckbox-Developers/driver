@@ -1,19 +1,18 @@
-/// $Id: Ping_TransformerTypes.h,v  Exp $
-/// @file     : ACC_Multicom/ACC_Transformers/Ping_TransformerTypes.h
+/// $Id: Ping_TransformerTypes.h,v Exp $
+/// @file : ACC_Multicom/ACC_Transformers/Ping_TransformerTypes.h
 ///
-/// @brief    : Ping Transformer APIs
+/// @brief : Ping Transformer APIs
 ///
 /// @par OWNER: Gael Lassure
 ///
-/// @author   : Gael Lassure
+/// @author : Gael Lassure
 ///
 /// @par SCOPE:
 ///
-/// @date     : 2008 - 02 - 20
+/// @date : 2008 - 02 - 20
 ///
 /// &copy; 2008 ST Microelectronics. All Rights Reserved.
 ///
-
 
 #ifndef _PING_TRANSFORMERTYPES_H_
 #define _PING_TRANSFORMERTYPES_H_
@@ -23,15 +22,15 @@
 #include "mme.h"
 #include "acc_mmedefines.h"
 
-#define PING_TF_NAME    "PING_CPU_"
-#define RELEASE_LENGTH  64
+#define PING_TF_NAME "PING_CPU_"
+#define RELEASE_LENGTH 64
 
 //! Additional PING capability structure
+
 typedef struct
 {
 	MME_UINT Info[RELEASE_LENGTH];
 } MME_PingInfo_t;
-
 
 #define AUDIORELEASE_TF_NAME "AUDIORELEASE"
 
@@ -47,7 +46,7 @@ enum eAudioFeatureReleaseTag
 	AUDIOFEATURE_HEAAC_TAG,
 	AUDIOFEATURE_WMAPRO_TAG,
 	AUDIOFEATURE_SRS_TRUSURROUNDXT_TAG,
-	AUDIOFEATURE_SRS_TRUSURROUNDHD_TAG,	
+	AUDIOFEATURE_SRS_TRUSURROUNDHD_TAG,
 	AUDIOFEATURE_SRS_TRUVOLUME_TAG,
 	AUDIOFEATURE_SRS_WOWHD_TAG,
 	AUDIOFEATURE_NB_RELEASE_TAG
@@ -59,4 +58,4 @@ typedef struct
 	char ReleaseTag[AUDIOFEATURE_NB_RELEASE_TAG][AUDIOFEATURE_RELEASE_TAG_SIZE];
 } tAudioReleaseInfo;
 
-#endif //  _PING_TRANSFORMERTYPES_H_
+#endif // _PING_TRANSFORMERTYPES_H_

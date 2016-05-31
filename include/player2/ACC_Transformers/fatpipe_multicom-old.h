@@ -1,14 +1,14 @@
-/// @file     : ACC_Multcom/ACC_PcmProcessing/fatpipe_multicom.h
+/// @file : ACC_Multcom/ACC_PcmProcessing/fatpipe_multicom.h
 ///
-/// @brief    : MME interfacing of ST Fatpipe pcmprocessing
+/// @brief : MME interfacing of ST Fatpipe pcmprocessing
 ///
 /// @par OWNER: SULPICE P
 ///
-/// @author   : SULPICE P
+/// @author : SULPICE P
 ///
 /// @par SCOPE:
 ///
-/// @date     : 2007-07 - 23
+/// @date : 2007-07 - 23
 ///
 /// &copy; 2007 ST Microelectronics. All Rights Reserved.
 ///
@@ -25,6 +25,5 @@
 #include "acc_defines.h"
 
 extern tPostProcessingMME fatpipe_mme;
-
 
 #endif /* _FATPIPE_MULTICOM_H_ */

@@ -1,15 +1,15 @@
 
-/// @file     : ACC/AAC_Transformer/SignalProcessingTypes.h
+/// @file : ACC/AAC_Transformer/SignalProcessingTypes.h
 ///
-/// @brief    : Signal Processing To be performed on the PCM samples
+/// @brief : Signal Processing To be performed on the PCM samples
 ///
-/// @par OWNER: 
+/// @par OWNER:
 ///
-/// @author   : 
+/// @author :
 ///
 /// @par SCOPE:
 ///
-/// @date     : 2004-06-02
+/// @date : 2004-06-02
 ///
 /// &copy; 2003 ST Microelectronics. All Rights Reserved.
 ///
@@ -39,7 +39,6 @@ enum eAccSignalProcInput
 	ACC_MUSIC_AND_VOICE
 };
 
-
 enum eAccScoringResult
 {
 	ACC_SCORE_BAD,
@@ -49,8 +48,8 @@ enum eAccScoringResult
 
 enum eAccWatermarkReady
 {
-	ACC_WATERMARK_RESULT_NOT_READY  = 0,
-	ACC_WATERMARK_RESULT_READY      = 1
+	ACC_WATERMARK_RESULT_NOT_READY = 0,
+	ACC_WATERMARK_RESULT_READY = 1
 };
 
 enum eAccSignalProcStatus
@@ -62,10 +61,10 @@ enum eAccSignalProcStatus
 //! Additional Signal Processing Capability structure
 typedef struct
 {
-    U32                 StructSize;        //!< Size of this structure
-    U32                 DecoderCapabilityFlags;
-    U32                 DecoderCapabilityExtFlags;
-    U32                 SignalProcessingCapabilityFlags;
+	U32 StructSize; //!< Size of this structure
+	U32 DecoderCapabilityFlags;
+	U32 DecoderCapabilityExtFlags;
+	U32 SignalProcessingCapabilityFlags;
 } MME_LxSignalProcessingTransformerInfo_t;
 
 /* Enumeration type for Watermark processing Configuration */
@@ -89,20 +88,20 @@ enum eWatermarkStatusIdx
 /* Global Parameters for watermark processing */
 typedef struct
 {
-	enum eAccSignalProcId Id;             /* Id of this processing */
-	U32                   StructSize;
-	U32                   Config[WM_NB_CONFIG_ELEMENTS]; 
-	enum eAccProcessApply Apply;          /* Enable/Disable watermark processing */	
+	enum eAccSignalProcId Id; /* Id of this processing */
+	U32 StructSize;
+	U32 Config[WM_NB_CONFIG_ELEMENTS];
+	enum eAccProcessApply Apply; /* Enable/Disable watermark processing */
 
-}MME_WmarkGlobalParams_t;
+} MME_WmarkGlobalParams_t;
 
 typedef struct
 {
-	U32                    StructSize;
-	U32                    Status[WM_NB_STATUS_ELEMENTS];
-	// eAccWatermarkReady     WatermarkOutputReady;   Field to indicate whether watermark output ready or not
-	// U16                    WatermarkOutput;         Field to output the watermark 
-}MME_WmarkStatusParams_t;
+	U32 StructSize;
+	U32 Status[WM_NB_STATUS_ELEMENTS];
+	// eAccWatermarkReady WatermarkOutputReady; Field to indicate whether watermark output ready or not
+	// U16 WatermarkOutput; Field to output the watermark
+} MME_WmarkStatusParams_t;
 
 /* Enumeration for configuring scoring block */
 enum eScoringIdx
@@ -128,72 +127,72 @@ enum eScoringStatusIdx
 /* Global Parameters for Scoring Block */
 typedef struct
 {
-	enum eAccSignalProcId Id;           //!< Id of this processing block 
-	U32                   StructSize;   
-	U32                   Config[SCORING_NB_CONFIG_ELEMENTS];
-	enum eAccProcessApply Apply;        //!< Enable/Disable scoring block
+	enum eAccSignalProcId Id; //!< Id of this processing block
+	U32 StructSize;
+	U32 Config[SCORING_NB_CONFIG_ELEMENTS];
+	enum eAccProcessApply Apply; //!< Enable/Disable scoring block
 
-}MME_ScoringGlobalParams_t;
+} MME_ScoringGlobalParams_t;
 
 typedef struct
 {
-	U32                   StructSize;
-	U32                   Status[SCORING_NB_STATUS_ELEMENTS];
+	U32 StructSize;
+	U32 Status[SCORING_NB_STATUS_ELEMENTS];
 #if 0
-	U16                  ScoringScore;           //!< Field to display score of the scoring algorithm
-	eAccScoringResult    ScoringDelay;           //!< Field to display delay parameter of scoring
-	eAccScoringResult    ScoringRhythm;          //!< Field to display rhythm parameter of scoring
-	eAccScoringResult    ScoringPitch;           //!< Field to display pitch parameter of scoring
-#endif 
-}MME_ScoringStatusParams_t;
+	U16 ScoringScore; //!< Field to display score of the scoring algorithm
+	eAccScoringResult ScoringDelay; //!< Field to display delay parameter of scoring
+	eAccScoringResult ScoringRhythm; //!< Field to display rhythm parameter of scoring
+	eAccScoringResult ScoringPitch; //!< Field to display pitch parameter of scoring
+#endif
+} MME_ScoringStatusParams_t;
 
 typedef struct
 {
-	U32                        StructSize;  //!< Size of this Structure
+	U32 StructSize; //!< Size of this Structure
 
-	MME_WmarkGlobalParams_t    Watermark;   //!< Watermark configuration
-	MME_ScoringGlobalParams_t  Scoring;     //!< Scoring  Configuration
+	MME_WmarkGlobalParams_t Watermark; //!< Watermark configuration
+	MME_ScoringGlobalParams_t Scoring; //!< Scoring Configuration
 
-}MME_LxSignalProcessingGlobalParams_t;
+} MME_LxSignalProcessingGlobalParams_t;
 
 /* Global Parameters for the Signal Processing Transformer */
 typedef struct
 {
-	U32                        StructSize;
-	enum eAccAcMode            MusicAudioMode;       //!< Audio Mode of Music Line input
-	enum eAccFsCode            MusicSamplingFreq;    //!< Sampling Frequency of Music Line Input
-	enum eAccAcMode            SpeechAudioMode;      //!< Audio Mode of Voice Line input
-	enum eAccFsCode            SpeechSamplingFreq;   //!< Sampling Frequency of voice line input
+	U32 StructSize;
+	enum eAccAcMode MusicAudioMode; //!< Audio Mode of Music Line input
+	enum eAccFsCode MusicSamplingFreq; //!< Sampling Frequency of Music Line Input
+	enum eAccAcMode SpeechAudioMode; //!< Audio Mode of Voice Line input
+	enum eAccFsCode SpeechSamplingFreq; //!< Sampling Frequency of voice line input
 
 	MME_LxSignalProcessingGlobalParams_t SignalParams;
 
-}MME_LxSignalProcessingTransformerGlobalParams_t;
+} MME_LxSignalProcessingTransformerGlobalParams_t;
 
 /* Initialization structure for Signal Processing Transformer */
 typedef struct
 {
-	U32                                              StructSize;
-	U8                                               NbChannelsInMusic;  //!< Nb of Input Channels on Music Line
-	U8                                               NbChannelsInVoice; //!< Nb of Input Channels on voice line
-	MME_LxSignalProcessingTransformerGlobalParams_t  GlobalParams;
+	U32 StructSize;
+	U8 NbChannelsInMusic; //!< Nb of Input Channels on Music Line
+	U8 NbChannelsInVoice; //!< Nb of Input Channels on voice line
+	MME_LxSignalProcessingTransformerGlobalParams_t GlobalParams;
 
-}MME_LxSignalProcessingTransformerInitParams_t;
+} MME_LxSignalProcessingTransformerInitParams_t;
 
-/* Frame Parameters  */
+/* Frame Parameters */
 typedef struct
 {
-	U32                NumInputBuffers;                    //!< Nb of Input MME Buffers.
-	MME_DataBuffer_t   buffers[2*NUM_FRAMES_PER_TRANSFORM];  //!< The input MME Buffers
+	U32 NumInputBuffers; //!< Nb of Input MME Buffers.
+	MME_DataBuffer_t buffers[2 * NUM_FRAMES_PER_TRANSFORM]; //!< The input MME Buffers
 
-}MME_LxSignalProcessingTransformerFrameParams_t;
+} MME_LxSignalProcessingTransformerFrameParams_t;
 
 /* The frame Status structure */
 typedef struct
 {
-	U32                          StructSize;
-	MME_WmarkStatusParams_t      WmarkStatus;
-	MME_ScoringStatusParams_t    ScoringStatus;
+	U32 StructSize;
+	MME_WmarkStatusParams_t WmarkStatus;
+	MME_ScoringStatusParams_t ScoringStatus;
 
-}MME_LxSignalProcessingTransformerFrameStatus_t;
+} MME_LxSignalProcessingTransformerFrameStatus_t;
 
-#endif  /* _SIGNALPROCESSING_TYPES_H_ */
+#endif /* _SIGNALPROCESSING_TYPES_H_ */

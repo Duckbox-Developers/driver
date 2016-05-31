@@ -4,10 +4,10 @@
 #include "acc_mmedefines.h"
 typedef struct
 {
-	long             bandWidth;   /* BandWidth */
-	enum eAccBoolean fIntensity;  /* Intensity Stereo */
-	enum eAccBoolean fVbrMode;    /* VBR Mode */
-	int              vbrQuality;  /* VBR Quality */
+	long bandWidth; /* BandWidth */
+	enum eAccBoolean fIntensity; /* Intensity Stereo */
+	enum eAccBoolean fVbrMode; /* VBR Mode */
+	int vbrQuality; /* VBR Quality */
 	enum eAccBoolean fFullHuffman;
 	enum eAccBoolean paddingMode;
 	enum eAccBoolean fCrc;
@@ -21,8 +21,7 @@ typedef struct
 typedef struct
 {
 	U32 Status;
-}MME_Mp3eStatus_t;
-
+} MME_Mp3eStatus_t;
 
 #endif //_MP3E_ENCODER_TYPES_H_
 
