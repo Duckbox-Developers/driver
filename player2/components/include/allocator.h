@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : allocator.h
-Author :           Nick
+Author : Nick
 
 Definition of the pure virtual class defining the interface to a generic
 allocator of regions of memory.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Jun-05   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+29-Jun-05 Created Nick
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 typedef enum
 {
-	AllocatorNoError            = 0,
+	AllocatorNoError = 0,
 	AllocatorError,
 	AllocatorNoMemory,
 	AllocatorUnableToAllocate
@@ -50,30 +50,30 @@ class Allocator_c
 {
 	public:
 
-		AllocatorStatus_t   InitializationStatus;
+		AllocatorStatus_t InitializationStatus;
 
 		virtual ~Allocator_c(void) {};
 
-		virtual AllocatorStatus_t Allocate(unsigned int      Size,
-										   unsigned char   **Block,
-										   bool              NonBlocking   = false) = 0;
+		virtual AllocatorStatus_t Allocate(unsigned int Size,
+						   unsigned char **Block,
+						   bool NonBlocking = false) = 0;
 
 		virtual AllocatorStatus_t AllocateLargest(
-			unsigned int     *Size,
-			unsigned char   **Block,
-			bool              NonBlocking   = false) = 0;
+			unsigned int *Size,
+			unsigned char **Block,
+			bool NonBlocking = false) = 0;
 
 		virtual AllocatorStatus_t ExtendToLargest(
-			unsigned int     *Size,
-			unsigned char   **Block,
-			bool          ExtendUpwards = true) = 0;
+			unsigned int *Size,
+			unsigned char **Block,
+			bool ExtendUpwards = true) = 0;
 
 		virtual AllocatorStatus_t Free(void) = 0;
 
-		virtual AllocatorStatus_t Free(unsigned int      Size,
-									   unsigned char    *Block) = 0;
+		virtual AllocatorStatus_t Free(unsigned int Size,
+					       unsigned char *Block) = 0;
 
-		virtual AllocatorStatus_t LargestFreeBlock(unsigned int  *Size) = 0;
+		virtual AllocatorStatus_t LargestFreeBlock(unsigned int *Size) = 0;
 };
 #endif
 

@@ -13,22 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : player_process_decode_to_manifest.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the process handling data transfer
 between the decode phase and the manifestation phase of
 the generic class implementation of player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-06-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+06-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -36,17 +36,17 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Useful defines/macros that need not be user visible
+// Useful defines/macros that need not be user visible
 //
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      C stub
+// C stub
 //
 
 OS_TaskEntry(PlayerProcessDecodeToManifest)
 {
-	PlayerStream_t          Stream = (PlayerStream_t)Parameter;
+	PlayerStream_t Stream = (PlayerStream_t)Parameter;
 	Stream->Player->ProcessDecodeToManifest(Stream);
 	OS_TerminateThread();
 	return NULL;
@@ -54,64 +54,66 @@ OS_TaskEntry(PlayerProcessDecodeToManifest)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Main process code
+// Main process code
 //
 
-void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Stream)
+void Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t Stream)
 {
-	unsigned int                      i;
-	PlayerStatus_t                    Status;
-	RingStatus_t                      RingStatus;
-	unsigned int                      AccumulatedBufferTableOccupancy;
-	PlayerBufferRecord_t             *AccumulatedBufferTable;
-	Buffer_t                          Buffer = NULL;
-	Buffer_t                          OriginalCodedFrameBuffer;
-	BufferType_t                      BufferType;
-	PlayerControlStructure_t         *ControlStructure;
-	ParsedFrameParameters_t          *ParsedFrameParameters;
-	unsigned int                      LowestIndex;
-	unsigned int                      LowestDisplayFrameIndex;
-	unsigned int                      DesiredFrameIndex;
-	unsigned int              PossibleDecodeBuffers;
-	unsigned int                      MaxDecodesOutOfOrder;
-	PlayerSequenceNumber_t           *SequenceNumberStructure;
-	unsigned long long                LastEntryTime;
-	unsigned long long                SequenceNumber;
-	unsigned long long                MinumumSequenceNumberAccumulated;
-	unsigned long long                MaximumActualSequenceNumberSeen;
-	unsigned long long                Time;
-	unsigned int                      AccumulatedBeforeControlMessagesCount;
-	unsigned int                      AccumulatedAfterControlMessagesCount;
-	bool                              SequenceCheck;
-	bool                              ProcessNow;
-	unsigned int                     *Count;
-	PlayerBufferRecord_t             *Table;
-	Buffer_t                          MarkerFrameBuffer;
-	bool                              FirstFrame;
-	bool                              DiscardBuffer;
-	bool                  LastPreManifestDiscardBuffer;
-	unsigned char                     SubmitInitialFrame;
-	Buffer_t                          InitialFrameBuffer;
+	unsigned int i;
+	PlayerStatus_t Status;
+	RingStatus_t RingStatus;
+	unsigned int AccumulatedBufferTableOccupancy;
+	PlayerBufferRecord_t *AccumulatedBufferTable;
+	Buffer_t Buffer = NULL;
+	Buffer_t OriginalCodedFrameBuffer;
+	BufferType_t BufferType;
+	PlayerControlStructure_t *ControlStructure;
+	ParsedFrameParameters_t *ParsedFrameParameters;
+	unsigned int LowestIndex;
+	unsigned int LowestDisplayFrameIndex;
+	unsigned int DesiredFrameIndex;
+	unsigned int PossibleDecodeBuffers;
+	unsigned int MaxDecodesOutOfOrder;
+	PlayerSequenceNumber_t *SequenceNumberStructure;
+	unsigned long long LastEntryTime;
+	unsigned long long SequenceNumber;
+	unsigned long long MinumumSequenceNumberAccumulated;
+	unsigned long long MaximumActualSequenceNumberSeen;
+	unsigned long long Time;
+	unsigned int AccumulatedBeforeControlMessagesCount;
+	unsigned int AccumulatedAfterControlMessagesCount;
+	bool SequenceCheck;
+	bool ProcessNow;
+	unsigned int *Count;
+	PlayerBufferRecord_t *Table;
+	Buffer_t MarkerFrameBuffer;
+	bool FirstFrame;
+	bool DiscardBuffer;
+	bool LastPreManifestDiscardBuffer;
+	unsigned char SubmitInitialFrame;
+	Buffer_t InitialFrameBuffer;
 	//
 	// Set parameters
 	//
-	AccumulatedBufferTableOccupancy             = 0;
-	AccumulatedBufferTable                      = Stream->AccumulatedDecodeBufferTable;
-	LastEntryTime                               = OS_GetTimeInMicroSeconds();
-	SequenceNumber                              = INVALID_SEQUENCE_VALUE;
-	Time                                        = INVALID_TIME;
-	AccumulatedBeforeControlMessagesCount       = 0;
-	AccumulatedAfterControlMessagesCount        = 0;
-	MinumumSequenceNumberAccumulated        = 0xffffffffffffffffULL;
-	MaximumActualSequenceNumberSeen             = 0;
-	DesiredFrameIndex                           = 0;
-	FirstFrame                                  = true;
-	MarkerFrameBuffer                           = NULL;
-	InitialFrameBuffer              = NULL;
-	LastPreManifestDiscardBuffer        = false;
+	AccumulatedBufferTableOccupancy = 0;
+	AccumulatedBufferTable = Stream->AccumulatedDecodeBufferTable;
+	LastEntryTime = OS_GetTimeInMicroSeconds();
+	SequenceNumber = INVALID_SEQUENCE_VALUE;
+	Time = INVALID_TIME;
+	AccumulatedBeforeControlMessagesCount = 0;
+	AccumulatedAfterControlMessagesCount = 0;
+	MinumumSequenceNumberAccumulated = 0xffffffffffffffffULL;
+	MaximumActualSequenceNumberSeen = 0;
+	DesiredFrameIndex = 0;
+	FirstFrame = true;
+	MarkerFrameBuffer = NULL;
+	InitialFrameBuffer = NULL;
+	LastPreManifestDiscardBuffer = false;
 	//
 	// Signal we have started
 	//
+	/* this should really be atomic_inc_return() == expected, with correct
+	 memory barriers, to have a lockless design! */
 	OS_LockMutex(&Lock);
 	Stream->ProcessRunningCount++;
 	if (Stream->ProcessRunningCount == Stream->ExpectedProcessCount)
@@ -131,39 +133,39 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			// Scan the list of accumulated buffers to see if the next display frame is available
 			// (whether because it was already accumulated, or because its display frame index has been updated)
 			//
-			MinumumSequenceNumberAccumulated    = 0xffffffffffffffffULL;
+			MinumumSequenceNumberAccumulated = 0xffffffffffffffffULL;
 			if (AccumulatedBufferTableOccupancy != 0)
 			{
-				LowestIndex                     = INVALID_INDEX;
-				LowestDisplayFrameIndex         = INVALID_INDEX;
+				LowestIndex = INVALID_INDEX;
+				LowestDisplayFrameIndex = INVALID_INDEX;
 				for (i = 0; i < Stream->NumberOfDecodeBuffers; i++)
 					if (AccumulatedBufferTable[i].Buffer != NULL)
 					{
-						MinumumSequenceNumberAccumulated        = min(MinumumSequenceNumberAccumulated, AccumulatedBufferTable[i].SequenceNumber);
-						if ((AccumulatedBufferTable[i].ParsedFrameParameters->DisplayFrameIndex != INVALID_INDEX)       &&
+						MinumumSequenceNumberAccumulated = min(MinumumSequenceNumberAccumulated, AccumulatedBufferTable[i].SequenceNumber);
+						if ((AccumulatedBufferTable[i].ParsedFrameParameters->DisplayFrameIndex != INVALID_INDEX) &&
 								((LowestIndex == INVALID_INDEX) || (AccumulatedBufferTable[i].ParsedFrameParameters->DisplayFrameIndex < LowestDisplayFrameIndex)))
 						{
-							LowestDisplayFrameIndex     = AccumulatedBufferTable[i].ParsedFrameParameters->DisplayFrameIndex;
-							LowestIndex                 = i;
+							LowestDisplayFrameIndex = AccumulatedBufferTable[i].ParsedFrameParameters->DisplayFrameIndex;
+							LowestIndex = i;
 						}
 					}
 				Stream->Manifestor->GetDecodeBufferCount(&PossibleDecodeBuffers);
-				MaxDecodesOutOfOrder        = (Stream->Playback->Direction == PlayForward) ? (PossibleDecodeBuffers >> 1) : (3 * PossibleDecodeBuffers) / 4;
-				MaxDecodesOutOfOrder        = min((PossibleDecodeBuffers - PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS), MaxDecodesOutOfOrder);
+				MaxDecodesOutOfOrder = (Stream->Playback->Direction == PlayForward) ? (PossibleDecodeBuffers >> 1) : (3 * PossibleDecodeBuffers) / 4;
+				MaxDecodesOutOfOrder = min((PossibleDecodeBuffers - PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS), MaxDecodesOutOfOrder);
 				if (Stream->Playback->Direction == PlayForward)
-					MaxDecodesOutOfOrder    = min(PLAYER_LIMIT_ON_OUT_OF_ORDER_DECODES, MaxDecodesOutOfOrder);
+					MaxDecodesOutOfOrder = min(PLAYER_LIMIT_ON_OUT_OF_ORDER_DECODES, MaxDecodesOutOfOrder);
 				if ((LowestIndex != INVALID_INDEX) &&
 						((LowestDisplayFrameIndex == DesiredFrameIndex) ||
 						 (AccumulatedBufferTableOccupancy >= MaxDecodesOutOfOrder) ||
 						 (AccumulatedBufferTable[LowestIndex].ParsedFrameParameters->CollapseHolesInDisplayIndices) ||
 						 (MarkerFrameBuffer != NULL)))
 				{
-					Buffer                                                      = AccumulatedBufferTable[LowestIndex].Buffer;
-					ParsedFrameParameters                                       = AccumulatedBufferTable[LowestIndex].ParsedFrameParameters;
-					SequenceNumber                                              = AccumulatedBufferTable[LowestIndex].SequenceNumber;
-					BufferType                                                  = Stream->DecodeBufferType;
-					AccumulatedBufferTable[LowestIndex].Buffer                  = NULL;
-					AccumulatedBufferTable[LowestIndex].ParsedFrameParameters   = NULL;
+					Buffer = AccumulatedBufferTable[LowestIndex].Buffer;
+					ParsedFrameParameters = AccumulatedBufferTable[LowestIndex].ParsedFrameParameters;
+					SequenceNumber = AccumulatedBufferTable[LowestIndex].SequenceNumber;
+					BufferType = Stream->DecodeBufferType;
+					AccumulatedBufferTable[LowestIndex].Buffer = NULL;
+					AccumulatedBufferTable[LowestIndex].ParsedFrameParameters = NULL;
 					AccumulatedBufferTableOccupancy--;
 					break;
 				}
@@ -178,27 +180,27 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			//
 			if (MarkerFrameBuffer != NULL)
 			{
-				SequenceNumber                          = SequenceNumberStructure->Value;
-				MaximumActualSequenceNumberSeen     = max(SequenceNumber, MaximumActualSequenceNumberSeen);
+				SequenceNumber = SequenceNumberStructure->Value;
+				MaximumActualSequenceNumberSeen = max(SequenceNumber, MaximumActualSequenceNumberSeen);
 				ProcessAccumulatedControlMessages(Stream,
-												  &AccumulatedBeforeControlMessagesCount,
-												  PLAYER_MAX_DTOM_MESSAGES,
-												  Stream->AccumulatedBeforeDtoMControlMessages,
-												  SequenceNumber, Time);
+								  &AccumulatedBeforeControlMessagesCount,
+								  PLAYER_MAX_DTOM_MESSAGES,
+								  Stream->AccumulatedBeforeDtoMControlMessages,
+								  SequenceNumber, Time);
 				ProcessAccumulatedControlMessages(Stream,
-												  &AccumulatedAfterControlMessagesCount,
-												  PLAYER_MAX_DTOM_MESSAGES,
-												  Stream->AccumulatedAfterDtoMControlMessages,
-												  SequenceNumber, Time);
-				Stream->ManifestedBufferRing->Insert((uintptr_t)MarkerFrameBuffer);          // Pass on the marker
-				MarkerFrameBuffer                       = NULL;
-				Stream->DiscardingUntilMarkerFrameDtoM  = false;
+								  &AccumulatedAfterControlMessagesCount,
+								  PLAYER_MAX_DTOM_MESSAGES,
+								  Stream->AccumulatedAfterDtoMControlMessages,
+								  SequenceNumber, Time);
+				Stream->ManifestedBufferRing->Insert((unsigned int)MarkerFrameBuffer); // Pass on the marker
+				MarkerFrameBuffer = NULL;
+				Stream->DiscardingUntilMarkerFrameDtoM = false;
 				continue;
 			}
 			//
 			// Get a new buffer (continue will still perform the scan)
 			//
-			RingStatus  = Stream->DecodedFrameRing->Extract((uintptr_t *)(&Buffer), PLAYER_NEXT_FRAME_EVENT_WAIT);
+			RingStatus = Stream->DecodedFrameRing->Extract((unsigned int *)(&Buffer), PLAYER_NEXT_FRAME_EVENT_WAIT);
 			if ((RingStatus == RingNothingToGet) || (Buffer == NULL) || Stream->Terminating)
 				continue;
 			Buffer->TransferOwnership(IdentifierProcessDecodeToManifest);
@@ -208,54 +210,54 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			//
 			// Obtain a sequence number from the buffer
 			//
-			Status      = Buffer->ObtainAttachedBufferReference(Stream->CodedFrameBufferType, &OriginalCodedFrameBuffer);
+			Status = Buffer->ObtainAttachedBufferReference(Stream->CodedFrameBufferType, &OriginalCodedFrameBuffer);
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Unable to obtain the the original coded frame buffer - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessDecodeToManifest);
 				continue;
 			}
-			Status      = OriginalCodedFrameBuffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
+			Status = OriginalCodedFrameBuffer->ObtainMetaDataReference(MetaDataSequenceNumberType, (void **)(&SequenceNumberStructure));
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Unable to obtain the meta data \"SequenceNumber\" - Implementation error\n");
 				Buffer->DecrementReferenceCount(IdentifierProcessDecodeToManifest);
 				continue;
 			}
-			SequenceNumberStructure->TimeEntryInProcess2        = OS_GetTimeInMicroSeconds();
-			SequenceNumberStructure->DeltaEntryInProcess2       = SequenceNumberStructure->TimeEntryInProcess2 - LastEntryTime;
-			LastEntryTime                                       = SequenceNumberStructure->TimeEntryInProcess2;
-			SequenceNumber                                      = SequenceNumberStructure->Value;
+			SequenceNumberStructure->TimeEntryInProcess2 = OS_GetTimeInMicroSeconds();
+			SequenceNumberStructure->DeltaEntryInProcess2 = SequenceNumberStructure->TimeEntryInProcess2 - LastEntryTime;
+			LastEntryTime = SequenceNumberStructure->TimeEntryInProcess2;
+			SequenceNumber = SequenceNumberStructure->Value;
 			//
 			// Check, is this a marker frame
 			//
 			if (SequenceNumberStructure->MarkerFrame)
 			{
-				MarkerFrameBuffer       = Buffer;
-				continue;                       // allow us to empty the accumulated buffer list
+				MarkerFrameBuffer = Buffer;
+				continue; // allow us to empty the accumulated buffer list
 			}
 			//
 			// If this is the first seen decode buffer do we wish to offer it up as an initial frame
 			//
 			if (FirstFrame)
 			{
-				FirstFrame              = false;
-				SubmitInitialFrame      = PolicyValue(Stream->Playback, Stream, PolicyManifestFirstFrameEarly);
+				FirstFrame = false;
+				SubmitInitialFrame = PolicyValue(Stream->Playback, Stream, PolicyManifestFirstFrameEarly);
 				if (SubmitInitialFrame == PolicyValueApply)
 				{
-					Status          = Stream->Manifestor->InitialFrame(Buffer);
+					Status = Stream->Manifestor->InitialFrame(Buffer);
 					if (Status != ManifestorNoError)
 						report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Failed to apply InitialFrame action.\n");
 					if (InitialFrameBuffer != NULL)
 						Stream->Codec->ReleaseDecodeBuffer(InitialFrameBuffer);
-					InitialFrameBuffer  = Buffer;
+					InitialFrameBuffer = Buffer;
 					InitialFrameBuffer->IncrementReferenceCount();
 				}
 			}
 			//
 			// Do we want to insert this in the table
 			//
-			Status      = Buffer->ObtainMetaDataReference(MetaDataParsedFrameParametersReferenceType, (void **)(&ParsedFrameParameters));
+			Status = Buffer->ObtainMetaDataReference(MetaDataParsedFrameParametersReferenceType, (void **)(&ParsedFrameParameters));
 			if (Status != PlayerNoError)
 			{
 				report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Unable to obtain the meta data \"ParsedFrameParametersReference\" - Implementation error\n");
@@ -275,16 +277,16 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			for (i = 0; i < Stream->NumberOfDecodeBuffers; i++)
 				if (AccumulatedBufferTable[i].Buffer == NULL)
 				{
-					AccumulatedBufferTable[i].Buffer                    = Buffer;
-					AccumulatedBufferTable[i].SequenceNumber            = SequenceNumber;
-					AccumulatedBufferTable[i].ParsedFrameParameters     = ParsedFrameParameters;
+					AccumulatedBufferTable[i].Buffer = Buffer;
+					AccumulatedBufferTable[i].SequenceNumber = SequenceNumber;
+					AccumulatedBufferTable[i].ParsedFrameParameters = ParsedFrameParameters;
 					AccumulatedBufferTableOccupancy++;
 					break;
 				}
 			if (i >= Stream->NumberOfDecodeBuffers)
 			{
 				report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Unable to insert buffer in table - Implementation error.\n");
-				break;  // Assume it is immediate, as an implementation error this is pretty nasty
+				break; // Assume it is immediate, as an implementation error this is pretty nasty
 			}
 		}
 		if (Stream->Terminating)
@@ -309,7 +311,7 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			// Report any re-ordering problems
 			//
 			if (ParsedFrameParameters->CollapseHolesInDisplayIndices && (ParsedFrameParameters->DisplayFrameIndex > DesiredFrameIndex))
-				DesiredFrameIndex   = ParsedFrameParameters->DisplayFrameIndex;
+				DesiredFrameIndex = ParsedFrameParameters->DisplayFrameIndex;
 			if (ParsedFrameParameters->DisplayFrameIndex > DesiredFrameIndex)
 				report(severity_error, "Player_Generic_c::ProcessDecodeToManifest - Hole in display frame indices (Got %d Expected %d).\n", ParsedFrameParameters->DisplayFrameIndex, DesiredFrameIndex);
 			if (ParsedFrameParameters->DisplayFrameIndex < DesiredFrameIndex)
@@ -323,17 +325,17 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			// below will re-wossname the sequence numbers to 0 1 1 3 causing the
 			// signal to occur at the correct point.
 			//
-			MaximumActualSequenceNumberSeen     = max(SequenceNumber, MaximumActualSequenceNumberSeen);
-			SequenceNumber                      = min(MaximumActualSequenceNumberSeen, MinumumSequenceNumberAccumulated);
-			Time                                = ParsedFrameParameters->NativePlaybackTime;
+			MaximumActualSequenceNumberSeen = max(SequenceNumber, MaximumActualSequenceNumberSeen);
+			SequenceNumber = min(MaximumActualSequenceNumberSeen, MinumumSequenceNumberAccumulated);
+			Time = ParsedFrameParameters->NativePlaybackTime;
 			//
 			// Process any outstanding control messages to be applied before this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-											  &AccumulatedBeforeControlMessagesCount,
-											  PLAYER_MAX_DTOM_MESSAGES,
-											  Stream->AccumulatedBeforeDtoMControlMessages,
-											  SequenceNumber, Time);
+							  &AccumulatedBeforeControlMessagesCount,
+							  PLAYER_MAX_DTOM_MESSAGES,
+							  Stream->AccumulatedBeforeDtoMControlMessages,
+							  SequenceNumber, Time);
 			//
 			// If we are paused, then we loop waiting for something to happen
 			//
@@ -344,12 +346,12 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 					OS_WaitForEvent(&Stream->SingleStepMayHaveHappened, PLAYER_NEXT_FRAME_EVENT_WAIT);
 					OS_ResetEvent(&Stream->SingleStepMayHaveHappened);
 				}
-				Stream->Step    = false;
+				Stream->Step = false;
 			}
 			//
 			// If we are not discarding everything, then proceed to process the buffer
 			//
-			DiscardBuffer       = Stream->DiscardingUntilMarkerFrameDtoM;
+			DiscardBuffer = Stream->DiscardingUntilMarkerFrameDtoM;
 			//
 			// Handle output timing functions, await entry into the decode window,
 			// Then check for frame drop (whether due to trick mode, or because
@@ -361,7 +363,7 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			//
 			if (!DiscardBuffer)
 			{
-				Status  = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeOutputTiming);
+				Status = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeOutputTiming);
 				if (Status == OutputTimerNoError)
 				{
 					//
@@ -370,18 +372,18 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 					while (!Stream->Terminating && Stream->ReTimeQueuedFrames)
 						OS_SleepMilliSeconds(PLAYER_RETIMING_WAIT);
 					Stream->OutputTimer->GenerateFrameTiming(Buffer);
-					Status  = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeManifestation);
+					Status = Stream->OutputTimer->TestForFrameDrop(Buffer, OutputTimerBeforeManifestation);
 				}
 				if (Stream->DiscardingUntilMarkerFrameDtoM ||
 						Stream->Terminating ||
 						(Status != OutputTimerNoError))
-					DiscardBuffer       = true;
+					DiscardBuffer = true;
 				if ((DiscardBuffer != LastPreManifestDiscardBuffer) &&
-						(Status        == OutputTimerUntimedFrame))
+						(Status == OutputTimerUntimedFrame))
 				{
 					report(severity_error, "Discarding untimed frames.\n");
 				}
-				LastPreManifestDiscardBuffer    = DiscardBuffer;
+				LastPreManifestDiscardBuffer = DiscardBuffer;
 #if 0
 				// Nick debug data
 				if (Status != OutputTimerNoError)
@@ -396,31 +398,31 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 			// give away the buffer, because ParsedFrameParameters
 			// can become invalid after either of the calls below.
 			//
-			DesiredFrameIndex   = ParsedFrameParameters->DisplayFrameIndex + 1;
+			DesiredFrameIndex = ParsedFrameParameters->DisplayFrameIndex + 1;
 			if (!DiscardBuffer)
 			{
-				SequenceNumberStructure->TimePassToManifestor   = OS_GetTimeInMicroSeconds();
+				SequenceNumberStructure->TimePassToManifestor = OS_GetTimeInMicroSeconds();
 #if 0
 				{
-					static unsigned long long         LastOutputTime = 0;
-					static unsigned long long         LastOutputTime1 = 0;
-					VideoOutputTiming_t              *OutputTiming;
-					unsigned int                      C0, C1, C2, C3;
+					static unsigned long long LastOutputTime = 0;
+					static unsigned long long LastOutputTime1 = 0;
+					VideoOutputTiming_t *OutputTiming;
+					unsigned int C0, C1, C2, C3;
 					Buffer->ObtainMetaDataReference(MetaDataVideoOutputTimingType, (void **)&OutputTiming);
 					Stream->CodedFrameBufferPool->GetPoolUsage(&C0, &C1, NULL, NULL, NULL);
 					Stream->DecodeBufferPool->GetPoolUsage(&C2, &C3, NULL, NULL, NULL);
 					report(severity_info, "Ord %3d (R = %d, K = %d) %d, %6lld %6lld %6lld %6lld (%d/%d %d/%d) (%d %d) %6lld %6lld\n",
-						   ParsedFrameParameters->DecodeFrameIndex, ParsedFrameParameters->ReferenceFrame, ParsedFrameParameters->KeyFrame, ParsedFrameParameters->DisplayFrameIndex,
-						   OutputTiming->SystemPlaybackTime - SequenceNumberStructure->TimePassToManifestor,
-						   SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess2,
-						   SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess1,
-						   SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess0,
-						   C0, C1, C2, C3,
-						   Stream->FramesToManifestorCount, Stream->FramesFromManifestorCount,
-						   OutputTiming->SystemPlaybackTime - LastOutputTime, ParsedFrameParameters->NormalizedPlaybackTime - LastOutputTime1);
+					       ParsedFrameParameters->DecodeFrameIndex, ParsedFrameParameters->ReferenceFrame, ParsedFrameParameters->KeyFrame, ParsedFrameParameters->DisplayFrameIndex,
+					       OutputTiming->SystemPlaybackTime - SequenceNumberStructure->TimePassToManifestor,
+					       SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess2,
+					       SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess1,
+					       SequenceNumberStructure->TimePassToManifestor - SequenceNumberStructure->TimeEntryInProcess0,
+					       C0, C1, C2, C3,
+					       Stream->FramesToManifestorCount, Stream->FramesFromManifestorCount,
+					       OutputTiming->SystemPlaybackTime - LastOutputTime, ParsedFrameParameters->NormalizedPlaybackTime - LastOutputTime1);
 //Buffer->TransferOwnership( IdentifierProcessDecodeToManifest, IdentifierManifestor );
 //if( (OutputTiming->SystemPlaybackTime - SequenceNumberStructure->TimePassToManifestor) > 0xffffffffULL )
-//    Stream->DecodeBufferPool->Dump( DumpAll );
+// Stream->DecodeBufferPool->Dump( DumpAll );
 					LastOutputTime = OutputTiming->SystemPlaybackTime;
 					LastOutputTime1 = ParsedFrameParameters->NormalizedPlaybackTime;
 				}
@@ -432,29 +434,29 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 				}
 #endif
 				Stream->FramesToManifestorCount++;
-				Status  = Stream->Manifestor->QueueDecodeBuffer(Buffer);
+				Status = Stream->Manifestor->QueueDecodeBuffer(Buffer);
 				if (Status != ManifestorNoError)
-					DiscardBuffer   = true;
+					DiscardBuffer = true;
 				if (InitialFrameBuffer != NULL)
 				{
 					Stream->Codec->ReleaseDecodeBuffer(InitialFrameBuffer);
-					InitialFrameBuffer  = NULL;
+					InitialFrameBuffer = NULL;
 				}
 			}
 			if (DiscardBuffer)
 			{
 				Stream->Codec->ReleaseDecodeBuffer(Buffer);
 				if (Stream->Playback->Speed == 0)
-					Stream->Step    = true;
+					Stream->Step = true;
 			}
 			//
 			// Process any outstanding control messages to be applied after this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-											  &AccumulatedAfterControlMessagesCount,
-											  PLAYER_MAX_DTOM_MESSAGES,
-											  Stream->AccumulatedAfterDtoMControlMessages,
-											  SequenceNumber, Time);
+							  &AccumulatedAfterControlMessagesCount,
+							  PLAYER_MAX_DTOM_MESSAGES,
+							  Stream->AccumulatedAfterDtoMControlMessages,
+							  SequenceNumber, Time);
 		}
 		//
 		// Deal with a player control structure
@@ -462,13 +464,13 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 		else if (BufferType == BufferPlayerControlStructureType)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
-			ProcessNow  = (ControlStructure->SequenceType == SequenceTypeImmediate);
+			ProcessNow = (ControlStructure->SequenceType == SequenceTypeImmediate);
 			if (!ProcessNow)
 			{
-				SequenceCheck   = (ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
-								  (ControlStructure->SequenceType == SequenceTypeAfterSequenceNumber);
-				ProcessNow      = SequenceCheck ? ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen)) :
-								  ((Time           != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= Time));
+				SequenceCheck = (ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
+						(ControlStructure->SequenceType == SequenceTypeAfterSequenceNumber);
+				ProcessNow = SequenceCheck ? ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen)) :
+					     ((Time != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= Time));
 			}
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
@@ -477,13 +479,13 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 				if ((ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
 						(ControlStructure->SequenceType == SequenceTypeBeforePlaybackTime))
 				{
-					Count       = &AccumulatedBeforeControlMessagesCount;
-					Table       = Stream->AccumulatedBeforeDtoMControlMessages;
+					Count = &AccumulatedBeforeControlMessagesCount;
+					Table = Stream->AccumulatedBeforeDtoMControlMessages;
 				}
 				else
 				{
-					Count       = &AccumulatedAfterControlMessagesCount;
-					Table       = Stream->AccumulatedAfterDtoMControlMessages;
+					Count = &AccumulatedAfterControlMessagesCount;
+					Table = Stream->AccumulatedAfterDtoMControlMessages;
 				}
 				AccumulateControlMessage(Buffer, ControlStructure, Count, PLAYER_MAX_DTOM_MESSAGES, Table);
 			}
@@ -500,7 +502,7 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 	if (InitialFrameBuffer != NULL)
 	{
 		Stream->Codec->ReleaseDecodeBuffer(InitialFrameBuffer);
-		InitialFrameBuffer  = NULL;
+		InitialFrameBuffer = NULL;
 	}
 	if (AccumulatedBufferTableOccupancy != 0)
 		for (i = 0; i < Stream->NumberOfDecodeBuffers; i++)
@@ -511,6 +513,8 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 	//
 	// Signal we have terminated
 	//
+	/* this should really be atomic_dec_and_test(), with correct memory
+	 barriers, to have a lockless design! */
 	OS_LockMutex(&Lock);
 	Stream->ProcessRunningCount--;
 	if (Stream->ProcessRunningCount == 0)
@@ -520,14 +524,14 @@ void   Player_Generic_c::ProcessDecodeToManifest(PlayerStream_t            Strea
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Function to check if a frame index is non-decoded
+// Function to check if a frame index is non-decoded
 //
 
-bool   Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t                  Stream,
-		unsigned int                    DisplayFrameIndex)
+bool Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t Stream,
+					       unsigned int DisplayFrameIndex)
 {
-	unsigned int    i;
-	bool            Return;
+	unsigned int i;
+	bool Return;
 	//
 	// Check for this index in the table (if the table is non-empty)
 	//
@@ -545,11 +549,11 @@ bool   Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t                 
 				{
 					if (Stream->DiscardingUntilMarkerFrameDtoM ||
 							Stream->NonDecodedBuffers[i].ParsedFrameParameters->CollapseHolesInDisplayIndices)
-						Stream->DisplayIndicesCollapse          = max(Stream->DisplayIndicesCollapse, Stream->NonDecodedBuffers[i].ParsedFrameParameters->DisplayFrameIndex);
+						Stream->DisplayIndicesCollapse = max(Stream->DisplayIndicesCollapse, Stream->NonDecodedBuffers[i].ParsedFrameParameters->DisplayFrameIndex);
 					// NOTE due to union, ParsedFrameParameters is invalid after this line, which is ok as we free the buffer in the next line anyway
-					Stream->NonDecodedBuffers[i].DisplayFrameIndex      = Stream->NonDecodedBuffers[i].ParsedFrameParameters->DisplayFrameIndex;
+					Stream->NonDecodedBuffers[i].DisplayFrameIndex = Stream->NonDecodedBuffers[i].ParsedFrameParameters->DisplayFrameIndex;
 					Stream->NonDecodedBuffers[i].Buffer->DecrementReferenceCount(IdentifierNonDecodedFrameList);
-					Stream->NonDecodedBuffers[i].ReleasedBuffer         = true;
+					Stream->NonDecodedBuffers[i].ReleasedBuffer = true;
 				}
 				else
 				{
@@ -561,8 +565,8 @@ bool   Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t                 
 			//
 			if (Stream->NonDecodedBuffers[i].DisplayFrameIndex <= DisplayFrameIndex)
 			{
-				Return                                  = (Stream->NonDecodedBuffers[i].DisplayFrameIndex == DisplayFrameIndex);
-				Stream->NonDecodedBuffers[i].Buffer     = NULL;
+				Return = (Stream->NonDecodedBuffers[i].DisplayFrameIndex == DisplayFrameIndex);
+				Stream->NonDecodedBuffers[i].Buffer = NULL;
 				Stream->RemovalsFromNonDecodedBuffers++;
 				if (Return)
 					return true;
@@ -571,7 +575,7 @@ bool   Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t                 
 //
 #if 0
 	if ((Stream->InsertionsIntoNonDecodedBuffers - Stream->RemovalsFromNonDecodedBuffers) > 16)
-		report(severity_info, "Eeek %d\n" , (Stream->InsertionsIntoNonDecodedBuffers - Stream->RemovalsFromNonDecodedBuffers));
+		report(severity_info, "Eeek %d\n", (Stream->InsertionsIntoNonDecodedBuffers - Stream->RemovalsFromNonDecodedBuffers));
 #endif
 //
 	return (DisplayFrameIndex < Stream->DisplayIndicesCollapse);
@@ -579,10 +583,10 @@ bool   Player_Generic_c::CheckForNonDecodedFrame(PlayerStream_t                 
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Function to flush any recorded non decoded frames
+// Function to flush any recorded non decoded frames
 //
 
-void   Player_Generic_c::FlushNonDecodedFrameList(PlayerStream_t                 Stream)
+void Player_Generic_c::FlushNonDecodedFrameList(PlayerStream_t Stream)
 {
 	unsigned int i;
 //
@@ -592,7 +596,7 @@ void   Player_Generic_c::FlushNonDecodedFrameList(PlayerStream_t                
 		if ((Stream->NonDecodedBuffers[i].Buffer != NULL) && !Stream->NonDecodedBuffers[i].ReleasedBuffer)
 		{
 			Stream->NonDecodedBuffers[i].Buffer->DecrementReferenceCount(IdentifierNonDecodedFrameList);
-			Stream->NonDecodedBuffers[i].Buffer                 = NULL;
+			Stream->NonDecodedBuffers[i].Buffer = NULL;
 			Stream->RemovalsFromNonDecodedBuffers++;
 		}
 }

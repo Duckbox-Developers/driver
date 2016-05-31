@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_video_divx.h
-Author :           Chris
+Author : Chris
 
 Definition of the stream specific codec implementation for Divx video in player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Jun-07   Created                                         Chris
+Date Modification Name
+---- ------------ --------
+11-Jun-07 Created Chris
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "codec_mme_video.h"
 #include "mpeg4.h"
@@ -49,7 +49,7 @@ Date        Modification                                    Name
 //
 
 #define Divx_TransformerCapability_t MME_DivXVideoDecodeCapabilityParams_t
-#define Divx_InitTransformerParam_t  MME_DivXVideoDecodeInitParams_t
+#define Divx_InitTransformerParam_t MME_DivXVideoDecodeInitParams_t
 // /////////////////////////////////////////////////////////////////////////
 //
 // The class definition
@@ -61,17 +61,17 @@ class Codec_MmeVideoDivxHd_c : public Codec_MmeVideo_c
 	protected:
 
 		// Data
-		MME_DivXHD_Capability_t             DivxTransformCapability;
-		MME_DivXHDVideoDecodeInitParams_t   DivxInitializationParameters;
+		MME_DivXHD_Capability_t DivxTransformCapability;
+		MME_DivXHDVideoDecodeInitParams_t DivxInitializationParameters;
 
-		MME_DivXHDSetGlobalParamSequence_t  DivXGlobalParamSequence;
+		MME_DivXHDSetGlobalParamSequence_t DivXGlobalParamSequence;
 
-		BufferDataDescriptor_t*             DivxMbStructDescriptor;
-		BufferType_t                        DivxMbStructType;
-		BufferPool_t                        DivxMbStructPool;
+		BufferDataDescriptor_t *DivxMbStructDescriptor;
+		BufferType_t DivxMbStructType;
+		BufferPool_t DivxMbStructPool;
 
-		MME_DivXHDVideoDecodeReturnParams_t   ReturnParams;
-		MME_DivXHDVideoDecodeParams_t       DecodeParams;
+		MME_DivXHDVideoDecodeReturnParams_t ReturnParams;
+		MME_DivXHDVideoDecodeParams_t DecodeParams;
 
 		unsigned int StreamWidth;
 		unsigned int StreamHeight;
@@ -87,19 +87,19 @@ class Codec_MmeVideoDivxHd_c : public Codec_MmeVideo_c
 	protected:
 
 		// Functions
-		CodecStatus_t   Reset(void);
-		CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t Reset(void);
+		CodecStatus_t HandleCapabilities(void);
 
-		CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
-		CodecStatus_t   FillOutTransformerInitializationParameters(void);
-		CodecStatus_t   FillOutSetStreamParametersCommand(void);
-		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring);
+		CodecStatus_t FillOutTransformerInitializationParameters(void);
+		CodecStatus_t FillOutSetStreamParametersCommand(void);
+		CodecStatus_t FillOutDecodeCommand(void);
 
-		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
 
-		CodecStatus_t   DumpSetStreamParameters(void *Parameters);
-		CodecStatus_t   DumpDecodeParameters(void *Parameters);
+		CodecStatus_t DumpSetStreamParameters(void *Parameters);
+		CodecStatus_t DumpDecodeParameters(void *Parameters);
 
-		CodecStatus_t   InitializeMMETransformer(void);
+		CodecStatus_t InitializeMMETransformer(void);
 };
 #endif

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_audio_pcm.cpp
-Author :           Julian
+Author : Julian
 
 Implementation of the pcm audio codec mme interface
 
-Date            Modification            Name
-----            ------------            --------
-12-Aug-09       Created                 Julian
+Date Modification Name
+---- ------------ --------
+12-Aug-09 Created Julian
 
 ************************************************************************/
 
@@ -38,29 +38,29 @@ Date            Modification            Name
 #include "ACC_Transformers/Audio_DecoderTypes.h"
 
 /* Defines the Maximum Scatter Pages expected in Real Audio in one Databuffer of a Transform Command */
-#define PCM_NB_SCATTERPAGES                                            (4) // 4 * 256 may be used
+#define PCM_NB_SCATTERPAGES (4) // 4 * 256 may be used
 
-#define PCM_MME_TRANSFORMER_NAME        "PCM_TRANSCODER"
+#define PCM_MME_TRANSFORMER_NAME "PCM_TRANSCODER"
 
-#define PCM_LITTLE_ENDIAN               0
-#define PCM_BIG_ENDIAN                  1
+#define PCM_LITTLE_ENDIAN 0
+#define PCM_BIG_ENDIAN 1
 
 typedef struct
 {
-	enum eAccDecoderId   DecoderId;
-	unsigned int         StructSize;
-	unsigned int         ChannelCount;
-	unsigned int         SampleRate;
-	unsigned int         BytesPerSecond;
-	unsigned int         BlockAlign;
-	unsigned int         BitsPerSample;
-	unsigned int         DataEndianness;
+	enum eAccDecoderId DecoderId;
+	unsigned int StructSize;
+	unsigned int ChannelCount;
+	unsigned int SampleRate;
+	unsigned int BytesPerSecond;
+	unsigned int BlockAlign;
+	unsigned int BitsPerSample;
+	unsigned int DataEndianness;
 } MME_LxPcmAudioConfig_t;
 
 typedef struct
 {
-	unsigned int                       StructSize; //!< Size of this structure
-	MME_LxPcmAudioConfig_t             PcmAudioConfig;  //!< Private Config of Pcm transcoder
+	unsigned int StructSize; //!< Size of this structure
+	MME_LxPcmAudioConfig_t PcmAudioConfig; //!< Private Config of Pcm transcoder
 } MME_LxPcmAudioTransformerGlobalParams_t;
 
 #endif /* _PCMAUDIO_DECODERTYPES_H_ */

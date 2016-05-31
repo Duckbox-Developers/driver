@@ -2,14 +2,14 @@
 COPYRIGHT (C) STMicroelectronics 2003
 
 Source file name : ring_unprotected.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Dec-03   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+11-Dec-03 Created Nick
 
 ************************************************************************/
 
@@ -20,10 +20,10 @@ Date        Modification                                    Name
 
 RingUnprotected_c::RingUnprotected_c(unsigned int MaxEntries)
 {
-	Limit       = MaxEntries + 1;
+	Limit = MaxEntries + 1;
 	NextExtract = 0;
-	NextInsert  = 0;
-	Storage     = new uintptr_t[Limit];
+	NextInsert = 0;
+	Storage = new unsigned int[Limit];
 	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
@@ -33,23 +33,23 @@ RingUnprotected_c::RingUnprotected_c(unsigned int MaxEntries)
 RingUnprotected_c::~RingUnprotected_c(void)
 {
 	if (Storage != NULL)
-		delete [] Storage;
+		delete Storage;
 }
 
 // ------------------------------------------------------------------------
 // Insert function
 
-RingStatus_t   RingUnprotected_c::Insert(uintptr_t   Value)
+RingStatus_t RingUnprotected_c::Insert(unsigned int Value)
 {
 	unsigned int OldNextInsert;
-	OldNextInsert       = NextInsert;
+	OldNextInsert = NextInsert;
 	Storage[NextInsert] = Value;
 	NextInsert++;
 	if (NextInsert == Limit)
 		NextInsert = 0;
 	if (NextInsert == NextExtract)
 	{
-		NextInsert      = OldNextInsert;
+		NextInsert = OldNextInsert;
 		return RingTooManyEntries;
 	}
 	return RingNoError;
@@ -58,7 +58,7 @@ RingStatus_t   RingUnprotected_c::Insert(uintptr_t   Value)
 // ------------------------------------------------------------------------
 // Extract function
 
-RingStatus_t   RingUnprotected_c::Extract(uintptr_t *Value)
+RingStatus_t RingUnprotected_c::Extract(unsigned int *Value)
 {
 	if (NextExtract == NextInsert)
 		return RingNothingToGet;
@@ -72,17 +72,17 @@ RingStatus_t   RingUnprotected_c::Extract(uintptr_t *Value)
 // ------------------------------------------------------------------------
 // Flush function
 
-RingStatus_t   RingUnprotected_c::Flush(void)
+RingStatus_t RingUnprotected_c::Flush(void)
 {
 	NextExtract = 0;
-	NextInsert  = 0;
+	NextInsert = 0;
 	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
 // Non-empty function
 
-bool   RingUnprotected_c::NonEmpty(void)
+bool RingUnprotected_c::NonEmpty(void)
 {
 	return (NextExtract != NextInsert);
 }

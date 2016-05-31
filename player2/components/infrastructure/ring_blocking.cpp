@@ -2,14 +2,14 @@
 COPYRIGHT (C) STMicroelectronics 2004
 
 Source file name : ring_blocking.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-23-Sep-04   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+23-Sep-04 Created Nick
 
 ************************************************************************/
 
@@ -21,10 +21,10 @@ Date        Modification                                    Name
 RingBlocking_c::RingBlocking_c(unsigned int MaxEntries)
 {
 	OS_InitializeEvent(&Signal);
-	Limit       = MaxEntries + 1;
+	Limit = MaxEntries + 1;
 	NextExtract = 0;
-	NextInsert  = 0;
-	Storage     = new uintptr_t[Limit];
+	NextInsert = 0;
+	Storage = new unsigned int[Limit];
 	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
@@ -36,23 +36,23 @@ RingBlocking_c::~RingBlocking_c(void)
 	OS_SetEvent(&Signal);
 	OS_TerminateEvent(&Signal);
 	if (Storage != NULL)
-		delete [] Storage;
+		delete Storage;
 }
 
 // ------------------------------------------------------------------------
 // Insert function
 
-RingStatus_t   RingBlocking_c::Insert(uintptr_t         Value)
+RingStatus_t RingBlocking_c::Insert(unsigned int Value)
 {
 	unsigned int OldNextInsert;
-	OldNextInsert       = NextInsert;
+	OldNextInsert = NextInsert;
 	Storage[NextInsert] = Value;
 	NextInsert++;
 	if (NextInsert == Limit)
 		NextInsert = 0;
 	if (NextInsert == NextExtract)
 	{
-		NextInsert      = OldNextInsert;
+		NextInsert = OldNextInsert;
 		return RingTooManyEntries;
 	}
 	OS_SetEvent(&Signal);
@@ -62,7 +62,7 @@ RingStatus_t   RingBlocking_c::Insert(uintptr_t         Value)
 // ------------------------------------------------------------------------
 // Extract function
 
-RingStatus_t   RingBlocking_c::Extract(uintptr_t       *Value)
+RingStatus_t RingBlocking_c::Extract(unsigned int *Value)
 {
 	while (true)
 	{
@@ -83,17 +83,17 @@ RingStatus_t   RingBlocking_c::Extract(uintptr_t       *Value)
 // ------------------------------------------------------------------------
 // Flush function
 
-RingStatus_t   RingBlocking_c::Flush(void)
+RingStatus_t RingBlocking_c::Flush(void)
 {
 	NextExtract = 0;
-	NextInsert  = 0;
+	NextInsert = 0;
 	return RingNoError;
 }
 
 // ------------------------------------------------------------------------
 // Non-empty function
 
-bool   RingBlocking_c::NonEmpty(void)
+bool RingBlocking_c::NonEmpty(void)
 {
 	return (NextExtract != NextInsert);
 }

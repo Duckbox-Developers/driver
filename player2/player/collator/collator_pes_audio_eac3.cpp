@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_eac3.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-22-May-07   Created (from collator_pes_audio_ac3.cpp)      Sylvain
+Date Modification Name
+---- ------------ --------
+22-May-07 Created (from collator_pes_audio_ac3.cpp) Sylvain
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_audio_eac3.h"
 #include "frame_parser_audio_eac3.h"
@@ -49,13 +49,14 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define EXTENDED_STREAM_PES_START_CODE          0xfd
-#define EXTENDED_STREAM_PES_FULL_START_CODE     0x000001fd
+#define EXTENDED_STREAM_PES_START_CODE 0xfd
+#define EXTENDED_STREAM_PES_FULL_START_CODE 0x000001fd
 
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
 //
+
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Initialize the class by resetting it.
@@ -88,8 +89,8 @@ CollatorStatus_t Collator_PesAudioEAc3_c::FindNextSyncWord(int *CodeOffset)
 	unsigned char eac3Header[EAC3_BYTES_NEEDED];
 	EAc3AudioParsedFrameHeader_t ParsedFrameHeader;
 	int RemainingInPotential = PotentialFrameHeaderLength;
-	unsigned char * PotentialFramePtr = PotentialFrameHeader;
-	unsigned char * ElementaryPtr;
+	unsigned char *PotentialFramePtr = PotentialFrameHeader;
+	unsigned char *ElementaryPtr;
 	int Offset;
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - EAC3_BYTES_NEEDED); i++)
@@ -97,7 +98,7 @@ CollatorStatus_t Collator_PesAudioEAc3_c::FindNextSyncWord(int *CodeOffset)
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least 65 bytes to get the stream type...*/
-			int size =  min(RemainingInPotential, EAC3_BYTES_NEEDED);
+			int size = min(RemainingInPotential, EAC3_BYTES_NEEDED);
 			memcpy(&eac3Header[0], PotentialFramePtr, size);
 			memcpy(&eac3Header[size], &RemainingElementaryData[0], EAC3_BYTES_NEEDED - size);
 			ElementaryPtr = eac3Header;
@@ -107,8 +108,8 @@ CollatorStatus_t Collator_PesAudioEAc3_c::FindNextSyncWord(int *CodeOffset)
 			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
 		}
 		FrameParserStatus_t FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader(ElementaryPtr,
-									   &ParsedFrameHeader,
-									   true);
+											       &ParsedFrameHeader,
+											       true);
 		if (FPStatus == FrameParserNoError)
 		{
 			// the condition for synchronization is the following:
@@ -146,9 +147,10 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength(un
 	FrameParserStatus_t FPStatus;
 	CollatorStatus_t Status = CollatorNoError; // assume success unless told otherwise
 	EAc3AudioParsedFrameHeader_t ParsedFrameHeader;
+	//
 	FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader(StoredFrameHeader,
-			   &ParsedFrameHeader,
-			   true);
+								   &ParsedFrameHeader,
+								   false);
 	if (FPStatus == FrameParserNoError)
 	{
 		*FrameLength = ParsedFrameHeader.Length;
@@ -185,7 +187,7 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength(un
 			else
 			{
 				COLLATOR_ERROR("Accumulated too many samples (%d of %d)\n",
-							   NbAccumulatedSamples, EAC3_NBSAMPLES_NEEDED);
+					       NbAccumulatedSamples, EAC3_NBSAMPLES_NEEDED);
 				Status = CollatorError;
 			}
 		}
@@ -209,7 +211,7 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength(un
 ///
 /// \return void
 ///
-void  Collator_PesAudioEAc3_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioEAc3_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* by default the optional private data area length will be set to zero... */
 	/* otherwise for DVD the private data area is 4 bytes long */
@@ -276,16 +278,16 @@ CollatorStatus_t Collator_PesAudioEAc3_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = EAC3_BYTES_NEEDED;
-	Configuration.StreamIdentifierMask       = 0xff;
-	Configuration.StreamIdentifierCode       = 0xbd; // from Rome...
-	Configuration.BlockTerminateMask         = 0xff;         // Picture
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = 0xbd - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = 0 /* 4 */;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask = 0xff;
+	Configuration.StreamIdentifierCode = 0xbd; // from Rome...
+	Configuration.BlockTerminateMask = 0xff; // Picture
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = 0xbd - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = 0 /* 4 */;
+	Configuration.DeferredTerminateFlag = false;
 	ProgrammeId = 0;
 	NbAccumulatedSamples = 0;
 	// by default do only 5.1...

@@ -10,16 +10,15 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include <linux/version.h>
-#include <linux/autoconf.h>
 #include <linux/init.h>
 #include <linux/smp_lock.h>
 #include <linux/slab.h>
@@ -52,31 +51,34 @@ typedef struct snd_pcm_sw_params snd_pcm_sw_params_t;
 typedef struct snd_pcm_hw_params snd_pcm_hw_params_t;
 
 /*
-    In STM2.4 all these helper functions were moved to the OSS lib, which has lots of dependencies and therefore
-    needs lots of space. However, since we don't need all that stuff i copied the relevant functions into this file.
+ In STM2.4 all these helper functions were moved to the OSS lib, which has lots of dependencies and therefore
+ needs lots of space. However, since we don't need all that stuff i copied the relevant functions into this file.
 */
 #if defined(__TDT__) && (defined(CONFIG_SND_PCM_OSS) || (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30)))
 extern int _snd_pcm_hw_param_setinteger(struct snd_pcm_hw_params *params,
-										snd_pcm_hw_param_t var);
+					snd_pcm_hw_param_t var);
 
 extern int _snd_pcm_hw_param_min(struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int val,
-								 int dir);
+				 snd_pcm_hw_param_t var, unsigned int val,
+				 int dir);
 extern int snd_pcm_hw_param_mask(struct snd_pcm_substream *pcm,
-								 struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var,
-								 const struct snd_mask *val);
+				 struct snd_pcm_hw_params *params,
+				 snd_pcm_hw_param_t var,
+				 const struct snd_mask *val);
 extern int snd_pcm_hw_param_set(struct snd_pcm_substream *pcm,
-								struct snd_pcm_hw_params *params,
-								snd_pcm_hw_param_t var, unsigned int val,
-								int dir);
+				struct snd_pcm_hw_params *params,
+				snd_pcm_hw_param_t var, unsigned int val,
+				int dir);
 
 extern int snd_pcm_hw_param_near(struct snd_pcm_substream *pcm,
-								 struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int best,
-								 int *dir);
+				 struct snd_pcm_hw_params *params,
+				 snd_pcm_hw_param_t var, unsigned int best,
+				 int *dir);
 #else
-/* helper functions to process hw_params */
+
+/*
+ * helper functions to process hw_params
+ */
 static int snd_interval_refine_min(struct snd_interval *i, unsigned int min, int openmin)
 {
 	int changed = 0;
@@ -156,7 +158,8 @@ static int snd_interval_refine_set(struct snd_interval *i, unsigned int val)
  * Return the minimum value for field PAR.
  */
 static unsigned int
-snd_pcm_hw_param_value_min(const struct snd_pcm_hw_params *params, snd_pcm_hw_param_t var, int *dir)
+snd_pcm_hw_param_value_min(const struct snd_pcm_hw_params *params,
+			   snd_pcm_hw_param_t var, int *dir)
 {
 	if (hw_is_mask(var))
 	{
@@ -183,7 +186,8 @@ snd_pcm_hw_param_value_min(const struct snd_pcm_hw_params *params, snd_pcm_hw_pa
  * Return the maximum value for field PAR.
  */
 static unsigned int
-snd_pcm_hw_param_value_max(const struct snd_pcm_hw_params *params, snd_pcm_hw_param_t var, int *dir)
+snd_pcm_hw_param_value_max(const struct snd_pcm_hw_params *params,
+			   snd_pcm_hw_param_t var, int *dir)
 {
 	if (hw_is_mask(var))
 	{
@@ -202,8 +206,8 @@ snd_pcm_hw_param_value_max(const struct snd_pcm_hw_params *params, snd_pcm_hw_pa
 }
 
 static int _snd_pcm_hw_param_mask(struct snd_pcm_hw_params *params,
-								  snd_pcm_hw_param_t var,
-								  const struct snd_mask *val)
+				  snd_pcm_hw_param_t var,
+				  const struct snd_mask *val)
 {
 	int changed;
 	changed = snd_mask_refine(hw_param_mask(params, var), val);
@@ -216,9 +220,9 @@ static int _snd_pcm_hw_param_mask(struct snd_pcm_hw_params *params,
 }
 
 static int snd_pcm_hw_param_mask(struct snd_pcm_substream *pcm,
-								 struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var,
-								 const struct snd_mask *val)
+				 struct snd_pcm_hw_params *params,
+				 snd_pcm_hw_param_t var,
+				 const struct snd_mask *val)
 {
 	int changed = _snd_pcm_hw_param_mask(params, var, val);
 	if (changed < 0)
@@ -235,8 +239,8 @@ static int snd_pcm_hw_param_mask(struct snd_pcm_substream *pcm,
 EXPORT_SYMBOL_GPL(snd_pcm_hw_param_mask);
 
 static int _snd_pcm_hw_param_min(struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int val,
-								 int dir)
+				 snd_pcm_hw_param_t var, unsigned int val,
+				 int dir)
 {
 	int changed;
 	int open = 0;
@@ -256,9 +260,11 @@ static int _snd_pcm_hw_param_min(struct snd_pcm_hw_params *params,
 		}
 	}
 	if (hw_is_mask(var))
-		changed = snd_mask_refine_min(hw_param_mask(params, var), val + !!open);
+		changed = snd_mask_refine_min(hw_param_mask(params, var),
+					      val + !!open);
 	else if (hw_is_interval(var))
-		changed = snd_interval_refine_min(hw_param_interval(params, var), val, open);
+		changed = snd_interval_refine_min(hw_param_interval(params, var),
+						  val, open);
 	else
 		return -EINVAL;
 	if (changed)
@@ -282,9 +288,9 @@ static int _snd_pcm_hw_param_min(struct snd_pcm_hw_params *params,
  * Return new minimum or -EINVAL if the configuration space is empty
  */
 static int snd_pcm_hw_param_min(struct snd_pcm_substream *pcm,
-								struct snd_pcm_hw_params *params,
-								snd_pcm_hw_param_t var, unsigned int val,
-								int *dir)
+				struct snd_pcm_hw_params *params,
+				snd_pcm_hw_param_t var, unsigned int val,
+				int *dir)
 {
 	int changed = _snd_pcm_hw_param_min(params, var, val, dir ? *dir : 0);
 	if (changed < 0)
@@ -301,8 +307,8 @@ static int snd_pcm_hw_param_min(struct snd_pcm_substream *pcm,
 EXPORT_SYMBOL_GPL(_snd_pcm_hw_param_min);
 
 static int _snd_pcm_hw_param_max(struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int val,
-								 int dir)
+				 snd_pcm_hw_param_t var, unsigned int val,
+				 int dir)
 {
 	int changed;
 	int open = 0;
@@ -326,10 +332,12 @@ static int _snd_pcm_hw_param_max(struct snd_pcm_hw_params *params,
 			changed = -EINVAL;
 		}
 		else
-			changed = snd_mask_refine_max(hw_param_mask(params, var), val - !!open);
+			changed = snd_mask_refine_max(hw_param_mask(params, var),
+						      val - !!open);
 	}
 	else if (hw_is_interval(var))
-		changed = snd_interval_refine_max(hw_param_interval(params, var), val, open);
+		changed = snd_interval_refine_max(hw_param_interval(params, var),
+						  val, open);
 	else
 		return -EINVAL;
 	if (changed)
@@ -349,13 +357,13 @@ static int _snd_pcm_hw_param_max(struct snd_pcm_hw_params *params,
  * @dir: pointer to the direction (-1,0,1) or NULL
  *
  * Inside configuration space defined by PARAMS remove from PAR all
- *  values >= VAL + 1. Reduce configuration space accordingly.
- *  Return new maximum or -EINVAL if the configuration space is empty
+ * values >= VAL + 1. Reduce configuration space accordingly.
+ * Return new maximum or -EINVAL if the configuration space is empty
  */
 static int snd_pcm_hw_param_max(struct snd_pcm_substream *pcm,
-								struct snd_pcm_hw_params *params,
-								snd_pcm_hw_param_t var, unsigned int val,
-								int *dir)
+				struct snd_pcm_hw_params *params,
+				snd_pcm_hw_param_t var, unsigned int val,
+				int *dir)
 {
 	int changed = _snd_pcm_hw_param_max(params, var, val, dir ? *dir : 0);
 	if (changed < 0)
@@ -369,7 +377,9 @@ static int snd_pcm_hw_param_max(struct snd_pcm_substream *pcm,
 	return snd_pcm_hw_param_value_max(params, var, dir);
 }
 
-static int boundary_sub(int a, int adir, int b, int bdir, int *c, int *cdir)
+static int boundary_sub(int a, int adir,
+			int b, int bdir,
+			int *c, int *cdir)
 {
 	adir = adir < 0 ? -1 : (adir > 0 ? 1 : 0);
 	bdir = bdir < 0 ? -1 : (bdir > 0 ? 1 : 0);
@@ -386,7 +396,8 @@ static int boundary_sub(int a, int adir, int b, int bdir, int *c, int *cdir)
 	return 0;
 }
 
-static int boundary_lt(unsigned int a, int adir, unsigned int b, int bdir)
+static int boundary_lt(unsigned int a, int adir,
+		       unsigned int b, int bdir)
 {
 	if (adir < 0)
 	{
@@ -407,8 +418,8 @@ static int boundary_lt(unsigned int a, int adir, unsigned int b, int bdir)
 
 /* Return 1 if min is nearer to best than max */
 static int boundary_nearer(int min, int mindir,
-						   int best, int bestdir,
-						   int max, int maxdir)
+			   int best, int bestdir,
+			   int max, int maxdir)
 {
 	int dmin, dmindir;
 	int dmax, dmaxdir;
@@ -430,11 +441,11 @@ static int boundary_nearer(int min, int mindir,
  * This function cannot be called for SNDRV_PCM_HW_PARAM_ACCESS,
  * SNDRV_PCM_HW_PARAM_FORMAT, SNDRV_PCM_HW_PARAM_SUBFORMAT.
  * Return the value found.
-  */
+ */
 static int snd_pcm_hw_param_near(struct snd_pcm_substream *pcm,
-								 struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int best,
-								 int *dir)
+				 struct snd_pcm_hw_params *params,
+				 snd_pcm_hw_param_t var, unsigned int best,
+				 int *dir)
 {
 	struct snd_pcm_hw_params *save = NULL;
 	int v;
@@ -514,8 +525,8 @@ _end:
 EXPORT_SYMBOL_GPL(snd_pcm_hw_param_near);
 
 static int _snd_pcm_hw_param_set(struct snd_pcm_hw_params *params,
-								 snd_pcm_hw_param_t var, unsigned int val,
-								 int dir)
+				 snd_pcm_hw_param_t var, unsigned int val,
+				 int dir)
 {
 	int changed;
 	if (hw_is_mask(var))
@@ -585,12 +596,12 @@ static int _snd_pcm_hw_param_set(struct snd_pcm_hw_params *params,
  *
  * Inside configuration space defined by PARAMS remove from PAR all
  * values != VAL. Reduce configuration space accordingly.
- *  Return VAL or -EINVAL if the configuration space is empty
+ * Return VAL or -EINVAL if the configuration space is empty
  */
 static int snd_pcm_hw_param_set(struct snd_pcm_substream *pcm,
-								struct snd_pcm_hw_params *params,
-								snd_pcm_hw_param_t var, unsigned int val,
-								int dir)
+				struct snd_pcm_hw_params *params,
+				snd_pcm_hw_param_t var, unsigned int val,
+				int dir)
 {
 	int changed = _snd_pcm_hw_param_set(params, var, val, dir);
 	if (changed < 0)
@@ -607,7 +618,7 @@ static int snd_pcm_hw_param_set(struct snd_pcm_substream *pcm,
 EXPORT_SYMBOL_GPL(snd_pcm_hw_param_set);
 
 static int _snd_pcm_hw_param_setinteger(struct snd_pcm_hw_params *params,
-										snd_pcm_hw_param_t var)
+					snd_pcm_hw_param_t var)
 {
 	int changed;
 	changed = snd_interval_setinteger(hw_param_interval(params, var));
@@ -665,27 +676,27 @@ EXPORT_SYMBOL(ksnd_hctl_elem_write);
 
 /// Used to output trace information on critical paths, typically disabled
 #define KSND_DEBUG(fmt, args...) \
-    ((void) (ENABLE_KSND_DEBUG && \
-             (printk(KERN_DEBUG "%s: " fmt, __FUNCTION__, ##args), 0)))
+	((void) (ENABLE_KSND_DEBUG && \
+		 (printk(KERN_DEBUG "%s: " fmt, __FUNCTION__, ##args), 0)))
 /// Output trace information off the critical path
 #define KSND_TRACE(fmt, args...) \
-    (printk(KERN_TRACE "%s: " fmt, \
-            (ENABLE_KSND_DEBUG ? __FUNCTION__ : "ksound"), ##args))
+	(printk(KERN_TRACE "%s: " fmt, \
+		(ENABLE_KSND_DEBUG ? __FUNCTION__ : "ksound"), ##args))
 /// Output errors, should never be output in 'normal' operation
 #define KSND_ERR(fmt, args...) \
-    (printk(KERN_WARNING "%s: " fmt, \
-            (ENABLE_KSND_DEBUG ? __FUNCTION__ : "ksound"), ##args))
+	(printk(KERN_WARNING "%s: " fmt, \
+		(ENABLE_KSND_DEBUG ? __FUNCTION__ : "ksound"), ##args))
 
 /* Scheduled for demolition! */
 int snd_pcm_format_iec60958_copy(snd_pcm_substream_t *substream,
-								 int data_channels,
-								 snd_pcm_uframes_t pos,
-								 void __user *buffer, snd_pcm_uframes_t count);
+				 int data_channels,
+				 snd_pcm_uframes_t pos,
+				 void __user *buffer, snd_pcm_uframes_t count);
 /*
 struct _ksnd_pcm {
-    snd_pcm_substream_t *substream;
-    snd_pcm_channel_area_t hwareas[10];
-    ksnd_pcm_hw_params_t actual_hwparams;
+ snd_pcm_substream_t *substream;
+ snd_pcm_channel_area_t hwareas[10];
+ ksnd_pcm_hw_params_t actual_hwparams;
 };
 */
 static inline snd_pcm_state_t _ksnd_pcm_state(snd_pcm_substream_t *substream)
@@ -700,13 +711,13 @@ snd_pcm_state_t ksnd_pcm_state(ksnd_pcm_t *pcm)
 
 /* CAUTION: call it with irq disabled (due to internal call to snd_pcm_update_hw_ptr) */
 static inline snd_pcm_uframes_t _ksnd_pcm_avail_update(snd_pcm_substream_t
-		*substream)
+						       *substream)
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	/*NICK added if to remove real updates which we do not want*/
 #if defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
-    defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
-    defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
+ defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
+ defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	if (runtime->sleep_min == 0 &&
 			_ksnd_pcm_state(substream) == SNDRV_PCM_STATE_RUNNING)
@@ -750,31 +761,42 @@ snd_pcm_uframes_t ksnd_pcm_avail_update(ksnd_pcm_t *kpcm)
 int ksnd_pcm_htimestamp(ksnd_pcm_t *kpcm, snd_pcm_uframes_t *avail, struct timespec *tstamp)
 {
 	snd_pcm_substream_t *substream = kpcm->substream;
-	snd_pcm_runtime_t *runtime = substream->runtime;
+	snd_pcm_runtime_t *runtime;
 	snd_pcm_uframes_t myavail;
 	struct timespec mystamp;
 	/* we can use a radically different approach to the userspace library (which loops making sure
 	 * avail is not modified). this is primarily because we can lock out interrupts.
 	 */
 	snd_pcm_stream_lock_irq(substream);
+	runtime = substream->runtime;
 	/*NICK made changes here, first he did as suggested by Dan and changed myavail
-	       to be obtained by checking the data structure without doing any update.
-	       Then he realised that myavail actually just confuses the issue, it is
-	       almost always 8, because the timestamp was taken after the hardware started
-	       to read the first 8 sample block. Even when it isn't 8, this is simply
-	       showing the jitter in the timestamp. The purpose of myavail is to try
-	       and correct that jitter, however because it is quantized to 8 samples, it
-	       actually makes the jitter much worse, since you have a jitter that varies by
-	       10 or 20 us, and you correct for it by adjusting by lumps of around 160 us.
-	       So I set myavail to be zero always.
-	       Also I added a a return failure if the timestamp is set to zero. */
+	 to be obtained by checking the data structure without doing any update.
+	 Then he realised that myavail actually just confuses the issue, it is
+	 almost always 8, because the timestamp was taken after the hardware started
+	 to read the first 8 sample block. Even when it isn't 8, this is simply
+	 showing the jitter in the timestamp. The purpose of myavail is to try
+	 and correct that jitter, however because it is quantized to 8 samples, it
+	 actually makes the jitter much worse, since you have a jitter that varies by
+	 10 or 20 us, and you correct for it by adjusting by lumps of around 160 us.
+	 So I set myavail to be zero always.
+	 Also I added a a return failure if the timestamp is set to zero. */
 	/* Dagobert: Also add UFS922 here for the "bad" 7101BWC cpu
 	 * currently it seems so that this works for both cpu types
 	 * (BWC vs. BWD)
 	 */
-#if defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
-    defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
-    defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
+#if defined(__TDT__) \
+ && (defined(FORTIS_HDBOX) \
+ || defined(UFS922) \
+ || defined(UFC960) \
+ || defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(OCTAGON1008) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO))
 	myavail = _ksnd_pcm_avail_update(kpcm->substream);
 #else
 	myavail = 0;
@@ -871,9 +893,9 @@ static int _ksnd_pcm_wait(snd_pcm_substream_t *substream, int timeout)
 				if (timeout < 0)
 				{
 					snd_printd("ksnd: [hw:%d,%d] playback write error "
-							   "(DMA or IRQ trouble?)\n",
-							   substream->pcm->card->number,
-							   substream->pcm->device);
+						   "(DMA or IRQ trouble?)\n",
+						   substream->pcm->card->number,
+						   substream->pcm->device);
 					jiffies = 10 * HZ;
 				}
 				else
@@ -890,12 +912,12 @@ static int _ksnd_pcm_wait(snd_pcm_substream_t *substream, int timeout)
 					break;
 				case SNDRV_PCM_STATE_SUSPENDED:
 					printk("%s: result ESTRPIPE %d\n",
-						   __FUNCTION__, __LINE__);
+					       __FUNCTION__, __LINE__);
 					res = -ESTRPIPE;
 					break;
 				case SNDRV_PCM_STATE_PAUSED:
 					printk("%s: Waiting for buffer %d\n",
-						   __FUNCTION__, __LINE__);
+					       __FUNCTION__, __LINE__);
 					break;
 				default:
 					break;
@@ -920,8 +942,8 @@ int ksnd_pcm_wait(ksnd_pcm_t *kpcm, int timeout)
 }
 
 static void _ksnd_pcm_mmap_begin(snd_pcm_substream_t *substream,
-								 snd_pcm_uframes_t *offset,
-								 snd_pcm_uframes_t *frames)
+				 snd_pcm_uframes_t *offset,
+				 snd_pcm_uframes_t *frames)
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	snd_pcm_uframes_t avail, f, cont, appl_ptr;
@@ -943,7 +965,7 @@ static void _ksnd_pcm_mmap_begin(snd_pcm_substream_t *substream,
 }
 
 int ksnd_pcm_mmap_begin(ksnd_pcm_t *pcm, const snd_pcm_channel_area_t **areas,
-						snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames)
+			snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames)
 {
 	snd_pcm_substream_t *substream = pcm->substream;
 	snd_pcm_channel_area_t *xareas = pcm->hwareas;
@@ -959,7 +981,7 @@ int ksnd_pcm_mmap_begin(ksnd_pcm_t *pcm, const snd_pcm_channel_area_t **areas,
 
 /* call with interrupts locked? */
 static int _ksnd_pcm_update_appl_ptr(snd_pcm_substream_t *substream,
-									 snd_pcm_uframes_t appl_ptr)
+				     snd_pcm_uframes_t appl_ptr)
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	snd_pcm_sframes_t hw_avail;
@@ -982,8 +1004,8 @@ static int _ksnd_pcm_update_appl_ptr(snd_pcm_substream_t *substream,
 }
 
 snd_pcm_sframes_t ksnd_pcm_mmap_commit(ksnd_pcm_t *pcm,
-									   snd_pcm_uframes_t offset,
-									   snd_pcm_uframes_t frames)
+				       snd_pcm_uframes_t offset,
+				       snd_pcm_uframes_t frames)
 {
 	snd_pcm_substream_t *substream = pcm->substream;
 	snd_pcm_runtime_t *runtime = substream->runtime;
@@ -995,7 +1017,7 @@ snd_pcm_sframes_t ksnd_pcm_mmap_commit(ksnd_pcm_t *pcm,
 	/* for SPDIF we need to run though the just committed PCM samples and
 	 * add formating (unless raw mode is enabled)
 	 */
-//      BUG_ON(substream->pcm->card->number == 2); /* TODO: magic number */
+// BUG_ON(substream->pcm->card->number == 2); /* TODO: magic number */
 	snd_pcm_stream_lock_irq(substream);
 	switch (_ksnd_pcm_state(substream))
 	{
@@ -1010,7 +1032,7 @@ snd_pcm_sframes_t ksnd_pcm_mmap_commit(ksnd_pcm_t *pcm,
 	/* verify no-one is interleaving access to the playback */
 	// TODO: what about capture?
 	BUG_ON(substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
-		   (appl_ptr % runtime->buffer_size) != offset);
+	       (appl_ptr % runtime->buffer_size) != offset);
 	appl_ptr += frames;
 	if (appl_ptr >= runtime->boundary)
 		appl_ptr = 0;
@@ -1045,7 +1067,7 @@ static inline int _ksnd_pcm_drain(snd_pcm_substream_t *substream)
 }
 
 static inline int _ksnd_pcm_pause(snd_pcm_substream_t *substream,
-								  unsigned int push)
+				  unsigned int push)
 {
 	snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_PAUSE, (void *) push);
 	return 0;
@@ -1068,9 +1090,9 @@ int ksnd_pcm_delay(ksnd_pcm_t *pcm, snd_pcm_sframes_t *delay)
 static struct file default_file = {.f_flags = 0 };
 
 int ksnd_pcm_open(ksnd_pcm_t **kpcm,
-				  int card,
-				  int device,
-				  snd_pcm_stream_t stream)
+		  int card,
+		  int device,
+		  snd_pcm_stream_t stream)
 {
 	int err = 0;
 	ksnd_pcm_t *xkpcm;
@@ -1099,17 +1121,10 @@ int ksnd_pcm_open(ksnd_pcm_t **kpcm,
 		goto _error_do_free;
 	}
 #if defined(__TDT__)
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 	minor = snd_get_minor(device_type, card, device);
 #else
-	minor = SNDRV_MINOR(card, device_type + device);
-#endif
-#else /* TDT */
-#if defined (CONFIG_KERNELVERSION)
+	// This assumes snd_find_minor has been added to the kernel
 	minor = snd_find_minor(device_type, card, device);
-#else /* STLinux 2.2 */
-	minor = SNDRV_MINOR(card, device_type + device);
-#endif
 #endif
 	if (minor < 0)
 	{
@@ -1118,8 +1133,8 @@ int ksnd_pcm_open(ksnd_pcm_t **kpcm,
 	}
 #if 0
 	printk(KERN_DEBUG "Opening ALSA device hw:%d,%d for %s...\n",
-		   card, device, stream == SND_PCM_STREAM_PLAYBACK ?
-		   "playback" : "capture");
+	       card, device, stream == SND_PCM_STREAM_PLAYBACK ?
+	       "playback" : "capture");
 #endif
 	pcm = snd_lookup_minor_data(minor, device_type);
 	if (pcm == NULL)
@@ -1169,11 +1184,11 @@ void ksnd_pcm_close(ksnd_pcm_t *kpcm)
 }
 
 static int _ksnd_pcm_write_transfer(snd_pcm_substream_t *substream,
-									unsigned int hwoff,
-									unsigned long data,
-									unsigned int off,
-									snd_pcm_uframes_t frames,
-									unsigned int srcchannels)
+				    unsigned int hwoff,
+				    unsigned long data,
+				    unsigned int off,
+				    snd_pcm_uframes_t frames,
+				    unsigned int srcchannels)
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	char *buf = (char *) data + samples_to_bytes(runtime, off * srcchannels);
@@ -1204,53 +1219,35 @@ static int _ksnd_pcm_write_transfer(snd_pcm_substream_t *substream,
 }
 
 static int _ksnd_pcm_IEC60958_transfer(snd_pcm_substream_t *substream,
-									   unsigned int hwoffset,
-									   unsigned long data,
-									   unsigned int offset,
-									   snd_pcm_uframes_t frames,
-									   unsigned int srcchannels)
+				       unsigned int hwoffset,
+				       unsigned long data,
+				       unsigned int offset,
+				       snd_pcm_uframes_t frames,
+				       unsigned int srcchannels)
 {
 	int ret = 0;
 	mm_segment_t fs;
-//#ifndef CONFIG_KERNELVERSION /* Only works in STlinux 2.2 */
-#if 0
-	char __user *buf =
-		(char __user *)data + samples_to_bytes(substream->runtime,
-				offset * srcchannels);
-#endif
 	fs = get_fs();
 	set_fs(get_ds());
-#if 0
-//#ifndef CONFIG_KERNELVERSION /* Only works in STlinux 2.2 */
-	ret =
-		snd_pcm_format_iec60958_copy(substream, srcchannels, hwoffset, buf,
-									 frames);
-#else
-	/*
-	 * todo Check if nothing to do as no kernel support for audio snd_pcm_format_iec60958_copy
-	 */
-#endif
 	set_fs(fs);
 	return ret;
 }
 
-typedef int (*transfer_f)(snd_pcm_substream_t * substream,
-						  unsigned int hwoff,
-						  unsigned long data,
-						  unsigned int off,
-						  snd_pcm_uframes_t size, unsigned int srcchannels);
+typedef int (*transfer_f)(snd_pcm_substream_t *substream,
+			  unsigned int hwoff,
+			  unsigned long data,
+			  unsigned int off,
+			  snd_pcm_uframes_t size, unsigned int srcchannels);
 
 static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
-							 unsigned long data,
-							 snd_pcm_uframes_t size,
-							 int srcchannels, transfer_f transfer)
+			     unsigned long data,
+			     snd_pcm_uframes_t size,
+			     int srcchannels, transfer_f transfer)
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	snd_pcm_uframes_t xfer = 0;
 	snd_pcm_uframes_t offset = 0;
 	int err = 0;
-	if (size == 0)
-		return 0;
 	snd_pcm_stream_lock_irq(substream);
 	switch (_ksnd_pcm_state(substream))
 	{
@@ -1297,7 +1294,7 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 					&& _ksnd_pcm_state(substream) !=
 					SNDRV_PCM_STATE_PAUSED);
 			snd_pcm_stream_lock_irq(substream);
-			if (res == 0)   /* timeout */
+			if (res == 0) /* timeout */
 			{
 				if (_ksnd_pcm_state(substream) ==
 						SNDRV_PCM_STATE_SUSPENDED)
@@ -1308,12 +1305,12 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 				else
 				{
 					snd_printd("playback write error "
-							   "(DMA or IRQ trouble?)\n");
+						   "(DMA or IRQ trouble?)\n");
 					err = -EIO;
 					goto _end_unlock;
 				}
 			}
-			else if (res < 0)       /* error */
+			else if (res < 0) /* error */
 			{
 				err = res;
 				goto _end_unlock;
@@ -1362,7 +1359,8 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 		size -= frames;
 		xfer += frames;
 		if (_ksnd_pcm_state(substream) == SNDRV_PCM_STATE_PREPARED &&
-				snd_pcm_playback_hw_avail(runtime) >= (snd_pcm_sframes_t) runtime->start_threshold)
+				snd_pcm_playback_hw_avail(runtime) >=
+				(snd_pcm_sframes_t) runtime->start_threshold)
 		{
 			err = snd_pcm_start(substream);
 			if (err < 0)
@@ -1376,7 +1374,7 @@ _end:
 }
 
 int ksnd_pcm_writei(ksnd_pcm_t *kpcm,
-					int *data, unsigned int size, unsigned int srcchannels)
+		    int *data, unsigned int size, unsigned int srcchannels)
 {
 	snd_pcm_substream_t *substream = kpcm->substream;
 	snd_pcm_runtime_t *runtime;
@@ -1404,7 +1402,7 @@ int ksnd_pcm_writei(ksnd_pcm_t *kpcm,
 	{
 		err =
 			_ksnd_pcm_writei1(substream, (unsigned long)data, size,
-							  srcchannels, out_func);
+					  srcchannels, out_func);
 		if (err < 0)
 		{
 			if (err == -EAGAIN)
@@ -1414,8 +1412,8 @@ int ksnd_pcm_writei(ksnd_pcm_t *kpcm,
 			if (err == -EPIPE)
 			{
 				printk("ALSA Aud underrun for hw:%d,%d\n",
-					   substream->pcm->card->number,
-					   substream->pcm->device);
+				       substream->pcm->card->number,
+				       substream->pcm->device);
 				if ((err = ksnd_pcm_prepare(kpcm)) < 0)
 					return err;
 				continue;
@@ -1497,14 +1495,14 @@ int ksnd_pcm_start(ksnd_pcm_t *kpcm)
  * snd_pcm_hw_param_value function.
  *
  * \param params the hw_params instance
- * \param var    parameter to retrieve
- * \param dir    pointer to the direction (-1,0,1) or NULL
+ * \param var parameter to retrieve
+ * \param dir pointer to the direction (-1,0,1) or NULL
  *
  * \return Return the value for field PAR if it's fixed in
- *         configuration space defined by PARAMS. Return -EINVAL otherwise
+ * configuration space defined by PARAMS. Return -EINVAL otherwise
  */
 static int _ksnd_pcm_hw_param_value(const ksnd_pcm_hw_params_t *params,
-									snd_pcm_hw_param_t var, int *dir)
+				    snd_pcm_hw_param_t var, int *dir)
 {
 	if (hw_is_mask(var))
 	{
@@ -1531,7 +1529,7 @@ static int _ksnd_pcm_hw_param_value(const ksnd_pcm_hw_params_t *params,
  * defined by PARAMS. Return -EINVAL otherwise
  */
 static int _ksnd_pcm_hw_param_get(const snd_pcm_hw_params_t *params, snd_pcm_hw_param_t var,
-								  unsigned int *val, int *dir)
+				  unsigned int *val, int *dir)
 {
 	int err = _ksnd_pcm_hw_param_value(params, var, dir);
 	if (err < 0)
@@ -1565,7 +1563,7 @@ int ksnd_pcm_hw_params(ksnd_pcm_t *kpcm, ksnd_pcm_hw_params_t *params)
 	if (substream == NULL)
 		return -EFAULT;
 	err = snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_HW_PARAMS,
-							   params);
+				   params);
 	if (0 != err)
 		return err;
 	kpcm->actual_hwparams = *params;
@@ -1580,8 +1578,8 @@ int ksnd_pcm_hw_params_any(ksnd_pcm_t *kpcm, ksnd_pcm_hw_params_t *params)
 }
 
 int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
-						int nrchannels, int sampledepth, int samplerate,
-						int periodsize, int buffersize)
+			int nrchannels, int sampledepth, int samplerate,
+			int periodsize, int buffersize)
 {
 	snd_pcm_substream_t *substream = pcm->substream;
 	snd_pcm_runtime_t *runtime = substream->runtime;
@@ -1614,7 +1612,7 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 			break;
 		default:
 			snd_printd("%s Unsupported sampledepth %d\n",
-					   __FUNCTION__, sampledepth);
+				   __FUNCTION__, sampledepth);
 			err = -EINVAL;
 			goto failure;
 	}
@@ -1627,38 +1625,25 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	snd_mask_set(&mask, SNDRV_PCM_ACCESS_RW_INTERLEAVED);
 	err =
 		snd_pcm_hw_param_mask(substream, hw_params,
-							  SNDRV_PCM_HW_PARAM_ACCESS, &mask);
+				      SNDRV_PCM_HW_PARAM_ACCESS, &mask);
 	if (err < 0)
 	{
 		err = -EINVAL;
 		goto failure;
 	}
-	err =
-		snd_pcm_hw_param_set(substream, hw_params, SNDRV_PCM_HW_PARAM_RATE,
-							 samplerate, 0);
+	err = snd_pcm_hw_param_set(substream, hw_params, SNDRV_PCM_HW_PARAM_RATE, samplerate, 0);
 	if (snd_BUG_ON(err < 0))
 		goto failure;
-	err =
-		snd_pcm_hw_param_near(substream, hw_params,
-							  SNDRV_PCM_HW_PARAM_CHANNELS, nrchannels,
-							  NULL);
+	err = snd_pcm_hw_param_near(substream, hw_params, SNDRV_PCM_HW_PARAM_CHANNELS, nrchannels, NULL);
 	if (snd_BUG_ON(err < 0))
 		goto failure;
-	err =
-		snd_pcm_hw_param_near(substream, hw_params,
-							  SNDRV_PCM_HW_PARAM_FORMAT, format, 0);
+	err = snd_pcm_hw_param_near(substream, hw_params, SNDRV_PCM_HW_PARAM_FORMAT, format, 0);
 	if (snd_BUG_ON(err < 0))
 		goto failure;
-	err =
-		snd_pcm_hw_param_near(substream, hw_params,
-							  SNDRV_PCM_HW_PARAM_PERIOD_SIZE, periodsize,
-							  NULL);
+	err = snd_pcm_hw_param_near(substream, hw_params, SNDRV_PCM_HW_PARAM_PERIOD_SIZE, periodsize, NULL);
 	if (snd_BUG_ON(err < 0))
 		goto failure;
-	err =
-		snd_pcm_hw_param_near(substream, hw_params,
-							  SNDRV_PCM_HW_PARAM_BUFFER_SIZE, buffersize,
-							  NULL);
+	err = snd_pcm_hw_param_near(substream, hw_params, SNDRV_PCM_HW_PARAM_BUFFER_SIZE, buffersize, NULL);
 	if (snd_BUG_ON(err < 0))
 		goto failure;
 	_ksnd_pcm_drop(substream);
@@ -1666,8 +1651,8 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	if (0 != (err = ksnd_pcm_hw_params(pcm, hw_params) < 0))
 	{
 		snd_printd("HW_PARAMS failed: for %d:%d code is %i\n",
-				   substream->pcm->card->number, substream->pcm->device,
-				   err);
+			   substream->pcm->card->number, substream->pcm->device,
+			   err);
 		goto failure;
 	}
 	memset(sw_params, 0, sizeof(*sw_params));
@@ -1682,11 +1667,11 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	sw_params->silence_size = runtime->period_size;
 	if ((err =
 				snd_pcm_kernel_ioctl(substream, SNDRV_PCM_IOCTL_SW_PARAMS,
-									 sw_params)) < 0)
+						     sw_params)) < 0)
 	{
 		snd_printd("SW_PARAMS failed: for %d:%d code is %i\n",
-				   substream->pcm->card->number, substream->pcm->device,
-				   err);
+			   substream->pcm->card->number, substream->pcm->device,
+			   err);
 		goto failure;
 	}
 	if ((err = ksnd_pcm_prepare(pcm)) < 0)
@@ -1705,8 +1690,8 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	periodsize = _ksnd_pcm_hw_param_value(hw_params, SNDRV_PCM_HW_PARAM_PERIOD_SIZE, 0);
 	buffersize = _ksnd_pcm_hw_param_value(hw_params, SNDRV_PCM_HW_PARAM_BUFFER_SIZE, 0);
 	printk(KERN_DEBUG "ksound: Set parameters for hw:%d,%d to %d x %dhz with period %d (of %d)\n",
-		   substream->pcm->card->number, substream->pcm->device,
-		   nrchannels, samplerate, periodsize, buffersize);
+	       substream->pcm->card->number, substream->pcm->device,
+	       nrchannels, samplerate, periodsize, buffersize);
 	err = 0;
 failure:
 	if (hw_params)
@@ -1724,8 +1709,8 @@ failure:
  * \return 0 on success otherwise a negative error code
  */
 int ksnd_pcm_get_params(ksnd_pcm_t *kpcm,
-						snd_pcm_uframes_t *buffer_size,
-						snd_pcm_uframes_t *period_size)
+			snd_pcm_uframes_t *buffer_size,
+			snd_pcm_uframes_t *period_size)
 {
 	snd_pcm_hw_params_t *hw;
 	int err;

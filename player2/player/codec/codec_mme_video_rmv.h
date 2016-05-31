@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_video_rmv.h
-Author :           Mark C
+Author : Mark C
 
 Definition of the stream specific codec implementation for Real Media video in player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-24-Oct-2008 Created                                         Julian
+Date Modification Name
+---- ------------ --------
+24-Oct-2008 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "codec_mme_video.h"
 
@@ -44,8 +44,8 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define RMV_DEFAULT_PICTURE_WIDTH               320
-#define RMV_DEFAULT_PICTURE_HEIGHT              240
+#define RMV_DEFAULT_PICTURE_WIDTH 320
+#define RMV_DEFAULT_PICTURE_HEIGHT 240
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -64,13 +64,13 @@ class Codec_MmeVideoRmv_c : public Codec_MmeVideo_c
 
 		// Data
 
-		RV89Dec_InitTransformerParam_t      InitializationParameters;
+		RV89Dec_InitTransformerParam_t InitializationParameters;
 
-		bool                                RestartTransformer;
+		bool RestartTransformer;
 
-		BufferDataDescriptor_t*             SegmentListDescriptor;
-		BufferType_t                        SegmentListType;
-		BufferPool_t                        SegmentListPool;
+		BufferDataDescriptor_t *SegmentListDescriptor;
+		BufferType_t SegmentListType;
+		BufferPool_t SegmentListPool;
 
 		// Functions
 
@@ -89,19 +89,19 @@ class Codec_MmeVideoRmv_c : public Codec_MmeVideo_c
 
 	protected:
 
-		CodecStatus_t   Reset(void);
-		CodecStatus_t   RegisterOutputBufferRing(Ring_t                          Ring);
-		CodecStatus_t   HandleCapabilities(void);
-		CodecStatus_t   FillOutTransformerInitializationParameters(void);
-		CodecStatus_t   FillOutSetStreamParametersCommand(void);
-		CodecStatus_t   FillOutDecodeCommand(void);
-		CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t              *Request);
-		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t       *Context);
-		CodecStatus_t   DumpSetStreamParameters(void                           *Parameters);
-		CodecStatus_t   DumpDecodeParameters(void                           *Parameters);
+		CodecStatus_t Reset(void);
+		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring);
+		CodecStatus_t HandleCapabilities(void);
+		CodecStatus_t FillOutTransformerInitializationParameters(void);
+		CodecStatus_t FillOutSetStreamParametersCommand(void);
+		CodecStatus_t FillOutDecodeCommand(void);
+		CodecStatus_t FillOutDecodeBufferRequest(BufferStructure_t *Request);
+		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t DumpSetStreamParameters(void *Parameters);
+		CodecStatus_t DumpDecodeParameters(void *Parameters);
 
-		CodecStatus_t   SendMMEStreamParameters(void);
-		CodecStatus_t   CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t SendMMEStreamParameters(void);
+		CodecStatus_t CheckCodecReturnParameters(CodecBaseDecodeContext_t *Context);
 
 };
 #endif

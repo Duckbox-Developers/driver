@@ -4,13 +4,13 @@ Player 2 (INT_191)
 Introduction
 ------------
 
-Player 2 is a thorough redesign of the successful Player 1 architecture 
+Player 2 is a thorough redesign of the successful Player 1 architecture
 currently deployed as the playback engine for digital video recorders 
 and media centres.
 
-Player 2 revisits many of the design decisions of Player 1 modernizing 
+Player 2 revisits many of the design decisions of Player 1 modernizing
 the architecture thus making is suitable for demanding applications 
-such as BD-ROM playback and A/V receiver while retaining the features 
+such as BD-ROM playback and A/V receiver while retaining the features
 required to support traditional media centres.
 
 Among the faults with player 1 are:
@@ -50,7 +50,7 @@ changes to player 2 are:
    video drivers, for example, to decide how long the top field of an 
    interlaced frame should be on display).
 
- * We have added functions to import and export time in its 
+ * We have added functions to import and export time in its
    multiple forms.
 
 Building Player 2

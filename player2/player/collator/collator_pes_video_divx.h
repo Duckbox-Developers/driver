@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_video_divx.h
-Author :           Chris
+Author : Chris
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Jul-07   Created from existing collator_pes_video.h      Chris
+Date Modification Name
+---- ------------ --------
+11-Jul-07 Created from existing collator_pes_video.h Chris
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_video.h"
 
@@ -53,8 +53,8 @@ class Collator_PesVideoDivx_c : public Collator_PesVideo_c
 {
 	private:
 
-		bool                IgnoreCodes;
-		unsigned char       Version;
+		bool IgnoreCodes;
+		unsigned char Version;
 
 	protected:
 
@@ -62,13 +62,13 @@ class Collator_PesVideoDivx_c : public Collator_PesVideo_c
 
 		Collator_PesVideoDivx_c();
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 
-		CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-								 unsigned int          DataLength,
-								 void             *Data,
-								 bool              NonBlocking = false,
-								 unsigned int         *DataLengthRemaining = NULL);
+		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+				       unsigned int DataLength,
+				       void *Data,
+				       bool NonBlocking = false,
+				       unsigned int *DataLengthRemaining = NULL);
 };
 
 #endif // H_COLLATOR_PES_VIDEO_DIVX

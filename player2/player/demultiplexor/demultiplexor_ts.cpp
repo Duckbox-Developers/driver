@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : demultiplexor_base.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the base demultiplexor class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-13-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+13-Nov-06 Created Nick
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "demultiplexor_ts.h"
 
@@ -48,7 +48,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 
 Demultiplexor_Ts_c::Demultiplexor_Ts_c(void)
@@ -61,109 +61,109 @@ Demultiplexor_Ts_c::Demultiplexor_Ts_c(void)
 	//
 	// Now perform our initialization
 	//
-	InitializationStatus        = DemultiplexorError;
+	InitializationStatus = DemultiplexorError;
 //
 	Demultiplexor_Base_c::SetContextSize(sizeof(struct DemultiplexorContext_s));
 //
-	InitializationStatus        = DemultiplexorNoError;
+	InitializationStatus = DemultiplexorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The add a stream to a context function
+// The add a stream to a context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Ts_c::GetHandledMuxType(
-	PlayerInputMuxType_t     *HandledType)
+DemultiplexorStatus_t Demultiplexor_Ts_c::GetHandledMuxType(
+	PlayerInputMuxType_t *HandledType)
 {
-	*HandledType        = MuxTypeTransportStream;
+	*HandledType = MuxTypeTransportStream;
 	return DemultiplexorError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The add a stream to a context function
+// The add a stream to a context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Ts_c::AddStream(
-	DemultiplexorContext_t    Context,
-	PlayerStream_t            Stream,
-	unsigned int              StreamIdentifier)
+DemultiplexorStatus_t Demultiplexor_Ts_c::AddStream(
+	DemultiplexorContext_t Context,
+	PlayerStream_t Stream,
+	unsigned int StreamIdentifier)
 {
-	DemultiplexorStatus_t     Status;
+	DemultiplexorStatus_t Status;
 	unsigned int PidTableIndex;
 //
-	Status      = Demultiplexor_Base_c::AddStream(Context, Stream, StreamIdentifier);
+	Status = Demultiplexor_Base_c::AddStream(Context, Stream, StreamIdentifier);
 	if (Status != DemultiplexorNoError)
 		return Status;
 //
 	PidTableIndex = (StreamIdentifier & (DVB_MAX_PIDS - 1));
-	Context->PidTable[PidTableIndex]                                            = Context->Base.LastStreamSet + 1;
-	Context->Streams[Context->Base.LastStreamSet].ValidExpectedContinuityCount  = false;
+	Context->PidTable[PidTableIndex] = Context->Base.LastStreamSet + 1;
+	Context->Streams[Context->Base.LastStreamSet].ValidExpectedContinuityCount = false;
 #ifdef DO_NICKS_SUGGESTED_IMPROVEMENTS
-	Context->Streams[Context->Base.LastStreamSet].AccumulationBufferPointer     = 0;
+	Context->Streams[Context->Base.LastStreamSet].AccumulationBufferPointer = 0;
 #endif
-	Context->Streams[Context->Base.LastStreamSet].SelectOnPriority              = ((StreamIdentifier & DEMULTIPLEXOR_SELECT_ON_PRIORITY) != 0);
-	Context->Streams[Context->Base.LastStreamSet].DesiredPriority               = ((StreamIdentifier & DEMULTIPLEXOR_PRIORITY_HIGH) != 0);
-	Context->AddedNewStream                                                     = true;
+	Context->Streams[Context->Base.LastStreamSet].SelectOnPriority = ((StreamIdentifier & DEMULTIPLEXOR_SELECT_ON_PRIORITY) != 0);
+	Context->Streams[Context->Base.LastStreamSet].DesiredPriority = ((StreamIdentifier & DEMULTIPLEXOR_PRIORITY_HIGH) != 0);
+	Context->AddedNewStream = true;
 //
 	return DemultiplexorError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The remove a stream from a context function
+// The remove a stream from a context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Ts_c::RemoveStream(
-	DemultiplexorContext_t    Context,
-	unsigned int              StreamIdentifier)
+DemultiplexorStatus_t Demultiplexor_Ts_c::RemoveStream(
+	DemultiplexorContext_t Context,
+	unsigned int StreamIdentifier)
 {
-	unsigned int    PidTableIndex;
-	PidTableIndex       = (StreamIdentifier & (DVB_MAX_PIDS - 1));
-	Context->PidTable[PidTableIndex]    = 0;
+	unsigned int PidTableIndex;
+	PidTableIndex = (StreamIdentifier & (DVB_MAX_PIDS - 1));
+	Context->PidTable[PidTableIndex] = 0;
 	return Demultiplexor_Base_c::RemoveStream(Context, StreamIdentifier);
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The input jump function resets continuity count preconceptions
+// The input jump function resets continuity count preconceptions
 //
 
-DemultiplexorStatus_t   Demultiplexor_Ts_c::InputJump(
-	DemultiplexorContext_t    Context)
+DemultiplexorStatus_t Demultiplexor_Ts_c::InputJump(
+	DemultiplexorContext_t Context)
 {
-	unsigned int      i;
+	unsigned int i;
 	//
 	// Reset our expectations of a continuity count
 	//
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
-		Context->Streams[i].ValidExpectedContinuityCount        = false;
+		Context->Streams[i].ValidExpectedContinuityCount = false;
 //
 	return Demultiplexor_Base_c::InputJump(Context);
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The demux function
+// The demux function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
-	PlayerPlayback_t          Playback,
-	DemultiplexorContext_t    Context,
-	Buffer_t                  Buffer)
+DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
+	PlayerPlayback_t Playback,
+	DemultiplexorContext_t Context,
+	Buffer_t Buffer)
 {
-	DemultiplexorStatus_t             Status;
-	unsigned int                      PacketStart;
-	unsigned int                      Entry;
-	unsigned int                      Header;
-	unsigned int                      Pid;
-	unsigned int                      DataOffset;
-	bool                              DeferredValidExpectedContinuityCount;
-	DemultiplexorStreamContext_t     *Stream;
+	DemultiplexorStatus_t Status;
+	unsigned int PacketStart;
+	unsigned int Entry;
+	unsigned int Header;
+	unsigned int Pid;
+	unsigned int DataOffset;
+	bool DeferredValidExpectedContinuityCount;
+	DemultiplexorStreamContext_t *Stream;
 	DemultiplexorBaseStreamContext_t *BaseStream;
 //
-	Status      = Demultiplexor_Base_c::Demux(Playback, Context, Buffer);
+	Status = Demultiplexor_Base_c::Demux(Playback, Context, Buffer);
 	if (Status != DemultiplexorNoError)
 		return Status;
 //
@@ -173,17 +173,17 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 	if (Context->AddedNewStream ||
 			(Context->Base.BufferLength % (DVB_PACKET_SIZE + Context->BluRayExtraData)) != 0)
 	{
-		Context->BluRayExtraData                        = 0;    // Default to DVB
+		Context->BluRayExtraData = 0; // Default to DVB
 		if ((Context->Base.BufferLength % (DVB_PACKET_SIZE + 4)) == 0)
 		{
 			if ((Context->Base.BufferLength % DVB_PACKET_SIZE) == 0)
 			{
-				unsigned int    PacketCount             = Context->Base.BufferLength / (DVB_PACKET_SIZE + 4);
-				unsigned int    i;
-				// Check 8 packets to see if sync byte is 192 or 188 aligned.  Only check 192 if not 188
+				unsigned int PacketCount = Context->Base.BufferLength / (DVB_PACKET_SIZE + 4);
+				unsigned int i;
+				// Check 8 packets to see if sync byte is 192 or 188 aligned. Only check 192 if not 188
 				// If neither assume 188.
 				if (PacketCount > 8)
-					PacketCount                         = 8;
+					PacketCount = 8;
 				for (i = 0; i < PacketCount; i++)
 				{
 					if (Context->Base.BufferData[DVB_PACKET_SIZE * i] != DVB_SYNC_BYTE)
@@ -197,11 +197,11 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 							break;
 					}
 					if (i == PacketCount)
-						Context->BluRayExtraData        = 4;
+						Context->BluRayExtraData = 4;
 				}
 			}
 			else
-				Context->BluRayExtraData                = 4;    // 192 but not 188 byte aligned - assume blu ray
+				Context->BluRayExtraData = 4; // 192 but not 188 byte aligned - assume blu ray
 		}
 		Context->AddedNewStream = false;
 	}
@@ -219,7 +219,7 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 	{
 		unsigned int NewPacketStart = PacketStart + Context->BluRayExtraData;
 		// PB: No wonder UnlockMutex and LockMutex hit the profiler for transport stream,
-		//     lets deschedule and check whats on our queue every packet, that won't cost very much will it...  actually it probably won't
+		// lets deschedule and check whats on our queue every packet, that won't cost very much will it... actually it probably won't
 		//
 		// Note we allow higher priority processes in here
 		// (for remove/add stream activities), due to
@@ -232,39 +232,39 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 		OS_LockMutex(&Context->Base.Lock);
 #endif
 //
-		Header  = Context->Base.BufferData[NewPacketStart]        |
-				  (Context->Base.BufferData[NewPacketStart + 1] <<  8) |
-				  (Context->Base.BufferData[NewPacketStart + 2] << 16) |
-				  (Context->Base.BufferData[NewPacketStart + 3] << 24);
+		Header = Context->Base.BufferData[NewPacketStart] |
+			 (Context->Base.BufferData[NewPacketStart + 1] << 8) |
+			 (Context->Base.BufferData[NewPacketStart + 2] << 16) |
+			 (Context->Base.BufferData[NewPacketStart + 3] << 24);
 		//
 		// Extract the pid, is it interesting
 		//
-		Pid             = DVB_PID(Header);
+		Pid = DVB_PID(Header);
 		if (Context->PidTable[Pid] == 0)
 			continue;
-		Entry           = Context->PidTable[Pid] - 1;
-		BaseStream      = &Context->Base.Streams[Entry];
-		Stream          = &Context->Streams[Entry];
+		Entry = Context->PidTable[Pid] - 1;
+		BaseStream = &Context->Base.Streams[Entry];
+		Stream = &Context->Streams[Entry];
 		//
 		// We are interested, Check validity of packet
 		//
 		if (!DVB_VALID_PACKET(Header))
 		{
 			report(severity_error, "Demultiplexor_Ts_c::Demux - Invalid packet (%02x %02x %02x %02x)\n",
-				   Context->Base.BufferData[NewPacketStart], Context->Base.BufferData[NewPacketStart + 1], Context->Base.BufferData[NewPacketStart + 2], Context->Base.BufferData[NewPacketStart + 3]);
+			       Context->Base.BufferData[NewPacketStart], Context->Base.BufferData[NewPacketStart + 1], Context->Base.BufferData[NewPacketStart + 2], Context->Base.BufferData[NewPacketStart + 3]);
 			continue;
 		}
 		//
 		// Handle adaptation field
 		//
-		DataOffset                              = DVB_HEADER_SIZE;
-		DeferredValidExpectedContinuityCount    = true;
+		DataOffset = DVB_HEADER_SIZE;
+		DeferredValidExpectedContinuityCount = true;
 		if (DVB_ADAPTATION_FIELD(Header))
 		{
 			DataOffset += 1 + Context->Base.BufferData[NewPacketStart + DVB_HEADER_SIZE];
 			if ((Context->Base.BufferData[NewPacketStart + DVB_HEADER_SIZE] != 0) &&
 					((Context->Base.BufferData[NewPacketStart + DVB_HEADER_SIZE + 1] & DVB_DISCONTINUITY_INDICATOR_MASK) != 0))
-				DeferredValidExpectedContinuityCount        = false;
+				DeferredValidExpectedContinuityCount = false;
 		}
 		//
 		// Perform continuity check
@@ -280,8 +280,8 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 			report(severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch.\n");
 			Player->InputGlitch(PlayerAllPlaybacks, BaseStream->Stream);
 		}
-		Stream->ExpectedContinuityCount       = (DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f;
-		Stream->ValidExpectedContinuityCount  = DeferredValidExpectedContinuityCount;
+		Stream->ExpectedContinuityCount = (DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f;
+		Stream->ValidExpectedContinuityCount = DeferredValidExpectedContinuityCount;
 		//
 		// Optionally discard packets of inappropriate priority (note that priority filtering
 		// must take place after the continuity check).
@@ -300,8 +300,8 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 			if ((Stream->AccumulationBufferPointer + (DVB_PACKET_SIZE - DataOffset)) > ACCUMULATION_BUFFER_SIZE)
 			{
 				BaseStream->Collator->Input(Context->Base.Descriptor,
-											Stream->AccumulationBufferPointer,
-											Stream->AccumulationBuffer);
+							    Stream->AccumulationBufferPointer,
+							    Stream->AccumulationBuffer);
 				Stream->AccumulationBufferPointer = 0;
 				// This is really really bad is it ever safe to do this????
 				OS_UnLockMutex(&Context->Base.Lock);
@@ -312,8 +312,8 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 #else
 #ifdef __TDT__
 			CollatorStatus_t Status = BaseStream->Collator->Input(Context->Base.Descriptor,
-									  DVB_PACKET_SIZE - DataOffset,
-									  &Context->Base.BufferData[NewPacketStart + DataOffset]);
+									      DVB_PACKET_SIZE - DataOffset,
+									      &Context->Base.BufferData[NewPacketStart + DataOffset]);
 			if (Status == CollatorBufferOverflow)
 			{
 				OS_UnLockMutex(&Context->Base.Lock);
@@ -321,8 +321,8 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 			}
 #else
 			BaseStream->Collator->Input(Context->Base.Descriptor,
-										DVB_PACKET_SIZE - DataOffset,
-										&Context->Base.BufferData[NewPacketStart + DataOffset]);
+						    DVB_PACKET_SIZE - DataOffset,
+						    &Context->Base.BufferData[NewPacketStart + DataOffset]);
 #endif
 #endif
 		}
@@ -330,13 +330,13 @@ DemultiplexorStatus_t   Demultiplexor_Ts_c::Demux(
 #ifdef DO_NICKS_SUGGESTED_IMPROVEMENTS
 	for (Entry = 0; Entry < DEMULTIPLEXOR_MAX_STREAMS; Entry++)
 	{
-		BaseStream      = &Context->Base.Streams[Entry];
-		Stream          = &Context->Streams[Entry];
+		BaseStream = &Context->Base.Streams[Entry];
+		Stream = &Context->Streams[Entry];
 		if (BaseStream->Stream && Stream->AccumulationBufferPointer)
 		{
 			BaseStream->Collator->Input(Context->Base.Descriptor,
-										Stream->AccumulationBufferPointer,
-										Stream->AccumulationBuffer);
+						    Stream->AccumulationBufferPointer,
+						    Stream->AccumulationBuffer);
 			Stream->AccumulationBufferPointer = 0;
 		}
 	}

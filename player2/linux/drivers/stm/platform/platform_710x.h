@@ -5,22 +5,22 @@ static struct resource h264pp_resource_7109[] =
 {
 	[0] = {
 		.start = 0x19540000,
-		.end   = 0x1954FFFF,
+		.end = 0x1954FFFF,
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
 		.start = 149,
-		.end   = 149,
+		.end = 149,
 		.flags = IORESOURCE_IRQ,
 	},
 };
 
 struct platform_device h264pp_device_7109 =
 {
-	.name          = "h264pp",
-	.id            = -1,
+	.name = "h264pp",
+	.id = -1,
 	.num_resources = ARRAY_SIZE(h264pp_resource_7109),
-	.resource      = &h264pp_resource_7109
+	.resource = &h264pp_resource_7109
 };
 
 static struct platform_device *platform_7109[] __initdata =
@@ -33,22 +33,22 @@ static struct resource h264pp_resource_7100[] =
 {
 	[0] = {
 		.start = 0x19214000,
-		.end   = 0x19215000,
+		.end = 0x19215000,
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
 		.start = 149,
-		.end   = 149,
+		.end = 149,
 		.flags = IORESOURCE_IRQ,
 	},
 };
 
 struct platform_device h264pp_device_7100 =
 {
-	.name          = "h264pp",
-	.id            = -1,
+	.name = "h264pp",
+	.id = -1,
 	.num_resources = ARRAY_SIZE(h264pp_resource_7100),
-	.resource      = h264pp_resource_7100
+	.resource = h264pp_resource_7100
 };
 
 static struct platform_device *platform_7100[] __initdata =
@@ -65,7 +65,7 @@ static __init int platform_init_710x(void)
 	printk("Switching Preprocessor clock to full speed.\n");
 	{
 		// iomap so memory available
-		int *data = (int*)ioremap(0x19000000, 0x1000);
+		int *data = (int *)ioremap(0x19000000, 0x1000);
 		// unlock CKGB_LCK to allow clockgen programming
 		data[0x10 / 4] = 0xC0DE;
 		data[0x80 / 4] = data[0x70 / 4];
@@ -82,7 +82,7 @@ static __init int platform_init_710x(void)
 		iounmap(data);
 	}
 #define SYSCONF_BASE 0xb9001000
-#define SYSCONF_DEVICEID       (SYSCONF_BASE + 0x000)
+#define SYSCONF_DEVICEID (SYSCONF_BASE + 0x000)
 	{
 		int chip_revision;
 		unsigned long chip_7109;
@@ -102,15 +102,15 @@ static __init int platform_init_710x(void)
 #ifdef __TDT__
 		if (chip_7109)
 		{
-			return platform_add_devices(platform_7109, sizeof(platform_7109) / sizeof(struct platform_device*));
+			return platform_add_devices(platform_7109, sizeof(platform_7109) / sizeof(struct platform_device *));
 		}
 		else
 		{
 			printk("No 7109 chip so assuming 7100 chip\n");
-			return platform_add_devices(platform_7100, sizeof(platform_7100) / sizeof(struct platform_device*));
+			return platform_add_devices(platform_7100, sizeof(platform_7100) / sizeof(struct platform_device *));
 		}
 #else
-		return platform_add_devices(platform_7109, sizeof(platform_7109) / sizeof(struct platform_device*));
+		return platform_add_devices(platform_7109, sizeof(platform_7109) / sizeof(struct platform_device *));
 #endif
 	}
 }

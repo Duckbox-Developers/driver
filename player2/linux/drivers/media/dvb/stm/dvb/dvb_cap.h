@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -27,19 +27,19 @@ license from ST.
 
 typedef struct cap_v4l_shared_handle_s
 {
-	struct DeviceContext_s  cap_device_context;
+	struct DeviceContext_s cap_device_context;
 
-	unsigned long long      target_latency;
-	long long               audio_video_latency_offset;
-	bool                    update_player2_time_mapping;
-	unsigned int            cap_irq;
-	unsigned int            cap_irq2;
-	int*                    mapped_cap_registers;
-	int*                    mapped_vtg_registers;
+	unsigned long long target_latency;
+	long long audio_video_latency_offset;
+	bool update_player2_time_mapping;
+	unsigned int cap_irq;
+	unsigned int cap_irq2;
+	int *mapped_cap_registers;
+	int *mapped_vtg_registers;
 } cap_v4l2_shared_handle_t;
 
-int cap_set_external_time_mapping(cap_v4l2_shared_handle_t *shared_context, struct StreamContext_s* stream,
-								  unsigned long long nativetime, unsigned long long systemtime);
+int cap_set_external_time_mapping(cap_v4l2_shared_handle_t *shared_context, struct StreamContext_s *stream,
+				  unsigned long long nativetime, unsigned long long systemtime);
 void cap_invalidate_external_time_mapping(cap_v4l2_shared_handle_t *shared_context);
 
 void cap_set_vsync_offset(cap_v4l2_shared_handle_t *shared_context, long long vsync_offset);

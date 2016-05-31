@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_dvp.h
-Author :           Chris
+Author : Chris
 
 Definition of the DVP null codec class module for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-07-Aug-07   Created                                         Chris
+Date Modification Name
+---- ------------ --------
+07-Aug-07 Created Chris
 
 ************************************************************************/
 
@@ -41,14 +41,14 @@ class Codec_DvpVideo_c : public Codec_c
 
 		// Data
 
-		BufferManager_t                       BufferManager;
-		bool                                  DataTypesInitialized;
+		BufferManager_t BufferManager;
+		bool DataTypesInitialized;
 
-		CodecTrickModeParameters_t        DvpTrickModeParameters;
+		CodecTrickModeParameters_t DvpTrickModeParameters;
 
-		BufferPool_t                          DecodeBufferPool;
+		BufferPool_t DecodeBufferPool;
 
-		Ring_t                                OutputRing;
+		Ring_t OutputRing;
 
 		// Functions
 
@@ -65,32 +65,32 @@ class Codec_DvpVideo_c : public Codec_c
 		// Standard class functions.
 		//
 
-		CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t      *TrickModeParameters);
+		CodecStatus_t GetTrickModeParameters(CodecTrickModeParameters_t *TrickModeParameters);
 
-		CodecStatus_t   RegisterOutputBufferRing(Ring_t                    Ring);
+		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
-		CodecStatus_t   ReleaseDecodeBuffer(Buffer_t                  Buffer);
+		CodecStatus_t ReleaseDecodeBuffer(Buffer_t Buffer);
 
-		CodecStatus_t   Input(Buffer_t                  CodedBuffer);
+		CodecStatus_t Input(Buffer_t CodedBuffer);
 
 		//
 		// Stubbed out functions that do nothing in a dvp situation
 		//
 
-		CodecStatus_t   OutputPartialDecodeBuffers(void)
+		CodecStatus_t OutputPartialDecodeBuffers(void)
 		{
 			return CodecNoError;
 		}
-		CodecStatus_t   DiscardQueuedDecodes(void)
+		CodecStatus_t DiscardQueuedDecodes(void)
 		{
 			return CodecNoError;
 		}
-		CodecStatus_t   ReleaseReferenceFrame(unsigned int      ReferenceFrameDecodeIndex)
+		CodecStatus_t ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex)
 		{
 			return CodecNoError;
 		}
-		CodecStatus_t   CheckReferenceFrameList(unsigned int        NumberOfReferenceFrameLists,
-												ReferenceFrameList_t    ReferenceFrameList[])
+		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
+						      ReferenceFrameList_t ReferenceFrameList[])
 		{
 			return CodecNoError;
 		}
@@ -99,12 +99,12 @@ class Codec_DvpVideo_c : public Codec_c
 		// Stubbed out base class function that wrapper expects me to have
 		//
 
-		CodecStatus_t   SetModuleParameters(unsigned int         ParameterBlockSize,
-											void            *ParameterBlock)
+		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
+						  void *ParameterBlock)
 		{
 			return CodecNoError;
 		}
 
 };
 
-#endif // H_CODEC_DVP            
+#endif // H_CODEC_DVP 

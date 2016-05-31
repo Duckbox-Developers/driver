@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_dtshd.h
-Author :           Sylvain
+Author : Sylvain
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-07-Jun-07   Ported from dts on Player 1                     Sylvain
+Date Modification Name
+---- ------------ --------
+07-Jun-07 Ported from dts on Player 1 Sylvain
 
 ************************************************************************/
 
@@ -53,33 +53,33 @@ Date        Modification                                    Name
 class Collator_PesAudioDtshd_c : public Collator_PesAudioDvd_c
 {
 	private:
-		bool             EightChannelsRequired; ///< Holds the output channel required configuration
+		bool EightChannelsRequired; ///< Holds the output channel required configuration
 		/// \todo This variable should be updated according to the manifestor constraints via SetModuleParameters
 		///
 		DtshdAudioSyncFrameHeader_t SyncFrameHeader;
 
-		BitStreamClass_c Bits;                  ///< will be used to parse frame header
+		BitStreamClass_c Bits; ///< will be used to parse frame header
 
 	protected:
 
 		CollatorStatus_t FindNextSyncWord(int *CodeOffset);
-		CollatorStatus_t FindAnyNextSyncWord(int *CodeOffset, DtshdStreamType_t * Type);
+		CollatorStatus_t FindAnyNextSyncWord(int *CodeOffset, DtshdStreamType_t *Type);
 
 		CollatorStatus_t DecideCollatorNextStateAndGetLength(unsigned int *FrameLength);
-		void             GetStreamType(unsigned char * Header, DtshdAudioParsedFrameHeader_t * ParsedFrameHeader);
-		void             SetPesPrivateDataLength(unsigned char SpecificCode);
+		void GetStreamType(unsigned char *Header, DtshdAudioParsedFrameHeader_t *ParsedFrameHeader);
+		void SetPesPrivateDataLength(unsigned char SpecificCode);
 		CollatorStatus_t HandlePesPrivateData(unsigned char *PesPrivateData);
-		CollatorStatus_t GetSpecificFrameLength(unsigned int * FrameLength);
+		CollatorStatus_t GetSpecificFrameLength(unsigned int *FrameLength);
 
 	public:
 
-		//  unsigned int     RealFrameSize;
-		unsigned int     CoreFrameSize;
-		bool             GotCoreFrameSize;
+		// unsigned int RealFrameSize;
+		unsigned int CoreFrameSize;
+		bool GotCoreFrameSize;
 
 		Collator_PesAudioDtshd_c();
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 };
 
 #endif // H_COLLATOR_PES_AUDIO_DTSHD

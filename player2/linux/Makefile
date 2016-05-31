@@ -1,5 +1,19 @@
 TREE_ROOT?=$(DRIVER_TOPDIR)/player2
 CONFIG_STGFB_PATH?=$(DRIVER_TOPDIR)/stgfb/stmfb
+CONFIG_MULTICOM_PATH?=$(DRIVER_TOPDIR)/multicom
+CONFIG_PLAYER2_PATH?=$(DRIVER_TOPDIR)/player2
+CONFIG_KERNEL_BUILD?=$(KERNEL_LOCATION)
+CONFIG_KERNEL_PATH?=$(KERNEL_LOCATION)
+
+
+export TREE_ROOT
+export CONFIG_KERNEL_BUILD
+export CONFIG_KERNEL_PATH
+export CONFIG_STGFB_PATH
+export CONFIG_MULTICOM_PATH
+export CONFIG_PLAYER2_PATH
+export INSTALL_MOD_PATH
+
 
 ifdef UFS922
  PART1=1
@@ -115,41 +129,44 @@ CCFLAGSY += -DMULTICOM406
 endif
 
 ifdef PART1
-CCFLAGSY+=-DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x01B00000 \
-	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00300000 \
-	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000 \
+CCFLAGSY += \
+	-DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x01B00000    \
+	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00300000  \
+	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000        \
 	-DPLAYER2_H264_MACROBLOCK_STRUCTURE_MEMORY=0x580000 \
-	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x800000 \
-	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=64 \
-	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=64 \
-	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000 \
+	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x800000           \
+	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=64           \
+	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=64            \
+	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000  \
 	-DPLAYER2_VIDEO_DEFAULT_CODED_MEMORY_SIZE=0x800000
 endif
 
 ifdef PART2
 #UFS912, SPARK, SPARK7162, atevio7500, hs7110, hs7810a, hs7119, hs7819, atemio520, atemio530
-CCFLAGSY += -DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x02400000 \
-	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00900000 \
-	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000 \
+CCFLAGSY += \
+	-DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x02400000    \
+	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00900000  \
+	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000        \
 	-DPLAYER2_H264_MACROBLOCK_STRUCTURE_MEMORY=0xa00000 \
-	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x1000000 \
-	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=128 \
-	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=128 \
-	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000 \
+	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x1000000          \
+	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=128          \
+	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=128           \
+	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000  \
 	-DPLAYER2_VIDEO_DEFAULT_CODED_MEMORY_SIZE=0x1000000
 endif
 
 ifdef PART3
 #UFS910 and others
-CCFLAGSY += -DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x01B00000 \
-	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00000000 \
-	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000 \
-	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000 \
+CCFLAGSY += \
+	-DPLAYER2_PRIMARY_VIDEO_BUFFER_MEMORY=0x01B00000    \
+	-DPLAYER2_SECONDARY_VIDEO_BUFFER_MEMORY=0x00000000  \
+	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000        \
+	-DPLAYER2_AVR_VIDEO_BUFFER_MEMORY=0x00000000        \
 	-DPLAYER2_H264_MACROBLOCK_STRUCTURE_MEMORY=0x580000 \
-	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x800000 \
-	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=64 \
-	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=64 \
-	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000 \
+	-DPLAYER2_H264_FRAME_MEMORY_SIZE=0x800000           \
+	-DPLAYER2_H264_STREAM_PARAMETERS_COUNT=64           \
+	-DPLAYER2_H264_FRAME_PARAMETERS_COUNT=64            \
+	-DPLAYER2_AUDIO_DEFAULT_CODED_MEMORY_SIZE=0x400000  \
 	-DPLAYER2_VIDEO_DEFAULT_CODED_MEMORY_SIZE=0x800000
 endif
 
@@ -158,26 +175,32 @@ ifdef CONFIG_CPU_SUBTYPE_STX7100
 CCFLAGSY += -DCONFIG_CPU_SUBTYPE_STB7100
 endif
 
+# We should ensure that *all* modules we build are built cleanly,
+# without any warnings, so we use subdir-ccflags to provide this
+# option throughout the build
+#subdir-ccflags-y := -Werror
 
-CCFLAGSY += -I$(CONFIG_KERNEL_BUILD)/include2 \
+CCFLAGSY += \
+	-I$(CONFIG_KERNEL_BUILD)/include2 \
 	-I$(CONFIG_KERNEL_BUILD)/include \
-	-include $(KERNEL_LOCATION)/include/linux/autoconf.h \
 	-I$(CONFIG_KERNEL_PATH)/include -D__KERNEL__ \
 	-I$(DRIVER_TOPDIR)/include \
 	-I$(DRIVER_TOPDIR)/include/stmfb \
 	-I$(DRIVER_TOPDIR)/include/player2 \
 	-I$(DRIVER_TOPDIR)/include/multicom
 
-CCFLAGSY += -I$(TREE_ROOT)/linux/components/inline         \
-	-I$(TREE_ROOT)/components/include              \
-	-I$(TREE_ROOT)/components/infrastructure       \
-	-I$(TREE_ROOT)/linux/drivers/media/dvb/stm/allocator \
+CCFLAGSY += \
+	-I$(TREE_ROOT)/linux/components/inline                       \
+	-I$(TREE_ROOT)/components/include                            \
+	-I$(TREE_ROOT)/components/infrastructure                     \
+	-I$(TREE_ROOT)/linux/drivers/media/dvb/stm/allocator         \
 	-I$(TREE_ROOT)/linux/drivers/media/dvb/stm/h264_preprocessor \
-	-I$(TREE_ROOT)/linux/drivers/stm/st_relay \
-	-I$(TREE_ROOT)/linux/drivers/sound/ksound \
+	-I$(TREE_ROOT)/linux/drivers/stm/st_relay                    \
+	-I$(TREE_ROOT)/linux/drivers/sound/ksound                    \
 	-I$(TREE_ROOT)/linux/drivers/sound/pcm_transcoder
 
-CCFLAGSY += -I$(TREE_ROOT)/player/class_definitions        \
+CCFLAGSY += \
+	-I$(TREE_ROOT)/player/class_definitions        \
 	-I$(TREE_ROOT)/player/buffer                   \
 	-I$(TREE_ROOT)/player/demultiplexor            \
 	-I$(TREE_ROOT)/player/collator                 \
@@ -186,7 +209,7 @@ CCFLAGSY += -I$(TREE_ROOT)/player/class_definitions        \
 	-I$(TREE_ROOT)/player/codec                    \
 	-I$(TREE_ROOT)/player/standards                \
 	-I$(TREE_ROOT)/player/manifestor               \
-	-I$(TREE_ROOT)/player/player/                  \
+	-I$(TREE_ROOT)/player/player                   \
 	-I$(TREE_ROOT)/player/output_coordinator       \
 	-I$(TREE_ROOT)/player/output_timer
 
@@ -221,6 +244,7 @@ CCFLAGSY += -DCONFIG_MONITOR=1
 # preference to any system supplied ones. Items such as the MME header
 # files (XXXX_DecoderTypes.h) form part of the system headers.
 CCFLAGSY += -I$(CONFIG_MODULES_PATH)/usr/include
+CCFLAGSY += -I$(CONFIG_MULTICOM_PATH)/include/
 
 CCFLAGSY += -D__SH4__
 

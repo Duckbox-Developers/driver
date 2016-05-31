@@ -13,18 +13,18 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : dvb_dmux.h - demux device definitions
-Author :           Julian
+Author : Julian
 
-Date        Modification                                    Name
-----        ------------                                    --------
-01-Nov-06   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+01-Nov-06 Created Julian
 
 ************************************************************************/
 
@@ -32,7 +32,13 @@ Date        Modification                                    Name
 #define H_DVB_DEMUX
 
 #include "dvbdev.h"
+#include <dvb_demux.h>
 
+#if 0
+int DmxWrite(struct dmx_demux *Demux,
+	     const char *Buffer,
+	     size_t Count);
+#endif
 int StartFeed(struct dvb_demux_feed *Feed);
 int StopFeed(struct dvb_demux_feed *Feed);
 

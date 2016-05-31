@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : manifestor_audio.cpp
-Author :           Daniel
+Author : Daniel
 
 Implementation of the base manifestor class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-14-May-07   Created (from manifestor_video.cpp)             Daniel
+Date Modification Name
+---- ------------ --------
+14-May-07 Created (from manifestor_video.cpp) Daniel
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "manifestor_audio.h"
 #include "st_relay.h"
@@ -42,12 +42,12 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#undef  MANIFESTOR_TAG
-#define MANIFESTOR_TAG          "Manifestor_Audio_c::"
+#undef MANIFESTOR_TAG
+#define MANIFESTOR_TAG "Manifestor_Audio_c::"
 
-#define BUFFER_DECODE_BUFFER            "AudioDecodeBuffer"
-#define BUFFER_DECODE_BUFFER_TYPE       {BUFFER_DECODE_BUFFER, BufferDataTypeBase, AllocateFromSuppliedBlock, 32, 32, false, false, 0}
-static BufferDataDescriptor_t           InitialDecodeBufferDescriptor = BUFFER_DECODE_BUFFER_TYPE;
+#define BUFFER_DECODE_BUFFER "AudioDecodeBuffer"
+#define BUFFER_DECODE_BUFFER_TYPE {BUFFER_DECODE_BUFFER, BufferDataTypeBase, AllocateFromSuppliedBlock, 32, 32, false, false, 0}
+static BufferDataDescriptor_t InitialDecodeBufferDescriptor = BUFFER_DECODE_BUFFER_TYPE;
 
 ////////////////////////////////////////////////////////////////////////////
 ///
@@ -57,8 +57,8 @@ Manifestor_Audio_c::Manifestor_Audio_c(void)
 	: DestroySyncrhonizationPrimatives(false)
 {
 	MANIFESTOR_DEBUG(">><<\n");
-	Configuration.ManifestorName    = "Audio";
-	Configuration.StreamType        = StreamTypeAudio;
+	Configuration.ManifestorName = "Audio";
+	Configuration.StreamType = StreamTypeAudio;
 	Configuration.DecodeBufferDescriptor = &InitialDecodeBufferDescriptor;
 	Configuration.PostProcessControlBufferCount = 16;
 	if (InitializationStatus != ManifestorNoError)
@@ -104,7 +104,7 @@ Manifestor_Audio_c::~Manifestor_Audio_c(void)
 ///
 ///
 ///
-ManifestorStatus_t      Manifestor_Audio_c::Halt(void)
+ManifestorStatus_t Manifestor_Audio_c::Halt(void)
 {
 	MANIFESTOR_DEBUG(">><<\n");
 	//
@@ -127,12 +127,12 @@ ManifestorStatus_t Manifestor_Audio_c::Reset(void)
 	MANIFESTOR_DEBUG(">><<\n");
 	if (TestComponentState(ComponentRunning))
 		Halt();
-	BufferQueueHead             = INVALID_BUFFER_ID;
-	BufferQueueTail             = ANY_BUFFER_ID;
-	QueuedBufferCount           = 0;
-	NotQueuedBufferCount        = 0;
-	DisplayUpdatePending        = false;
-	ForcedUnblock               = false;
+	BufferQueueHead = INVALID_BUFFER_ID;
+	BufferQueueTail = ANY_BUFFER_ID;
+	QueuedBufferCount = 0;
+	NotQueuedBufferCount = 0;
+	DisplayUpdatePending = false;
+	ForcedUnblock = false;
 	memset(&LastSeenAudioParameters, 0, sizeof(LastSeenAudioParameters));
 	return Manifestor_Base_c::Reset();
 }
@@ -141,26 +141,26 @@ ManifestorStatus_t Manifestor_Audio_c::Reset(void)
 ///
 /// Allocate and initialize the decode buffer if required, and pass them to the caller.
 ///
-/// \param Pool         Pointer to location for buffer pool pointer to hold
-///                     details of the buffer pool holding the decode buffers.
-/// \return             Succes or failure
+/// \param Pool Pointer to location for buffer pool pointer to hold
+/// details of the buffer pool holding the decode buffers.
+/// \return Succes or failure
 ///
-ManifestorStatus_t      Manifestor_Audio_c::GetDecodeBufferPool(class BufferPool_c**   Pool)
+ManifestorStatus_t Manifestor_Audio_c::GetDecodeBufferPool(class BufferPool_c **Pool)
 {
-	unsigned int                        i;
-	ManifestorStatus_t          Status;
+	unsigned int i;
+	ManifestorStatus_t Status;
 	MANIFESTOR_DEBUG(">><<\n");
 	// Only create the pool if it doesn't exist and buffers have been created
 	if (DecodeBufferPool != NULL)
 	{
-		*Pool   = DecodeBufferPool;
+		*Pool = DecodeBufferPool;
 		return ManifestorNoError;
 	}
-	Status      = Manifestor_Base_c::GetDecodeBufferPool(Pool);
+	Status = Manifestor_Base_c::GetDecodeBufferPool(Pool);
 	if (Status != ManifestorNoError)
 	{
 		MANIFESTOR_ERROR("Failed to create a pool of decode buffers.\n");
-		DecodeBufferPool        = NULL;
+		DecodeBufferPool = NULL;
 		return ManifestorError;
 	}
 	// Fill in surface descriptor details with our assumed defaults
@@ -169,17 +169,17 @@ ManifestorStatus_t      Manifestor_Audio_c::GetDecodeBufferPool(class BufferPool
 	SurfaceDescriptor.SampleRateHz = 0;
 	for (i = 0; i < BufferConfiguration.MaxBufferCount; i++)
 	{
-		StreamBuffer[i].BufferIndex                     = i;
-		StreamBuffer[i].QueueCount                      = 0;
-		StreamBuffer[i].TimeOfGoingOnDisplay            = 0;
-		StreamBuffer[i].BufferState                     = AudioBufferStateAvailable;
+		StreamBuffer[i].BufferIndex = i;
+		StreamBuffer[i].QueueCount = 0;
+		StreamBuffer[i].TimeOfGoingOnDisplay = 0;
+		StreamBuffer[i].BufferState = AudioBufferStateAvailable;
 	}
-	BufferQueueHead                     = INVALID_BUFFER_ID;
-	BufferQueueTail                     = ANY_BUFFER_ID;
-	QueuedBufferCount                   = 0;
-	NotQueuedBufferCount                = 0;
+	BufferQueueHead = INVALID_BUFFER_ID;
+	BufferQueueTail = ANY_BUFFER_ID;
+	QueuedBufferCount = 0;
+	NotQueuedBufferCount = 0;
 	// Let outside world know about the created pool
-	*Pool   = DecodeBufferPool;
+	*Pool = DecodeBufferPool;
 	SetComponentState(ComponentRunning);
 	return ManifestorNoError;
 }
@@ -187,12 +187,12 @@ ManifestorStatus_t      Manifestor_Audio_c::GetDecodeBufferPool(class BufferPool
 ////////////////////////////////////////////////////////////////////////////
 /// Fill in private structure with timing details of display surface.
 ///
-/// \param      SurfaceParameters pointer to structure to complete
+/// \param SurfaceParameters pointer to structure to complete
 ///
-ManifestorStatus_t      Manifestor_Audio_c::GetSurfaceParameters(void** SurfaceParameters)
+ManifestorStatus_t Manifestor_Audio_c::GetSurfaceParameters(void **SurfaceParameters)
 {
 	MANIFESTOR_DEBUG(">><<\n");
-	*SurfaceParameters  = (void*)&SurfaceDescriptor;
+	*SurfaceParameters = (void *)&SurfaceDescriptor;
 	return ManifestorNoError;
 }
 
@@ -200,12 +200,12 @@ ManifestorStatus_t      Manifestor_Audio_c::GetSurfaceParameters(void** SurfaceP
 ///
 ///
 ///
-ManifestorStatus_t      Manifestor_Audio_c::GetNextQueuedManifestationTime(unsigned long long*    Time)
+ManifestorStatus_t Manifestor_Audio_c::GetNextQueuedManifestationTime(unsigned long long *Time)
 {
 	MANIFESTOR_DEBUG(">><<\n");
 	// this is not an appropriate implementation... it just assumes that audio latency is a quarter of
 	// a second.
-	*Time     = OS_GetTimeInMicroSeconds() + 250000;
+	*Time = OS_GetTimeInMicroSeconds() + 250000;
 	return ManifestorNoError;
 }
 
@@ -218,7 +218,7 @@ ManifestorStatus_t      Manifestor_Audio_c::GetNextQueuedManifestationTime(unsig
 ///
 /// The super-class will tidy up an queued events.
 ///
-ManifestorStatus_t      Manifestor_Audio_c::ReleaseQueuedDecodeBuffers()
+ManifestorStatus_t Manifestor_Audio_c::ReleaseQueuedDecodeBuffers()
 {
 	ManifestorStatus_t Status;
 	MANIFESTOR_DEBUG(">><<\n");
@@ -236,7 +236,7 @@ ManifestorStatus_t      Manifestor_Audio_c::ReleaseQueuedDecodeBuffers()
 		QueuedBufferCount--;
 		if (StreamBuffer[BufferIndex].EventPending)
 			ServiceEventQueue(BufferIndex);
-		OutputRing->Insert((uintptr_t) StreamBuffer[BufferIndex].Buffer);
+		OutputRing->Insert((unsigned int) StreamBuffer[BufferIndex].Buffer);
 	}
 	BufferQueueHead = INVALID_BUFFER_ID;
 	BufferQueueTail = ANY_BUFFER_ID;
@@ -248,7 +248,7 @@ ManifestorStatus_t      Manifestor_Audio_c::ReleaseQueuedDecodeBuffers()
 ///
 ///
 ///
-ManifestorStatus_t      Manifestor_Audio_c::InitialFrame(class Buffer_c*         Buffer)
+ManifestorStatus_t Manifestor_Audio_c::InitialFrame(class Buffer_c *Buffer)
 {
 	MANIFESTOR_DEBUG(">><<\n");
 	return ManifestorNoError;
@@ -258,11 +258,11 @@ ManifestorStatus_t      Manifestor_Audio_c::InitialFrame(class Buffer_c*        
 ///
 ///
 ///
-ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*        Buffer)
+ManifestorStatus_t Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c *Buffer)
 {
-	ManifestorStatus_t                  Status;
-	BufferStatus_t                      BufferStatus;
-	unsigned int                        BufferIndex;
+	ManifestorStatus_t Status;
+	BufferStatus_t BufferStatus;
+	unsigned int BufferIndex;
 	//MANIFESTOR_DEBUG(">><<\n");
 	AssertComponentState("Manifestor_Audio_c::QueueDecodeBuffer", ComponentRunning);
 	//
@@ -278,28 +278,29 @@ ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*   
 	StreamBuffer[BufferIndex].EventPending = EventPending;
 	EventPending = false;
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersReferenceType,
-				   (void**) &StreamBuffer[BufferIndex].FrameParameters);
+						       (void **) &StreamBuffer[BufferIndex].FrameParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed frame parameters %x.\n", BufferStatus);
 		return ManifestorError;
 	}
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataParsedAudioParametersType,
-				   (void**) &StreamBuffer[BufferIndex].AudioParameters);
+						       (void **) &StreamBuffer[BufferIndex].AudioParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed audio parameters %x.\n", BufferStatus);
 		return ManifestorError;
 	}
-	Buffer->DumpToRelayFS(ST_RELAY_TYPE_DECODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_MANIFESTOR + RelayfsIndex, (void*)Player);
+	Buffer->DumpToRelayFS(ST_RELAY_TYPE_DECODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_MANIFESTOR + RelayfsIndex, (void *)Player);
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataAudioOutputTimingType,
-				   (void **) &StreamBuffer[BufferIndex].AudioOutputTiming);
+						       (void **) &StreamBuffer[BufferIndex].AudioOutputTiming);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer audio output timing parameters %x.\n", BufferStatus);
 		return ManifestorError;
 	}
-	BufferStatus = Buffer->ObtainDataReference(NULL, NULL, (void**)(&StreamBuffer[BufferIndex].Data), UnCachedAddress);
+	BufferStatus = Buffer->ObtainDataReference(NULL, NULL,
+						   (void **)(&StreamBuffer[BufferIndex].Data), UnCachedAddress);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to obtain buffer's data reference %x.\n", BufferStatus);
@@ -310,7 +311,7 @@ ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*   
 	// Check if there are new audio parameters (i.e. change of sample rate etc.) and note this
 	//
 	if (0 == memcmp(&LastSeenAudioParameters, StreamBuffer[BufferIndex].AudioParameters,
-					sizeof(LastSeenAudioParameters)))
+			sizeof(LastSeenAudioParameters)))
 	{
 		StreamBuffer[BufferIndex].UpdateAudioParameters = false;
 	}
@@ -318,7 +319,7 @@ ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*   
 	{
 		StreamBuffer[BufferIndex].UpdateAudioParameters = true;
 		memcpy(&LastSeenAudioParameters, StreamBuffer[BufferIndex].AudioParameters,
-			   sizeof(LastSeenAudioParameters));
+		       sizeof(LastSeenAudioParameters));
 	}
 	//
 	// Allow the sub-class to have a peek at the buffer before we queue it for display
@@ -355,9 +356,9 @@ ManifestorStatus_t      Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c*   
 ///
 /// If no buffers yet queued returns ANY_BUFFER_ID
 ///
-/// \return     Buffer index of last buffer sent for display
+/// \return Buffer index of last buffer sent for display
 ///
-unsigned int    Manifestor_Audio_c::GetBufferId(void)
+unsigned int Manifestor_Audio_c::GetBufferId(void)
 {
 	return BufferQueueTail;
 }
@@ -366,16 +367,16 @@ unsigned int    Manifestor_Audio_c::GetBufferId(void)
 ///
 /// Get original PTS of currently visible buffer
 ///
-/// \param Pts          Pointer to Pts variable
+/// \param Pts Pointer to Pts variable
 ///
-/// \return             Success if Pts value is available
+/// \return Success if Pts value is available
 ///
-ManifestorStatus_t Manifestor_Audio_c::GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long* Time)
+ManifestorStatus_t Manifestor_Audio_c::GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long *Time)
 {
-	BufferStatus_t                      BufferStatus;
-	struct ParsedFrameParameters_s*     FrameParameters;
+	BufferStatus_t BufferStatus;
+	struct ParsedFrameParameters_s *FrameParameters;
 	MANIFESTOR_DEBUG("\n");
-	*Time      = INVALID_TIME;
+	*Time = INVALID_TIME;
 	OS_AutoLockMutex AutoLock(&BufferQueueLock);
 	if (BufferQueueHead == INVALID_BUFFER_ID)
 	{
@@ -383,7 +384,7 @@ ManifestorStatus_t Manifestor_Audio_c::GetNativeTimeOfCurrentlyManifestedFrame(u
 		return ManifestorError;
 	}
 	BufferStatus = StreamBuffer[BufferQueueHead].Buffer->ObtainMetaDataReference(
-					   Player->MetaDataParsedFrameParametersReferenceType, (void**)&FrameParameters);
+			       Player->MetaDataParsedFrameParametersReferenceType, (void **)&FrameParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed frame parameters %x.\n", BufferStatus);
@@ -395,20 +396,20 @@ ManifestorStatus_t Manifestor_Audio_c::GetNativeTimeOfCurrentlyManifestedFrame(u
 		return ManifestorError;
 	}
 	MANIFESTOR_DEBUG("%lld\n", FrameParameters->NativePlaybackTime);
-	*Time       = FrameParameters->NativePlaybackTime;
+	*Time = FrameParameters->NativePlaybackTime;
 	return ManifestorNoError;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 ///
 /// \brief Get number of frames appeared on the display
-/// \param Framecount   Pointer to FrameCount variable
-/// \return             Success
+/// \param Framecount Pointer to FrameCount variable
+/// \return Success
 ///
-ManifestorStatus_t Manifestor_Audio_c::GetFrameCount(unsigned long long* FrameCount)
+ManifestorStatus_t Manifestor_Audio_c::GetFrameCount(unsigned long long *FrameCount)
 {
 	//MANIFESTOR_DEBUG ("\n");
-	*FrameCount         = 0ull;
+	*FrameCount = 0ull;
 	return ManifestorNoError;
 }
 
@@ -489,9 +490,9 @@ void Manifestor_Audio_c::PushBackBuffer(unsigned int BufferIndex)
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Function to flesh out a buffer request structure
+// Function to flesh out a buffer request structure
 
-ManifestorStatus_t   Manifestor_Audio_c::FillOutBufferStructure(BufferStructure_t    *RequestedStructure)
+ManifestorStatus_t Manifestor_Audio_c::FillOutBufferStructure(BufferStructure_t *RequestedStructure)
 {
 	//
 	// Check that the format type is compatible
@@ -504,11 +505,11 @@ ManifestorStatus_t   Manifestor_Audio_c::FillOutBufferStructure(BufferStructure_
 	//
 	// Calculate the appropriate fields
 	//
-	RequestedStructure->ComponentCount      = 1;
-	RequestedStructure->ComponentOffset[0]  = 0;
-	RequestedStructure->Strides[0][0]       = RequestedStructure->Dimension[0] / 8;
-	RequestedStructure->Strides[1][0]       = RequestedStructure->Dimension[1] * RequestedStructure->Strides[0][0];
-	RequestedStructure->Size            = (RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1] * RequestedStructure->Dimension[2]) / 8;
+	RequestedStructure->ComponentCount = 1;
+	RequestedStructure->ComponentOffset[0] = 0;
+	RequestedStructure->Strides[0][0] = RequestedStructure->Dimension[0] / 8;
+	RequestedStructure->Strides[1][0] = RequestedStructure->Dimension[1] * RequestedStructure->Strides[0][0];
+	RequestedStructure->Size = (RequestedStructure->Dimension[0] * RequestedStructure->Dimension[1] * RequestedStructure->Dimension[2]) / 8;
 	return ManifestorNoError;
 }
 

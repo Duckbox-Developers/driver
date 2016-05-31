@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_dummy.h
-Author :           Nick
+Author : Nick
 
 Definition of the dummy codec class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-16-Jan-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+16-Jan-07 Created Nick
 
 ************************************************************************/
 
@@ -53,7 +53,7 @@ class Codec_Dummy_c : public Codec_c
 {
 	public:
 
-		CodecTrickModeParameters_t    CodecTrickModeParameters;
+		CodecTrickModeParameters_t CodecTrickModeParameters;
 
 		//
 		// Constructor/Destructor methods
@@ -72,64 +72,64 @@ class Codec_Dummy_c : public Codec_c
 		// Other functions
 		//
 
-		CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t *TrickModeParameters)
+		CodecStatus_t GetTrickModeParameters(CodecTrickModeParameters_t *TrickModeParameters)
 		{
 			CodecTrickModeParameters.SubstandardDecodeSupported = false;
-			CodecTrickModeParameters.MaximumNormalDecodeRate    = 2;
-			CodecTrickModeParameters.MaximumSubstandardDecodeRate   = 3;
-			CodecTrickModeParameters.DefaultGroupSize       = 12;
+			CodecTrickModeParameters.MaximumNormalDecodeRate = 2;
+			CodecTrickModeParameters.MaximumSubstandardDecodeRate = 3;
+			CodecTrickModeParameters.DefaultGroupSize = 12;
 			CodecTrickModeParameters.DefaultGroupReferenceFrameCount = 4;
-			*TrickModeParameters    = CodecTrickModeParameters;
+			*TrickModeParameters = CodecTrickModeParameters;
 			return CodecNoError;
 		}
 
 //
 
-		CodecStatus_t   SetModuleParameters(unsigned int   ParameterBlockSize,
-											void          *ParameterBlock)
+		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
+						  void *ParameterBlock)
 		{
 			report(severity_info, "Codec_Dummy_c::SetModuleParameters - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   DiscardQueuedDecodes(void)
+		CodecStatus_t DiscardQueuedDecodes(void)
 		{
 			report(severity_info, "Codec_Dummy_c::DiscardQueuedDecodes - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   CheckReferenceFrameList(unsigned int              NumberOfReferenceFrameLists,
-												ReferenceFrameList_t      ReferenceFrameList[])
+		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
+						      ReferenceFrameList_t ReferenceFrameList[])
 		{
 			report(severity_info, "Codec_Dummy_c::CheckReferenceFrameList - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   RegisterOutputBufferRing(Ring_t       Ring)
+		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring)
 		{
 			report(severity_info, "Codec_Dummy_c::RegisterOutputBufferRing - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   OutputPartialDecodeBuffers(void)
+		CodecStatus_t OutputPartialDecodeBuffers(void)
 		{
 			report(severity_info, "Codec_Dummy_c::OutputPartialDecodeBuffers - Called\n");
 			return CodecNoError;
 		};
 
-		CodecStatus_t   ReleaseReferenceFrame(unsigned int    ReferenceFrameDecodeIndex)
+		CodecStatus_t ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex)
 		{
 			report(severity_info, "Codec_Dummy_c::ReleaseReferenceFrame - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   ReleaseDecodeBuffer(Buffer_t      Buffer)
+		CodecStatus_t ReleaseDecodeBuffer(Buffer_t Buffer)
 		{
 			report(severity_info, "Codec_Dummy_c::ReleaseDecodeBuffer - Called\n");
 			return CodecNoError;
 		}
 
-		CodecStatus_t   Input(Buffer_t    CodedBuffer)
+		CodecStatus_t Input(Buffer_t CodedBuffer)
 		{
 			report(severity_info, "Codec_Dummy_c::Input - Called\n"); /*BufferManager->Dump(DumpAll);*/ return CodecNoError;
 		}

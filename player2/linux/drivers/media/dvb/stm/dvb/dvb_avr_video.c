@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -26,7 +26,9 @@ license from ST.
 /******************************
  * INCLUDES
  ******************************/
-#include <linux/semaphore.h>
+#if !defined(__TDT__)
+#include <asm/semaphore.h>
+#endif
 #include <asm/page.h>
 #include <asm/io.h>
 #include <asm/page.h>
@@ -43,6 +45,11 @@ license from ST.
 #include <linux/poll.h>
 #include <linux/mm.h>
 #include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
+#include <asm/semaphore.h>
+#else
+#include <linux/semaphore.h>
+#endif
 #include <linux/videodev.h>
 #include <linux/dvb/video.h>
 #include <linux/interrupt.h>
@@ -65,31 +72,31 @@ license from ST.
  * FUNCTION PROTOTYPES
  ******************************/
 
-extern struct class_device* player_sysfs_get_class_device(void *playback, void* stream);
-extern int player_sysfs_get_stream_id(struct class_device* stream_dev);
+extern struct class_device *player_sysfs_get_class_device(void *playback, void *stream);
+extern int player_sysfs_get_stream_id(struct class_device *stream_dev);
 extern void player_sysfs_new_attribute_notification(struct class_device *stream_dev);
 
 /******************************
  * LOCAL VARIABLES
  ******************************/
 
-#define inrange(v,l,u)          (((v) >= (l)) && ((v) <= (u)))
-#define Clamp(v,l,u)            { if( (v) < (l) ) v = (l); else if ( (v) > (u) ) v = (u); }
-#define min( a, b )         (((a)<(b)) ? (a) : (b))
-#define max( a, b )         (((a)>(b)) ? (a) : (b))
-#define Abs( a )            (((a)<0) ? (-a) : (a))
+#define inrange(v,l,u) (((v) >= (l)) && ((v) <= (u)))
+#define Clamp(v,l,u) { if( (v) < (l) ) v = (l); else if ( (v) > (u) ) v = (u); }
+#define min( a, b ) (((a)<(b)) ? (a) : (b))
+#define max( a, b ) (((a)>(b)) ? (a) : (b))
+#define Abs( a ) (((a)<0) ? (-a) : (a))
 
-#define DvpTimeForNFrames(N)        ((((N) * Context->StreamInfo.FrameRateDenominator * 1000000ULL) + (Context->StreamInfo.FrameRateNumerator/2)) / Context->StreamInfo.FrameRateNumerator)
-#define DvpCorrectedTimeForNFrames(N)   ((DvpTimeForNFrames((N)) * Context->DvpFrameDurationCorrection) >> DVP_CORRECTION_FIXED_POINT_BITS);
+#define DvpTimeForNFrames(N) ((((N) * Context->StreamInfo.FrameRateDenominator * 1000000ULL) + (Context->StreamInfo.FrameRateNumerator/2)) / Context->StreamInfo.FrameRateNumerator)
+#define DvpCorrectedTimeForNFrames(N) ((DvpTimeForNFrames((N)) * Context->DvpFrameDurationCorrection) >> DVP_CORRECTION_FIXED_POINT_BITS);
 
-#define DvpRange(T)         (((T * DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR) / 1000000) + 1)
-#define DvpValueMatchesFrameTime(V,T)   inrange( V, T - DvpRange(T), T + DvpRange(T) )
+#define DvpRange(T) (((T * DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR) / 1000000) + 1)
+#define DvpValueMatchesFrameTime(V,T) inrange( V, T - DvpRange(T), T + DvpRange(T) )
 
-#define ControlValue(s)         ((Context->DvpControl##s == DVP_USE_DEFAULT) ? Context->DvpControlDefault##s : Context->DvpControl##s)
+#define ControlValue(s) ((Context->DvpControl##s == DVP_USE_DEFAULT) ? Context->DvpControlDefault##s : Context->DvpControl##s)
 
-#define GetValue( s, v )        printk( "%s\n", s ); *Value = v;
-#define Check( s, l, u )        printk( "%s\n", s ); if( (Value != DVP_USE_DEFAULT) && !inrange((int)Value,l,u) ) {printk( "Set Control - Value out of range (%d not in [%d..%d])\n", Value, l, u ); return -1; }
-#define CheckAndSet( s, l, u, v )   Check( s, l, u ); v = Value;
+#define GetValue( s, v ) printk( "%s\n", s ); *Value = v;
+#define Check( s, l, u ) printk( "%s\n", s ); if( (Value != DVP_USE_DEFAULT) && !inrange((int)Value,l,u) ) {printk( "Set Control - Value out of range (%d not in [%d..%d])\n", Value, l, u ); return -1; }
+#define CheckAndSet( s, l, u, v ) Check( s, l, u ); v = Value;
 
 /******************************
  * GLOBAL VARIABLES
@@ -185,14 +192,14 @@ static const dvp_v4l2_video_mode_line_t DvpModeParamsTable[] =
 
 typedef struct ResizingFilter_s
 {
-	unsigned int    ForScalingFactorLessThan;   // 0x100 is x 1, 0x200 means downscaling, halving the dimension
-	unsigned char   Coefficients[40];       // 40 for horizontal, 24 for vertical
+	unsigned int ForScalingFactorLessThan; // 0x100 is x 1, 0x200 means downscaling, halving the dimension
+	unsigned char Coefficients[40]; // 40 for horizontal, 24 for vertical
 } ResizingFilter_t;
 
 //
 
-#define ScalingFactor(N)        ((1000 * 256)/N)        // Scaling factor in 1000s
-#define WORDS_PER_VERTICAL_FILTER   6
+#define ScalingFactor(N) ((1000 * 256)/N) // Scaling factor in 1000s
+#define WORDS_PER_VERTICAL_FILTER 6
 #define WORDS_PER_HORIZONTAL_FILTER 10
 
 static ResizingFilter_t VerticalResizingFilters[] =
@@ -351,149 +358,149 @@ static dvp_v4l2_video_handle_t *DvpVideoSysfsLookupContext(struct class_device *
 {
 	int streamid = player_sysfs_get_stream_id(class_dev);
 	BUG_ON(streamid < 0 ||
-		   streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
-		   NULL == VideoContextLookupTable[streamid]);
+	       streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
+	       NULL == VideoContextLookupTable[streamid]);
 	return VideoContextLookupTable[streamid];
 }
 
 // Define the macro for creating fns and declaring the attribute
 
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_DECLARE( DvpName, LinuxName )                         \
-    static ssize_t DvpVideoSysfsShow##DvpName( struct class_device *class_dev, char *buf )      \
-    {                                               \
-        int v = atomic_read(&DvpVideoSysfsLookupContext(class_dev)->Dvp##DvpName);          \
-        return sprintf(buf, "%d\n", v);                             \
-    }                                               \
-    \
-    static ssize_t DvpVideoSysfsStore##DvpName( struct class_device *class_dev, const char *buf, size_t count ) \
-    {                                               \
-        int v;                                          \
-        \
-        if (1 != sscanf(buf, "%i", &v))                             \
-            return -EINVAL;                                      \
-        \
-        if (v < 0)                                          \
-            return -EINVAL;                                      \
-        \
-        atomic_set(&DvpVideoSysfsLookupContext(class_dev)->Dvp##DvpName, v);            \
-        return count;                                       \
-    }                                               \
-    \
-    static CLASS_DEVICE_ATTR(LinuxName, 0600, DvpVideoSysfsShow##DvpName, DvpVideoSysfsStore##DvpName)
+#define SYSFS_DECLARE( DvpName, LinuxName ) \
+	static ssize_t DvpVideoSysfsShow##DvpName( struct class_device *class_dev, char *buf ) \
+	{ \
+		int v = atomic_read(&DvpVideoSysfsLookupContext(class_dev)->Dvp##DvpName); \
+		return sprintf(buf, "%d\n", v); \
+	} \
+	\
+	static ssize_t DvpVideoSysfsStore##DvpName( struct class_device *class_dev, const char *buf, size_t count ) \
+	{ \
+		int v; \
+		\
+		if (1 != sscanf(buf, "%i", &v)) \
+			return -EINVAL; \
+		\
+		if (v < 0) \
+			return -EINVAL; \
+		\
+		atomic_set(&DvpVideoSysfsLookupContext(class_dev)->Dvp##DvpName, v); \
+		return count; \
+	} \
+	\
+	static CLASS_DEVICE_ATTR(LinuxName, 0600, DvpVideoSysfsShow##DvpName, DvpVideoSysfsStore##DvpName)
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_CREATE( DvpName, LinuxName )                          \
-    {                                               \
-        int Result;                                         \
-        \
-        Result  = class_device_create_file(VideoContext->DvpSysfsClassDevice,           \
-                                           &class_device_attr_##LinuxName);              \
-        if (Result) {                                       \
-            DVB_ERROR("class_device_create_file failed (%d)\n", Result);             \
-            return -1;                                      \
-        }                                               \
-        \
-        player_sysfs_new_attribute_notification(VideoContext->DvpSysfsClassDevice);         \
-        atomic_set(&VideoContext->Dvp##DvpName, 0);                         \
-    }
+#define SYSFS_CREATE( DvpName, LinuxName ) \
+	{ \
+		int Result; \
+		\
+		Result = class_device_create_file(VideoContext->DvpSysfsClassDevice, \
+						  &class_device_attr_##LinuxName); \
+		if (Result) { \
+			DVB_ERROR("class_device_create_file failed (%d)\n", Result); \
+			return -1; \
+		} \
+		\
+		player_sysfs_new_attribute_notification(VideoContext->DvpSysfsClassDevice); \
+		atomic_set(&VideoContext->Dvp##DvpName, 0); \
+	}
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_DECLARE_WITH_PROCESS_DECREMENT( DvpName, LinuxName )              \
-    SYSFS_DECLARE( DvpName, LinuxName );                                \
-    \
-    static void DvpVideoSysfsProcessDecrement##DvpName( dvp_v4l2_video_handle_t *VideoContext ) \
-    {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Dvp##DvpName);                    \
-            \
-            if (new > 0)                                     \
-                new--;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new));   \
-        \
-        if (old == 1)                                       \
-            sysfs_notify (&((*(VideoContext->DvpSysfsClassDevice)).kobj), NULL, #LinuxName );    \
-    }
+#define SYSFS_DECLARE_WITH_PROCESS_DECREMENT( DvpName, LinuxName ) \
+	SYSFS_DECLARE( DvpName, LinuxName ); \
+	\
+	static void DvpVideoSysfsProcessDecrement##DvpName( dvp_v4l2_video_handle_t *VideoContext ) \
+	{ \
+		int old, new; \
+		\
+		/* conditionally decrement and notify one to zero transition. */ \
+		do { \
+			old = new = atomic_read(&VideoContext->Dvp##DvpName); \
+			\
+			if (new > 0) \
+				new--; \
+		} while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new)); \
+		\
+		if (old == 1) \
+			sysfs_notify (&((*(VideoContext->DvpSysfsClassDevice)).kobj), NULL, #LinuxName ); \
+	}
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT( DvpName, LinuxName )                \
-    SYSFS_DECLARE( DvpName, LinuxName );                                \
-    \
-    static void DvpVideoSysfsInterruptDecrement##DvpName( dvp_v4l2_video_handle_t *VideoContext )   \
-    {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Dvp##DvpName);                    \
-            \
-            if (new > 0)                                     \
-                new--;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new));   \
-        \
-        if (old == 1)                                       \
-        {                                               \
-            VideoContext->Dvp##DvpName##Notify  = true;                     \
-            up( &VideoContext->DvpSynchronizerWakeSem );                        \
-        }                                               \
-    }
+#define SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT( DvpName, LinuxName ) \
+	SYSFS_DECLARE( DvpName, LinuxName ); \
+	\
+	static void DvpVideoSysfsInterruptDecrement##DvpName( dvp_v4l2_video_handle_t *VideoContext ) \
+	{ \
+		int old, new; \
+		\
+		/* conditionally decrement and notify one to zero transition. */ \
+		do { \
+			old = new = atomic_read(&VideoContext->Dvp##DvpName); \
+			\
+			if (new > 0) \
+				new--; \
+		} while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new)); \
+		\
+		if (old == 1) \
+		{ \
+			VideoContext->Dvp##DvpName##Notify = true; \
+			up( &VideoContext->DvpSynchronizerWakeSem ); \
+		} \
+	}
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT( DvpName, LinuxName )                \
-    SYSFS_DECLARE( DvpName, LinuxName );                                \
-    \
-    static void DvpVideoSysfsInterruptIncrement##DvpName( dvp_v4l2_video_handle_t *VideoContext )   \
-    {                                               \
-        int old, new;                                       \
-        \
-        /* conditionally decrement and notify one to zero transition. */                \
-        do {                                            \
-            old = new = atomic_read(&VideoContext->Dvp##DvpName);                    \
-            \
-            if( new == 0)                                        \
-                new++;                                       \
-        } while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new));   \
-        \
-        if (old == 0)                                       \
-        {                                               \
-            VideoContext->Dvp##DvpName##Notify  = true;                     \
-            up( &VideoContext->DvpSynchronizerWakeSem );                        \
-        }                                               \
-    }
+#define SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT( DvpName, LinuxName ) \
+	SYSFS_DECLARE( DvpName, LinuxName ); \
+	\
+	static void DvpVideoSysfsInterruptIncrement##DvpName( dvp_v4l2_video_handle_t *VideoContext ) \
+	{ \
+		int old, new; \
+		\
+		/* conditionally decrement and notify one to zero transition. */ \
+		do { \
+			old = new = atomic_read(&VideoContext->Dvp##DvpName); \
+			\
+			if( new == 0) \
+				new++; \
+		} while (old != new && old != atomic_cmpxchg(&VideoContext->Dvp##DvpName, old, new)); \
+		\
+		if (old == 0) \
+		{ \
+			VideoContext->Dvp##DvpName##Notify = true; \
+			up( &VideoContext->DvpSynchronizerWakeSem ); \
+		} \
+	}
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_DECLARE_WITH_INTERRUPT_SET( DvpName, LinuxName )                  \
-    SYSFS_DECLARE( DvpName, LinuxName );                                \
-    \
-    static void DvpVideoSysfsInterruptSet##DvpName( dvp_v4l2_video_handle_t *VideoContext, unsigned int Value ) \
-    {                                               \
-        int old;                                            \
-        \
-        /* Set and notify transition. */                                \
-        \
-        old = atomic_read(&VideoContext->Dvp##DvpName);                     \
-        atomic_set(&VideoContext->Dvp##DvpName, Value );                        \
-        \
-        if (old != Value)                                       \
-        {                                               \
-            VideoContext->Dvp##DvpName##Notify  = true;                     \
-            up( &VideoContext->DvpSynchronizerWakeSem );                        \
-        }                                               \
-    }
+#define SYSFS_DECLARE_WITH_INTERRUPT_SET( DvpName, LinuxName ) \
+	SYSFS_DECLARE( DvpName, LinuxName ); \
+	\
+	static void DvpVideoSysfsInterruptSet##DvpName( dvp_v4l2_video_handle_t *VideoContext, unsigned int Value ) \
+	{ \
+		int old; \
+		\
+		/* Set and notify transition. */ \
+		\
+		old = atomic_read(&VideoContext->Dvp##DvpName); \
+		atomic_set(&VideoContext->Dvp##DvpName, Value ); \
+		\
+		if (old != Value) \
+		{ \
+			VideoContext->Dvp##DvpName##Notify = true; \
+			up( &VideoContext->DvpSynchronizerWakeSem ); \
+		} \
+	}
 // ------------------------------------------------------------------------------------------------
-#define SYSFS_TEST_NOTIFY( DvpName, LinuxName )                         \
-    {                                               \
-        if( Context->Dvp##DvpName##Notify )                             \
-        {                                               \
-            Context->Dvp##DvpName##Notify   = false;                        \
-            sysfs_notify (&((*(Context->DvpSysfsClassDevice)).kobj), NULL, #LinuxName );        \
-        }                                               \
-    }
+#define SYSFS_TEST_NOTIFY( DvpName, LinuxName ) \
+	{ \
+		if( Context->Dvp##DvpName##Notify ) \
+		{ \
+			Context->Dvp##DvpName##Notify = false; \
+			sysfs_notify (&((*(Context->DvpSysfsClassDevice)).kobj), NULL, #LinuxName ); \
+		} \
+	}
 // ------------------------------------------------------------------------------------------------
 
-SYSFS_DECLARE_WITH_INTERRUPT_SET(MicroSecondsPerFrame,          microseconds_per_frame);
-SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCountingNotification,       frame_counting_notification);
-SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCaptureNotification,        frame_capture_notification);
-SYSFS_DECLARE_WITH_PROCESS_DECREMENT(OutputCropTargetReachedNotification,   output_crop_target_reached_notification);
-SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT(PostMortem,              post_mortem);
+SYSFS_DECLARE_WITH_INTERRUPT_SET(MicroSecondsPerFrame, microseconds_per_frame);
+SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCountingNotification, frame_counting_notification);
+SYSFS_DECLARE_WITH_INTERRUPT_DECREMENT(FrameCaptureNotification, frame_capture_notification);
+SYSFS_DECLARE_WITH_PROCESS_DECREMENT(OutputCropTargetReachedNotification, output_crop_target_reached_notification);
+SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT(PostMortem, post_mortem);
 
 /**
  * Create the sysfs attributes unique to A/VR video streams.
@@ -503,9 +510,9 @@ SYSFS_DECLARE_WITH_INTERRUPT_INCREMENT(PostMortem,              post_mortem);
  */
 static int DvpVideoSysfsCreateAttributes(dvp_v4l2_video_handle_t *VideoContext)
 {
-	int Result                      = 0;
-	playback_handle_t playerplayback            = NULL;
-	stream_handle_t playerstream            = NULL;
+	int Result = 0;
+	playback_handle_t playerplayback = NULL;
+	stream_handle_t playerstream = NULL;
 	int streamid;
 	Result = DvbStreamGetPlayerEnvironment(VideoContext->DeviceContext->VideoStream, &playerplayback, &playerstream);
 	if (Result < 0)
@@ -527,40 +534,40 @@ static int DvpVideoSysfsCreateAttributes(dvp_v4l2_video_handle_t *VideoContext)
 	}
 	VideoContextLookupTable[streamid] = VideoContext;
 //
-	SYSFS_CREATE(MicroSecondsPerFrame,          microseconds_per_frame);
-	SYSFS_CREATE(FrameCountingNotification,         frame_counting_notification);
-	SYSFS_CREATE(FrameCaptureNotification,          frame_capture_notification);
-	SYSFS_CREATE(OutputCropTargetReachedNotification,   output_crop_target_reached_notification);
-	SYSFS_CREATE(PostMortem,                post_mortem);
+	SYSFS_CREATE(MicroSecondsPerFrame, microseconds_per_frame);
+	SYSFS_CREATE(FrameCountingNotification, frame_counting_notification);
+	SYSFS_CREATE(FrameCaptureNotification, frame_capture_notification);
+	SYSFS_CREATE(OutputCropTargetReachedNotification, output_crop_target_reached_notification);
+	SYSFS_CREATE(PostMortem, post_mortem);
 //
 	return 0;
 }
 
 // ////////////////////////////////////////////////////////////////////////////
 
-int DvpVideoClose(dvp_v4l2_video_handle_t   *Context)
+int DvpVideoClose(dvp_v4l2_video_handle_t *Context)
 {
 	int Result;
 //
 	if (Context->VideoRunning)
 	{
-		Context->VideoRunning       = false;
-		Context->Synchronize        = false;
+		Context->VideoRunning = false;
+		Context->Synchronize = false;
 		Context->SynchronizeEnabled = false;
-		Context->SynchronizerRunning    = false;
+		Context->SynchronizerRunning = false;
 		up(&Context->DvpPreInjectBufferSem);
 		up(&Context->DvpVideoInterruptSem);
 		up(&Context->DvpSynchronizerWakeSem);
 		while (Context->DeviceContext->VideoStream != NULL)
 		{
-			unsigned int  Jiffies = ((HZ) / 1000) + 1;
+			unsigned int Jiffies = ((HZ) / 1000) + 1;
 			set_current_state(TASK_INTERRUPTIBLE);
 			schedule_timeout(Jiffies);
 		}
 		DvpVideoIoctlAncillaryRequestBuffers(Context, 0, 0, NULL, NULL);
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
-		Result  = DvbDisplayDelete(BACKEND_VIDEO_ID, Context->DeviceContext->Id);
+		Result = DvbDisplayDelete(BACKEND_VIDEO_ID, Context->DeviceContext->Id);
 		if (Result)
 		{
 			printk("Error in %s: DisplayDelete failed\n", __FUNCTION__);
@@ -578,20 +585,20 @@ int DvpVideoClose(dvp_v4l2_video_handle_t   *Context)
 //	Nicks function to configure the vertical resize coefficients
 //
 
-static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t   *Context,
-		unsigned int         ScalingFactorStep)
+static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t *Context,
+						  unsigned int ScalingFactorStep)
 {
-	volatile int        *DvpRegs    = Context->DvpRegs;
-	unsigned int         i;
-	unsigned int         Index;
-	int         *Table;
+	volatile int *DvpRegs = Context->DvpRegs;
+	unsigned int i;
+	unsigned int Index;
+	int *Table;
 	//
 	// Select the table of ceofficients
 	//
-	for (Index  = 0;
+	for (Index = 0;
 			(ScalingFactorStep > VerticalResizingFilters[Index].ForScalingFactorLessThan);
 			Index++);
-	Table   = (int *)(&VerticalResizingFilters[Index].Coefficients);
+	Table = (int *)(&VerticalResizingFilters[Index].Coefficients);
 	//
 	// Program the filter
 	//
@@ -606,19 +613,19 @@ static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t   *Con
 //
 
 static int DvpConfigureHorizontalResizeCoefficients(dvp_v4l2_video_handle_t *Context,
-		unsigned int         ScalingFactorStep)
+						    unsigned int ScalingFactorStep)
 {
-	volatile int        *DvpRegs    = Context->DvpRegs;
-	unsigned int         i;
-	unsigned int         Index;
-	int         *Table;
+	volatile int *DvpRegs = Context->DvpRegs;
+	unsigned int i;
+	unsigned int Index;
+	int *Table;
 	//
 	// Select the table of ceofficients
 	//
-	for (Index  = 0;
+	for (Index = 0;
 			(ScalingFactorStep > HorizontalResizingFilters[Index].ForScalingFactorLessThan);
 			Index++);
-	Table   = (int *)(&HorizontalResizingFilters[Index].Coefficients);
+	Table = (int *)(&HorizontalResizingFilters[Index].Coefficients);
 	//
 	// Program the filter
 	//
@@ -633,62 +640,62 @@ static int DvpConfigureHorizontalResizeCoefficients(dvp_v4l2_video_handle_t *Con
 //	input data, based on the crop values and the current input mode.
 //
 
-static int DvpRecalculateScaling(dvp_v4l2_video_handle_t    *Context)
+static int DvpRecalculateScaling(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned int         ScaledInputWidth;      // Uncropped values
-	unsigned int         ScaledInputHeight;
-	unsigned int         ScalingInputWidth;     // Cropped values
-	unsigned int         ScalingInputHeight;
-	unsigned int         ScalingOutputWidth;
-	unsigned int         ScalingOutputHeight;
-	unsigned int         NewHSRC;
-	unsigned int         NewVSRC;
-	unsigned int         BytesPerLine;
+	unsigned int ScaledInputWidth; // Uncropped values
+	unsigned int ScaledInputHeight;
+	unsigned int ScalingInputWidth; // Cropped values
+	unsigned int ScalingInputHeight;
+	unsigned int ScalingOutputWidth;
+	unsigned int ScalingOutputHeight;
+	unsigned int NewHSRC;
+	unsigned int NewVSRC;
+	unsigned int BytesPerLine;
 //
 	if (Context == NULL)
-		return -1;          // Too early to do anything
+		return -1; // Too early to do anything
 	//
 	// Enter the lock, and initialize the scaled input crop
 	//
 	down_interruptible(&Context->DvpScalingStateLock);
-	Context->ScaledInputCrop    = Context->InputCrop;
-	ScalingInputWidth   = (Context->ScaledInputCrop.Width != 0) ? Context->ScaledInputCrop.Width : Context->ModeWidth;
-	ScalingInputHeight  = (Context->ScaledInputCrop.Height != 0) ? Context->ScaledInputCrop.Height : Context->ModeHeight;
-	ScalingOutputWidth  = (Context->OutputCrop.Width != 0) ? Context->OutputCrop.Width : Context->ModeWidth;
+	Context->ScaledInputCrop = Context->InputCrop;
+	ScalingInputWidth = (Context->ScaledInputCrop.Width != 0) ? Context->ScaledInputCrop.Width : Context->ModeWidth;
+	ScalingInputHeight = (Context->ScaledInputCrop.Height != 0) ? Context->ScaledInputCrop.Height : Context->ModeHeight;
+	ScalingOutputWidth = (Context->OutputCrop.Width != 0) ? Context->OutputCrop.Width : Context->ModeWidth;
 	ScalingOutputHeight = (Context->OutputCrop.Height != 0) ? Context->OutputCrop.Height : Context->ModeHeight;
 	if ((ScalingInputWidth == 0) || (ScalingOutputWidth == 0))
 	{
 		up(&Context->DvpScalingStateLock);
-		return -1;          // Too early to do anything
+		return -1; // Too early to do anything
 	}
 	//
 	// We limit any downscaling to 1/8th
 	//
-	ScalingOutputWidth  = max(ScalingOutputWidth, ScalingInputWidth / 8);
+	ScalingOutputWidth = max(ScalingOutputWidth, ScalingInputWidth / 8);
 	ScalingOutputHeight = max(ScalingOutputHeight, ScalingInputHeight / 8);
 	//
 	// Now calculate the step values, note we only resize if the input is larger than the output.
 	//
-	NewHSRC     = DVP_SRC_OFF_VALUE;
-	NewVSRC     = DVP_SRC_OFF_VALUE;
-	ScaledInputWidth    = Context->ModeWidth;       // Not cropped version
-	ScaledInputHeight   = Context->ModeHeight;      // Not cropped version
+	NewHSRC = DVP_SRC_OFF_VALUE;
+	NewVSRC = DVP_SRC_OFF_VALUE;
+	ScaledInputWidth = Context->ModeWidth; // Not cropped version
+	ScaledInputHeight = Context->ModeHeight; // Not cropped version
 	if (ControlValue(HorizontalResizeEnable) &&
 			(ScalingInputWidth > ScalingOutputWidth))
 	{
-		NewHSRC             = 0x01000000 | (((ScalingInputWidth - 1) * 256) / (ScalingOutputWidth - 1));
-		Context->ScaledInputCrop.X  = ((Context->ScaledInputCrop.X     * ScalingOutputWidth) / ScalingInputWidth);
-		Context->ScaledInputCrop.Width  = ((Context->ScaledInputCrop.Width * ScalingOutputWidth) / ScalingInputWidth);
-		ScaledInputWidth        = ((Context->ModeWidth * ScalingOutputWidth) / ScalingInputWidth);
+		NewHSRC = 0x01000000 | (((ScalingInputWidth - 1) * 256) / (ScalingOutputWidth - 1));
+		Context->ScaledInputCrop.X = ((Context->ScaledInputCrop.X * ScalingOutputWidth) / ScalingInputWidth);
+		Context->ScaledInputCrop.Width = ((Context->ScaledInputCrop.Width * ScalingOutputWidth) / ScalingInputWidth);
+		ScaledInputWidth = ((Context->ModeWidth * ScalingOutputWidth) / ScalingInputWidth);
 	}
 //
 	if (ControlValue(VerticalResizeEnable) &&
 			(ScalingInputHeight > ScalingOutputHeight))
 	{
-		NewVSRC             = 0x01000000 | (((ScalingInputHeight - 1) * 256) / (ScalingOutputHeight - 1));
-		Context->ScaledInputCrop.Y  = ((Context->ScaledInputCrop.Y      * ScalingOutputHeight) / ScalingInputHeight);
+		NewVSRC = 0x01000000 | (((ScalingInputHeight - 1) * 256) / (ScalingOutputHeight - 1));
+		Context->ScaledInputCrop.Y = ((Context->ScaledInputCrop.Y * ScalingOutputHeight) / ScalingInputHeight);
 		Context->ScaledInputCrop.Height = ((Context->ScaledInputCrop.Height * ScalingOutputHeight) / ScalingInputHeight);
-		ScaledInputHeight       = ((Context->ModeHeight * ScalingOutputHeight) / ScalingInputHeight);
+		ScaledInputHeight = ((Context->ModeHeight * ScalingOutputHeight) / ScalingInputHeight);
 	}
 	//
 	// Calculate the other new register values.
@@ -696,16 +703,16 @@ static int DvpRecalculateScaling(dvp_v4l2_video_handle_t    *Context)
 	// value. I import here, the knowledge that the display hardware
 	// requires a 64 byte (32 pixel) allignment on a line.
 	//
-	BytesPerLine            = Context->BufferBytesPerPixel * ((ScaledInputWidth + 31) & 0xffffffe0);
-	Context->NextWidth          = ScaledInputWidth;
-	Context->NextHeight         = ScaledInputHeight;
-	Context->NextRegisterCVS        = ScaledInputWidth | ((ScaledInputHeight / (Context->StreamInfo.interlaced ? 2 : 1)) << 16);;
-	Context->NextRegisterVMP        = BytesPerLine * (Context->StreamInfo.interlaced ? 2 : 1);
-	Context->NextRegisterVBPminusVTP    = (Context->StreamInfo.interlaced ? BytesPerLine : 0);
-	Context->NextRegisterHSRC       = NewHSRC;
-	Context->NextRegisterVSRC       = NewVSRC;
-	Context->NextInputWindow        = Context->ScaledInputCrop;
-	Context->NextOutputWindow       = Context->OutputCrop;
+	BytesPerLine = Context->BufferBytesPerPixel * ((ScaledInputWidth + 31) & 0xffffffe0);
+	Context->NextWidth = ScaledInputWidth;
+	Context->NextHeight = ScaledInputHeight;
+	Context->NextRegisterCVS = ScaledInputWidth | ((ScaledInputHeight / (Context->StreamInfo.interlaced ? 2 : 1)) << 16);;
+	Context->NextRegisterVMP = BytesPerLine * (Context->StreamInfo.interlaced ? 2 : 1);
+	Context->NextRegisterVBPminusVTP = (Context->StreamInfo.interlaced ? BytesPerLine : 0);
+	Context->NextRegisterHSRC = NewHSRC;
+	Context->NextRegisterVSRC = NewVSRC;
+	Context->NextInputWindow = Context->ScaledInputCrop;
+	Context->NextOutputWindow = Context->OutputCrop;
 	up(&Context->DvpScalingStateLock);
 //
 	return 0;
@@ -716,53 +723,53 @@ static int DvpRecalculateScaling(dvp_v4l2_video_handle_t    *Context)
 //	Nicks function to get a buffer
 //
 
-static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t    *Context)
+static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t *Context)
 {
-	int          Result;
-	unsigned int         Dimensions[2];
-	unsigned int         BufferIndex;
-	unsigned int         SurfaceFormat;
-	DvpBufferStack_t    *Record;
+	int Result;
+	unsigned int Dimensions[2];
+	unsigned int BufferIndex;
+	unsigned int SurfaceFormat;
+	DvpBufferStack_t *Record;
 //
-	Record                  = &Context->DvpBufferStack[Context->DvpNextBufferToGet % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+	Record = &Context->DvpBufferStack[Context->DvpNextBufferToGet % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 	memset(Record, 0x00, sizeof(DvpBufferStack_t));
 //
 	down_interruptible(&Context->DvpScalingStateLock);
-	Record->Width               = Context->NextWidth;
-	Record->Height              = Context->NextHeight;
-	Record->RegisterCVS             = Context->NextRegisterCVS;
-	Record->RegisterVMP             = Context->NextRegisterVMP;
-	Record->RegisterVBPminusVTP         = Context->NextRegisterVBPminusVTP;
-	Record->RegisterHSRC            = Context->NextRegisterHSRC;
-	Record->RegisterVSRC            = Context->NextRegisterVSRC;
-	Record->InputWindow             = Context->NextInputWindow;
-	Record->OutputWindow            = Context->NextOutputWindow;
-	Dimensions[0]               = Context->NextWidth;
-	Dimensions[1]               = Context->NextHeight;
-	SurfaceFormat                               = SURF_YCBCR422R;
+	Record->Width = Context->NextWidth;
+	Record->Height = Context->NextHeight;
+	Record->RegisterCVS = Context->NextRegisterCVS;
+	Record->RegisterVMP = Context->NextRegisterVMP;
+	Record->RegisterVBPminusVTP = Context->NextRegisterVBPminusVTP;
+	Record->RegisterHSRC = Context->NextRegisterHSRC;
+	Record->RegisterVSRC = Context->NextRegisterVSRC;
+	Record->InputWindow = Context->NextInputWindow;
+	Record->OutputWindow = Context->NextOutputWindow;
+	Dimensions[0] = Context->NextWidth;
+	Dimensions[1] = Context->NextHeight;
+	SurfaceFormat = SURF_YCBCR422R;
 	switch (SurfaceFormat)
 	{
 		case SURF_RGB565:
-			Context->BufferBytesPerPixel  = 0x2;
+			Context->BufferBytesPerPixel = 0x2;
 			break;
 		case SURF_RGB888:
-			Context->BufferBytesPerPixel  = 0x3;
+			Context->BufferBytesPerPixel = 0x3;
 			break;
 		case SURF_ARGB8888:
-			Context->BufferBytesPerPixel  = 0x4;
+			Context->BufferBytesPerPixel = 0x4;
 			break;
 		case SURF_YCBCR422R:
-			Context->BufferBytesPerPixel  = 0x2;
+			Context->BufferBytesPerPixel = 0x2;
 	}
 	up(&Context->DvpScalingStateLock);
 //
-	Result  = DvbStreamGetDecodeBuffer(Context->DeviceContext->VideoStream,
-									   &Record->Buffer,
-									   &Record->Data,
-									   SurfaceFormat,
-									   2, Dimensions,
-									   &BufferIndex,
-									   &Context->BytesPerLine);
+	Result = DvbStreamGetDecodeBuffer(Context->DeviceContext->VideoStream,
+					  &Record->Buffer,
+					  &Record->Data,
+					  SurfaceFormat,
+					  2, Dimensions,
+					  &BufferIndex,
+					  &Context->BytesPerLine);
 	if (Result != 0)
 	{
 		printk("Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__);
@@ -782,15 +789,15 @@ static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t    *Context)
 //	Nicks function to release currently held, but not injected buffers
 //
 
-static int DvpReleaseBuffers(dvp_v4l2_video_handle_t    *Context)
+static int DvpReleaseBuffers(dvp_v4l2_video_handle_t *Context)
 {
-	int          Result;
-	DvpBufferStack_t    *Record;
+	int Result;
+	DvpBufferStack_t *Record;
 //
 	while (Context->DvpNextBufferToInject < Context->DvpNextBufferToGet)
 	{
-		Record  = &Context->DvpBufferStack[Context->DvpNextBufferToInject % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
-		Result  = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
+		Record = &Context->DvpBufferStack[Context->DvpNextBufferToInject % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+		Result = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
 		if (Result < 0)
 		{
 			printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
@@ -809,12 +816,12 @@ static int DvpReleaseBuffers(dvp_v4l2_video_handle_t    *Context)
 
 static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 {
-	int          Result;
-	DvpBufferStack_t    *Record;
-	unsigned long long   ElapsedFrameTime;
-	unsigned long long   PresentationTime;
-	unsigned long long   Pts;
-	StreamInfo_t         Packet;
+	int Result;
+	DvpBufferStack_t *Record;
+	unsigned long long ElapsedFrameTime;
+	unsigned long long PresentationTime;
+	unsigned long long Pts;
+	StreamInfo_t Packet;
 //
 	if (Context->DvpNextBufferToInject >= Context->DvpNextBufferToGet)
 	{
@@ -832,44 +839,44 @@ static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 		return Result;
 	}
 //
-	Record              = &Context->DvpBufferStack[Context->DvpNextBufferToInject % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+	Record = &Context->DvpBufferStack[Context->DvpNextBufferToInject % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 	//
 	// Calculate the expected fill time, Note the correction factor on the incoming values has 1 as 2^DVP_CORRECTION_FIXED_POINT_BITS.
 	//
-	Context->DvpCalculatingFrameTime    = true;
-	ElapsedFrameTime            = DvpCorrectedTimeForNFrames(Context->DvpFrameCount + Context->DvpLeadInVideoFrames);
+	Context->DvpCalculatingFrameTime = true;
+	ElapsedFrameTime = DvpCorrectedTimeForNFrames(Context->DvpFrameCount + Context->DvpLeadInVideoFrames);
 	Context->DvpDriftFrameCount++;
 	Context->DvpLastDriftCorrection = -(Context->DvpCurrentDriftError * Context->DvpDriftFrameCount) / (long long)(2 * DVP_MAXIMUM_TIME_INTEGRATION_FRAMES);
-	Record->ExpectedFillTime        = Context->DvpBaseTime + ElapsedFrameTime + Context->DvpLastDriftCorrection;
+	Record->ExpectedFillTime = Context->DvpBaseTime + ElapsedFrameTime + Context->DvpLastDriftCorrection;
 	//
 	// Rebase our calculation values
 	//
 	if (ElapsedFrameTime >= (1ULL << 31))
 	{
-		Context->DvpDriftFrameCount = 0;                // We zero the drift data, because it is encapsulated in the ExpectedFillTime
+		Context->DvpDriftFrameCount = 0; // We zero the drift data, because it is encapsulated in the ExpectedFillTime
 		Context->DvpLastDriftCorrection = 0;
-		Context->DvpBaseTime        = Record->ExpectedFillTime;
-		Context->DvpFrameCount      = -Context->DvpLeadInVideoFrames;
+		Context->DvpBaseTime = Record->ExpectedFillTime;
+		Context->DvpFrameCount = -Context->DvpLeadInVideoFrames;
 	}
-	Context->DvpCalculatingFrameTime    = false;
+	Context->DvpCalculatingFrameTime = false;
 	//
 	// Construct a packet to inject the information - NOTE we adjust the time to cope for a specific video latency
 	//
-	PresentationTime        = Record->ExpectedFillTime + Context->AppliedLatency;
-	Pts              = (((PresentationTime * 27) + 150) / 300) & 0x00000001ffffffffull;
+	PresentationTime = Record->ExpectedFillTime + Context->AppliedLatency;
+	Pts = (((PresentationTime * 27) + 150) / 300) & 0x00000001ffffffffull;
 	memcpy(&Packet, &Context->StreamInfo, sizeof(StreamInfo_t));
-	Packet.buffer       = phys_to_virt((unsigned int)Record->Data);
-	Packet.buffer_class     = Record->Buffer;
-	Packet.width        = Record->Width;
-	Packet.height       = Record->Height;
-	Packet.top_field_first  = ControlValue(TopFieldFirst);
-	Packet.h_offset     = 0;
-	Packet.InputWindow      = Record->InputWindow;
-	Packet.OutputWindow     = Record->OutputWindow;
+	Packet.buffer = phys_to_virt((unsigned int)Record->Data);
+	Packet.buffer_class = Record->Buffer;
+	Packet.width = Record->Width;
+	Packet.height = Record->Height;
+	Packet.top_field_first = ControlValue(TopFieldFirst);
+	Packet.h_offset = 0;
+	Packet.InputWindow = Record->InputWindow;
+	Packet.OutputWindow = Record->OutputWindow;
 	Packet.pixel_aspect_ratio.Numerator = Context->DeviceContext->PixelAspectRatio.Numerator;
 	Packet.pixel_aspect_ratio.Denominator = Context->DeviceContext->PixelAspectRatio.Denominator;
 //printk( "ElapsedFrameTime = %12lld - %016llx - %12lld, %12lld - %016llx\n", ElapsedFrameTime, Pts, StreamInfo.FrameRateNumerator, StreamInfo.FrameRateDenominator, DvpFrameDurationCorrection );
-	Result  = DvbStreamInjectPacket(Context->DeviceContext->VideoStream, (const unsigned char*)(&Packet), sizeof(StreamInfo_t), true, Pts);
+	Result = DvbStreamInjectPacket(Context->DeviceContext->VideoStream, (const unsigned char *)(&Packet), sizeof(StreamInfo_t), true, Pts);
 	if (Result < 0)
 	{
 		printk("Error in %s: StreamInjectDataPacket failed\n", __FUNCTION__);
@@ -878,7 +885,7 @@ static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 	//
 	// The ownership of the buffer has now been passed to the player, so we release our hold
 	//
-	Result  = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
+	Result = DvbStreamReturnDecodeBuffer(Context->DeviceContext->VideoStream, Record->Buffer);
 	if (Result < 0)
 	{
 		printk("Error in %s: StreamReturnDecodeBuffer failed\n", __FUNCTION__);
@@ -898,101 +905,101 @@ static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 //	Nicks function to configure the capture buffer pointers
 //
 unsigned long capture_address;
-static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t    *Context,
-		unsigned long long         Now)
+static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t *Context,
+					 unsigned long long Now)
 {
-	int          i;
-	volatile int        *DvpRegs    = Context->DvpRegs;
-	DvpBufferStack_t        *Record;
-	bool             DroppedAFrame;
-	unsigned long long   ShouldSkip;
+	int i;
+	volatile int *DvpRegs = Context->DvpRegs;
+	DvpBufferStack_t *Record;
+	bool DroppedAFrame;
+	unsigned long long ShouldSkip;
 	//
 	// Try to move on a buffer
-	//      We ensure that the timing for capture is right to move on.
-	//      in error, we stay with the current buffer
+	// We ensure that the timing for capture is right to move on.
+	// in error, we stay with the current buffer
 	//
-	DroppedAFrame       = false;
-	Record          = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+	DroppedAFrame = false;
+	Record = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 	if ((Context->DvpNextBufferToFill + 1) >= Context->DvpNextBufferToGet)
 	{
 		// Is there a buffer to move onto
-//		printk( "DVP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->DvpNextBufferToFill, Context->DvpNextBufferToGet, Context->DvpPreInjectBufferSem.count );
-		printk("DVP DF\n");                      // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
-		DroppedAFrame   = true;
+//	printk( "DVP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->DvpNextBufferToFill, Context->DvpNextBufferToGet, Context->DvpPreInjectBufferSem.count );
+		printk("DVP DF\n"); // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
+		DroppedAFrame = true;
 	}
 	else if (inrange((Now - Record->ExpectedFillTime), ((7 * DvpTimeForNFrames(1)) / 8), 0x8000000000000000ULL))
 	{
 		// is it time to move onto it
 		Context->DvpNextBufferToFill++;
-		Record          = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+		Record = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 		up(&Context->DvpPreInjectBufferSem);
 	}
 	else
 	{
 		// Not time, inform the user
 		printk("DVP Video - Too early to fill buffer(%d), Discarding a frame (%lld)\n", Context->DvpNextBufferToFill, (Record->ExpectedFillTime - Now));
-		DroppedAFrame   = true;
+		DroppedAFrame = true;
 	}
-	Context->DvpMissedFramesInARow  = DroppedAFrame ? (Context->DvpMissedFramesInARow + 1) : 0;
+	Context->DvpMissedFramesInARow = DroppedAFrame ? (Context->DvpMissedFramesInARow + 1) : 0;
 	//
 	// If we moved on, check that we are not late for the new buffer,
 	// if we are then stick with it, but adjust the times to compensate
 	//
 	if (!DroppedAFrame && inrange((Now - Record->ExpectedFillTime), DvpTimeForNFrames(1), 0x8000000000000000ULL))
 	{
-		ShouldSkip  = ((Now - Record->ExpectedFillTime) + (DvpTimeForNFrames(1) / 8) - 1) / DvpTimeForNFrames(1);
+		ShouldSkip = ((Now - Record->ExpectedFillTime) + (DvpTimeForNFrames(1) / 8) - 1) / DvpTimeForNFrames(1);
 		printk("DVP Video - Too late to fill buffer(%d), should have skipped %lld buffers (Late by %lld)\n", Context->DvpNextBufferToFill, ShouldSkip, (Now - Record->ExpectedFillTime));
 		//
 		// Now fudge up the time
 		//
-		ShouldSkip       = DvpTimeForNFrames(1) * ShouldSkip;
-		Context->DvpBaseTime    += ShouldSkip;
+		ShouldSkip = DvpTimeForNFrames(1) * ShouldSkip;
+		Context->DvpBaseTime += ShouldSkip;
 		for (i = Context->DvpNextBufferToFill;
 				i < Context->DvpNextBufferToGet;
 				i++)
-			Context->DvpBufferStack[i % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime    += ShouldSkip;
+			Context->DvpBufferStack[i % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime += ShouldSkip;
 	}
 	//
 	// Update the Horizontal and Vertical re-sizing
 	//
 	if (Record->RegisterHSRC != Context->LastRegisterHSRC)
 	{
-		Context->RegisterCTL        &= ~(1 << 10);          // HRESIZE_EN           - Clear out the resize enable bit
+		Context->RegisterCTL &= ~(1 << 10); // HRESIZE_EN - Clear out the resize enable bit
 		if (Record->RegisterHSRC != DVP_SRC_OFF_VALUE)
 		{
 			DvpConfigureHorizontalResizeCoefficients(Context, (Record->RegisterHSRC & 0x00000fff));
-			Context->RegisterCTL        |= (1 << 10);       // HRESIZE_EN           - Enable horizontal resize
+			Context->RegisterCTL |= (1 << 10); // HRESIZE_EN - Enable horizontal resize
 		}
-		Context->LastRegisterHSRC   = Record->RegisterHSRC;
+		Context->LastRegisterHSRC = Record->RegisterHSRC;
 	}
 //
 	if (Record->RegisterVSRC != Context->LastRegisterVSRC)
 	{
-		Context->RegisterCTL        &= ~(1 << 11);          // VRESIZE_EN           - Clear out the resize enable bit
+		Context->RegisterCTL &= ~(1 << 11); // VRESIZE_EN - Clear out the resize enable bit
 		if (Record->RegisterVSRC != DVP_SRC_OFF_VALUE)
 		{
 			DvpConfigureVerticalResizeCoefficients(Context, (Record->RegisterVSRC & 0x00000fff));
-			Context->RegisterCTL        |= (1 << 11);       // VRESIZE_EN           - Enable vertical resize
+			Context->RegisterCTL |= (1 << 11); // VRESIZE_EN - Enable vertical resize
 		}
-		Context->LastRegisterVSRC   = Record->RegisterVSRC;
+		Context->LastRegisterVSRC = Record->RegisterVSRC;
 	}
 	//
 	// Move onto the new buffer
 	//
 #ifdef OFFSET_THE_IMAGE
-	DvpRegs[GAM_DVP_VTP]    = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP);
-	DvpRegs[GAM_DVP_VBP]    = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP) + Record->RegisterVBPminusVTP;
+	DvpRegs[GAM_DVP_VTP] = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP);
+	DvpRegs[GAM_DVP_VBP] = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP) + Record->RegisterVBPminusVTP;
 	capture_address = (unsigned int)Record->Data + 128 + (64 * Record->RegisterVMP);
 #else
-	DvpRegs[GAM_DVP_VTP]    = (unsigned int)Record->Data;
-	DvpRegs[GAM_DVP_VBP]    = (unsigned int)Record->Data + Record->RegisterVBPminusVTP;
+	DvpRegs[GAM_DVP_VTP] = (unsigned int)Record->Data;
+	DvpRegs[GAM_DVP_VBP] = (unsigned int)Record->Data + Record->RegisterVBPminusVTP;
 	capture_address = (unsigned int)Record->Data;
 #endif
-	DvpRegs[GAM_DVP_HSRC]   = Record->RegisterHSRC;
-	DvpRegs[GAM_DVP_VSRC]   = Record->RegisterVSRC;
-	DvpRegs[GAM_DVP_VMP]    = Record->RegisterVMP;
-	DvpRegs[GAM_DVP_CVS]    = Record->RegisterCVS;
-	DvpRegs[GAM_DVP_CTL]    = Context->RegisterCTL;
+	DvpRegs[GAM_DVP_HSRC] = Record->RegisterHSRC;
+	DvpRegs[GAM_DVP_VSRC] = Record->RegisterVSRC;
+	DvpRegs[GAM_DVP_VMP] = Record->RegisterVMP;
+	DvpRegs[GAM_DVP_CVS] = Record->RegisterCVS;
+	DvpRegs[GAM_DVP_CTL] = Context->RegisterCTL;
 //
 	return 0;
 }
@@ -1002,24 +1009,24 @@ static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t    *Context,
 //	Nicks function to halt the capture hardware
 //
 
-static int DvpHaltCapture(dvp_v4l2_video_handle_t   *Context)
+static int DvpHaltCapture(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned int         Tmp;
-	volatile int        *DvpRegs    = Context->DvpRegs;
+	unsigned int Tmp;
+	volatile int *DvpRegs = Context->DvpRegs;
 	//
 	// Mark state
 	//
-	Context->DvpState       = DvpMovingToInactive;
+	Context->DvpState = DvpMovingToInactive;
 	//
 	// make sure nothing is going on
 	//
-	DvpRegs[GAM_DVP_CTL]    = 0x80080000;
-	DvpRegs[GAM_DVP_ITM]    = 0x00;
-	Tmp             = DvpRegs[GAM_DVP_ITS];
+	DvpRegs[GAM_DVP_CTL] = 0x80080000;
+	DvpRegs[GAM_DVP_ITM] = 0x00;
+	Tmp = DvpRegs[GAM_DVP_ITS];
 	//
 	// Mark state
 	//
-	Context->DvpState       = DvpInactive;
+	Context->DvpState = DvpInactive;
 	//
 	// Make sure no one thinks an ancillary capture is in progress
 	//
@@ -1033,95 +1040,95 @@ static int DvpHaltCapture(dvp_v4l2_video_handle_t   *Context)
 //	Nicks function to configure the capture hardware
 //
 
-static int DvpParseModeValues(dvp_v4l2_video_handle_t   *Context)
+static int DvpParseModeValues(dvp_v4l2_video_handle_t *Context)
 {
-	const dvp_v4l2_video_mode_params_t  *ModeParams;
-	const dvp_v4l2_video_timing_params_t    *TimingParams;
-	dvp_v4l2_video_mode_t            Mode;
-	bool                     Interlaced;
-	unsigned int                 SixteenBit;
-	unsigned int                 HOffset;
-	unsigned int                 Width;
-	unsigned int                 VOffset;
-	unsigned int                 Height;
-	unsigned int                 TopVoffset;
-	unsigned int                 BottomVoffset;
-	unsigned int                 TopHeight;
-	unsigned int                 BottomHeight;
+	const dvp_v4l2_video_mode_params_t *ModeParams;
+	const dvp_v4l2_video_timing_params_t *TimingParams;
+	dvp_v4l2_video_mode_t Mode;
+	bool Interlaced;
+	unsigned int SixteenBit;
+	unsigned int HOffset;
+	unsigned int Width;
+	unsigned int VOffset;
+	unsigned int Height;
+	unsigned int TopVoffset;
+	unsigned int BottomVoffset;
+	unsigned int TopHeight;
+	unsigned int BottomHeight;
 //
-	ModeParams      = &Context->DvpCaptureMode->ModeParams;
-	TimingParams    = &Context->DvpCaptureMode->TimingParams;
-	Mode        = Context->DvpCaptureMode->Mode;
+	ModeParams = &Context->DvpCaptureMode->ModeParams;
+	TimingParams = &Context->DvpCaptureMode->TimingParams;
+	Mode = Context->DvpCaptureMode->Mode;
 	//
 	// Modify default control values based on current mode
-	//     NOTE because some adjustments have an incestuous relationship,
-	//      we need to calculate some defaults twice.
+	// NOTE because some adjustments have an incestuous relationship,
+	// we need to calculate some defaults twice.
 	//
-	Context->DvpControlDefault16Bit             = ModeParams->ActiveAreaWidth > 732;
-	Context->DvpControlDefaultOddPixelCount         = ((ModeParams->ActiveAreaWidth + ControlValue(ActiveAreaAdjustWidth)) & 1);
-	Context->DvpControlDefaultExternalVRefPolarityPositive  = TimingParams->VSyncPolarity;
-	Context->DvpControlDefaultHRefPolarityPositive      = TimingParams->HSyncPolarity;
-	Context->DvpControlDefaultVideoLatency          = (int)Context->DvpLatency;
+	Context->DvpControlDefault16Bit = ModeParams->ActiveAreaWidth > 732;
+	Context->DvpControlDefaultOddPixelCount = ((ModeParams->ActiveAreaWidth + ControlValue(ActiveAreaAdjustWidth)) & 1);
+	Context->DvpControlDefaultExternalVRefPolarityPositive = TimingParams->VSyncPolarity;
+	Context->DvpControlDefaultHRefPolarityPositive = TimingParams->HSyncPolarity;
+	Context->DvpControlDefaultVideoLatency = (int)Context->DvpLatency;
 	//
 	// Setup the stream info based on the current capture mode
 	//
-	Context->StandardFrameRate              = true;
+	Context->StandardFrameRate = true;
 	if (ModeParams->FrameRate == 59940)
 	{
-		Context->StreamInfo.FrameRateNumerator      = 60000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 60000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
 	else if (ModeParams->FrameRate == 29970)
 	{
-		Context->StreamInfo.FrameRateNumerator      = 30000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 30000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
 	else if (ModeParams->FrameRate == 23976)
 	{
-		Context->StreamInfo.FrameRateNumerator      = 24000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 24000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
 	else
 	{
-		Context->StreamInfo.FrameRateNumerator      = ModeParams->FrameRate;
-		Context->StreamInfo.FrameRateDenominator    = 1000;
+		Context->StreamInfo.FrameRateNumerator = ModeParams->FrameRate;
+		Context->StreamInfo.FrameRateDenominator = 1000;
 	}
 	if (ModeParams->ScanType == SCAN_I)
-		Context->StreamInfo.FrameRateNumerator      /= 2;
+		Context->StreamInfo.FrameRateNumerator /= 2;
 	DvpVideoSysfsInterruptSetMicroSecondsPerFrame(Context, DvpTimeForNFrames(1));
 //
-	if (DvpTimeForNFrames(1) > 20000)                // If frame time is more than 20ms then use counts appropriate to 30 or less fps
+	if (DvpTimeForNFrames(1) > 20000) // If frame time is more than 20ms then use counts appropriate to 30 or less fps
 	{
-		Context->DvpWarmUpVideoFrames   = DVP_WARM_UP_VIDEO_FRAMES_30;
-		Context->DvpLeadInVideoFrames   = DVP_LEAD_IN_VIDEO_FRAMES_30;
+		Context->DvpWarmUpVideoFrames = DVP_WARM_UP_VIDEO_FRAMES_30;
+		Context->DvpLeadInVideoFrames = DVP_LEAD_IN_VIDEO_FRAMES_30;
 	}
 	else
 	{
-		Context->DvpWarmUpVideoFrames   = DVP_WARM_UP_VIDEO_FRAMES_60;
-		Context->DvpLeadInVideoFrames   = DVP_LEAD_IN_VIDEO_FRAMES_60;
+		Context->DvpWarmUpVideoFrames = DVP_WARM_UP_VIDEO_FRAMES_60;
+		Context->DvpLeadInVideoFrames = DVP_LEAD_IN_VIDEO_FRAMES_60;
 	}
 	//
 	// Calculate how many buffers we will need to pre-inject.
 	// That is the buffers injected ahead of filling.
 	//
-	Context->DvpBuffersRequiredToInjectAhead    = DVP_MAXIMUM_PLAYER_TRANSIT_TIME / DvpTimeForNFrames(1) + 1;
+	Context->DvpBuffersRequiredToInjectAhead = DVP_MAXIMUM_PLAYER_TRANSIT_TIME / DvpTimeForNFrames(1) + 1;
 	//
 	// Fill in the stream info fields
 	//
-	Context->ModeWidth          = ModeParams->ActiveAreaWidth  + ControlValue(ActiveAreaAdjustWidth);
-	Context->ModeHeight         = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
-	Context->StreamInfo.interlaced  = ModeParams->ScanType == SCAN_I;
-	Context->StreamInfo.h_offset    = 0;
-	Context->StreamInfo.v_offset    = 0;
-	Context->StreamInfo.VideoFullRange  = ControlValue(FullRange);
-	Context->StreamInfo.ColourMode  = ControlValue(ColourMode);
+	Context->ModeWidth = ModeParams->ActiveAreaWidth + ControlValue(ActiveAreaAdjustWidth);
+	Context->ModeHeight = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
+	Context->StreamInfo.interlaced = ModeParams->ScanType == SCAN_I;
+	Context->StreamInfo.h_offset = 0;
+	Context->StreamInfo.v_offset = 0;
+	Context->StreamInfo.VideoFullRange = ControlValue(FullRange);
+	Context->StreamInfo.ColourMode = ControlValue(ColourMode);
 	//
 	// Lock in the state of control values
 	//
-	Context->SynchronizeEnabled     = ControlValue(VsyncLockEnable);
-	Context->AppliedLatency     = ControlValue(VideoLatency) - Context->DvpLatency;
+	Context->SynchronizeEnabled = ControlValue(VsyncLockEnable);
+	Context->AppliedLatency = ControlValue(VideoLatency) - Context->DvpLatency;
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_EXTERNAL_TIME_MAPPING_VSYNC_LOCKED,
-					   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
+			   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
 	//
 	// Based on the mode<dimension> values, recalculate the scaling values.
 	// clearing the input crop as a matter of course (since the crop may well
@@ -1132,50 +1139,50 @@ static int DvpParseModeValues(dvp_v4l2_video_handle_t   *Context)
 	//
 	// Precalculate the register values
 	//
-	Interlaced          = Context->StreamInfo.interlaced;
-	SixteenBit          = ControlValue(16Bit);
-	HOffset         = ModeParams->ActiveAreaXStart + ControlValue(ActiveAreaAdjustHorizontalOffset);
-	Width           = ModeParams->ActiveAreaWidth  + ControlValue(ActiveAreaAdjustWidth);
-	VOffset         = ModeParams->FullVBIHeight    + ControlValue(ActiveAreaAdjustVerticalOffset);
-	Height          = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
+	Interlaced = Context->StreamInfo.interlaced;
+	SixteenBit = ControlValue(16Bit);
+	HOffset = ModeParams->ActiveAreaXStart + ControlValue(ActiveAreaAdjustHorizontalOffset);
+	Width = ModeParams->ActiveAreaWidth + ControlValue(ActiveAreaAdjustWidth);
+	VOffset = ModeParams->FullVBIHeight + ControlValue(ActiveAreaAdjustVerticalOffset);
+	Height = ModeParams->ActiveAreaHeight + ControlValue(ActiveAreaAdjustHeight);
 #ifdef OFFSET_THE_IMAGE
 // NAUGHTY - Since we are offseting the image, we need to crop it, or it will write past the buffer end
 	Width /= 2;
 	Height /= 2;
 #endif
 #if 0
-	TopVoffset          = Context->StreamInfo.interlaced ? ((VOffset + 1) / 2) : VOffset;
-	BottomVoffset       = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
+	TopVoffset = Context->StreamInfo.interlaced ? ((VOffset + 1) / 2) : VOffset;
+	BottomVoffset = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
 #else
-	TopVoffset          = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
-	BottomVoffset       = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
+	TopVoffset = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
+	BottomVoffset = Context->StreamInfo.interlaced ? (VOffset / 2) : VOffset;
 #endif
-	TopHeight           = Context->StreamInfo.interlaced ? ((Height + 1) / 2) : Height;
-	BottomHeight        = Context->StreamInfo.interlaced ? (Height / 2) : Height;
-	Context->RegisterTFO    = ((HOffset     * (SixteenBit ? 1 : 2)) | (TopVoffset          << 16));
-	Context->RegisterTFS    = (((Width - 1) * (SixteenBit ? 1 : 2)) | ((TopHeight - 1)     << 16)) + Context->RegisterTFO;
-	Context->RegisterBFO    = ((HOffset     * (SixteenBit ? 1 : 2)) | (BottomVoffset       << 16));
-	Context->RegisterBFS    = (((Width - 1)  * (SixteenBit ? 1 : 2)) | ((BottomHeight - 1)  << 16)) + Context->RegisterBFO;
-	Context->RegisterHLL    = Width / (SixteenBit ? 2 : 1);
+	TopHeight = Context->StreamInfo.interlaced ? ((Height + 1) / 2) : Height;
+	BottomHeight = Context->StreamInfo.interlaced ? (Height / 2) : Height;
+	Context->RegisterTFO = ((HOffset * (SixteenBit ? 1 : 2)) | (TopVoffset << 16));
+	Context->RegisterTFS = (((Width - 1) * (SixteenBit ? 1 : 2)) | ((TopHeight - 1) << 16)) + Context->RegisterTFO;
+	Context->RegisterBFO = ((HOffset * (SixteenBit ? 1 : 2)) | (BottomVoffset << 16));
+	Context->RegisterBFS = (((Width - 1) * (SixteenBit ? 1 : 2)) | ((BottomHeight - 1) << 16)) + Context->RegisterBFO;
+	Context->RegisterHLL = Width / (SixteenBit ? 2 : 1);
 	//
 	// Setup the control register values (No constants, so I commented each field)
 	//
-	Context->RegisterCTL    = (ControlValue(16Bit)              << 30) |    // HD_EN        - 16 bit capture
-							  (ControlValue(BigEndian)          << 23) |    // BIG_NOT_LITTLE   - Big endian format
-							  (ControlValue(FullRange)          << 16) |    // EXTENDED_1_254   - Clip input to 1..254 rather than 16..235 luma and 16..240 chroma
-							  (ControlValue(ExternalSynchroOutOfPhase)  << 15) |    // SYNCHRO_PHASE_NOTOK  - External H and V signals not in phase
-							  (ControlValue(ExternalVRefOddEven)        <<  9) |    // ODDEVEN_NOT_VSYNC    - External vertical reference is an odd/even signal
-							  (ControlValue(OddPixelCount)          <<  8) |    // PHASE[1]     - Number of pixels to capture is odd
-							  (ControlValue(IncompleteFirstPixel)       <<  7) |    // PHASE[0]     - First pixel is incomplete (Y1 not CB0_Y0_CR0)
-							  (ControlValue(ExternalVRefPolarityPositive)   <<  6) |    // V_REF_POL        - External Vertical counter reset on +ve edge of VREF
-							  (ControlValue(HRefPolarityPositive)       <<  5) |    // H_REF_POL        - Horizontal counter reset on +ve edge of HREF
-							  (ControlValue(ExternalSync)           <<  4) |    // EXT_SYNC     - Use external HSI/VSI
-							  (ControlValue(VsyncBottomHalfLineEnable)  <<  3) |    // VSYNC_BOT_HALF_LINE_EN - VSOUT starts at the middle of the last top field line
-							  (ControlValue(ExternalSyncPolarity)       <<  2) |    // EXT_SYNC_POL     - external sync polarity
-							  (0                                            <<  1) |    // ANCILLARY_DATA_EN    - ANC/VBI data collection enable managed throughout
-							  (1                        <<  0);     // VID_EN       - Enable capture
+	Context->RegisterCTL = (ControlValue(16Bit) << 30) | // HD_EN - 16 bit capture
+			       (ControlValue(BigEndian) << 23) | // BIG_NOT_LITTLE - Big endian format
+			       (ControlValue(FullRange) << 16) | // EXTENDED_1_254 - Clip input to 1..254 rather than 16..235 luma and 16..240 chroma
+			       (ControlValue(ExternalSynchroOutOfPhase) << 15) | // SYNCHRO_PHASE_NOTOK - External H and V signals not in phase
+			       (ControlValue(ExternalVRefOddEven) << 9) | // ODDEVEN_NOT_VSYNC - External vertical reference is an odd/even signal
+			       (ControlValue(OddPixelCount) << 8) | // PHASE[1] - Number of pixels to capture is odd
+			       (ControlValue(IncompleteFirstPixel) << 7) | // PHASE[0] - First pixel is incomplete (Y1 not CB0_Y0_CR0)
+			       (ControlValue(ExternalVRefPolarityPositive) << 6) | // V_REF_POL - External Vertical counter reset on +ve edge of VREF
+			       (ControlValue(HRefPolarityPositive) << 5) | // H_REF_POL - Horizontal counter reset on +ve edge of HREF
+			       (ControlValue(ExternalSync) << 4) | // EXT_SYNC - Use external HSI/VSI
+			       (ControlValue(VsyncBottomHalfLineEnable) << 3) | // VSYNC_BOT_HALF_LINE_EN - VSOUT starts at the middle of the last top field line
+			       (ControlValue(ExternalSyncPolarity) << 2) | // EXT_SYNC_POL - external sync polarity
+			       (0 << 1) | // ANCILLARY_DATA_EN - ANC/VBI data collection enable managed throughout
+			       (1 << 0); // VID_EN - Enable capture
 	if (Context->StreamInfo.interlaced)
-		Context->RegisterCTL        |= (1 << 29);       // Reserved     - I am guessing this is an interlaced flag
+		Context->RegisterCTL |= (1 << 29); // Reserved - I am guessing this is an interlaced flag
 //
 	return 0;
 }
@@ -1185,72 +1192,72 @@ static int DvpParseModeValues(dvp_v4l2_video_handle_t   *Context)
 //	Nicks function to configure the capture hardware
 //
 
-static int DvpConfigureCapture(dvp_v4l2_video_handle_t  *Context)
+static int DvpConfigureCapture(dvp_v4l2_video_handle_t *Context)
 {
-	volatile int        *DvpRegs    = Context->DvpRegs;
-	DvpBufferStack_t        *Record;
-	unsigned int         Tmp;
+	volatile int *DvpRegs = Context->DvpRegs;
+	DvpBufferStack_t *Record;
+	unsigned int Tmp;
 //
-	Record          = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
+	Record = &Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE];
 	//
 	// make sure nothing is going on
 	//
-	DvpRegs[GAM_DVP_CTL]    = 0x80080000;
-	DvpRegs[GAM_DVP_ITM]    = 0x00;
+	DvpRegs[GAM_DVP_CTL] = 0x80080000;
+	DvpRegs[GAM_DVP_ITM] = 0x00;
 	//
 	// Clean up the ancillary data - match the consequences of the following writes
 	// also capture the control variable that we do not allow to change during streams
 	//
-	Context->AncillaryInputBufferInputPointer       = Context->AncillaryInputBufferUnCachedAddress;
+	Context->AncillaryInputBufferInputPointer = Context->AncillaryInputBufferUnCachedAddress;
 	memset(Context->AncillaryInputBufferUnCachedAddress, 0x00, Context->AncillaryInputBufferSize);
-	Context->AncillaryPageSizeSpecified         = ControlValue(AncPageSizeSpecified);
-	Context->AncillaryPageSize              = ControlValue(AncPageSize);
+	Context->AncillaryPageSizeSpecified = ControlValue(AncPageSizeSpecified);
+	Context->AncillaryPageSize = ControlValue(AncPageSize);
 	//
 	// Update to incorporate the resizing
 	//
 	if (Record->RegisterHSRC != DVP_SRC_OFF_VALUE)
 	{
 		DvpConfigureHorizontalResizeCoefficients(Context, (Record->RegisterHSRC & 0x00000fff));
-		Context->RegisterCTL        |= (1 << 10);       // HRESIZE_EN           - Enable horizontal resize
+		Context->RegisterCTL |= (1 << 10); // HRESIZE_EN - Enable horizontal resize
 	}
-	Context->LastRegisterHSRC   = Record->RegisterHSRC;
+	Context->LastRegisterHSRC = Record->RegisterHSRC;
 //
 	if (Record->RegisterVSRC != DVP_SRC_OFF_VALUE)
 	{
 		DvpConfigureVerticalResizeCoefficients(Context, (Record->RegisterVSRC & 0x00000fff));
-		Context->RegisterCTL        |= (1 << 11);       // VRESIZE_EN           - Enable vertical resize
+		Context->RegisterCTL |= (1 << 11); // VRESIZE_EN - Enable vertical resize
 	}
-	Context->LastRegisterVSRC   = Record->RegisterVSRC;
+	Context->LastRegisterVSRC = Record->RegisterVSRC;
 	//
 	// Program the structure registers
 	//
-	DvpRegs[GAM_DVP_TFO]    = Context->RegisterTFO;
-	DvpRegs[GAM_DVP_TFS]    = Context->RegisterTFS;
-	DvpRegs[GAM_DVP_BFO]    = Context->RegisterBFO;
-	DvpRegs[GAM_DVP_BFS]    = Context->RegisterBFS;
-	DvpRegs[GAM_DVP_VTP]    = (unsigned int)Record->Data;
-	DvpRegs[GAM_DVP_VBP]    = (unsigned int)Record->Data + Record->RegisterVBPminusVTP;
-	DvpRegs[GAM_DVP_VMP]    = Record->RegisterVMP;
-	DvpRegs[GAM_DVP_CVS]    = Record->RegisterCVS;
-	DvpRegs[GAM_DVP_VSD]    = 0;                    // Set synchronization delays to zero
-	DvpRegs[GAM_DVP_HSD]    = 0;
-	DvpRegs[GAM_DVP_HLL]    = Context->RegisterHLL;
-	DvpRegs[GAM_DVP_HSRC]   = Record->RegisterHSRC;
-	DvpRegs[GAM_DVP_VSRC]   = Record->RegisterVSRC;
-	DvpRegs[GAM_DVP_PKZ]    = 0x2;                  // Set packet size to 4 ST bus words
-	DvpRegs[GAM_DVP_ABA]    = (unsigned int)Context->AncillaryInputBufferPhysicalAddress;
-	DvpRegs[GAM_DVP_AEA]    = (unsigned int)Context->AncillaryInputBufferPhysicalAddress + Context->AncillaryInputBufferSize - DVP_ANCILLARY_BUFFER_CHUNK_SIZE; // Note address of last 128bit word
-	DvpRegs[GAM_DVP_APS]    = Context->AncillaryPageSize;
-	Tmp             = DvpRegs[GAM_DVP_ITS];         // Clear interrupts before enabling
-	DvpRegs[GAM_DVP_ITM]    = (1 << 4);             // Interested in Vsync top only
-	DvpRegs[GAM_DVP_CTL]    = Context->RegisterCTL;         // Let er rip
+	DvpRegs[GAM_DVP_TFO] = Context->RegisterTFO;
+	DvpRegs[GAM_DVP_TFS] = Context->RegisterTFS;
+	DvpRegs[GAM_DVP_BFO] = Context->RegisterBFO;
+	DvpRegs[GAM_DVP_BFS] = Context->RegisterBFS;
+	DvpRegs[GAM_DVP_VTP] = (unsigned int)Record->Data;
+	DvpRegs[GAM_DVP_VBP] = (unsigned int)Record->Data + Record->RegisterVBPminusVTP;
+	DvpRegs[GAM_DVP_VMP] = Record->RegisterVMP;
+	DvpRegs[GAM_DVP_CVS] = Record->RegisterCVS;
+	DvpRegs[GAM_DVP_VSD] = 0; // Set synchronization delays to zero
+	DvpRegs[GAM_DVP_HSD] = 0;
+	DvpRegs[GAM_DVP_HLL] = Context->RegisterHLL;
+	DvpRegs[GAM_DVP_HSRC] = Record->RegisterHSRC;
+	DvpRegs[GAM_DVP_VSRC] = Record->RegisterVSRC;
+	DvpRegs[GAM_DVP_PKZ] = 0x2; // Set packet size to 4 ST bus words
+	DvpRegs[GAM_DVP_ABA] = (unsigned int)Context->AncillaryInputBufferPhysicalAddress;
+	DvpRegs[GAM_DVP_AEA] = (unsigned int)Context->AncillaryInputBufferPhysicalAddress + Context->AncillaryInputBufferSize - DVP_ANCILLARY_BUFFER_CHUNK_SIZE; // Note address of last 128bit word
+	DvpRegs[GAM_DVP_APS] = Context->AncillaryPageSize;
+	Tmp = DvpRegs[GAM_DVP_ITS]; // Clear interrupts before enabling
+	DvpRegs[GAM_DVP_ITM] = (1 << 4); // Interested in Vsync top only
+	DvpRegs[GAM_DVP_CTL] = Context->RegisterCTL; // Let er rip
 //
 #if 0
 	printk("%08x %08x %08x %08x - %08x %08x %08x %08x - %08x %08x %08x %08x - %08x %08x\n",
-		   DvpRegs[GAM_DVP_TFO], DvpRegs[GAM_DVP_TFS], DvpRegs[GAM_DVP_BFO], DvpRegs[GAM_DVP_BFS],
-		   DvpRegs[GAM_DVP_VTP], DvpRegs[GAM_DVP_VBP], DvpRegs[GAM_DVP_VMP], DvpRegs[GAM_DVP_CVS],
-		   DvpRegs[GAM_DVP_VSD], DvpRegs[GAM_DVP_HSD], DvpRegs[GAM_DVP_HLL], DvpRegs[GAM_DVP_HSRC],
-		   DvpRegs[GAM_DVP_VSRC], DvpRegs[GAM_DVP_CTL]);
+	       DvpRegs[GAM_DVP_TFO], DvpRegs[GAM_DVP_TFS], DvpRegs[GAM_DVP_BFO], DvpRegs[GAM_DVP_BFS],
+	       DvpRegs[GAM_DVP_VTP], DvpRegs[GAM_DVP_VBP], DvpRegs[GAM_DVP_VMP], DvpRegs[GAM_DVP_CVS],
+	       DvpRegs[GAM_DVP_VSD], DvpRegs[GAM_DVP_HSD], DvpRegs[GAM_DVP_HLL], DvpRegs[GAM_DVP_HSRC],
+	       DvpRegs[GAM_DVP_VSRC], DvpRegs[GAM_DVP_CTL]);
 #endif
 //
 	return 0;
@@ -1260,26 +1267,26 @@ static int DvpConfigureCapture(dvp_v4l2_video_handle_t  *Context)
 //	Nicks function to start capturing data
 //
 
-static int DvpStartup(dvp_v4l2_video_handle_t   *Context)
+static int DvpStartup(dvp_v4l2_video_handle_t *Context)
 {
-	int          Result;
+	int Result;
 	//
 	// Configure the capture
 	//
-	Context->DvpCalculatingFrameTime    = false;
-	Context->DvpBaseTime        = INVALID_TIME;
-	Context->DvpFrameCount      = 0;
+	Context->DvpCalculatingFrameTime = false;
+	Context->DvpBaseTime = INVALID_TIME;
+	Context->DvpFrameCount = 0;
 	Context->DvpFrameDurationCorrection = DVP_CORRECTION_FACTOR_ONE;
 	Context->DvpTotalElapsedCaptureTime = 0;
 	Context->DvpTotalCapturedFrameCount = 0;
-	Context->DvpCurrentDriftError   = 0;
+	Context->DvpCurrentDriftError = 0;
 	Context->DvpLastDriftCorrection = 0;
-	Context->DvpDriftFrameCount     = 0;
-	Context->DvpState           = DvpStarting;
+	Context->DvpDriftFrameCount = 0;
+	Context->DvpState = DvpStarting;
 	avr_invalidate_external_time_mapping(Context->SharedContext);
 	sema_init(&Context->DvpVideoInterruptSem, 0);
 	sema_init(&Context->DvpPreInjectBufferSem, Context->DvpBuffersRequiredToInjectAhead - 1);
-	Result              = DvpConfigureCapture(Context);
+	Result = DvpConfigureCapture(Context);
 	if (Result < 0)
 	{
 		printk("DvpStartup - Failed to configure capture hardware.\n");
@@ -1297,15 +1304,15 @@ static int DvpStartup(dvp_v4l2_video_handle_t   *Context)
 //	Nicks function to enter the run state, where we capture and move onto the next buffer
 //
 
-static int DvpRun(dvp_v4l2_video_handle_t   *Context)
+static int DvpRun(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned long long  ElapsedFrameTime;
+	unsigned long long ElapsedFrameTime;
 	//
 	// Set the start time, and switch to moving to run state
 	//
-	ElapsedFrameTime            = DvpTimeForNFrames(Context->DvpLeadInVideoFrames + 1);
-	Context->DvpRunFromTime     = Context->DvpBaseTime + ElapsedFrameTime - 8000;   // Allow for jitter by subtracting 8ms
-	Context->DvpState           = DvpMovingToRun;
+	ElapsedFrameTime = DvpTimeForNFrames(Context->DvpLeadInVideoFrames + 1);
+	Context->DvpRunFromTime = Context->DvpBaseTime + ElapsedFrameTime - 8000; // Allow for jitter by subtracting 8ms
+	Context->DvpState = DvpMovingToRun;
 //
 	return 0;
 }
@@ -1315,13 +1322,13 @@ static int DvpRun(dvp_v4l2_video_handle_t   *Context)
 //	Nicks function to stop capturing data
 //
 
-static int DvpStop(dvp_v4l2_video_handle_t  *Context)
+static int DvpStop(dvp_v4l2_video_handle_t *Context)
 {
-	int          Result;
+	int Result;
 	//
 	// Halt the capture
 	//
-	Result          = DvpHaltCapture(Context);
+	Result = DvpHaltCapture(Context);
 	if (Result < 0)
 	{
 		printk("Error in %s: Failed to halt capture hardware.\n", __FUNCTION__);
@@ -1330,7 +1337,7 @@ static int DvpStop(dvp_v4l2_video_handle_t  *Context)
 	//
 	// And adjust the state accordingly
 	//
-	Context->DvpBaseTime    = INVALID_TIME;
+	Context->DvpBaseTime = INVALID_TIME;
 //
 	return 0;
 }
@@ -1338,87 +1345,87 @@ static int DvpStop(dvp_v4l2_video_handle_t  *Context)
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Nicks function to handle a warm up failure
-//	What warmup failure usually means, is that the
-//	frame rate is either wrong, or the source is
-//	way way out of spec.
+//	 What warmup failure usually means, is that the
+//	 frame rate is either wrong, or the source is
+//	 way way out of spec.
 //
 
 static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
-						unsigned long long   MicroSeconds,
-						unsigned int         Frames)
+			unsigned long long MicroSeconds,
+			unsigned int Frames)
 {
-	unsigned int        i;
-	unsigned long long  MicroSecondsPerFrame;
-	unsigned int        NewDvpBuffersRequiredToInjectAhead;
+	unsigned int i;
+	unsigned long long MicroSecondsPerFrame;
+	unsigned int NewDvpBuffersRequiredToInjectAhead;
 	//
 	// First convert the us int microseconds per frame
 	//
-	MicroSecondsPerFrame    = (MicroSeconds + (Frames / 2)) / Frames;
+	MicroSecondsPerFrame = (MicroSeconds + (Frames / 2)) / Frames;
 	printk("DvpFrameRate - MicroSecondsPerFrame = %5lld (%6lld, %4d)\n", MicroSecondsPerFrame, MicroSeconds, Frames);
 //
-	Context->StandardFrameRate  = true;
-	if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 16667))               // 60fps = 16666.67 us
+	Context->StandardFrameRate = true;
+	if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 16667)) // 60fps = 16666.67 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 60;
-		Context->StreamInfo.FrameRateDenominator    = 1;
+		Context->StreamInfo.FrameRateNumerator = 60;
+		Context->StreamInfo.FrameRateDenominator = 1;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 16683))          // 59fps = 16683.33 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 16683)) // 59fps = 16683.33 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 60000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 60000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 20000))          // 50fps = 20000.00 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 20000)) // 50fps = 20000.00 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 50;
-		Context->StreamInfo.FrameRateDenominator    = 1;
+		Context->StreamInfo.FrameRateNumerator = 50;
+		Context->StreamInfo.FrameRateDenominator = 1;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 33333))          // 30fps = 33333.33 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 33333)) // 30fps = 33333.33 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 30;
-		Context->StreamInfo.FrameRateDenominator    = 1;
+		Context->StreamInfo.FrameRateNumerator = 30;
+		Context->StreamInfo.FrameRateDenominator = 1;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 33367))          // 29fps = 33366.67 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 33367)) // 29fps = 33366.67 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 30000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 30000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 40000))          // 25fps = 40000.00 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 40000)) // 25fps = 40000.00 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 25;
-		Context->StreamInfo.FrameRateDenominator    = 1;
+		Context->StreamInfo.FrameRateNumerator = 25;
+		Context->StreamInfo.FrameRateDenominator = 1;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 41667))          // 24fps = 41666.67 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 41667)) // 24fps = 41666.67 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 24;
-		Context->StreamInfo.FrameRateDenominator    = 1;
+		Context->StreamInfo.FrameRateNumerator = 24;
+		Context->StreamInfo.FrameRateDenominator = 1;
 	}
-	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 41708))          // 23fps = 41708.33 us
+	else if (DvpValueMatchesFrameTime(MicroSecondsPerFrame, 41708)) // 23fps = 41708.33 us
 	{
-		Context->StreamInfo.FrameRateNumerator      = 24000;
-		Context->StreamInfo.FrameRateDenominator    = 1001;
+		Context->StreamInfo.FrameRateNumerator = 24000;
+		Context->StreamInfo.FrameRateDenominator = 1001;
 	}
-	else if (MicroSecondsPerFrame != Context->StreamInfo.FrameRateDenominator)   // If it has changed since the last time
+	else if (MicroSecondsPerFrame != Context->StreamInfo.FrameRateDenominator) // If it has changed since the last time
 	{
-		Context->StandardFrameRate          = false;
-		Context->StreamInfo.FrameRateNumerator      = 1000000;
-		Context->StreamInfo.FrameRateDenominator    = MicroSecondsPerFrame;
+		Context->StandardFrameRate = false;
+		Context->StreamInfo.FrameRateNumerator = 1000000;
+		Context->StreamInfo.FrameRateDenominator = MicroSecondsPerFrame;
 	}
 	// If it was non standard, but has not changed since
 	// last integration, we let it become the new standard.
 //
-	if (MicroSecondsPerFrame < 32000)                        // Has the interlaced flag been set incorrectly
-		Context->StreamInfo.interlaced          = false;
+	if (MicroSecondsPerFrame < 32000) // Has the interlaced flag been set incorrectly
+		Context->StreamInfo.interlaced = false;
 	DvpVideoSysfsInterruptSetMicroSecondsPerFrame(Context, DvpTimeForNFrames(1));
 //
 	if (Context->StandardFrameRate)
 		printk("DvpFrameRate - Framerate = %lld/%lld (%s)\n", Context->StreamInfo.FrameRateNumerator, Context->StreamInfo.FrameRateDenominator,
-			   (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
+		       (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
 	//
 	// Recalculate how many buffers we will need to pre-inject.
 	// If this has increased, then allow more injections by performing up
 	// on the appropriate semaphore.
 	//
-	NewDvpBuffersRequiredToInjectAhead      = DVP_MAXIMUM_PLAYER_TRANSIT_TIME / DvpTimeForNFrames(1) + 1;
+	NewDvpBuffersRequiredToInjectAhead = DVP_MAXIMUM_PLAYER_TRANSIT_TIME / DvpTimeForNFrames(1) + 1;
 	if (NewDvpBuffersRequiredToInjectAhead > Context->DvpBuffersRequiredToInjectAhead)
 	{
 		for (i = Context->DvpBuffersRequiredToInjectAhead; i < NewDvpBuffersRequiredToInjectAhead; i++)
@@ -1432,15 +1439,15 @@ static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
 //	Nicks function to handle a warm up failure
-//	What warmup failure usually means, is that the
-//	frame rate is either wrong, or the source is
-//	way way out of spec.
+//	 What warmup failure usually means, is that the
+//	 frame rate is either wrong, or the source is
+//	 way way out of spec.
 //
 
 static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
-							unsigned long long      MicroSeconds)
+			    unsigned long long MicroSeconds)
 {
-//    printk( "$$$ DvpWarmUpFailure %5d => %5lld %5lld $$$\n", DvpTimeForNFrames(1), DvpTimeForNFrames(Context->DvpInterruptFrameCount), MicroSeconds );
+// printk( "$$$ DvpWarmUpFailure %5d => %5lld %5lld $$$\n", DvpTimeForNFrames(1), DvpTimeForNFrames(Context->DvpInterruptFrameCount), MicroSeconds );
 	//
 	// Select an appropriate frame rate
 	//
@@ -1448,8 +1455,8 @@ static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
 	//
 	// Automatically switch to a slow startup
 	//
-	Context->DvpWarmUpVideoFrames   = DVP_WARM_UP_VIDEO_FRAMES_60;
-	Context->DvpLeadInVideoFrames   = DVP_LEAD_IN_VIDEO_FRAMES_60;
+	Context->DvpWarmUpVideoFrames = DVP_WARM_UP_VIDEO_FRAMES_60;
+	Context->DvpLeadInVideoFrames = DVP_LEAD_IN_VIDEO_FRAMES_60;
 //
 	return 0;
 }
@@ -1461,19 +1468,19 @@ static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
 
 static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 {
-	bool             AncillaryCaptureWasInProgress;
-	unsigned int         Index;
-	volatile int        *DvpRegs;
-	unsigned int         Size;
-	unsigned char       *Capturestart;
-	unsigned int         Transfer0;
-	unsigned int         Transfer1;
+	bool AncillaryCaptureWasInProgress;
+	unsigned int Index;
+	volatile int *DvpRegs;
+	unsigned int Size;
+	unsigned char *Capturestart;
+	unsigned int Transfer0;
+	unsigned int Transfer1;
 //
-	DvpRegs             = Context->DvpRegs;
-	AncillaryCaptureWasInProgress   = Context->AncillaryCaptureInProgress;
-	Capturestart            = Context->AncillaryInputBufferInputPointer;
-	Transfer0               = 0;
-	Transfer1               = 0;
+	DvpRegs = Context->DvpRegs;
+	AncillaryCaptureWasInProgress = Context->AncillaryCaptureInProgress;
+	Capturestart = Context->AncillaryInputBufferInputPointer;
+	Transfer0 = 0;
+	Transfer1 = 0;
 	//
 	// Is there any ongoing captured data
 	//
@@ -1486,7 +1493,7 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 		{
 			if (Context->AncillaryPageSizeSpecified)
 			{
-				Context->AncillaryInputBufferInputPointer   += Context->AncillaryPageSize;
+				Context->AncillaryInputBufferInputPointer += Context->AncillaryPageSize;
 			}
 			else
 			{
@@ -1494,26 +1501,26 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 				// The length is in 32 bit words, and is in the bottom 6 bits of the word.
 				// There are 6 header bytes captured in total.
 				// The hardware will write in 16 byte chunks (I see though doc says 8)
-				Size                         = (Context->AncillaryInputBufferInputPointer[3] & 0x3f) * 4;
-				Size                        += 6;
-				Size                         = (Size + 15) & 0xfffffff0;
-				Context->AncillaryInputBufferInputPointer   += Size;
+				Size = (Context->AncillaryInputBufferInputPointer[3] & 0x3f) * 4;
+				Size += 6;
+				Size = (Size + 15) & 0xfffffff0;
+				Context->AncillaryInputBufferInputPointer += Size;
 			}
 			if ((Context->AncillaryInputBufferInputPointer - Context->AncillaryInputBufferUnCachedAddress) >= Context->AncillaryInputBufferSize)
-				Context->AncillaryInputBufferInputPointer   -= Context->AncillaryInputBufferSize;
+				Context->AncillaryInputBufferInputPointer -= Context->AncillaryInputBufferSize;
 		}
 		//
 		// Calculate transfer sizes ( 0 before end of circular buffer, 1 after wrap point of circular buffer)
 		//
 		if (Context->AncillaryInputBufferInputPointer < Capturestart)
 		{
-			Transfer0   = (Context->AncillaryInputBufferUnCachedAddress + Context->AncillaryInputBufferSize) - Capturestart;
-			Transfer1   = Context->AncillaryInputBufferInputPointer - Context->AncillaryInputBufferUnCachedAddress;
+			Transfer0 = (Context->AncillaryInputBufferUnCachedAddress + Context->AncillaryInputBufferSize) - Capturestart;
+			Transfer1 = Context->AncillaryInputBufferInputPointer - Context->AncillaryInputBufferUnCachedAddress;
 		}
 		else
 		{
-			Transfer0   = Context->AncillaryInputBufferInputPointer - Capturestart;
-			Transfer1   = 0;
+			Transfer0 = Context->AncillaryInputBufferInputPointer - Capturestart;
+			Transfer1 = 0;
 		}
 	}
 	//
@@ -1536,11 +1543,11 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 			}
 			else
 			{
-				Index       = Context->AncillaryBufferQueue[Context->AncillaryBufferNextFillIndex % DVP_MAX_ANCILLARY_BUFFERS];
+				Index = Context->AncillaryBufferQueue[Context->AncillaryBufferNextFillIndex % DVP_MAX_ANCILLARY_BUFFERS];
 				Context->AncillaryBufferState[Index].Queued = false;
-				Context->AncillaryBufferState[Index].Done   = true;
-				Context->AncillaryBufferState[Index].Bytes  = (Transfer0 + Transfer1);
-				Context->AncillaryBufferState[Index].FillTime   = Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime;
+				Context->AncillaryBufferState[Index].Done = true;
+				Context->AncillaryBufferState[Index].Bytes = (Transfer0 + Transfer1);
+				Context->AncillaryBufferState[Index].FillTime = Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime;
 				memcpy(Context->AncillaryBufferState[Index].UnCachedAddress, Capturestart, Transfer0);
 				if (Transfer1 != 0)
 					memcpy(Context->AncillaryBufferState[Index].UnCachedAddress + Transfer0, Context->AncillaryInputBufferUnCachedAddress, Transfer1);
@@ -1561,10 +1568,10 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 	Context->AncillaryCaptureInProgress = Context->AncillaryStreamOn;
 	if (Context->AncillaryCaptureInProgress != AncillaryCaptureWasInProgress)
 	{
-		Context->RegisterCTL    = Context->RegisterCTL                  |
-								  (Context->AncillaryPageSizeSpecified      << 13)  |   // VALID_ANC_PAGE_SIZE_EXT - During ANC (VBI) collection size will be specified in APS register
-								  (Context->AncillaryCaptureInProgress ? (1 << 1) : 0);     // ANCILLARY_DATA_EN       - Capture enable
-		DvpRegs[GAM_DVP_CTL]    = Context->RegisterCTL;
+		Context->RegisterCTL = Context->RegisterCTL |
+				       (Context->AncillaryPageSizeSpecified << 13) | // VALID_ANC_PAGE_SIZE_EXT - During ANC (VBI) collection size will be specified in APS register
+				       (Context->AncillaryCaptureInProgress ? (1 << 1) : 0); // ANCILLARY_DATA_EN - Capture enable
+		DvpRegs[GAM_DVP_CTL] = Context->RegisterCTL;
 	}
 //
 	return 0;
@@ -1575,66 +1582,66 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 //	Nicks dvp interrupt handler
 //
 
-#if defined (CONFIG_KERNELVERSION)  // STLinux 2.3
-int DvpInterrupt(int irq, void* data)
+#if defined (CONFIG_KERNELVERSION) // STLinux 2.3
+int DvpInterrupt(int irq, void *data)
 #else
-int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
+int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 #endif
 {
-	int          i;
+	int i;
 	dvp_v4l2_video_handle_t *Context;
-	volatile int        *DvpRegs;
-	unsigned int         DvpIts;
-	ktime_t          Ktime;
-	unsigned long long   Now;
-	unsigned long long   EstimatedBaseTime;
-	unsigned long long   EstimatedBaseTimeRange;
-	bool             ThrowAnIntegration;
-	bool             ArithmeticOverflowLikely;
-	bool             UpdateCorrectionFactor;
-	bool             HistoricDifference0Sign;
-	unsigned long long   HistoricDifference0;
-	bool             HistoricDifference1Sign;
-	unsigned long long   HistoricDifference1;
-	unsigned long long   NewTotalElapsedTime;
-	unsigned int         NewTotalFrameCount;
-	unsigned long long   NewCorrectionFactor;
-	long long        CorrectionFactorChange;
-	long long        AffectOfChangeOnPreviousFrameTimes;
-	long long        DriftError;
-	long long        DriftLimit;
-	unsigned int         Interrupts;
+	volatile int *DvpRegs;
+	unsigned int DvpIts;
+	ktime_t Ktime;
+	unsigned long long Now;
+	unsigned long long EstimatedBaseTime;
+	unsigned long long EstimatedBaseTimeRange;
+	bool ThrowAnIntegration;
+	bool ArithmeticOverflowLikely;
+	bool UpdateCorrectionFactor;
+	bool HistoricDifference0Sign;
+	unsigned long long HistoricDifference0;
+	bool HistoricDifference1Sign;
+	unsigned long long HistoricDifference1;
+	unsigned long long NewTotalElapsedTime;
+	unsigned int NewTotalFrameCount;
+	unsigned long long NewCorrectionFactor;
+	long long CorrectionFactorChange;
+	long long AffectOfChangeOnPreviousFrameTimes;
+	long long DriftError;
+	long long DriftLimit;
+	unsigned int Interrupts;
 //
-	Context     = (dvp_v4l2_video_handle_t *)data;
-	DvpRegs     = Context->DvpRegs;
-	DvpIts      = DvpRegs[GAM_DVP_ITS];
-	Ktime       = ktime_get();
-	Now         = ktime_to_us(Ktime);
+	Context = (dvp_v4l2_video_handle_t *)data;
+	DvpRegs = Context->DvpRegs;
+	DvpIts = DvpRegs[GAM_DVP_ITS];
+	Ktime = ktime_get();
+	Now = ktime_to_us(Ktime);
 	Context->DvpInterruptFrameCount++;
 //printk( "DvpInterrupt - %d, %08x, %016llx - %lld, %d\n", Context->DvpState, DvpIts, Now, DvpTimeForNFrames(1), Context->DvpInterruptFrameCount );
 	switch (Context->DvpState)
 	{
 		case DvpInactive:
 			printk("DvpInterrupt - Dvp inactive - possible implementation error.\n");
-			DvpHaltCapture(Context);                 // Try and halt it
+			DvpHaltCapture(Context); // Try and halt it
 			break;
 		case DvpStarting:
-			Context->DvpBaseTime                = Now + DvpTimeForNFrames(1);   // Force trigger
-			Context->DvpInterruptFrameCount         = 0;
-			Context->DvpwarmUpSynchronizationAttempts   = 0;
-			Context->DvpMissedFramesInARow          = 0;
-			Context->DvpState               = DvpWarmingUp;
+			Context->DvpBaseTime = Now + DvpTimeForNFrames(1); // Force trigger
+			Context->DvpInterruptFrameCount = 0;
+			Context->DvpwarmUpSynchronizationAttempts = 0;
+			Context->DvpMissedFramesInARow = 0;
+			Context->DvpState = DvpWarmingUp;
 		case DvpWarmingUp:
-			EstimatedBaseTime               = Now - DvpCorrectedTimeForNFrames(Context->DvpInterruptFrameCount);
-			EstimatedBaseTimeRange              = 1 + (DvpTimeForNFrames(Context->DvpInterruptFrameCount) * DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR) / 1000000;
-			if (!inrange(Context->DvpBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange) , (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
+			EstimatedBaseTime = Now - DvpCorrectedTimeForNFrames(Context->DvpInterruptFrameCount);
+			EstimatedBaseTimeRange = 1 + (DvpTimeForNFrames(Context->DvpInterruptFrameCount) * DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR) / 1000000;
+			if (!inrange(Context->DvpBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange), (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
 					(Context->DvpwarmUpSynchronizationAttempts < DVP_WARM_UP_TRIES))
 			{
-//				printk( "DvpInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->DvpBaseTime, DvpTimeForNFrames(1), EstimatedBaseTime, Context->DvpInterruptFrameCount, Context->DvpBaseTime );
-				Context->DvpBaseTime            = Now;
-				Context->DvpInterruptFrameCount     = 0;
-				Context->DvpTimeAtZeroInterruptFrameCount   = Context->DvpBaseTime;
-				Context->Synchronize            = Context->SynchronizeEnabled;      // Trigger vsync lock
+//			 printk( "DvpInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->DvpBaseTime, DvpTimeForNFrames(1), EstimatedBaseTime, Context->DvpInterruptFrameCount, Context->DvpBaseTime );
+				Context->DvpBaseTime = Now;
+				Context->DvpInterruptFrameCount = 0;
+				Context->DvpTimeAtZeroInterruptFrameCount = Context->DvpBaseTime;
+				Context->Synchronize = Context->SynchronizeEnabled; // Trigger vsync lock
 				Context->DvpwarmUpSynchronizationAttempts++;
 				up(&Context->DvpSynchronizerWakeSem);
 			}
@@ -1644,24 +1651,24 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 			if (Context->DvpwarmUpSynchronizationAttempts >= DVP_WARM_UP_TRIES)
 				DvpWarmUpFailure(Context, (Now - Context->DvpBaseTime));
 			up(&Context->DvpVideoInterruptSem);
-			Context->DvpState               = DvpStarted;
-			Context->DvpIntegrateForAtLeastNFrames      = DVP_MINIMUM_TIME_INTEGRATION_FRAMES;
+			Context->DvpState = DvpStarted;
+			Context->DvpIntegrateForAtLeastNFrames = DVP_MINIMUM_TIME_INTEGRATION_FRAMES;
 		case DvpStarted:
 			MonitorSignalEvent(MONITOR_EVENT_VIDEO_FIRST_FIELD_ACQUIRED, NULL, "DvpInterrupt: First field acquired");
 			break;
 		case DvpMovingToRun:
-//printk( "Moving %12lld  %12lld - %016llx %016llx\n", (Now - Context->DvpRunFromTime), (Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now), Context->DvpRunFromTime, Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime );
+//printk( "Moving %12lld %12lld - %016llx %016llx\n", (Now - Context->DvpRunFromTime), (Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now), Context->DvpRunFromTime, Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime );
 			if (Now < Context->DvpRunFromTime)
 				break;
-			Context->DvpState               = DvpRunning;
+			Context->DvpState = DvpRunning;
 		case DvpRunning:
 			//
 			// Monitor for missed interrupts, this can throw our calculations out dramatically
 			//
-			Interrupts  = ((Now - Context->DvpTimeOfLastFrameInterrupt + (DvpTimeForNFrames(1) / 2)) / DvpTimeForNFrames(1));
+			Interrupts = ((Now - Context->DvpTimeOfLastFrameInterrupt + (DvpTimeForNFrames(1) / 2)) / DvpTimeForNFrames(1));
 			if (Interrupts > 1)
 			{
-				Context->DvpInterruptFrameCount += Interrupts - 1;      // Compensate for the missed interrupts
+				Context->DvpInterruptFrameCount += Interrupts - 1; // Compensate for the missed interrupts
 				printk("$$$$$$$$$$ Missed an interrupt %d\n", Interrupts - 1);
 			}
 			//
@@ -1681,7 +1688,7 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 			// have we integrated for long enough, and is this value
 			// Unjittered.
 			//
-			DriftError  = Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now;
+			DriftError = Context->DvpBufferStack[Context->DvpNextBufferToFill % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now;
 			if (Context->DvpCalculatingFrameTime ||
 					(Context->DvpInterruptFrameCount < Context->DvpIntegrateForAtLeastNFrames) ||
 					((Context->DvpInterruptFrameCount < (2 * Context->DvpIntegrateForAtLeastNFrames)) &&
@@ -1694,14 +1701,14 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 			//
 			// Re-calculate applying a clamp to the change
 			//
-			UpdateCorrectionFactor          = Context->StandardFrameRate;
-			NewTotalElapsedTime         = 0;        // Initialized to keep compiler happy
-			NewTotalFrameCount          = 0;
-			HistoricDifference0         = 0;
-			HistoricDifference1         = 0;
-			HistoricDifference0Sign         = false;
-			HistoricDifference1Sign         = false;
-			AffectOfChangeOnPreviousFrameTimes  = 0;        // Initialize for print purposes
+			UpdateCorrectionFactor = Context->StandardFrameRate;
+			NewTotalElapsedTime = 0; // Initialized to keep compiler happy
+			NewTotalFrameCount = 0;
+			HistoricDifference0 = 0;
+			HistoricDifference1 = 0;
+			HistoricDifference0Sign = false;
+			HistoricDifference1Sign = false;
+			AffectOfChangeOnPreviousFrameTimes = 0; // Initialize for print purposes
 			if (UpdateCorrectionFactor)
 			{
 				//
@@ -1714,14 +1721,14 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 					HistoricDifference0 = ((Now - Context->DvpTimeAtZeroInterruptFrameCount) << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(Context->DvpInterruptFrameCount);
 					HistoricDifference0Sign = HistoricDifference0 < Context->DvpFrameDurationCorrection;
 					HistoricDifference0 = HistoricDifference0Sign ?
-										  (Context->DvpFrameDurationCorrection - HistoricDifference0) :
-										  (HistoricDifference0 - Context->DvpFrameDurationCorrection);
+							      (Context->DvpFrameDurationCorrection - HistoricDifference0) :
+							      (HistoricDifference0 - Context->DvpFrameDurationCorrection);
 					if (HistoricDifference0 > (8 * DVP_ONE_PPM))
 					{
 						Context->DvpTotalElapsedCaptureTime = 0;
 						Context->DvpTotalCapturedFrameCount = 0;
-						Context->DvpNextIntegrationRecord   = 0;
-						Context->DvpFirstIntegrationRecord  = 0;
+						Context->DvpNextIntegrationRecord = 0;
+						Context->DvpFirstIntegrationRecord = 0;
 					}
 				}
 				if ((Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord) > 1)
@@ -1729,15 +1736,15 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 					HistoricDifference1 = (Context->DvpElapsedCaptureTimeRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS] << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(Context->DvpCapturedFrameCountRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS]);
 					HistoricDifference1Sign = HistoricDifference1 < Context->DvpFrameDurationCorrection;
 					HistoricDifference1 = HistoricDifference1Sign ?
-										  (Context->DvpFrameDurationCorrection - HistoricDifference1) :
-										  (HistoricDifference1 - Context->DvpFrameDurationCorrection);
+							      (Context->DvpFrameDurationCorrection - HistoricDifference1) :
+							      (HistoricDifference1 - Context->DvpFrameDurationCorrection);
 					if ((HistoricDifference0 > DVP_ONE_PPM) &&
 							(HistoricDifference1 > DVP_ONE_PPM) &&
 							(HistoricDifference0Sign == HistoricDifference1Sign))
 					{
 						Context->DvpTotalElapsedCaptureTime = Context->DvpElapsedCaptureTimeRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS];
 						Context->DvpTotalCapturedFrameCount = Context->DvpCapturedFrameCountRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS];
-						Context->DvpFirstIntegrationRecord  = Context->DvpNextIntegrationRecord - 1;
+						Context->DvpFirstIntegrationRecord = Context->DvpNextIntegrationRecord - 1;
 					}
 				}
 				//
@@ -1745,16 +1752,16 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 				//
 				do
 				{
-					NewTotalElapsedTime         = Context->DvpTotalElapsedCaptureTime + (Now - Context->DvpTimeAtZeroInterruptFrameCount);
-					NewTotalFrameCount          = Context->DvpTotalCapturedFrameCount + Context->DvpInterruptFrameCount;
-					ArithmeticOverflowLikely        = (NewTotalElapsedTime != ((NewTotalElapsedTime << DVP_CORRECTION_FIXED_POINT_BITS) >> DVP_CORRECTION_FIXED_POINT_BITS)) ||
-													  ((DvpTimeForNFrames(NewTotalFrameCount) & 0xffffffff00000000ull) != 0);
-					ThrowAnIntegration          = ArithmeticOverflowLikely ||
-												  ((Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord) >= (DVP_MAX_RECORDED_INTEGRATIONS - 1));
+					NewTotalElapsedTime = Context->DvpTotalElapsedCaptureTime + (Now - Context->DvpTimeAtZeroInterruptFrameCount);
+					NewTotalFrameCount = Context->DvpTotalCapturedFrameCount + Context->DvpInterruptFrameCount;
+					ArithmeticOverflowLikely = (NewTotalElapsedTime != ((NewTotalElapsedTime << DVP_CORRECTION_FIXED_POINT_BITS) >> DVP_CORRECTION_FIXED_POINT_BITS)) ||
+								   ((DvpTimeForNFrames(NewTotalFrameCount) & 0xffffffff00000000ull) != 0);
+					ThrowAnIntegration = ArithmeticOverflowLikely ||
+							     ((Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord) >= (DVP_MAX_RECORDED_INTEGRATIONS - 1));
 					if (ThrowAnIntegration)
 					{
-						Context->DvpTotalElapsedCaptureTime     -= Context->DvpElapsedCaptureTimeRecord[Context->DvpFirstIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS];
-						Context->DvpTotalCapturedFrameCount     -= Context->DvpCapturedFrameCountRecord[Context->DvpFirstIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS];
+						Context->DvpTotalElapsedCaptureTime -= Context->DvpElapsedCaptureTimeRecord[Context->DvpFirstIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS];
+						Context->DvpTotalCapturedFrameCount -= Context->DvpCapturedFrameCountRecord[Context->DvpFirstIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS];
 						Context->DvpFirstIntegrationRecord++;
 					}
 				}
@@ -1762,27 +1769,27 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 				//
 				// Calculate new factor, and the change
 				//
-				NewCorrectionFactor             = (NewTotalElapsedTime << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(NewTotalFrameCount);
-				CorrectionFactorChange          = NewCorrectionFactor - Context->DvpFrameDurationCorrection;
-				Context->DvpFrameDurationCorrection     = NewCorrectionFactor;
+				NewCorrectionFactor = (NewTotalElapsedTime << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(NewTotalFrameCount);
+				CorrectionFactorChange = NewCorrectionFactor - Context->DvpFrameDurationCorrection;
+				Context->DvpFrameDurationCorrection = NewCorrectionFactor;
 				//
 				// Adjust the base time so that the change only affects frames
 				// after those already calculated.
 				//
-				AffectOfChangeOnPreviousFrameTimes      = DvpTimeForNFrames(Context->DvpFrameCount + Context->DvpLeadInVideoFrames);
-				AffectOfChangeOnPreviousFrameTimes      = (AffectOfChangeOnPreviousFrameTimes * Abs(CorrectionFactorChange)) >> DVP_CORRECTION_FIXED_POINT_BITS;
-				Context->DvpBaseTime            += (CorrectionFactorChange < 0) ? AffectOfChangeOnPreviousFrameTimes : -AffectOfChangeOnPreviousFrameTimes;
+				AffectOfChangeOnPreviousFrameTimes = DvpTimeForNFrames(Context->DvpFrameCount + Context->DvpLeadInVideoFrames);
+				AffectOfChangeOnPreviousFrameTimes = (AffectOfChangeOnPreviousFrameTimes * Abs(CorrectionFactorChange)) >> DVP_CORRECTION_FIXED_POINT_BITS;
+				Context->DvpBaseTime += (CorrectionFactorChange < 0) ? AffectOfChangeOnPreviousFrameTimes : -AffectOfChangeOnPreviousFrameTimes;
 			}
 			//
 			// Detect an out of range correction factor, and mark our frame rate as invalid
 			//
 			if (!inrange(Context->DvpFrameDurationCorrection, (DVP_CORRECTION_FACTOR_ONE - (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM)),
-						 (DVP_CORRECTION_FACTOR_ONE + (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM))))
+					(DVP_CORRECTION_FACTOR_ONE + (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM))))
 			{
 				printk("DvpInterrupt - Correction factor %lld.%09lld outside reasonable rate, marking frame rate as invalid.\n",
-					   (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
-					   (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
-				Context->StandardFrameRate  = false;
+				       (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
+				       (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
+				Context->StandardFrameRate = false;
 			}
 			//
 			// If running at a non-standard framerate, then try for an
@@ -1796,14 +1803,14 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 				// Note we do not adjust the base time, the change in framerate
 				// has equivalent effect to the correction factor change.
 				//
-				Context->DvpFrameDurationCorrection     = DVP_CORRECTION_FACTOR_ONE;
-				Context->DvpTotalElapsedCaptureTime     = 0;
-				Context->DvpTotalCapturedFrameCount     = 0;
-				Context->DvpNextIntegrationRecord       = 0;
-				Context->DvpFirstIntegrationRecord      = 0;
-				Context->DvpInterruptFrameCount     = 0;
-				Context->DvpTimeAtZeroInterruptFrameCount   = Now;
-				Context->DvpIntegrateForAtLeastNFrames  = DVP_MINIMUM_TIME_INTEGRATION_FRAMES / 2;
+				Context->DvpFrameDurationCorrection = DVP_CORRECTION_FACTOR_ONE;
+				Context->DvpTotalElapsedCaptureTime = 0;
+				Context->DvpTotalCapturedFrameCount = 0;
+				Context->DvpNextIntegrationRecord = 0;
+				Context->DvpFirstIntegrationRecord = 0;
+				Context->DvpInterruptFrameCount = 0;
+				Context->DvpTimeAtZeroInterruptFrameCount = Now;
+				Context->DvpIntegrateForAtLeastNFrames = DVP_MINIMUM_TIME_INTEGRATION_FRAMES / 2;
 				//
 				// If we have had a step change in frame rate, we wish recalculate the base time to
 				// to make the current expected arrival time of frames as based on now.
@@ -1811,35 +1818,35 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 				for (i = Context->DvpNextBufferToFill;
 						i < Context->DvpNextBufferToGet;
 						i++)
-					Context->DvpBufferStack[i % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime    = Now + DvpTimeForNFrames(i - Context->DvpNextBufferToFill);
-				Context->DvpFrameCount          = i - Context->DvpNextBufferToFill - Context->DvpLeadInVideoFrames;
-				Context->DvpBaseTime            = Now;
+					Context->DvpBufferStack[i % DVP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime = Now + DvpTimeForNFrames(i - Context->DvpNextBufferToFill);
+				Context->DvpFrameCount = i - Context->DvpNextBufferToFill - Context->DvpLeadInVideoFrames;
+				Context->DvpBaseTime = Now;
 			}
 			//
 			// Now calculate the drift error - limitting to 2ppm
 			//
-			Context->DvpCurrentDriftError       = (Abs(DriftError) < Abs(Context->DvpLastFrameDriftError)) ? DriftError : Context->DvpLastFrameDriftError;
-			Context->DvpBaseTime            = Context->DvpBaseTime + Context->DvpLastDriftCorrection;
-			Context->DvpDriftFrameCount     = 0;
-			Context->DvpLastDriftCorrection     = 0;
-			DriftLimit              = (1 * DvpTimeForNFrames(DVP_MAXIMUM_TIME_INTEGRATION_FRAMES)) / 500000;
+			Context->DvpCurrentDriftError = (Abs(DriftError) < Abs(Context->DvpLastFrameDriftError)) ? DriftError : Context->DvpLastFrameDriftError;
+			Context->DvpBaseTime = Context->DvpBaseTime + Context->DvpLastDriftCorrection;
+			Context->DvpDriftFrameCount = 0;
+			Context->DvpLastDriftCorrection = 0;
+			DriftLimit = (1 * DvpTimeForNFrames(DVP_MAXIMUM_TIME_INTEGRATION_FRAMES)) / 500000;
 			Clamp(Context->DvpCurrentDriftError, -DriftLimit, DriftLimit);
 			//
 			// Print out the new state
 			//
 			printk("New Correction factor %lld.%09lld(%d - %3d) [%3lld] - (%5d %6d) %5lld (%lld,%lld)(%s%lld.%09lld %s%lld.%09lld) \n",
-				   (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
-				   (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
-				   UpdateCorrectionFactor, (Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord),
-				   AffectOfChangeOnPreviousFrameTimes,
-				   Context->DvpInterruptFrameCount, Context->DvpTotalCapturedFrameCount,
-				   Context->DvpCurrentDriftError, DriftError, Context->DvpLastFrameDriftError,
-				   (HistoricDifference0Sign  ? "-" : " "),
-				   (HistoricDifference0 >> DVP_CORRECTION_FIXED_POINT_BITS),
-				   (((HistoricDifference0 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
-				   (HistoricDifference1Sign  ? "-" : " "),
-				   (HistoricDifference1 >> DVP_CORRECTION_FIXED_POINT_BITS),
-				   (((HistoricDifference1 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
+			       (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
+			       (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
+			       UpdateCorrectionFactor, (Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord),
+			       AffectOfChangeOnPreviousFrameTimes,
+			       Context->DvpInterruptFrameCount, Context->DvpTotalCapturedFrameCount,
+			       Context->DvpCurrentDriftError, DriftError, Context->DvpLastFrameDriftError,
+			       (HistoricDifference0Sign ? "-" : " "),
+			       (HistoricDifference0 >> DVP_CORRECTION_FIXED_POINT_BITS),
+			       (((HistoricDifference0 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
+			       (HistoricDifference1Sign ? "-" : " "),
+			       (HistoricDifference1 >> DVP_CORRECTION_FIXED_POINT_BITS),
+			       (((HistoricDifference1 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
 			//
 			// Initialize for next integration
 			//
@@ -1853,13 +1860,13 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 					Context->DvpCapturedFrameCountRecord[Context->DvpNextIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS] = Context->DvpInterruptFrameCount;
 					Context->DvpNextIntegrationRecord++;
 				}
-				Context->DvpInterruptFrameCount     = 0;
-				Context->DvpTimeAtZeroInterruptFrameCount   = Now;
-				Context->DvpIntegrateForAtLeastNFrames  = DVP_MAXIMUM_TIME_INTEGRATION_FRAMES;
+				Context->DvpInterruptFrameCount = 0;
+				Context->DvpTimeAtZeroInterruptFrameCount = Now;
+				Context->DvpIntegrateForAtLeastNFrames = DVP_MAXIMUM_TIME_INTEGRATION_FRAMES;
 			}
 			else
 			{
-				Context->DvpIntegrateForAtLeastNFrames  = 2 * Context->DvpIntegrateForAtLeastNFrames;
+				Context->DvpIntegrateForAtLeastNFrames = 2 * Context->DvpIntegrateForAtLeastNFrames;
 			}
 			break;
 		case DvpMovingToInactive:
@@ -1868,7 +1875,7 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 	//
 	// Update our history
 	//
-	Context->DvpTimeOfLastFrameInterrupt        = Now;
+	Context->DvpTimeOfLastFrameInterrupt = Now;
 //
 	return IRQ_HANDLED;
 }
@@ -1878,14 +1885,14 @@ int DvpInterrupt(int irq, void* data, struct pt_regs* pRegs)
 //	Nicks version of the stream event handler
 //
 
-static void DvpEventHandler(context_handle_t         EventContext,
-							struct stream_event_s  *Event)
+static void DvpEventHandler(context_handle_t EventContext,
+			    struct stream_event_s *Event)
 {
 	dvp_v4l2_video_handle_t *Context;
 	//
 	// Initialize context variables
 	//
-	Context         = (dvp_v4l2_video_handle_t *)EventContext;
+	Context = (dvp_v4l2_video_handle_t *)EventContext;
 	//
 	// Is the event for us - if not just lose it
 	//
@@ -1902,7 +1909,7 @@ static void DvpEventHandler(context_handle_t         EventContext,
 					(Event->u.rectangle.height == Context->OutputCropTarget.Height))
 			{
 				DvpVideoSysfsProcessDecrementOutputCropTargetReachedNotification(Context);
-				Context->OutputCropTargetReached    = true;
+				Context->OutputCropTargetReached = true;
 			}
 			break;
 		case STREAM_EVENT_FATAL_HARDWARE_FAILURE:
@@ -1918,30 +1925,30 @@ static void DvpEventHandler(context_handle_t         EventContext,
 //	Nicks version of the function to handle a step in the output crop
 //
 
-static void   DvpPerformOutputCropStep(dvp_v4l2_video_handle_t  *Context)
+static void DvpPerformOutputCropStep(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned int    Steps;
-	unsigned int    Step;
+	unsigned int Steps;
+	unsigned int Step;
 	//
 	// If no previous crop has been specified, then we
 	// take the mode dimensions as our starting point.
 	//
 	if (Context->OutputCropStart.Width == 0)
 	{
-		Context->OutputCropStart.X  = 0;
-		Context->OutputCropStart.Y  = 0;
-		Context->OutputCropStart.Width  = Context->ModeWidth;
+		Context->OutputCropStart.X = 0;
+		Context->OutputCropStart.Y = 0;
+		Context->OutputCropStart.Width = Context->ModeWidth;
 		Context->OutputCropStart.Height = Context->ModeHeight;
 	}
 	//
 	// Obtain a set of output crop values
 	//
-	Step            = ++Context->OutputCropCurrentStep;
-	Steps           = Context->OutputCropSteps;
-	Context->OutputCrop.X   = ((Context->OutputCropStart.X      * (Steps - Step)) + (Context->OutputCropTarget.X      * Step)) / Steps;
-	Context->OutputCrop.Y   = ((Context->OutputCropStart.Y      * (Steps - Step)) + (Context->OutputCropTarget.Y      * Step)) / Steps;
-	Context->OutputCrop.Width   = ((Context->OutputCropStart.Width  * (Steps - Step)) + (Context->OutputCropTarget.Width  * Step)) / Steps;
-	Context->OutputCrop.Height  = ((Context->OutputCropStart.Height * (Steps - Step)) + (Context->OutputCropTarget.Height * Step)) / Steps;
+	Step = ++Context->OutputCropCurrentStep;
+	Steps = Context->OutputCropSteps;
+	Context->OutputCrop.X = ((Context->OutputCropStart.X * (Steps - Step)) + (Context->OutputCropTarget.X * Step)) / Steps;
+	Context->OutputCrop.Y = ((Context->OutputCropStart.Y * (Steps - Step)) + (Context->OutputCropTarget.Y * Step)) / Steps;
+	Context->OutputCrop.Width = ((Context->OutputCropStart.Width * (Steps - Step)) + (Context->OutputCropTarget.Width * Step)) / Steps;
+	Context->OutputCrop.Height = ((Context->OutputCropStart.Height * (Steps - Step)) + (Context->OutputCropTarget.Height * Step)) / Steps;
 	if (Step == Steps)
 		Context->OutputCropStepping = false;
 	//
@@ -1949,10 +1956,10 @@ static void   DvpPerformOutputCropStep(dvp_v4l2_video_handle_t  *Context)
 	//
 	if (Context->OutputCropStepping)
 	{
-		Context->OutputCrop.X       = (Context->OutputCrop.X      + 1) & 0xfffffffe;
-		Context->OutputCrop.Y       = (Context->OutputCrop.Y      + 1) & 0xfffffffe;
-		Context->OutputCrop.Width   = (Context->OutputCrop.Width  + 1) & 0xfffffffe;
-		Context->OutputCrop.Height  = (Context->OutputCrop.Height + 1) & 0xfffffffe;
+		Context->OutputCrop.X = (Context->OutputCrop.X + 1) & 0xfffffffe;
+		Context->OutputCrop.Y = (Context->OutputCrop.Y + 1) & 0xfffffffe;
+		Context->OutputCrop.Width = (Context->OutputCrop.Width + 1) & 0xfffffffe;
+		Context->OutputCrop.Height = (Context->OutputCrop.Height + 1) & 0xfffffffe;
 	}
 	//
 	// Now use the values
@@ -1968,21 +1975,21 @@ static void   DvpPerformOutputCropStep(dvp_v4l2_video_handle_t  *Context)
 static int DvpVideoThread(void *data)
 {
 	dvp_v4l2_video_handle_t *Context;
-	int          Result;
+	int Result;
 	//
 	// Initialize context variables
 	//
-	Context         = (dvp_v4l2_video_handle_t *)data;
+	Context = (dvp_v4l2_video_handle_t *)data;
 	//
 	// Initialize then player with a stream
 	//
 	Result = DvbPlaybackAddStream(Context->DeviceContext->Playback,
-								  BACKEND_VIDEO_ID,
-								  BACKEND_PES_ID,
-								  BACKEND_DVP_ID,
-								  DEMUX_INVALID_ID,
-								  Context->DeviceContext->Id,         // SurfaceId .....
-								  &Context->DeviceContext->VideoStream);
+				      BACKEND_VIDEO_ID,
+				      BACKEND_PES_ID,
+				      BACKEND_DVP_ID,
+				      DEMUX_INVALID_ID,
+				      Context->DeviceContext->Id, // SurfaceId .....
+				      &Context->DeviceContext->VideoStream);
 	if (Result < 0)
 	{
 		printk("DvpVideoThread - PlaybackAddStream failed with %d\n", Result);
@@ -1999,28 +2006,28 @@ static int DvpVideoThread(void *data)
 	// Interject our event handler
 	//
 	DvbStreamRegisterEventSignalCallback(Context->DeviceContext->VideoStream, (context_handle_t)Context,
-										 (stream_event_signal_callback)DvpEventHandler);
+					     (stream_event_signal_callback)DvpEventHandler);
 	//
 	// Set the appropriate policies
 	//
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_VIDEO_ASPECT_RATIO, VIDEO_FORMAT_16_9);
-	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_VIDEO_DISPLAY_FORMAT,   VIDEO_FULL_SCREEN);
-	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_AV_SYNC,            PLAY_OPTION_VALUE_ENABLE);
-	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_DECIMATE_DECODER_OUTPUT,  PLAY_OPTION_VALUE_DECIMATE_DECODER_OUTPUT_DISABLED);
+	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_VIDEO_DISPLAY_FORMAT, VIDEO_FULL_SCREEN);
+	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_AV_SYNC, PLAY_OPTION_VALUE_ENABLE);
+	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_DECIMATE_DECODER_OUTPUT, PLAY_OPTION_VALUE_DECIMATE_DECODER_OUTPUT_DISABLED);
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_DISPLAY_FIRST_FRAME_EARLY, PLAY_OPTION_VALUE_DISABLE);
 	//
 	// Main loop
 	//
-	Context->VideoRunning       = true;
+	Context->VideoRunning = true;
 	while (Context->VideoRunning)
 	{
 		//
 		// Handle setting up and executing a sequence
 		//
 		Context->DvpNextBufferToGet = 0;
-		Context->DvpNextBufferToInject  = 0;
-		Context->DvpNextBufferToFill    = 0;
-		Context->FastModeSwitch     = false;
+		Context->DvpNextBufferToInject = 0;
+		Context->DvpNextBufferToFill = 0;
+		Context->FastModeSwitch = false;
 		//
 		// Insert check for no standard set up
 		//
@@ -2032,15 +2039,15 @@ static int DvpVideoThread(void *data)
 		}
 		//
 		if (Context->VideoRunning && !Context->FastModeSwitch)
-			Result  = DvpParseModeValues(Context);
+			Result = DvpParseModeValues(Context);
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
-			Result  = DvpGetVideoBuffer(Context);
+			Result = DvpGetVideoBuffer(Context);
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
-			Result  = DvpStartup(Context);
+			Result = DvpStartup(Context);
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
-			Result  = DvpInjectVideoBuffer(Context);
+			Result = DvpInjectVideoBuffer(Context);
 		if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
-			Result  = DvpRun(Context);
+			Result = DvpRun(Context);
 		//
 		// Enter the main loop for a running sequence
 		//
@@ -2050,9 +2057,9 @@ static int DvpVideoThread(void *data)
 			if (Context->OutputCropStepping)
 				DvpPerformOutputCropStep(Context);
 			if (Context->VideoRunning && !Context->FastModeSwitch)
-				Result  = DvpGetVideoBuffer(Context);
+				Result = DvpGetVideoBuffer(Context);
 			if ((Result == 0) && Context->VideoRunning && !Context->FastModeSwitch)
-				Result  = DvpInjectVideoBuffer(Context);
+				Result = DvpInjectVideoBuffer(Context);
 		}
 		if (Result < 0)
 			break;
@@ -2070,7 +2077,7 @@ static int DvpVideoThread(void *data)
 	//
 	// Nothing should be happening, remove the stream from the playback
 	//
-	Result              = DvbPlaybackRemoveStream(Context->DeviceContext->Playback, Context->DeviceContext->VideoStream);
+	Result = DvbPlaybackRemoveStream(Context->DeviceContext->Playback, Context->DeviceContext->VideoStream);
 	Context->DeviceContext->VideoStream = NULL;
 	if (Result < 0)
 	{
@@ -2089,19 +2096,19 @@ static int DvpVideoThread(void *data)
 static int DvpSynchronizerThread(void *data)
 {
 	dvp_v4l2_video_handle_t *Context;
-	unsigned long long   TriggerPoint;
-	long long        FrameDuration;
-	long long        SleepTime;
-	long long        Frames;
-	ktime_t          Ktime;
-	unsigned long long   Now;
-	unsigned long long   ExpectedWake;
-	unsigned int         Jiffies;
+	unsigned long long TriggerPoint;
+	long long FrameDuration;
+	long long SleepTime;
+	long long Frames;
+	ktime_t Ktime;
+	unsigned long long Now;
+	unsigned long long ExpectedWake;
+	unsigned int Jiffies;
 	//
 	// Initialize context variables
 	//
-	Context             = (dvp_v4l2_video_handle_t *)data;
-	Context->SynchronizerRunning    = true;
+	Context = (dvp_v4l2_video_handle_t *)data;
+	Context->SynchronizerRunning = true;
 	//
 	// Enter the main loop waiting for something to happen
 	//
@@ -2111,35 +2118,35 @@ static int DvpSynchronizerThread(void *data)
 		//
 		// Do we want to do something
 		//
-		SYSFS_TEST_NOTIFY(MicroSecondsPerFrame,     microseconds_per_frame);
-		SYSFS_TEST_NOTIFY(FrameCountingNotification,        frame_counting_notification);
-		SYSFS_TEST_NOTIFY(FrameCaptureNotification,         frame_capture_notification);
-		SYSFS_TEST_NOTIFY(PostMortem,               post_mortem);
+		SYSFS_TEST_NOTIFY(MicroSecondsPerFrame, microseconds_per_frame);
+		SYSFS_TEST_NOTIFY(FrameCountingNotification, frame_counting_notification);
+		SYSFS_TEST_NOTIFY(FrameCaptureNotification, frame_capture_notification);
+		SYSFS_TEST_NOTIFY(PostMortem, post_mortem);
 		while (Context->SynchronizerRunning && Context->SynchronizeEnabled && Context->Synchronize)
 		{
 			//
 			// When do we want to trigger (try for 32 us early to allow time
 			// for the procedure to execute, and to shake the sleep from my eyes).
 			//
-			TriggerPoint        = Context->DvpBaseTime + ControlValue(VideoLatency) - 32;
-			FrameDuration       = DvpTimeForNFrames(1);
+			TriggerPoint = Context->DvpBaseTime + ControlValue(VideoLatency) - 32;
+			FrameDuration = DvpTimeForNFrames(1);
 			if (Context->StreamInfo.interlaced &&
 					!ControlValue(TopFieldFirst))
-				TriggerPoint        += FrameDuration / 2;
-			Context->Synchronize    = false;
-			Ktime           = ktime_get();
-			Now             = ktime_to_us(Ktime);
-			SleepTime           = (long long)TriggerPoint - (long long)Now;
+				TriggerPoint += FrameDuration / 2;
+			Context->Synchronize = false;
+			Ktime = ktime_get();
+			Now = ktime_to_us(Ktime);
+			SleepTime = (long long)TriggerPoint - (long long)Now;
 			if (SleepTime < 0)
-				Frames          = ((-SleepTime) / FrameDuration) + 1;
+				Frames = ((-SleepTime) / FrameDuration) + 1;
 			else
-				Frames          = -(SleepTime / FrameDuration);
-			SleepTime           = SleepTime + (Frames * FrameDuration);
+				Frames = -(SleepTime / FrameDuration);
+			SleepTime = SleepTime + (Frames * FrameDuration);
 			//
 			// Now sleep
 			//
-			Jiffies     = (unsigned int)(((long long)HZ * SleepTime) / 1000000);
-			ExpectedWake    = Now + SleepTime;
+			Jiffies = (unsigned int)(((long long)HZ * SleepTime) / 1000000);
+			ExpectedWake = Now + SleepTime;
 			set_current_state(TASK_INTERRUPTIBLE);
 			schedule_timeout(Jiffies);
 			//
@@ -2149,8 +2156,8 @@ static int DvpSynchronizerThread(void *data)
 			{
 				if (!Context->SynchronizerRunning || Context->Synchronize)
 					break;
-				Ktime       = ktime_get();
-				Now     = ktime_to_us(Ktime);
+				Ktime = ktime_get();
+				Now = ktime_to_us(Ktime);
 			}
 			while (inrange((ExpectedWake - Now), 0, 0x7fffffffffffffffull) &&
 					Context->SynchronizerRunning && Context->SynchronizeEnabled && !Context->Synchronize);
@@ -2159,14 +2166,14 @@ static int DvpSynchronizerThread(void *data)
 			//
 			// Finally do the synchronize
 			//
-			DvbDisplaySynchronize(BACKEND_VIDEO_ID, Context->DeviceContext->Id);             // Trigger vsync lock
-			Ktime       = ktime_get();
-			Now         = ktime_to_us(Ktime);
+			DvbDisplaySynchronize(BACKEND_VIDEO_ID, Context->DeviceContext->Id); // Trigger vsync lock
+			Ktime = ktime_get();
+			Now = ktime_to_us(Ktime);
 			//
 			// If we check to see if we were interrupted at any critical point, and retry the sync if so.
 			// We assume an interrupt occurred if we took more than 128us to perform the sync trigger.
 			if ((Now - ExpectedWake) > 128)
-				Context->Synchronize    = true;
+				Context->Synchronize = true;
 		}
 //printk( "Synchronize Vsync - Now-Expected = %lld\n", (Now - ExpectedWake) );
 	}
@@ -2180,10 +2187,10 @@ static int DvpSynchronizerThread(void *data)
 //
 
 int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
-								unsigned int         Width,
-								unsigned int         Height,
-								unsigned int         BytesPerLine,
-								unsigned int         Control)
+				unsigned int Width,
+				unsigned int Height,
+				unsigned int BytesPerLine,
+				unsigned int Control)
 {
 	printk("VIDIOC_S_FBUF: DOING NOTHING !!!! - W = %4d, H = %4d, BPL = %4d, Crtl = %08x\n", Width, Height, BytesPerLine, Control);
 	return 0;
@@ -2191,11 +2198,11 @@ int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
 
 // -----------------------------
 
-int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t    *Context,
-							 v4l2_std_id      Id)
+int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t *Context,
+			     v4l2_std_id Id)
 {
-	int                      i;
-	const dvp_v4l2_video_mode_line_t    *NewCaptureMode     = NULL;
+	int i;
+	const dvp_v4l2_video_mode_line_t *NewCaptureMode = NULL;
 //
 	printk("VIDIOC_S_STD: %08x\n", (unsigned int) Id);
 //
@@ -2215,8 +2222,8 @@ int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t    *Context,
 	// a mode switch if any video sequence is already running.
 	//
 	DvpHaltCapture(Context);
-	Context->DvpCaptureMode     = NewCaptureMode;
-	Context->FastModeSwitch     = true;
+	Context->DvpCaptureMode = NewCaptureMode;
+	Context->FastModeSwitch = true;
 	up(&Context->DvpPreInjectBufferSem);
 	up(&Context->DvpVideoInterruptSem);
 	return 0;
@@ -2224,13 +2231,13 @@ int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t    *Context,
 
 // -----------------------------
 
-int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
+int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned int         i;
-	int          Result;
-	char             TaskName[32];
-	struct task_struct  *Task;
-	struct sched_param   Param;
+	unsigned int i;
+	int Result;
+	char TaskName[32];
+	struct task_struct *Task;
+	struct sched_param Param;
 //
 	printk("VIDIOC_OVERLAY:\n");
 	if (Context == NULL)
@@ -2239,28 +2246,28 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 		return -EINVAL;
 	}
 //
-	Context->DvpLatency     = (Context->SharedContext->target_latency * 1000);
+	Context->DvpLatency = (Context->SharedContext->target_latency * 1000);
 //
 	if (Context->VideoRunning)
 	{
-//		printk("DvpVideoIoctlOverlayStart - Capture Thread already started\n" );
+//	printk("DvpVideoIoctlOverlayStart - Capture Thread already started\n" );
 		return 0;
 	}
 //
-	Context->DvpLatency         = (Context->SharedContext->target_latency * 1000);
-	Context->VideoRunning       = false;
-	Context->DvpState           = DvpInactive;
-	Context->SynchronizerRunning    = false;
-	Context->Synchronize        = false;
+	Context->DvpLatency = (Context->SharedContext->target_latency * 1000);
+	Context->VideoRunning = false;
+	Context->DvpState = DvpInactive;
+	Context->SynchronizerRunning = false;
+	Context->Synchronize = false;
 //
 	sema_init(&Context->DvpVideoInterruptSem, 0);
 	sema_init(&Context->DvpSynchronizerWakeSem, 0);
 	sema_init(&Context->DvpPreInjectBufferSem, 0);
 	sema_init(&Context->DvpScalingStateLock, 1);
 #if defined (CONFIG_KERNELVERSION) // STLinux 2.3
-	Result  = request_irq(Context->DvpIrq, DvpInterrupt, IRQF_DISABLED, "dvp", Context);
+	Result = request_irq(Context->DvpIrq, DvpInterrupt, IRQF_DISABLED, "dvp", Context);
 #else
-	Result  = request_irq(Context->DvpIrq, DvpInterrupt, SA_INTERRUPT, "dvp", Context);
+	Result = request_irq(Context->DvpIrq, DvpInterrupt, SA_INTERRUPT, "dvp", Context);
 #endif
 	if (Result != 0)
 	{
@@ -2270,38 +2277,38 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 	//
 	// Create the ancillary input data buffer - Note we capture the control value for the size just in case the user should try to change it after allocation.
 	//
-	Context->AncillaryInputBufferSize           = ControlValue(AncInputBufferSize);
-	Context->AncillaryInputBufferPhysicalAddress    = OSDEV_MallocPartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferSize);
+	Context->AncillaryInputBufferSize = ControlValue(AncInputBufferSize);
+	Context->AncillaryInputBufferPhysicalAddress = OSDEV_MallocPartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferSize);
 	if (Context->AncillaryInputBufferPhysicalAddress == NULL)
 	{
 		printk("DvpVideoIoctlOverlayStart - Unable to allocate ANC input buffer.\n");
 		free_irq(Context->DvpIrq, Context);
 		return -ENOMEM;
 	}
-	Context->AncillaryInputBufferUnCachedAddress    = (unsigned char *)OSDEV_IOReMap((unsigned int)Context->AncillaryInputBufferPhysicalAddress, Context->AncillaryInputBufferSize);
-	Context->AncillaryInputBufferInputPointer       = Context->AncillaryInputBufferUnCachedAddress;
+	Context->AncillaryInputBufferUnCachedAddress = (unsigned char *)OSDEV_IOReMap((unsigned int)Context->AncillaryInputBufferPhysicalAddress, Context->AncillaryInputBufferSize);
+	Context->AncillaryInputBufferInputPointer = Context->AncillaryInputBufferUnCachedAddress;
 	memset(Context->AncillaryInputBufferUnCachedAddress, 0x00, Context->AncillaryInputBufferSize);
 	//
 	// Create the video tasks
 	//
 	strcpy(TaskName, "dvp video task");
-	Task        = kthread_create(DvpVideoThread, Context, "%s", TaskName);
+	Task = kthread_create(DvpVideoThread, Context, "%s", TaskName);
 	if (IS_ERR(Task))
 	{
 		printk("DvpVideoIoctlOverlayStart - Unable to start video thread\n");
-		Context->VideoRunning       = false;
-		Context->SynchronizerRunning    = false;
+		Context->VideoRunning = false;
+		Context->SynchronizerRunning = false;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
 		free_irq(Context->DvpIrq, Context);
 		return -EINVAL;
 	}
-	Param.sched_priority    = DVP_VIDEO_THREAD_PRIORITY;
+	Param.sched_priority = DVP_VIDEO_THREAD_PRIORITY;
 	if (sched_setscheduler(Task, SCHED_RR, &Param))
 	{
 		printk("DvpVideoIoctlOverlayStart - FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Param.sched_priority);
-		Context->VideoRunning       = false;
-		Context->SynchronizerRunning    = false;
+		Context->VideoRunning = false;
+		Context->SynchronizerRunning = false;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
 		free_irq(Context->DvpIrq, Context);
@@ -2310,23 +2317,23 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 	wake_up_process(Task);
 //
 	strcpy(TaskName, "dvp synchronizer task");
-	Task        = kthread_create(DvpSynchronizerThread, Context, "%s", TaskName);
+	Task = kthread_create(DvpSynchronizerThread, Context, "%s", TaskName);
 	if (IS_ERR(Task))
 	{
 		printk("DvpVideoIoctlOverlayStart - Unable to start synchronizer thread\n");
-		Context->VideoRunning       = false;
-		Context->SynchronizerRunning    = false;
+		Context->VideoRunning = false;
+		Context->SynchronizerRunning = false;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
 		free_irq(Context->DvpIrq, Context);
 		return -EINVAL;
 	}
-	Param.sched_priority    = DVP_SYNCHRONIZER_THREAD_PRIORITY;
+	Param.sched_priority = DVP_SYNCHRONIZER_THREAD_PRIORITY;
 	if (sched_setscheduler(Task, SCHED_RR, &Param))
 	{
 		printk("DvpVideoIoctlOverlayStart - FAILED to set scheduling parameters to priority %d (SCHED_RR)\n", Param.sched_priority);
-		Context->VideoRunning       = false;
-		Context->SynchronizerRunning    = false;
+		Context->VideoRunning = false;
+		Context->SynchronizerRunning = false;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
 		free_irq(Context->DvpIrq, Context);
@@ -2338,15 +2345,15 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 	//
 	for (i = 0; (i < 100) && (!Context->VideoRunning || !Context->SynchronizerRunning); i++)
 	{
-		unsigned int  Jiffies = ((HZ) / 1000) + 1;
+		unsigned int Jiffies = ((HZ) / 1000) + 1;
 		set_current_state(TASK_INTERRUPTIBLE);
 		schedule_timeout(Jiffies);
 	}
 	if (!Context->VideoRunning || !Context->SynchronizerRunning)
 	{
 		printk("DvpVideoIoctlOverlayStart - FAILED to set start processes\n");
-		Context->VideoRunning       = false;
-		Context->SynchronizerRunning    = false;
+		Context->VideoRunning = false;
+		Context->SynchronizerRunning = false;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryInputBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryInputBufferPhysicalAddress);
 		free_irq(Context->DvpIrq, Context);
@@ -2358,14 +2365,14 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t   *Context)
 
 // -----------------------------
 
-int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t       *Context,
-					  struct v4l2_crop        *Crop)
+int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t *Context,
+		      struct v4l2_crop *Crop)
 {
 #if 0
 	printk("VIDIOC_S_CROP:\n");
 	printk("	%s %3dx%3d\n",
-		   ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
-		   Crop->c.width, Crop->c.height);
+	       ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
+	       Crop->c.width, Crop->c.height);
 #endif
 	if ((Context == NULL) || (Context->DeviceContext->VideoStream == NULL))
 		return -EINVAL;
@@ -2376,21 +2383,21 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t       *Context,
 			printk("DvpVideoIoctlCrop: Setting output crop before previous crop has reached display\n");
 		}
 		atomic_set(&Context->DvpOutputCropTargetReachedNotification, 1);
-		Context->OutputCropStepping     = false;
-		Context->OutputCropTargetReached    = false;
-		Context->OutputCropTarget.X     = Crop->c.left;
-		Context->OutputCropTarget.Y     = Crop->c.top;
-		Context->OutputCropTarget.Width     = Crop->c.width;
-		Context->OutputCropTarget.Height    = Crop->c.height;
-		Context->OutputCropStart        = Context->OutputCrop;
-		if ((Context->OutputCropTarget.X      == Context->OutputCropStart.X) &&
-				(Context->OutputCropTarget.Y      == Context->OutputCropStart.Y) &&
-				(Context->OutputCropTarget.Width  == Context->OutputCropStart.Width) &&
+		Context->OutputCropStepping = false;
+		Context->OutputCropTargetReached = false;
+		Context->OutputCropTarget.X = Crop->c.left;
+		Context->OutputCropTarget.Y = Crop->c.top;
+		Context->OutputCropTarget.Width = Crop->c.width;
+		Context->OutputCropTarget.Height = Crop->c.height;
+		Context->OutputCropStart = Context->OutputCrop;
+		if ((Context->OutputCropTarget.X == Context->OutputCropStart.X) &&
+				(Context->OutputCropTarget.Y == Context->OutputCropStart.Y) &&
+				(Context->OutputCropTarget.Width == Context->OutputCropStart.Width) &&
 				(Context->OutputCropTarget.Height == Context->OutputCropStart.Height))
 		{
 			printk("DvpVideoIoctlCrop: Setting output crop to be unchanged - marking as target on display immediately.\n");
 			DvpVideoSysfsProcessDecrementOutputCropTargetReachedNotification(Context);
-			Context->OutputCropTargetReached    = true;
+			Context->OutputCropTargetReached = true;
 		}
 		else
 		{
@@ -2399,14 +2406,14 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t       *Context,
 				default:
 					printk("DvpVideoIoctlCrop: Unsupported output crop transition mode (%d) defaulting to single step. \n ", ControlValue(OutputCropTransitionMode));
 				case DVP_TRANSITION_MODE_SINGLE_STEP:
-					Context->OutputCropSteps        = 1;
-					Context->OutputCropCurrentStep      = 0;
-					Context->OutputCropStepping     = true;
+					Context->OutputCropSteps = 1;
+					Context->OutputCropCurrentStep = 0;
+					Context->OutputCropStepping = true;
 					break;
 				case DVP_TRANSITION_MODE_STEP_OVER_N_VSYNCS:
-					Context->OutputCropSteps        = ControlValue(OutputCropTransitionModeParameter0);
-					Context->OutputCropCurrentStep      = 0;
-					Context->OutputCropStepping     = true;
+					Context->OutputCropSteps = ControlValue(OutputCropTransitionModeParameter0);
+					Context->OutputCropCurrentStep = 0;
+					Context->OutputCropStepping = true;
 					break;
 			}
 		}
@@ -2417,14 +2424,14 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t       *Context,
 				((Crop->c.top + Crop->c.height) > Context->ModeHeight))
 		{
 			printk("DvpVideoIoctlCrop: Input crop invalid for current mode, (%d + %d > %d) Or (%d + %d > %d).\n",
-				   Crop->c.left, Crop->c.width, Context->ModeWidth,
-				   Crop->c.top, Crop->c.height, Context->ModeHeight);
+			       Crop->c.left, Crop->c.width, Context->ModeWidth,
+			       Crop->c.top, Crop->c.height, Context->ModeHeight);
 			return -EINVAL;
 		}
-		Context->InputCrop.X        = Crop->c.left;
-		Context->InputCrop.Y        = Crop->c.top;
-		Context->InputCrop.Width    = Crop->c.width;
-		Context->InputCrop.Height   = Crop->c.height;
+		Context->InputCrop.X = Crop->c.left;
+		Context->InputCrop.Y = Crop->c.top;
+		Context->InputCrop.Width = Crop->c.width;
+		Context->InputCrop.Height = Crop->c.height;
 		if (!Context->OutputCropStepping)
 			DvpRecalculateScaling(Context);
 	}
@@ -2440,8 +2447,8 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t       *Context,
 // -----------------------------
 
 int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
-							unsigned int         Control,
-							unsigned int         Value)
+			    unsigned int Control,
+			    unsigned int Value)
 {
 	int ret;
 	printk("VIDIOC_S_CTRL->V4L2_CID_STM_DVPIF_");
@@ -2449,72 +2456,72 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 	{
 		case V4L2_CID_STM_DVPIF_RESTORE_DEFAULT:
 			printk("RESTORE_DEFAULT\n");
-			Context->DvpControl16Bit                    = DVP_USE_DEFAULT;
-			Context->DvpControlBigEndian                    = DVP_USE_DEFAULT;
-			Context->DvpControlFullRange                    = DVP_USE_DEFAULT;
-			Context->DvpControlIncompleteFirstPixel             = DVP_USE_DEFAULT;
-			Context->DvpControlOddPixelCount                = DVP_USE_DEFAULT;
-			Context->DvpControlVsyncBottomHalfLineEnable            = DVP_USE_DEFAULT;
-			Context->DvpControlExternalSync                 = DVP_USE_DEFAULT;
-			Context->DvpControlExternalSyncPolarity             = DVP_USE_DEFAULT;
-			Context->DvpControlExternalSynchroOutOfPhase            = DVP_USE_DEFAULT;
-			Context->DvpControlExternalVRefOddEven              = DVP_USE_DEFAULT;
-			Context->DvpControlExternalVRefPolarityPositive         = DVP_USE_DEFAULT;
-			Context->DvpControlHRefPolarityPositive             = DVP_USE_DEFAULT;
-			Context->DvpControlActiveAreaAdjustHorizontalOffset     = DVP_USE_DEFAULT;
-			Context->DvpControlActiveAreaAdjustVerticalOffset       = DVP_USE_DEFAULT;
-			Context->DvpControlActiveAreaAdjustWidth            = DVP_USE_DEFAULT;
-			Context->DvpControlActiveAreaAdjustHeight           = DVP_USE_DEFAULT;
-			Context->DvpControlColourMode                   = DVP_USE_DEFAULT;
-			Context->DvpControlVideoLatency                 = DVP_USE_DEFAULT;
-			Context->DvpControlBlank                    = DVP_USE_DEFAULT;
-			Context->DvpControlAncPageSizeSpecified             = DVP_USE_DEFAULT;
-			Context->DvpControlAncPageSize                  = DVP_USE_DEFAULT;
-			Context->DvpControlAncInputBufferSize               = DVP_USE_DEFAULT;
-			Context->DvpControlHorizontalResizeEnable           = DVP_USE_DEFAULT;
-			Context->DvpControlVerticalResizeEnable             = DVP_USE_DEFAULT;
-			Context->DvpControlTopFieldFirst                = DVP_USE_DEFAULT;
-			Context->DvpControlVsyncLockEnable              = DVP_USE_DEFAULT;
-			Context->DvpControlPixelAspectRatioCorrection           = DVP_USE_DEFAULT;
-			Context->DvpControlPictureAspectRatio               = DVP_USE_DEFAULT;
-			Context->DvpControlOutputCropTransitionMode         = DVP_USE_DEFAULT;
-			Context->DvpControlOutputCropTransitionModeParameter0       = DVP_USE_DEFAULT;
-			Context->DvpControlDefault16Bit                 = 0;
-			Context->DvpControlDefaultBigEndian             = 0;
-			Context->DvpControlDefaultFullRange             = 0;
-			Context->DvpControlDefaultIncompleteFirstPixel          = 0;
-			Context->DvpControlDefaultOddPixelCount             = 0;
-			Context->DvpControlDefaultVsyncBottomHalfLineEnable     = 0;
-			Context->DvpControlDefaultExternalSync              = 1;
-			Context->DvpControlDefaultExternalSyncPolarity          = 1;
-			Context->DvpControlDefaultExternalSynchroOutOfPhase     = 0;
-			Context->DvpControlDefaultExternalVRefOddEven           = 0;
-			Context->DvpControlDefaultExternalVRefPolarityPositive      = 0;
-			Context->DvpControlDefaultHRefPolarityPositive          = 0;
-			Context->DvpControlDefaultActiveAreaAdjustHorizontalOffset  = 0;
-			Context->DvpControlDefaultActiveAreaAdjustVerticalOffset    = 0;
-			Context->DvpControlDefaultActiveAreaAdjustWidth         = 0;
-			Context->DvpControlDefaultActiveAreaAdjustHeight        = 0;
-			Context->DvpControlDefaultColourMode                = 0;
-			Context->DvpControlDefaultVideoLatency              = 0xffffffff;
-			Context->DvpControlDefaultBlank                 = 0;
-			Context->DvpControlDefaultAncPageSizeSpecified          = 0;
-			Context->DvpControlDefaultAncPageSize               = DVP_DEFAULT_ANCILLARY_PAGE_SIZE;
-			Context->DvpControlDefaultAncInputBufferSize            = DVP_DEFAULT_ANCILLARY_INPUT_BUFFER_SIZE;
-			Context->DvpControlDefaultHorizontalResizeEnable        = 1;
-			Context->DvpControlDefaultVerticalResizeEnable          = 0;
-			Context->DvpControlDefaultTopFieldFirst             = 0;
-			Context->DvpControlDefaultVsyncLockEnable           = 0;
-			Context->DvpControlDefaultOutputCropTransitionMode      = DVP_TRANSITION_MODE_SINGLE_STEP;
-			Context->DvpControlDefaultOutputCropTransitionModeParameter0    = 8;
-			Context->DvpControlDefaultPixelAspectRatioCorrection        = DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE;
-			Context->DvpControlDefaultPictureAspectRatio            = DVP_PICTURE_ASPECT_RATIO_4_3;
+			Context->DvpControl16Bit = DVP_USE_DEFAULT;
+			Context->DvpControlBigEndian = DVP_USE_DEFAULT;
+			Context->DvpControlFullRange = DVP_USE_DEFAULT;
+			Context->DvpControlIncompleteFirstPixel = DVP_USE_DEFAULT;
+			Context->DvpControlOddPixelCount = DVP_USE_DEFAULT;
+			Context->DvpControlVsyncBottomHalfLineEnable = DVP_USE_DEFAULT;
+			Context->DvpControlExternalSync = DVP_USE_DEFAULT;
+			Context->DvpControlExternalSyncPolarity = DVP_USE_DEFAULT;
+			Context->DvpControlExternalSynchroOutOfPhase = DVP_USE_DEFAULT;
+			Context->DvpControlExternalVRefOddEven = DVP_USE_DEFAULT;
+			Context->DvpControlExternalVRefPolarityPositive = DVP_USE_DEFAULT;
+			Context->DvpControlHRefPolarityPositive = DVP_USE_DEFAULT;
+			Context->DvpControlActiveAreaAdjustHorizontalOffset = DVP_USE_DEFAULT;
+			Context->DvpControlActiveAreaAdjustVerticalOffset = DVP_USE_DEFAULT;
+			Context->DvpControlActiveAreaAdjustWidth = DVP_USE_DEFAULT;
+			Context->DvpControlActiveAreaAdjustHeight = DVP_USE_DEFAULT;
+			Context->DvpControlColourMode = DVP_USE_DEFAULT;
+			Context->DvpControlVideoLatency = DVP_USE_DEFAULT;
+			Context->DvpControlBlank = DVP_USE_DEFAULT;
+			Context->DvpControlAncPageSizeSpecified = DVP_USE_DEFAULT;
+			Context->DvpControlAncPageSize = DVP_USE_DEFAULT;
+			Context->DvpControlAncInputBufferSize = DVP_USE_DEFAULT;
+			Context->DvpControlHorizontalResizeEnable = DVP_USE_DEFAULT;
+			Context->DvpControlVerticalResizeEnable = DVP_USE_DEFAULT;
+			Context->DvpControlTopFieldFirst = DVP_USE_DEFAULT;
+			Context->DvpControlVsyncLockEnable = DVP_USE_DEFAULT;
+			Context->DvpControlPixelAspectRatioCorrection = DVP_USE_DEFAULT;
+			Context->DvpControlPictureAspectRatio = DVP_USE_DEFAULT;
+			Context->DvpControlOutputCropTransitionMode = DVP_USE_DEFAULT;
+			Context->DvpControlOutputCropTransitionModeParameter0 = DVP_USE_DEFAULT;
+			Context->DvpControlDefault16Bit = 0;
+			Context->DvpControlDefaultBigEndian = 0;
+			Context->DvpControlDefaultFullRange = 0;
+			Context->DvpControlDefaultIncompleteFirstPixel = 0;
+			Context->DvpControlDefaultOddPixelCount = 0;
+			Context->DvpControlDefaultVsyncBottomHalfLineEnable = 0;
+			Context->DvpControlDefaultExternalSync = 1;
+			Context->DvpControlDefaultExternalSyncPolarity = 1;
+			Context->DvpControlDefaultExternalSynchroOutOfPhase = 0;
+			Context->DvpControlDefaultExternalVRefOddEven = 0;
+			Context->DvpControlDefaultExternalVRefPolarityPositive = 0;
+			Context->DvpControlDefaultHRefPolarityPositive = 0;
+			Context->DvpControlDefaultActiveAreaAdjustHorizontalOffset = 0;
+			Context->DvpControlDefaultActiveAreaAdjustVerticalOffset = 0;
+			Context->DvpControlDefaultActiveAreaAdjustWidth = 0;
+			Context->DvpControlDefaultActiveAreaAdjustHeight = 0;
+			Context->DvpControlDefaultColourMode = 0;
+			Context->DvpControlDefaultVideoLatency = 0xffffffff;
+			Context->DvpControlDefaultBlank = 0;
+			Context->DvpControlDefaultAncPageSizeSpecified = 0;
+			Context->DvpControlDefaultAncPageSize = DVP_DEFAULT_ANCILLARY_PAGE_SIZE;
+			Context->DvpControlDefaultAncInputBufferSize = DVP_DEFAULT_ANCILLARY_INPUT_BUFFER_SIZE;
+			Context->DvpControlDefaultHorizontalResizeEnable = 1;
+			Context->DvpControlDefaultVerticalResizeEnable = 0;
+			Context->DvpControlDefaultTopFieldFirst = 0;
+			Context->DvpControlDefaultVsyncLockEnable = 0;
+			Context->DvpControlDefaultOutputCropTransitionMode = DVP_TRANSITION_MODE_SINGLE_STEP;
+			Context->DvpControlDefaultOutputCropTransitionModeParameter0 = 8;
+			Context->DvpControlDefaultPixelAspectRatioCorrection = DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE;
+			Context->DvpControlDefaultPictureAspectRatio = DVP_PICTURE_ASPECT_RATIO_4_3;
 #if 0
-			Context->DvpControlOutputCropTransitionMode         = DVP_TRANSITION_MODE_STEP_OVER_N_VSYNCS;
-			Context->DvpControlOutputCropTransitionModeParameter0       = 60;
+			Context->DvpControlOutputCropTransitionMode = DVP_TRANSITION_MODE_STEP_OVER_N_VSYNCS;
+			Context->DvpControlOutputCropTransitionModeParameter0 = 60;
 #endif
 			break;
-		case  V4L2_CID_STM_DVPIF_BLANK:
+		case V4L2_CID_STM_DVPIF_BLANK:
 			Check("DVPIF_BLANK", 0, 1);
 			if (Context->DeviceContext->VideoStream == NULL)
 				return -EINVAL;
@@ -2524,104 +2531,104 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 				printk("DvpVideoIoctlSetControl - StreamEnable failed (%d)\n", Value);
 				return -EINVAL;
 			}
-			Context->DvpControlBlank    = Value;
+			Context->DvpControlBlank = Value;
 			break;
-		case  V4L2_CID_STM_DVPIF_16_BIT:
+		case V4L2_CID_STM_DVPIF_16_BIT:
 			CheckAndSet("16_BIT", 0, 1, Context->DvpControl16Bit);
 			break;
-		case  V4L2_CID_STM_DVPIF_BIG_ENDIAN:
+		case V4L2_CID_STM_DVPIF_BIG_ENDIAN:
 			CheckAndSet("BIG_ENDIAN", 0, 1, Context->DvpControlBigEndian);
 			break;
-		case  V4L2_CID_STM_DVPIF_FULL_RANGE:
+		case V4L2_CID_STM_DVPIF_FULL_RANGE:
 			CheckAndSet("FULL_RANGE", 0, 1, Context->DvpControlFullRange);
 			break;
-		case  V4L2_CID_STM_DVPIF_INCOMPLETE_FIRST_PIXEL:
+		case V4L2_CID_STM_DVPIF_INCOMPLETE_FIRST_PIXEL:
 			CheckAndSet("INCOMPLETE_FIRST_PIXEL", 0, 1, Context->DvpControlIncompleteFirstPixel);
 			break;
-		case  V4L2_CID_STM_DVPIF_ODD_PIXEL_COUNT:
+		case V4L2_CID_STM_DVPIF_ODD_PIXEL_COUNT:
 			CheckAndSet("ODD_PIXEL_COUNT", 0, 1, Context->DvpControlOddPixelCount);
 			break;
-		case  V4L2_CID_STM_DVPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
+		case V4L2_CID_STM_DVPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
 			CheckAndSet("VSYNC_BOTTOM_HALF_LINE_ENABLE", 0, 1, Context->DvpControlVsyncBottomHalfLineEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNC:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNC:
 			CheckAndSet("EXTERNAL_SYNC", 0, 1, Context->DvpControlExternalSync);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNC_POLARITY:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNC_POLARITY:
 			CheckAndSet("EXTERNAL_SYNC_POLARITY", 0, 1, Context->DvpControlExternalSyncPolarity);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNCHRO_OUT_OF_PHASE:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNCHRO_OUT_OF_PHASE:
 			CheckAndSet("EXTERNAL_SYNCHRO_OUT_OF_PHASE", 0, 1, Context->DvpControlExternalSynchroOutOfPhase);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_VREF_ODD_EVEN:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_VREF_ODD_EVEN:
 			CheckAndSet("EXTERNAL_VREF_ODD_EVEN", 0, 1, Context->DvpControlExternalVRefOddEven);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_VREF_POLARITY_POSITIVE:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_VREF_POLARITY_POSITIVE:
 			CheckAndSet("EXTERNAL_VREF_POLARITY_POSITIVE", 0, 1, Context->DvpControlExternalVRefPolarityPositive);
 			break;
-		case  V4L2_CID_STM_DVPIF_HREF_POLARITY_POSITIVE:
+		case V4L2_CID_STM_DVPIF_HREF_POLARITY_POSITIVE:
 			CheckAndSet("HREF_POLARITY_POSITIVE", 0, 1, Context->DvpControlHRefPolarityPositive);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
 			CheckAndSet("ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET", -260, 260, Context->DvpControlActiveAreaAdjustHorizontalOffset);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
 			CheckAndSet("ACTIVE_AREA_ADJUST_VERTICAL_OFFSET", -256, 256, Context->DvpControlActiveAreaAdjustVerticalOffset);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_WIDTH:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_WIDTH:
 			CheckAndSet("ACTIVE_AREA_ADJUST_WIDTH", -2048, 2048, Context->DvpControlActiveAreaAdjustWidth);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HEIGHT:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HEIGHT:
 			CheckAndSet("ACTIVE_AREA_ADJUST_HEIGHT", -2048, 2048, Context->DvpControlActiveAreaAdjustHeight);
 			break;
-		case  V4L2_CID_STM_DVPIF_COLOUR_MODE:
+		case V4L2_CID_STM_DVPIF_COLOUR_MODE:
 			CheckAndSet("COLOUR_MODE", 0, 2, Context->DvpControlColourMode);
 			break;
-		case  V4L2_CID_STM_DVPIF_VIDEO_LATENCY:
+		case V4L2_CID_STM_DVPIF_VIDEO_LATENCY:
 			CheckAndSet("VIDEO_LATENCY", 0, 1000000, Context->DvpControlVideoLatency);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE_SPECIFIED:
+		case V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE_SPECIFIED:
 			CheckAndSet("ANC_PAGE_SIZE_SPECIFIED", 0, 1, Context->DvpControlAncPageSizeSpecified);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE:
+		case V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE:
 			CheckAndSet("ANC_PAGE_SIZE", 0, 4096, Context->DvpControlAncPageSize);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_INPUT_BUFFER_SIZE:
-			Value       &= 0xfffffff0;
+		case V4L2_CID_STM_DVPIF_ANC_INPUT_BUFFER_SIZE:
+			Value &= 0xfffffff0;
 			CheckAndSet("ANC_INPUT_BUFFER_SIZE", 0, 0x100000, Context->DvpControlAncInputBufferSize);
 			break;
-		case  V4L2_CID_STM_DVPIF_HORIZONTAL_RESIZE_ENABLE:
+		case V4L2_CID_STM_DVPIF_HORIZONTAL_RESIZE_ENABLE:
 			CheckAndSet("HORIZONTAL_RESIZE_ENABLE", 0, 1, Context->DvpControlHorizontalResizeEnable);
 			DvpRecalculateScaling(Context);
 			break;
-		case  V4L2_CID_STM_DVPIF_VERTICAL_RESIZE_ENABLE:
+		case V4L2_CID_STM_DVPIF_VERTICAL_RESIZE_ENABLE:
 			CheckAndSet("VERTICAL_RESIZE_ENABLE", 0, 0, Context->DvpControlVerticalResizeEnable);
 			DvpRecalculateScaling(Context);
 			break;
-		case  V4L2_CID_STM_DVPIF_TOP_FIELD_FIRST:
+		case V4L2_CID_STM_DVPIF_TOP_FIELD_FIRST:
 			CheckAndSet("TOP_FIELD_FIRST", 0, 1, Context->DvpControlTopFieldFirst);
 			break;
-		case  V4L2_CID_STM_DVPIF_VSYNC_LOCK_ENABLE:
+		case V4L2_CID_STM_DVPIF_VSYNC_LOCK_ENABLE:
 			CheckAndSet("VSYNC_LOCK_ENABLE", 0, 1, Context->DvpControlVsyncLockEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE:
+		case V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE:
 			CheckAndSet("OUTPUT_CROP_TRANSITION_MODE", 0, 1, Context->DvpControlOutputCropTransitionMode);
 			break;
-		case  V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
+		case V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
 			CheckAndSet("OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0", 0, 0x7fffffff, Context->DvpControlOutputCropTransitionModeParameter0);
 			break;
 		case V4L2_CID_STM_DVPIF_PIXEL_ASPECT_RATIO_CORRECTION:
 			CheckAndSet("PIXEL_ASPECT_RATIO_CORRECTION", DVP_PIXEL_ASPECT_RATIO_CORRECTION_MIN_VALUE,
-						DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->DvpControlPixelAspectRatioCorrection);
+				    DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->DvpControlPixelAspectRatioCorrection);
 			// Set appropriate policy to manage non progressive zoom format
 			DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION,
-							   Context->DvpControlPixelAspectRatioCorrection);
+					   Context->DvpControlPixelAspectRatioCorrection);
 			break;
 		case V4L2_CID_STM_DVPIF_PICTURE_ASPECT_RATIO:
 		{
-			dvp_v4l2_video_mode_t    Mode;
+			dvp_v4l2_video_mode_t Mode;
 			CheckAndSet("PICTURE_ASPECT_RATIO", DVP_PICTURE_ASPECT_RATIO_4_3,
-						DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
+				    DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
 			// Calculate the pixel aspect ratio coefficients corresponding to the picture aspect ratio.
 			// They are used to set the non progressive zoom format. Only for NTSC and PAL.
 			Mode = Context->DvpCaptureMode->Mode;
@@ -2681,98 +2688,98 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 // --------------------------------
 
 int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
-							unsigned int         Control,
-							unsigned int        *Value)
+			    unsigned int Control,
+			    unsigned int *Value)
 {
 	printk("VIDIOC_G_CTRL->V4L2_CID_STM_DVPIF_");
 	switch (Control)
 	{
 		case V4L2_CID_STM_DVPIF_RESTORE_DEFAULT:
 			printk("RESTORE_DEFAULT - Not a readable control\n");
-			*Value      = 0;
+			*Value = 0;
 			break;
-		case  V4L2_CID_STM_DVPIF_BLANK:
+		case V4L2_CID_STM_DVPIF_BLANK:
 			GetValue("DVPIF_BLANK", Context->DvpControlBlank);
 			break;
-		case  V4L2_CID_STM_DVPIF_16_BIT:
+		case V4L2_CID_STM_DVPIF_16_BIT:
 			GetValue("16_BIT", Context->DvpControl16Bit);
 			break;
-		case  V4L2_CID_STM_DVPIF_BIG_ENDIAN:
+		case V4L2_CID_STM_DVPIF_BIG_ENDIAN:
 			GetValue("BIG_ENDIAN", Context->DvpControlBigEndian);
 			break;
-		case  V4L2_CID_STM_DVPIF_FULL_RANGE:
+		case V4L2_CID_STM_DVPIF_FULL_RANGE:
 			GetValue("FULL_RANGE", Context->DvpControlFullRange);
 			break;
-		case  V4L2_CID_STM_DVPIF_INCOMPLETE_FIRST_PIXEL:
+		case V4L2_CID_STM_DVPIF_INCOMPLETE_FIRST_PIXEL:
 			GetValue("INCOMPLETE_FIRST_PIXEL", Context->DvpControlIncompleteFirstPixel);
 			break;
-		case  V4L2_CID_STM_DVPIF_ODD_PIXEL_COUNT:
+		case V4L2_CID_STM_DVPIF_ODD_PIXEL_COUNT:
 			GetValue("ODD_PIXEL_COUNT", Context->DvpControlOddPixelCount);
 			break;
-		case  V4L2_CID_STM_DVPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
+		case V4L2_CID_STM_DVPIF_VSYNC_BOTTOM_HALF_LINE_ENABLE:
 			GetValue("VSYNC_BOTTOM_HALF_LINE_ENABLE", Context->DvpControlVsyncBottomHalfLineEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNC:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNC:
 			GetValue("EXTERNAL_SYNC", Context->DvpControlExternalSync);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNC_POLARITY:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNC_POLARITY:
 			GetValue("EXTERNAL_SYNC_POLARITY", Context->DvpControlExternalSyncPolarity);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_SYNCHRO_OUT_OF_PHASE:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_SYNCHRO_OUT_OF_PHASE:
 			GetValue("EXTERNAL_SYNCHRO_OUT_OF_PHASE", Context->DvpControlExternalSynchroOutOfPhase);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_VREF_ODD_EVEN:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_VREF_ODD_EVEN:
 			GetValue("EXTERNAL_VREF_ODD_EVEN", Context->DvpControlExternalVRefOddEven);
 			break;
-		case  V4L2_CID_STM_DVPIF_EXTERNAL_VREF_POLARITY_POSITIVE:
+		case V4L2_CID_STM_DVPIF_EXTERNAL_VREF_POLARITY_POSITIVE:
 			GetValue("EXTERNAL_VREF_POLARITY_POSITIVE", Context->DvpControlExternalVRefPolarityPositive);
 			break;
-		case  V4L2_CID_STM_DVPIF_HREF_POLARITY_POSITIVE:
+		case V4L2_CID_STM_DVPIF_HREF_POLARITY_POSITIVE:
 			GetValue("HREF_POLARITY_POSITIVE", Context->DvpControlHRefPolarityPositive);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET:
 			GetValue("ACTIVE_AREA_ADJUST_HORIZONTAL_OFFSET", Context->DvpControlActiveAreaAdjustHorizontalOffset);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_VERTICAL_OFFSET:
 			GetValue("ACTIVE_AREA_ADJUST_VERTICAL_OFFSET", Context->DvpControlActiveAreaAdjustVerticalOffset);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_WIDTH:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_WIDTH:
 			GetValue("ACTIVE_AREA_ADJUST_WIDTH", Context->DvpControlActiveAreaAdjustWidth);
 			break;
-		case  V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HEIGHT:
+		case V4L2_CID_STM_DVPIF_ACTIVE_AREA_ADJUST_HEIGHT:
 			GetValue("ACTIVE_AREA_ADJUST_HEIGHT", Context->DvpControlActiveAreaAdjustHeight);
 			break;
-		case  V4L2_CID_STM_DVPIF_COLOUR_MODE:
+		case V4L2_CID_STM_DVPIF_COLOUR_MODE:
 			GetValue("COLOUR_MODE", Context->DvpControlColourMode);
 			break;
-		case  V4L2_CID_STM_DVPIF_VIDEO_LATENCY:
+		case V4L2_CID_STM_DVPIF_VIDEO_LATENCY:
 			GetValue("VIDEO_LATENCY", Context->DvpControlVideoLatency);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE_SPECIFIED:
+		case V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE_SPECIFIED:
 			GetValue("ANC_PAGE_SIZE_SPECIFIED", Context->DvpControlAncPageSizeSpecified);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE:
+		case V4L2_CID_STM_DVPIF_ANC_PAGE_SIZE:
 			GetValue("ANC_PAGE_SIZE", Context->DvpControlAncPageSize);
 			break;
-		case  V4L2_CID_STM_DVPIF_ANC_INPUT_BUFFER_SIZE:
+		case V4L2_CID_STM_DVPIF_ANC_INPUT_BUFFER_SIZE:
 			GetValue("ANC_INPUT_BUFFER_SIZE", Context->DvpControlAncInputBufferSize);
 			break;
-		case  V4L2_CID_STM_DVPIF_HORIZONTAL_RESIZE_ENABLE:
+		case V4L2_CID_STM_DVPIF_HORIZONTAL_RESIZE_ENABLE:
 			GetValue("HORIZONTAL_RESIZE_ENABLE", Context->DvpControlHorizontalResizeEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_VERTICAL_RESIZE_ENABLE:
+		case V4L2_CID_STM_DVPIF_VERTICAL_RESIZE_ENABLE:
 			GetValue("VERTICAL_RESIZE_ENABLE", Context->DvpControlVerticalResizeEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_TOP_FIELD_FIRST:
+		case V4L2_CID_STM_DVPIF_TOP_FIELD_FIRST:
 			GetValue("TOP_FIELD_FIRST", Context->DvpControlTopFieldFirst);
 			break;
-		case  V4L2_CID_STM_DVPIF_VSYNC_LOCK_ENABLE:
+		case V4L2_CID_STM_DVPIF_VSYNC_LOCK_ENABLE:
 			GetValue("VSYNC_LOCK_ENABLE", Context->DvpControlVsyncLockEnable);
 			break;
-		case  V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE:
+		case V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE:
 			GetValue("OUTPUT_CROP_TRANSITION_MODE", Context->DvpControlOutputCropTransitionMode);
 			break;
-		case  V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
+		case V4L2_CID_STM_DVPIF_OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0:
 			GetValue("OUTPUT_CROP_TRANSITION_MODE_PARAMETER_0", Context->DvpControlOutputCropTransitionModeParameter0);
 			break;
 		case V4L2_CID_STM_DVPIF_PIXEL_ASPECT_RATIO_CORRECTION:
@@ -2795,13 +2802,13 @@ int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
 //	Function to request buffers
 //
 
-int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
-		unsigned int         DesiredCount,
-		unsigned int         DesiredSize,
-		unsigned int        *ActualCount,
-		unsigned int        *ActualSize)
+int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t *Context,
+					 unsigned int DesiredCount,
+					 unsigned int DesiredSize,
+					 unsigned int *ActualCount,
+					 unsigned int *ActualSize)
 {
-	unsigned int    i;
+	unsigned int i;
 	//
 	// Is this a closedown call
 	//
@@ -2813,7 +2820,7 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
 			return -EINVAL;
 		}
 		DvpVideoIoctlAncillaryStreamOff(Context);
-		Context->AncillaryBufferCount   = 0;
+		Context->AncillaryBufferCount = 0;
 		OSDEV_IOUnMap((unsigned int)Context->AncillaryBufferUnCachedAddress);
 		OSDEV_FreePartitioned(DVP_ANCILLARY_PARTITION, Context->AncillaryBufferPhysicalAddress);
 		return 0;
@@ -2830,7 +2837,7 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
 	// Adjust the buffer counts and sizes to meet our restrictions
 	//
 	Clamp(DesiredCount, DVP_MIN_ANCILLARY_BUFFERS, DVP_MAX_ANCILLARY_BUFFERS);
-	Clamp(DesiredSize,  DVP_MIN_ANCILLARY_BUFFER_SIZE, DVP_MAX_ANCILLARY_BUFFER_SIZE);
+	Clamp(DesiredSize, DVP_MIN_ANCILLARY_BUFFER_SIZE, DVP_MAX_ANCILLARY_BUFFER_SIZE);
 	if ((DesiredSize % DVP_ANCILLARY_BUFFER_CHUNK_SIZE) != 0)
 		DesiredSize += (DVP_ANCILLARY_BUFFER_CHUNK_SIZE - (DesiredSize % DVP_ANCILLARY_BUFFER_CHUNK_SIZE));
 	//
@@ -2847,30 +2854,30 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
 	//
 	// Initialize the state
 	//
-	Context->AncillaryStreamOn          = false;
-	Context->AncillaryCaptureInProgress     = false;
-	Context->AncillaryBufferCount       = DesiredCount;
-	Context->AncillaryBufferSize        = DesiredSize;
+	Context->AncillaryStreamOn = false;
+	Context->AncillaryCaptureInProgress = false;
+	Context->AncillaryBufferCount = DesiredCount;
+	Context->AncillaryBufferSize = DesiredSize;
 	memset(Context->AncillaryBufferState, 0x00, DVP_MAX_ANCILLARY_BUFFERS * sizeof(AncillaryBufferState_t));
 	for (i = 0; i < Context->AncillaryBufferCount; i++)
 	{
-		Context->AncillaryBufferState[i].PhysicalAddress    = Context->AncillaryBufferPhysicalAddress + (i * DesiredSize);
-		Context->AncillaryBufferState[i].UnCachedAddress    = Context->AncillaryBufferUnCachedAddress + (i * DesiredSize);
-		Context->AncillaryBufferState[i].Queued         = false;
-		Context->AncillaryBufferState[i].Done           = false;
-		Context->AncillaryBufferState[i].Bytes          = 0;
-		Context->AncillaryBufferState[i].FillTime       = 0;
+		Context->AncillaryBufferState[i].PhysicalAddress = Context->AncillaryBufferPhysicalAddress + (i * DesiredSize);
+		Context->AncillaryBufferState[i].UnCachedAddress = Context->AncillaryBufferUnCachedAddress + (i * DesiredSize);
+		Context->AncillaryBufferState[i].Queued = false;
+		Context->AncillaryBufferState[i].Done = false;
+		Context->AncillaryBufferState[i].Bytes = 0;
+		Context->AncillaryBufferState[i].FillTime = 0;
 	}
 	//
 	// Initialize the queued/dequeued/fill pointers
 	//
-	Context->AncillaryBufferNextQueueIndex  = 0;
-	Context->AncillaryBufferNextFillIndex   = 0;
-	Context->AncillaryBufferNextDeQueueIndex    = 0;
+	Context->AncillaryBufferNextQueueIndex = 0;
+	Context->AncillaryBufferNextFillIndex = 0;
+	Context->AncillaryBufferNextDeQueueIndex = 0;
 	sema_init(&Context->DvpAncillaryBufferDoneSem, 0);
 //
-	*ActualCount                = Context->AncillaryBufferCount;
-	*ActualSize                 = Context->AncillaryBufferSize;
+	*ActualCount = Context->AncillaryBufferCount;
+	*ActualSize = Context->AncillaryBufferSize;
 	return 0;
 }
 
@@ -2879,15 +2886,15 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t    *Context,
 //	Function to query the state of a buffer
 //
 
-int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
-									  unsigned int          Index,
-									  bool             *Queued,
-									  bool             *Done,
-									  unsigned char       **PhysicalAddress,
-									  unsigned char       **UnCachedAddress,
-									  unsigned long long   *CaptureTime,
-									  unsigned int         *Bytes,
-									  unsigned int         *Size)
+int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t *Context,
+				      unsigned int Index,
+				      bool *Queued,
+				      bool *Done,
+				      unsigned char **PhysicalAddress,
+				      unsigned char **UnCachedAddress,
+				      unsigned long long *CaptureTime,
+				      unsigned int *Bytes,
+				      unsigned int *Size)
 {
 	if (Index >= Context->AncillaryBufferCount)
 	{
@@ -2895,13 +2902,13 @@ int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
 		return -EINVAL;
 	}
 //
-	*Queued     = Context->AncillaryBufferState[Index].Queued;
-	*Done       = Context->AncillaryBufferState[Index].Done;
-	*PhysicalAddress    = Context->AncillaryBufferState[Index].PhysicalAddress;
-	*UnCachedAddress    = Context->AncillaryBufferState[Index].UnCachedAddress;
-	*CaptureTime    = Context->AncillaryBufferState[Index].FillTime + Context->AppliedLatency;
-	*Bytes      = Context->AncillaryBufferState[Index].Bytes;
-	*Size       = Context->AncillaryBufferSize;
+	*Queued = Context->AncillaryBufferState[Index].Queued;
+	*Done = Context->AncillaryBufferState[Index].Done;
+	*PhysicalAddress = Context->AncillaryBufferState[Index].PhysicalAddress;
+	*UnCachedAddress = Context->AncillaryBufferState[Index].UnCachedAddress;
+	*CaptureTime = Context->AncillaryBufferState[Index].FillTime + Context->AppliedLatency;
+	*Bytes = Context->AncillaryBufferState[Index].Bytes;
+	*Size = Context->AncillaryBufferSize;
 //
 	return 0;
 }
@@ -2911,8 +2918,8 @@ int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t    *Context,
 //	Function to queue a buffer
 //
 
-int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
-									  unsigned int         Index)
+int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t *Context,
+				      unsigned int Index)
 {
 	if (Index >= Context->AncillaryBufferCount)
 	{
@@ -2928,8 +2935,8 @@ int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
 	}
 //
 	memset(Context->AncillaryBufferState[Index].UnCachedAddress, 0x00, Context->AncillaryBufferSize);
-	Context->AncillaryBufferState[Index].Queued         = true;
-	Context->AncillaryBufferQueue[Context->AncillaryBufferNextQueueIndex % DVP_MAX_ANCILLARY_BUFFERS]   = Index;
+	Context->AncillaryBufferState[Index].Queued = true;
+	Context->AncillaryBufferQueue[Context->AncillaryBufferNextQueueIndex % DVP_MAX_ANCILLARY_BUFFERS] = Index;
 	Context->AncillaryBufferNextQueueIndex++;
 //
 	return 0;
@@ -2941,8 +2948,8 @@ int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t   *Context,
 //
 
 int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
-										unsigned int        *Index,
-										bool             Blocking)
+					unsigned int *Index,
+					bool Blocking)
 {
 	do
 	{
@@ -2957,11 +2964,11 @@ int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
 //
 		if (Context->AncillaryBufferNextDeQueueIndex < Context->AncillaryBufferNextFillIndex)
 		{
-			*Index  = Context->AncillaryBufferQueue[Context->AncillaryBufferNextDeQueueIndex % DVP_MAX_ANCILLARY_BUFFERS];
+			*Index = Context->AncillaryBufferQueue[Context->AncillaryBufferNextDeQueueIndex % DVP_MAX_ANCILLARY_BUFFERS];
 			Context->AncillaryBufferNextDeQueueIndex++;
 			if (!Context->AncillaryBufferState[*Index].Done)
 				printk("DvpVideoIoctlAncillaryDeQueueBuffer - Internal state error, buffer is in done queue, but not marked as done - Implementation Error.\n");
-			Context->AncillaryBufferState[*Index].Done  = false;
+			Context->AncillaryBufferState[*Index].Done = false;
 			return 0;
 		}
 	}
@@ -2974,9 +2981,9 @@ int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
 //	Function to turn on stream aquisition
 //
 
-int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t  *Context)
+int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t *Context)
 {
-	Context->AncillaryStreamOn  = true;
+	Context->AncillaryStreamOn = true;
 	return 0;
 }
 
@@ -2987,25 +2994,25 @@ int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t  *Context)
 
 int DvpVideoIoctlAncillaryStreamOff(dvp_v4l2_video_handle_t *Context)
 {
-	unsigned int        i;
+	unsigned int i;
 	//
 	// First mark us as off, and wait for any current capture activity to complete
 	//
-	Context->AncillaryStreamOn  = false;
+	Context->AncillaryStreamOn = false;
 	//
 	// Clear the queued and done queues
 	//
-	Context->AncillaryBufferNextQueueIndex  = 0;
-	Context->AncillaryBufferNextFillIndex   = 0;
-	Context->AncillaryBufferNextDeQueueIndex    = 0;
+	Context->AncillaryBufferNextQueueIndex = 0;
+	Context->AncillaryBufferNextFillIndex = 0;
+	Context->AncillaryBufferNextDeQueueIndex = 0;
 	//
 	// Tidy up the state records
 	//
 	for (i = 0; i < Context->AncillaryBufferCount; i++)
 	{
-		Context->AncillaryBufferState[i].Queued         = false;
-		Context->AncillaryBufferState[i].Done           = false;
-		Context->AncillaryBufferState[i].FillTime       = 0;
+		Context->AncillaryBufferState[i].Queued = false;
+		Context->AncillaryBufferState[i].Done = false;
+		Context->AncillaryBufferState[i].FillTime = 0;
 	}
 	//
 	// Make sure there is no-one waiting for a Dequeue

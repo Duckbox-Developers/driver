@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_dtshd.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-06-Jun-07   Created                                         Sylvain
+Date Modification Name
+---- ------------ --------
+06-Jun-07 Created Sylvain
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_audio_dtshd.h"
 #include "frame_parser_audio_dtshd.h"
@@ -49,8 +49,8 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define EXTENDED_STREAM_PES_START_CODE          0xfd
-#define EXTENDED_STREAM_PES_FULL_START_CODE     0x000001fd
+#define EXTENDED_STREAM_PES_START_CODE 0xfd
+#define EXTENDED_STREAM_PES_FULL_START_CODE 0x000001fd
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -84,8 +84,8 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 	int i;
 	unsigned char DtshdHeader[DTSHD_FRAME_HEADER_SIZE];
 	int RemainingInPotential = PotentialFrameHeaderLength;
-	unsigned char * PotentialFramePtr = PotentialFrameHeader;
-	unsigned char * ElementaryPtr;
+	unsigned char *PotentialFramePtr = PotentialFrameHeader;
+	unsigned char *ElementaryPtr;
 	int Offset;
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - DTSHD_FRAME_HEADER_SIZE); i++)
@@ -94,7 +94,7 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least DTSHD_FRAME_HEADER_SIZE bytes to get the stream type...*/
-			int size =  min(RemainingInPotential, DTSHD_FRAME_HEADER_SIZE);
+			int size = min(RemainingInPotential, DTSHD_FRAME_HEADER_SIZE);
 			memcpy(&DtshdHeader[0], PotentialFramePtr, size);
 			memcpy(&DtshdHeader[size], &RemainingElementaryData[0], DTSHD_FRAME_HEADER_SIZE - size);
 			ElementaryPtr = DtshdHeader;
@@ -140,13 +140,13 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindNextSyncWord(int *CodeOffset)
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///
-CollatorStatus_t Collator_PesAudioDtshd_c::FindAnyNextSyncWord(int *CodeOffset, DtshdStreamType_t * Type)
+CollatorStatus_t Collator_PesAudioDtshd_c::FindAnyNextSyncWord(int *CodeOffset, DtshdStreamType_t *Type)
 {
 	int i, OffsetIntoHeader = 0;
 	unsigned char DtshdHeader[DTSHD_RAW_SYNCHRO_BYTES_NEEDED];
-	int             RemainingInPotential = FrameHeaderLength;
-	unsigned char * PotentialFramePtr = StoredFrameHeader;
-	unsigned char * ElementaryPtr;
+	int RemainingInPotential = FrameHeaderLength;
+	unsigned char *PotentialFramePtr = StoredFrameHeader;
+	unsigned char *ElementaryPtr;
 	// if we just got synchronized, skip the first synchro bytes
 	if (CollatorState == GotSynchronized)
 	{
@@ -160,7 +160,7 @@ CollatorStatus_t Collator_PesAudioDtshd_c::FindAnyNextSyncWord(int *CodeOffset, 
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least DTSHD_RAW_SYNCHRO_BYTES_NEEDED bytes to get the stream type...*/
-			int size =  min(RemainingInPotential, DTSHD_RAW_SYNCHRO_BYTES_NEEDED);
+			int size = min(RemainingInPotential, DTSHD_RAW_SYNCHRO_BYTES_NEEDED);
 			memcpy(&DtshdHeader[0], &PotentialFramePtr[i], size);
 			memcpy(&DtshdHeader[size], &RemainingElementaryData[0], DTSHD_RAW_SYNCHRO_BYTES_NEEDED - size);
 			ElementaryPtr = DtshdHeader;
@@ -237,17 +237,17 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 	{
 		DtshdParseModel_t ParseModel = {ParseForSynchro, 0, 0};
 		/* We have already calculated the CoreFrameSize so better to set CodedFrameParameters->DataSpecificFlags here instead of state "GotCompleteFrame".
-		   Because it is possible that InternalFrameFlush is called from the drain and so the frame_parser called for already parsed frame.
-		   And the frame parser require  DataSpecificFlags to see the core frame size. See the bz24622 */
+		 Because it is possible that InternalFrameFlush is called from the drain and so the frame_parser called for already parsed frame.
+		 And the frame parser require DataSpecificFlags to see the core frame size. See the bz24622 */
 		CodedFrameParameters->DataSpecificFlags = CoreFrameSize;
 		FPStatus = FrameParser_AudioDtshd_c::ParseSingleFrameHeader(StoredFrameHeader,
-				   &ParsedFrameHeader,
-				   &Bits,
-				   FrameHeaderLength,
-				   RemainingElementaryData,
-				   RemainingElementaryLength,
-				   ParseModel,
-				   0);
+									    &ParsedFrameHeader,
+									    &Bits,
+									    FrameHeaderLength,
+									    RemainingElementaryData,
+									    RemainingElementaryLength,
+									    ParseModel,
+									    0);
 		if (FPStatus == FrameParserNoError)
 		{
 			if (CollatorState == GotSynchronized)
@@ -260,14 +260,14 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 			{
 				if (SyncFrameHeader.Type == TypeDtshdExt)
 				{
-					// we  should not encounter such core streams, this means
-					// we synchron    ized on a false substream...
-					// so we will accumulate t    his wrong extension frame, plus the regular frame
-					// and the frame parser will reanalyse     this situation to tell the codec to
+					// we should not encounter such core streams, this means
+					// we synchron ized on a false substream...
+					// so we will accumulate t his wrong extension frame, plus the regular frame
+					// and the frame parser will reanalyse this situation to tell the codec to
 					// start decoding atfer he extension frame
 					GotCoreFrameSize = false;
 					// get rid of frame header
-					*FrameLength     = 0;
+					*FrameLength = 0;
 					// accumulate this frame...
 					CollatorState = GotSynchronized;
 					SyncFrameHeader.Type = TypeDtshdCore;
@@ -294,8 +294,8 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 				{
 					// ac cumulate this frame...
 					CollatorState = ReadSubFrame;
-					// we are confident wi    th these data...
-					*FrameLength  = ParsedFrameHeader.Length;
+					// we are confident wi th these data...
+					*FrameLength = ParsedFrameHeader.Length;
 				}
 			}
 		}
@@ -317,7 +317,7 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 ///
 /// \return void
 ///
-void  Collator_PesAudioDtshd_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioDtshd_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* by default the optional private data area length will be set to zero... */
 	/* otherwise for DVD the private data area is 4 bytes long */
@@ -390,16 +390,16 @@ CollatorStatus_t Collator_PesAudioDtshd_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = DTSHD_FRAME_HEADER_SIZE;
-	Configuration.StreamIdentifierMask       = 0xff;
-	Configuration.StreamIdentifierCode       = PES_START_CODE_PRIVATE_STREAM_1;
-	Configuration.BlockTerminateMask         = 0xff;         // Picture
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_PRIVATE_STREAM_1 - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = 0;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask = 0xff;
+	Configuration.StreamIdentifierCode = PES_START_CODE_PRIVATE_STREAM_1;
+	Configuration.BlockTerminateMask = 0xff; // Picture
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = PES_START_CODE_PRIVATE_STREAM_1 - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = 0;
+	Configuration.DeferredTerminateFlag = false;
 	// by default do only 5.1...
 	EightChannelsRequired = false;
 	// default frame size is unset...

@@ -5,27 +5,17 @@
  * Author: Peter Bennett <peter.bennett@st.com>
  *
  * May be copied or modified under the terms of the GNU General Public
- * License.  See linux/COPYING for more information.
+ * License. See linux/COPYING for more information.
  */
 
 #include <linux/io.h>
 #include <linux/init.h>
 #include <linux/platform_device.h>
 #include <linux/autoconf.h>
-#ifdef __TDT__
-#include <linux/version.h>
-#endif
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-#else
-#include <asm-sh/processor.h>
-#endif
 
-#if defined (CONFIG_KERNELVERSION)
-#include <asm-sh/irq-ilc.h>
-#include <asm-sh/irq.h>
-#else /* STLinux 2.2 kernel */
-#define ILC_IRQ(x) (x + MUXED_IRQ_BASE)
-#endif
+#include <linux/version.h>
+#include <asm/irq-ilc.h>
+#include <asm/irq.h>
 
 #if defined(CONFIG_CPU_SUBTYPE_STB7100)
 #include "mb442.h"

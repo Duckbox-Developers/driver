@@ -28,13 +28,13 @@ DECLARE_MUTEX(cmd_mutex);
 
 #define FILE void
 
-FILE * usb_fout;
+FILE *usb_fout;
 #define FWRITE(p,s,n,f) st_relayfs_write(ST_RELAY_TYPE_MME_LOG, ST_RELAY_SOURCE_MME_LOG, \
-                                         (unsigned char *) p, s*n, 0)
-#define FOPEN(n,p)      usb_fout
-#define FFOPEN(n,p)     usb_fout
-#define FCLOSE(f)       f = NULL
-#define FPUTC(c,f)      st_relayfs_write(ST_RELAY_TYPE_MME_LOG, ST_RELAY_SOURCE_MME_LOG, &c, 1, 0)
+					 (unsigned char *) p, s*n, 0)
+#define FOPEN(n,p) usb_fout
+#define FFOPEN(n,p) usb_fout
+#define FCLOSE(f) f = NULL
+#define FPUTC(c,f) st_relayfs_write(ST_RELAY_TYPE_MME_LOG, ST_RELAY_SOURCE_MME_LOG, &c, 1, 0)
 #define CMD_LOG_FILE "acc_mme_wrapper"
 
 enum eBoolean
@@ -50,7 +50,7 @@ enum eCmdType
 	CMD_GETCAPABILITY, CMD_INIT, CMD_SEND, CMD_ABORT, CMD_TERM, CMD_LAST
 };
 
-static unsigned char * cmd_str[CMD_LAST] =
+static unsigned char *cmd_str[CMD_LAST] =
 {
 	"CMD_GETC", "CMD_INIT", "CMD_SEND", "CMD_ABORT", "CMD_TERM"
 };
@@ -76,7 +76,7 @@ char warning[ACC_LAST_WARNING][64] =
 
 /* static void acc_warning(enum eWarning wn) */
 /* { */
-/*  printk("acc_mme_wrapper: %s\n", warning[wn]); */
+/* printk("acc_mme_wrapper: %s\n", warning[wn]); */
 /* } */
 
 static void handles_clear(void)
@@ -107,15 +107,15 @@ static int handles_new(void)
 	return i;
 }
 
-FILE * cmd_log_lock(void)
+FILE *cmd_log_lock(void)
 {
-	FILE * fin;
+	FILE *fin;
 	down(&cmd_mutex);
 	fin = FOPEN(CMD_LOG_FILE, "ab");
 	return (fin);
 }
 
-void cmd_log_release(FILE * fin)
+void cmd_log_release(FILE *fin)
 {
 	FCLOSE(fin);
 	up(&cmd_mutex);
@@ -123,7 +123,7 @@ void cmd_log_release(FILE * fin)
 
 void acc_mme_logreset(void)
 {
-	FILE * fcmd;
+	FILE *fcmd;
 	fcmd = FFOPEN(CMD_LOG_FILE, "wb");
 	FCLOSE(fcmd);
 }
@@ -136,15 +136,15 @@ void acc_mme_logstart(void)
 
 void acc_mme_logstop(void)
 {
-	log_enable =  ACC_FALSE;
+	log_enable = ACC_FALSE;
 }
 
 MME_ERROR acc_MME_InitTransformer(const char *Name,
-								  MME_TransformerInitParams_t * Params_p,
-								  MME_TransformerHandle_t     * Handle_p)
+				  MME_TransformerInitParams_t *Params_p,
+				  MME_TransformerHandle_t *Handle_p)
 {
-	MME_ERROR  mme_status;
-	FILE     * fcmd = cmd_log_lock();
+	MME_ERROR mme_status;
+	FILE *fcmd = cmd_log_lock();
 	if (log_enable == ACC_TRUE)
 	{
 		FWRITE(cmd_str[CMD_INIT], strlen(cmd_str[CMD_INIT]) + 1, 1, fcmd);
@@ -153,19 +153,19 @@ MME_ERROR acc_MME_InitTransformer(const char *Name,
 		FWRITE(Params_p->TransformerInitParams_p, Params_p->TransformerInitParamsSize, 1, fcmd);
 	}
 	cmd_log_release(fcmd);
-	mme_status =  MME_InitTransformer(Name, Params_p, Handle_p);
+	mme_status = MME_InitTransformer(Name, Params_p, Handle_p);
 	if (log_enable)
 	{
-		if (mme_status == MME_SUCCESS)  handles[handles_new()] = (int) * Handle_p;
+		if (mme_status == MME_SUCCESS) handles[handles_new()] = (int) * Handle_p;
 	}
 	return mme_status;
 }
 
-MME_ERROR acc_MME_GetTransformerCapability(const char * TransformerName, MME_TransformerCapability_t *TransformerInfo_p)
+MME_ERROR acc_MME_GetTransformerCapability(const char *TransformerName, MME_TransformerCapability_t *TransformerInfo_p)
 {
 	if (log_enable == ACC_TRUE)
 	{
-		FILE * fcmd = cmd_log_lock();
+		FILE *fcmd = cmd_log_lock();
 		FWRITE(cmd_str[CMD_GETCAPABILITY], strlen(cmd_str[CMD_GETCAPABILITY]) + 1, 1, fcmd);
 		FWRITE((char *)TransformerName, strlen((char *)TransformerName) + 1, 1, fcmd);
 		cmd_log_release(fcmd);
@@ -173,30 +173,30 @@ MME_ERROR acc_MME_GetTransformerCapability(const char * TransformerName, MME_Tra
 	return MME_GetTransformerCapability(TransformerName, TransformerInfo_p);
 }
 
-MME_ERROR acc_MME_SendCommand(MME_TransformerHandle_t Handle, MME_Command_t * CmdInfo_p)
+MME_ERROR acc_MME_SendCommand(MME_TransformerHandle_t Handle, MME_Command_t *CmdInfo_p)
 {
-	MME_ERROR   mme_status;
-	FILE      * fcmd = NULL;
-	int         i, j, nbuf;
+	MME_ERROR mme_status;
+	FILE *fcmd = NULL;
+	int i, j, nbuf;
 	if (log_enable == ACC_TRUE)
 	{
 		// log the command;
-		int    hdl_idx =  handles_search(Handle);
+		int hdl_idx = handles_search(Handle);
 		fcmd = cmd_log_lock();
-		FWRITE(cmd_str[CMD_SEND], strlen(cmd_str[CMD_SEND]) + 1 , 1, fcmd);
+		FWRITE(cmd_str[CMD_SEND], strlen(cmd_str[CMD_SEND]) + 1, 1, fcmd);
 		FWRITE(&hdl_idx, sizeof(int), 1, fcmd);
 		FWRITE(CmdInfo_p, sizeof(MME_Command_t), 1, fcmd);
 		FWRITE(CmdInfo_p->Param_p, CmdInfo_p->ParamSize, 1, fcmd);
-		//        printk("Param: %d\n", ((int*)CmdInfo_p->Param_p)[2]);
-		nbuf =  CmdInfo_p->NumberInputBuffers + CmdInfo_p->NumberOutputBuffers;
+		// printk("Param: %d\n", ((int*)CmdInfo_p->Param_p)[2]);
+		nbuf = CmdInfo_p->NumberInputBuffers + CmdInfo_p->NumberOutputBuffers;
 		for (i = 0; i < nbuf; i++)
 		{
-			MME_DataBuffer_t  * db = CmdInfo_p->DataBuffers_p[i];
-			MME_ScatterPage_t * sc;
+			MME_DataBuffer_t *db = CmdInfo_p->DataBuffers_p[i];
+			MME_ScatterPage_t *sc;
 			FWRITE(db, sizeof(MME_DataBuffer_t), 1, fcmd);
 			if (db->NumberOfScatterPages == 0)
 			{
-				// check whether a buffer is sent without any pages  !! should never happen.
+				// check whether a buffer is sent without any pages !! should never happen.
 				//acc_warning(ACC_WARNING_NO_SCATTERPAGE_IN_BUFFER);
 			}
 			for (j = 0; j < db->NumberOfScatterPages; j++)
@@ -214,11 +214,11 @@ MME_ERROR acc_MME_SendCommand(MME_TransformerHandle_t Handle, MME_Command_t * Cm
 		}
 	}
 	// send the command to get back the ID generated by Multicom
-	mme_status =  MME_SendCommand(Handle, CmdInfo_p);
+	mme_status = MME_SendCommand(Handle, CmdInfo_p);
 	if (log_enable == ACC_TRUE)
 	{
 		// replace the ID in the local copy
-		FWRITE(&CmdInfo_p->CmdStatus.CmdId, sizeof(unsigned int), 1 , fcmd);
+		FWRITE(&CmdInfo_p->CmdStatus.CmdId, sizeof(unsigned int), 1, fcmd);
 		cmd_log_release(fcmd);
 	}
 	return mme_status;
@@ -228,8 +228,8 @@ MME_ERROR acc_MME_AbortCommand(MME_TransformerHandle_t Handle, MME_CommandId_t C
 {
 	if (log_enable == ACC_TRUE)
 	{
-		FILE * fcmd    = cmd_log_lock();
-		int    hdl_idx =  handles_search(Handle);
+		FILE *fcmd = cmd_log_lock();
+		int hdl_idx = handles_search(Handle);
 		FWRITE(cmd_str[CMD_ABORT], strlen(cmd_str[CMD_ABORT]) + 1, 1, fcmd);
 		FWRITE(&hdl_idx, sizeof(int), 1, fcmd);
 		FWRITE(&CmdId, sizeof(int), 1, fcmd);
@@ -244,15 +244,15 @@ MME_ERROR acc_MME_AbortCommand(MME_TransformerHandle_t Handle, MME_CommandId_t C
 MME_ERROR acc_MME_TermTransformer(MME_TransformerHandle_t handle)
 {
 	MME_ERROR mme_status;
-	int      hdl_idx =  handles_search(handle);
+	int hdl_idx = handles_search(handle);
 	if (log_enable == ACC_TRUE)
 	{
-		FILE * fcmd    = cmd_log_lock();
+		FILE *fcmd = cmd_log_lock();
 		FWRITE(cmd_str[CMD_TERM], strlen(cmd_str[CMD_TERM]) + 1, 1, fcmd);
 		FWRITE(&hdl_idx, sizeof(int), 1, fcmd);
 		cmd_log_release(fcmd);
 	}
-	mme_status =  MME_TermTransformer(handle);
+	mme_status = MME_TermTransformer(handle);
 	if (log_enable == ACC_TRUE)
 	{
 		if (mme_status == MME_SUCCESS) handles[hdl_idx] = 0;

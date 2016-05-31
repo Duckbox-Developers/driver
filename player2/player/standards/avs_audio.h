@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : avs_audio.h
-Author :           Andy
+Author : Andy
 
 Definition of the constants/macros that define useful things associated with
 AVS audio streams.
 
-Date        Modification                                    Name
-----        ------------                                    --------
+Date Modification Name
+---- ------------ --------
 
 ************************************************************************/
 
@@ -37,39 +37,39 @@ Date        Modification                                    Name
 
 // ////////////////////////////////////////////////////////////////////////////
 //
-//  General defines of start codes etc.
+// General defines of start codes etc.
 //
 
 // Elementary stream constants
 
-#define AVS_AUDIO_PARTIAL_FRAME_HEADER_SIZE        4
-#define AVS_AUDIO_FRAME_HEADER_SIZE               8
+#define AVS_AUDIO_PARTIAL_FRAME_HEADER_SIZE 4
+#define AVS_AUDIO_FRAME_HEADER_SIZE 8
 
-#define AVS_AUDIO_START_CODE_MASK                 0xffe00000
-#define AVS_AUDIO_START_CODE                      0xffe00000
+#define AVS_AUDIO_START_CODE_MASK 0xffe00000
+#define AVS_AUDIO_START_CODE 0xffe00000
 
-#define AVS_AUDIO_LAYER_MASK                      0x00060000
-#define AVS_AUDIO_LAYER_I                         0x00060000
-#define AVS_AUDIO_LAYER_II                        0x00040000
-#define AVS_AUDIO_LAYER_III                       0x00020000
+#define AVS_AUDIO_LAYER_MASK 0x00060000
+#define AVS_AUDIO_LAYER_I 0x00060000
+#define AVS_AUDIO_LAYER_II 0x00040000
+#define AVS_AUDIO_LAYER_III 0x00020000
 
-#define AVS_AUDIO_AVS_MASK                       0x00180000
-#define AVS_AUDIO_AVS_1                          0x00180000
-#define AVS_AUDIO_AVS_2                          0x00100000
-#define AVS_AUDIO_AVS_2_5                        0x00000000
+#define AVS_AUDIO_AVS_MASK 0x00180000
+#define AVS_AUDIO_AVS_1 0x00180000
+#define AVS_AUDIO_AVS_2 0x00100000
+#define AVS_AUDIO_AVS_2_5 0x00000000
 
-#define AVS_AUDIO_BIT_RATE_MASK                   0x0000f000
-#define AVS_AUDIO_BIT_RATE_SHIFT                  (4+8)
+#define AVS_AUDIO_BIT_RATE_MASK 0x0000f000
+#define AVS_AUDIO_BIT_RATE_SHIFT (4+8)
 
-#define AVS_AUDIO_SAMPLING_FREQUENCY_MASK         0x00000c00
-#define AVS_AUDIO_SAMPLING_FREQUENCY_SHIFT        (2+8)
+#define AVS_AUDIO_SAMPLING_FREQUENCY_MASK 0x00000c00
+#define AVS_AUDIO_SAMPLING_FREQUENCY_SHIFT (2+8)
 
-#define AVS_AUDIO_PADDING_MASK                    0x00000200
-#define AVS_AUDIO_PADDING_SHIFT                   (1+8)
+#define AVS_AUDIO_PADDING_MASK 0x00000200
+#define AVS_AUDIO_PADDING_SHIFT (1+8)
 
 // ////////////////////////////////////////////////////////////////////////////
 //
-//  Definitions of types matching avs audio headers
+// Definitions of types matching avs audio headers
 //
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,8 +105,8 @@ typedef struct AvsAudioStreamParameters_s
 	unsigned int Layer;
 } AvsAudioStreamParameters_t;
 
-#define BUFFER_AVS_AUDIO_STREAM_PARAMETERS        "AvsAudioStreamParameters"
-#define BUFFER_AVS_AUDIO_STREAM_PARAMETERS_TYPE   {BUFFER_AVS_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(AvsAudioStreamParameters_t)}
+#define BUFFER_AVS_AUDIO_STREAM_PARAMETERS "AvsAudioStreamParameters"
+#define BUFFER_AVS_AUDIO_STREAM_PARAMETERS_TYPE {BUFFER_AVS_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(AvsAudioStreamParameters_t)}
 
 //
 
@@ -115,8 +115,8 @@ typedef struct AvsAudioStreamParameters_s
 /// Meta-data unique to Avs audio.
 ///
 /// \todo This is actually pretty generic stuff; if nothing radical emerges
-///       in the other audio codecs perhaps this should be combined. Alternatively
-///       just get rid of this type entirely and rename AvsAudioParsedFrameHeader_t.
+/// in the other audio codecs perhaps this should be combined. Alternatively
+/// just get rid of this type entirely and rename AvsAudioParsedFrameHeader_t.
 ///
 typedef struct AvsAudioFrameParameters_s
 {
@@ -127,7 +127,7 @@ typedef struct AvsAudioFrameParameters_s
 	unsigned int FrameSize;
 } AvsAudioFrameParameters_t;
 
-#define BUFFER_AVS_AUDIO_FRAME_PARAMETERS        "AvsAudioFrameParameters"
-#define BUFFER_AVS_AUDIO_FRAME_PARAMETERS_TYPE   {BUFFER_AVS_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(AvsAudioFrameParameters_t)}
+#define BUFFER_AVS_AUDIO_FRAME_PARAMETERS "AvsAudioFrameParameters"
+#define BUFFER_AVS_AUDIO_FRAME_PARAMETERS_TYPE {BUFFER_AVS_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(AvsAudioFrameParameters_t)}
 
 #endif /* H_AVS_AUDIO */

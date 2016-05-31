@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : demultiplexor_base.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the base demultiplexor class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-13-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+13-Nov-06 Created Nick
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "demultiplexor_base.h"
 
@@ -48,19 +48,19 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 
 Demultiplexor_Base_c::Demultiplexor_Base_c(void)
 {
-	InitializationStatus        = DemultiplexorError;
+	InitializationStatus = DemultiplexorError;
 //
-	InitializationStatus        = DemultiplexorNoError;
+	InitializationStatus = DemultiplexorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destructor function
+// The Destructor function
 //
 
 Demultiplexor_Base_c::~Demultiplexor_Base_c(void)
@@ -69,36 +69,36 @@ Demultiplexor_Base_c::~Demultiplexor_Base_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Create context function
+// The Create context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::CreateContext(DemultiplexorContext_t   *Context)
+DemultiplexorStatus_t Demultiplexor_Base_c::CreateContext(DemultiplexorContext_t *Context)
 {
-	unsigned int            i;
-	DemultiplexorContext_t      NewContext;
-	DemultiplexorBaseContext_t      BaseContext;
+	unsigned int i;
+	DemultiplexorContext_t NewContext;
+	DemultiplexorBaseContext_t BaseContext;
 //
-	NewContext  = (DemultiplexorContext_t)new unsigned char[SizeofContext];
+	NewContext = (DemultiplexorContext_t)new unsigned char[SizeofContext];
 	memset(NewContext, 0x00, SizeofContext);
 	BaseContext = (DemultiplexorBaseContext_t)NewContext;
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
 	{
-		BaseContext->Streams[i].Stream      = NULL;
-		BaseContext->Streams[i].Identifier  = INVALID_INDEX;
+		BaseContext->Streams[i].Stream = NULL;
+		BaseContext->Streams[i].Identifier = INVALID_INDEX;
 	}
 	OS_InitializeMutex(&BaseContext->Lock);
-	*Context    = NewContext;
+	*Context = NewContext;
 	return DemultiplexorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destroy context function
+// The Destroy context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::DestroyContext(DemultiplexorContext_t    Context)
+DemultiplexorStatus_t Demultiplexor_Base_c::DestroyContext(DemultiplexorContext_t Context)
 {
-	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
+	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 	OS_LockMutex(&BaseContext->Lock);
 	OS_TerminateMutex(&BaseContext->Lock);
 	delete(unsigned char *)Context;
@@ -107,16 +107,16 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::DestroyContext(DemultiplexorContex
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The add a stream to a context function
+// The add a stream to a context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::AddStream(
-	DemultiplexorContext_t    Context,
-	PlayerStream_t            Stream,
-	unsigned int              StreamIdentifier)
+DemultiplexorStatus_t Demultiplexor_Base_c::AddStream(
+	DemultiplexorContext_t Context,
+	PlayerStream_t Stream,
+	unsigned int StreamIdentifier)
 {
-	unsigned int                    i;
-	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
+	unsigned int i;
+	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 //
 	report(severity_info, "Demultiplexor_Base_c::AddStream - %x, %d.\n", Stream, StreamIdentifier);
 	OS_LockMutex(&BaseContext->Lock);
@@ -124,9 +124,9 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::AddStream(
 		if (BaseContext->Streams[i].Stream == NULL)
 		{
 			Player->GetClassList(Stream, &BaseContext->Streams[i].Collator, NULL, NULL, NULL, NULL);
-			BaseContext->Streams[i].Stream      = Stream;
-			BaseContext->Streams[i].Identifier  = StreamIdentifier;
-			BaseContext->LastStreamSet          = i;
+			BaseContext->Streams[i].Stream = Stream;
+			BaseContext->Streams[i].Identifier = StreamIdentifier;
+			BaseContext->LastStreamSet = i;
 			Player->AttachDemultiplexor(Stream, this, Context);
 			OS_UnLockMutex(&BaseContext->Lock);
 			return DemultiplexorNoError;
@@ -139,15 +139,15 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::AddStream(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The remove a stream from a context function
+// The remove a stream from a context function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::RemoveStream(
-	DemultiplexorContext_t    Context,
-	unsigned int              StreamIdentifier)
+DemultiplexorStatus_t Demultiplexor_Base_c::RemoveStream(
+	DemultiplexorContext_t Context,
+	unsigned int StreamIdentifier)
 {
-	unsigned int                    i, j;
-	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
+	unsigned int i, j;
+	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 //
 	report(severity_info, "Demultiplexor_Base_c::RemoveStream - %d.\n", StreamIdentifier);
 	OS_LockMutex(&BaseContext->Lock);
@@ -167,8 +167,8 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::RemoveStream(
 			//
 			// release and return.
 			//
-			BaseContext->Streams[i].Stream      = NULL;
-			BaseContext->Streams[i].Identifier  = INVALID_INDEX;
+			BaseContext->Streams[i].Stream = NULL;
+			BaseContext->Streams[i].Identifier = INVALID_INDEX;
 		}
 //
 	OS_UnLockMutex(&BaseContext->Lock);
@@ -177,15 +177,15 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::RemoveStream(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The switch a stream function
+// The switch a stream function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::SwitchStream(
-	DemultiplexorContext_t    Context,
-	PlayerStream_t            Stream)
+DemultiplexorStatus_t Demultiplexor_Base_c::SwitchStream(
+	DemultiplexorContext_t Context,
+	PlayerStream_t Stream)
 {
-	unsigned int                    i;
-	DemultiplexorBaseContext_t      BaseContext = (DemultiplexorBaseContext_t)Context;
+	unsigned int i;
+	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 //
 	report(severity_info, "Demultiplexor_Base_c::SwitchStream - %x.\n", Stream);
 	for (i = 0; i < DEMULTIPLEXOR_MAX_STREAMS; i++)
@@ -197,36 +197,36 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::SwitchStream(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The default input jump function currently does nothing
+// The default input jump function currently does nothing
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::InputJump(
-	DemultiplexorContext_t    Context)
+DemultiplexorStatus_t Demultiplexor_Base_c::InputJump(
+	DemultiplexorContext_t Context)
 {
 	return DemultiplexorError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The demux function
+// The demux function
 //
 
-DemultiplexorStatus_t   Demultiplexor_Base_c::Demux(
-	PlayerPlayback_t          Playback,
-	DemultiplexorContext_t    Context,
-	Buffer_t                  Buffer)
+DemultiplexorStatus_t Demultiplexor_Base_c::Demux(
+	PlayerPlayback_t Playback,
+	DemultiplexorContext_t Context,
+	Buffer_t Buffer)
 {
-	PlayerStatus_t                    Status;
-	DemultiplexorBaseContext_t        BaseContext = (DemultiplexorBaseContext_t)Context;
+	PlayerStatus_t Status;
+	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 //
-	Status      = Buffer->ObtainMetaDataReference(Player->MetaDataInputDescriptorType, (void **)(&BaseContext->Descriptor));
+	Status = Buffer->ObtainMetaDataReference(Player->MetaDataInputDescriptorType, (void **)(&BaseContext->Descriptor));
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "Demultiplexor_Base_c::Demux - Unable to obtain the meta data input descriptor.\n");
 		return Status;
 	}
 //
-	Status  = Buffer->ObtainDataReference(NULL, &BaseContext->BufferLength, (void **)(&BaseContext->BufferData));
+	Status = Buffer->ObtainDataReference(NULL, &BaseContext->BufferLength, (void **)(&BaseContext->BufferData));
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "Demultiplexor_Base_c::Demux - unable to obtain data reference.\n");
@@ -238,10 +238,10 @@ DemultiplexorStatus_t   Demultiplexor_Base_c::Demux(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Set the context size
+// Set the context size
 //
 
-void   Demultiplexor_Base_c::SetContextSize(unsigned int    SizeofContext)
+void Demultiplexor_Base_c::SetContextSize(unsigned int SizeofContext)
 {
 	this->SizeofContext = SizeofContext;
 }

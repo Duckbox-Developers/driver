@@ -3,12 +3,12 @@
  *
  * Copyright (c) STMicroelectronics 2005
  *
- *   Author:Peter Bennett <peter.bennett@st.com>
+ * Author:Peter Bennett <peter.bennett@st.com>
  *
- *      This program is free software; you can redistribute it and/or
- *      modify it under the terms of the GNU General Public License as
- *      published by the Free Software Foundation; either version 2 of
- *      the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  */
 #include <linux/version.h>
 #include <linux/init.h>
@@ -48,7 +48,7 @@ DVB_DEFINE_MOD_OPT_ADAPTER_NR(adapter_nr);
 
 //__TDT__ ->file moved in this directory
 
-int debug = 1;
+int debug = 0;
 
 struct stfe_channel *stfe_channel_allocate(struct stfe *stfe)
 {
@@ -82,15 +82,11 @@ struct stfe *stfe_create(void *private_data, void *start_feed, void *stop_feed)
 	up(&stfe->sem);
 	for (channel = 0; channel < STFE_MAXCHANNEL; ++channel)
 	{
-		stfe->channel[channel].id        = channel;
-		stfe->channel[channel].stfe      = stfe;
+		stfe->channel[channel].id = channel;
+		stfe->channel[channel].stfe = stfe;
 		stfe->channel[channel].havana_id = private_data;
 	}
-#if (DVB_API_VERSION > 3)
 	dvb_register_adapter(&stfe->adapter, "ST Generic Front End Driver", THIS_MODULE, NULL, adapter_nr);
-#else
-	dvb_register_adapter(&stfe->adapter, "ST Generic Front End Driver", THIS_MODULE, NULL);
-#endif
 	stfe->adapter.priv = stfe;
 	memset(&stfe->dvb_demux, 0, sizeof(stfe->dvb_demux));
 	stfe->dvb_demux.dmx.capabilities =
@@ -98,13 +94,13 @@ struct stfe *stfe_create(void *private_data, void *start_feed, void *stop_feed)
 	stfe->dvb_demux.priv = private_data;
 	stfe->dvb_demux.filternum = 48;
 	stfe->dvb_demux.feednum = STFE_MAXCHANNEL;
-	stfe->dvb_demux.start_feed       = start_feed;
-	stfe->dvb_demux.stop_feed        = stop_feed;
-	stfe->dvb_demux.write_to_decoder = NULL;        /* write_to_decoder;*/
+	stfe->dvb_demux.start_feed = start_feed;
+	stfe->dvb_demux.stop_feed = stop_feed;
+	stfe->dvb_demux.write_to_decoder = NULL; /* write_to_decoder;*/
 	if ((result = dvb_dmx_init(&stfe->dvb_demux)) < 0)
 	{
 		printk("stfe_init: dvb_dmx_init failed (errno = %d)\n",
-			   result);
+		       result);
 		goto err;
 	}
 	stfe->dmxdev.filternum = stfe->dvb_demux.filternum;
@@ -113,7 +109,7 @@ struct stfe *stfe_create(void *private_data, void *start_feed, void *stop_feed)
 	if ((result = dvb_dmxdev_init(&stfe->dmxdev, &stfe->adapter)) < 0)
 	{
 		printk("stfe_init: dvb_dmxdev_init failed (errno = %d)\n",
-			   result);
+		       result);
 		dvb_dmx_release(&stfe->dvb_demux);
 		goto err;
 	}

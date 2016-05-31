@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_packet_dvp.cpp
-Author :           Julian
+Author : Julian
 
 Implementation of the packet collator for dvp video.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jul-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+08-Jul-08 Created Julian
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_packet_dvp.h"
 #include "dvp.h"
@@ -52,15 +52,15 @@ Date        Modification                                    Name
 // Resets and configures according to the requirements of this stream content
 //
 
-CollatorStatus_t Collator_PacketDvp_c::Input(PlayerInputDescriptor_t  *Input,
-		unsigned int          DataLength,
-		void                     *Data,
-		bool              NonBlocking,
-		unsigned int         *DataLengthRemaining)
+CollatorStatus_t Collator_PacketDvp_c::Input(PlayerInputDescriptor_t *Input,
+					     unsigned int DataLength,
+					     void *Data,
+					     bool NonBlocking,
+					     unsigned int *DataLengthRemaining)
 {
-	CollatorStatus_t     Status;
-	StreamInfo_t        *CapturedFrameDescriptor = (StreamInfo_t *)Data;
-	Buffer_t         CapturedBuffer;
+	CollatorStatus_t Status;
+	StreamInfo_t *CapturedFrameDescriptor = (StreamInfo_t *)Data;
+	Buffer_t CapturedBuffer;
 //
 	COLLATOR_ASSERT(!NonBlocking);
 	AssertComponentState("Collator_Packet_c::Input", ComponentRunning);
@@ -75,12 +75,12 @@ CollatorStatus_t Collator_PacketDvp_c::Input(PlayerInputDescriptor_t  *Input,
 		report(severity_error, "Collator_Packet_c::Input - Packet is wrong size (%d != %d)\n", DataLength, sizeof(StreamInfo_t));
 		return CollatorError;
 	}
-	CapturedBuffer  = (Buffer_t)(CapturedFrameDescriptor->buffer_class);
+	CapturedBuffer = (Buffer_t)(CapturedFrameDescriptor->buffer_class);
 	CodedFrameBuffer->AttachBuffer(CapturedBuffer);
 	//
 	// Perform the standard packet handling
 	//
-	Status  = Collator_Packet_c::Input(Input, DataLength, Data);
+	Status = Collator_Packet_c::Input(Input, DataLength, Data);
 	InputExit();
 	return Status;
 }

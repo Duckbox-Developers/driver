@@ -45,18 +45,18 @@ static short sins(short x)
 	/* TODO: this routine original implemented cosine so fudge it... */
 	x -= 90;
 	/* put x into the interval 0 <= x <= 90 */
-	x = (x >   0 ? x : 0 - x);
+	x = (x > 0 ? x : 0 - x);
 	x = (x < 360 ? x : x % 360);
 	x = (x < 180 ? x : 360 - x);
-	x = (x <  90 ? (sign = 1, x) : (sign = -1, 180 - x));
+	x = (x < 90 ? (sign = 1, x) : (sign = -1, 180 - x));
 	return (short)(sign * (32767l - ((16570l * x * x) >> 12)));
 }
 
 static void generate_signal(unsigned int *p,
-							unsigned int nrchannels,
-							unsigned int nrsamples,
-							unsigned int samplerate,
-							unsigned int freq, unsigned int *phasep)
+			    unsigned int nrchannels,
+			    unsigned int nrsamples,
+			    unsigned int samplerate,
+			    unsigned int freq, unsigned int *phasep)
 {
 	unsigned int phase = *phasep;
 	unsigned int step;
@@ -84,7 +84,7 @@ static void generate_signal(unsigned int *p,
 
 static int xrun_recovery(ksnd_pcm_t *handle, int err)
 {
-	if (err == -EPIPE)      /* under-run */
+	if (err == -EPIPE) /* under-run */
 	{
 		/*err = snd_pcm_prepare(handle); */
 		err = ksnd_pcm_prepare(handle);
@@ -98,7 +98,7 @@ static int xrun_recovery(ksnd_pcm_t *handle, int err)
 	{
 #if 0
 		while ((err = snd_pcm_resume(handle)) == -EAGAIN)
-			sleep(1);   /* wait until the suspend flag is released */
+			sleep(1); /* wait until the suspend flag is released */
 		if (err < 0)
 		{
 			err = snd_pcm_prepare(handle);
@@ -144,7 +144,7 @@ static int ktone(void *unused)
 	{
 #if 0
 		generate_signal(samples, nrchannels, period_size, samplerate,
-						freq, &state);
+				freq, &state);
 		res = ksnd_pcm_writei(handle, samples, period_size, nrchannels);
 		if (0 != res)
 		{
@@ -173,7 +173,7 @@ static int ktone(void *unused)
 			void *samples;
 			res =
 				ksnd_pcm_mmap_begin(handle, &my_areas, &offset,
-									&frames);
+						    &frames);
 			if (res < 0)
 			{
 				printk("Failed to mmap buffer\n");
@@ -184,7 +184,7 @@ static int ktone(void *unused)
 			samples += offset * my_areas[0].step / 8;
 			/*printk("offset %d base %p samples %p\n", offset, my_areas[0].addr, samples); */
 			generate_signal(samples, nrchannels, frames, samplerate,
-							freq, &state);
+					freq, &state);
 			commitres =
 				ksnd_pcm_mmap_commit(handle, offset, frames);
 			if (commitres < 0
@@ -192,8 +192,8 @@ static int ktone(void *unused)
 			{
 				if ((res =
 							xrun_recovery(handle,
-										  commitres >=
-										  0 ? -EPIPE : commitres)) <
+								      commitres >=
+								      0 ? -EPIPE : commitres)) <
 						0)
 				{
 					printk("MMAP commit error\n");

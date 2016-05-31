@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the base video frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+29-Nov-06 Created Nick
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "frame_parser_video.h"
 #include "stack_generic.h"
@@ -44,10 +44,10 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define         DEFAULT_DECODE_TIME_OFFSET      3600            // thats 40ms in 90Khz ticks
-#define         MAXIMUM_DECODE_TIME_OFFSET      (4 * 90000)     // thats 4s in 90Khz ticks
+#define DEFAULT_DECODE_TIME_OFFSET 3600 // thats 40ms in 90Khz ticks
+#define MAXIMUM_DECODE_TIME_OFFSET (4 * 90000) // thats 4s in 90Khz ticks
 
-#define     MAX_ALLOWED_SMOOTH_REVERSE_PLAY_FAILURES   2    // After this we assume reverse play just isn't practical
+#define MAX_ALLOWED_SMOOTH_REVERSE_PLAY_FAILURES 2 // After this we assume reverse play just isn't practical
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -56,32 +56,32 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 FrameParser_Video_c::FrameParser_Video_c(void)
 {
 	if (InitializationStatus != FrameParserNoError)
 		return;
 //
-	ReverseQueuedPostDecodeSettingsRing         = NULL;
-	ReverseDecodeUnsatisfiedReferenceStack      = NULL;
-	ReverseDecodeSingleFrameStack       = NULL;
-	ReverseDecodeStack                          = NULL;
-	DeferredCodedFrameBuffer                    = NULL;
-	DeferredParsedFrameParameters               = NULL;
-	DeferredParsedVideoParameters               = NULL;
-	DeferredCodedFrameBufferSecondField         = NULL;
-	DeferredParsedFrameParametersSecondField    = NULL;
-	DeferredParsedVideoParametersSecondField    = NULL;
+	ReverseQueuedPostDecodeSettingsRing = NULL;
+	ReverseDecodeUnsatisfiedReferenceStack = NULL;
+	ReverseDecodeSingleFrameStack = NULL;
+	ReverseDecodeStack = NULL;
+	DeferredCodedFrameBuffer = NULL;
+	DeferredParsedFrameParameters = NULL;
+	DeferredParsedVideoParameters = NULL;
+	DeferredCodedFrameBufferSecondField = NULL;
+	DeferredParsedFrameParametersSecondField = NULL;
+	DeferredParsedVideoParametersSecondField = NULL;
 //
-	Configuration.SupportSmoothReversePlay      = true;     // By default we support smooth reverse
-	Configuration.InitializeStartCodeList   = true;     // By default we get the start code lists
-	RevPlaySmoothReverseFailureCount        = 0;
+	Configuration.SupportSmoothReversePlay = true; // By default we support smooth reverse
+	Configuration.InitializeStartCodeList = true; // By default we get the start code lists
+	RevPlaySmoothReverseFailureCount = 0;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destructor function
+// The Destructor function
 //
 
 FrameParser_Video_c::~FrameParser_Video_c(void)
@@ -90,10 +90,10 @@ FrameParser_Video_c::~FrameParser_Video_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Halt function, give up access to any registered resources
+// The Halt function, give up access to any registered resources
 //
 
-FrameParserStatus_t   FrameParser_Video_c::Halt(void)
+FrameParserStatus_t FrameParser_Video_c::Halt(void)
 {
 	if (!TestComponentState(ComponentRunning))
 		return FrameParserNoError;
@@ -106,40 +106,40 @@ FrameParserStatus_t   FrameParser_Video_c::Halt(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Reset function release any resources, and reset all variable
+// The Reset function release any resources, and reset all variable
 //
 
-FrameParserStatus_t   FrameParser_Video_c::Reset(void)
+FrameParserStatus_t FrameParser_Video_c::Reset(void)
 {
-	ParsedVideoParameters               = NULL;
-	CollapseHolesInDisplayIndices       = true;
-	NextDecodeFieldIndex                = 0;
-	NextDisplayFieldIndex               = 0;
-	RevPlaySmoothReverseFailureCount        = 0;
+	ParsedVideoParameters = NULL;
+	CollapseHolesInDisplayIndices = true;
+	NextDecodeFieldIndex = 0;
+	NextDisplayFieldIndex = 0;
+	RevPlaySmoothReverseFailureCount = 0;
 //
-	NewStreamParametersSeenButNotQueued     = false;
-	CodedFramePlaybackTimeValid                 = false;
-	CodedFrameDecodeTimeValid                   = false;
-	AccumulatedPictureStructure                 = StructureEmpty;
-	LastRecordedPlaybackTimeDisplayFieldIndex   = 0;
-	LastRecordedNormalizedPlaybackTime          = INVALID_TIME;
-	LastRecordedDecodeTimeFieldIndex            = 0;
-	LastRecordedNormalizedDecodeTime            = INVALID_TIME;
-	LastSeenContentFrameRate            = 0;
-	LastSeenContentWidth            = 0;
-	LastSeenContentHeight           = 0;
+	NewStreamParametersSeenButNotQueued = false;
+	CodedFramePlaybackTimeValid = false;
+	CodedFrameDecodeTimeValid = false;
+	AccumulatedPictureStructure = StructureEmpty;
+	LastRecordedPlaybackTimeDisplayFieldIndex = 0;
+	LastRecordedNormalizedPlaybackTime = INVALID_TIME;
+	LastRecordedDecodeTimeFieldIndex = 0;
+	LastRecordedNormalizedDecodeTime = INVALID_TIME;
+	LastSeenContentFrameRate = 0;
+	LastSeenContentWidth = 0;
+	LastSeenContentHeight = 0;
 	RevPlayClearResourceUtilization();
 	// Added by PB
-	DeferredCodedFrameBuffer                    = NULL;
-	DeferredParsedFrameParameters               = NULL;
-	DeferredParsedVideoParameters               = NULL;
-	DeferredCodedFrameBufferSecondField         = NULL;
-	DeferredParsedFrameParametersSecondField    = NULL;
-	DeferredParsedVideoParametersSecondField    = NULL;
-	LastFieldRate                               = 1;
-	ValidPTSDeducedFrameRate            = false;
-	StandardPTSDeducedFrameRate         = false;
-	LastStandardPTSDeducedFrameRate     = 0;
+	DeferredCodedFrameBuffer = NULL;
+	DeferredParsedFrameParameters = NULL;
+	DeferredParsedVideoParameters = NULL;
+	DeferredCodedFrameBufferSecondField = NULL;
+	DeferredParsedFrameParametersSecondField = NULL;
+	DeferredParsedVideoParametersSecondField = NULL;
+	LastFieldRate = 1;
+	ValidPTSDeducedFrameRate = false;
+	StandardPTSDeducedFrameRate = false;
+	LastStandardPTSDeducedFrameRate = 0;
 //
 	if (ReverseQueuedPostDecodeSettingsRing != NULL)
 	{
@@ -149,17 +149,17 @@ FrameParserStatus_t   FrameParser_Video_c::Reset(void)
 	if (ReverseDecodeUnsatisfiedReferenceStack != NULL)
 	{
 		delete ReverseDecodeUnsatisfiedReferenceStack;
-		ReverseDecodeUnsatisfiedReferenceStack  = NULL;
+		ReverseDecodeUnsatisfiedReferenceStack = NULL;
 	}
 	if (ReverseDecodeSingleFrameStack != NULL)
 	{
 		delete ReverseDecodeSingleFrameStack;
-		ReverseDecodeSingleFrameStack       = NULL;
+		ReverseDecodeSingleFrameStack = NULL;
 	}
 	if (ReverseDecodeStack != NULL)
 	{
 		delete ReverseDecodeStack;
-		ReverseDecodeStack                      = NULL;
+		ReverseDecodeStack = NULL;
 	}
 //
 	return FrameParser_Base_c::Reset();
@@ -167,24 +167,24 @@ FrameParserStatus_t   FrameParser_Video_c::Reset(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The register output ring function
+// The register output ring function
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RegisterOutputBufferRing(
-	Ring_t          Ring)
+FrameParserStatus_t FrameParser_Video_c::RegisterOutputBufferRing(
+	Ring_t Ring)
 {
-	FrameParserStatus_t     Status;
+	FrameParserStatus_t Status;
 	//
 	// First allow the base class to perform it's operations,
 	// as we operate on the buffer pool obtained by it.
 	//
-	Status      = FrameParser_Base_c::RegisterOutputBufferRing(Ring);
+	Status = FrameParser_Base_c::RegisterOutputBufferRing(Ring);
 	if (Status != FrameParserNoError)
 		return Status;
 	//
 	// Obtain stacks used in reverse play
 	//
-	ReverseDecodeUnsatisfiedReferenceStack      = new class StackGeneric_c(FrameBufferCount);
+	ReverseDecodeUnsatisfiedReferenceStack = new class StackGeneric_c(FrameBufferCount);
 	if ((ReverseDecodeUnsatisfiedReferenceStack == NULL) ||
 			(ReverseDecodeUnsatisfiedReferenceStack->InitializationStatus != StackNoError))
 	{
@@ -192,7 +192,7 @@ FrameParserStatus_t   FrameParser_Video_c::RegisterOutputBufferRing(
 		SetComponentState(ComponentInError);
 		return FrameParserFailedToCreateReversePlayStacks;
 	}
-	ReverseDecodeSingleFrameStack         = new class StackGeneric_c(FrameBufferCount);
+	ReverseDecodeSingleFrameStack = new class StackGeneric_c(FrameBufferCount);
 	if ((ReverseDecodeSingleFrameStack == NULL) ||
 			(ReverseDecodeSingleFrameStack->InitializationStatus != StackNoError))
 	{
@@ -200,7 +200,7 @@ FrameParserStatus_t   FrameParser_Video_c::RegisterOutputBufferRing(
 		SetComponentState(ComponentInError);
 		return FrameParserFailedToCreateReversePlayStacks;
 	}
-	ReverseDecodeStack  = new class StackGeneric_c(FrameBufferCount);
+	ReverseDecodeStack = new class StackGeneric_c(FrameBufferCount);
 	if ((ReverseDecodeStack == NULL) ||
 			(ReverseDecodeStack->InitializationStatus != StackNoError))
 	{
@@ -211,7 +211,7 @@ FrameParserStatus_t   FrameParser_Video_c::RegisterOutputBufferRing(
 	//
 	// Attach the video specific parsed frame parameters to every element of the pool
 	//
-	Status      = CodedFrameBufferPool->AttachMetaData(Player->MetaDataParsedVideoParametersType);
+	Status = CodedFrameBufferPool->AttachMetaData(Player->MetaDataParsedVideoParametersType);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "FrameParser_Video_c::RegisterCodedFrameBufferPool - Failed to attach parsed video parameters to all coded frame buffers.\n");
@@ -237,12 +237,12 @@ FrameParserStatus_t   FrameParser_Video_c::RegisterOutputBufferRing(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The input function perform video specific operations
+// The input function perform video specific operations
 //
 
-FrameParserStatus_t   FrameParser_Video_c::Input(Buffer_t                  CodedBuffer)
+FrameParserStatus_t FrameParser_Video_c::Input(Buffer_t CodedBuffer)
 {
-	FrameParserStatus_t     Status;
+	FrameParserStatus_t Status;
 	//
 	// Are we allowed in here
 	//
@@ -250,18 +250,18 @@ FrameParserStatus_t   FrameParser_Video_c::Input(Buffer_t                  Coded
 	//
 	// Initialize context pointers
 	//
-	ParsedVideoParameters       = NULL;
+	ParsedVideoParameters = NULL;
 	//
 	// First perform base operations
 	//
-	Status      = FrameParser_Base_c::Input(CodedBuffer);
+	Status = FrameParser_Base_c::Input(CodedBuffer);
 	if (Status != FrameParserNoError)
 		return Status;
 	st_relayfs_write(ST_RELAY_TYPE_CODED_VIDEO_BUFFER, ST_RELAY_SOURCE_VIDEO_FRAME_PARSER, (unsigned char *)BufferData, BufferLength, 0);
 	//
 	// Obtain video specific pointers to data associated with the buffer.
 	//
-	Status      = Buffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void **)(&ParsedVideoParameters));
+	Status = Buffer->ObtainMetaDataReference(Player->MetaDataParsedVideoParametersType, (void **)(&ParsedVideoParameters));
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "FrameParser_Video_c::Input - Unable to obtain the meta data \"ParsedVideoParameters\".\n");
@@ -276,14 +276,14 @@ FrameParserStatus_t   FrameParser_Video_c::Input(Buffer_t                  Coded
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The standard processing chain for a single input buffer
-//      this is the video specific implementation, it probably
-//      differs quite significantly from the audio implementation.
+// The standard processing chain for a single input buffer
+// this is the video specific implementation, it probably
+// differs quite significantly from the audio implementation.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
+FrameParserStatus_t FrameParser_Video_c::ProcessBuffer(void)
 {
-	FrameParserStatus_t     Status;
+	FrameParserStatus_t Status;
 	//
 	// Handle discontinuity in input stream
 	//
@@ -291,9 +291,9 @@ FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
 	{
 #if 0
 		report(severity_info, "Disco - %d %d %d - %d (%d %d %d)\n",
-			   CodedFrameParameters->StreamDiscontinuity, CodedFrameParameters->ContinuousReverseJump, CodedFrameParameters->FlushBeforeDiscontinuity,
-			   (PlaybackDirection == PlayForward),
-			   ReverseDecodeStack->NonEmpty(), ReverseDecodeUnsatisfiedReferenceStack->NonEmpty(), ReverseDecodeSingleFrameStack->NonEmpty());
+		       CodedFrameParameters->StreamDiscontinuity, CodedFrameParameters->ContinuousReverseJump, CodedFrameParameters->FlushBeforeDiscontinuity,
+		       (PlaybackDirection == PlayForward),
+		       ReverseDecodeStack->NonEmpty(), ReverseDecodeUnsatisfiedReferenceStack->NonEmpty(), ReverseDecodeSingleFrameStack->NonEmpty());
 #endif
 		if ((PlaybackDirection == PlayBackward) && CodedFrameParameters->ContinuousReverseJump)
 		{
@@ -305,17 +305,17 @@ FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
 				ForPlayPurgeQueuedPostDecodeParameterSettings();
 			if ((PlaybackDirection == PlayBackward) || ReverseDecodeStack->NonEmpty() || ReverseDecodeUnsatisfiedReferenceStack->NonEmpty())
 				RevPlayPurgeDecodeStacks();
-			CollapseHolesInDisplayIndices       = true;
-			LastRecordedPlaybackTimeDisplayFieldIndex   = 0;                    // Invalidate the time bases used in ongoing calculations
-			LastRecordedNormalizedPlaybackTime          = INVALID_TIME;
-			LastRecordedDecodeTimeFieldIndex            = 0;
-			LastRecordedNormalizedDecodeTime            = INVALID_TIME;
+			CollapseHolesInDisplayIndices = true;
+			LastRecordedPlaybackTimeDisplayFieldIndex = 0; // Invalidate the time bases used in ongoing calculations
+			LastRecordedNormalizedPlaybackTime = INVALID_TIME;
+			LastRecordedDecodeTimeFieldIndex = 0;
+			LastRecordedNormalizedDecodeTime = INVALID_TIME;
 			ResetReferenceFrameList();
 		}
 		AccumulatedPictureStructure = StructureEmpty;
-		FirstDecodeAfterInputJump       = true;
-		SurplusDataInjected             = CodedFrameParameters->FlushBeforeDiscontinuity;
-		ContinuousReverseJump           = CodedFrameParameters->ContinuousReverseJump;
+		FirstDecodeAfterInputJump = true;
+		SurplusDataInjected = CodedFrameParameters->FlushBeforeDiscontinuity;
+		ContinuousReverseJump = CodedFrameParameters->ContinuousReverseJump;
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnOutputPartialDecodeBuffers);
 	}
 	//
@@ -329,7 +329,7 @@ FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
 		if (!CodedFrameParameters->StreamDiscontinuity)
 		{
 			Buffer->IncrementReferenceCount(IdentifierFrameParserMarkerFrame);
-			OutputRing->Insert((uintptr_t)Buffer);
+			OutputRing->Insert((unsigned int)Buffer);
 		}
 		return FrameParserNoError;
 	}
@@ -338,20 +338,20 @@ FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
 	//
 	if (CodedFrameParameters->PlaybackTimeValid)
 	{
-		CodedFramePlaybackTimeValid     = true;
-		CodedFramePlaybackTime          = CodedFrameParameters->PlaybackTime;
+		CodedFramePlaybackTimeValid = true;
+		CodedFramePlaybackTime = CodedFrameParameters->PlaybackTime;
 	}
 	if (CodedFrameParameters->DecodeTimeValid)
 	{
-		CodedFrameDecodeTimeValid       = true;
-		CodedFrameDecodeTime            = CodedFrameParameters->DecodeTime;
+		CodedFrameDecodeTimeValid = true;
+		CodedFrameDecodeTime = CodedFrameParameters->DecodeTime;
 	}
 	//
 	// Parse the headers
 	//
-	FrameToDecode                       = false;
-	ParsedVideoParameters->FirstSlice   = true;         // Default for non-slice decoders
-	Status      = ReadHeaders();
+	FrameToDecode = false;
+	ParsedVideoParameters->FirstSlice = true; // Default for non-slice decoders
+	Status = ReadHeaders();
 	if (Status != FrameParserNoError)
 		return Status;
 	//
@@ -363,59 +363,59 @@ FrameParserStatus_t   FrameParser_Video_c::ProcessBuffer(void)
 	// Perform the separate chain depending on the direction of play
 	//
 	if (PlaybackDirection == PlayForward)
-		Status  = ForPlayProcessFrame();
+		Status = ForPlayProcessFrame();
 	else
-		Status  = RevPlayProcessFrame();
+		Status = RevPlayProcessFrame();
 //
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Deal with decode of a single frame in forward play
+// Deal with decode of a single frame in forward play
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ForPlayProcessFrame(void)
+FrameParserStatus_t FrameParser_Video_c::ForPlayProcessFrame(void)
 {
-	FrameParserStatus_t     Status;
+	FrameParserStatus_t Status;
 	//
 	// Have we missed any new stream parameters
 	//
 	if (NewStreamParametersSeenButNotQueued)
-		ParsedFrameParameters->NewStreamParameters  = true;
+		ParsedFrameParameters->NewStreamParameters = true;
 	else if (ParsedFrameParameters->NewStreamParameters)
-		NewStreamParametersSeenButNotQueued     = true;
+		NewStreamParametersSeenButNotQueued = true;
 	//
 	// Prepare the reference frame list for this frame
 	//
-	Status      = PrepareReferenceFrameList();
+	Status = PrepareReferenceFrameList();
 	if (Status != FrameParserNoError)
 		return Status;
 	//
 	// Can we generate any queued index and pts values based on what we have seen
 	//
-	Status      = ForPlayProcessQueuedPostDecodeParameterSettings();
+	Status = ForPlayProcessQueuedPostDecodeParameterSettings();
 	if (Status != FrameParserNoError)
 		return Status;
 	//
 	// Calculate the display index/PTS values
 	//
-	Status      = ForPlayGeneratePostDecodeParameterSettings();
+	Status = ForPlayGeneratePostDecodeParameterSettings();
 	if (Status != FrameParserNoError)
 		return Status;
 	//
 	// Queue the frame for decode
 	//
-	Status      = ForPlayQueueFrameForDecode();
+	Status = ForPlayQueueFrameForDecode();
 	if (Status != FrameParserNoError)
 		return Status;
-	FirstDecodeAfterInputJump           = false;
-	SurplusDataInjected                 = false;
-	ContinuousReverseJump               = false;
+	FirstDecodeAfterInputJump = false;
+	SurplusDataInjected = false;
+	ContinuousReverseJump = false;
 	//
 	// Update reference frame management
 	//
-	Status      = ForPlayUpdateReferenceFrameList();
+	Status = ForPlayUpdateReferenceFrameList();
 	if (Status != FrameParserNoError)
 		return Status;
 	//
@@ -423,20 +423,20 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayProcessFrame(void)
 	// then clean out the frame labellings.
 	//
 	if (CodedFrameParameters->FollowedByStreamTerminate)
-		Status  = ForPlayPurgeQueuedPostDecodeParameterSettings();
+		Status = ForPlayPurgeQueuedPostDecodeParameterSettings();
 //
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Deal with a single frame in reverse play
+// Deal with a single frame in reverse play
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessFrame(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayProcessFrame(void)
 {
-	FrameParserStatus_t     Status;
-	bool            NewFrame;
+	FrameParserStatus_t Status;
+	bool NewFrame;
 	//
 	// If we cannot handle smooth reverse, then discard all none independent
 	// frames but to ensure decent timing we increment field counts.
@@ -444,7 +444,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessFrame(void)
 	if (!Configuration.SupportSmoothReversePlay &&
 			!ParsedFrameParameters->IndependentFrame)
 	{
-		NextDisplayFieldIndex       -= (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
+		NextDisplayFieldIndex -= (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
 		return FrameParserNoError;
 	}
 	//
@@ -452,7 +452,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessFrame(void)
 	//
 	if (!RevPlayDiscardingState)
 	{
-		Status  = RevPlayCheckResourceUtilization();
+		Status = RevPlayCheckResourceUtilization();
 		if (Status != FrameParserNoError)
 		{
 			report(severity_error, "FrameParser_Video_c::RevPlayProcessFrame - Failed to check resource utilization - Implementation error.\n");
@@ -465,8 +465,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessFrame(void)
 	// frame/field discarded, and release it
 	// (we just don't claim to effect a release).
 	//
-	NewFrame    = ParsedFrameParameters->NewFrameParameters &&
-				  ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+	NewFrame = ParsedFrameParameters->NewFrameParameters &&
+		   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (RevPlayDiscardingState)
 	{
 		if (NewFrame)
@@ -483,29 +483,29 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessFrame(void)
 	//
 	// Queue the frame for decode
 	//
-	Status      = RevPlayQueueFrameForDecode();
+	Status = RevPlayQueueFrameForDecode();
 	if (Status != FrameParserNoError)
 		return Status;
-	FirstDecodeAfterInputJump           = false;
-	SurplusDataInjected                 = false;
-	ContinuousReverseJump               = false;
+	FirstDecodeAfterInputJump = false;
+	SurplusDataInjected = false;
+	ContinuousReverseJump = false;
 	//
 	// Update reference frame management
 	//
-	Status      = RevPlayAppendToReferenceFrameList();
+	Status = RevPlayAppendToReferenceFrameList();
 //
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Addition to the base queue a buffer for decode increments
-//      the field index.
+// Addition to the base queue a buffer for decode increments
+// the field index.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ForPlayQueueFrameForDecode(void)
+FrameParserStatus_t FrameParser_Video_c::ForPlayQueueFrameForDecode(void)
 {
-	PlayerStatus_t      Status;
+	PlayerStatus_t Status;
 	PlayerEventRecord_t Event;
 	//
 	// Is there anything we should signal
@@ -513,34 +513,34 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayQueueFrameForDecode(void)
 	if ((LastSeenContentFrameRate != ParsedVideoParameters->Content.FrameRate) &&
 			((EventMask & EventFrameRateChangeParse) != 0))
 	{
-		Event.Code          = EventFrameRateChangeParse;
-		Event.Playback          = Playback;
-		Event.Stream            = Stream;
-		Event.PlaybackTime      = ParsedFrameParameters->NativePlaybackTime;
-		Event.Rational          = ParsedVideoParameters->Content.FrameRate;
-		Status              = Player->SignalEvent(&Event);
+		Event.Code = EventFrameRateChangeParse;
+		Event.Playback = Playback;
+		Event.Stream = Stream;
+		Event.PlaybackTime = ParsedFrameParameters->NativePlaybackTime;
+		Event.Rational = ParsedVideoParameters->Content.FrameRate;
+		Status = Player->SignalEvent(&Event);
 		if (Status != PlayerNoError)
 			report(severity_error, "FrameParser_Video_c::ForPlayQueueFrameForDecode - Failed to signal event.\n");
 	}
 //
-	if (((LastSeenContentWidth  != ParsedVideoParameters->Content.Width) ||
+	if (((LastSeenContentWidth != ParsedVideoParameters->Content.Width) ||
 			(LastSeenContentHeight != ParsedVideoParameters->Content.Height)) &&
 			((EventMask & EventSizeChangeParse) != 0))
 	{
-		Event.Code          = EventSizeChangeParse;
-		Event.Playback          = Playback;
-		Event.Stream            = Stream;
-		Event.PlaybackTime      = ParsedFrameParameters->NativePlaybackTime;
-		Event.Value[0].UnsignedInt  = ParsedVideoParameters->Content.Width;
-		Event.Value[1].UnsignedInt  = ParsedVideoParameters->Content.Height;
-		Status              = Player->SignalEvent(&Event);
+		Event.Code = EventSizeChangeParse;
+		Event.Playback = Playback;
+		Event.Stream = Stream;
+		Event.PlaybackTime = ParsedFrameParameters->NativePlaybackTime;
+		Event.Value[0].UnsignedInt = ParsedVideoParameters->Content.Width;
+		Event.Value[1].UnsignedInt = ParsedVideoParameters->Content.Height;
+		Status = Player->SignalEvent(&Event);
 		if (Status != PlayerNoError)
 			report(severity_error, "FrameParser_Video_c::ForPlayQueueFrameForDecode - Failed to signal event.\n");
 	}
 //
-	LastSeenContentFrameRate        = ParsedVideoParameters->Content.FrameRate;
-	LastSeenContentWidth        = ParsedVideoParameters->Content.Width;
-	LastSeenContentHeight       = ParsedVideoParameters->Content.Height;
+	LastSeenContentFrameRate = ParsedVideoParameters->Content.FrameRate;
+	LastSeenContentWidth = ParsedVideoParameters->Content.Width;
+	LastSeenContentHeight = ParsedVideoParameters->Content.Height;
 	//
 	// Force the rewind of decode frame index, if this is not a first slice,
 	// and only increment the decode field index if it is a first slice.
@@ -550,67 +550,67 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayQueueFrameForDecode(void)
 	else
 	{
 		if (PlaybackDirection == PlayForward)
-			NextDecodeFieldIndex    += (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
+			NextDecodeFieldIndex += (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
 		else
-			NextDecodeFieldIndex    -= (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
+			NextDecodeFieldIndex -= (ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1]);
 	}
 	//
 	// Output queuing debug information
 	//
 #if 0
-//if( ParsedVideoParameters->FirstSlice  && ParsedFrameParameters->IndependentFrame )
+//if( ParsedVideoParameters->FirstSlice && ParsedFrameParameters->IndependentFrame )
 	if (ParsedVideoParameters->FirstSlice)
 	{
-		unsigned int     i;
-		unsigned int     Length;
-		unsigned char   *Data;
-		unsigned int     Checksum;
+		unsigned int i;
+		unsigned int Length;
+		unsigned char *Data;
+		unsigned int Checksum;
 		Buffer->ObtainDataReference(NULL, &Length, (void **)&Data);
-		Length      -= ParsedFrameParameters->DataOffset;
-		Data        += ParsedFrameParameters->DataOffset;
-		Checksum    = 0;
+		Length -= ParsedFrameParameters->DataOffset;
+		Data += ParsedFrameParameters->DataOffset;
+		Checksum = 0;
 		for (i = 0; i < Length; i++)
-			Checksum        += Data[i];
+			Checksum += Data[i];
 		report(severity_info, "Q %d ( K = %d, R = %d, RL= {%d %d %d}, ST = %d, PS = %d, FPFP= %d, FS = %d) (%08x %d)\n",
-			   NextDecodeFrameIndex,
-			   ParsedFrameParameters->KeyFrame,
-			   ParsedFrameParameters->ReferenceFrame,
-			   ParsedFrameParameters->ReferenceFrameList[0].EntryCount, ParsedFrameParameters->ReferenceFrameList[1].EntryCount, ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
-			   ParsedVideoParameters->SliceType,
-			   ParsedVideoParameters->PictureStructure,
-			   ParsedFrameParameters->FirstParsedParametersForOutputFrame,
-			   ParsedVideoParameters->FirstSlice,
-			   Checksum, Length);
+		       NextDecodeFrameIndex,
+		       ParsedFrameParameters->KeyFrame,
+		       ParsedFrameParameters->ReferenceFrame,
+		       ParsedFrameParameters->ReferenceFrameList[0].EntryCount, ParsedFrameParameters->ReferenceFrameList[1].EntryCount, ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
+		       ParsedVideoParameters->SliceType,
+		       ParsedVideoParameters->PictureStructure,
+		       ParsedFrameParameters->FirstParsedParametersForOutputFrame,
+		       ParsedVideoParameters->FirstSlice,
+		       Checksum, Length);
 #if 0
 		report(severity_info, "\t\t%4d %4d %4d %4d - %4d %4d %4d %4d - %4d %4d %4d %4d\n",
-			   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
-			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
-			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3]);
+		       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
+		       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
+		       ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3]);
 #endif
 	}
 #endif
 	//
 	// Allow the base class to actually queue the frame
 	//
-	NewStreamParametersSeenButNotQueued   = false;
+	NewStreamParametersSeenButNotQueued = false;
 	return FrameParser_Base_c::QueueFrameForDecode();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Specific reverse play implementation of queue for decode
-//      the field index.
+// Specific reverse play implementation of queue for decode
+// the field index.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayQueueFrameForDecode(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayQueueFrameForDecode(void)
 {
-	FrameParserStatus_t     Status;
+	FrameParserStatus_t Status;
 	//
 	// Prepare the reference frame list for this frame
 	//
-	Status  = PrepareReferenceFrameList();
+	Status = PrepareReferenceFrameList();
 	if (Status != FrameParserNoError)
-		ParsedFrameParameters->NumberOfReferenceFrameLists  = INVALID_INDEX;
+		ParsedFrameParameters->NumberOfReferenceFrameLists = INVALID_INDEX;
 	//
 	// Deal with reference frame
 	//
@@ -623,14 +623,14 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayQueueFrameForDecode(void)
 		{
 			// This happens for some perfectly valid H264 streams, we simply cannot reverse play these without slipping into IDR only synchronization mode
 			report(severity_error, "FrameParser_Video_c::RevPlayQueueFrameForDecode - Insufficient reference frames for a reference frame in reverse play mode.\n");
-			RevPlayDiscardingState  = true;
+			RevPlayDiscardingState = true;
 			RevPlaySmoothReverseFailureCount++;
 			return FrameParserInsufficientReferenceFrames;
 		}
 		//
 		// Go ahead and decode it (just as for forward play)
 		//
-		Status  = ForPlayQueueFrameForDecode();
+		Status = ForPlayQueueFrameForDecode();
 		if (Status != FrameParserNoError)
 		{
 			report(severity_error, "FrameParser_Video_c::RevPlayQueueFrameForDecode - Failed to queue reference frames for decode.\n");
@@ -647,34 +647,34 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayQueueFrameForDecode(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is responsible for walking the stacks to handle
-//      reverse decode.
+// This function is responsible for walking the stacks to handle
+// reverse decode.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
 {
-	FrameParserStatus_t               Status;
-	Buffer_t                          PreservedBuffer;
-	ParsedFrameParameters_t          *PreservedParsedFrameParameters;
-	ParsedVideoParameters_t          *PreservedParsedVideoParameters;
+	FrameParserStatus_t Status;
+	Buffer_t PreservedBuffer;
+	ParsedFrameParameters_t *PreservedParsedFrameParameters;
+	ParsedVideoParameters_t *PreservedParsedVideoParameters;
 #if 0
 	report(severity_info, "Utilized %2d %2d %2d\n", NumberOfUtilizedFrameParameters, NumberOfUtilizedStreamParameters, NumberOfUtilizedDecodeBuffers);
 	{
-		unsigned int                      C0, C1, C2;
+		unsigned int C0, C1, C2;
 		FrameParametersPool->GetPoolUsage(&C0, &C1, NULL, NULL, NULL);
-		report(severity_info, "         FP %d/%d => %d/%d\n", NumberOfUtilizedFrameParameters, Configuration.FrameParametersCount, C1, C0);
+		report(severity_info, " FP %d/%d => %d/%d\n", NumberOfUtilizedFrameParameters, Configuration.FrameParametersCount, C1, C0);
 		Manifestor->GetDecodeBufferCount(&C2);
 		DecodeBufferPool->GetPoolUsage(&C0, &C1, NULL, NULL, NULL);
-		report(severity_info, "         DB %d/%d => %d/%d\n", NumberOfUtilizedDecodeBuffers, C2, C1, C0);
+		report(severity_info, " DB %d/%d => %d/%d\n", NumberOfUtilizedDecodeBuffers, C2, C1, C0);
 	}
 #endif
 	//
 	// Preserve the pointers relating to the current buffer
 	// while we trawl the reverse decode stacks.
 	//
-	PreservedBuffer                     = Buffer;
-	PreservedParsedFrameParameters      = ParsedFrameParameters;
-	PreservedParsedVideoParameters      = ParsedVideoParameters;
+	PreservedBuffer = Buffer;
+	PreservedParsedFrameParameters = ParsedFrameParameters;
+	PreservedParsedVideoParameters = ParsedVideoParameters;
 	//
 	// Move last times unsatisfied reference reverse decode stack
 	// (these were the frames in the open group that were missing
@@ -691,7 +691,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
 		RevPlayNextSequenceFrameProcess();
 		if (ParsedFrameParameters->NumberOfReferenceFrameLists == INVALID_INDEX)
 		{
-			Status  = PrepareReferenceFrameList();
+			Status = PrepareReferenceFrameList();
 			if (Status != FrameParserNoError)
 			{
 				report(severity_error, "FrameParser_Video_c::RevPlayProcessDecodeStacks - Insufficient reference frames for a deferred decode.\n");
@@ -745,7 +745,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
 			//
 			// Calculate the display index/PTS values
 			//
-			Status  = RevPlayGeneratePostDecodeParameterSettings();
+			Status = RevPlayGeneratePostDecodeParameterSettings();
 			if (Status != FrameParserNoError)
 			{
 				// We are in serious trouble, deadlock is on its way.
@@ -805,9 +805,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
 	//
 	// Restore the preserved pointers before completing
 	//
-	Buffer                      = PreservedBuffer;
-	ParsedFrameParameters       = PreservedParsedFrameParameters;
-	ParsedVideoParameters       = PreservedParsedVideoParameters;
+	Buffer = PreservedBuffer;
+	ParsedFrameParameters = PreservedParsedFrameParameters;
+	ParsedVideoParameters = PreservedParsedVideoParameters;
 	ReverseQueuedPostDecodeSettingsRing->Flush();
 	ReverseDecodeSingleFrameStack->Flush();
 	return FrameParserNoError;
@@ -815,23 +815,23 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayProcessDecodeStacks(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is responsible for walking the stacks to discard
-//      everything on them when we abandon reverse decode.
+// This function is responsible for walking the stacks to discard
+// everything on them when we abandon reverse decode.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 {
-	FrameParserStatus_t               Status;
-	Buffer_t                          PreservedBuffer;
-	ParsedFrameParameters_t          *PreservedParsedFrameParameters;
-	ParsedVideoParameters_t          *PreservedParsedVideoParameters;
+	FrameParserStatus_t Status;
+	Buffer_t PreservedBuffer;
+	ParsedFrameParameters_t *PreservedParsedFrameParameters;
+	ParsedVideoParameters_t *PreservedParsedVideoParameters;
 	//
 	// Preserve the pointers relating to the current buffer
 	// while we trawl the reverse decode stacks.
 	//
-	PreservedBuffer                     = Buffer;
-	PreservedParsedFrameParameters      = ParsedFrameParameters;
-	PreservedParsedVideoParameters      = ParsedVideoParameters;
+	PreservedBuffer = Buffer;
+	PreservedParsedFrameParameters = ParsedFrameParameters;
+	PreservedParsedVideoParameters = ParsedVideoParameters;
 	//
 	// Move last times unsatisfied reference reverse decode stack
 	// (these were the frames in the open group that were missing
@@ -863,7 +863,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 			// Calculate the display index/PTS values this guarantees that
 			// refrence frames that are held in frame re-ordering will be released.
 			//
-			Status      = RevPlayGeneratePostDecodeParameterSettings();
+			Status = RevPlayGeneratePostDecodeParameterSettings();
 			if (Status != FrameParserNoError)
 			{
 				// We are in serious trouble, deadlock is on its way.
@@ -887,7 +887,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 	// some codec may still hold frames for post decode parameter settings
 	// (H264 specifically), so we issue a purge on this operation.
 	//
-	Status  = RevPlayPurgeQueuedPostDecodeParameterSettings();
+	Status = RevPlayPurgeQueuedPostDecodeParameterSettings();
 	if (Status != FrameParserNoError)
 	{
 		// We are in serious trouble, deadlock may be on its way.
@@ -896,9 +896,9 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 	//
 	// Restore the preserved pointers before completing
 	//
-	Buffer                      = PreservedBuffer;
-	ParsedFrameParameters       = PreservedParsedFrameParameters;
-	ParsedVideoParameters       = PreservedParsedVideoParameters;
+	Buffer = PreservedBuffer;
+	ParsedFrameParameters = PreservedParsedFrameParameters;
+	ParsedVideoParameters = PreservedParsedVideoParameters;
 	//
 	// Clear the resource utilization counts
 	//
@@ -909,25 +909,25 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeDecodeStacks(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//	This function is responsible for walking only the unsatisfied
+// This function is responsible for walking only the unsatisfied
 //	reference stack, when we have a failure to do smooth reverse decode,
 //	to discard everything on it.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack(void)
 {
-	FrameParserStatus_t               Status;
-	Buffer_t                          PreservedBuffer;
-	ParsedFrameParameters_t          *PreservedParsedFrameParameters;
-	ParsedVideoParameters_t          *PreservedParsedVideoParameters;
-	bool                  NewFrame;
+	FrameParserStatus_t Status;
+	Buffer_t PreservedBuffer;
+	ParsedFrameParameters_t *PreservedParsedFrameParameters;
+	ParsedVideoParameters_t *PreservedParsedVideoParameters;
+	bool NewFrame;
 	//
 	// Preserve the pointers relating to the
 	// current buffer while we trawl the stack.
 	//
-	PreservedBuffer                     = Buffer;
-	PreservedParsedFrameParameters      = ParsedFrameParameters;
-	PreservedParsedVideoParameters      = ParsedVideoParameters;
+	PreservedBuffer = Buffer;
+	PreservedParsedFrameParameters = ParsedFrameParameters;
+	PreservedParsedVideoParameters = ParsedVideoParameters;
 	//
 	// Now process the stack in reverse order
 	//
@@ -946,7 +946,7 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack
 		//
 		if (ParsedFrameParameters->ReferenceFrame)
 		{
-			Status      = RevPlayGeneratePostDecodeParameterSettings();
+			Status = RevPlayGeneratePostDecodeParameterSettings();
 			if (Status != FrameParserNoError)
 			{
 				// We are in serious trouble, deadlock is on its way.
@@ -961,8 +961,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack
 		//
 		// Adjust the counts of discarded frames
 		//
-		NewFrame    = ParsedFrameParameters->NewFrameParameters &&
-					  ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+		NewFrame = ParsedFrameParameters->NewFrameParameters &&
+			   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (NewFrame)
 			RevPlayDiscardedFrameCount++;
 		//
@@ -973,45 +973,45 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack
 	//
 	// Restore the preserved pointers before completing
 	//
-	Buffer                      = PreservedBuffer;
-	ParsedFrameParameters       = PreservedParsedFrameParameters;
-	ParsedVideoParameters       = PreservedParsedVideoParameters;
+	Buffer = PreservedBuffer;
+	ParsedFrameParameters = PreservedParsedFrameParameters;
+	ParsedVideoParameters = PreservedParsedVideoParameters;
 	return FrameParserNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//	Reverse play function to count resource utilization and check if
+// Reverse play function to count resource utilization and check if
 //	it allows continued smooth reverse play. NOTE this function is only
 //	called if we are not already in a discarding state.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayClearResourceUtilization(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayClearResourceUtilization(void)
 {
-	NumberOfUtilizedFrameParameters     = 0;
-	NumberOfUtilizedStreamParameters        = 0;
-	NumberOfUtilizedDecodeBuffers       = 0;
-	RevPlayDiscardingState          = false;
-	RevPlayAccumulatedFrameCount        = 0;
-	RevPlayDiscardedFrameCount          = 0;
+	NumberOfUtilizedFrameParameters = 0;
+	NumberOfUtilizedStreamParameters = 0;
+	NumberOfUtilizedDecodeBuffers = 0;
+	RevPlayDiscardingState = false;
+	RevPlayAccumulatedFrameCount = 0;
+	RevPlayDiscardedFrameCount = 0;
 	if (RevPlaySmoothReverseFailureCount > MAX_ALLOWED_SMOOTH_REVERSE_PLAY_FAILURES)
-		Configuration.SupportSmoothReversePlay  = false;
+		Configuration.SupportSmoothReversePlay = false;
 	return FrameParserNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//	Reverse play function to count resource utilization and check if
+// Reverse play function to count resource utilization and check if
 //	it allows continued smooth reverse play. NOTE this function is only
 //	called if we are not already in a discarding state.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 {
-	PlayerStatus_t      Status;
-	bool            NewFrame;
-	unsigned int        WorkingCount;
-	unsigned int        DecodeBufferCount;
+	PlayerStatus_t Status;
+	bool NewFrame;
+	unsigned int WorkingCount;
+	unsigned int DecodeBufferCount;
 	PlayerEventRecord_t Event;
 	//
 	// Update our counts of utilized resources
@@ -1020,8 +1020,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 		NumberOfUtilizedFrameParameters++;
 	if (ParsedFrameParameters->NewStreamParameters)
 		NumberOfUtilizedStreamParameters++;
-	NewFrame    = ParsedVideoParameters->FirstSlice &&
-				  ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+	NewFrame = ParsedVideoParameters->FirstSlice &&
+		   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (NewFrame && ParsedFrameParameters->ReferenceFrame)
 		NumberOfUtilizedDecodeBuffers++;
 	//
@@ -1032,13 +1032,13 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 	// this point.
 	//
 	Manifestor->GetDecodeBufferCount(&DecodeBufferCount);
-	WorkingCount    = 2 * (PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS + 1);    /* 2x for field decodes */
-#define RevResourceCheckGE( U, A, T )   if( !RevPlayDiscardingState && ((U) >= (A)) ) {report( severity_info, "FrameParser_Video_c::RevPlayProcessFrame - Unable to smooth reverse (%s)\n", T ); RevPlayDiscardingState = true; }
-#define RevResourceCheckGT( U, A, T )   if( !RevPlayDiscardingState && ((U) > (A)) ) {report( severity_info, "FrameParser_Video_c::RevPlayProcessFrame - Unable to smooth reverse (%s)\n", T ); RevPlayDiscardingState = true; }
+	WorkingCount = 2 * (PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS + 1); /* 2x for field decodes */
+#define RevResourceCheckGE( U, A, T ) if( !RevPlayDiscardingState && ((U) >= (A)) ) {report( severity_info, "FrameParser_Video_c::RevPlayProcessFrame - Unable to smooth reverse (%s)\n", T ); RevPlayDiscardingState = true; }
+#define RevResourceCheckGT( U, A, T ) if( !RevPlayDiscardingState && ((U) > (A)) ) {report( severity_info, "FrameParser_Video_c::RevPlayProcessFrame - Unable to smooth reverse (%s)\n", T ); RevPlayDiscardingState = true; }
 	RevResourceCheckGT(NumberOfUtilizedFrameParameters, (Configuration.FrameParametersCount - WorkingCount), "FrameParameters");
 	RevResourceCheckGE(NumberOfUtilizedStreamParameters, (Configuration.StreamParametersCount - WorkingCount), "StreamParameters");
 	RevResourceCheckGT(NumberOfUtilizedDecodeBuffers, (DecodeBufferCount - 3), "DecodeBuffers");
-	RevResourceCheckGT(NumberOfUtilizedDecodeBuffers, (Configuration.MaxReferenceFrameCount - 3), "ReferenceFrames");    // We only accumulate reference frames
+	RevResourceCheckGT(NumberOfUtilizedDecodeBuffers, (Configuration.MaxReferenceFrameCount - 3), "ReferenceFrames"); // We only accumulate reference frames
 #undef RevResourceCheck
 	//
 	// If we are transitioning to a discard state, then we need to purge
@@ -1050,16 +1050,16 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 	if (RevPlayDiscardingState)
 	{
 		RevPlaySmoothReverseFailureCount++;
-		RevPlayDiscardedFrameCount  = 0;
+		RevPlayDiscardedFrameCount = 0;
 		RevPlayPurgeUnsatisfiedReferenceStack();
 		if ((EventFailureToPlaySmoothReverse & EventMask) != 0)
 		{
-			Event.Code          = EventFailureToPlaySmoothReverse;
-			Event.Playback      = Playback;
-			Event.Stream        = Stream;
-			Event.PlaybackTime      = TIME_NOT_APPLICABLE;
-			Event.UserData      = EventUserData;
-			Status          = Player->SignalEvent(&Event);
+			Event.Code = EventFailureToPlaySmoothReverse;
+			Event.Playback = Playback;
+			Event.Stream = Stream;
+			Event.PlaybackTime = TIME_NOT_APPLICABLE;
+			Event.UserData = EventUserData;
+			Status = Player->SignalEvent(&Event);
 			if (Status != PlayerNoError)
 				report(severity_error, "FrameParser_Video_c::RevPlayCheckResourceUtilization - Failed to signal event.\n");
 		}
@@ -1070,47 +1070,47 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to initialize the post decode parameter
-//      settings for reverse play, these consist of the display frame index,
-//      and presentation time, both of which may be deferred if not explicitly
-//      specified during reverse play.
+// Stream specific function to initialize the post decode parameter
+// settings for reverse play, these consist of the display frame index,
+// and presentation time, both of which may be deferred if not explicitly
+// specified during reverse play.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::InitializePostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_Video_c::InitializePostDecodeParameterSettings(void)
 {
-	bool            ReasonableDecodeTime;
+	bool ReasonableDecodeTime;
 	//
 	// Default setting
 	//
-	ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
-	ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
-	ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
-	ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
-	ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
+	ParsedFrameParameters->DisplayFrameIndex = INVALID_INDEX;
+	ParsedFrameParameters->NativePlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedPlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NativeDecodeTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedDecodeTime = INVALID_TIME;
 	//
 	// Record in the structure the decode and presentation times if specified
 	// specifying the default decode time as the presentation time
 	//
 	if (CodedFramePlaybackTimeValid)
 	{
-		CodedFramePlaybackTimeValid                     = false;
-		ParsedFrameParameters->NativePlaybackTime       = CodedFramePlaybackTime;
+		CodedFramePlaybackTimeValid = false;
+		ParsedFrameParameters->NativePlaybackTime = CodedFramePlaybackTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFramePlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
 	}
 	if (CodedFrameDecodeTimeValid)
 	{
-		CodedFrameDecodeTimeValid                       = false;
-		ReasonableDecodeTime                            = (ParsedFrameParameters->NativePlaybackTime == INVALID_TIME) ||
-				(((CodedFramePlaybackTime - CodedFrameDecodeTime) & 0x1ffffffffull) < MAXIMUM_DECODE_TIME_OFFSET);
+		CodedFrameDecodeTimeValid = false;
+		ReasonableDecodeTime = (ParsedFrameParameters->NativePlaybackTime == INVALID_TIME) ||
+				       ((CodedFramePlaybackTime - CodedFrameDecodeTime) < MAXIMUM_DECODE_TIME_OFFSET);
 		if (ReasonableDecodeTime)
 		{
-			ParsedFrameParameters->NativeDecodeTime     = CodedFrameDecodeTime;
+			ParsedFrameParameters->NativeDecodeTime = CodedFrameDecodeTime;
 			TranslatePlaybackTimeNativeToNormalized(CodedFrameDecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
 		}
 		else
 		{
 			report(severity_error, "FrameParser_Video_c::InitializePostDecodeParameterSettings - (PTS - DTS) ridiculuously large (%lld 90kHz ticks)\n",
-				   (CodedFramePlaybackTime - CodedFrameDecodeTime));
+			       (CodedFramePlaybackTime - CodedFrameDecodeTime));
 		}
 	}
 //
@@ -1119,35 +1119,35 @@ FrameParserStatus_t   FrameParser_Video_c::InitializePostDecodeParameterSettings
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The calculation code in different places to calculate
-//      the display frame index and time stamps, the same for
-//      B frames and deferred reference frames.
+// The calculation code in different places to calculate
+// the display frame index and time stamps, the same for
+// B frames and deferred reference frames.
 //
 
-void   FrameParser_Video_c::CalculateFrameIndexAndPts(
-	ParsedFrameParameters_t         *ParsedFrame,
-	ParsedVideoParameters_t         *ParsedVideo)
+void FrameParser_Video_c::CalculateFrameIndexAndPts(
+	ParsedFrameParameters_t *ParsedFrame,
+	ParsedVideoParameters_t *ParsedVideo)
 {
-	int                      ElapsedFields;
-	long long        ElapsedTime;
-	long long        MicroSecondsPerFrame;
-	int                      FieldIndex;
-	Rational_t               FieldRate;
-	Rational_t               Temp;
-	bool                     DerivePresentationTime;
+	int ElapsedFields;
+	long long ElapsedTime;
+	long long MicroSecondsPerFrame;
+	int FieldIndex;
+	Rational_t FieldRate;
+	Rational_t Temp;
+	bool DerivePresentationTime;
 	//
 	// Calculate the field indices, if this is not the first decode of the
 	// frame abort before proceeding on with display frame and pts/dts generation.
 	//
 	if (PlaybackDirection == PlayForward)
 	{
-		FieldIndex                               = NextDisplayFieldIndex;
-		NextDisplayFieldIndex                   += (ParsedVideo->DisplayCount[0] + ParsedVideo->DisplayCount[1]);
+		FieldIndex = NextDisplayFieldIndex;
+		NextDisplayFieldIndex += (ParsedVideo->DisplayCount[0] + ParsedVideo->DisplayCount[1]);
 	}
 	else
 	{
-		NextDisplayFieldIndex                   -= (ParsedVideo->DisplayCount[0] + ParsedVideo->DisplayCount[1]);
-		FieldIndex                               = NextDisplayFieldIndex;
+		NextDisplayFieldIndex -= (ParsedVideo->DisplayCount[0] + ParsedVideo->DisplayCount[1]);
+		FieldIndex = NextDisplayFieldIndex;
 	}
 	if (!ParsedFrame->FirstParsedParametersForOutputFrame)
 		return;
@@ -1164,26 +1164,26 @@ void   FrameParser_Video_c::CalculateFrameIndexAndPts(
 	//
 	// Calculate the indices
 	//
-	ParsedFrame->DisplayFrameIndex               = NextDisplayFrameIndex++;
-	ParsedFrame->CollapseHolesInDisplayIndices   = CollapseHolesInDisplayIndices;
-	CollapseHolesInDisplayIndices        = false;
+	ParsedFrame->DisplayFrameIndex = NextDisplayFrameIndex++;
+	ParsedFrame->CollapseHolesInDisplayIndices = CollapseHolesInDisplayIndices;
+	CollapseHolesInDisplayIndices = false;
 	//
 	// Obtain the presentation time
 	//
-	DerivePresentationTime      = ParsedFrame->NormalizedPlaybackTime == INVALID_TIME;
+	DerivePresentationTime = ParsedFrame->NormalizedPlaybackTime == INVALID_TIME;
 	if (DerivePresentationTime)
 	{
 		if (LastRecordedNormalizedPlaybackTime != INVALID_TIME)
 		{
-			ElapsedFields                           = FieldIndex - LastRecordedPlaybackTimeDisplayFieldIndex;
-			ElapsedTime                             = LongLongIntegerPart((1000000 / LastFieldRate) * ElapsedFields);
-			ParsedFrame->NormalizedPlaybackTime     = LastRecordedNormalizedPlaybackTime + ElapsedTime;
+			ElapsedFields = FieldIndex - LastRecordedPlaybackTimeDisplayFieldIndex;
+			ElapsedTime = LongLongIntegerPart((1000000 / LastFieldRate) * ElapsedFields);
+			ParsedFrame->NormalizedPlaybackTime = LastRecordedNormalizedPlaybackTime + ElapsedTime;
 			TranslatePlaybackTimeNormalizedToNative(ParsedFrame->NormalizedPlaybackTime, &ParsedFrame->NativePlaybackTime);
 		}
 		else
 		{
-			ParsedFrame->NativePlaybackTime         = UNSPECIFIED_TIME;
-			ParsedFrame->NormalizedPlaybackTime     = UNSPECIFIED_TIME;
+			ParsedFrame->NativePlaybackTime = UNSPECIFIED_TIME;
+			ParsedFrame->NormalizedPlaybackTime = UNSPECIFIED_TIME;
 		}
 	}
 	//
@@ -1191,51 +1191,51 @@ void   FrameParser_Video_c::CalculateFrameIndexAndPts(
 	//
 	if (!DerivePresentationTime && (LastRecordedNormalizedPlaybackTime != INVALID_TIME))
 	{
-		ElapsedFields       = (FieldIndex - LastRecordedPlaybackTimeDisplayFieldIndex) * (ParsedVideo->Content.Progressive ? 2 : 1);
-		ElapsedTime     = ParsedFrame->NormalizedPlaybackTime - LastRecordedNormalizedPlaybackTime;
-		MicroSecondsPerFrame    = (2 * ElapsedTime) / ElapsedFields;
+		ElapsedFields = (FieldIndex - LastRecordedPlaybackTimeDisplayFieldIndex) * (ParsedVideo->Content.Progressive ? 2 : 1);
+		ElapsedTime = ParsedFrame->NormalizedPlaybackTime - LastRecordedNormalizedPlaybackTime;
+		MicroSecondsPerFrame = (2 * ElapsedTime) / ElapsedFields;
 		DeduceFrameRateFromPresentationTime(MicroSecondsPerFrame);
 	}
 	//
 	// We rebase recorded times for out pts derivation, if we
 	// have a specified time or if the field/frame rate has changed (when we have recorded times).
 	//
-	FieldRate                               = ParsedVideo->Content.FrameRate;
+	FieldRate = ParsedVideo->Content.FrameRate;
 	if (!ParsedVideo->Content.Progressive)
-		FieldRate                           = FieldRate * 2;
+		FieldRate = FieldRate * 2;
 	if (!DerivePresentationTime ||
 			((LastRecordedNormalizedPlaybackTime != INVALID_TIME) && (FieldRate != LastFieldRate)))
 	{
-		LastRecordedPlaybackTimeDisplayFieldIndex   = FieldIndex;
-		LastRecordedNormalizedPlaybackTime          = ParsedFrame->NormalizedPlaybackTime;
+		LastRecordedPlaybackTimeDisplayFieldIndex = FieldIndex;
+		LastRecordedNormalizedPlaybackTime = ParsedFrame->NormalizedPlaybackTime;
 	}
-	LastFieldRate       = FieldRate;
+	LastFieldRate = FieldRate;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The calculation code to calculate the decode time stamp.
+// The calculation code to calculate the decode time stamp.
 //
-//      Note the deduced decode times are jittered by up to 1/4
-//      of a frame period. We use field counts in the calculation.
-//      With 3:2 pulldown this jitters the value (not using field
-//      counts in this case would contract all decode times to take
-//      place during 4/5ths of the time). Without 3:2 pulldown the
-//      scheme is accurate to within the calculation error.
-//      We are not concerned about the jitter, because the output
-//      timer allows decodes to commence early by several frame times,
-//      and if the caller requires more accuracy, he/she should specify
-//      decode times rather than allowing us to deduce them.
+// Note the deduced decode times are jittered by up to 1/4
+// of a frame period. We use field counts in the calculation.
+// With 3:2 pulldown this jitters the value (not using field
+// counts in this case would contract all decode times to take
+// place during 4/5ths of the time). Without 3:2 pulldown the
+// scheme is accurate to within the calculation error.
+// We are not concerned about the jitter, because the output
+// timer allows decodes to commence early by several frame times,
+// and if the caller requires more accuracy, he/she should specify
+// decode times rather than allowing us to deduce them.
 //
 
-void   FrameParser_Video_c::CalculateDts(
-	ParsedFrameParameters_t         *ParsedFrame,
-	ParsedVideoParameters_t         *ParsedVideo)
+void FrameParser_Video_c::CalculateDts(
+	ParsedFrameParameters_t *ParsedFrame,
+	ParsedVideoParameters_t *ParsedVideo)
 {
-	unsigned int             ElapsedFields;
-	unsigned long long   ElapsedTime;
-	Rational_t               FieldRate;
-	Rational_t               Temp;
+	unsigned int ElapsedFields;
+	unsigned long long ElapsedTime;
+	Rational_t FieldRate;
+	Rational_t Temp;
 	//
 	// Do nothing if this is not the first decode of a frame
 	//
@@ -1248,48 +1248,48 @@ void   FrameParser_Video_c::CalculateDts(
 	{
 		if (LastRecordedNormalizedDecodeTime != INVALID_TIME)
 		{
-			ElapsedFields                       = NextDecodeFieldIndex - LastRecordedDecodeTimeFieldIndex;
-			FieldRate                           = ParsedVideo->Content.FrameRate;
+			ElapsedFields = NextDecodeFieldIndex - LastRecordedDecodeTimeFieldIndex;
+			FieldRate = ParsedVideo->Content.FrameRate;
 			if (!ParsedVideo->Content.Progressive)
-				FieldRate                       = FieldRate * 2;
-			Temp                                = (1000000 / FieldRate) * ElapsedFields;
-			ElapsedTime                         = Temp.LongLongIntegerPart();
-			ParsedFrame->NormalizedDecodeTime   = LastRecordedNormalizedDecodeTime + ElapsedTime;
+				FieldRate = FieldRate * 2;
+			Temp = (1000000 / FieldRate) * ElapsedFields;
+			ElapsedTime = Temp.LongLongIntegerPart();
+			ParsedFrame->NormalizedDecodeTime = LastRecordedNormalizedDecodeTime + ElapsedTime;
 			TranslatePlaybackTimeNormalizedToNative(ParsedFrame->NormalizedDecodeTime, &ParsedFrame->NativeDecodeTime);
 		}
 		else
 		{
-			ParsedFrame->NativeDecodeTime       = UNSPECIFIED_TIME;
-			ParsedFrame->NormalizedDecodeTime   = UNSPECIFIED_TIME;
+			ParsedFrame->NativeDecodeTime = UNSPECIFIED_TIME;
+			ParsedFrame->NormalizedDecodeTime = UNSPECIFIED_TIME;
 		}
 	}
 	else
 	{
-		LastRecordedDecodeTimeFieldIndex        = NextDecodeFieldIndex;
-		LastRecordedNormalizedDecodeTime        = ParsedFrame->NormalizedDecodeTime;
+		LastRecordedDecodeTimeFieldIndex = NextDecodeFieldIndex;
+		LastRecordedNormalizedDecodeTime = ParsedFrame->NormalizedDecodeTime;
 	}
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The reset reference frame list function
+// The reset reference frame list function
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ResetReferenceFrameList(void)
+FrameParserStatus_t FrameParser_Video_c::ResetReferenceFrameList(void)
 {
 	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
-	ReferenceFrameList.EntryCount       = 0;
+	ReferenceFrameList.EntryCount = 0;
 	return FrameParserNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to purge deferred post decode parameter
-//      settings, these consist of the display frame index, and presentation
-//      time. Here we treat them as if we had received a reference frame.
+// Stream specific function to purge deferred post decode parameter
+// settings, these consist of the display frame index, and presentation
+// time. Here we treat them as if we had received a reference frame.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ForPlayPurgeQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_Video_c::ForPlayPurgeQueuedPostDecodeParameterSettings(void)
 {
 	//
 	// Do we have something to process.
@@ -1303,12 +1303,12 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayPurgeQueuedPostDecodeParameter
 			CalculateFrameIndexAndPts(DeferredParsedFrameParametersSecondField, DeferredParsedVideoParametersSecondField);
 			DeferredCodedFrameBufferSecondField->DecrementReferenceCount();
 		}
-		DeferredCodedFrameBuffer                        = NULL;
-		DeferredParsedFrameParameters                   = NULL;
-		DeferredParsedVideoParameters                   = NULL;
-		DeferredCodedFrameBufferSecondField             = NULL;
-		DeferredParsedFrameParametersSecondField        = NULL;
-		DeferredParsedVideoParametersSecondField        = NULL;
+		DeferredCodedFrameBuffer = NULL;
+		DeferredParsedFrameParameters = NULL;
+		DeferredParsedVideoParameters = NULL;
+		DeferredCodedFrameBufferSecondField = NULL;
+		DeferredParsedFrameParametersSecondField = NULL;
+		DeferredParsedVideoParametersSecondField = NULL;
 	}
 //
 	return FrameParserNoError;
@@ -1316,12 +1316,12 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayPurgeQueuedPostDecodeParameter
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to process deferred post decode parameter
-//      settings, these consist of the display frame index, and presentation
-//      time, they can be processed if we have a new reference frame (in mpeg2)
+// Stream specific function to process deferred post decode parameter
+// settings, these consist of the display frame index, and presentation
+// time, they can be processed if we have a new reference frame (in mpeg2)
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ForPlayProcessQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_Video_c::ForPlayProcessQueuedPostDecodeParameterSettings(void)
 {
 	//
 	// Do we have something to process, and can we process it
@@ -1335,12 +1335,12 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayProcessQueuedPostDecodeParamet
 			CalculateFrameIndexAndPts(DeferredParsedFrameParametersSecondField, DeferredParsedVideoParametersSecondField);
 			DeferredCodedFrameBufferSecondField->DecrementReferenceCount();
 		}
-		DeferredCodedFrameBuffer                        = NULL;
-		DeferredParsedFrameParameters                   = NULL;
-		DeferredParsedVideoParameters                   = NULL;
-		DeferredCodedFrameBufferSecondField             = NULL;
-		DeferredParsedFrameParametersSecondField        = NULL;
-		DeferredParsedVideoParametersSecondField        = NULL;
+		DeferredCodedFrameBuffer = NULL;
+		DeferredParsedFrameParameters = NULL;
+		DeferredParsedVideoParameters = NULL;
+		DeferredCodedFrameBufferSecondField = NULL;
+		DeferredParsedFrameParametersSecondField = NULL;
+		DeferredParsedVideoParametersSecondField = NULL;
 	}
 //
 	return FrameParserNoError;
@@ -1348,15 +1348,15 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayProcessQueuedPostDecodeParamet
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to generate the post decode parameter
-//      settings, these consist of the display frame index, and presentation
-//      time, both of which may be deferred if the information is unavailable.
+// Stream specific function to generate the post decode parameter
+// settings, these consist of the display frame index, and presentation
+// time, both of which may be deferred if the information is unavailable.
 //
-//      For mpeg2, even though we could use temporal reference, I am going
-//      to use a no holes system.
+// For mpeg2, even though we could use temporal reference, I am going
+// to use a no holes system.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::ForPlayGeneratePostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_Video_c::ForPlayGeneratePostDecodeParameterSettings(void)
 {
 	//
 	// Default setting
@@ -1393,15 +1393,15 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayGeneratePostDecodeParameterSet
 //
 		if (DeferredCodedFrameBuffer != NULL)
 		{
-			DeferredCodedFrameBufferSecondField     = Buffer;
-			DeferredParsedFrameParametersSecondField    = ParsedFrameParameters;
-			DeferredParsedVideoParametersSecondField    = ParsedVideoParameters;
+			DeferredCodedFrameBufferSecondField = Buffer;
+			DeferredParsedFrameParametersSecondField = ParsedFrameParameters;
+			DeferredParsedVideoParametersSecondField = ParsedVideoParameters;
 		}
 		else
 		{
-			DeferredCodedFrameBuffer                    = Buffer;
-			DeferredParsedFrameParameters               = ParsedFrameParameters;
-			DeferredParsedVideoParameters               = ParsedVideoParameters;
+			DeferredCodedFrameBuffer = Buffer;
+			DeferredParsedFrameParameters = ParsedFrameParameters;
+			DeferredParsedVideoParameters = ParsedVideoParameters;
 		}
 		CalculateDts(ParsedFrameParameters, ParsedVideoParameters);
 	}
@@ -1411,28 +1411,28 @@ FrameParserStatus_t   FrameParser_Video_c::ForPlayGeneratePostDecodeParameterSet
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to generate the post decode parameter
-//      settings for reverse play, these consist of the display frame index,
-//      and presentation time, both of which may be deferred if the information
-//      is unavailable.
+// Stream specific function to generate the post decode parameter
+// settings for reverse play, these consist of the display frame index,
+// and presentation time, both of which may be deferred if the information
+// is unavailable.
 //
-//      For mpeg2 reverse play, this function will use a simple numbering system,
-//      Imaging a sequence  I B B P B B this should be numbered (in reverse) as
-//                          3 5 4 0 2 1
-//      These will be presented to this function in reverse order ( B B P B B I )
-//      so for non ref frames we ring them, and for ref frames we use the next number
-//      and then process what is on the ring.
+// For mpeg2 reverse play, this function will use a simple numbering system,
+// Imaging a sequence I B B P B B this should be numbered (in reverse) as
+// 3 5 4 0 2 1
+// These will be presented to this function in reverse order ( B B P B B I )
+// so for non ref frames we ring them, and for ref frames we use the next number
+// and then process what is on the ring.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSettings(void)
 {
 	//
 	// If this is not a reference frame then place it on the ring for calculation later
 	//
 	if (!ParsedFrameParameters->ReferenceFrame)
 	{
-		ReverseQueuedPostDecodeSettingsRing->Insert((uintptr_t)ParsedFrameParameters);
-		ReverseQueuedPostDecodeSettingsRing->Insert((uintptr_t)ParsedVideoParameters);
+		ReverseQueuedPostDecodeSettingsRing->Insert((unsigned int)ParsedFrameParameters);
+		ReverseQueuedPostDecodeSettingsRing->Insert((unsigned int)ParsedVideoParameters);
 	}
 	else
 		//
@@ -1445,8 +1445,8 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSet
 		{
 			while (ReverseQueuedPostDecodeSettingsRing->NonEmpty())
 			{
-				ReverseQueuedPostDecodeSettingsRing->Extract((uintptr_t *)&DeferredParsedFrameParameters);
-				ReverseQueuedPostDecodeSettingsRing->Extract((uintptr_t *)&DeferredParsedVideoParameters);
+				ReverseQueuedPostDecodeSettingsRing->Extract((unsigned int *)&DeferredParsedFrameParameters);
+				ReverseQueuedPostDecodeSettingsRing->Extract((unsigned int *)&DeferredParsedVideoParameters);
 				CalculateFrameIndexAndPts(DeferredParsedFrameParameters, DeferredParsedVideoParameters);
 			}
 		}
@@ -1457,59 +1457,59 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayGeneratePostDecodeParameterSet
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to manage a reference frame list in forward play
-//      we only record a reference frame as such on the last field, in order to
-//      ensure the correct management of reference frames in the codec, we immediately
-//      inform the codec of a release on the first field of a field picture.
+// Stream specific function to manage a reference frame list in forward play
+// we only record a reference frame as such on the last field, in order to
+// ensure the correct management of reference frames in the codec, we immediately
+// inform the codec of a release on the first field of a field picture.
 //
 /*
-FrameParserStatus_t   FrameParser_Video_c::ForPlayUpdateReferenceFrameList( void )
+FrameParserStatus_t FrameParser_Video_c::ForPlayUpdateReferenceFrameList( void )
 {
-unsigned int    i;
-bool            LastField;
+unsigned int i;
+bool LastField;
 
 //
 
-    if( ParsedFrameParameters->ReferenceFrame )
-    {
-    LastField       = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-              !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+ if( ParsedFrameParameters->ReferenceFrame )
+ {
+ LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
+ !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 
-    if( LastField )
-    {
-        if( ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FORWARD_PLAY )
-        {
-        Player->CallInSequence( Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ReferenceFrameList.EntryIndicies[0] );
+ if( LastField )
+ {
+ if( ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FORWARD_PLAY )
+ {
+ Player->CallInSequence( Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ReferenceFrameList.EntryIndicies[0] );
 
-        ReferenceFrameList.EntryCount--;
-        for( i=0; i<ReferenceFrameList.EntryCount; i++ )
-            ReferenceFrameList.EntryIndicies[i] = ReferenceFrameList.EntryIndicies[i+1];
-        }
+ ReferenceFrameList.EntryCount--;
+ for( i=0; i<ReferenceFrameList.EntryCount; i++ )
+ ReferenceFrameList.EntryIndicies[i] = ReferenceFrameList.EntryIndicies[i+1];
+ }
 
-        ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount++] = ParsedFrameParameters->DecodeFrameIndex;
-    }
-    else
-    {
-        Player->CallInSequence( Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex );
-    }
-    }
+ ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount++] = ParsedFrameParameters->DecodeFrameIndex;
+ }
+ else
+ {
+ Player->CallInSequence( Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex );
+ }
+ }
 
-    return FrameParserNoError;
+ return FrameParserNoError;
 }
 */
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to add a frame to the reference
-//      frame list in reverse play.
+// Stream specific function to add a frame to the reference
+// frame list in reverse play.
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayAppendToReferenceFrameList(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayAppendToReferenceFrameList(void)
 {
-	bool            LastField;
+	bool LastField;
 //
-	LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-				  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
+		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (ParsedFrameParameters->ReferenceFrame && LastField)
 	{
 		if (ReferenceFrameList.EntryCount >= MAX_ENTRIES_IN_REFERENCE_FRAME_LIST)
@@ -1524,20 +1524,20 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayAppendToReferenceFrameList(voi
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to remove a frame from the reference
-//      frame list in reverse play.
+// Stream specific function to remove a frame from the reference
+// frame list in reverse play.
 //
-//      Note, we only inserted the reference frame in the list on the last
-//      field but we need to inform the codec we are finished with it on both
-//      fields (for field pictures).
+// Note, we only inserted the reference frame in the list on the last
+// field but we need to inform the codec we are finished with it on both
+// fields (for field pictures).
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayRemoveReferenceFrameFromList(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayRemoveReferenceFrameFromList(void)
 {
-	bool            LastField;
+	bool LastField;
 //
-	LastField   = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-				  !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
+		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (ReferenceFrameList.EntryCount != 0)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
@@ -1549,31 +1549,31 @@ FrameParserStatus_t   FrameParser_Video_c::RevPlayRemoveReferenceFrameFromList(v
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to junk the reference frame list
+// Stream specific function to junk the reference frame list
 //
 
-FrameParserStatus_t   FrameParser_Video_c::RevPlayJunkReferenceFrameList(void)
+FrameParserStatus_t FrameParser_Video_c::RevPlayJunkReferenceFrameList(void)
 {
-	ReferenceFrameList.EntryCount       = 0;
+	ReferenceFrameList.EntryCount = 0;
 	return FrameParserNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private function to convert a us per frame
+// Private function to convert a us per frame
 //
 //	We define matching as within 8us, since we can have errors of
 //	up to 5.5555555 us when trying to express a frame time as a
 //	PTS (90kHz clock)
 //
 
-#define ValueMatchesFrameTime(V,T)   inrange( V, T - 8, T + 8 )
+#define ValueMatchesFrameTime(V,T) inrange( V, T - 8, T + 8 )
 
-void   FrameParser_Video_c::DeduceFrameRateFromPresentationTime(long long int     MicroSecondsPerFrame)
+void FrameParser_Video_c::DeduceFrameRateFromPresentationTime(long long int MicroSecondsPerFrame)
 {
-	long long int    CurrentMicroSecondsPerFrame;
+	long long int CurrentMicroSecondsPerFrame;
 	//
-	// Are we OK with what we have got.
+	// Are we ok with what we have got.
 	// If not, then we mark the rate as not standard, to force a recalculation,
 	// but not immediately, since this may be just a glitch.
 	//
@@ -1587,45 +1587,45 @@ void   FrameParser_Video_c::DeduceFrameRateFromPresentationTime(long long int   
 	//
 	// Check against the standard values
 	//
-	ValidPTSDeducedFrameRate    = true;
+	ValidPTSDeducedFrameRate = true;
 	StandardPTSDeducedFrameRate = true;
 //
-	if (ValueMatchesFrameTime(MicroSecondsPerFrame, 16667))              // 60fps = 16666.67 us
+	if (ValueMatchesFrameTime(MicroSecondsPerFrame, 16667)) // 60fps = 16666.67 us
 	{
 		PTSDeducedFrameRate = Rational_t(60, 1);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 16683))             // 59fps = 16683.33 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 16683)) // 59fps = 16683.33 us
 	{
 		PTSDeducedFrameRate = Rational_t(60000, 1001);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 20000))             // 50fps = 20000.00 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 20000)) // 50fps = 20000.00 us
 	{
 		PTSDeducedFrameRate = Rational_t(50, 1);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 33333))             // 30fps = 33333.33 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 33333)) // 30fps = 33333.33 us
 	{
 		PTSDeducedFrameRate = Rational_t(30, 1);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 33367))             // 29fps = 33366.67 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 33367)) // 29fps = 33366.67 us
 	{
 		PTSDeducedFrameRate = Rational_t(30000, 1001);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 40000))             // 25fps = 40000.00 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 40000)) // 25fps = 40000.00 us
 	{
 		PTSDeducedFrameRate = Rational_t(25, 1);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 41667))             // 24fps = 41666.67 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 41667)) // 24fps = 41666.67 us
 	{
 		PTSDeducedFrameRate = Rational_t(24, 1);
 	}
-	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 41708))             // 23fps = 41708.33 us
+	else if (ValueMatchesFrameTime(MicroSecondsPerFrame, 41708)) // 23fps = 41708.33 us
 	{
 		PTSDeducedFrameRate = Rational_t(24000, 1001);
 	}
-	else if (PTSDeducedFrameRate != Rational_t(1000000, MicroSecondsPerFrame))    // If it has changed since the last time
+	else if (PTSDeducedFrameRate != Rational_t(1000000, MicroSecondsPerFrame)) // If it has changed since the last time
 	{
 		StandardPTSDeducedFrameRate = false;
-		PTSDeducedFrameRate     = Rational_t(1000000, MicroSecondsPerFrame);
+		PTSDeducedFrameRate = Rational_t(1000000, MicroSecondsPerFrame);
 	}
 	// If it was non standard, but has not changed since
 	// last time we let it become the new standard.
@@ -1640,21 +1640,21 @@ void   FrameParser_Video_c::DeduceFrameRateFromPresentationTime(long long int   
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Functions to load the anti emulation buffer
+// Functions to load the anti emulation buffer
 //
 
-void   FrameParser_Video_c::LoadAntiEmulationBuffer(unsigned char  *Pointer)
+void FrameParser_Video_c::LoadAntiEmulationBuffer(unsigned char *Pointer)
 {
-	AntiEmulationSource         = Pointer;
-	AntiEmulationContent        = 0;
+	AntiEmulationSource = Pointer;
+	AntiEmulationContent = 0;
 	Bits.SetPointer(AntiEmulationBuffer);
 #if 0
 //#ifdef DUMP_HEADERS
-	unsigned int        i, j;
+	unsigned int i, j;
 	report(severity_info, "LoadAntiEmulationBuffer\n");
 	for (i = 0; i < 256; i += 16)
 	{
-		report(severity_info, "        ");
+		report(severity_info, " ");
 		for (j = 0; j < 16; j++)
 			report(severity_info, "%02x ", Pointer[i + j]);
 		report(severity_info, "\n");
@@ -1665,36 +1665,36 @@ void   FrameParser_Video_c::LoadAntiEmulationBuffer(unsigned char  *Pointer)
 
 // --------
 
-void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
+void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int Size)
 {
-	unsigned int             i, j;
-	FrameParserStatus_t      Status;
-	unsigned int             UntouchedBytesInBuffer;
-	unsigned int             BitsInByte;
-	unsigned char           *NewBase;
-	unsigned char           *Pointer;
+	unsigned int i, j;
+	FrameParserStatus_t Status;
+	unsigned int UntouchedBytesInBuffer;
+	unsigned int BitsInByte;
+	unsigned char *NewBase;
+	unsigned char *Pointer;
 	//
 	// Check that the request is supportable
 	//
 	if (Size > (ANTI_EMULATION_BUFFER_SIZE - 16))
 	{
 		report(severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %u (avail: %d) - Implementation error.\n",
-			   Size, (ANTI_EMULATION_BUFFER_SIZE - 16));
+		       Size, (ANTI_EMULATION_BUFFER_SIZE - 16));
 		return;
 	}
 	//
 	// Do we already have the required data, or do we need some more
 	// if we need some more, preserve the unused ones that we have.
 	//
-	BitsInByte                  = 8;
-	NewBase                     = AntiEmulationBuffer;
-	UntouchedBytesInBuffer      = 0;
+	BitsInByte = 8;
+	NewBase = AntiEmulationBuffer;
+	UntouchedBytesInBuffer = 0;
 	if (AntiEmulationContent != 0)
 	{
 		//
 		// First let us check the status of the buffer
 		//
-		Status  = TestAntiEmulationBuffer();
+		Status = TestAntiEmulationBuffer();
 		if (Status != FrameParserNoError)
 		{
 			report(severity_error, "FrameParser_Video_c::CheckAntiEmulationBuffer - Already gone bad (%d).\n", Size);
@@ -1704,7 +1704,7 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
 		// Can we satisfy the request without trying
 		//
 		Bits.GetPosition(&Pointer, &BitsInByte);
-		UntouchedBytesInBuffer  = AntiEmulationContent - (Pointer - AntiEmulationBuffer) - (BitsInByte != 8);
+		UntouchedBytesInBuffer = AntiEmulationContent - (Pointer - AntiEmulationBuffer) - (BitsInByte != 8);
 		if (UntouchedBytesInBuffer >= Size)
 			return;
 		//
@@ -1712,14 +1712,14 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
 		//
 		if (((Pointer - AntiEmulationBuffer) + Size + 16) > ANTI_EMULATION_BUFFER_SIZE)
 		{
-			AntiEmulationContent        = UntouchedBytesInBuffer + (BitsInByte != 8);
+			AntiEmulationContent = UntouchedBytesInBuffer + (BitsInByte != 8);
 			for (i = 0; i < AntiEmulationContent; i++)
-				AntiEmulationBuffer[i]  = Pointer[i];
-			NewBase     = AntiEmulationBuffer;
+				AntiEmulationBuffer[i] = Pointer[i];
+			NewBase = AntiEmulationBuffer;
 		}
 		else
 		{
-			NewBase     = Pointer;
+			NewBase = Pointer;
 		}
 	}
 //
@@ -1731,15 +1731,15 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
 				(AntiEmulationSource[j + 2] == 3))
 		{
 			memcpy(AntiEmulationBuffer + AntiEmulationContent, AntiEmulationSource, j + 2);
-			AntiEmulationContent        += j + 2;
-			AntiEmulationSource         += j + 3;
-			j                            = -1;
+			AntiEmulationContent += j + 2;
+			AntiEmulationSource += j + 3;
+			j = -1;
 		}
 	if (j != 0)
 	{
 		memcpy(AntiEmulationBuffer + AntiEmulationContent, AntiEmulationSource, j);
-		AntiEmulationContent    += j;
-		AntiEmulationSource     += j;
+		AntiEmulationContent += j;
+		AntiEmulationSource += j;
 	}
 //
 	Bits.SetPointer(NewBase);
@@ -1749,7 +1749,7 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
 	report(severity_info, "CheckAntiEmulationBuffer(%d) - Content is %d, Untouched was %d\n", Size, AntiEmulationContent, UntouchedBytesInBuffer);
 	for (i = 0; i < AntiEmulationContent; i += 16)
 	{
-		report(severity_info, "        ");
+		report(severity_info, " ");
 		for (j = 0; j < 16; j++)
 			report(severity_info, "%02x ", AntiEmulationBuffer[i + j]);
 		report(severity_info, "\n");
@@ -1759,22 +1759,22 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int    Size)
 
 // --------
 
-FrameParserStatus_t   FrameParser_Video_c::TestAntiEmulationBuffer(void)
+FrameParserStatus_t FrameParser_Video_c::TestAntiEmulationBuffer(void)
 {
-	unsigned int     BitsInByte;
-	unsigned char   *Pointer;
-	unsigned int     BytesUsed;
+	unsigned int BitsInByte;
+	unsigned char *Pointer;
+	unsigned int BytesUsed;
 //
 	Bits.GetPosition(&Pointer, &BitsInByte);
-	BytesUsed   = (Pointer - AntiEmulationBuffer) + (BitsInByte != 8);
+	BytesUsed = (Pointer - AntiEmulationBuffer) + (BitsInByte != 8);
 	if ((BytesUsed != 0) && (BytesUsed > AntiEmulationContent))
 	{
 		report(severity_error, "FrameParser_Video_c::TestAntiEmulationBuffer - Anti emulation buffering failure (%d [%d,%d]) - Implementation error\n",
-			   AntiEmulationContent - BytesUsed, BytesUsed, AntiEmulationContent);
+		       AntiEmulationContent - BytesUsed, BytesUsed, AntiEmulationContent);
 		return FrameParserError;
 	}
 #if 0
-	report(severity_info, "TEST %d %d\n",  BytesUsed, BitsInByte);
+	report(severity_info, "TEST %d %d\n", BytesUsed, BitsInByte);
 #endif
 //
 	return FrameParserNoError;

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_video.h
-Author :           Nick
+Author : Nick
 
 Definition of the codec video class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-20-Jan-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+20-Jan-07 Created Nick
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "VideoCompanion.h"
 #include "codec_mme_base.h"
@@ -61,10 +61,10 @@ class Codec_MmeVideo_c : public Codec_MmeBase_c
 
 		// Data
 
-		VideoOutputSurfaceDescriptor_t       *VideoOutputSurface;
+		VideoOutputSurfaceDescriptor_t *VideoOutputSurface;
 
-		ParsedVideoParameters_t              *ParsedVideoParameters;
-		bool                                  KnownLastSliceInFieldFrame;
+		ParsedVideoParameters_t *ParsedVideoParameters;
+		bool KnownLastSliceInFieldFrame;
 
 		// Functions
 
@@ -74,27 +74,27 @@ class Codec_MmeVideo_c : public Codec_MmeBase_c
 		// Overrides for component base class functions
 		//
 
-		CodecStatus_t   Halt(void);
-		CodecStatus_t   Reset(void);
+		CodecStatus_t Halt(void);
+		CodecStatus_t Reset(void);
 
 		//
 		// Codec class functions
 		//
 
-		CodecStatus_t   RegisterOutputBufferRing(Ring_t            Ring);
-		CodecStatus_t   Input(Buffer_t          CodedBuffer);
+		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring);
+		CodecStatus_t Input(Buffer_t CodedBuffer);
 
 		//
 		// Extension to base functions
 		//
 
-		CodecStatus_t   InitializeDataTypes(void);
+		CodecStatus_t InitializeDataTypes(void);
 
 		//
 		// Implementation of fill out function for generic video,
 		// may be overridden if necessary.
 		//
 
-		virtual CodecStatus_t   FillOutDecodeBufferRequest(BufferStructure_t     *Request);
+		virtual CodecStatus_t FillOutDecodeBufferRequest(BufferStructure_t *Request);
 };
 #endif

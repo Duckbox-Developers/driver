@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio_mpeg.h
-Author :           Daniel
+Author : Daniel
 
 Definition of the frame parser audio mpeg class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-30-Mar-07   Created (from frame_parser_video_mpeg2.h)       Daniel
+Date Modification Name
+---- ------------ --------
+30-Mar-07 Created (from frame_parser_video_mpeg2.h) Daniel
 
 ************************************************************************/
 
@@ -77,31 +77,31 @@ class FrameParser_AudioMpeg_c : public FrameParser_Audio_c
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t       Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		//
 		// Stream specific functions
 		//
 
-		FrameParserStatus_t   ReadHeaders(void);
-		FrameParserStatus_t   ResetReferenceFrameList(void);
-		FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
-		FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
-		FrameParserStatus_t   UpdateReferenceFrameList(void);
+		FrameParserStatus_t ReadHeaders(void);
+		FrameParserStatus_t ResetReferenceFrameList(void);
+		FrameParserStatus_t PurgeQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
+		FrameParserStatus_t ProcessQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t GeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t UpdateReferenceFrameList(void);
 
-		FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   ProcessReverseDecodeStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeStack(void);
-		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
+		FrameParserStatus_t ProcessReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t ProcessReverseDecodeStack(void);
+		FrameParserStatus_t PurgeReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t PurgeReverseDecodeStack(void);
+		FrameParserStatus_t TestForTrickModeFrameDrop(void);
 
 		static FrameParserStatus_t ParseFrameHeader(unsigned char *FrameHeader, MpegAudioParsedFrameHeader_t *ParsedFrameHeader);
 		static FrameParserStatus_t ParseExtensionHeader(unsigned char *ExtensionHeader, unsigned int *ExtensionLength);

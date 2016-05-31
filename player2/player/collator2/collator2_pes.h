@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator2_pes.h
-Author :           Nick
+Author : Nick
 
 Definition of the base collator2 pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-20-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+20-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "pes.h"
 #include "bitstream_class.h"
@@ -47,7 +47,7 @@ Date        Modification                                    Name
 //
 
 #ifndef H_COLLATOR_PES
-#define SPANNING_HEADER_SIZE    3
+#define SPANNING_HEADER_SIZE 3
 
 typedef enum
 {
@@ -69,41 +69,41 @@ class Collator2_Pes_c : public Collator2_Base_c
 
 		// Data
 
-		bool                  GotPartialHeader;         // New style partial header management
-		PartialHeaderType_t   GotPartialType;
-		unsigned int          GotPartialCurrentSize;
-		unsigned int          GotPartialDesiredSize;
-		unsigned char        *StoredPartialHeader;
-		unsigned char     StoredPartialHeaderCopy[256];
+		bool GotPartialHeader; // New style partial header management
+		PartialHeaderType_t GotPartialType;
+		unsigned int GotPartialCurrentSize;
+		unsigned int GotPartialDesiredSize;
+		unsigned char *StoredPartialHeader;
+		unsigned char StoredPartialHeaderCopy[256];
 
-		unsigned int          Skipping;
+		unsigned int Skipping;
 
-		unsigned int          RemainingLength;
-		unsigned char        *RemainingData;
+		unsigned int RemainingLength;
+		unsigned char *RemainingData;
 
-		unsigned int          PesPacketLength;
-		unsigned int          PesPayloadLength;
+		unsigned int PesPacketLength;
+		unsigned int PesPayloadLength;
 
-		bool                  PlaybackTimeValid;
-		bool                  DecodeTimeValid;
-		unsigned long long    PlaybackTime;
-		unsigned long long    DecodeTime;
-		bool                  UseSpanningTime;
-		bool                  SpanningPlaybackTimeValid;
-		unsigned long long    SpanningPlaybackTime;
-		bool                  SpanningDecodeTimeValid;
-		unsigned long long    SpanningDecodeTime;
+		bool PlaybackTimeValid;
+		bool DecodeTimeValid;
+		unsigned long long PlaybackTime;
+		unsigned long long DecodeTime;
+		bool UseSpanningTime;
+		bool SpanningPlaybackTimeValid;
+		unsigned long long SpanningPlaybackTime;
+		bool SpanningDecodeTimeValid;
+		unsigned long long SpanningDecodeTime;
 
-		BitStreamClass_c      Bits;
+		BitStreamClass_c Bits;
 
 		// Functions
 
-		CollatorStatus_t   ReadPesHeader(unsigned char  *PesHeader);
+		CollatorStatus_t ReadPesHeader(unsigned char *PesHeader);
 
 		// Overridable functions
 
-		virtual CollatorStatus_t   FindNextStartCode(unsigned int        *CodeOffset);
-		virtual CollatorStatus_t   FindPreviousStartCode(unsigned int        *CodeOffset);
+		virtual CollatorStatus_t FindNextStartCode(unsigned int *CodeOffset);
+		virtual CollatorStatus_t FindPreviousStartCode(unsigned int *CodeOffset);
 
 //
 
@@ -120,17 +120,17 @@ class Collator2_Pes_c : public Collator2_Base_c
 		// Base overrides
 		//
 
-		CollatorStatus_t   Halt(void);
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Halt(void);
+		CollatorStatus_t Reset(void);
 
 		//
 		// Collator class functions
 		//
 
-		CollatorStatus_t   DiscardAccumulatedData(void);
+		CollatorStatus_t DiscardAccumulatedData(void);
 
-		CollatorStatus_t   InputJump(bool                      SurplusDataInjected,
-									 bool                      ContinuousReverseJump);
+		CollatorStatus_t InputJump(bool SurplusDataInjected,
+					   bool ContinuousReverseJump);
 };
 
 #endif

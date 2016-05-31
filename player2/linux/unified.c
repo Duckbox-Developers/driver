@@ -13,28 +13,28 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : unified.c
-Author :           Pete
+Author : Pete
 
-Date        Modification                                    Name
-----        ------------                                    --------
-20-Feb-10   Created                                         Pete
+Date Modification Name
+---- ------------ --------
+20-Feb-10 Created Pete
 
 ************************************************************************/
 
 #include <linux/io.h>
 #include <linux/init.h>
-#include <linux/module.h>
 #include <linux/platform_device.h>
+#include <linux/autoconf.h>
 
-extern initcall_t  __initcall_stm_start6[], __initcall_stm_end6[];
-extern exitcall_t  __exitcall_stm_start[], __exitcall_stm_end[];
+extern initcall_t __initcall_stm_start6[], __initcall_stm_end6[];
+extern exitcall_t __exitcall_stm_start[], __exitcall_stm_end[];
 
 static __init int stm_load_player2_unified(void)
 {

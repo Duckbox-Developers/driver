@@ -7,6 +7,7 @@
  */
 
 #include "osinline.h"
+
 #include "wma_properties.h"
 #include "report.h"
 
@@ -91,21 +92,21 @@ unsigned char *ASF_StreamPropertiesObject_c::decode(unsigned char *data, unsigne
 void ASF_StreamPropertiesObject_c::dump(bool verbose)
 {
 	ASF_TRACE("ASF STREAM PROPERTIES OBJECT\n");
-	ASF_TRACE("Object id                      %s\n", asf_guid_name_lookup[object_id]);
-	ASF_TRACE("Object size                    %d\n", object_size);
-	ASF_TRACE("Stream type                    %s\n", asf_guid_name_lookup[stream_type]);
-	ASF_TRACE("Error correction type          %s\n", asf_guid_name_lookup[error_correction_type]);
-	ASF_TRACE("Time offset                    0x%x%08x\n", time_offset_hi, time_offset);
-	ASF_TRACE("Type specific data length      %d\n", type_specific_data_length);
-	ASF_TRACE("Error correction data length   %d\n", error_correction_data_length);
-	ASF_TRACE("Flags                          %d\n", flags);
+	ASF_TRACE("Object id %s\n", asf_guid_name_lookup[object_id]);
+	ASF_TRACE("Object size %d\n", object_size);
+	ASF_TRACE("Stream type %s\n", asf_guid_name_lookup[stream_type]);
+	ASF_TRACE("Error correction type %s\n", asf_guid_name_lookup[error_correction_type]);
+	ASF_TRACE("Time offset 0x%x%08x\n", time_offset_hi, time_offset);
+	ASF_TRACE("Type specific data length %d\n", type_specific_data_length);
+	ASF_TRACE("Error correction data length %d\n", error_correction_data_length);
+	ASF_TRACE("Flags %d\n", flags);
 	if (verbose)
 	{
-		ASF_TRACE("    Stream number                  %d\n", stream_number);
-		ASF_TRACE("    Encrypted content flags        %s\n", (encrypted_content_flag ? "true" : "false"));
+		ASF_TRACE(" Stream number %d\n", stream_number);
+		ASF_TRACE(" Encrypted content flags %s\n", (encrypted_content_flag ? "true" : "false"));
 	}
-	ASF_TRACE("Type specific data             0x%08x\n", type_specific_data);
-	ASF_TRACE("Error correction data          0x%08x\n", error_correction_data);
+	ASF_TRACE("Type specific data 0x%08x\n", type_specific_data);
+	ASF_TRACE("Error correction data 0x%08x\n", error_correction_data);
 }
 
 unsigned char *WMA_WaveFormatEx_c::decode(unsigned char *data, unsigned int dataLength)
@@ -131,21 +132,21 @@ unsigned char *WMA_WaveFormatEx_c::decode(unsigned char *data, unsigned int data
 void WMA_WaveFormatEx_c::dump(bool verbose)
 {
 	ASF_TRACE("WMA_WAVEFORMATEX\n");
-	ASF_TRACE("Codec id/format tag            %d\n", codec_id);
-	ASF_TRACE("Number of channels             %d\n", number_of_channels);
-	ASF_TRACE("Samples per second             %d\n", samples_per_second);
-	ASF_TRACE("Avg. num. of bytes per second  %d\n", average_number_of_bytes_per_second);
-	ASF_TRACE("Block alignment                %d\n", block_alignment);
-	ASF_TRACE("Bits per sample                %d\n", bits_per_sample);
-	ASF_TRACE("Codec specific data size       %d\n", codec_specific_data_size);
-	ASF_TRACE("Codec specific data            0x%08x\n", codec_specific_data);
+	ASF_TRACE("Codec id/format tag %d\n", codec_id);
+	ASF_TRACE("Number of channels %d\n", number_of_channels);
+	ASF_TRACE("Samples per second %d\n", samples_per_second);
+	ASF_TRACE("Avg. num. of bytes per second %d\n", average_number_of_bytes_per_second);
+	ASF_TRACE("Block alignment %d\n", block_alignment);
+	ASF_TRACE("Bits per sample %d\n", bits_per_sample);
+	ASF_TRACE("Codec specific data size %d\n", codec_specific_data_size);
+	ASF_TRACE("Codec specific data 0x%08x\n", codec_specific_data);
 }
 
 unsigned char *WMA_TypeSpecificData_c::decode(unsigned int formatTag, unsigned char *data, unsigned int dataLength)
 {
 	// class contains no virtual members so we can safely use memset ...
 	memset(this, 0, sizeof(*this));
-	channel_mask                = 3;            // Default to stereo
+	channel_mask = 3; // Default to stereo
 	switch (formatTag)
 	{
 		case WMA_VERSION_1:
@@ -153,20 +154,20 @@ unsigned char *WMA_TypeSpecificData_c::decode(unsigned int formatTag, unsigned c
 		case WMA_VERSION_2_9:
 			if (dataLength != 10)
 				return NULL;
-			samples_per_block       = extract(data, 4);
-			encode_options          = extract(data, 2);
-			super_block_align       = extract(data, 4);
+			samples_per_block = extract(data, 4);
+			encode_options = extract(data, 2);
+			super_block_align = extract(data, 4);
 			break;
 		case WMA_VERSION_9_PRO:
 		case WMA_LOSSLESS:
 			if (dataLength != 18)
 				return NULL;
-			unsigned int    temp;
-			valid_bits_per_sample   = extract(data, 2);
-			channel_mask            = extract(data, 4);
-			temp                    = extract(data, 4);
-			temp                    = extract(data, 4);
-			encode_options          = extract(data, 2);
+			unsigned int temp;
+			valid_bits_per_sample = extract(data, 2);
+			channel_mask = extract(data, 4);
+			temp = extract(data, 4);
+			temp = extract(data, 4);
+			encode_options = extract(data, 2);
 			break;
 		default:
 			return NULL;
@@ -177,9 +178,9 @@ unsigned char *WMA_TypeSpecificData_c::decode(unsigned int formatTag, unsigned c
 void WMA_TypeSpecificData_c::dump(bool verbose)
 {
 	ASF_TRACE("WMA TYPE SPECIFIC DATA\n");
-	ASF_TRACE("Samples per block              %d\n", samples_per_block);
-	ASF_TRACE("Encode options                 %d\n", encode_options);
-	ASF_TRACE("Super block align              %d\n", super_block_align);
-	ASF_TRACE("Valid Bits Per Sample          %d\n", valid_bits_per_sample);
-	ASF_TRACE("Channel Mask                   %d\n", channel_mask);
+	ASF_TRACE("Samples per block %d\n", samples_per_block);
+	ASF_TRACE("Encode options %d\n", encode_options);
+	ASF_TRACE("Super block align %d\n", super_block_align);
+	ASF_TRACE("Valid Bits Per Sample %d\n", valid_bits_per_sample);
+	ASF_TRACE("Channel Mask %d\n", channel_mask);
 }

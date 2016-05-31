@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : spdifin_audio.h
-Author :           Gael
+Author : Gael
 
 Definition of the types and constants that are used by several components
 dealing with spdifin audio decode/display for havana.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-July-07  built from eac3_audio.h                          Gael
+Date Modification Name
+---- ------------ --------
+18-July-07 built from eac3_audio.h Gael
 
 ************************************************************************/
 
@@ -38,18 +38,18 @@ Date        Modification                                    Name
 
 // ////////////////////////////////////////////////////////////////////////////
 //
-//  General defines of start codes etc.
+// General defines of start codes etc.
 //
 
-#define SPDIFIN_START_CODE                          0x0000
-#define SPDIFIN_START_CODE_MASK                     0xffff
-#define SPDIFIN_FRAME_HEADER_SIZE                   0
-#define SPDIFIN_EXTRA_INFO_SIZE                     0
-#define SPDIFIN_BYTES_NEEDED                        (SPDIFIN_FRAME_HEADER_SIZE + SPDIFIN_EXTRA_INFO_SIZE)
+#define SPDIFIN_START_CODE 0x0000
+#define SPDIFIN_START_CODE_MASK 0xffff
+#define SPDIFIN_FRAME_HEADER_SIZE 0
+#define SPDIFIN_EXTRA_INFO_SIZE 0
+#define SPDIFIN_BYTES_NEEDED (SPDIFIN_FRAME_HEADER_SIZE + SPDIFIN_EXTRA_INFO_SIZE)
 
 // ////////////////////////////////////////////////////////////////////////////
 //
-//  Definitions of types matching SPDIFIN audio headers
+// Definitions of types matching SPDIFIN audio headers
 //
 
 ////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ Date        Modification                                    Name
 ///
 typedef enum
 {
-	TypeSpdifIn,  ///< frame is coming from SPDIF-IN
-	TypeHdmiIn,   ///< frame is coming from HDMI-IN
+	TypeSpdifIn, ///< frame is coming from SPDIF-IN
+	TypeHdmiIn, ///< frame is coming from HDMI-IN
 } SpdifinStreamType_t;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,12 +71,12 @@ typedef struct SpdifinAudioParsedFrameHeader_s
 {
 	// Directly interpretted values
 	SpdifinStreamType_t Type;
-	unsigned char   SubStreamId;
-	unsigned int    SamplingFrequency; ///< Sampling frequency in Hz.
+	unsigned char SubStreamId;
+	unsigned int SamplingFrequency; ///< Sampling frequency in Hz.
 
 	// Derived values
-	unsigned int    NumberOfSamples; ///< Number of samples per channel within the frame.
-	unsigned int    Length; ///< Length of frame in bytes (including header).
+	unsigned int NumberOfSamples; ///< Number of samples per channel within the frame.
+	unsigned int Length; ///< Length of frame in bytes (including header).
 } SpdifinAudioParsedFrameHeader_t;
 
 ////////////////////////////////////////////////////////////////
@@ -91,8 +91,8 @@ typedef struct SpdifinAudioStreamParameters_s
 	unsigned int NbSamples;
 } SpdifinAudioStreamParameters_t;
 
-#define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS        "SpdifinAudioStreamParameters"
-#define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS_TYPE   {BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(SpdifinAudioStreamParameters_t)}
+#define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS "SpdifinAudioStreamParameters"
+#define BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS_TYPE {BUFFER_SPDIFIN_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(SpdifinAudioStreamParameters_t)}
 
 //
 
@@ -105,7 +105,7 @@ typedef struct SpdifinAudioStreamParameters_s
 
 #define SpdifinAudioFrameParameters_t SpdifinAudioParsedFrameHeader_t
 
-#define BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS        "SpdifinAudioFrameParameters"
-#define BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS_TYPE   {BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(SpdifinAudioFrameParameters_t)}
+#define BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS "SpdifinAudioFrameParameters"
+#define BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS_TYPE {BUFFER_SPDIFIN_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(SpdifinAudioFrameParameters_t)}
 
 #endif /* H_SPDIFIN_AUDIO */

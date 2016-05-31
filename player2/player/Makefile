@@ -6,11 +6,12 @@ LDFLAGS+=-g
 NDIR?=.
 
 CCFLAGSY += -I$(NDIR)/user_mode_non_player_bits/includes
-##CFLAGS+=-I/opt/STM/STLinux-2.2/devkit/sh4/target/usr/include/
-##CFLAGS+=-I/usr/include
+##CFLAGS += -I/opt/STM/STLinux-2.2/devkit/sh4/target/usr/include/
+##CFLAGS += -I/usr/include
 CCFLAGSY += -I$(NDIR)/../components/include
 
-CCFLAGSY += -I$(NDIR)/class_definitions        \
+CCFLAGSY += \
+	-I$(NDIR)/class_definitions        \
 	-I$(NDIR)/buffer                   \
 	-I$(NDIR)/demultiplexor            \
 	-I$(NDIR)/collator                 \

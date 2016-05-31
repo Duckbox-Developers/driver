@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_audio_lpcm.cpp
-Author :           Sylvain Barge
+Author : Sylvain Barge
 
 Implementation of the lpcm audio codec class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-Jul-07   Created                                         Sylvain Barge
+Date Modification Name
+---- ------------ --------
+18-Jul-07 Created Sylvain Barge
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #define CODEC_TAG "LPCM audio codec"
 #include "codec_mme_audio_lpcm.h"
@@ -51,7 +51,7 @@ const char LpcmModeLut[] =
 	ACC_LPCM_BD
 };
 
-const LpcmAudioStreamParameters_t  DefaultStreamParameters =
+const LpcmAudioStreamParameters_t DefaultStreamParameters =
 {
 	TypeLpcmDVDVideo,
 	ACC_MME_TRUE,
@@ -86,30 +86,42 @@ static const int LpcmDVDSamplingFreq[LpcmSamplingFreqNone] =
 
 typedef struct LpcmAudioCodecStreamParameterContext_s
 {
-	CodecBaseStreamParameterContext_t   BaseContext;
+	CodecBaseStreamParameterContext_t BaseContext;
 
 	MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } LpcmAudioCodecStreamParameterContext_t;
 
-#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT                "LpcmAudioCodecStreamParameterContext"
-#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE   {BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(LpcmAudioCodecStreamParameterContext_t)}
+//#if __KERNEL__
+#if 0
+#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT "LpcmAudioCodecStreamParameterContext"
+#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE {BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(LpcmAudioCodecStreamParameterContext_t)}
+#else
+#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT "LpcmAudioCodecStreamParameterContext"
+#define BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE {BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(LpcmAudioCodecStreamParameterContext_t)}
+#endif
 
-static BufferDataDescriptor_t            LpcmAudioCodecStreamParameterContextDescriptor = BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
+static BufferDataDescriptor_t LpcmAudioCodecStreamParameterContextDescriptor = BUFFER_LPCM_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
 // --------
 
 typedef struct LpcmAudioCodecDecodeContext_s
 {
-	CodecBaseDecodeContext_t            BaseContext;
+	CodecBaseDecodeContext_t BaseContext;
 
-	MME_LxAudioDecoderFrameParams_t     DecodeParameters;
-	MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
+	MME_LxAudioDecoderFrameParams_t DecodeParameters;
+	MME_LxAudioDecoderFrameStatus_t DecodeStatus;
 } LpcmAudioCodecDecodeContext_t;
 
-#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT  "LpcmAudioCodecDecodeContext"
-#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT_TYPE     {BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(LpcmAudioCodecDecodeContext_t)}
+//#if __KERNEL__
+#if 0
+#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT "LpcmAudioCodecDecodeContext"
+#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT_TYPE {BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(LpcmAudioCodecDecodeContext_t)}
+#else
+#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT "LpcmAudioCodecDecodeContext"
+#define BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT_TYPE {BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(LpcmAudioCodecDecodeContext_t)}
+#endif
 
-static BufferDataDescriptor_t            LpcmAudioCodecDecodeContextDescriptor = BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
+static BufferDataDescriptor_t LpcmAudioCodecDecodeContextDescriptor = BUFFER_LPCM_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
 static const char *LookupLpcmStreamType(LpcmStreamType_t t)
 {
@@ -137,11 +149,11 @@ static const char *LookupLpcmStreamType(LpcmStreamType_t t)
 ///
 Codec_MmeAudioLpcm_c::Codec_MmeAudioLpcm_c(void)
 {
-	Configuration.CodecName                             = "LPCM audio";
-	Configuration.StreamParameterContextCount           = 1;
-	Configuration.StreamParameterContextDescriptor      = &LpcmAudioCodecStreamParameterContextDescriptor;
-	Configuration.DecodeContextCount                    = 4;
-	Configuration.DecodeContextDescriptor               = &LpcmAudioCodecDecodeContextDescriptor;
+	Configuration.CodecName = "LPCM audio";
+	Configuration.StreamParameterContextCount = 1;
+	Configuration.StreamParameterContextDescriptor = &LpcmAudioCodecStreamParameterContextDescriptor;
+	Configuration.DecodeContextCount = 4;
+	Configuration.DecodeContextDescriptor = &LpcmAudioCodecDecodeContextDescriptor;
 //
 	DecoderId = ACC_LPCM_ID;
 	Reset();
@@ -149,8 +161,8 @@ Codec_MmeAudioLpcm_c::Codec_MmeAudioLpcm_c(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor function, ensures a full halt and reset
-///     are executed for all levels of the class.
+/// Destructor function, ensures a full halt and reset
+/// are executed for all levels of the class.
 ///
 Codec_MmeAudioLpcm_c::~Codec_MmeAudioLpcm_c(void)
 {
@@ -166,13 +178,13 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 {
 	CodecStatus_t Status;
 //
-	LpcmAudioStreamParameters_t    *Parsed;
+	LpcmAudioStreamParameters_t *Parsed;
 	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
 	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
 	if (ParsedFrameParameters == NULL)
 	{
 		// At transformer init, stream properties might be unknown...
-		Parsed = (LpcmAudioStreamParameters_t*) &DefaultStreamParameters;
+		Parsed = (LpcmAudioStreamParameters_t *) &DefaultStreamParameters;
 	}
 	else
 	{
@@ -217,7 +229,7 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 			Resampling = ACC_LPCM_RSPL_48;
 		}
 		else if ((StreamSamplingFreq == 96000) &&
-				 (AudioOutputSurface->SampleRateHz == 48000))
+				(AudioOutputSurface->SampleRateHz == 48000))
 		{
 			Resampling = ACC_LPCM_RSPL_96;
 		}
@@ -248,7 +260,7 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 /// will have been filled out with valid values sufficient to initialize an
 /// LPCM audio decoder.
 ///
-CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutTransformerInitializationParameters(void)
+CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerInitializationParameters(void)
 {
 	CodecStatus_t Status;
 	MME_LxAudioDecoderInitParams_t &Params = AudioDecoderInitializationParameters;
@@ -267,11 +279,11 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutTransformerInitializationParameters
 ///
 /// Populate the AUDIO_DECODER's MME_SET_GLOBAL_TRANSFORMER_PARAMS parameters for LPCM audio.
 ///
-CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutSetStreamParametersCommand(void)
+CodecStatus_t Codec_MmeAudioLpcm_c::FillOutSetStreamParametersCommand(void)
 {
 	CodecStatus_t Status;
 //LpcmAudioStreamParameters_t *Parsed = (LpcmAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
-	LpcmAudioCodecStreamParameterContext_t  *Context = (LpcmAudioCodecStreamParameterContext_t *)StreamParameterContext;
+	LpcmAudioCodecStreamParameterContext_t *Context = (LpcmAudioCodecStreamParameterContext_t *)StreamParameterContext;
 	//
 	// Examine the parsed stream parameters and determine what type of codec to instanciate
 	//
@@ -286,10 +298,10 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutSetStreamParametersCommand(void)
 	//
 	// Fill out the actual command
 	//
-	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = 0;
-	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = NULL;
-	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->StreamParameters);
-	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->StreamParameters);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize = 0;
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p = NULL;
+	Context->BaseContext.MMECommand.ParamSize = sizeof(Context->StreamParameters);
+	Context->BaseContext.MMECommand.Param_p = (MME_GenericParams_t)(&Context->StreamParameters);
 //
 	return CodecNoError;
 }
@@ -298,10 +310,10 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutSetStreamParametersCommand(void)
 ///
 /// Populate the AUDIO_DECODER's MME_TRANSFORM parameters for LPCM audio.
 ///
-CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutDecodeCommand(void)
+CodecStatus_t Codec_MmeAudioLpcm_c::FillOutDecodeCommand(void)
 {
-	LpcmAudioCodecDecodeContext_t   *Context        = (LpcmAudioCodecDecodeContext_t *)DecodeContext;
-	LpcmAudioFrameParameters_t    *Parsed         = (LpcmAudioFrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
+	LpcmAudioCodecDecodeContext_t *Context = (LpcmAudioCodecDecodeContext_t *)DecodeContext;
+	LpcmAudioFrameParameters_t *Parsed = (LpcmAudioFrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
 	//
 	// Initialize the frame parameters
 	//
@@ -315,10 +327,10 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutDecodeCommand(void)
 	//
 	// Fill out the actual command
 	//
-	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize        = sizeof(Context->DecodeStatus);
-	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p          = (MME_GenericParams_t)(&Context->DecodeStatus);
-	Context->BaseContext.MMECommand.ParamSize                           = sizeof(Context->DecodeParameters);
-	Context->BaseContext.MMECommand.Param_p                             = (MME_GenericParams_t)(&Context->DecodeParameters);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfoSize = sizeof(Context->DecodeStatus);
+	Context->BaseContext.MMECommand.CmdStatus.AdditionalInfo_p = (MME_GenericParams_t)(&Context->DecodeStatus);
+	Context->BaseContext.MMECommand.ParamSize = sizeof(Context->DecodeParameters);
+	Context->BaseContext.MMECommand.Param_p = (MME_GenericParams_t)(&Context->DecodeParameters);
 	return CodecNoError;
 }
 
@@ -332,7 +344,7 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::FillOutDecodeCommand(void)
 ///
 /// \return CodecSuccess
 ///
-CodecStatus_t   Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeContext_t *Context)
+CodecStatus_t Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeContext_t *Context)
 {
 	LpcmAudioCodecDecodeContext_t *DecodeContext = (LpcmAudioCodecDecodeContext_t *) Context;
 	MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus;
@@ -358,7 +370,7 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeConte
 	AudioParameters = BufferState[DecodeContext->BaseContext.BufferIndex].ParsedAudioParameters;
 	// TODO: these values should be extracted from the codec's reply
 	AudioParameters->Source.BitsPerSample = /* AudioOutputSurface->BitsPerSample;*/ ((AUDIODEC_GET_OUTPUT_WS((&AudioDecoderInitializationParameters)) == ACC_WS32) ? 32 : 16);
-	AudioParameters->Source.ChannelCount =  AudioOutputSurface->ChannelCount;/*Codec_MmeAudio_c::GetNumberOfChannelsFromAudioConfiguration((enum eAccAcMode) Status.AudioMode);*/
+	AudioParameters->Source.ChannelCount = AudioOutputSurface->ChannelCount;/*Codec_MmeAudio_c::GetNumberOfChannelsFromAudioConfiguration((enum eAccAcMode) Status.AudioMode);*/
 	AudioParameters->Organisation = Status.AudioMode;
 	// lpcm can be resampled directly in the codec to avoid having them resampled by the mixer
 	// so get the sampling frequency from the codec
@@ -378,11 +390,11 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::ValidateDecodeContext(CodecBaseDecodeConte
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to dump out the set stream
-//      parameters from an mme command.
+// Function to dump out the set stream
+// parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioLpcm_c::DumpSetStreamParameters(void    *Parameters)
+CodecStatus_t Codec_MmeAudioLpcm_c::DumpSetStreamParameters(void *Parameters)
 {
 	CODEC_ERROR("Not implemented\n");
 	return CodecNoError;
@@ -390,11 +402,11 @@ CodecStatus_t   Codec_MmeAudioLpcm_c::DumpSetStreamParameters(void    *Parameter
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to dump out the decode
-//      parameters from an mme command.
+// Function to dump out the decode
+// parameters from an mme command.
 //
 
-CodecStatus_t   Codec_MmeAudioLpcm_c::DumpDecodeParameters(void    *Parameters)
+CodecStatus_t Codec_MmeAudioLpcm_c::DumpDecodeParameters(void *Parameters)
 {
 	CODEC_ERROR("Not implemented\n");
 	return CodecNoError;

@@ -13,24 +13,24 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : front_matter.h
-Author :           Nick
+Author : Nick
 
 A 'fake' header file containing only doxygen front-matter.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-21-Mar-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+21-Mar-07 Created Daniel
 
 ************************************************************************/
 
-//{{{  Main page
+//{{{ Main page
 /*! \mainpage
 
 \section intro_sec Introduction
@@ -47,30 +47,30 @@ required to support traditional media centres.
 Among the faults with player 1 are:
 
 - There is one player 1 instantiation per playback (you may not have
-  noticed this if you have only one TV).
+ noticed this if you have only one TV).
 - Buffers carry no context (without fudging a header at the start).
 - There is no way to flush instructions or operations down the decoding pipeline
 - The avsync control is based around operations on frames of data
 - There is no mechanism to import, or export the playback time and
-  consequently no way to synchronise external events with the playback.
+ consequently no way to synchronise external events with the playback.
 - There is no way to dispose of a buffer out of line.
 
 Player 2 addresses these and other issues, among the key
 changes to player 2 are:
 
 - There is only one player instantiation, with multiple ongoing
-  playbacks.
+ playbacks.
 - There is a more sophisticated buffer mechanism, based around a
-  class implementation, and supporting reference counts and meta data
-  attachment etc...
+ class implementation, and supporting reference counts and meta data
+ attachment etc...
 - Input, is via a buffer, and can be multiplexed or de-multiplexed.
 - It supports the passing of instructions/parameters down the buffer chain.
 - Avsync is based around providing a preferred manifestation time
-  for every frame of audio/video, alongside an expected duration (to
-  allow video drivers, for example, to decide how long the top field of
-  an interlaced frame should be on display).
+ for every frame of audio/video, alongside an expected duration (to
+ allow video drivers, for example, to decide how long the top field of
+ an interlaced frame should be on display).
 - Functions have been added to import and export time in its multiple
-  forms (See \ref time).
+ forms (See \ref time).
 
 \section concepts_sec Internal concepts and data types
 
@@ -100,11 +100,11 @@ classes. The implementation of a useful player consists
 of three additional components.
 
 - The player components, implementations of the pure
-  virtual classes.
+ virtual classes.
 - The player wrapper, an interface by which implementations
-  of the pure virtual classes can be instanciated and manipulated.
+ of the pure virtual classes can be instanciated and manipulated.
 - Utility classes, used by the player components to help them
-  implement their contractual behavior.
+ implement their contractual behavior.
 
 In order to understand any other aspect of the player a
 thorough understanding the pure virtual class is implements
@@ -115,74 +115,74 @@ The most important pure virtual classes are listed below:
 - BaseComponentClass_c: Base class from which all component classes are derived.
 
 - BufferManager_c, BufferPool_c, Buffer_c: These form the
-  implementation of buffers as detailed in \ref buffers.
-  These wrap the buffers used throughout in this implementation. I
-  expect there will be only one generic implementation of these classes.
-  Further I would expect there to be one instance of the buffer
-  manager, several buffer pool instances (at least 2 per individual
-  stream), and many buffer instances.
+ implementation of buffers as detailed in \ref buffers.
+ These wrap the buffers used throughout in this implementation. I
+ expect there will be only one generic implementation of these classes.
+ Further I would expect there to be one instance of the buffer
+ manager, several buffer pool instances (at least 2 per individual
+ stream), and many buffer instances.
 
 - Codec_c: This class will be responsible for decoding an individual
-  frame, and for passing codec parameters. This class has the least
-  change to its functionality in the new implementation, though due to
-  the buffer changes it will still undergo a change in its
-  implementation. I expect there will be an implementation of this
-  class for each decodable data format, and an instance for each
-  ongoing decode of that format.
+ frame, and for passing codec parameters. This class has the least
+ change to its functionality in the new implementation, though due to
+ the buffer changes it will still undergo a change in its
+ implementation. I expect there will be an implementation of this
+ class for each decodable data format, and an instance for each
+ ongoing decode of that format.
 
 - Collator_c: This class is responsible for taking input data and
-  collating it into frames of input data appropriate for
-  parsing/decode. This class will also be responsible for performing
-  any start code scan that is appropriate for the particular stream. I
-  expect there to be an implementation of this class for each decodable
-  data format, and an instance for each ongoing decode of that
-  format.
+ collating it into frames of input data appropriate for
+ parsing/decode. This class will also be responsible for performing
+ any start code scan that is appropriate for the particular stream. I
+ expect there to be an implementation of this class for each decodable
+ data format, and an instance for each ongoing decode of that
+ format.
 
 - Demultiplexor_c: This class is responsible for splitting input muxed
-  data into component streams and passing this data to the appropriate
-  collators. I expect there will at least one of these to support
-  transport stream demultiplexing, and possibly others for specific
-  muxed data streams. There is likely to be only one instance of each demultiplexor.
+ data into component streams and passing this data to the appropriate
+ collators. I expect there will at least one of these to support
+ transport stream demultiplexing, and possibly others for specific
+ muxed data streams. There is likely to be only one instance of each demultiplexor.
 
 - FrameParser_c: This class is responsible for parsing an input data
-  frame, and submitting to the codec any appropriate decode requests.
-  This differs from the previous implementation in that there will be
-  no requirement to collate frames (as used to exist for audio), and no
-  requirement to handle multiple frames (as used to exist in some
-  video, and audio formats). I expect there will be an implementation
-  of this class for each decodable data format, and an instance for
-  each ongoing decode of that format.
+ frame, and submitting to the codec any appropriate decode requests.
+ This differs from the previous implementation in that there will be
+ no requirement to collate frames (as used to exist for audio), and no
+ requirement to handle multiple frames (as used to exist in some
+ video, and audio formats). I expect there will be an implementation
+ of this class for each decodable data format, and an instance for
+ each ongoing decode of that format.
 
 - Manifestor_c: This class represents the output mechanism of Player 2.
-  I have tried to extend the functionality of the manifestor, so that
-  it is capable of doing all that our current ones do (which is, as
-  with all things player 1, more than was originally intended), while
-  making it simpler. All things will now have a manifestation time as
-  opposed to the current play when you reach the head of the queue.
-  There will be data associated with the buffer to allow manifestation
-  mechanism to make wise decisions affecting manifestation. The class
-  will also have the concept of an abstract 'output surface' on which
-  to manifest the data, to allow external control of mixing or output
-  routing. I expect there will be an implementation of this class for
-  each decoded output type (audio, video, graphics ?), and an instance
-  for each ongoing decode of that type.
+ I have tried to extend the functionality of the manifestor, so that
+ it is capable of doing all that our current ones do (which is, as
+ with all things player 1, more than was originally intended), while
+ making it simpler. All things will now have a manifestation time as
+ opposed to the current play when you reach the head of the queue.
+ There will be data associated with the buffer to allow manifestation
+ mechanism to make wise decisions affecting manifestation. The class
+ will also have the concept of an abstract 'output surface' on which
+ to manifest the data, to allow external control of mixing or output
+ routing. I expect there will be an implementation of this class for
+ each decoded output type (audio, video, graphics ?), and an instance
+ for each ongoing decode of that type.
 
 - Player_c: The glue that holds all the components. Its methods from
-  the primary means for the player wrapper to manipulate a player
-  instance.
+ the primary means for the player wrapper to manipulate a player
+ instance.
 
 - OutputTimer_c: This replaces old synchronizer, its primary function
-  is to generate output times, and expected durations, for decoded
-  data, and in the case of speed changes to re-generate those times. It
-  also performs those adjustments relating to synchronization, basing
-  its adjustments on information about when a decoded frame arrived at
-  the manifestor later than its manifestation time (starvation), when a
-  decoded frame was removed from manifestation earlier than its
-  expected time (because the next frame arrived with an earlier
-  manifestation time), and what the number of filled coded frame
-  buffers is, when in real time playback. I expect there to be one
-  generic implementation of this, and an instance for each playback and
-  its associated streams.
+ is to generate output times, and expected durations, for decoded
+ data, and in the case of speed changes to re-generate those times. It
+ also performs those adjustments relating to synchronization, basing
+ its adjustments on information about when a decoded frame arrived at
+ the manifestor later than its manifestation time (starvation), when a
+ decoded frame was removed from manifestation earlier than its
+ expected time (because the next frame arrived with an earlier
+ manifestation time), and what the number of filled coded frame
+ buffers is, when in real time playback. I expect there to be one
+ generic implementation of this, and an instance for each playback and
+ its associated streams.
 
 */
 //}}}
@@ -191,7 +191,7 @@ The most important pure virtual classes are listed below:
  * Internal concepts and datatypes pages
  */
 
-//{{{  Buffer management
+//{{{ Buffer management
 /*! \page buffers Buffer management
 
 \section intro_sec Introduction
@@ -234,19 +234,19 @@ meta data, type consists of a few simple pieces of information:
 
 - <b>TypeName</b>, textual name (looks pretty on the dumps)
 - <b>Type</b>, an identity for the type, an unsigned integer,
-                can be a specified number, or an indicator that the
-                definition function should create a new number.
+ can be a specified number, or an indicator that the
+ definition function should create a new number.
 - <b>AllocationSource</b>, Tells the manager where memory for this type is
-                to be allocated from, covers from various malloc
-                sources, to explicit attachment via a pointer.
+ to be allocated from, covers from various malloc
+ sources, to explicit attachment via a pointer.
 - <b>RequiredAllignment</b>, Control to be applied to allocation.
 - <b>AllocationUnitSize</b>, Control to be applied to allocation.
 - <b>HasFixedSize</b>, indicates datum has a fixed size.
 - <b>FixedSize</b>, The value of the fixed size.
 - <b>AllocateOnPoolCreation</b>, for buffer data, indicates that it
-                should be allocated during pool creation. If set
-        buffers will each have one data block that is
-        associated with the buffer for the life of the pool.
+ should be allocated during pool creation. If set
+ buffers will each have one data block that is
+ associated with the buffer for the life of the pool.
 
 When creating a buffer or meta data descriptor, the appropriate
 initialization macro should be used to set unused fields appropriately,
@@ -304,38 +304,38 @@ Derived from the source of manifestor_dummy.h, but changed
 to create a metadata type rather than a buffer type
 
 \code
-#define METADATA_ERIC           "Eric"
-#define METADATA_ERIC_TYPE          { METADATA_ERIC, MetaDataTypeBase, \
-                                          AllocateFromOSMemory, 4, 0, true, \
-                      false, sizeof(Eric_t) }
+#define METADATA_ERIC "Eric"
+#define METADATA_ERIC_TYPE { METADATA_ERIC, MetaDataTypeBase, \
+ AllocateFromOSMemory, 4, 0, true, \
+ false, sizeof(Eric_t) }
 
-static BufferDataDescriptor_t            InitialDescriptor = METADATA_ERIC_TYPE;
+static BufferDataDescriptor_t InitialDescriptor = METADATA_ERIC_TYPE;
 
-BufferDataDescriptor_t                  *Descriptor;
-BufferType_t                             Type;
-BufferStatus_t                           Status;
+BufferDataDescriptor_t *Descriptor;
+BufferType_t Type;
+BufferStatus_t Status;
 
 //
 // Find the type for eric if it already exists
 //
 
-Status      = BufferManager->FindBufferDataType( METADATA_ERIC, &Type );
+Status = BufferManager->FindBufferDataType( METADATA_ERIC, &Type );
 if( Status != BufferNoError )
 {
 
-    //
-    // It didn't already exist - create it
-    //
+ //
+ // It didn't already exist - create it
+ //
 
-    Status  = BufferManager->CreateBufferDataType( &InitialDescriptor, &Type );
-    if( Status != BufferNoError )
-    {
-        report( severity_error,
-                "Codec_MmeBase_c::InitializeDataType(%s) - "
-            "Failed to create the %s buffer type.\n",
-            Configuration.CodecName, InitialDescriptor.TypeName );
-        return Status;
-    }
+ Status = BufferManager->CreateBufferDataType( &InitialDescriptor, &Type );
+ if( Status != BufferNoError )
+ {
+ report( severity_error,
+ "Codec_MmeBase_c::InitializeDataType(%s) - "
+ "Failed to create the %s buffer type.\n",
+ Configuration.CodecName, InitialDescriptor.TypeName );
+ return Status;
+ }
 }
 
 //
@@ -348,33 +348,33 @@ BufferManager->GetDescriptor( Type, MetaDataTypeBase, &Descriptor );
 \subsubsection buffer_ex3_sec Part two: attaching one to every item of a pool
 
 \code
-Status        = Pool->AttachMetaData( Type );
+Status = Pool->AttachMetaData( Type );
 if( Status != BufferNoError )
 {
-    report( severity_error,
-            "Failed to attach Eric to all members of the pool.\n" );
-    return Status;
+ report( severity_error,
+ "Failed to attach Eric to all members of the pool.\n" );
+ return Status;
 }
 \endcode
 
 \subsubsection buffer_ex4_sec Part three: getting a pointer to the one attached to a specific buffer
 
 \code
-Eric_t      Eric;
+Eric_t Eric;
 
-Status  = Buffer->ObtainMetaDataReference( Type, (void **)(&Eric) );
+Status = Buffer->ObtainMetaDataReference( Type, (void **)(&Eric) );
 if( Status != BufferNoError )
 {
-    report( severity_error,
-            "Failed to obtain pointer to meta data\"Eric\".\n" );
-    return Status;
+ report( severity_error,
+ "Failed to obtain pointer to meta data\"Eric\".\n" );
+ return Status;
 }
 \endcode
 
 */
 //}}}
 
-//{{{  Demultiplexing
+//{{{ Demultiplexing
 /*! \page demultiplexing Demultiplexing
 
 In Player 1 de-multiplexing was originally incorporated to separate out
@@ -419,7 +419,7 @@ data.
 */
 //}}}
 
-//{{{  Events
+//{{{ Events
 /*! \page events Events
 
 We recognise that Player 1 today has no capability of exporting events
@@ -450,20 +450,20 @@ you express an interest in the event. Something like:
 \code
 typedef struct PlayerEventRecord_s
 {
-    PlayerEventIdentifier_t        Code;
-    PlayerPlayback_t               Playback;
-    PlayerStream_t                 Stream;
-    unsigned long long             PlaybackTime;
+ PlayerEventIdentifier_t Code;
+ PlayerPlayback_t Playback;
+ PlayerStream_t Stream;
+ unsigned long long PlaybackTime;
 
-    union
-    {
-        unsigned int               UnsignedInt;
-        UnsignedFixedPoint_t       FixedPoint;
-        unsigned long long         LongLong;
-        void                      *Pointer;
-    } Value[4];
+ union
+ {
+ unsigned int UnsignedInt;
+ UnsignedFixedPoint_t FixedPoint;
+ unsigned long long LongLong;
+ void *Pointer;
+ } Value[4];
 
-    void                          *UserData
+ void *UserData
 } PlayerEventRecord_t;
 \endcode
 
@@ -476,28 +476,28 @@ The current list of possible event codes is something like:
 \code
 typedef enum
 {
-    // One-shot events
-    EventFirstFrameManifested            = 0x00000001,
-    EventPlaybackTerminated              = 0x00000002,
-    EventStreamTerminated                = 0x00000004,
-    EventStreamSwitched                  = 0x00000008,
-    EventStreamDrained                   = 0x00000010,
-    EventTimeNotification                = 0x00000020,
-    EventDecodeBufferAvailable           = 0x00000040,
+ // One-shot events
+ EventFirstFrameManifested = 0x00000001,
+ EventPlaybackTerminated = 0x00000002,
+ EventStreamTerminated = 0x00000004,
+ EventStreamSwitched = 0x00000008,
+ EventStreamDrained = 0x00000010,
+ EventTimeNotification = 0x00000020,
+ EventDecodeBufferAvailable = 0x00000040,
 
-    // Ongoing events
-    EventSizeChangeParse                 = 0x00010000,
-    EventSourceSizeChangeManifest        = 0x00020000,
-    EventOutputSizeChangeManifest        = 0x00040000,
+ // Ongoing events
+ EventSizeChangeParse = 0x00010000,
+ EventSourceSizeChangeManifest = 0x00020000,
+ EventOutputSizeChangeManifest = 0x00040000,
 
-    EventFrameRateChangeParse            = 0x00080000,
-    EventSourceFrameRateChangeManifest   = 0x00100000,
-    EventOutputFrameRateChangeManifest   = 0x00200000,
+ EventFrameRateChangeParse = 0x00080000,
+ EventSourceFrameRateChangeManifest = 0x00100000,
+ EventOutputFrameRateChangeManifest = 0x00200000,
 
-    EventBufferRelease                   = 0x00400000
+ EventBufferRelease = 0x00400000
 } PlayerEventIdentifier_t;
 
-typedef unsigned int             PlayerEventMask_t;
+typedef unsigned int PlayerEventMask_t;
 \endcode
 
 Of these all but the last two are one-shot events. The parameter change
@@ -510,7 +510,7 @@ conveyed in the value encoded in the event record.
 */
 //}}}
 
-//{{{  Input handling
+//{{{ Input handling
 /*! \page input Input handling
 
 Data is input to the player via buffers, and can be multi-threaded.
@@ -527,23 +527,23 @@ structure is initially expected to look something like:
 \code
 typedef enum
 {
-    MuxTypeUnMuxed           = 0,
-    MuxTypeTransportStream,
-    ... Any Others I can't think of ...
+ MuxTypeUnMuxed = 0,
+ MuxTypeTransportStream,
+ ... Any Others I can't think of ...
 } PlayerInputMuxType_t;
 
 typedef struct PlayerInputDescriptor_s
 {
-    PlayerInputMuxType_t    MuxType;
-    DemultiplexorContext_t  DemultiplexorContext;
-    PlayerStream_t          UnMuxedStream;
+ PlayerInputMuxType_t MuxType;
+ DemultiplexorContext_t DemultiplexorContext;
+ PlayerStream_t UnMuxedStream;
 
-    bool                    PlaybackTimeValid;
-    bool                    DecodeTimeValid;
-    unsigned long long      PlaybackTime;
-    unsigned long long      DecodeTime;
+ bool PlaybackTimeValid;
+ bool DecodeTimeValid;
+ unsigned long long PlaybackTime;
+ unsigned long long DecodeTime;
 
-    unsigned int            DataSpecificFlags;
+ unsigned int DataSpecificFlags;
 
 } PlayerInputDescriptor_t;
 \endcode
@@ -566,9 +566,9 @@ consist of blocks of 'unwrapped' memory, with a pointer to a
 <b>PlayerInputDescriptor_t</b> structure, ie, something like:
 
 \code
-CollatorStatus_t   Input( PlayerInputDescriptor_t    *Descriptor,
-                          unsigned int                Length,
-                          unsigned char              *Data );
+CollatorStatus_t Input( PlayerInputDescriptor_t *Descriptor,
+ unsigned int Length,
+ unsigned char *Data );
 \endcode
 
 Due to the handling of Muxed input, it is unsafe to assume that
@@ -581,17 +581,17 @@ in a stream or playback, at these times it is useful to indicate to the
 player that a jump is occurring. The Player needs to know which stream,
 or streams are jumping, and also whether or not there should be a
 discard of accumulated data, or a flush of any complete frames. In
-addition to this, the in the case of reverse   play, it is useful to
+addition to this, the in the case of reverse play, it is useful to
 indicate to the player that although there has been a jump, this is
 actually a reverse jump to the previous block of data (it is in fact a
 continuous reverse jump), since we may not be executing in reverse
 play, we give this additional indicator a default value.
 
 \code
-PlayerStatus_t   InputJump( PlayerPlayback_t         Playback,
-                            PlayerStream_t           Stream,
-                            bool                     SurplusDataInjected,
-                            bool                     ContinuousReverseJump  = false );
+PlayerStatus_t InputJump( PlayerPlayback_t Playback,
+ PlayerStream_t Stream,
+ bool SurplusDataInjected,
+ bool ContinuousReverseJump = false );
 \endcode
 
 One stream can be selected by supplying just a stream identifier, or
@@ -600,7 +600,7 @@ several can be selected by supplying a playback identifier, and a
 
 The surplus data injected flag, if set, will cause the discard of any
 accumulated data in the collators, while if it is not set, the
-collators will be commanded to pass on accumulated data as  complete
+collators will be commanded to pass on accumulated data as complete
 frames.
 
 The continuous reverse flag, if set, will ripple through the stream
@@ -610,7 +610,7 @@ longer required reference frames.
 */
 //}}}
 
-//{{{  Parameter blocks
+//{{{ Parameter blocks
 /*! \page parameter_blocks Parameter blocks
 
 In the player 1 implementation, we always had the capability to set
@@ -630,7 +630,7 @@ consists of a void * block of memory with a specified size.
 */
 //}}}
 
-//{{{  Playbacks and streams
+//{{{ Playbacks and streams
 /*! \page playbacks_and_streams Playbacks and streams
 
 Since there is to be only one Player 2 running in the system, we need a
@@ -646,7 +646,7 @@ playback, or a specific stream within a playback.
 */
 //}}}
 
-//{{{  Policies
+//{{{ Policies
 /*! \page policies Policies
 
 We identified in player 1 that there are certain policies that
@@ -664,44 +664,44 @@ have two states indicating on, or off. The following are examples of
 some possible policy flags:
 
 - <b>PolicyExternalTimeMappingOnly</b>, A boolean policy, this forces
-  the output time to only establish a mapping between system time and
-  playback time by use of the player SetNativePlaybackTime() function
-  (which will invoke a call to EstablishTimeMapping() in the output
-  timer).
+ the output time to only establish a mapping between system time and
+ playback time by use of the player SetNativePlaybackTime() function
+ (which will invoke a call to EstablishTimeMapping() in the output
+ timer).
 - <b>PolicyRealTime</b>, A boolean policy, this affects whether, or
-  not, the collators will wait for a buffer, should none be avaialable,
-  or discard the accumulated data. There are possible other effects for
-  this policy, that we will identify when using live feeds.
+ not, the collators will wait for a buffer, should none be avaialable,
+ or discard the accumulated data. There are possible other effects for
+ this policy, that we will identify when using live feeds.
 - <b>PolicySynchronize</b>, A push Button, informs the
-  <b>OutputTimer</b> of the preferred mechanism for synchronization
-  activity.
+ <b>OutputTimer</b> of the preferred mechanism for synchronization
+ activity.
 - <b>PolicyDisplayFirstVideoFrameEarly</b>, A boolean policy, rather
-  than wait until we have N frames before starting display, display the
-  first frame as soon as decoded, and leave it on screen while we
-  decode N frames.
+ than wait until we have N frames before starting display, display the
+ first frame as soon as decoded, and leave it on screen while we
+ decode N frames.
 - <b>PolicyTrickModeDecodePerField</b>, A boolean policy, informs the
-  Player, that it is desirable to use a different frame decode for each
-  field in >=2 speeds (IE in 2x, top field from frame N, bottom field
-  from frame N+1).
+ Player, that it is desirable to use a different frame decode for each
+ field in >=2 speeds (IE in 2x, top field from frame N, bottom field
+ from frame N+1).
 - <b>PolicyTrickModeDisplayFrameOnStartPaused</b>, A boolean policy,
-  informs the Player, that if a playback is paused, before the first
-  frame is displayed, then the first frame should still be displayed.
+ informs the Player, that if a playback is paused, before the first
+ frame is displayed, then the first frame should still be displayed.
 - <b>PolicyTrickModeAudio</b>, A push Button, informs the
-  player/manifestor, what is to be done with audio when operating in
-  trick mode playback.
+ player/manifestor, what is to be done with audio when operating in
+ trick mode playback.
 - <b>PolicyPlayoutOnTerminate</b>, A boolean policy, indicates that a
-  stream is to be played out when terminating a playback or stream.
+ stream is to be played out when terminating a playback or stream.
 - <b>PolicyPlayoutOnSwitch</b>, A boolean policy, indicates that a
-  stream is to be played out when switching a stream.
+ stream is to be played out when switching a stream.
 - <b>PolicyPlayoutOnDrain</b>, A boolean policy, indicates that a
-  stream is to be played out when draining a stream.
+ stream is to be played out when draining a stream.
 - <b>PolicyPlay24FPSVideoAt25FPS</b>, A boolean policy, indicates that
-  a playback is to be adjusted to play a 24 fps stream at 25 fps.
+ a playback is to be adjusted to play a 24 fps stream at 25 fps.
 
 */
 //}}}
 
-//{{{  Process model
+//{{{ Process model
 /*! \page process_model Process model
 
 The process model for Player 2 is somewhat different from player 1, in
@@ -712,40 +712,40 @@ For each stream component to be decoded (video/audio data etc.) there
 are the following operations:
 
 - <b>Caller Context</b>,
-  All player entrypoints, including, on input, any demultiplexor, and
-  Collator effort.
+ All player entrypoints, including, on input, any demultiplexor, and
+ Collator effort.
 - <b>Collator To Parser process</b>,
-  Takes coded frame buffers, from the Collator's output ring, and
-  passing them onto the frame parser. The frame Parser which will,
-  after parsing is complete, pass the coded frame buffer, along with
-  the attached results of parsing, onto the parsed frame buffer ring.
-  Since the buffer is now a class instantiation, and can be returned to
-  the pool of available buffers by a call to one of its methods, this
-  task will no longer have to fudge the recording of when a buffer
-  shall become free.
+ Takes coded frame buffers, from the Collator's output ring, and
+ passing them onto the frame parser. The frame Parser which will,
+ after parsing is complete, pass the coded frame buffer, along with
+ the attached results of parsing, onto the parsed frame buffer ring.
+ Since the buffer is now a class instantiation, and can be returned to
+ the pool of available buffers by a call to one of its methods, this
+ task will no longer have to fudge the recording of when a buffer
+ shall become free.
 - <b>Parser To Codec process</b>,
-  Takes the parsed frame buffers from the Frame Parser's output
-  ring, and passes them on to the codec to decode the frame. When the
-  codec completes decoding of the frame, the decode buffer will be
-  passed onto the Codec's output ring. Specific parameter meta data
-  will be copied from the frame buffer to the decode buffer, and the
-  frame buffer will be released.  Not every parsed frame buffer will
-  result in a completed decode transfer, since a frame may consist of,
-  in the case of video, a single field, or a single slice, or in the
-  case of audio, may generate no output.
+ Takes the parsed frame buffers from the Frame Parser's output
+ ring, and passes them on to the codec to decode the frame. When the
+ codec completes decoding of the frame, the decode buffer will be
+ passed onto the Codec's output ring. Specific parameter meta data
+ will be copied from the frame buffer to the decode buffer, and the
+ frame buffer will be released. Not every parsed frame buffer will
+ result in a completed decode transfer, since a frame may consist of,
+ in the case of video, a single field, or a single slice, or in the
+ case of audio, may generate no output.
 - <b>Codec To Manifestor process</b>,
-  Takes any completed decodes from the codec and submits them to
-  the manifestors. This process is also responsible for various other
-  operations, such as:
-  - Waiting For frame information to be updated (see DIVX B frames)
-  - Re-ordering decoded frames
-  - Generating manifestation timing information
-  - Synchronizing on speed change
+ Takes any completed decodes from the codec and submits them to
+ the manifestors. This process is also responsible for various other
+ operations, such as:
+ - Waiting For frame information to be updated (see DIVX B frames)
+ - Re-ordering decoded frames
+ - Generating manifestation timing information
+ - Synchronizing on speed change
 - <b>Post Manifestation process</b>,
-  This process is responsible for taking buffers from the Multiplexor,
-  and performing one of several functions on them:
-  - Return frame to codec
-  - Re-time frame and re-submit for manifestation
+ This process is responsible for taking buffers from the Multiplexor,
+ and performing one of several functions on them:
+ - Return frame to codec
+ - Re-time frame and re-submit for manifestation
 
 Of these the <b>Post Manifestation process</b> is perhaps the most
 different from its previous incarnation. Since we can now release a
@@ -769,7 +769,7 @@ appropriate for the new playback speed.
 */
 //}}}
 
-//{{{  Specific meta data types
+//{{{ Specific meta data types
 /*! \page specific_meta_data_types Specific meta data types
 
 This is my first stab at a set of named meta data types. Through the
@@ -782,7 +782,7 @@ the meta data types.
 The input descriptor type, attached to input buffers.
 
 \code
-#define METADATA_PLAYER_INPUT_DESCRIPTOR    "PlayerInputDescriptor"
+#define METADATA_PLAYER_INPUT_DESCRIPTOR "PlayerInputDescriptor"
 \endcode
 
 For details of the structure definition for this type see \ref input.
@@ -790,18 +790,18 @@ For details of the structure definition for this type see \ref input.
 The coded frame parameters, attached to a coded frame buffer, output from a collator.
 
 \code
-#define METADATA_CODED_FRAME_PARAMETERS     "CodedFrameParameters"
+#define METADATA_CODED_FRAME_PARAMETERS "CodedFrameParameters"
 
 typedef struct CodedFrameParameters_s
 {
-    bool                    StreamDiscontinuity;
-    bool                    ContinuousReverseJump;
-    bool                    PlaybackTimeValid;
-    bool                    DecodeTimeValid;
-    unsigned long long      PlaybackTime;
-    unsigned long long      DecodeTime;
+ bool StreamDiscontinuity;
+ bool ContinuousReverseJump;
+ bool PlaybackTimeValid;
+ bool DecodeTimeValid;
+ unsigned long long PlaybackTime;
+ unsigned long long DecodeTime;
 
-    unsigned int            DataSpecificFlags;
+ unsigned int DataSpecificFlags;
 } CodedFrameParameters_t;
 \endcode
 
@@ -809,56 +809,56 @@ The start code scan result, <b>optionally</b> attached to a coded frame
 buffer, output from a collator.
 
 \code
-#define METADATA_START_CODE_LIST            "StartCodeList"
+#define METADATA_START_CODE_LIST "StartCodeList"
 
-#define PackStartCode(Offset,Code)          ((unsigned int)(((Offset) << 8) | (Code)))
+#define PackStartCode(Offset,Code) ((unsigned int)(((Offset) << 8) | (Code)))
 
-#define ExtractStartCodeOffset(Value)       ((unsigned int)((Value) >> 8))
-#define ExtractStartCodeCode(Value)         ((unsigned int)((Value) & 0xff))
+#define ExtractStartCodeOffset(Value) ((unsigned int)((Value) >> 8))
+#define ExtractStartCodeCode(Value) ((unsigned int)((Value) & 0xff))
 
 typedef struct StartCodeList_s
 {
-    unsigned int            NumberOfStartCodes;
-    unsigned int            StartCodes[1];
+ unsigned int NumberOfStartCodes;
+ unsigned int StartCodes[1];
 } StartCodeList_t;
 
-#define SizeofStartCodeList(Entries)        (sizeof(StartCodeList_t) + ((Entries-1) * sizeof(unsigned int)))
+#define SizeofStartCodeList(Entries) (sizeof(StartCodeList_t) + ((Entries-1) * sizeof(unsigned int)))
 \endcode
 
 The parsed frame parameters, attached to a coded frame buffer, output from a frame parser.
 
 \code
-#define METADATA_PARSED_FRAME_PARAMETERS     "ParsedFrameParameters"
+#define METADATA_PARSED_FRAME_PARAMETERS "ParsedFrameParameters"
 
-#define MAX_REFERENCE_FRAME_LISTS               2
-#define MAX_ENTRIES_IN_REFERENCE_FRAME_LIST     16
+#define MAX_REFERENCE_FRAME_LISTS 2
+#define MAX_ENTRIES_IN_REFERENCE_FRAME_LIST 16
 
 typedef struct ReferenceFrameList_s
 {
-    unsigned int            EntryCount;
-    unsigned int            EntryIndicies[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];
+ unsigned int EntryCount;
+ unsigned int EntryIndicies[MAX_ENTRIES_IN_REFERENCE_FRAME_LIST];
 } ReferenceFrameList_t;
 
 typedef struct ParsedFrameParameters_s
 {
-    unsigned int            DecodeFrameIndex;
-    unsigned int            DisplayFrameIndex;
-    unsigned long long      NormalizedPlaybackTime;
-    unsigned long long      NormalizedDecodeTime;
+ unsigned int DecodeFrameIndex;
+ unsigned int DisplayFrameIndex;
+ unsigned long long NormalizedPlaybackTime;
+ unsigned long long NormalizedDecodeTime;
 
-    unsigned int            DataOffset;
-    bool                    KeyFrame;
-    bool                    ReferenceFrame;
-    unsigned int            NumberOfReferenceFrameLists;
-    ReferenceFrameList_t    ReferenceFrameList[MAX_REFERENCE_FRAME_LISTS];
+ unsigned int DataOffset;
+ bool KeyFrame;
+ bool ReferenceFrame;
+ unsigned int NumberOfReferenceFrameLists;
+ ReferenceFrameList_t ReferenceFrameList[MAX_REFERENCE_FRAME_LISTS];
 
-    bool                    NewStreamParameters;
-    unsigned int            SizeofStreamParameterStructure;
-    void                   *StreamParameterStructure;
+ bool NewStreamParameters;
+ unsigned int SizeofStreamParameterStructure;
+ void *StreamParameterStructure;
 
-    bool                    NewFrameParameters;
-    unsigned int            SizeofFrameParameterStructure;
-    void                   *FrameParameterStructure;
+ bool NewFrameParameters;
+ unsigned int SizeofFrameParameterStructure;
+ void *FrameParameterStructure;
 } ParsedFrameParameters_t;
 \endcode
 
@@ -869,45 +869,45 @@ buffer for video frames, output from a frame parser.
 manifestation parameters structure it is likely to change.</b>
 
 \code
-#define METADATA_PARSED_VIDEO_PARAMETERS     "ParsedVideoParameters"
+#define METADATA_PARSED_VIDEO_PARAMETERS "ParsedVideoParameters"
 
-#define MAX_PAN_SCAN_VALUES    3             // H264 has max seen value
+#define MAX_PAN_SCAN_VALUES 3 // H264 has max seen value
 
 typedef enum
 {
-    StructureTopField   = 1,
-    StructureBottomField,
-    StructureFrame
+ StructureTopField = 1,
+ StructureBottomField,
+ StructureFrame
 } PictureStructure_t;
 
 typedef struct VideoDisplayParameters_s
 {
-    unsigned int                Width;
-    unsigned int                Height;
-    unsigned int                DisplayWidth;
-    unsigned int                DisplayHeight;
-    bool                        Progressive;
-    bool                        OverscanAppropriate;
-    UnsignedFixedPoint_t        PixelAspectRatio;
-    UnsignedFixedPoint_t        FrameRate;
+ unsigned int Width;
+ unsigned int Height;
+ unsigned int DisplayWidth;
+ unsigned int DisplayHeight;
+ bool Progressive;
+ bool OverscanAppropriate;
+ UnsignedFixedPoint_t PixelAspectRatio;
+ UnsignedFixedPoint_t FrameRate;
 } VideoDisplayParameters_t;
 
 typedef struct PanScan_s
 {
-    unsigned int                Count;
-    unsigned int                DisplayCount[MAX_PAN_SCAN_VALUES];
-    int                         HorizontalOffset[MAX_PAN_SCAN_VALUES];
-    int                         VerticalOffset[MAX_PAN_SCAN_VALUES];
+ unsigned int Count;
+ unsigned int DisplayCount[MAX_PAN_SCAN_VALUES];
+ int HorizontalOffset[MAX_PAN_SCAN_VALUES];
+ int VerticalOffset[MAX_PAN_SCAN_VALUES];
 } PanScan_t;
 
 typedef struct ParsedVideoParameters_s
 {
-    VideoDisplayParameters_t    Content;
-    PictureStructure_t          PictureStructure;
-    bool                        InterlacedFrame;
-    bool                        TopFieldFirst;     // Interlaced frames only
-    unsigned int                DisplayCount[2];
-    PanScan_t                   PanScan;
+ VideoDisplayParameters_t Content;
+ PictureStructure_t PictureStructure;
+ bool InterlacedFrame;
+ bool TopFieldFirst; // Interlaced frames only
+ unsigned int DisplayCount[2];
+ PanScan_t PanScan;
 } ParsedVideoParameters_t;
 \endcode
 
@@ -919,19 +919,19 @@ buffer for audio frames, output from a frame parser.
 <b>NOTE This is a very early stab it is likely to change.</b>
 
 \code
-#define METADATA_PARSED_AUDIO_PARAMETERS     "ParsedAudioParameters"
+#define METADATA_PARSED_AUDIO_PARAMETERS "ParsedAudioParameters"
 
 typedef struct AudioSurfaceParameters_s
 {
-    unsigned int                BitsPerSample;
-    unsigned int                ChannelCount;
-    unsigned int                SampleRateHz;
+ unsigned int BitsPerSample;
+ unsigned int ChannelCount;
+ unsigned int SampleRateHz;
 } AudioSurfaceParameters_t;
 
 typedef struct ParsedAudioParameters_s
 {
-    AudioSurfaceParameters_t    Source;
-    unsigned int                SampleCount;
+ AudioSurfaceParameters_t Source;
+ unsigned int SampleCount;
 } ParsedAudioParameters_t;
 \endcode
 
@@ -940,17 +940,17 @@ frame buffer to control manifestation, output from the output timing
 module. Plus actual time values appended by the manifestation process.
 
 \code
-#define METADATA_VIDEO_OUTPUT_TIMING    "VideoOutputTiming"
+#define METADATA_VIDEO_OUTPUT_TIMING "VideoOutputTiming"
 
 typedef struct VideoOutputTiming_s
 {
-    unsigned long long          SystemPlaybackTime;
-    unsigned long long          ExpectedDurationTime;
-    unsigned long long          ActualSystemPlaybackTime;
-    bool                        Interlaced;
-    bool                        TopFieldFirst;     // Interlaced frames only
-    unsigned int                DisplayCount[2];     // Non-interlaced use [0] only
-    PanScan_t                   PanScan;
+ unsigned long long SystemPlaybackTime;
+ unsigned long long ExpectedDurationTime;
+ unsigned long long ActualSystemPlaybackTime;
+ bool Interlaced;
+ bool TopFieldFirst; // Interlaced frames only
+ unsigned int DisplayCount[2]; // Non-interlaced use [0] only
+ PanScan_t PanScan;
 } VideoOutputTiming_t;
 \endcode
 
@@ -959,13 +959,13 @@ frame buffer to control manifestation, output from the output timing
 module. Plus actual time values appended by the manifestation process.
 
 \code
-#define METADATA_AUDIO_OUTPUT_TIMING    "AudioOutputTiming"
+#define METADATA_AUDIO_OUTPUT_TIMING "AudioOutputTiming"
 
 typedef struct AudioOutputTiming_s
 {
-    unsigned long long          SystemPlaybackTime;
-    unsigned long long          ExpectedDurationTime;
-    unsigned long long          ActualSystemPlaybackTime;
+ unsigned long long SystemPlaybackTime;
+ unsigned long long ExpectedDurationTime;
+ unsigned long long ActualSystemPlaybackTime;
 } AudioOutputTiming_t;
 \endcode
 
@@ -978,17 +978,17 @@ calculate field counts for the display.
 \code
 typedef struct VideoOutputSurfaceDescriptor_s
 {
-    // Display information
-    unsigned int                DisplayWidth;
-    unsigned int                DisplayHeight;
-    bool                        Progressive;
-    UnsignedFixedPoint_t        FrameRate;
+ // Display information
+ unsigned int DisplayWidth;
+ unsigned int DisplayHeight;
+ bool Progressive;
+ UnsignedFixedPoint_t FrameRate;
 } VideoOutputSurfaceDescriptor_t;
 
 //
 
-#define METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR         "VideoOutputSurfaceDescriptor"
-#define METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR_TYPE    {METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR, MetaDataTypeBase, AllocateFromOSMemory, 4, 0, true, false, sizeof(VideoOutputSurfaceDescriptor_t)}
+#define METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR "VideoOutputSurfaceDescriptor"
+#define METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR_TYPE {METADATA_VIDEO_OUTPUT_SURFACE_DESCRIPTOR, MetaDataTypeBase, AllocateFromOSMemory, 4, 0, true, false, sizeof(VideoOutputSurfaceDescriptor_t)}
 \endcode
 
 The Output surface descriptor specific to Audio, there is one instance
@@ -999,322 +999,322 @@ on possible application of sample rate conversion and down/upsampling.
 \code
 typedef struct AudioOutputSurfaceDescriptor_s
 {
-    unsigned int                BitsPerSample;
-    unsigned int                ChannelCount;
-    unsigned int                SampleRateHz;
+ unsigned int BitsPerSample;
+ unsigned int ChannelCount;
+ unsigned int SampleRateHz;
 } AudioOutputSurfaceDescriptor_t;
 
 //
 
-#define METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR        "AudioOutputSurfaceDescriptor"
-#define METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR_TYPE   {METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR, MetaDataTypeBase, AllocateFromOSMemory, 4, 0, true, false, sizeof(AudioOutputSurfaceDescriptor_t)}
+#define METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR "AudioOutputSurfaceDescriptor"
+#define METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR_TYPE {METADATA_AUDIO_OUTPUT_SURFACE_DESCRIPTOR, MetaDataTypeBase, AllocateFromOSMemory, 4, 0, true, false, sizeof(AudioOutputSurfaceDescriptor_t)}
 \endcode
 
 */
 //}}}
 
-//{{{  Time management
+//{{{ Time management
 /*! \page time Time management
 
-\section time_domains_sec    Time domains
+\section time_domains_sec Time domains
 
-    Player 2 operates with three time domains :-
+ Player 2 operates with three time domains :-
 
-    - Native Playback Time,
-        This is the time as handled by a particular playback,
-        its format is dependent on the format of the coded data
-        (in mpeg2 this is PTS time). It is often based at some
-        arbitrary value (IE a stream may start at 0xdeadbeef).
+ - Native Playback Time,
+ This is the time as handled by a particular playback,
+ its format is dependent on the format of the coded data
+ (in mpeg2 this is PTS time). It is often based at some
+ arbitrary value (IE a stream may start at 0xdeadbeef).
 
-    - Normalized Playback Time,
-        This is a scaled version of the native playback time
-        such that a delta of one in this scheme is equivalent
-        to an elapsed time of 1 us. It is also based at an
-        arbitrary value, derived by the scaling of the base
-        Native Playback Time.
+ - Normalized Playback Time,
+ This is a scaled version of the native playback time
+ such that a delta of one in this scheme is equivalent
+ to an elapsed time of 1 us. It is also based at an
+ arbitrary value, derived by the scaling of the base
+ Native Playback Time.
 
-    - System Time,
-        This is the abstract (OS inline) system clock, which also
-        runs at a 1us tick rate.
+ - System Time,
+ This is the abstract (OS inline) system clock, which also
+ runs at a 1us tick rate.
 
-    These times are freely translated between in the player, the
-    playback times will have standard rules for translation that
-    are defined by the coded data content. The translation between
-    playback time and system time will be done via a mapping held in
-    the Output Coordinator. The mapping will be held across all the
-    streams that make up a playback (that is all the streams that
-    require to be synchronized together). In player 2 the mapping
-    between system and playback time can be established in one of
-    two ways. A mapping can be imposed from outside the player, or,
-    in the more common usage, a mapping can be derived by starting
-    playback of the component streams at the earliest possible time.
+ These times are freely translated between in the player, the
+ playback times will have standard rules for translation that
+ are defined by the coded data content. The translation between
+ playback time and system time will be done via a mapping held in
+ the Output Coordinator. The mapping will be held across all the
+ streams that make up a playback (that is all the streams that
+ require to be synchronized together). In player 2 the mapping
+ between system and playback time can be established in one of
+ two ways. A mapping can be imposed from outside the player, or,
+ in the more common usage, a mapping can be derived by starting
+ playback of the component streams at the earliest possible time.
 
-    Where streams contain jumps in PTSs the player will allow different
-    streams to transition from one mapping to a new one in a phased
-    manner. to allow seamless transition between clips.
+ Where streams contain jumps in PTSs the player will allow different
+ streams to transition from one mapping to a new one in a phased
+ manner. to allow seamless transition between clips.
 
-\section clocks_sec    Clocks
+\section clocks_sec Clocks
 
-    This is possibly the most confusing part.
+ This is possibly the most confusing part.
 
-    In the universe there are a large number of clocks, where
-    a clock is derived from another, then the second is actually
-    an expression of the first, and there is only one clock.
-    No two clocks ever run at the same rate, there is a myth that
-    atomic clocks do not drift with respect to each other, this
-    is only true if they are not in motion relative to each other,
-    and they sit at exactly the same point in the gravitational
-    topology of the universe (which effectively means that they
-    are one clock). In any system where there are multiple clocks
-    none of them will be 'right', we have to choose one that we
-    will treat as being right.
+ In the universe there are a large number of clocks, where
+ a clock is derived from another, then the second is actually
+ an expression of the first, and there is only one clock.
+ No two clocks ever run at the same rate, there is a myth that
+ atomic clocks do not drift with respect to each other, this
+ is only true if they are not in motion relative to each other,
+ and they sit at exactly the same point in the gravitational
+ topology of the universe (which effectively means that they
+ are one clock). In any system where there are multiple clocks
+ none of them will be 'right', we have to choose one that we
+ will treat as being right.
 
-\section clock_pulling_sec    Clock pulling
+\section clock_pulling_sec Clock pulling
 
-    In the player 2 model of the universe there is one system clock
-    plus an output clock on each stream. In a playback we choose one
-    of these clocks to be master, then we have two choices, we can
-    rate adjust the others (effectively locking them together),
-    so that we avoid frame repeats for audio/video or we can not
-    rate adjust and we accept frame repeat/drop for the non-master
-    output streams.
+ In the player 2 model of the universe there is one system clock
+ plus an output clock on each stream. In a playback we choose one
+ of these clocks to be master, then we have two choices, we can
+ rate adjust the others (effectively locking them together),
+ so that we avoid frame repeats for audio/video or we can not
+ rate adjust and we accept frame repeat/drop for the non-master
+ output streams.
 
-    Rate adjustment, for output clocks, involves actual adjustments
-    to the clock rate, for the system clock, involves a calculated
-    rate adjustment that is applied to temporal calculations, it
-    does not involve any physical adjustment to the system clock.
+ Rate adjustment, for output clocks, involves actual adjustments
+ to the clock rate, for the system clock, involves a calculated
+ rate adjustment that is applied to temporal calculations, it
+ does not involve any physical adjustment to the system clock.
 
-    if we choose a good master clock then the rate adjustments for
-    the other outputs will be minimal, for example in the M3 release
-    we apply a policy that the video output clock is master, the
-    resultant calculations show that on my development board, we
-    need to adjust the audio output rate by approximately 2ppm. The
-    system clock is adjusted by a factor closer to 47ppm.
+ if we choose a good master clock then the rate adjustments for
+ the other outputs will be minimal, for example in the M3 release
+ we apply a policy that the video output clock is master, the
+ resultant calculations show that on my development board, we
+ need to adjust the audio output rate by approximately 2ppm. The
+ system clock is adjusted by a factor closer to 47ppm.
 
-    In practice, audio output may have several clocks one for each
-    output method, but these are effectively locked together by the
-    output driver.
+ In practice, audio output may have several clocks one for each
+ output method, but these are effectively locked together by the
+ output driver.
 
-    Also in practice for a single video output display, there is only
-    one video output clock, so for completely independent output streams
-    (non-synchronized PIP) all video outputs bar one (to this display)
-    must have video master set, or must allow frame repeat/drop.
+ Also in practice for a single video output display, there is only
+ one video output clock, so for completely independent output streams
+ (non-synchronized PIP) all video outputs bar one (to this display)
+ must have video master set, or must allow frame repeat/drop.
 
-    The source code for the clock rate adjustment values is appended
-    at the bottom of this file, it involves integrating the actual
-    and expected duration of frames (rejecting large jittered values)
-    and calculating a rate adjustments based on those values.
+ The source code for the clock rate adjustment values is appended
+ at the bottom of this file, it involves integrating the actual
+ and expected duration of frames (rejecting large jittered values)
+ and calculating a rate adjustments based on those values.
 
 \section synchronization_sec A/V/D synchronization
 
-    AVD synchronization has three major components
+ AVD synchronization has three major components
 
-    - Startup synchronization
+ - Startup synchronization
 
-    - Ongoing output rate adjustment as described above
+ - Ongoing output rate adjustment as described above
 
-    - Percussive corrections
+ - Percussive corrections
 
-    For startup synchronization we wait (for a limited time) for each
-    component stream within a playvback to have decoded sufficient
-    frames to playback continuously. (in the case of audio this is
-    sufficient to allow the manifestor not to starve, in the case of video
-    it is sufficient to have in hand the appropriate decoded reference
-    frames). We then compare the playback times of the frames, with the
-    time until their respective manifestors can display them and set a
-    base system time and a base playback time and instruct the manifestors
-    to commence playing at the appropriate times. For many streams
-    playback commencement will not be at the same actual time since
-    in transport streams audio and video may be offset within the stream.
+ For startup synchronization we wait (for a limited time) for each
+ component stream within a playvback to have decoded sufficient
+ frames to playback continuously. (in the case of audio this is
+ sufficient to allow the manifestor not to starve, in the case of video
+ it is sufficient to have in hand the appropriate decoded reference
+ frames). We then compare the playback times of the frames, with the
+ time until their respective manifestors can display them and set a
+ base system time and a base playback time and instruct the manifestors
+ to commence playing at the appropriate times. For many streams
+ playback commencement will not be at the same actual time since
+ in transport streams audio and video may be offset within the stream.
 
-    The ongoing rate adjustment is as described before via clock pulling,
-    and is responsible for correcting drifts in the synchronization on
-    the several parts per million scale.
+ The ongoing rate adjustment is as described before via clock pulling,
+ and is responsible for correcting drifts in the synchronization on
+ the several parts per million scale.
 
-    Percussive corrections are responsible for handling large
-    synchronization errors they are for knocking the streams back into
-    synchronization. The algorithm applied to detect the need for
-    percussive synchronization is a simple integration scheme over a
-    number of frames, the sync must be out by more than a threshold
-    value for all of the frames before correction will be deployed.
-    Currently we are integrating over 8 frames and the threshold is
-    1ms.
+ Percussive corrections are responsible for handling large
+ synchronization errors they are for knocking the streams back into
+ synchronization. The algorithm applied to detect the need for
+ percussive synchronization is a simple integration scheme over a
+ number of frames, the sync must be out by more than a threshold
+ value for all of the frames before correction will be deployed.
+ Currently we are integrating over 8 frames and the threshold is
+ 1ms.
 
-    Percusssive corrections are applied to video by dropping/extending
-    frames. They are applied to audio by informing the audio driver
-    that a frame of N samples is to be played over M sample periods,
-    the audio driver is at liberty to achieve this by any means desired.
+ Percusssive corrections are applied to video by dropping/extending
+ frames. They are applied to audio by informing the audio driver
+ that a frame of N samples is to be played over M sample periods,
+ the audio driver is at liberty to achieve this by any means desired.
 
-    Startup synchronization will be deployed when streams start, and
-    when they skip, and in any other circumstance where a stream drains.
-    Ongoing rate adjustment is expected to be perfomed at all times.
-    Percussive corrections will occur if the startup synchronization
-    is imperfect (currently usually), if there is corruption or stream
-    dropount (test streams) and every 10 minutes or so if output rate
-    adjustment is disabled. If playing a blu-ray DVD with output rate
-    adjustment enabled, percussive adjustment is not expected to occur
-    beyond the startup phase.
+ Startup synchronization will be deployed when streams start, and
+ when they skip, and in any other circumstance where a stream drains.
+ Ongoing rate adjustment is expected to be perfomed at all times.
+ Percussive corrections will occur if the startup synchronization
+ is imperfect (currently usually), if there is corruption or stream
+ dropount (test streams) and every 10 minutes or so if output rate
+ adjustment is disabled. If playing a blu-ray DVD with output rate
+ adjustment enabled, percussive adjustment is not expected to occur
+ beyond the startup phase.
 
-    In the current M3 release, we are seeing a startup synchronization
-    error of up to 40ms which is corrected after some 250ms after which
-    we remain within 1ms until after some 10 minutes when the fact that
-    output rate adjustment is disabled for audio causes a 1 ms correction.
-    We expect to bring the startup error down to within 8ms later in the
-    project, and to use output rate adjustment to avoid regular kicks.
-    We do not expect to reduce the 250ms period for tightening the sync
-    to sub 1ms, since this is dependent on the integration period used
-    to detect the startup error (it would be possible to halve it by
-    reducing the integration period, however this may lead to a second
-    order correction of a smaller magnitude later).
+ In the current M3 release, we are seeing a startup synchronization
+ error of up to 40ms which is corrected after some 250ms after which
+ we remain within 1ms until after some 10 minutes when the fact that
+ output rate adjustment is disabled for audio causes a 1 ms correction.
+ We expect to bring the startup error down to within 8ms later in the
+ project, and to use output rate adjustment to avoid regular kicks.
+ We do not expect to reduce the 250ms period for tightening the sync
+ to sub 1ms, since this is dependent on the integration period used
+ to detect the startup error (it would be possible to halve it by
+ reducing the integration period, however this may lead to a second
+ order correction of a smaller magnitude later).
 
-    Special cases, we anticipate deploying percusive corrections to
-    audio in two additional, related, circumstances :-
-    NOTE not all customers may be interested in these mechanisms :-
+ Special cases, we anticipate deploying percusive corrections to
+ audio in two additional, related, circumstances :-
+ NOTE not all customers may be interested in these mechanisms :-
 
-    - When playing a stream at +20% speed (certain customers require
-      the ability to play recoded movies at +20% speed with audio pitch
-      correction, because they cannot find the time to watch a movie at
-      normal speed). In this circumstance the correction on every audio
-      frame will be coded as if it were a percussive correction.
+ - When playing a stream at +20% speed (certain customers require
+ the ability to play recoded movies at +20% speed with audio pitch
+ correction, because they cannot find the time to watch a movie at
+ normal speed). In this circumstance the correction on every audio
+ frame will be coded as if it were a percussive correction.
 
-    - When playing a movie at 25/24ths normal speed, ie when taking a
-      24fps movie and playing it at 25fps (again some customers require
-      the ability to play 24fps content on a 50hz display without frame
-      repeat).
+ - When playing a movie at 25/24ths normal speed, ie when taking a
+ 24fps movie and playing it at 25fps (again some customers require
+ the ability to play 24fps content on a 50hz display without frame
+ repeat).
 
-\section clock_pulling_scenarios_sec    Clock pulling scenarios - the real world
+\section clock_pulling_scenarios_sec Clock pulling scenarios - the real world
 
-    Give the clock pulling descriptions above, it is probably worth
-    detailing certain scenarios, and recommended settings :-
+ Give the clock pulling descriptions above, it is probably worth
+ detailing certain scenarios, and recommended settings :-
 
-    - Case 1 - simple blu-ray playback
+ - Case 1 - simple blu-ray playback
 
-        Here we select the video clock as master,
-        the audio clock is then locked to it via
-        output rate adjustment.
+ Here we select the video clock as master,
+ the audio clock is then locked to it via
+ output rate adjustment.
 
-    - Case 2 - 2 separate blue-ray playbacks with PIP
+ - Case 2 - 2 separate blue-ray playbacks with PIP
 
-        Here we select the video clock as master for
-        both playbacks.
+ Here we select the video clock as master for
+ both playbacks.
 
-    - Case 3 - Avr playback with clock matching
+ - Case 3 - Avr playback with clock matching
 
-        Here we set the system clock as master, and
-        timestamp incoming frames from the system clock,
-        both audio and video are independently rate
-        adjusted to match the rate of the incoming frames.
+ Here we set the system clock as master, and
+ timestamp incoming frames from the system clock,
+ both audio and video are independently rate
+ adjusted to match the rate of the incoming frames.
 
-    - case 4 - Avr playback without clock matching
+ - case 4 - Avr playback without clock matching
 
-        As case 3, but with the streams not requiring
-        clock matching having clock matching disabled
-        (this is a flag that will need to be implemented
-        for AVR). Corrections to the affected streams
-        will then be applied by percusssive av
-        synchronization, these will deploy automatically.
+ As case 3, but with the streams not requiring
+ clock matching having clock matching disabled
+ (this is a flag that will need to be implemented
+ for AVR). Corrections to the affected streams
+ will then be applied by percusssive av
+ synchronization, these will deploy automatically.
 
-    - case 5 - Avr playback with clock matching
-           plus blu-ray.
+ - case 5 - Avr playback with clock matching
+ plus blu-ray.
 
-        This is achieved as a straight copy of case 3
-        and case 1, the avr stream adjusts the video output
-        clock to match its' input and the blu-ray output
-        simply matches to that. For mixed audio output
-        there will have to be sample rate conversion of the
-        blu-ray stream to that of the avr stream.
+ This is achieved as a straight copy of case 3
+ and case 1, the avr stream adjusts the video output
+ clock to match its' input and the blu-ray output
+ simply matches to that. For mixed audio output
+ there will have to be sample rate conversion of the
+ blu-ray stream to that of the avr stream.
 
-    - case 6 - Avr playback without clock matching
-           plus blu-ray.
+ - case 6 - Avr playback without clock matching
+ plus blu-ray.
 
-        This is a complicated case dependent on which
-        streams have clock matching and whether or not there
-        is mixing of the input. You ask about the specific
-        case and we will will figure out how it works.
+ This is a complicated case dependent on which
+ streams have clock matching and whether or not there
+ is mixing of the input. You ask about the specific
+ case and we will will figure out how it works.
 
-    I believe that as part of the AVR implementation, there will
-    have to be a rebase mechanism for the output rate adjustmnents,
-    to be applied when policy configurations are changed. Specifically
-    we will need to know what to do when we have been using clock
-    matching on an AVR stream in a PIP window, when we remove the
-    AVR but continue on with the blu-ray presentation, do we :-
+ I believe that as part of the AVR implementation, there will
+ have to be a rebase mechanism for the output rate adjustmnents,
+ to be applied when policy configurations are changed. Specifically
+ we will need to know what to do when we have been using clock
+ matching on an AVR stream in a PIP window, when we remove the
+ AVR but continue on with the blu-ray presentation, do we :-
 
-        A/ Stay as video master, but with video set
-           as it was to match the input avr stream
+ A/ Stay as video master, but with video set
+ as it was to match the input avr stream
 
-        B/ Stay as video master, but reset the output rate
-           to what it would have been if the AFVR input had
-           never been connected.
+ B/ Stay as video master, but reset the output rate
+ to what it would have been if the AFVR input had
+ never been connected.
 
-    This will have to be a customer decision.
+ This will have to be a customer decision.
 
-\section video_frame_rate_conversion_sec    Video frame rate conversion
+\section video_frame_rate_conversion_sec Video frame rate conversion
 
-    Frame rate conversion comes in two areas, frame rate conversion for
-    standard blu-ray playback, and for AVR playback. In both cases the
-    algorithm is the same, we have source frame rate suplied to the
-    player, either externally in the case of AVR (and this may involve
-    an integrating filter to differentiate 59.xxx and 60 hz frame rates),
-    or via the frame parser in the case of coded data. We have 3:2
-    pulldown and speed effects (both of which will be absent from
-    the AVR), and we have an output frame rate. In addition to these
-    we also have pan scan vectors for coded frames.
+ Frame rate conversion comes in two areas, frame rate conversion for
+ standard blu-ray playback, and for AVR playback. In both cases the
+ algorithm is the same, we have source frame rate suplied to the
+ player, either externally in the case of AVR (and this may involve
+ an integrating filter to differentiate 59.xxx and 60 hz frame rates),
+ or via the frame parser in the case of coded data. We have 3:2
+ pulldown and speed effects (both of which will be absent from
+ the AVR), and we have an output frame rate. In addition to these
+ we also have pan scan vectors for coded frames.
 
-    The source code for our function to fill out a frame timing record
-    is appended below, but a brief abridged desription is :-
+ The source code for our function to fill out a frame timing record
+ is appended below, but a brief abridged desription is :-
 
-    - Input Nature of the input (field/frame counts, source frame
-      rate etc...), plus time at which the frame should be displayed
-      ignoring frame rate conversion
+ - Input Nature of the input (field/frame counts, source frame
+ rate etc...), plus time at which the frame should be displayed
+ ignoring frame rate conversion
 
-    - Check the incoming frame rate and limit to a sensible value
+ - Check the incoming frame rate and limit to a sensible value
 
-    - Check for 3:2 pulldown, if we have 60hz => 50hz that was coded
-      with 3:2 pulldown remove it, and correct the display time.
+ - Check for 3:2 pulldown, if we have 60hz => 50hz that was coded
+ with 3:2 pulldown remove it, and correct the display time.
 
-    - If any multiplier parameters have changed re-calculate the
-      conversion multiplier (using rational arithmetic)
+ - If any multiplier parameters have changed re-calculate the
+ conversion multiplier (using rational arithmetic)
 
-    - Adjust the display time to compensate for the running error
-      (will be zero if no frame rate conversion)
+ - Adjust the display time to compensate for the running error
+ (will be zero if no frame rate conversion)
 
-    - Calculate new field counts using the lines of code :-
+ - Calculate new field counts using the lines of code :-
 
-    <pre>
-    FrameCount                          = (CountMultiplier * ParsedVideoParameters->DisplayCount[0]) + AccumulatedError;
-        VideoOutputTiming->DisplayCount[0]  = FrameCount.IntegerPart();
-    AccumulatedError                    = FrameCount.Remainder();
-    </pre>
+ <pre>
+ FrameCount = (CountMultiplier * ParsedVideoParameters->DisplayCount[0]) + AccumulatedError;
+ VideoOutputTiming->DisplayCount[0] = FrameCount.IntegerPart();
+ AccumulatedError = FrameCount.Remainder();
+ </pre>
 
-    - Calculate rate converted pan scan counts
+ - Calculate rate converted pan scan counts
 
-    - Apply any ongoing percussive video sync correction to
-      the rate converted counts.
+ - Apply any ongoing percussive video sync correction to
+ the rate converted counts.
 
-    - Store the outputs in the output timing record
+ - Store the outputs in the output timing record
 
-    - If running in reverse with an interlaced frame switch the
-      field order of counts and pan scan vectors.
+ - If running in reverse with an interlaced frame switch the
+ field order of counts and pan scan vectors.
 
-    I guess the crucial part is that we obtain a simple multiplier
-    for frame rate conversion held as a mrational number, and that
-    we multiply field/frame counts by the multiplier, maintaining
-    an acumulated frame error value.
+ I guess the crucial part is that we obtain a simple multiplier
+ for frame rate conversion held as a mrational number, and that
+ we multiply field/frame counts by the multiplier, maintaining
+ an acumulated frame error value.
 
-    Issues yet to be considered clearly when we are not displaying
-    at the native display rate for a stream, there will be issues
-    with any meta data associated with frames which can be lost,
-    or may need extension. The code already handles pan/scan vectors
-    passing through frame rate conversion, but a more difficult issue
-    is likely to be VBI or Closed Caption data.
+ Issues yet to be considered clearly when we are not displaying
+ at the native display rate for a stream, there will be issues
+ with any meta data associated with frames which can be lost,
+ or may need extension. The code already handles pan/scan vectors
+ passing through frame rate conversion, but a more difficult issue
+ is likely to be VBI or Closed Caption data.
 
-    In general frame rate conversion, of captured content, from
-    60 => 50hz risks being messy, if the 60hz content was generated
-    with 3:2 pulldown, we are unable to remove the 3:2 pulldown in
-    the frame rate conversion, dropping frames/fields is unlikely
-    to match the extended fields/frames inserted in the content so
-    the output is unlikely to look good (of course there is the question
-    of why would we want to output at 50hz in a box such as this).
+ In general frame rate conversion, of captured content, from
+ 60 => 50hz risks being messy, if the 60hz content was generated
+ with 3:2 pulldown, we are unable to remove the 3:2 pulldown in
+ the frame rate conversion, dropping frames/fields is unlikely
+ to match the extended fields/frames inserted in the content so
+ the output is unlikely to look good (of course there is the question
+ of why would we want to output at 50hz in a box such as this).
 
 \section obsolete_sec Obsolete
 
@@ -1322,35 +1322,35 @@ This section contains out of date information regarding the player's handling
 time. However the replacement test (above) was circulated with the following proviso.
 
 <pre>
-  Looking through my mails, I think that they do not summarise the
-  position, in one chunk, coherently. So I am going to try to write a short
-  summary of all the interesting bits about time in one place as it applies
-  to a player 2 based system. This may confuse more than enlighten, in which
-  case ignore it and read mails instead.
+ Looking through my mails, I think that they do not summarise the
+ position, in one chunk, coherently. So I am going to try to write a short
+ summary of all the interesting bits about time in one place as it applies
+ to a player 2 based system. This may confuse more than enlighten, in which
+ case ignore it and read mails instead.
 </pre>
 
 For that reason this section cannot be deleted for the time being.
 
 \todo This section can probably be deleted but the section needs to be
-      reviewed by Nick Haydock (who authored both the old and the new text).
+ reviewed by Nick Haydock (who authored both the old and the new text).
 
 <b>Time is an illusion, player times doubly so !!!</b>
 
 There are three different (but related) time domains in any playback.
 
 - <b>Native Playback Time</b>,
-  This is the time as handled by a particular playback, its format is
-  dependent on the format of the coded data (in mpeg2 this is PTS
-  time). It is often based at some arbitrary value (IE a stream may
-  start at 0xdeadbeef).
+ This is the time as handled by a particular playback, its format is
+ dependent on the format of the coded data (in mpeg2 this is PTS
+ time). It is often based at some arbitrary value (IE a stream may
+ start at 0xdeadbeef).
 - <b>Normalized Playback Time</b>,
-  This is a scaled version of the native playback time such that a
-  delta of one in this scheme is equivalent to an elapsed time of 1 us.
-  It is also based at an arbitrary value, derived by the scaling of the
-  base Native Playback Time.
+ This is a scaled version of the native playback time such that a
+ delta of one in this scheme is equivalent to an elapsed time of 1 us.
+ It is also based at an arbitrary value, derived by the scaling of the
+ base Native Playback Time.
 - <b>System Time</b>,
-  This is the abstract (OS inline) system clock, which also runs at a
-  1us tick rate.
+ This is the abstract (OS inline) system clock, which also runs at a
+ 1us tick rate.
 
 The Native Playback time is important because it is the streams native
 time, and it effectively encodes all the information necessary to
@@ -1368,47 +1368,47 @@ System Time is used to relate events to the system clock.
 The domains interact as follows:
 
 - A frame (audio or video) is parsed and the Native Playback time for
-  it is extracted or calculated.
+ it is extracted or calculated.
 - The Native Playback time is converted to a Normalized Playback Time
-  in US, and associated with the frame as it passes through the code to
-  be decoded.
+ in US, and associated with the frame as it passes through the code to
+ be decoded.
 - The Normalized Playback Time for a frame is then converted to a
-  System time by the synchronizer and the frame is passed to the
-  manifestor, which manifests the frame at the appropriate time.
+ System time by the synchronizer and the frame is passed to the
+ manifestor, which manifests the frame at the appropriate time.
 
 Player 2 allows several simple operations that control the use of time,
 and the translation between its domains. These funtions allow the
 import and export of synchronization information from the player.
 
 - <b>SetPlaybackSpeed</b>,
-  This causes playback time to flow at a faster or slower rate, and
-  affects both the duration of frames, and the translation applied by
-  the synchronizer.
+ This causes playback time to flow at a faster or slower rate, and
+ affects both the duration of frames, and the translation applied by
+ the synchronizer.
 - <b>SetNativePlaybackTime</b>,
-  This allows an external synchronizer to drive player synchronization.
-  This allows an external synchronization module to inform the
-  synchronizer what it thinks is the current native playback time.
-  This will be translated by one of the frame parsers to the normalized
-  US based format. This controls the translation, by the synchronizer,
-  of Playback time to System time.
+ This allows an external synchronizer to drive player synchronization.
+ This allows an external synchronization module to inform the
+ synchronizer what it thinks is the current native playback time.
+ This will be translated by one of the frame parsers to the normalized
+ US based format. This controls the translation, by the synchronizer,
+ of Playback time to System time.
 - <b>RetrieveNativePlaybackTime</b>,
-  This allows an external synchronizer to be driven by player
-  synchronization. It allows an external synchronization module to ask
-  the synchronizer what it thinks is the current playback time. It will
-  be translated by one of the frame parsers to native playback related
-  format.
+ This allows an external synchronizer to be driven by player
+ synchronization. It allows an external synchronization module to ask
+ the synchronizer what it thinks is the current playback time. It will
+ be translated by one of the frame parsers to native playback related
+ format.
 - <b>TranslateNativePlaybackTime</b>,
-  This allows an external synchronizer to to discover at what system
-  time it should manifest its data. It translates a Native playback
-  time to a system time.
+ This allows an external synchronizer to to discover at what system
+ time it should manifest its data. It translates a Native playback
+ time to a system time.
 
 In addition to these, the synchronizer has the following function
 
 - <b>AdjustSystemClockRate</b>
-  This adjusts the rate at which the synchronizer expects the system
-  clock to tick. This is used by external clock recovery drivers when
-  there is no hardware mechanism to adjust the system clock rate. It
-  affects the translation of playback time to system clock time.
+ This adjusts the rate at which the synchronizer expects the system
+ clock to tick. This is used by external clock recovery drivers when
+ there is no hardware mechanism to adjust the system clock rate. It
+ affects the translation of playback time to system clock time.
 
 */
 //}}}
@@ -1417,7 +1417,7 @@ In addition to these, the synchronizer has the following function
  * Developers Guide
  */
 
-//{{{  Adding new audio codecs to the player
+//{{{ Adding new audio codecs to the player
 /*! \page adding_new_audio_codecs Adding new audio codecs to the player
 
 \section audio_introduction_sec Introduction
@@ -1431,10 +1431,10 @@ a specific audio codec.
 
  - A collator, which is responsible for identifying frame boundaries.
  - A frame parser, which is responsible for extracting any information
-   contained in the frame header that is required to configure the
-   decode.
+ contained in the frame header that is required to configure the
+ decode.
  - A codec (proxy), which is responsible for arranging that the decode
-   take place.
+ take place.
 
 There are also a small number of additional tasks to construct a complete
 system, such as defining applicable data types and registering factories
@@ -1455,18 +1455,18 @@ This file consists of:
 
  - A collection of bitmasks describing the structure of the frame header.
  - A data structure, ::MpegAudioParsedFrameHeader_t, used to describe the
-   'exploded' frame header.
+ 'exploded' frame header.
  - A data structure, ::MpegAudioStreamParameters_t, used to describe
-   stream parameters and the associated buffer descriptor,
-   #BUFFER_MPEG_AUDIO_STREAM_PARAMETERS_TYPE. The stream parameters are
-   typically those parameters that ultimately map to
-   MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS commands.
+ stream parameters and the associated buffer descriptor,
+ #BUFFER_MPEG_AUDIO_STREAM_PARAMETERS_TYPE. The stream parameters are
+ typically those parameters that ultimately map to
+ MME_CommandCode_t::MME_SET_GLOBAL_TRANSFORM_PARAMS commands.
  - A data structure, ::MpegAudioFrameParameters_t, used to describe
-   frame parameters and the associated buffer descriptor,
-   #BUFFER_MPEG_AUDIO_FRAME_PARAMETERS_TYPE. These parameters are
-   those that will either be sent to the decoder within
-   MME_Command_t::Param_p or those that will be used to verify that
-   MME_CommandStatus_t::AdditionalInfo_p is correct.
+ frame parameters and the associated buffer descriptor,
+ #BUFFER_MPEG_AUDIO_FRAME_PARAMETERS_TYPE. These parameters are
+ those that will either be sent to the decoder within
+ MME_Command_t::Param_p or those that will be used to verify that
+ MME_CommandStatus_t::AdditionalInfo_p is correct.
 
 \section audio_collator_sec Collator
 
@@ -1512,9 +1512,9 @@ The Collator_PesAudio_c::DecideCollatorNextStateAndGetLength() plays a fundament
 in switching between collator states. The state switch decision must be taken according to the
 previous state and the nature of the sub-frame encountered. According to the codec type, the collator
 state might be changed to:
-   - GotCompleteFrame (an end of the frame is detected, so the frame can be sent to the frame parser)
-   - SkipSubFrame (the detected subframe does not need to be sent to the frame parser)
-   - ReadSubFrame (the detected subframe is to be sent to the frame parser)
+ - GotCompleteFrame (an end of the frame is detected, so the frame can be sent to the frame parser)
+ - SkipSubFrame (the detected subframe does not need to be sent to the frame parser)
+ - ReadSubFrame (the detected subframe is to be sent to the frame parser)
 In any case the state MUST be changed otherwise the collator may be lost.
 
 The role of the SetPesPrivateDataLength() method is to specify, according to the stream_id of the PES,

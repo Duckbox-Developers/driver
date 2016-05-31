@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator2_pes_video_h264.cpp
-Author :           Julian
+Author : Julian
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-26-Jul-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+26-Jul-07 Created Nick
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator2_pes_video_h264.h"
 #include "h264.h"
@@ -77,16 +77,16 @@ CollatorStatus_t Collator2_PesVideoH264_c::Reset(void)
 	Status = Collator2_PesVideo_c::Reset();
 	if (Status != CollatorNoError)
 		return Status;
-	Configuration.CollatorName               = "H264 Collator";
-	Configuration.GenerateStartCodeList      = true;
-	Configuration.MaxStartCodes              = 300;                 // If someone inserts 32 SPS and 256 PPS
-	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-	Configuration.StreamIdentifierCode       = PES_START_CODE_VIDEO;
-	Configuration.IgnoreCodesRangeStart      = 0xff;                    // Ignore nothing
-	Configuration.IgnoreCodesRangeEnd        = 0x00;
-	Configuration.InsertFrameTerminateCode   = true;                    // Insert a filler data code, to guarantee thatNo terminal code
-	Configuration.TerminalCode               = 0x0C;                    // picture parameter sets will always be followed by a zero byte
+	Configuration.CollatorName = "H264 Collator";
+	Configuration.GenerateStartCodeList = true;
+	Configuration.MaxStartCodes = 300; // If someone inserts 32 SPS and 256 PPS
+	Configuration.StreamIdentifierMask = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode = PES_START_CODE_VIDEO;
+	Configuration.IgnoreCodesRangeStart = 0xff; // Ignore nothing
+	Configuration.IgnoreCodesRangeEnd = 0x00;
+	Configuration.InsertFrameTerminateCode = true; // Insert a filler data code, to guarantee thatNo terminal code
+	Configuration.TerminalCode = 0x0C; // picture parameter sets will always be followed by a zero byte
 	// (makes the MoreRsbpData implementation a lot simpler).
-	Configuration.ExtendedHeaderLength       = 0;
+	Configuration.ExtendedHeaderLength = 0;
 	return CollatorNoError;
 }

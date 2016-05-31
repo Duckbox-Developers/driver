@@ -13,18 +13,18 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : player_interface.c - player interface
-Author :           Julian
+Author : Julian
 
-Date        Modification                                    Name
-----        ------------                                    --------
-28-Apr-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+28-Apr-08 Created Julian
 
 ************************************************************************/
 
@@ -41,86 +41,86 @@ Date        Modification                                    Name
 /* The player interface context provides access to the STM streaming engine (Player2) */
 struct PlayerInterfaceContext_s
 {
-	char*                               Name;
-	struct player_interface_operations* Ops;
+	char *Name;
+	struct player_interface_operations *Ops;
 };
 
-/*{{{  register_player_interface*/
-static struct PlayerInterfaceContext_s*         PlayerInterface;
+/*{{{ register_player_interface*/
+static struct PlayerInterfaceContext_s *PlayerInterface;
 
-int register_player_interface(char*                                   Name,
-							  struct player_interface_operations*     Ops)
+int register_player_interface(char *Name,
+			      struct player_interface_operations *Ops)
 {
 	if (PlayerInterface == NULL)
 	{
-		INTERFACE_ERROR("Cannot register player interface  %s - not created\n", Name);
+		INTERFACE_ERROR("Cannot register player interface %s - not created\n", Name);
 		return -ENOMEM;
 	}
-	PlayerInterface->Ops        = Ops;
-	PlayerInterface->Name       = kmalloc(strlen(Name) + 1,  GFP_KERNEL);
+	PlayerInterface->Ops = Ops;
+	PlayerInterface->Name = kmalloc(strlen(Name) + 1, GFP_KERNEL);
 	if (PlayerInterface->Name != NULL)
 		strcpy(PlayerInterface->Name, Name);
-	SysfsInit();        /* This must be done after the player has registered itself */
+	SysfsInit(); /* This must be done after the player has registered itself */
 	return 0;
 }
 EXPORT_SYMBOL(register_player_interface);
-/*}}}*/
+/*}}} */
 
-/*{{{  PlayerInterfaceInit*/
+/*{{{ PlayerInterfaceInit*/
 int PlayerInterfaceInit(void)
 {
-	PlayerInterface     = kmalloc(sizeof(struct PlayerInterfaceContext_s), GFP_KERNEL);
+	PlayerInterface = kmalloc(sizeof(struct PlayerInterfaceContext_s), GFP_KERNEL);
 	if (PlayerInterface == NULL)
 	{
 		INTERFACE_ERROR("Unable to create player interface context - no memory\n");
 		return -ENOMEM;
 	}
 	memset(PlayerInterface, 0, sizeof(struct PlayerInterfaceContext_s));
-	PlayerInterface->Ops       = NULL;
+	PlayerInterface->Ops = NULL;
 	return 0;
 }
-/*}}}*/
-/*{{{  PlayerInterfaceDelete*/
+/*}}} */
+/*{{{ PlayerInterfaceDelete*/
 int PlayerInterfaceDelete()
 {
 	if (PlayerInterface->Name != NULL)
 		kfree(PlayerInterface->Name);
-	PlayerInterface->Name       = NULL;
+	PlayerInterface->Name = NULL;
 	kfree(PlayerInterface);
-	PlayerInterface     = NULL;
+	PlayerInterface = NULL;
 	return 0;
 }
-/*}}}*/
+/*}}} */
 
-/*{{{  ComponentGetAttribute*/
-int ComponentGetAttribute(player_component_handle_t       Component,
-						  const char*                     Attribute,
-						  union attribute_descriptor_u*   Value)
+/*{{{ ComponentGetAttribute*/
+int ComponentGetAttribute(player_component_handle_t Component,
+			  const char *Attribute,
+			  union attribute_descriptor_u *Value)
 {
-	int         Result  = 0;
+	int Result = 0;
 	Result = PlayerInterface->Ops->component_get_attribute(Component, Attribute, Value);
 	if (Result < 0)
 		INTERFACE_ERROR("component_get_attribute failed\n");
 	return Result;
 }
-/*}}}*/
-/*{{{  ComponentSetAttribute*/
-int ComponentSetAttribute(player_component_handle_t       Component,
-						  const char*                     Attribute,
-						  union attribute_descriptor_u*   Value)
+/*}}} */
+/*{{{ ComponentSetAttribute*/
+int ComponentSetAttribute(player_component_handle_t Component,
+			  const char *Attribute,
+			  union attribute_descriptor_u *Value)
 {
-	int         Result  = 0;
+	int Result = 0;
 	INTERFACE_DEBUG("\n");
 	Result = PlayerInterface->Ops->component_set_attribute(Component, Attribute, Value);
 	if (Result < 0)
 		INTERFACE_ERROR("component_set_attribute failed\n");
 	return Result;
 }
-/*}}}*/
-/*{{{  PlayerRegisterEventSignalCallback*/
-player_event_signal_callback PlayerRegisterEventSignalCallback(player_event_signal_callback    Callback)
+/*}}} */
+/*{{{ PlayerRegisterEventSignalCallback*/
+player_event_signal_callback PlayerRegisterEventSignalCallback(player_event_signal_callback Callback)
 {
 	return PlayerInterface->Ops->player_register_event_signal_callback(Callback);
 }
-/*}}}*/
+/*}}} */
 

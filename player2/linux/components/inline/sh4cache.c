@@ -42,19 +42,19 @@ static void sh4_cache_snoop_set(void *set, void *p, unsigned int len)
 		if (valid && ((phys + LINE_SZ) > base) && (phys < end))
 		{
 			/*printk("Found unexpected cache data: "
-			       "phys 0x%08x    virt 0x%08x    %s\n",
-			       phys, virt, dirty ? "dirty" : "clean" );*/
+			 "phys 0x%08x virt 0x%08x %s\n",
+			 phys, virt, dirty ? "dirty" : "clean" );*/
 			if (!listed_bounds)
 			{
-				printk("Bounds: set 0x%08x    base 0x%08x    end 0x%08x\n",
-					   (unsigned) set, (unsigned) base, end);
+				printk("Bounds: set 0x%08x base 0x%08x end 0x%08x\n",
+				       (unsigned) set, (unsigned) base, end);
 				listed_bounds = 1;
 			}
-			printk("%03d: field 0x%08x    phys 0x%08x    "
-				   "virt 0x%08x    %s %s\n",
-				   i, field, phys, virt,
-				   (valid ? "valid" : "invalid"),
-				   (dirty ? "dirty" : "clean"));
+			printk("%03d: field 0x%08x phys 0x%08x "
+			       "virt 0x%08x %s %s\n",
+			       i, field, phys, virt,
+			       (valid ? "valid" : "invalid"),
+			       (dirty ? "dirty" : "clean"));
 		}
 	}
 }

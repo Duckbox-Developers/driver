@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_base.h
-Author :           Nick
+Author : Nick
 
 Definition of the frame parser base class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-28-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+28-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -45,17 +45,17 @@ Date        Modification                                    Name
 // Frequently used macros
 //
 
-#define MarkerBit( v )      if( Bits.Get(1) != (v) )                                    \
-    {                                               \
-        report( severity_error, "%s(%d) - Invalid marker bit value.\n", __FUNCTION__, __LINE__ );   \
-        return FrameParserHeaderSyntaxError;                            \
-    }
+#define MarkerBit( v ) if( Bits.Get(1) != (v) ) \
+	{ \
+		report( severity_error, "%s(%d) - Invalid marker bit value.\n", __FUNCTION__, __LINE__ ); \
+		return FrameParserHeaderSyntaxError; \
+	}
 
-#define MarkerBits( n, v )  if( Bits.Get((n)) != (v) )                                  \
-    {                                               \
-        report( severity_error, "%s(%d) - Invalid marker bits value.\n", __FUNCTION__, __LINE__ );  \
-        return FrameParserHeaderSyntaxError;                            \
-    }
+#define MarkerBits( n, v ) if( Bits.Get((n)) != (v) ) \
+	{ \
+		report( severity_error, "%s(%d) - Invalid marker bits value.\n", __FUNCTION__, __LINE__ ); \
+		return FrameParserHeaderSyntaxError; \
+	}
 
 //
 
@@ -63,12 +63,12 @@ Date        Modification                                    Name
 #define ENABLE_FRAME_DEBUG 0
 #endif
 
-#define FRAME_TAG      "Frame parser"
+#define FRAME_TAG "Frame parser"
 #define FRAME_FUNCTION (ENABLE_FRAME_DEBUG ? __PRETTY_FUNCTION__ : FRAME_TAG )
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define FRAME_DEBUG(fmt, args...) ((void)(ENABLE_FRAME_DEBUG && \
-                                          (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args), 0)))
+					  (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define FRAME_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, FRAME_FUNCTION, ##args))
@@ -76,7 +76,7 @@ Date        Modification                                    Name
 #define FRAME_ERROR(fmt, args...) (report(severity_error, "%s: " fmt, FRAME_FUNCTION, ##args))
 
 #define FRAME_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-                                                   FRAME_FUNCTION, #x, __FILE__, __LINE__); while(0)
+							   FRAME_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -85,19 +85,19 @@ Date        Modification                                    Name
 
 typedef struct FrameParserConfiguration_s
 {
-	const char           *FrameParserName;
+	const char *FrameParserName;
 
-	unsigned int          StreamParametersCount;
-	BufferDataDescriptor_t   *StreamParametersDescriptor;
+	unsigned int StreamParametersCount;
+	BufferDataDescriptor_t *StreamParametersDescriptor;
 
-	unsigned int          FrameParametersCount;
-	BufferDataDescriptor_t   *FrameParametersDescriptor;
+	unsigned int FrameParametersCount;
+	BufferDataDescriptor_t *FrameParametersDescriptor;
 
-	unsigned int          MaxReferenceFrameCount;       // Used in reverse play resource management
+	unsigned int MaxReferenceFrameCount; // Used in reverse play resource management
 
-	bool              SupportSmoothReversePlay;     // Can we support smooth reverse on this stream
+	bool SupportSmoothReversePlay; // Can we support smooth reverse on this stream
 
-	bool              InitializeStartCodeList;      // Do we need to extract the start code list from input
+	bool InitializeStartCodeList; // Do we need to extract the start code list from input
 } FrameParserConfiguration_t;
 
 // /////////////////////////////////////////////////////////////////////////
@@ -111,54 +111,54 @@ class FrameParser_Base_c : public FrameParser_c
 
 		// Data
 
-		OS_Mutex_t            Lock;
+		OS_Mutex_t Lock;
 
-		FrameParserConfiguration_t    Configuration;
+		FrameParserConfiguration_t Configuration;
 
-		BufferPool_t          CodedFrameBufferPool;
-		unsigned int          FrameBufferCount;
-		BufferPool_t          DecodeBufferPool;
-		unsigned int          DecodeBufferCount;
-		Ring_t            OutputRing;
+		BufferPool_t CodedFrameBufferPool;
+		unsigned int FrameBufferCount;
+		BufferPool_t DecodeBufferPool;
+		unsigned int DecodeBufferCount;
+		Ring_t OutputRing;
 
-		BufferManager_t       BufferManager;
+		BufferManager_t BufferManager;
 
-		BufferDataDescriptor_t   *StreamParametersDescriptor;
-		BufferType_t          StreamParametersType;
-		BufferPool_t          StreamParametersPool;
-		Buffer_t              StreamParametersBuffer;
+		BufferDataDescriptor_t *StreamParametersDescriptor;
+		BufferType_t StreamParametersType;
+		BufferPool_t StreamParametersPool;
+		Buffer_t StreamParametersBuffer;
 
-		BufferDataDescriptor_t   *FrameParametersDescriptor;
-		BufferType_t          FrameParametersType;
-		BufferPool_t          FrameParametersPool;
-		Buffer_t              FrameParametersBuffer;
+		BufferDataDescriptor_t *FrameParametersDescriptor;
+		BufferType_t FrameParametersType;
+		BufferPool_t FrameParametersPool;
+		Buffer_t FrameParametersBuffer;
 
-		Buffer_t              Buffer;
-		unsigned int          BufferLength;
-		unsigned char        *BufferData;
-		CodedFrameParameters_t   *CodedFrameParameters;
-		ParsedFrameParameters_t  *ParsedFrameParameters;
-		StartCodeList_t      *StartCodeList;
+		Buffer_t Buffer;
+		unsigned int BufferLength;
+		unsigned char *BufferData;
+		CodedFrameParameters_t *CodedFrameParameters;
+		ParsedFrameParameters_t *ParsedFrameParameters;
+		StartCodeList_t *StartCodeList;
 
-		bool              FirstDecodeAfterInputJump;
-		bool              SurplusDataInjected;
-		bool              ContinuousReverseJump;
+		bool FirstDecodeAfterInputJump;
+		bool SurplusDataInjected;
+		bool ContinuousReverseJump;
 
-		unsigned int          NextDecodeFrameIndex;
-		unsigned int          NextDisplayFrameIndex;
+		unsigned int NextDecodeFrameIndex;
+		unsigned int NextDisplayFrameIndex;
 
-		unsigned long long        NativeTimeBaseLine;
-		unsigned long long        LastNativeTimeUsedInBaseline;
+		unsigned long long NativeTimeBaseLine;
+		unsigned long long LastNativeTimeUsedInBaseline;
 
-		BitStreamClass_c          Bits;
-		bool              FrameToDecode;
+		BitStreamClass_c Bits;
+		bool FrameToDecode;
 
-		Rational_t            PlaybackSpeed;
-		PlayDirection_t       PlaybackDirection;
+		Rational_t PlaybackSpeed;
+		PlayDirection_t PlaybackDirection;
 
 		// Functions
 
-		FrameParserStatus_t   RegisterStreamAndFrameDescriptors(void);
+		FrameParserStatus_t RegisterStreamAndFrameDescriptors(void);
 
 	public:
 
@@ -173,41 +173,41 @@ class FrameParser_Base_c : public FrameParser_c
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Halt(void);
+		FrameParserStatus_t Halt(void);
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t             Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
-		FrameParserStatus_t   Input(Buffer_t          CodedBuffer);
+		FrameParserStatus_t Input(Buffer_t CodedBuffer);
 
-		FrameParserStatus_t   TranslatePlaybackTimeNativeToNormalized(
-			unsigned long long    NativeTime,
-			unsigned long long   *NormalizedTime);
+		FrameParserStatus_t TranslatePlaybackTimeNativeToNormalized(
+			unsigned long long NativeTime,
+			unsigned long long *NormalizedTime);
 
-		FrameParserStatus_t   TranslatePlaybackTimeNormalizedToNative(
-			unsigned long long    NormalizedTime,
-			unsigned long long   *NativeTime);
+		FrameParserStatus_t TranslatePlaybackTimeNormalizedToNative(
+			unsigned long long NormalizedTime,
+			unsigned long long *NativeTime);
 
-		FrameParserStatus_t   ApplyCorrectiveNativeTimeWrap(void);
+		FrameParserStatus_t ApplyCorrectiveNativeTimeWrap(void);
 
 		// Class function for default non-implemented functionality
 
-		FrameParserStatus_t   ResetCollatedHeaderState(void)
+		FrameParserStatus_t ResetCollatedHeaderState(void)
 		{
 			return PlayerNotSupported;
 		}
-		unsigned int      RequiredPresentationLength(unsigned char        StartCode)
+		unsigned int RequiredPresentationLength(unsigned char StartCode)
 		{
 			return 0;
 		}
-		FrameParserStatus_t   PresentCollatedHeader(unsigned char         StartCode,
-				unsigned char        *HeaderBytes,
-				FrameParserHeaderFlag_t  *Flags)
+		FrameParserStatus_t PresentCollatedHeader(unsigned char StartCode,
+							  unsigned char *HeaderBytes,
+							  FrameParserHeaderFlag_t *Flags)
 		{
 			return PlayerNotSupported;
 		}
@@ -217,15 +217,15 @@ class FrameParser_Base_c : public FrameParser_c
 
 	protected:
 
-		FrameParserStatus_t   GetNewStreamParameters(void           **Pointer);
-		FrameParserStatus_t   GetNewFrameParameters(void            **Pointer);
+		FrameParserStatus_t GetNewStreamParameters(void **Pointer);
+		FrameParserStatus_t GetNewFrameParameters(void **Pointer);
 
 		//
 		// Extensions to the class that may be overridden by my inheritors
 		//
 
-		virtual FrameParserStatus_t   ProcessBuffer(void);
-		virtual FrameParserStatus_t   QueueFrameForDecode(void);
+		virtual FrameParserStatus_t ProcessBuffer(void);
+		virtual FrameParserStatus_t QueueFrameForDecode(void);
 
 		//
 		// Extensions to the class to be fulfilled by my inheritors, all defaulted to null functions
@@ -234,19 +234,19 @@ class FrameParser_Base_c : public FrameParser_c
 		// doxygen comments up to date.
 		//
 
-		virtual FrameParserStatus_t   ReadHeaders(void)
+		virtual FrameParserStatus_t ReadHeaders(void)
 		{
 			return FrameParserNoError;
 		}
-		virtual FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void)
+		virtual FrameParserStatus_t ProcessQueuedPostDecodeParameterSettings(void)
 		{
 			return FrameParserNoError;
 		}
-		virtual FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void)
+		virtual FrameParserStatus_t PurgeQueuedPostDecodeParameterSettings(void)
 		{
 			return FrameParserNoError;
 		}
-		virtual FrameParserStatus_t   GeneratePostDecodeParameterSettings(void)
+		virtual FrameParserStatus_t GeneratePostDecodeParameterSettings(void)
 		{
 			return FrameParserNoError;
 		}

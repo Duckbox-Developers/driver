@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_mlp.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Oct-07   Creation                                        Sylvain
+Date Modification Name
+---- ------------ --------
+08-Oct-07 Creation Sylvain
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_audio_mlp.h"
 #include "frame_parser_audio_mlp.h"
@@ -54,14 +54,12 @@ Date        Modification                                    Name
 #define NB_SAMPLES_48_KHZ 960
 #define NB_SAMPLES_96_KHZ 1920
 #define NB_SAMPLES_192_KHZ 1920
-/*
- * todo Update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync
- */
+//#warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync"
 
 const char NbAudioFramesToGlob[MlpSamplingFreqNone] =
 {
-	NB_SAMPLES_48_KHZ / 40,  ///< 48 kHz
-	NB_SAMPLES_96_KHZ / 80,  ///< 96 kHz
+	NB_SAMPLES_48_KHZ / 40, ///< 48 kHz
+	NB_SAMPLES_96_KHZ / 80, ///< 96 kHz
 	NB_SAMPLES_192_KHZ / 160, ///< 192 kHz
 	0,
 	0,
@@ -110,16 +108,16 @@ CollatorStatus_t Collator_PesAudioMlp_c::FindNextSyncWord(int *CodeOffset)
 	int i;
 	unsigned char MlpHeader[MLP_HEADER_SIZE];
 	int RemainingInPotential = PotentialFrameHeaderLength;
-	unsigned char * PotentialFramePtr = PotentialFrameHeader;
+	unsigned char *PotentialFramePtr = PotentialFrameHeader;
 	// do the most naive possible search. there is no obvious need for performance here
 	for (i = 0; i <= (int)(RemainingElementaryLength + PotentialFrameHeaderLength - MLP_HEADER_SIZE); i++)
 	{
 		unsigned int SyncWord, Signature;
-		unsigned char * ElementaryPtr;
+		unsigned char *ElementaryPtr;
 		if (RemainingInPotential > 0)
 		{
 			/* we need at least MLP_HEADER_SIZE bytes to get the stream type...*/
-			int size =  min(RemainingInPotential, MLP_HEADER_SIZE);
+			int size = min(RemainingInPotential, MLP_HEADER_SIZE);
 			memcpy(&MlpHeader[0], PotentialFramePtr, size);
 			memcpy(&MlpHeader[size], &RemainingElementaryData[0], MLP_HEADER_SIZE - size);
 			ElementaryPtr = MlpHeader;
@@ -173,7 +171,7 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 		return CollatorNoError;
 	}
 	FPStatus = FrameParser_AudioMlp_c::ParseSingleFrameHeader(StoredFrameHeader,
-			   &ParsedFrameHeader);
+								  &ParsedFrameHeader);
 	if (FPStatus == FrameParserNoError)
 	{
 		// normally we have sync on a major sync frame, so we should for the
@@ -214,10 +212,10 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 ///
 /// \return void
 ///
-void  Collator_PesAudioMlp_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioMlp_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* by default the optional private data area length is set to zero */
-	/*   (broadcast or Blu-ray mode */
+	/* (broadcast or Blu-ray mode */
 	/* when the Pes stream_id is PES_START_CODE_PRIVATE_STREAM_1 we consider */
 	/* this is a DVD-Audio, so we set the private data area to 10 bytes long */
 	/* If we have mistaken, the HandlePesPrivateData will mark these bytes as part of the stream */
@@ -303,18 +301,18 @@ CollatorStatus_t Collator_PesAudioMlp_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = MLP_HEADER_SIZE;
-	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-	Configuration.StreamIdentifierCode       = PES_START_CODE_PRIVATE_STREAM_1;
-	Configuration.SubStreamIdentifierMask    = 0xff;
-	Configuration.SubStreamIdentifierCode    = MLP_STREAM_ID_EXTENSION_MLP;
-	Configuration.BlockTerminateMask         = 0xff;         // Picture
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_PRIVATE_STREAM_1 - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = 0;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode = PES_START_CODE_PRIVATE_STREAM_1;
+	Configuration.SubStreamIdentifierMask = 0xff;
+	Configuration.SubStreamIdentifierCode = MLP_STREAM_ID_EXTENSION_MLP;
+	Configuration.BlockTerminateMask = 0xff; // Picture
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = PES_START_CODE_PRIVATE_STREAM_1 - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = 0;
+	Configuration.DeferredTerminateFlag = false;
 	AccumulatedFrameNumber = 0;
 	NbFramesToGlob = 0;
 	StuffingBytesLength = 0;

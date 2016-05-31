@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -33,29 +33,25 @@ license from ST.
 struct staout_description
 {
 	char name[32];
-	int audioId;    /* id associated with audio description */
+	int audioId; // id associated with audio description
 	int deviceId;
 	int virtualId;
 };
 
-/* Describes the audio output surfaces to user */
+//< Describes the audio output surfaces to user
 static struct staout_description g_aoutDevice[] =
 {
-	{"MIXER0_PRIMARY",   0, 0, 0},  /* "MIXER0_PRIMARY" audio, primary audio mixer input */
-	{"MIXER0_SECONDARY", 0, 0, 0},  /* "MIXER0_SECONDARY" audio, secondary audio mixer input */
-	{"MIXER1_PRIMARY",   0, 0, 0},  /* "MIXER1_PRIMARY", audio, physically independent audio device used for second room audio output */
+	{ "MIXER0_PRIMARY", 0, 0, 0}, //<! "MIXER0_PRIMARY" audio, primary audio mixer input
+	{ "MIXER0_SECONDARY", 0, 0, 0}, //<! "MIXER0_SECONDARY" audio, secondary audio mixer input
+	{ "MIXER1_PRIMARY", 0, 0, 0}, //<! "MIXER1_PRIMARY", audio, physically independent audio device used for second room audio output
 };
 
 #ifdef __TDT__
-static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle,
-								 struct stm_v4l2_driver *driver, int device,
-								 int type,
-								 struct file *file, unsigned int cmd, void *arg)
+static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driver,
+				 int device, int type, struct file *file, unsigned int cmd, void *arg)
 #else
-static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle,
-								 struct stm_v4l2_driver *driver, int device,
-								 enum _stm_v4l2_driver_type type,
-								 struct file *file, unsigned int cmd, void *arg)
+static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driver,
+				 int device, enum _stm_v4l2_driver_type type, struct file *file, unsigned int cmd, void *arg)
 #endif
 {
 	switch (cmd)
@@ -81,7 +77,7 @@ static int dvb_v4l2_audout_ioctl(struct stm_v4l2_handles *handle,
 				DVB_ERROR("VIDIOC_S_AUDOUT: Output number out of range %d\n", index);
 				return -EINVAL;
 			}
-			/* allocate handle for driver registration */
+			// allocate handle for driver registration
 			handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle = kmalloc(sizeof(struct v4l2_audioout), GFP_KERNEL);
 			if (handle->v4l2type[STM_V4L2_AUDIO_OUTPUT].handle == NULL)
 			{
@@ -111,17 +107,18 @@ static int dvb_v4l2_audout_close(struct stm_v4l2_handles *handle, enum _stm_v4l2
 
 static struct stm_v4l2_driver dvb_v4l2_audout_driver =
 {
-	.name           = "dvb_v4l2_audout",
-	.type           = STM_V4L2_AUDIO_OUTPUT,
-	.control_range  = {{V4L2_CID_STM_AUDIO_O_FIRST, V4L2_CID_STM_AUDIO_O_LAST},
+	.name = "dvb_v4l2_audout",
+	.type = STM_V4L2_AUDIO_OUTPUT,
+	.control_range = {
+		{V4L2_CID_STM_AUDIO_O_FIRST, V4L2_CID_STM_AUDIO_O_LAST},
 		{V4L2_CID_STM_AUDIO_O_FIRST, V4L2_CID_STM_AUDIO_O_LAST},
 		{V4L2_CID_STM_AUDIO_O_FIRST, V4L2_CID_STM_AUDIO_O_LAST}
 	},
-	.n_indexes      = {ARRAY_SIZE(g_aoutDevice), ARRAY_SIZE(g_aoutDevice), ARRAY_SIZE(g_aoutDevice)},
-	.ioctl          = dvb_v4l2_audout_ioctl,
-	.close          = dvb_v4l2_audout_close,
-	.poll           = NULL,
-	.mmap           = NULL,
+	.n_indexes = { ARRAY_SIZE(g_aoutDevice), ARRAY_SIZE(g_aoutDevice), ARRAY_SIZE(g_aoutDevice) },
+	.ioctl = dvb_v4l2_audout_ioctl,
+	.close = dvb_v4l2_audout_close,
+	.poll = NULL,
+	.mmap = NULL,
 };
 
 static int __init dvb_v4l2_audout_init(void)
@@ -134,7 +131,8 @@ static void __exit dvb_v4l2_audout_exit(void)
 	stm_v4l2_unregister_driver(&dvb_v4l2_audout_driver);
 }
 
-/* module_init (dvb_v4l2_audout_init); */
-/* module_exit (dvb_v4l2_audout_exit); */
+//module_init (dvb_v4l2_audout_init);
+//module_exit (dvb_v4l2_audout_exit);
 
-/* MODULE_LICENSE ("GPL"); */
+//MODULE_LICENSE ("GPL");
+

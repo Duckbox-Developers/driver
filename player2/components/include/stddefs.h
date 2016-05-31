@@ -1,6 +1,6 @@
 /******************************************************************************
 
-File Name   : stddefs.h
+File Name : stddefs.h
 
 Description : Contains a number of generic type declarations and defines.
 
@@ -23,7 +23,7 @@ extern "C" {
 /* Common unsigned types */
 #ifndef DEFINED_U8
 #define DEFINED_U8
-typedef unsigned char  U8;
+typedef unsigned char U8;
 #endif
 
 #ifndef DEFINED_U16
@@ -33,13 +33,13 @@ typedef unsigned short U16;
 
 #ifndef DEFINED_U32
 #define DEFINED_U32
-typedef unsigned int   U32;
+typedef unsigned int U32;
 #endif
 
 /* Common signed types */
 #ifndef DEFINED_S8
 #define DEFINED_S8
-typedef signed char  S8;
+typedef signed char S8;
 #endif
 
 #ifndef DEFINED_S16
@@ -49,7 +49,7 @@ typedef signed short S16;
 
 #ifndef DEFINED_S32
 #define DEFINED_S32
-typedef signed int   S32;
+typedef signed int S32;
 #endif
 
 #ifndef DEFINED_ERRORCODE
@@ -74,7 +74,7 @@ typedef int BOOL;
 }
 #endif
 
-#endif  /* #ifndef __STDDEFS_H */
+#endif /* #ifndef __STDDEFS_H */
 
-/* End of stddefs.h  ------------------------------------------------------- */
+/* End of stddefs.h ------------------------------------------------------- */
 

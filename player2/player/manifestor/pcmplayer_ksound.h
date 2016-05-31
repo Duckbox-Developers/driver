@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : pcmplayer_ksound.h
-Author :           Daniel
+Author : Daniel
 
 Concrete definition of a PCM player implemented using the ksound ALSA subset.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-27-Jun-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+27-Jun-07 Created Daniel
 
 ************************************************************************/
 
@@ -53,7 +53,7 @@ class PcmPlayer_Ksound_c : public PcmPlayer_c
 
 		unsigned long long TimeOfNextCommit;
 
-		int BufferType;     //this will hold identifier for relayfs
+		int BufferType; //this will hold identifier for relayfs
 
 		/* this lot for FSynth control access */
 		snd_ctl_elem_id_t id;

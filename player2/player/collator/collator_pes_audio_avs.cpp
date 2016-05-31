@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_avs.cpp
-Author :           Daniel
+Author : Daniel
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-19-Apr-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+19-Apr-07 Created Daniel
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_audio_avs.h"
 #include "frame_parser_audio_avs.h"
@@ -139,10 +139,10 @@ CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(uns
 	// Having handled extension headers we can handle headers.
 	//
 	FPStatus = FrameParser_AudioAvs_c::ParseFrameHeader(StoredFrameHeader,
-			   &ParsedFrameHeader);
+							    &ParsedFrameHeader);
 	if (FPStatus == FrameParserNoError)
 	{
-		*FrameLength     = ParsedFrameHeader.Length;
+		*FrameLength = ParsedFrameHeader.Length;
 		CollatorState = (CollatorState == SeekingFrameEnd) ? GotCompleteFrame : ReadSubFrame;
 		Status = CollatorNoError;
 	}
@@ -159,7 +159,7 @@ CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(uns
 ///
 /// \return void
 ///
-void  Collator_PesAudioAvs_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioAvs_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* do nothing, configuration already set to the right value... */
 }
@@ -174,15 +174,15 @@ CollatorStatus_t Collator_PesAudioAvs_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = AVS_HEADER_SIZE;
-	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-	Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
-	Configuration.BlockTerminateMask         = 0xff;         // Picture
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_AUDIO - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = 0;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode = PES_START_CODE_AUDIO;
+	Configuration.BlockTerminateMask = 0xff; // Picture
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = PES_START_CODE_AUDIO - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = 0;
+	Configuration.DeferredTerminateFlag = false;
 	return CollatorNoError;
 }

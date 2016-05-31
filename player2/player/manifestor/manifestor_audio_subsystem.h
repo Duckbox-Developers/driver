@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : front_matter.h
-Author :           Daniel
+Author : Daniel
 
 A 'fake' header file containing only documentation on the
 audio manifestor architecture.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-23-May-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+23-May-07 Created Daniel
 
 ************************************************************************/
 
@@ -48,15 +48,15 @@ The following inputs are presented to the manifestor
 system all of which must be mixed.
 
  - Primary stream, delivered to an instance of Player2's Manifestor_c.
-   This stream is time stamped and thus subject to synchronization.
+ This stream is time stamped and thus subject to synchronization.
  - Secondary stream, delivered to an instance of Player2's Manifestor_c.
-   This stream is time stamped and while subject to
-   synchronization should
-   not have any sync. 'tension' versus the primary stream. In other words any output rate adjustment (a.k.a. clock pulling) applied to the primary stream is applicable to the secondary stream. If this invariant is violated then percussive adjustments are acceptable.
+ This stream is time stamped and while subject to
+ synchronization should
+ not have any sync. 'tension' versus the primary stream. In other words any output rate adjustment (a.k.a. clock pulling) applied to the primary stream is applicable to the secondary stream. If this invariant is violated then percussive adjustments are acceptable.
  - Up to 8 interactive monaural streams, delivered as LPCM from outside of
-   Player2 (via the ALSA playback interface). The final two monaural streams may be
-   combined to form a single stereo stream. These streams are not time stamped nor subject to syncrhonization
-   and must simply be presented with minimal latency.
+ Player2 (via the ALSA playback interface). The final two monaural streams may be
+ combined to form a single stereo stream. These streams are not time stamped nor subject to syncrhonization
+ and must simply be presented with minimal latency.
 
 The primary and secondary streams are continuous and
 seeking through them is anticipated, thus any discontinuity in the primary and secondary streams must result in a de-click across the transitions.
@@ -100,11 +100,11 @@ For profile 1 this include the following:
 Future profiles are likely to require:
 
  - Higher sampling frequencies (192KHz has already
-      been mentioned by some potential customers). Such high sampling
-      frequencies
-      should not affect the mixer architecture but may strain the audio coprocessors
-      somewhat. It is also likely to require much larger mixer granules to amortize
-      communication overhead.
+ been mentioned by some potential customers). Such high sampling
+ frequencies
+ should not affect the mixer architecture but may strain the audio coprocessors
+ somewhat. It is also likely to require much larger mixer granules to amortize
+ communication overhead.
  - Support for 7.1 speaker organisation and cross mixing between different 7.1 speaker topologies.
  - Support different output topologies. In particular the provision of 8 channel PCM or 'HD' compressed data (e.g. DTS-HD, DD+) via HDMI.
 
@@ -116,13 +116,13 @@ The mix process is can be approximated to the following actions (in order):
  - Obtain descriptors for each of the input buffers,
  - Zero the mixer output buffer,
  - For each input buffer:
-   - Sample rate convert each of the input buffers to the native mixer frequency and store in the SRC output buffer. For the primary stream this step is typically omitted since the input and output sample rates match.
-   - Mix SRC output buffer (or original buffer) into the mixer output buffer.
+ - Sample rate convert each of the input buffers to the native mixer frequency and store in the SRC output buffer. For the primary stream this step is typically omitted since the input and output sample rates match.
+ - Mix SRC output buffer (or original buffer) into the mixer output buffer.
  - Apply any shared PCM post processing that may be required (e.g. volume control),
  - For each output:
-   - Apply any PCM post processing applicable to the current output (including secondary SRC if the output is incapable of presenting at the mixer's native frequency).
-   - Optionally pass the PCM through an encoder (e.g. AC3).
-   - Optionally pass the PCM through an SPDIF stream formatter to provide framing information.
+ - Apply any PCM post processing applicable to the current output (including secondary SRC if the output is incapable of presenting at the mixer's native frequency).
+ - Optionally pass the PCM through an encoder (e.g. AC3).
+ - Optionally pass the PCM through an SPDIF stream formatter to provide framing information.
  - Commit the playback buffers for presentation.
 
 Note: Since only one mix can take place at once and the maximum number of output samples per mix iteration is known in advance there need only be one pre-allocated mixer output buffer and one pre-allocated SRC output buffer.
@@ -200,11 +200,11 @@ of clock recovery available to us is sample rate conversion.
 The fundamental Fsynth equations is as follows:
 
 <pre>
-                             32768*Fpll
+ 32768*Fpll
 Fout = ------------------------------------------------------
-                       md                        (md + 1)
-        sdiv*((pe*(1 + --)) - ((pe - 32768)*(1 + --------)))
-                       32                           32
+ md (md + 1)
+ sdiv*((pe*(1 + --)) - ((pe - 32768)*(1 + --------)))
+ 32 32
 </pre>
 
 Where:
@@ -217,9 +217,9 @@ Where:
 This has the following simplification:
 
 <pre>
-                  1048576*Fpll
+ 1048576*Fpll
 Fout = ----------------------------------
-        sdiv*(1081344 - pe + (32768*md))
+ sdiv*(1081344 - pe + (32768*md))
 </pre>
 
 \section audio_todo_sec Development Plan
@@ -229,23 +229,23 @@ Fout = ----------------------------------
  - [https://bugzilla.stlinux.com/show_bug.cgi?id=1760] Migrate downmix from decoder to mixer (STx7109).
  - Dynamic switching of output mode (sampling frequency) based on stream parameters (STx7109).
  - [https://bugzilla.stlinux.com/show_bug.cgi?id=1759] Silence stuffing when input is not present (STx7109).
-    - 'Idle' with 0 connected inputs but software muted output buffers.
-    - Inject silence on input underflow.
-    - Apply fade in, fade out to stream discontinuities due to underflow.
-    - Apply fade in, fade out on demarked stream discontinuities (e.g. track change, trick mode).
+ - 'Idle' with 0 connected inputs but software muted output buffers.
+ - Inject silence on input underflow.
+ - Apply fade in, fade out to stream discontinuities due to underflow.
+ - Apply fade in, fade out on demarked stream discontinuities (e.g. track change, trick mode).
  - Clock recovery and A/V sync (STx7109)
-    - Precisely timed startup.
-    - Continuous adjustment of Fsynth to prevent drift.
-    - Mute based approach to significant discrepancies.
+ - Precisely timed startup.
+ - Continuous adjustment of Fsynth to prevent drift.
+ - Mute based approach to significant discrepancies.
  - Primary and secondary decode and mix (STx7109).
  - ?Synchronization of secondary decode (via SRC)?.
  - Primary and interactive decode and mix (STx7109).
  - Multiple outputs (STx7109).
-    - Manage output buffers to external DAC/HDMI and SPDIF.
-    - Arrange appropriate clock recovery and startup
+ - Manage output buffers to external DAC/HDMI and SPDIF.
+ - Arrange appropriate clock recovery and startup
  - Port to production device (STm7200).
-    - Implement ALSA devices for STm7200.
-    - Adapt the clock recovery and A/V sync management for STm7200.
+ - Implement ALSA devices for STm7200.
+ - Adapt the clock recovery and A/V sync management for STm7200.
  - Audio stable notification: https://bugzilla.stlinux.com/show_bug.cgi?id=1405
 
 Last updated: 11-Jun-2007

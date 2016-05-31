@@ -13,22 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator.h
-Author :           Nick
+Author : Nick
 
 Definition of the collator class module for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-01-Nov-06   Created                                         Nick
-31-Jul-09   Added GuaranteedNonBlockingWriteSpace()
-        supported in reversing collator.            Nick
+Date Modification Name
+---- ------------ --------
+01-Nov-06 Created Nick
+31-Jul-09 Added GuaranteedNonBlockingWriteSpace()
+ supported in reversing collator. Nick
 ************************************************************************/
 
 #ifndef H_COLLATOR
@@ -43,16 +43,16 @@ Date        Modification                                    Name
 
 enum
 {
-	CollatorNoError             = PlayerNoError,
-	CollatorError               = PlayerError,
+	CollatorNoError = PlayerNoError,
+	CollatorError = PlayerError,
 
-	CollatorWouldBlock              = BASE_COLLATOR,
+	CollatorWouldBlock = BASE_COLLATOR,
 	CollatorBufferOverflow,
 	CollatorBufferUnderflow, ///< Primarily for internal use
 	CollatorUnwindStack, ///< Reported to cause execution to unwind (to avoid recursion)
 };
 
-typedef PlayerStatus_t  CollatorStatus_t;
+typedef PlayerStatus_t CollatorStatus_t;
 
 // ---------------------------------------------------------------------
 //
@@ -63,24 +63,24 @@ class Collator_c : public BaseComponentClass_c
 {
 	public:
 
-		virtual CollatorStatus_t   RegisterOutputBufferRing(Ring_t            Ring) = 0;
+		virtual CollatorStatus_t RegisterOutputBufferRing(Ring_t Ring) = 0;
 
-		virtual CollatorStatus_t   InputJump(bool             SurplusDataInjected,
-											 bool              ContinuousReverseJump) = 0;
+		virtual CollatorStatus_t InputJump(bool SurplusDataInjected,
+						   bool ContinuousReverseJump) = 0;
 
-		virtual CollatorStatus_t   InputGlitch(void) = 0;
+		virtual CollatorStatus_t InputGlitch(void) = 0;
 
-		virtual CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-										 unsigned int          DataLength,
-										 void             *Data,
-										 bool              NonBlocking = false,
-										 unsigned int         *DataLengthRemaining = NULL) = 0;
+		virtual CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+					       unsigned int DataLength,
+					       void *Data,
+					       bool NonBlocking = false,
+					       unsigned int *DataLengthRemaining = NULL) = 0;
 
-		virtual CollatorStatus_t   FrameFlush(void) = 0;
+		virtual CollatorStatus_t FrameFlush(void) = 0;
 
-		virtual CollatorStatus_t   DiscardAccumulatedData(void) = 0;
+		virtual CollatorStatus_t DiscardAccumulatedData(void) = 0;
 
-		virtual CollatorStatus_t   NonBlockingWriteSpace(unsigned int        *Size)
+		virtual CollatorStatus_t NonBlockingWriteSpace(unsigned int *Size)
 		{
 			return PlayerNotSupported;
 		}
@@ -103,11 +103,11 @@ The partial list of entrypoints used by this class:
 The partial list of meta data types used by this class:
 
 - There are no input buffers, but as part of the input parameter list, the following is attached:
-  - <b>PlayerInputDescriptor</b> Describes the input block.
+ - <b>PlayerInputDescriptor</b> Describes the input block.
 
 - Attached to output buffers :-
-  - <b>CodedFrameParameters</b>, describes the coded frame output.
-  - <b>StartCodeList</b>, optional output attachment for those collators generating a start code scan.
+ - <b>CodedFrameParameters</b>, describes the coded frame output.
+ - <b>StartCodeList</b>, optional output attachment for those collators generating a start code scan.
 */
 
 /*! \fn CollatorStatus_t Collator_c::RegisterOutputBufferRing(Ring_t Ring)
@@ -131,7 +131,7 @@ For more information on discontinuous streams see <b>InputJump</b> on \ref input
 \return Collator status code, CollatorNoError indicates success.
 */
 
-/*! \fn CollatorStatus_t   Collator_c::InputGlitch(             void )
+/*! \fn CollatorStatus_t Collator_c::InputGlitch( void )
 \brief Demark a glitch in the input data.
 
 For more information on discontinuous streams see <b>InputGlitch</b> on \ref input.

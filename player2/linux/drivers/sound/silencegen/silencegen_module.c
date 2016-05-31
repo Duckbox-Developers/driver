@@ -18,7 +18,7 @@ MODULE_LICENSE("GPL");
 
 static char *name = MME_SILENCE_GENERATOR;
 
-module_param(name , charp, S_IRUGO);
+module_param(name, charp, S_IRUGO);
 MODULE_PARM_DESC(name, "Name to use for MME Transformer registration");
 
 static int __init silencegen_init(void)

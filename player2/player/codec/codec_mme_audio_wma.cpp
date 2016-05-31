@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_audio_wma.cpp
-Author :           Adam
+Author : Adam
 
 Implementation of the wma audio codec class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Sep-07   Created (from codec_mme_audio_mpeg.cpp)         Adam
+Date Modification Name
+---- ------------ --------
+11-Sep-07 Created (from codec_mme_audio_mpeg.cpp) Adam
 
 ************************************************************************/
 
@@ -55,7 +55,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "codec_mme_audio_wma.h"
 #include "wma_properties.h"
@@ -69,7 +69,7 @@ Date        Modification                                    Name
 //#define NUM_SEND_BUFFERS_COMMANDS 4
 #define MAX_ASF_PACKET_SIZE 16384
 
-#define MAXIMUM_STALL_PERIOD    250000          // 1/4 second
+#define MAXIMUM_STALL_PERIOD 250000 // 1/4 second
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -78,32 +78,44 @@ Date        Modification                                    Name
 
 typedef struct WmaAudioCodecStreamParameterContext_s
 {
-	CodecBaseStreamParameterContext_t   BaseContext;
+	CodecBaseStreamParameterContext_t BaseContext;
 
 	MME_LxAudioDecoderGlobalParams_t StreamParameters;
 } WmaAudioCodecStreamParameterContext_t;
 
-#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT         "WmaAudioCodecStreamParameterContext"
-#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE    {BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecStreamParameterContext_t)}
+//#if __KERNEL__
+#if 0
+#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT "WmaAudioCodecStreamParameterContext"
+#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE {BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(WmaAudioCodecStreamParameterContext_t)}
+#else
+#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT "WmaAudioCodecStreamParameterContext"
+#define BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE {BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecStreamParameterContext_t)}
+#endif
 
-static BufferDataDescriptor_t            WmaAudioCodecStreamParameterContextDescriptor = BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
+static BufferDataDescriptor_t WmaAudioCodecStreamParameterContextDescriptor = BUFFER_WMA_AUDIO_CODEC_STREAM_PARAMETER_CONTEXT_TYPE;
 
 // --------
 
 typedef struct WmaAudioCodecDecodeContext_s
 {
-	CodecBaseDecodeContext_t            BaseContext;
+	CodecBaseDecodeContext_t BaseContext;
 
-	MME_StreamingBufferParams_t         DecodeParameters;
-	MME_LxAudioDecoderFrameStatus_t     DecodeStatus;
+	MME_StreamingBufferParams_t DecodeParameters;
+	MME_LxAudioDecoderFrameStatus_t DecodeStatus;
 } WmaAudioCodecDecodeContext_t;
 
-#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT   "WmaAudioCodecDecodeContext"
-#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE      {BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecDecodeContext_t)}
+//#if __KERNEL__
+#if 0
+#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT "WmaAudioCodecDecodeContext"
+#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE {BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromDeviceMemory, 32, 0, true, true, sizeof(WmaAudioCodecDecodeContext_t)}
+#else
+#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT "WmaAudioCodecDecodeContext"
+#define BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE {BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT, BufferDataTypeBase, AllocateFromOSMemory, 32, 0, true, true, sizeof(WmaAudioCodecDecodeContext_t)}
+#endif
 
-static BufferDataDescriptor_t           WmaAudioCodecDecodeContextDescriptor    = BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
+static BufferDataDescriptor_t WmaAudioCodecDecodeContextDescriptor = BUFFER_WMA_AUDIO_CODEC_DECODE_CONTEXT_TYPE;
 
-//{{{  Constructor
+//{{{ Constructor
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Fill in the configuration parameters used by the super-class and reset everything.
@@ -111,24 +123,24 @@ static BufferDataDescriptor_t           WmaAudioCodecDecodeContextDescriptor    
 Codec_MmeAudioWma_c::Codec_MmeAudioWma_c(void)
 {
 	CODEC_DEBUG("%s\n", __FUNCTION__);
-	Configuration.CodecName                             = "WMA audio";
-	Configuration.StreamParameterContextCount           = 1;
-	Configuration.StreamParameterContextDescriptor      = &WmaAudioCodecStreamParameterContextDescriptor;
-	Configuration.DecodeContextCount                    = SENDBUF_DECODE_CONTEXT_COUNT; //4;
-	Configuration.DecodeContextDescriptor               = &WmaAudioCodecDecodeContextDescriptor;
-	Configuration.MaximumSampleCount                    = 4096;
+	Configuration.CodecName = "WMA audio";
+	Configuration.StreamParameterContextCount = 1;
+	Configuration.StreamParameterContextDescriptor = &WmaAudioCodecStreamParameterContextDescriptor;
+	Configuration.DecodeContextCount = SENDBUF_DECODE_CONTEXT_COUNT; //4;
+	Configuration.DecodeContextDescriptor = &WmaAudioCodecDecodeContextDescriptor;
+	Configuration.MaximumSampleCount = 4096;
 //
 	AudioDecoderTransformCapabilityMask.DecoderCapabilityFlags = (1 << ACC_WMAPROLSL);
-	DecoderId                                           = ACC_WMAPROLSL_ID;
+	DecoderId = ACC_WMAPROLSL_ID;
 	Reset();
-	SendbufTriggerTransformCount                        = 1;
+	SendbufTriggerTransformCount = 1;
 }
 //}}}
-//{{{  Destructor
+//{{{ Destructor
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor function, ensures a full halt and reset
-///     are executed for all levels of the class.
+/// Destructor function, ensures a full halt and reset
+/// are executed for all levels of the class.
 ///
 Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c(void)
 {
@@ -138,7 +150,7 @@ Codec_MmeAudioWma_c::~Codec_MmeAudioWma_c(void)
 }
 //}}}
 
-//{{{  FillOutTransformerGlobalParameters
+//{{{ FillOutTransformerGlobalParameters
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Populate the supplied structure with parameters for WMA audio.
@@ -148,17 +160,17 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 {
 	MME_LxAudioDecoderGlobalParams_t &GlobalParams = *GlobalParams_p;
 	GlobalParams.StructSize = sizeof(MME_LxAudioDecoderGlobalParams_t);
-//    MME_LxWmaConfig_t &Config = *((MME_LxWmaConfig_t *) GlobalParams.DecConfig);
+// MME_LxWmaConfig_t &Config = *((MME_LxWmaConfig_t *) GlobalParams.DecConfig);
 	MME_LxWmaProLslConfig_t &Config = *((MME_LxWmaProLslConfig_t *) GlobalParams.DecConfig);
 	CODEC_TRACE("Initializing WMA audio decoder\n");
-//    MME_LxWmaProLslConfig_t &config = ((MME_LxWmaProLslConfig_t *) globalParams.DecConfig)[0];
+// MME_LxWmaProLslConfig_t &config = ((MME_LxWmaProLslConfig_t *) globalParams.DecConfig)[0];
 	memset(&Config, 0, sizeof(Config));
 	Config.DecoderId = ACC_WMAPROLSL_ID;
 	/*
-	Audio_DecoderTypes.h:   ACC_WMA9_ID,
-	Audio_DecoderTypes.h:   ACC_WMAPROLSL_ID,
-	Audio_DecoderTypes.h:   ACC_WMA_ST_FILE,
-	Audio_EncoderTypes.h:   ACC_WMAE_ID,
+	Audio_DecoderTypes.h: ACC_WMA9_ID,
+	Audio_DecoderTypes.h: ACC_WMAPROLSL_ID,
+	Audio_DecoderTypes.h: ACC_WMA_ST_FILE,
+	Audio_EncoderTypes.h: ACC_WMAE_ID,
 	*/
 	Config.StructSize = sizeof(Config);
 #if 0
@@ -173,7 +185,7 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 	Config.MaxPageSize = MAX_ASF_PACKET_SIZE; // default if no other is specified
 	if ((ParsedFrameParameters != NULL) && (ParsedFrameParameters->StreamParameterStructure != NULL))
 	{
-		WmaAudioStreamParameters_t*     StreamParams    = (WmaAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
+		WmaAudioStreamParameters_t *StreamParams = (WmaAudioStreamParameters_t *)ParsedFrameParameters->StreamParameterStructure;
 		Config.NbSamplesOut = StreamParams->SamplesPerFrame ? StreamParams->SamplesPerFrame : 2048;
 		CODEC_TRACE("%s - StreamParams->SamplesPerFrame %d\n", __FUNCTION__, StreamParams->SamplesPerFrame);
 		CODEC_TRACE("%s - Config.NbSamplesOut %d\n", __FUNCTION__, Config.NbSamplesOut);
@@ -181,8 +193,8 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 		{
 			// zero is an illegal stream number
 			CODEC_ERROR("ILLEGAL STREAM NUMBER\n");
-			Config.NewAudioStreamInfo       = ACC_MME_FALSE;
-			NeedToMarkStreamUnplayable      = true;
+			Config.NewAudioStreamInfo = ACC_MME_FALSE;
+			NeedToMarkStreamUnplayable = true;
 			return CodecError;
 		}
 		else
@@ -190,21 +202,21 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 			Config.NewAudioStreamInfo = ACC_MME_TRUE;
 			//MME_WmaAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
 			MME_WmaProLslAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
-			streamInfo.nVersion            = (StreamParams->FormatTag == WMA_VERSION_2_9) ? 2 :     // WMA V2
-											 (StreamParams->FormatTag == WMA_VERSION_9_PRO) ? 3 :   // WMA Pro
-											 (StreamParams->FormatTag == WMA_LOSSLESS) ? 4 : 1;     // WMA lossless - Default to WMA version1?
-			streamInfo.wFormatTag          = StreamParams->FormatTag;
-			streamInfo.nSamplesPerSec      = StreamParams->SamplesPerSecond;
-			streamInfo.nAvgBytesPerSec     = StreamParams->AverageNumberOfBytesPerSecond;
-			streamInfo.nBlockAlign         = StreamParams->BlockAlignment;
-			streamInfo.nChannels           = StreamParams->NumberOfChannels;
-			streamInfo.nEncodeOpt          = StreamParams->EncodeOptions;
-			streamInfo.nSamplesPerBlock    = StreamParams->SamplesPerBlock;
+			streamInfo.nVersion = (StreamParams->FormatTag == WMA_VERSION_2_9) ? 2 : // WMA V2
+					      (StreamParams->FormatTag == WMA_VERSION_9_PRO) ? 3 : // WMA Pro
+					      (StreamParams->FormatTag == WMA_LOSSLESS) ? 4 : 1; // WMA lossless - Default to WMA version1?
+			streamInfo.wFormatTag = StreamParams->FormatTag;
+			streamInfo.nSamplesPerSec = StreamParams->SamplesPerSecond;
+			streamInfo.nAvgBytesPerSec = StreamParams->AverageNumberOfBytesPerSecond;
+			streamInfo.nBlockAlign = StreamParams->BlockAlignment;
+			streamInfo.nChannels = StreamParams->NumberOfChannels;
+			streamInfo.nEncodeOpt = StreamParams->EncodeOptions;
+			streamInfo.nSamplesPerBlock = StreamParams->SamplesPerBlock;
 			CODEC_TRACE("%s - streamInfo.nSamplesPerBlock %d\n", __FUNCTION__, streamInfo.nSamplesPerBlock);
-			streamInfo.dwChannelMask       = StreamParams->ChannelMask;
-			streamInfo.nBitsPerSample      = StreamParams->BitsPerSample;
+			streamInfo.dwChannelMask = StreamParams->ChannelMask;
+			streamInfo.nBitsPerSample = StreamParams->BitsPerSample;
 			streamInfo.wValidBitsPerSample = StreamParams->ValidBitsPerSample;
-			streamInfo.wStreamId           = StreamParams->StreamNumber;
+			streamInfo.wStreamId = StreamParams->StreamNumber;
 			CODEC_TRACE("%s INFO : streamInfo.nSamplesPerSec %d \n", __FUNCTION__, streamInfo.nSamplesPerSec);
 			// HACK: see ValidateCompletedCommand()
 			//NumChannels = StreamParams.NumberOfChannels;
@@ -222,7 +234,7 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 	// unsigned char *pcmParams = ((unsigned char *) &Config) + Config.StructSize;
 	// FillPcmProcessingGlobalParams((void *) pcmParams);
 	return Codec_MmeAudio_c::FillOutTransformerGlobalParameters(GlobalParams_p);
-	//  return CodecNoError;
+	// return CodecNoError;
 }
 //}}}
 

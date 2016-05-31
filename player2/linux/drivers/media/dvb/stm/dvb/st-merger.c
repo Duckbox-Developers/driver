@@ -3,12 +3,12 @@
 *
 * Copyright (c) STMicroelectronics 2006
 *
-*   Author:Peter Bennett <peter.bennett@st.com>
+* Author:Peter Bennett <peter.bennett@st.com>
 *
-*      This program is free software; you can redistribute it and/or
-*      modify it under the terms of the GNU General Public License as
-*      published by the Free Software Foundation; either version 2 of
-*      the License, or (at your option) any later version.
+* This program is free software; you can redistribute it and/or
+* modify it under the terms of the GNU General Public License as
+* published by the Free Software Foundation; either version 2 of
+* the License, or (at your option) any later version.
 */
 
 #include <linux/version.h>
@@ -55,74 +55,74 @@ unsigned long TSM_NUM_1394_ALT_OUT;
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
  || defined(SAGEMCOM88)
-#define TSMergerBaseAddress     0xFE242000
-#define SWTS_BASE_ADDRESS       0xFE900000 //STi7105 STi7111
+#define TSMergerBaseAddress 0xFE242000
+#define SWTS_BASE_ADDRESS 0xFE900000 //STi7105 STi7111
 #else
-#define TSMergerBaseAddress     0x19242000
-#define SWTS_BASE_ADDRESS       0x1A300000
+#define TSMergerBaseAddress 0x19242000
+#define SWTS_BASE_ADDRESS 0x1A300000
 #endif
 
-#define TSM_STREAM0_CFG         0x0000
-#define TSM_STREAM1_CFG         0x0020
-#define TSM_STREAM2_CFG         0x0040
-#define TSM_STREAM3_CFG         0x0060
-#define TSM_STREAM4_CFG         0x0080
+#define TSM_STREAM0_CFG 0x0000
+#define TSM_STREAM1_CFG 0x0020
+#define TSM_STREAM2_CFG 0x0040
+#define TSM_STREAM3_CFG 0x0060
+#define TSM_STREAM4_CFG 0x0080
 
 /* for all 7109er */
-#define TSM_STREAM5_CFG         0x00a0
-#define TSM_STREAM6_CFG         0x00c0
+#define TSM_STREAM5_CFG 0x00a0
+#define TSM_STREAM6_CFG 0x00c0
 
 /* see proc entry from ufs912 */
-#define TSM_STREAM7_CFG         0x00e0
-#define TSM_STREAM7_SYNC        0x00e8
-#define TSM_STREAM7_STAT        0x00f0
+#define TSM_STREAM7_CFG 0x00e0
+#define TSM_STREAM7_SYNC 0x00e8
+#define TSM_STREAM7_STAT 0x00f0
 
 /* 7111er */
-#define TSM_STREAM0_CFG2        0x0018
-#define TSM_STREAM1_CFG2        0x0038
-#define TSM_STREAM2_CFG2        0x0058
-#define TSM_STREAM3_CFG2        0x0078
-#define TSM_STREAM4_CFG2        0x0098
-#define TSM_STREAM5_CFG2        0x00b8
-#define TSM_STREAM6_CFG2        0x00d8
-#define TSM_STREAM7_CFG2        0x00f8
+#define TSM_STREAM0_CFG2 0x0018
+#define TSM_STREAM1_CFG2 0x0038
+#define TSM_STREAM2_CFG2 0x0058
+#define TSM_STREAM3_CFG2 0x0078
+#define TSM_STREAM4_CFG2 0x0098
+#define TSM_STREAM5_CFG2 0x00b8
+#define TSM_STREAM6_CFG2 0x00d8
+#define TSM_STREAM7_CFG2 0x00f8
 
-#define TSM_STREAM0_SYNC    0x0008
-#define TSM_STREAM1_SYNC    0x0028
-#define TSM_STREAM2_SYNC    0x0048
-#define TSM_STREAM3_SYNC    0x0068
-#define TSM_STREAM4_SYNC    0x0088
+#define TSM_STREAM0_SYNC 0x0008
+#define TSM_STREAM1_SYNC 0x0028
+#define TSM_STREAM2_SYNC 0x0048
+#define TSM_STREAM3_SYNC 0x0068
+#define TSM_STREAM4_SYNC 0x0088
 
 /* for all 7109er */
-#define TSM_STREAM5_SYNC        0x00a8
-#define TSM_STREAM6_SYNC        0x00c8
+#define TSM_STREAM5_SYNC 0x00a8
+#define TSM_STREAM6_SYNC 0x00c8
 
-#define TSM_STREAM0_STA         0x0010
-#define TSM_STREAM1_STA         0x0030
-#define TSM_STREAM2_STA         0x0050
-#define TSM_STREAM3_STA         0x0070
-#define TSM_STREAM4_STA         0x0090
+#define TSM_STREAM0_STA 0x0010
+#define TSM_STREAM1_STA 0x0030
+#define TSM_STREAM2_STA 0x0050
+#define TSM_STREAM3_STA 0x0070
+#define TSM_STREAM4_STA 0x0090
 
-#define TSM_PTI_DEST        0x0200
-#define TSM_PTI_SEL         TSM_PTI_DEST
+#define TSM_PTI_DEST 0x0200
+#define TSM_PTI_SEL TSM_PTI_DEST
 
-#define TSM_PTI1_DEST       0x0210
-#define TSM_PTI1_SEL        TSM_PTI1_DEST
+#define TSM_PTI1_DEST 0x0210
+#define TSM_PTI1_SEL TSM_PTI1_DEST
 
-#define TSM_1394_DEST       0x0210
-#define TSM_1394_SEL        TSM_1394_DEST
+#define TSM_1394_DEST 0x0210
+#define TSM_1394_SEL TSM_1394_DEST
 
-#define TSM_PROG_CNT0       0x0400
-#define TSM_PROG_CNT1       0x0410
+#define TSM_PROG_CNT0 0x0400
+#define TSM_PROG_CNT1 0x0410
 
-#define SWTS_CFG(x)   (0x0600 + (x*0x10))
+#define SWTS_CFG(x) (0x0600 + (x*0x10))
 
-#define PTI_ALT_OUT_CFG         0x0800
-#define TS_1394_CFG         0x0810
-#define TSM_SYS_CFG         0x0820
-#define TSM_SW_RST          0x0830
+#define PTI_ALT_OUT_CFG 0x0800
+#define TS_1394_CFG 0x0810
+#define TSM_SYS_CFG 0x0820
+#define TSM_SW_RST 0x0830
 
-#define TSM_SWTS            0x010BE000
+#define TSM_SWTS 0x010BE000
 
 #if defined(UFS912) \
  || defined(UFS913) \
@@ -139,21 +139,21 @@ unsigned long TSM_NUM_1394_ALT_OUT;
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
  || defined(SAGEMCOM88)
-#define SysConfigBaseAddress    0xFE001000
+#define SysConfigBaseAddress 0xFE001000
 #else
-#define SysConfigBaseAddress    0x19001000
+#define SysConfigBaseAddress 0x19001000
 #endif
 
-#define SYS_CFG0            0x100
-#define SYS_CFG1            0x104
-#define SYS_CFG5            0x114
+#define SYS_CFG0 0x100
+#define SYS_CFG1 0x104
+#define SYS_CFG5 0x114
 
-#define SYS_CFG7            0x11C
+#define SYS_CFG7 0x11C
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
 unsigned long tsm_io = 0;
 #else
-void* tsm_io = NULL;
+void *tsm_io = NULL;
 #endif
 
 #if defined(ADB_BOX)
@@ -185,57 +185,55 @@ struct stm_tsm_handle
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
 	unsigned long tsm_io;
 #else
-	void* tsm_io;
+	void *tsm_io;
 #endif
 	unsigned long tsm_swts;
 
 	int swts_channel;
 
 	/* FDMA for SWTS */
-	int                        fdma_channel;
-	struct stm_dma_params      fdma_params;
-	unsigned long              fdma_reqline;
-	struct stm_dma_req        *fdma_req;
+	int fdma_channel;
+	struct stm_dma_params fdma_params;
+	unsigned long fdma_reqline;
+	struct stm_dma_req *fdma_req;
 
-	struct page               *swts_pages[MAX_SWTS_PAGES];
-	struct stm_dma_params      swts_params[MAX_SWTS_PAGES];
-	struct scatterlist         swts_sg[MAX_SWTS_PAGES];
+	struct page *swts_pages[MAX_SWTS_PAGES];
+	struct stm_dma_params swts_params[MAX_SWTS_PAGES];
+	struct scatterlist swts_sg[MAX_SWTS_PAGES];
 };
 
 static struct stm_tsm_handle tsm_handle;
 
 struct stm_dma_req_config fdma_req_config =
 {
-	.rw        = REQ_CONFIG_WRITE,
-	.opcode    = REQ_CONFIG_OPCODE_32,
-	.count     = 4,
+	.rw = REQ_CONFIG_WRITE,
+	.opcode = REQ_CONFIG_OPCODE_32,
+	.count = 4,
 	.increment = 0,
-	.hold_off  = 0,
+	.hold_off = 0,
 	.initiator = 0,
 };
 
-static const char *fdmac_id[]    = { STM_DMAC_ID, NULL };
+static const char *fdmac_id[] = { STM_DMAC_ID, NULL };
 static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
 
 /* >>> DVBT-USB
-  Step2-Driver injects data to SWTS here
-  When properly registered, driver should be visible in list of frontends,
-  if you get error just after start of manual scan, you have neighter correct frontendX defined nor incorrect tsm definitions in this file */ 
+ Step2-Driver injects data to SWTS here
+ When properly registered, driver should be visible in list of frontends,
+ if you get error just after start of manual scan, you have neighter correct frontendX defined nor incorrect tsm definitions in this file */
 #if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(SPARK7162)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
 	int blocks = (size + 127) / 128;
-	int count  = size;
+	int count = size;
 	int words;
 	u32 *p = data;
 	int n;
 	int m;
-	u32 *addr = (u32*)tsm_handle.tsm_swts;
-
+	u32 *addr = (u32 *)tsm_handle.tsm_swts;
 	//paceSwtsByPti();
 	//dprintk("%s > size = %d, block %d\n", __FUNCTION__, (int) size, blocks);
-
 	for (n = 0; n < blocks; n++)
 	{
 		while (!(readl(tsm_handle.tsm_io + SWTS_CFG(0)) & TSM_SWTS_REQ))
@@ -246,7 +244,6 @@ void extern_inject_data(u32 *data, off_t size)
 			words = 128 / 4;
 		else
 			words = count / 4;
-
 		count -= words * 4;
 		for (m = 0; m < words; m++)
 			*addr = *p++;
@@ -260,12 +257,12 @@ EXPORT_SYMBOL(extern_inject_data);
 void stm_tsm_inject_data(struct stm_tsm_handle *handle, u32 *data, off_t size)
 {
 	int blocks = (size + 127) / 128;
-	int count  = size;
+	int count = size;
 	int words;
 	u32 *p = data;
 	int n;
 	int m;
-	u32 *addr = (u32*)handle->tsm_swts;
+	u32 *addr = (u32 *)handle->tsm_swts;
 	dprintk("%s > size = %d, block %d\n", __FUNCTION__, (int) size, blocks);
 	for (n = 0; n < blocks; n++)
 	{
@@ -293,7 +290,7 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	int remaining;
 	int n;
 	struct stm_dma_params *in_param;
-	struct scatterlist    *curr_sg;
+	struct scatterlist *curr_sg;
 	int sg_count;
 	unsigned long start = (unsigned long)data;
 	unsigned long len = size;
@@ -301,25 +298,27 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	int extra = 0;
 	struct stm_tsm_handle *handle = &tsm_handle;
 	dprintk("%s > size = %d\n", __FUNCTION__, (int) size);
-	dprintk("status: 0x%08x",  readl(tsm_io + TSM_STREAM3_STA));
+	dprintk("status: 0x%08x", readl(tsm_io + TSM_STREAM3_STA));
 	paceSwtsByPti();
 	if (start & SWTS_FDMA_ALIGNMENT)
 	{
 		int hand = (SWTS_FDMA_ALIGNMENT + 1) - (start & SWTS_FDMA_ALIGNMENT);
 		// we need a copy to user...
 		dprintk("inject 1\n");
-		stm_tsm_inject_data(handle, (u32*)data, hand);
+		stm_tsm_inject_data(handle, (u32 *)data, hand);
 		start += hand;
-		len   -= hand;
+		len -= hand;
 	}
 	if (len & SWTS_FDMA_ALIGNMENT)
 	{
 		extra = len & SWTS_FDMA_ALIGNMENT;
 		len = len & ~SWTS_FDMA_ALIGNMENT;
 	}
-	nr_pages = (PAGE_ALIGN(start + len) - (start & PAGE_MASK)) >> PAGE_SHIFT;
+	nr_pages = (PAGE_ALIGN(start + len) -
+		    (start & PAGE_MASK)) >> PAGE_SHIFT;
 	down_read(&current->mm->mmap_sem);
-	ret = get_user_pages(current, current->mm, start, nr_pages, READ, 0, handle->swts_pages, NULL);
+	ret = get_user_pages(current, current->mm, start,
+			     nr_pages, READ, 0, handle->swts_pages, NULL);
 	up_read(&current->mm->mmap_sem);
 	if (ret < nr_pages)
 	{
@@ -334,7 +333,7 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	{
 		int copy = min_t(int, PAGE_SIZE - page_offset, remaining);
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-		handle->swts_sg[n].page   = handle->swts_pages[n];
+		handle->swts_sg[n].page = handle->swts_pages[n];
 #else
 		handle->swts_sg[n].page_link = (unsigned long) handle->swts_pages[n];
 #endif
@@ -347,17 +346,17 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	sg_count = dma_map_sg(NULL, &handle->swts_sg[0], nr_pages, DMA_TO_DEVICE);
 	in_param = &handle->swts_params[0];
 	curr_sg = &handle->swts_sg[0];
-	/* Go through the list and unscatter it  */
+	/* Go through the list and unscatter it */
 	taddr = sg_dma_address(curr_sg);
-	tlen  = sg_dma_len(curr_sg);
+	tlen = sg_dma_len(curr_sg);
 	for (n = 0; n < sg_count; n++)
 	{
 		unsigned long naddr, nlen;
-		dma_params_addrs(in_param, taddr, 0x1a300000 , tlen);
+		dma_params_addrs(in_param, taddr, 0x1a300000, tlen);
 		dma_params_link(in_param, in_param + 1);
 		curr_sg++;
 		naddr = sg_dma_address(curr_sg);
-		nlen  = sg_dma_len(curr_sg);
+		nlen = sg_dma_len(curr_sg);
 		if (taddr + tlen == naddr && ((n + 1) != sg_count))
 		{
 			tlen += nlen;
@@ -365,13 +364,13 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 		else
 		{
 			taddr = naddr;
-			tlen  = nlen;
+			tlen = nlen;
 			in_param++;
 		}
 	}
 	in_param--;
 	dma_params_link(in_param, NULL);
-	dma_compile_list(handle->fdma_channel, &handle->swts_params[0] , GFP_ATOMIC);
+	dma_compile_list(handle->fdma_channel, &handle->swts_params[0], GFP_ATOMIC);
 	ret = dma_xfer_list(handle->fdma_channel, &handle->swts_params[0]);
 	if (ret)
 	{
@@ -388,7 +387,7 @@ int stm_tsm_inject_user_data(const char __user *data, off_t size)
 	if (extra)
 	{
 		dprintk("inject 2\n");
-		stm_tsm_inject_data(handle, (u32*)(data + size - extra), extra);
+		stm_tsm_inject_data(handle, (u32 *)(data + size - extra), extra);
 	}
 out_unmap:
 	for (n = 0; n < nr_pages; n++)
@@ -405,7 +404,7 @@ EXPORT_SYMBOL(stm_tsm_inject_user_data);
  */
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
-static unsigned long    reg_sys_config = 0;
+static unsigned long reg_sys_config = 0;
 #else
 static void *reg_sys_config = NULL;
 #endif
@@ -415,9 +414,9 @@ static void *reg_sys_config = NULL;
 
 void spark_stm_tsm_init(void)
 {
-	unsigned int     ret;
-	unsigned int     stream_sync = 0xbc4722;
-	int              n;
+	unsigned int ret;
+	unsigned int stream_sync = 0xbc4722;
+	int n;
 	/* ugly hack: the TSM sometimes seems to stop working, a
 	* reset of the config registers fixes it
 	* but the DMA stuff must not be touched or everything
@@ -494,11 +493,11 @@ void spark_stm_tsm_init(void)
 	 * some ts packets!
 	 */
 	/* RAM partitioning of streams */
-	ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
-	ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
-	ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);   //384kb (8*64)
-	ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG);   //384kb (6*64)
-	ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
+	ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (8*64)
+	ctrl_outl(0x500, tsm_io + TSM_STREAM1_CFG); //448kb (6*64)
+	ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (8*64)
+	ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+	ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 	ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 	ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
 	/* I think this is a fault value !!! 0x1f00 is maximum but
@@ -534,8 +533,8 @@ void spark_stm_tsm_init(void)
 	ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM3_CFG);
 	ret = ctrl_inl(tsm_io + TSM_STREAM4_CFG);
 	ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM4_CFG);
-	ctrl_outl(0x00 , tsm_io + TSM_STREAM5_SYNC);
-	ctrl_outl(0x00 , tsm_io + TSM_STREAM6_SYNC);
+	ctrl_outl(0x00, tsm_io + TSM_STREAM5_SYNC);
+	ctrl_outl(0x00, tsm_io + TSM_STREAM6_SYNC);
 	ctrl_outl(stream_sync, tsm_io + TSM_STREAM3_SYNC);
 	ctrl_outl(0x0, tsm_io + 0x78 /* reserved ??? */);
 	ctrl_outl(0x8f0000e, tsm_io + SWTS_CFG(0));
@@ -543,7 +542,7 @@ void spark_stm_tsm_init(void)
 	ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
 	/* auto count */
 	ctrl_outl(0x0, tsm_io + TSM_PROG_CNT0);
-	ctrl_outl(0x15 , tsm_io + TSM_PTI_SEL);
+	ctrl_outl(0x15, tsm_io + TSM_PTI_SEL);
 	/* set stream 2 on */
 	ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
 	ctrl_outl(ret | 0x80, tsm_io + TSM_STREAM2_CFG);
@@ -559,7 +558,7 @@ void spark_stm_tsm_init(void)
 	ctrl_outl(ret | 0x8, tsm_io + TSM_PTI_SEL);
 	ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 	ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
-			  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN, tsm_io + TSM_STREAM3_CFG);
+		  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN, tsm_io + TSM_STREAM3_CFG);
 	/* don't touch the DMA engine -- seems unnecessary on reinit */
 	if (reinit)
 		return;
@@ -568,7 +567,7 @@ void spark_stm_tsm_init(void)
 	/* Now lets get the SWTS info and setup an FDMA channel */
 	tsm_handle.fdma_reqline = 31;
 	tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
-	tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
+	tsm_handle.fdma_req = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
 	/* Initilise the parameters for the FDMA SWTS data injection */
 	for (n = 0; n < MAX_SWTS_PAGES; n++)
 	{
@@ -590,7 +589,6 @@ void stm_tsm_init(int use_cimax)
  && !defined(UFS913) \
  && !defined(SPARK) \
  && !defined(OCTAGON1008) \
- && !defined(HOMECAST5101) \
  && !defined(ATEVIO7500) \
  && !defined(HS7110) \
  && !defined(HS7810A) \
@@ -656,15 +654,15 @@ void stm_tsm_init(int use_cimax)
  || defined(HS7819)
 		if (!reinit)
 		{
-			struct stpio* stream1_pin = stpio_request_pin(5, 0, "TSinterface1", STPIO_IN);
-			struct stpio* stream2_pin = stpio_request_pin(5, 3, "TSinterface2", STPIO_IN);
+			struct stpio *stream1_pin = stpio_request_pin(5, 0, "TSinterface1", STPIO_IN);
+			struct stpio *stream2_pin = stpio_request_pin(5, 3, "TSinterface2", STPIO_IN);
 		}
 		else
 			printk("[TSM] skip stpio stuff in reinit\n");
 #elif defined(ATEVIO7500)
 		if (!reinit)
 		{
-			struct stpio_pin* pin;
+			struct stpio_pin *pin;
 			/* set the muxer pin otherwise startci output will
 			 * not properly passed to tsmerger.
 			 */
@@ -678,7 +676,7 @@ void stm_tsm_init(int use_cimax)
 #elif defined(OCTAGON1008)
 		if (!reinit)
 		{
-			struct stpio* stream2_pin = stpio_request_pin(1, 3, "STREAM2", STPIO_OUT);
+			struct stpio *stream2_pin = stpio_request_pin(1, 3, "STREAM2", STPIO_OUT);
 			/* disbaled on 1 */
 			stpio_set_pin(stream2_pin, 0);
 		}
@@ -687,7 +685,7 @@ void stm_tsm_init(int use_cimax)
 #elif defined(UFS913)
 		if (!reinit)
 		{
-			struct stpio* pin = stpio_request_pin(12, 0, "ts", STPIO_ALT_OUT);
+			struct stpio *pin = stpio_request_pin(12, 0, "ts", STPIO_ALT_OUT);
 			pin = stpio_request_pin(12, 1, "ts", STPIO_ALT_OUT);
 			pin = stpio_request_pin(12, 2, "ts", STPIO_ALT_OUT);
 			pin = stpio_request_pin(12, 3, "ts", STPIO_ALT_OUT);
@@ -748,7 +746,9 @@ void stm_tsm_init(int use_cimax)
 #elif defined(FORTIS_HDBOX)
 		/* ->TSIN0 routes to TSIN2 */
 		ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
-#elif defined(UFS912) || defined(SPARK) || defined(VITAMIN_HD5000)
+#elif defined(UFS912) \
+ || defined(SPARK) \
+ || defined(VITAMIN_HD5000)
 		ctrl_outl(0x3, reg_sys_config + SYS_CFG0);
 #elif defined(UFS913)
 		ctrl_outl(0x10, reg_sys_config + SYS_CFG0);
@@ -872,24 +872,24 @@ void stm_tsm_init(int use_cimax)
  || defined(UFC960) \
  || defined(HL101) \
  || defined(VIP1_V2)
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);      //320kb (5*64)
-		ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);      //320kb (5*64)
-		ctrl_outl(0xa00,  tsm_io + TSM_STREAM2_CFG);      //256kb (4*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM3_CFG);      //320kb (5*64)
-		ctrl_outl(0x1300, tsm_io + TSM_STREAM4_CFG);      //256kb (4*64)
-		ctrl_outl(0x1700, tsm_io + TSM_STREAM5_CFG);      //192kb (3*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM6_CFG);      //384kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //320kb (5*64)
+		ctrl_outl(0x500, tsm_io + TSM_STREAM1_CFG); //320kb (5*64)
+		ctrl_outl(0xa00, tsm_io + TSM_STREAM2_CFG); //256kb (4*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM3_CFG); //320kb (5*64)
+		ctrl_outl(0x1300, tsm_io + TSM_STREAM4_CFG); //256kb (4*64)
+		ctrl_outl(0x1700, tsm_io + TSM_STREAM5_CFG); //192kb (3*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM6_CFG); //384kb (5*64)
 #elif defined (UFS912) \
  || defined(HS7420) \
  || defined(HS7429) \
  || defined(HS7810A) \
  || defined(HS7819)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
-		ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);   //384kb (8*64)
-		ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG);   //384kb (6*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (8*64)
+		ctrl_outl(0x500, tsm_io + TSM_STREAM1_CFG); //448kb (6*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (8*64)
+		ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 		ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
 		/* I think this is a fault value !!! 0x1f00 is maximum but
@@ -904,13 +904,16 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + TSM_STREAM5_CFG2);
 		ctrl_outl(0x0, tsm_io + TSM_STREAM6_CFG2);
 		ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
-#elif defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
-		ctrl_outl(0x800,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);   //384kb (8*64)
-		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG);   //384kb (6*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (8*64)
+		ctrl_outl(0x800, tsm_io + TSM_STREAM1_CFG); //448kb (6*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (8*64)
+		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 		ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
 		/* I think this is a fault value !!! 0x1f00 is maximum but
@@ -927,10 +930,10 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
 #elif defined(ATEVIO7500)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);
-		ctrl_outl(0x400,  tsm_io + TSM_STREAM1_CFG);
-		ctrl_outl(0x800,  tsm_io + TSM_STREAM2_CFG);
-		ctrl_outl(0xc00,  tsm_io + TSM_STREAM3_CFG);
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG);
+		ctrl_outl(0x400, tsm_io + TSM_STREAM1_CFG);
+		ctrl_outl(0x800, tsm_io + TSM_STREAM2_CFG);
+		ctrl_outl(0xc00, tsm_io + TSM_STREAM3_CFG);
 		ctrl_outl(0x1300, tsm_io + TSM_STREAM4_CFG);
 		ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
@@ -945,10 +948,10 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
 #elif defined(UFS913)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);
-		ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);
-		ctrl_outl(0xa00,  tsm_io + TSM_STREAM2_CFG);
-		ctrl_outl(0xf00,  tsm_io + TSM_STREAM3_CFG);
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG);
+		ctrl_outl(0x500, tsm_io + TSM_STREAM1_CFG);
+		ctrl_outl(0xa00, tsm_io + TSM_STREAM2_CFG);
+		ctrl_outl(0xf00, tsm_io + TSM_STREAM3_CFG);
 		ctrl_outl(0x1300, tsm_io + TSM_STREAM4_CFG);
 		ctrl_outl(0x1700, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1b00, tsm_io + TSM_STREAM6_CFG);
@@ -962,11 +965,11 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0, tsm_io + TSM_STREAM6_CFG2);
 		ctrl_outl(0x0, tsm_io + TSM_STREAM7_CFG2);
 #else
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);     //448kb (7*64)
-		ctrl_outl(0x700,  tsm_io + TSM_STREAM1_CFG);     //448kb (7*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);     //384kb (6*64)
-		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG);     //384kb (6*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);     //320kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (7*64)
+		ctrl_outl(0x700, tsm_io + TSM_STREAM1_CFG); //448kb (7*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (6*64)
+		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 #endif
 		/* configure streams: */
 		/* add tag bytes to stream + stream priority */
@@ -999,7 +1002,9 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(stream_sync, tsm_io + TSM_STREAM0_SYNC);
 		ctrl_outl(0x0, tsm_io + 0x18 /* reserved ??? */);
 		/* add tag bytes to stream + stream priority */
-#if defined(FORTIS_HDBOX) || defined(OCTAGON1008) || defined(ATEVIO7500)
+#if defined(FORTIS_HDBOX) \
+ || defined(OCTAGON1008) \
+ || defined(ATEVIO7500)
 		ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
 		ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM1_CFG);
 #elif !defined(UFS913)
@@ -1028,7 +1033,8 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(stream_sync, tsm_io + TSM_STREAM2_SYNC);
 		ctrl_outl(0x0, tsm_io + 0x58 /* reserved ??? */);
 		/* add tag bytes to stream + stream priority */
-#if defined(FORTIS_HDBOX) || defined(OCTAGON1008)
+#if defined(FORTIS_HDBOX) \
+ || defined(OCTAGON1008)
 		ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 		ctrl_outl(ret | (0x40020), tsm_io + TSM_STREAM3_CFG);
 #elif defined(UFS912) \
@@ -1043,8 +1049,8 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM3_CFG);
 		ret = ctrl_inl(tsm_io + TSM_STREAM4_CFG);
 		ctrl_outl(ret | (0x20020), tsm_io + TSM_STREAM4_CFG);
-		ctrl_outl(0x00 , tsm_io + TSM_STREAM5_SYNC);
-		ctrl_outl(0x00 , tsm_io + TSM_STREAM6_SYNC);
+		ctrl_outl(0x00, tsm_io + TSM_STREAM5_SYNC);
+		ctrl_outl(0x00, tsm_io + TSM_STREAM6_SYNC);
 #elif defined(CUBEREVO) \
  || defined(CUBEREVO_MINI2) \
  || defined(CUBEREVO_MINI) \
@@ -1104,7 +1110,11 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x8f0000e, tsm_io + SWTS_CFG(0));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
-#elif defined(CUBEREVO) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || defined(CUBEREVO_3000HD)
+#elif defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_3000HD)
 		ctrl_outl(0x88000010, tsm_io + SWTS_CFG(0));
 #elif !defined(UFS913)
 		ctrl_outl(0x8000010, tsm_io + SWTS_CFG(0));
@@ -1117,7 +1127,6 @@ void stm_tsm_init(int use_cimax)
  && !defined(FORTIS_HDBOX) \
  && !defined(HL101) \
  && !defined(VIP1_V2) \
- && !defined(HOMECAST5101) \
  && !defined(UFS912) \
  && !defined(UFS913) \
  && !defined(SPARK) \
@@ -1159,24 +1168,24 @@ void stm_tsm_init(int use_cimax)
 		 */
 #ifdef FW1XX
 		if (highSR)
-			ctrl_outl(0x7000f , tsm_io + TS_1394_CFG);
+			ctrl_outl(0x7000f, tsm_io + TS_1394_CFG);
 		else
-			ctrl_outl(0x70014 , tsm_io + TS_1394_CFG);
+			ctrl_outl(0x70014, tsm_io + TS_1394_CFG);
 #elif defined(UFS910)
-		ctrl_outl(0x70014 , tsm_io + TS_1394_CFG);
+		ctrl_outl(0x70014, tsm_io + TS_1394_CFG);
 #else
 		/* logged from fw 202rc ->see also pti */
-		ctrl_outl(0x50014 , tsm_io + TS_1394_CFG);
+		ctrl_outl(0x50014, tsm_io + TS_1394_CFG);
 #endif
 		/* connect TSIN0 to TS1394 for routing tuner TS through the CIMAX */
 		ret = ctrl_inl(tsm_io + TSM_1394_DEST);
-		ctrl_outl(ret | 0x1 , tsm_io + TSM_1394_DEST);
+		ctrl_outl(ret | 0x1, tsm_io + TSM_1394_DEST);
 #elif defined(UFS912) \
  || defined(HS7420) \
  || defined(HS7429) \
  || defined(HS7810A) \
  || defined(HS7819)
-		ctrl_outl(0x15 , tsm_io + TSM_PTI_SEL);
+		ctrl_outl(0x15, tsm_io + TSM_PTI_SEL);
 		/* set stream 2 on */
 		ret = ctrl_inl(tsm_io + TSM_STREAM2_CFG);
 		ctrl_outl(ret | 0x80, tsm_io + TSM_STREAM2_CFG);
@@ -1232,7 +1241,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(stream_sync, tsm_io + TSM_STREAM5_SYNC);
 		ctrl_outl(0x00, tsm_io + TSM_STREAM6_SYNC);
 		ret = ctrl_inl(tsm_io + TSM_1394_DEST);
-		ctrl_outl(ret | 0x38 , tsm_io + TSM_1394_DEST);
+		ctrl_outl(ret | 0x38, tsm_io + TSM_1394_DEST);
 #elif defined(CUBEREVO) \
  || defined(CUBEREVO_MINI2) \
  || defined(CUBEREVO_MINI) \
@@ -1259,11 +1268,6 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x0001804c ,tsm_io + TS_1394_CFG);
 		ret = ctrl_inl(tsm_io + TSM_1394_DEST);
 		ctrl_outl(ret | 0x1 , tsm_io + TSM_1394_DEST);*/
-#elif defined(HOMECAST5101)
-		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
-		ctrl_outl(ret | 0x1, tsm_io + TSM_PTI_SEL);
-		ret = ctrl_inl(tsm_io + TSM_STREAM0_CFG);
-		ctrl_outl(ret | 0x0, tsm_io + TSM_STREAM0_CFG);
 #elif defined(OCTAGON1008)
 		/* route stream 1 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
@@ -1281,7 +1285,7 @@ void stm_tsm_init(int use_cimax)
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
 		ctrl_outl(ret | 0x1, tsm_io + TSM_PTI_SEL);
 		ret = ctrl_inl(tsm_io + TSM_1394_DEST);
-		ctrl_outl(ret | 0x38 , tsm_io + TSM_1394_DEST);
+		ctrl_outl(ret | 0x38, tsm_io + TSM_1394_DEST);
 #elif defined(ATEVIO7500)
 		/* set stream 1 on */
 		ret = ctrl_inl(tsm_io + TSM_STREAM1_CFG);
@@ -1333,10 +1337,12 @@ void stm_tsm_init(int use_cimax)
 		->TSIN2 = Tuner1
 		->TSIN3 = Tuner1
 
-		      ctrl_outl(0x11, tsm_io + TSM_PTI_SEL);
-		      ctrl_outl(0x2f, tsm_io + TSM_PTI1_SEL);
+		 ctrl_outl(0x11, tsm_io + TSM_PTI_SEL);
+		 ctrl_outl(0x2f, tsm_io + TSM_PTI1_SEL);
 		*/
-#elif defined(IPBOX9900) || defined(ARIVALINK200) || defined(VITAMIN_HD5000)
+#elif defined(IPBOX9900) \
+ || defined(ARIVALINK200) \
+ || defined(VITAMIN_HD5000)
 		/* route stream 0/1 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
 		ctrl_outl(ret | 0x2 | 0x1 | 0x4, tsm_io + TSM_PTI_SEL);
@@ -1365,7 +1371,10 @@ void stm_tsm_init(int use_cimax)
 		/* route stream 0 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
 		ctrl_outl(ret | 0x1, tsm_io + TSM_PTI_SEL);
-#elif defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530)
 		/* route stream 0 to PTI */
 		ret = ctrl_inl(tsm_io + TSM_PTI_SEL);
 		ctrl_outl(ret | 0x1, tsm_io + TSM_PTI_SEL);
@@ -1392,8 +1401,8 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(ret | 0x8, tsm_io + TSM_PTI_SEL);
 		ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 		ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
-				  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN
-				  , tsm_io + TSM_STREAM3_CFG);
+			  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN
+			  , tsm_io + TSM_STREAM3_CFG);
 		/* don't touch the DMA engine -- seems unnecessary on reinit */
 		if (reinit)
 			return;
@@ -1420,7 +1429,7 @@ void stm_tsm_init(int use_cimax)
 		tsm_handle.fdma_reqline = 30;
 #endif
 		tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
-		tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
+		tsm_handle.fdma_req = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
 		/* Initilise the parameters for the FDMA SWTS data injection */
 		for (n = 0; n < MAX_SWTS_PAGES; n++)
 		{
@@ -1454,8 +1463,8 @@ void stm_tsm_init(int use_cimax)
 			tsm_io = ioremap(/* config->tsm_base_address */ 0x19242000, 0x1000);
 #endif
 		}
-/* >>> DVBT-USB
-  j00zek: when tuner hangs starting streaming from DVB-T USB, something wrong is with this section */ 
+		/* >>> DVBT-USB
+		 j00zek: when tuner hangs starting streaming from DVB-T USB, something wrong is with this section */
 #if defined(SAGEMCOM88) || defined(SPARK7162)
 		printk(">>Init st7105 DVBT-USB\n");
 		// STi7105
@@ -1465,7 +1474,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(1));
 		ctrl_outl(0x8000000, tsm_io + SWTS_CFG(2));
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x1000);
-		tsm_handle.tsm_swts = (unsigned long)ioremap (SWTS_BASE_ADDRESS, 0x1000);
+		tsm_handle.tsm_swts = (unsigned long)ioremap(SWTS_BASE_ADDRESS, 0x1000);
 		// pio12
 		ctrl_outl(0x0, 0xfe015020);
 		ctrl_outl(0x0, 0xfe015030);
@@ -1495,56 +1504,59 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(TSM_SWTS_REQ_TRIG(128 / 16) | 12, tsm_io + TSM_SWTS_CFG(0));
 		tsm_handle.fdma_reqline = 30;
 		tsm_handle.fdma_channel = request_dma_bycap(fdmac_id, fdma_cap_hb, "swts0");
-		tsm_handle.fdma_req     = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
+		tsm_handle.fdma_req = dma_req_config(tsm_handle.fdma_channel, tsm_handle.fdma_reqline, &fdma_req_config);
 		/*
 		// Initilise the parameters for the FDMA SWTS data injection
 		for (n=0;n<3;n++) {
 		//for (n=0;n<MAX_SWTS_PAGES;n++) {
-			dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
-			dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
-			dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
+		 dma_params_init(&tsm_handle.swts_params[n], MODE_PACED, STM_DMA_LIST_OPEN);
+		 dma_params_DIM_1_x_0(&tsm_handle.swts_params[n]);
+		 dma_params_req(&tsm_handle.swts_params[n],tsm_handle.fdma_req);
 		}
 		*/
 #endif
-/* <<< DVBT-USB */
+		/* <<< DVBT-USB */
 #ifdef LOAD_TSM_DATA
-		TSM_NUM_PTI_ALT_OUT  = 1/* config->tsm_num_pti_alt_out*/;
+		TSM_NUM_PTI_ALT_OUT = 1/* config->tsm_num_pti_alt_out*/;
 		TSM_NUM_1394_ALT_OUT = 1/*config->tsm_num_1394_alt_out */;
 #endif // LOAD_TSM_DATA
 		writel(0x0, tsm_io + TSM_SW_RESET);
 		writel(0x6, tsm_io + TSM_SW_RESET);
 		/*
 		channels = streams = 5 ? wohl 4 s.u.
-		tsm_sram_buffer_size  ?
+		tsm_sram_buffer_size ?
 		options? ->s.u.
 		lock ->muss es als register geben ->ist lt. meinen logs beides 3
 		drop ->dito _>also nachlesen
-		#define STM_GET_CHANNEL(x)       ((x & 0x0f0000) >> 16)
+		#define STM_GET_CHANNEL(x) ((x & 0x0f0000) >> 16)
 
 		Dies sind die Options (also wohl auch view channel):
-		       STM_TSM_CHANNEL_0       = 0x000000, ->ok dann liefer stm_get_channel 0,1,2,3 ;-)
-		       STM_TSM_CHANNEL_1       = 0x010000,
-		       STM_TSM_CHANNEL_2       = 0x020000,
-		       STM_TSM_CHANNEL_3       = 0x030000,
+		 STM_TSM_CHANNEL_0 = 0x000000, ->ok dann liefer stm_get_channel 0,1,2,3 ;-)
+		 STM_TSM_CHANNEL_1 = 0x010000,
+		 STM_TSM_CHANNEL_2 = 0x020000,
+		 STM_TSM_CHANNEL_3 = 0x030000,
 
 		*/
 #if defined(SPARK)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
-		ctrl_outl(0x500,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);   //384kb (8*64)
-		ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG);   //384kb (6*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (8*64)
+		ctrl_outl(0x500, tsm_io + TSM_STREAM1_CFG); //448kb (6*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (8*64)
+		ctrl_outl(0x1600, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 		ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
 		ctrl_outl(0x1f00, tsm_io + TSM_STREAM7_CFG);
-#elif defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
+#elif defined(HS7110) \
+ || defined(HS7119) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530)
 		/* RAM partitioning of streams */
-		ctrl_outl(0x0,    tsm_io + TSM_STREAM0_CFG);   //448kb (8*64)
-		ctrl_outl(0x800,  tsm_io + TSM_STREAM1_CFG);   //448kb (6*64)
-		ctrl_outl(0xe00,  tsm_io + TSM_STREAM2_CFG);   //384kb (8*64)
-		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG);   //384kb (6*64)
-		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG);   //320kb (5*64)
+		ctrl_outl(0x0, tsm_io + TSM_STREAM0_CFG); //448kb (8*64)
+		ctrl_outl(0x800, tsm_io + TSM_STREAM1_CFG); //448kb (6*64)
+		ctrl_outl(0xe00, tsm_io + TSM_STREAM2_CFG); //384kb (8*64)
+		ctrl_outl(0x1400, tsm_io + TSM_STREAM3_CFG); //384kb (6*64)
+		ctrl_outl(0x1a00, tsm_io + TSM_STREAM4_CFG); //320kb (5*64)
 		ctrl_outl(0x1d00, tsm_io + TSM_STREAM5_CFG);
 		ctrl_outl(0x1e00, tsm_io + TSM_STREAM6_CFG);
 		ctrl_outl(0x1f00, tsm_io + TSM_STREAM7_CFG);
@@ -1557,8 +1569,9 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(0x1D00, tsm_io + TSM_STREAM5_CFG); // 0x1D00-0x1DFF
 		ctrl_outl(0x1E00, tsm_io + TSM_STREAM6_CFG); // 0x1E00-0x1EFF
 		ctrl_outl(0x1F00, tsm_io + TSM_STREAM7_CFG); // 0x1F00-0x1FFF
-#elif defined(SAGEMCOM88) || defined(SPARK7162)
-		for (n = 0; n < 6; n++)		//4TS + 3SWTS at STi7105
+#elif defined(SAGEMCOM88) \
+ || defined(SPARK7162)
+		for (n = 0; n < 6; n++) //4TS + 3SWTS at STi7105
 		{
 			writel(TSM_RAM_ALLOC_START(0x4 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
@@ -1568,10 +1581,11 @@ void stm_tsm_init(int use_cimax)
 			writel(TSM_RAM_ALLOC_START(0x3 * n), tsm_io + TSM_STREAM_CONF(n));
 		}
 #endif // defined(SPARK) || defined(HS7110) || defined(HS7119) || defined(ATEMIO520) || defined(ATEMIO530)
-#if defined(SAGEMCOM88) || defined(SPARK7162)
-		for (n = 0; n < 6/* config->nr_channels */; n++)	//4TS + 3SWTS at STi7105
+#if defined(SAGEMCOM88) \
+ || defined(SPARK7162)
+		for (n = 0; n < 6/* config->nr_channels */; n++) //4TS + 3SWTS at STi7105
 #else
-		for (n = 0; n < 4/* config->nr_channels */; n++) 
+		for (n = 0; n < 4/* config->nr_channels */; n++)
 #endif
 		{
 #ifdef alt
@@ -1590,54 +1604,54 @@ void stm_tsm_init(int use_cimax)
 			{
 				printk("BZZB TsinMode = SERIAL*st-merger*\n\t");
 				writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-					   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 1) |
-					   (options & STM_INVERT_CLOCK        ? TSM_INVERT_BYTECLK : 0) |
-					   (options & STM_PACKET_CLOCK_VALID  ? TSM_SYNC_NOT_ASYNC : 0) |
-					   TSM_ALIGN_BYTE_SOP |
-					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
-					   tsm_io + TSM_STREAM_CONF(chan));
+				       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 1) |
+				       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+				       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+				       TSM_ALIGN_BYTE_SOP |
+				       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+				       tsm_io + TSM_STREAM_CONF(chan));
 			}
 			else if (TsinMode == PARALLEL)
 			{
 				printk("BSKA,BSLA,BXZB TsinMode = Parallel *st-merger*\n\t");
 				writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-					   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-					   (options & STM_INVERT_CLOCK        ? TSM_INVERT_BYTECLK : 0) |
-					   (options & STM_PACKET_CLOCK_VALID  ? TSM_SYNC_NOT_ASYNC : 0) |
-					   TSM_ALIGN_BYTE_SOP |
-					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
-					   tsm_io + TSM_STREAM_CONF(chan));
+				       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+				       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+				       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+				       TSM_ALIGN_BYTE_SOP |
+				       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+				       tsm_io + TSM_STREAM_CONF(chan));
 			}
 #elif defined(SAGEMCOM88)
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-				   (options & STM_INVERT_CLOCK        ? TSM_INVERT_BYTECLK : 0) |
-				   (options & STM_PACKET_CLOCK_VALID  ? TSM_SYNC_NOT_ASYNC : 0) |
-				   TSM_ALIGN_BYTE_SOP |
-				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
-				   tsm_io + TSM_STREAM_CONF(chan));
+			       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+			       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+			       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+			       TSM_ALIGN_BYTE_SOP |
+			       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+			       tsm_io + TSM_STREAM_CONF(chan));
 #else
 			printk("TsinMode = Parallel *st-merger*\n\t");
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-				   (options & STM_INVERT_CLOCK        ? TSM_INVERT_BYTECLK : 0) |
-				   (options & STM_PACKET_CLOCK_VALID  ? TSM_SYNC_NOT_ASYNC : 0) |
-				   TSM_ALIGN_BYTE_SOP |
-				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES ,
-				   tsm_io + TSM_STREAM_CONF(chan));
+			       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+			       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+			       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+			       TSM_ALIGN_BYTE_SOP |
+			       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+			       tsm_io + TSM_STREAM_CONF(chan));
 #endif
 #ifdef alt
 			writel(TSM_SYNC(config->channels[n].lock) |
-				   TSM_DROP(config->channels[n].drop) |
-				   TSM_SOP_TOKEN(0x47) |
-				   TSM_PACKET_LENGTH(188)
-				   , tsm_io + TSM_STREAM_SYNC(chan));
+			       TSM_DROP(config->channels[n].drop) |
+			       TSM_SOP_TOKEN(0x47) |
+			       TSM_PACKET_LENGTH(188)
+			       , tsm_io + TSM_STREAM_SYNC(chan));
 #endif // alt
 			writel(TSM_SYNC(3 /* lock */) |
-				   TSM_DROP(3 /*drop*/) |
-				   TSM_SOP_TOKEN(0x47) |
-				   TSM_PACKET_LENGTH(188)
-				   , tsm_io + TSM_STREAM_SYNC(chan));
+			       TSM_DROP(3 /*drop*/) |
+			       TSM_SOP_TOKEN(0x47) |
+			       TSM_PACKET_LENGTH(188)
+			       , tsm_io + TSM_STREAM_SYNC(chan));
 		}
 		/* Put TSMERGER into normal mode */
 		writel(TSM_CFG_BYPASS_NORMAL, tsm_io + TSM_SYSTEM_CFG);

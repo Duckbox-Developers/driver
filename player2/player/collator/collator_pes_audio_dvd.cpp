@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_dvd.cpp
-Author :           Daniel
+Author : Daniel
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jan-09   Created.                                        Daniel
+Date Modification Name
+---- ------------ --------
+08-Jan-09 Created. Daniel
 
 ************************************************************************/
 
@@ -48,7 +48,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_audio_dvd.h"
 
@@ -78,7 +78,7 @@ Collator_PesAudioDvd_c::Collator_PesAudioDvd_c()
 ///
 /// Iniitialize members.
 ///
-CollatorStatus_t   Collator_PesAudioDvd_c::Reset(void)
+CollatorStatus_t Collator_PesAudioDvd_c::Reset(void)
 {
 	CollatorStatus_t Status = Collator_PesAudio_c::Reset();
 	MakeDvdSyncWordPrediction(INVALID_PREDICTION);
@@ -94,24 +94,24 @@ CollatorStatus_t   Collator_PesAudioDvd_c::Reset(void)
 /// Update the prediction after consuming data.
 ///
 /// \param Adjustment Number of bytes to adjust the prediciton by, this is
-///                   expected to be negative.
+/// expected to be negative.
 ///
 void Collator_PesAudioDvd_c::AdjustDvdSyncWordPredictionAfterConsumingData(int Adjustment)
 {
 	if (Adjustment > 0)
 		COLLATOR_ERROR("Probably implementation error - positive adjustment requested (%d)\n",
-					   Adjustment);
+			       Adjustment);
 	if (-Adjustment > SyncWordPrediction)
 		SyncWordPrediction = INVALID_PREDICTION;
 	if (SyncWordPrediction != WILDCARD_PREDICTION && SyncWordPrediction != INVALID_PREDICTION)
 	{
 		COLLATOR_DEBUG("Adjusting prediction from %d to %d\n",
-					   SyncWordPrediction, SyncWordPrediction + Adjustment);
+			       SyncWordPrediction, SyncWordPrediction + Adjustment);
 		SyncWordPrediction += Adjustment;
 	}
 	else
 		COLLATOR_DEBUG("Prediciton is %s - no adjustment made\n",
-					   (SyncWordPrediction == WILDCARD_PREDICTION ? "wildcarded" : "invalid"));
+			       (SyncWordPrediction == WILDCARD_PREDICTION ? "wildcarded" : "invalid"));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ void Collator_PesAudioDvd_c::VerifyDvdSyncWordPrediction(int Offset)
 		if (--RemainingWildcardsPermitted < 0)
 		{
 			COLLATOR_TRACE("Having trouble re-locking, %s DVD wildcard mode.\n",
-						   (PassPesPrivateDataToElementaryStreamHandler ? "entering" : "leaving"));
+				       (PassPesPrivateDataToElementaryStreamHandler ? "entering" : "leaving"));
 			PassPesPrivateDataToElementaryStreamHandler = !PassPesPrivateDataToElementaryStreamHandler;
 			// having switched modes we can reset our counter.
 			RemainingWildcardsPermitted = MaxWildcardsPermitted;

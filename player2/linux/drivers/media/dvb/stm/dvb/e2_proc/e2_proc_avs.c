@@ -2,10 +2,10 @@
  * e2_proc_avs.c
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
@@ -30,14 +30,16 @@
 struct stmfb_info;
 struct stmfbio_output_configuration;
 
-extern struct snd_kcontrol** pseudoGetControls(int* numbers);
-extern int snd_pseudo_integer_get(struct snd_kcontrol* kcontrol, struct snd_ctl_elem_value* ucontrol);
-extern int snd_pseudo_integer_put(struct snd_kcontrol* kcontrol, struct snd_ctl_elem_value* ucontrol);
-extern int avs_command_kernel(unsigned int cmd, void* arg);
+extern struct snd_kcontrol **pseudoGetControls(int *numbers);
+extern int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
+				  struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
+				  struct snd_ctl_elem_value *ucontrol);
+extern int avs_command_kernel(unsigned int cmd, void *arg);
 
-extern int stmfb_set_output_configuration(struct stmfbio_output_configuration* c, struct stmfb_info* i);
-extern int stmfb_get_output_configuration(struct stmfbio_output_configuration* c, struct stmfb_info* i);
-struct stmfb_info* stmfb_get_fbinfo_ptr(void);
+extern int stmfb_set_output_configuration(struct stmfbio_output_configuration *c, struct stmfb_info *i);
+extern int stmfb_get_output_configuration(struct stmfbio_output_configuration *c, struct stmfb_info *i);
+struct stmfb_info *stmfb_get_fbinfo_ptr(void);
 
 //stgfb.h
 struct stmfbio_output_configuration
@@ -52,32 +54,32 @@ struct stmfbio_output_configuration
 	__u32 dvo_config;
 	__u32 hdmi_config;
 	__u32 mixer_background;
-	__u8  brightness;
-	__u8  saturation;
-	__u8  contrast;
-	__u8  hue;
+	__u8 brightness;
+	__u8 saturation;
+	__u8 contrast;
+	__u8 hue;
 };
 
 #if defined(ADB_BOX)
-#define SAAIOSWSS       10 /* set wide screen signaling data */
-#define SAA_WSS_OFF     8
-#define SAA_WSS_43F     0
+#define SAAIOSWSS 10 /* set wide screen signaling data */
+#define SAA_WSS_OFF 8
+#define SAA_WSS_43F 0
 
-#define STMFBIO_OUTPUT_HDMI_ENABLED          (0)
-#define STMFBIO_OUTPUT_HDMI_DISABLED         (1L<<0)
+#define STMFBIO_OUTPUT_HDMI_ENABLED (0)
+#define STMFBIO_OUTPUT_HDMI_DISABLED (1L<<0)
 #endif
 
-#define STMFBIO_OUTPUT_CAPS_HDMI_CONFIG      (1L<<3)
-#define STMFBIO_OUTPUT_CAPS_ANALOGUE_CONFIG  (1L<<1)
-#define STMFBIO_OUTPUT_HDMI_RGB              (0)
-#define STMFBIO_OUTPUT_HDMI_YUV              (1L<<1)
-#define STMFBIO_OUTPUT_HDMI_444              (0)
-#define STMFBIO_OUTPUT_HDMI_422              (1L<<2)
+#define STMFBIO_OUTPUT_CAPS_HDMI_CONFIG (1L<<3)
+#define STMFBIO_OUTPUT_CAPS_ANALOGUE_CONFIG (1L<<1)
+#define STMFBIO_OUTPUT_HDMI_RGB (0)
+#define STMFBIO_OUTPUT_HDMI_YUV (1L<<1)
+#define STMFBIO_OUTPUT_HDMI_444 (0)
+#define STMFBIO_OUTPUT_HDMI_422 (1L<<2)
 
-#define STMFBIO_OUTPUT_ANALOGUE_RGB          (1L<<0)
-#define STMFBIO_OUTPUT_ANALOGUE_YPrPb        (1L<<1)
-#define STMFBIO_OUTPUT_ANALOGUE_YC           (1L<<2)
-#define STMFBIO_OUTPUT_ANALOGUE_CVBS         (1L<<3)
+#define STMFBIO_OUTPUT_ANALOGUE_RGB (1L<<0)
+#define STMFBIO_OUTPUT_ANALOGUE_YPrPb (1L<<1)
+#define STMFBIO_OUTPUT_ANALOGUE_YC (1L<<2)
+#define STMFBIO_OUTPUT_ANALOGUE_CVBS (1L<<3)
 
 #include "../../../../../sound/pseudocard/pseudo_mixer.h"
 
@@ -85,13 +87,13 @@ struct stmfbio_output_configuration
 
 #include "../../../../../../../../avs/avs_core.h"
 
-#define AVSIOSET        0x1000
-#define AVSIOSTANDBY    (99|AVSIOSET)
+#define AVSIOSET 0x1000
+#define AVSIOSTANDBY (99|AVSIOSET)
 
 #define ENCODER 0
-#define SCART   1
+#define SCART 1
 
-extern struct DeviceContext_s* DeviceContext;
+extern struct DeviceContext_s *DeviceContext;
 
 static int current_standby = 0;
 static int current_input = ENCODER;
@@ -110,7 +112,6 @@ static int current_input = ENCODER;
  || defined(HL101) \
  || defined(VIP1_V2) \
  || defined(VIP2_V1) \
- || defined(HOMECAST5101) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
  || defined(HS7810A) \
@@ -132,28 +133,29 @@ static int current_volume = 31;
 
 static int current_e2_volume = 31;
 
-int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_volume_write(struct file *file, const char __user *buf,
+			    unsigned long count, void *data)
 {
 #define cMaxAttenuationE2 64
 	int logarithmicAttenuation[cMaxAttenuationE2] =
 	{
-		0,  0,  0,  1,  1,  1,  1,  2,  2,  2,  3,  3,  3,  4,  4,  4,
-		5,  5,  5,  6,  6,  6,  7,  7,  8,  8,  9,  9,  9, 10, 10, 11,
+		0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4,
+		5, 5, 5, 6, 6, 6, 7, 7, 8, 8, 9, 9, 9, 10, 10, 11,
 		11, 12, 13, 13, 14, 14, 15, 16, 16, 17, 18, 19, 19, 20, 21, 22,
 		23, 24, 25, 27, 28, 29, 31, 33, 35, 37, 40, 43, 47, 51, 58, 70
 	};
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		int number = 0;
-		struct snd_kcontrol** kcontrol = pseudoGetControls(&number);
-		struct snd_kcontrol* single_control = NULL;
+		struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
+		struct snd_kcontrol *single_control = NULL;
 		int vLoop;
 		int volume = 0;
 		ret = -EFAULT;
@@ -164,7 +166,7 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
 			if (copy_from_user(page, buf, count))
 				goto out;
 		}
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -186,7 +188,6 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
  || defined(HL101) \
  || defined(VIP1_V2) \
  || defined(VIP2_V1) \
- || defined(HOMECAST5101) \
  || defined(ATEVIO7500) \
  || defined(HS7110) \
  || defined(HS7810A) \
@@ -241,10 +242,10 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
 			 */
 			/* Dagobert: 06.10.2009: Volume is a logarithmical value ...
 
-			        scale range
+			 scale range
 
-			        volume = ((volume * 100) / cMaxVolumeE2 * cMaxVolumePlayer) / 100;
-			        volume = 0 - volume;
+			 volume = ((volume * 100) / cMaxVolumeE2 * cMaxVolumePlayer) / 100;
+			 volume = 0 - volume;
 			*/
 			volume = 0 - logarithmicAttenuation[current_e2_volume];
 			//printk("Pseudo Mixer controls = %p\n", kcontrol);
@@ -261,7 +262,7 @@ int proc_avs_0_volume_write(struct file* file, const char __user* buf, unsigned 
 			printk("Pseudo Mixer does not deliver controls\n");
 		}
 		if (current_input == SCART)
-			avs_command_kernel(AVSIOSVOL, (void*) current_volume);
+			avs_command_kernel(AVSIOSVOL, (void *) current_volume);
 		kfree(myString);
 	}
 	ret = count;
@@ -270,7 +271,8 @@ out:
 	return ret;
 }
 
-int proc_avs_0_volume_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_volume_read(char *page, char **start, off_t off, int count,
+			   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -280,7 +282,8 @@ int proc_avs_0_volume_read(char* page, char** start, off_t off, int count, int* 
 	return len;
 }
 
-int proc_avs_0_input_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_input_choices_read(char *page, char **start, off_t off, int count,
+				  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -290,15 +293,16 @@ int proc_avs_0_input_choices_read(char* page, char** start, off_t off, int count
 	return len;
 }
 
-int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_input_write(struct file *file, const char __user *buf,
+			   unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	/* int result; */
 #if defined(ADB_BOX)
 	struct stmfbio_output_configuration outputConfig;
-	struct stmfb_info* info = stmfb_get_fbinfo_ptr();
+	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	int err;
 	outputConfig.outputid = 1;
 	stmfb_get_output_configuration(&outputConfig, info);
@@ -310,13 +314,13 @@ int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned l
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -327,23 +331,24 @@ int proc_avs_0_input_write(struct file* file, const char __user* buf, unsigned l
 			avs_command_kernel(SAAIOSSRCSEL, SAA_SRC_ENC);
 			// Note: Volumne is not changed directly but by using the MIXER instead of the AVS.
 			// So this should always be set to the maximum
-#if defined(UFS910) || defined(ADB_BOX)
-			avs_command_kernel(AVSIOSVOL, (void*) 31);
+#if defined(UFS910) \
+ || defined(ADB_BOX)
+			avs_command_kernel(AVSIOSVOL, (void *) 31);
 #else
-			avs_command_kernel(AVSIOSVOL, (void*) 0);
+			avs_command_kernel(AVSIOSVOL, (void *) 0);
 #endif
 #if defined(ADB_BOX)
-			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_43F);
+			avs_command_kernel(SAAIOSWSS, (void *) SAA_WSS_43F);
 			outputConfig.hdmi_config &= ~STMFBIO_OUTPUT_HDMI_DISABLED;
 #endif
 			current_input = ENCODER;
 		}
 		if (!strncmp("scart", myString, count - 1))
 		{
-			avs_command_kernel(SAAIOSSRCSEL, (void*) SAA_SRC_SCART);
-			avs_command_kernel(AVSIOSVOL, (void*) current_volume);
+			avs_command_kernel(SAAIOSSRCSEL, (void *) SAA_SRC_SCART);
+			avs_command_kernel(AVSIOSVOL, (void *) current_volume);
 #if defined(ADB_BOX)
-			avs_command_kernel(SAAIOSWSS, (void*) SAA_WSS_OFF);
+			avs_command_kernel(SAAIOSWSS, (void *) SAA_WSS_OFF);
 			outputConfig.hdmi_config |= STMFBIO_OUTPUT_HDMI_DISABLED;
 #endif
 			current_input = SCART;
@@ -364,7 +369,8 @@ out:
 	return ret;
 }
 
-int proc_avs_0_input_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_input_read(char *page, char **start, off_t off, int count,
+			  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -377,22 +383,23 @@ int proc_avs_0_input_read(char* page, char** start, off_t off, int count, int* e
 	return len;
 }
 
-int proc_avs_0_fb_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_fb_write(struct file *file, const char __user *buf,
+			unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	/* int result; */
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -407,7 +414,8 @@ out:
 	return ret;
 }
 
-int proc_avs_0_fb_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_fb_read(char *page, char **start, off_t off, int count,
+		       int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -417,18 +425,19 @@ int proc_avs_0_fb_read(char* page, char** start, off_t off, int count, int* eof,
 	return len;
 }
 
-int proc_avs_0_colorformat_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_colorformat_write(struct file *file, const char __user *buf,
+				 unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
-		struct stmfb_info* info = stmfb_get_fbinfo_ptr();
+		struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 		struct stmfbio_output_configuration outputConfig;
 		int err = 0;
 		int alpha = 0;
@@ -438,14 +447,14 @@ int proc_avs_0_colorformat_write(struct file* file, const char __user* buf, unsi
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
 		printk("%s\n", myString);
 #endif
 		sscanf(myString, "%d", &alpha);
-		//0rgb 1yuv 2422
+//0rgb 1yuv 2422
 		if (strncmp("hdmi_rgb", page, count - 1) == 0)
 		{
 			hdmi_colour = 0;
@@ -503,7 +512,7 @@ int proc_avs_0_colorformat_write(struct file* file, const char __user* buf, unsi
 		}
 		else if (hdmi0scart1yuv2 == 1)
 		{
-			avs_command_kernel(SAAIOSMODE, (void*) scart_colour);
+			avs_command_kernel(SAAIOSMODE, (void *) scart_colour);
 			outputConfig.outputid = 1;
 			stmfb_get_output_configuration(&outputConfig, info);
 			outputConfig.caps = 0;
@@ -555,9 +564,10 @@ out:
 	return ret;
 }
 
-int proc_avs_0_colorformat_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_colorformat_read(char *page, char **start, off_t off, int count,
+				int *eof, void *data_unused)
 {
-	struct stmfb_info* info = stmfb_get_fbinfo_ptr();
+	struct stmfb_info *info = stmfb_get_fbinfo_ptr();
 	struct stmfbio_output_configuration outputConfig;
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -584,7 +594,8 @@ int proc_avs_0_colorformat_read(char* page, char** start, off_t off, int count, 
 	return len;
 }
 
-int proc_avs_0_colorformat_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_colorformat_choices_read(char *page, char **start, off_t off, int count,
+					int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -594,22 +605,23 @@ int proc_avs_0_colorformat_choices_read(char* page, char** start, off_t off, int
 	return len;
 }
 
-int proc_avs_0_sb_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_sb_write(struct file *file, const char __user *buf,
+			unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	/* int result; */
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -624,7 +636,8 @@ out:
 	return ret;
 }
 
-int proc_avs_0_sb_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_sb_read(char *page, char **start, off_t off, int count,
+		       int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -634,22 +647,23 @@ int proc_avs_0_sb_read(char* page, char** start, off_t off, int count, int* eof,
 	return len;
 }
 
-int proc_avs_0_standby_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_avs_0_standby_write(struct file *file, const char __user *buf,
+			     unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	/* int result; */
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -663,7 +677,7 @@ int proc_avs_0_standby_write(struct file* file, const char __user* buf, unsigned
 		{
 			current_standby = 0;
 		}
-		avs_command_kernel(AVSIOSTANDBY, (void*) current_standby);
+		avs_command_kernel(AVSIOSTANDBY, (void *) current_standby);
 		kfree(myString);
 		//result = sscanf(page, "%3s %3s %3s %3s %3s", s1, s2, s3, s4, s5);
 	}
@@ -673,7 +687,8 @@ out:
 	return ret;
 }
 
-int proc_avs_0_standby_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_avs_0_standby_read(char *page, char **start, off_t off, int count,
+			    int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE

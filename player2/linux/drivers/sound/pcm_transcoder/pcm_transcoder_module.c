@@ -16,15 +16,15 @@ MODULE_DESCRIPTION("Pcm transcoding MME transformer.");
 MODULE_AUTHOR("STMicroelectronics (R&D) Ltd.");
 MODULE_LICENSE("GPL");
 
-static char* TransformerName    = PCM_MME_TRANSFORMER_NAME;
+static char *TransformerName = PCM_MME_TRANSFORMER_NAME;
 
 module_param(TransformerName, charp, S_IRUGO);
 MODULE_PARM_DESC(TransformerName, "Name to use for MME Transformer registration");
 
 static int __init pcm_transcoder_init(void)
 {
-	MME_ERROR   Status  = MME_SUCCESS;
-	Status              = PcmTranscoder_RegisterTransformer(TransformerName);
+	MME_ERROR Status = MME_SUCCESS;
+	Status = PcmTranscoder_RegisterTransformer(TransformerName);
 	if (Status != MME_SUCCESS)
 	{
 		printk("Failed to register %s with MME (%x)\n", TransformerName, Status);
@@ -36,8 +36,8 @@ static int __init pcm_transcoder_init(void)
 
 static void __exit pcm_transcoder_exit(void)
 {
-	MME_ERROR   Status  = MME_SUCCESS;
-	Status              = MME_DeregisterTransformer(TransformerName);
+	MME_ERROR Status = MME_SUCCESS;
+	Status = MME_DeregisterTransformer(TransformerName);
 	if (Status != MME_SUCCESS)
 		printk("Failed to deregister %s with MME\n", TransformerName);
 }

@@ -1,5 +1,11 @@
-codec-objs :=   codec_mme_base.o        \
-		codec_mme_video.o       \
+# workaround for stlinux24
+ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
+ccflags-y += $(CCFLAGSY)
+endif
+
+codec-objs := \
+		codec_mme_base.o \
+		codec_mme_video.o \
 		codec_mme_video_mpeg2.o \
 		codec_mme_video_h264.o \
 		codec_mme_video_vc1.o \

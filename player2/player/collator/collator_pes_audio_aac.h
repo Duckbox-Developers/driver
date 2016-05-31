@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_aac.h
-Author :           Adam
+Author : Adam
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-05-Jul-07   Created from existing collator_pes_video.h      Adam
+Date Modification Name
+---- ------------ --------
+05-Jul-07 Created from existing collator_pes_video.h Adam
 
 ************************************************************************/
 
@@ -56,7 +56,7 @@ class Collator_PesAudioAac_c : public Collator_PesAudio_c
 
 		CollatorStatus_t FindNextSyncWord(int *CodeOffset);
 		CollatorStatus_t DecideCollatorNextStateAndGetLength(unsigned int *FrameLength);
-		void             SetPesPrivateDataLength(unsigned char SpecificCode);
+		void SetPesPrivateDataLength(unsigned char SpecificCode);
 
 		AacFormatType_t FormatType;
 
@@ -64,7 +64,7 @@ class Collator_PesAudioAac_c : public Collator_PesAudio_c
 
 		Collator_PesAudioAac_c();
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 };
 
 #endif // H_COLLATOR_PES_AUDIO_AAC

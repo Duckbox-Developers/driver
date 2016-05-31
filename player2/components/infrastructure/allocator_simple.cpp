@@ -2,16 +2,16 @@
 COPYRIGHT (C) STMicroelectronics 2005
 
 Source file name : allocator_simple.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the pure virtual class used to control the allocation
 of portions of a buffer.
 
 Note this is the simplest of implementations, it is definitely not the best
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Jun-05   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+29-Jun-05 Created Nick
 
 ************************************************************************/
 
@@ -27,25 +27,25 @@ Date        Modification                                    Name
 // ------------------------------------------------------------------------
 // Macro
 
-#define On64MBBoundary( O ) ((((uintptr_t)(O) + (uintptr_t)PhysicalAddress) & 0x03ffffff) == 0)
+#define On64MBBoundary( O ) ((((unsigned int)(O) + (unsigned int)PhysicalAddress) & 0x03ffffff) == 0)
 
 // ------------------------------------------------------------------------
 // Constructor function
 
-AllocatorSimple_c::AllocatorSimple_c(unsigned int     BufferSize,
-									 unsigned int     SegmentSize,
-									 unsigned char   *PhysicalAddress)
+AllocatorSimple_c::AllocatorSimple_c(unsigned int BufferSize,
+				     unsigned int SegmentSize,
+				     unsigned char *PhysicalAddress)
 {
-	InitializationStatus        = AllocatorError;
+	InitializationStatus = AllocatorError;
 	OS_InitializeMutex(&Lock);
 	OS_InitializeEvent(&EntryFreed);
-	this->BufferSize        = BufferSize;
-	this->SegmentSize       = SegmentSize;
-	this->PhysicalAddress       = PhysicalAddress;
-	BeingDeleted        = false;
-	InAllocate          = false;
+	this->BufferSize = BufferSize;
+	this->SegmentSize = SegmentSize;
+	this->PhysicalAddress = PhysicalAddress;
+	BeingDeleted = false;
+	InAllocate = false;
 	Free();
-	InitializationStatus        = AllocatorNoError;
+	InitializationStatus = AllocatorNoError;
 }
 
 // ------------------------------------------------------------------------
@@ -53,7 +53,7 @@ AllocatorSimple_c::AllocatorSimple_c(unsigned int     BufferSize,
 
 AllocatorSimple_c::~AllocatorSimple_c(void)
 {
-	BeingDeleted        = true;
+	BeingDeleted = true;
 	OS_SetEvent(&EntryFreed);
 	while (InAllocate)
 		OS_SleepMilliSeconds(1);
@@ -64,18 +64,18 @@ AllocatorSimple_c::~AllocatorSimple_c(void)
 // ------------------------------------------------------------------------
 // Allocate function
 
-AllocatorStatus_t   AllocatorSimple_c::Allocate(
-	unsigned int      Size,
-	unsigned char   **Block,
-	bool              NonBlocking)
+AllocatorStatus_t AllocatorSimple_c::Allocate(
+	unsigned int Size,
+	unsigned char **Block,
+	bool NonBlocking)
 {
-	unsigned int    i;
+	unsigned int i;
 //
 	if (this == NULL)
 		return AllocatorError;
 //
-	InAllocate  = true;
-	Size        = (((Size + SegmentSize - 1) / SegmentSize) * SegmentSize);
+	InAllocate = true;
+	Size = (((Size + SegmentSize - 1) / SegmentSize) * SegmentSize);
 	do
 	{
 		OS_LockMutex(&Lock);
@@ -87,13 +87,13 @@ AllocatorStatus_t   AllocatorSimple_c::Allocate(
 		for (i = 0; i < (HighestUsedBlockIndex + 1); i++)
 			if (Blocks[i].InUse && (Blocks[i].Size >= Size))
 			{
-				*Block                   = Blocks[i].Base;
-				Blocks[i].Base          += Size;
-				Blocks[i].Size          -= Size;
+				*Block = Blocks[i].Base;
+				Blocks[i].Base += Size;
+				Blocks[i].Size -= Size;
 				if (Blocks[i].Size == 0)
-					Blocks[i].InUse      = false;
+					Blocks[i].InUse = false;
 				OS_UnLockMutex(&Lock);
-				InAllocate       = false;
+				InAllocate = false;
 				return AllocatorNoError;
 			}
 //
@@ -102,7 +102,7 @@ AllocatorStatus_t   AllocatorSimple_c::Allocate(
 			report(severity_info, "Waiting for memory \n");
 			for (i = 0; i < ALLOCATOR_SIMPLE_MAX_BLOCKS; i++)
 				if (Blocks[i].InUse)
-					report(severity_info, "        %08x - %06x\n", Blocks[i].Base, Blocks[i].Size);
+					report(severity_info, " %08x - %06x\n", Blocks[i].Base, Blocks[i].Size);
 		}
 #endif
 //
@@ -111,24 +111,24 @@ AllocatorStatus_t   AllocatorSimple_c::Allocate(
 			OS_WaitForEvent(&EntryFreed, OS_INFINITE);
 	}
 	while (!NonBlocking && !BeingDeleted);
-	InAllocate   = false;
+	InAllocate = false;
 	return AllocatorUnableToAllocate;
 }
 
 // ------------------------------------------------------------------------
 // Allocate function
 
-AllocatorStatus_t   AllocatorSimple_c::AllocateLargest(
-	unsigned int     *Size,
-	unsigned char   **Block,
-	bool              NonBlocking)
+AllocatorStatus_t AllocatorSimple_c::AllocateLargest(
+	unsigned int *Size,
+	unsigned char **Block,
+	bool NonBlocking)
 {
 	int Index;
 //
 	if (this == NULL)
 		return AllocatorError;
 //
-	InAllocate  = true;
+	InAllocate = true;
 	do
 	{
 		OS_LockMutex(&Lock);
@@ -137,15 +137,15 @@ AllocatorStatus_t   AllocatorSimple_c::AllocateLargest(
 		if (BeingDeleted)
 			break;
 //
-		Index   = LargestFreeBlock();
+		Index = LargestFreeBlock();
 		if ((Index >= 0) && (Blocks[Index].Size >= (*Size)))
 		{
-			*Size       = Blocks[Index].Size;
-			*Block      = Blocks[Index].Base;
-			Blocks[Index].Size  = 0;
+			*Size = Blocks[Index].Size;
+			*Block = Blocks[Index].Base;
+			Blocks[Index].Size = 0;
 			Blocks[Index].InUse = false;
 			OS_UnLockMutex(&Lock);
-			InAllocate       = false;
+			InAllocate = false;
 			return AllocatorNoError;
 		}
 		OS_UnLockMutex(&Lock);
@@ -153,7 +153,7 @@ AllocatorStatus_t   AllocatorSimple_c::AllocateLargest(
 			OS_WaitForEvent(&EntryFreed, OS_INFINITE);
 	}
 	while (!NonBlocking && !BeingDeleted);
-	InAllocate   = false;
+	InAllocate = false;
 	return AllocatorUnableToAllocate;
 }
 
@@ -162,20 +162,20 @@ AllocatorStatus_t   AllocatorSimple_c::AllocateLargest(
 // NOTE we practically split this fn into two separate implementations depending on which
 // way we want to extend.
 
-AllocatorStatus_t   AllocatorSimple_c::ExtendToLargest(
-	unsigned int     *Size,
-	unsigned char   **Block,
-	bool          ExtendUpwards)
+AllocatorStatus_t AllocatorSimple_c::ExtendToLargest(
+	unsigned int *Size,
+	unsigned char **Block,
+	bool ExtendUpwards)
 {
-	unsigned int     i;
-	unsigned char   *BoundaryToExtend;
+	unsigned int i;
+	unsigned char *BoundaryToExtend;
 //
 	if (ExtendUpwards)
 	{
 		//
 		// First check to see if extension is even possible
 		//
-		BoundaryToExtend    = *Block + *Size;
+		BoundaryToExtend = *Block + *Size;
 		if (On64MBBoundary(BoundaryToExtend) || (BoundaryToExtend >= (PhysicalAddress + BufferSize)))
 			return AllocatorNoMemory;
 		//
@@ -185,9 +185,9 @@ AllocatorStatus_t   AllocatorSimple_c::ExtendToLargest(
 		for (i = 0; i < (HighestUsedBlockIndex + 1); i++)
 			if (Blocks[i].InUse && (BoundaryToExtend == Blocks[i].Base))
 			{
-				*Size       += Blocks[i].Size;
-				Blocks[i].Size   = 0;
-				Blocks[i].InUse  = false;
+				*Size += Blocks[i].Size;
+				Blocks[i].Size = 0;
+				Blocks[i].InUse = false;
 				OS_UnLockMutex(&Lock);
 				return AllocatorNoError;
 			}
@@ -197,7 +197,7 @@ AllocatorStatus_t   AllocatorSimple_c::ExtendToLargest(
 		//
 		// First check to see if extension is even possible
 		//
-		BoundaryToExtend    = *Block;
+		BoundaryToExtend = *Block;
 		if (On64MBBoundary(BoundaryToExtend) || (BoundaryToExtend == PhysicalAddress))
 			return AllocatorNoMemory;
 		//
@@ -207,10 +207,10 @@ AllocatorStatus_t   AllocatorSimple_c::ExtendToLargest(
 		for (i = 0; i < (HighestUsedBlockIndex + 1); i++)
 			if (Blocks[i].InUse && (BoundaryToExtend == (Blocks[i].Base + Blocks[i].Size)))
 			{
-				*Size       += Blocks[i].Size;
-				*Block       = Blocks[i].Base;
-				Blocks[i].Size   = 0;
-				Blocks[i].InUse  = false;
+				*Size += Blocks[i].Size;
+				*Block = Blocks[i].Base;
+				Blocks[i].Size = 0;
+				Blocks[i].InUse = false;
 				OS_UnLockMutex(&Lock);
 				return AllocatorNoError;
 			}
@@ -223,27 +223,27 @@ AllocatorStatus_t   AllocatorSimple_c::ExtendToLargest(
 // Free the whole block, note we partition this into blocks that do not
 // cross a 64Mb boundary in the physical address space.
 
-AllocatorStatus_t   AllocatorSimple_c::Free(void)
+AllocatorStatus_t AllocatorSimple_c::Free(void)
 {
-	int              i;
-	unsigned int         LocalBufferSize;
-	unsigned int         MaxBlockSize;
-	unsigned char       *LocalOffset;
+	int i;
+	unsigned int LocalBufferSize;
+	unsigned int MaxBlockSize;
+	unsigned char *LocalOffset;
 	OS_LockMutex(&Lock);
 	memset(Blocks, 0x00, sizeof(Blocks));
-	LocalBufferSize     = BufferSize;
-	LocalOffset         = NULL;
-	MaxBlockSize        = 0x4000000 - ((uintptr_t)PhysicalAddress & 0x03ffffff);
-	HighestUsedBlockIndex   = 0;
+	LocalBufferSize = BufferSize;
+	LocalOffset = NULL;
+	MaxBlockSize = 0x4000000 - ((unsigned int)PhysicalAddress & 0x03ffffff);
+	HighestUsedBlockIndex = 0;
 	for (i = 0; ((LocalBufferSize != 0) && (i < ALLOCATOR_SIMPLE_MAX_BLOCKS)); i++)
 	{
-		Blocks[i].InUse      = true;
-		Blocks[i].Size       = min(LocalBufferSize, MaxBlockSize);
-		Blocks[i].Base       = LocalOffset;
-		LocalBufferSize     -= Blocks[i].Size;
-		LocalOffset     += Blocks[i].Size;
-		MaxBlockSize         = 0x4000000;
-		HighestUsedBlockIndex    = i;
+		Blocks[i].InUse = true;
+		Blocks[i].Size = min(LocalBufferSize, MaxBlockSize);
+		Blocks[i].Base = LocalOffset;
+		LocalBufferSize -= Blocks[i].Size;
+		LocalOffset += Blocks[i].Size;
+		MaxBlockSize = 0x4000000;
+		HighestUsedBlockIndex = i;
 	}
 	OS_SetEvent(&EntryFreed);
 	OS_UnLockMutex(&Lock);
@@ -253,16 +253,16 @@ AllocatorStatus_t   AllocatorSimple_c::Free(void)
 // ------------------------------------------------------------------------
 // Free range of entries
 
-AllocatorStatus_t   AllocatorSimple_c::Free(unsigned int      Size,
-		unsigned char    *Block)
+AllocatorStatus_t AllocatorSimple_c::Free(unsigned int Size,
+					  unsigned char *Block)
 {
-	unsigned int    i;
-	unsigned int    LowestFreeBlock;
-	unsigned int    NextHighestUsedBlockIndex;
+	unsigned int i;
+	unsigned int LowestFreeBlock;
+	unsigned int NextHighestUsedBlockIndex;
 //
-	Size                    = (((Size + SegmentSize - 1) / SegmentSize) * SegmentSize);
-	LowestFreeBlock         = HighestUsedBlockIndex + 1;
-	NextHighestUsedBlockIndex   = 0;
+	Size = (((Size + SegmentSize - 1) / SegmentSize) * SegmentSize);
+	LowestFreeBlock = HighestUsedBlockIndex + 1;
+	NextHighestUsedBlockIndex = 0;
 	OS_LockMutex(&Lock);
 	//
 	// Note by adding adjacent block records to the one we are trying to free,
@@ -276,24 +276,24 @@ AllocatorStatus_t   AllocatorSimple_c::Free(unsigned int      Size,
 			if (((Block + Size) == Blocks[i].Base) &&
 					!On64MBBoundary(Blocks[i].Base))
 			{
-				Size            += Blocks[i].Size;
-				Blocks[i].InUse  = false;
+				Size += Blocks[i].Size;
+				Blocks[i].InUse = false;
 			}
 			else if ((Block == (Blocks[i].Base + Blocks[i].Size)) &&
-					 !On64MBBoundary(Block))
+					!On64MBBoundary(Block))
 			{
-				Size            += Blocks[i].Size;
-				Block            = Blocks[i].Base;
-				Blocks[i].InUse  = false;
+				Size += Blocks[i].Size;
+				Block = Blocks[i].Base;
+				Blocks[i].InUse = false;
 			}
 			else
 			{
-				NextHighestUsedBlockIndex   = i;
+				NextHighestUsedBlockIndex = i;
 			}
 		}
 		if (!Blocks[i].InUse)
 		{
-			LowestFreeBlock      = min(LowestFreeBlock, i);
+			LowestFreeBlock = min(LowestFreeBlock, i);
 		}
 	}
 //
@@ -304,17 +304,17 @@ AllocatorStatus_t   AllocatorSimple_c::Free(unsigned int      Size,
 			report(severity_info, "\tBlocks\n");
 			for (i = 0; i < ALLOCATOR_SIMPLE_MAX_BLOCKS; i++)
 				if (Blocks[i].InUse)
-					report(severity_info, "        %08x - %06x\n", Blocks[i].Base, Blocks[i].Size);
+					report(severity_info, " %08x - %06x\n", Blocks[i].Base, Blocks[i].Size);
 		}
 		OS_SetEvent(&EntryFreed);
 		OS_UnLockMutex(&Lock);
 		return AllocatorError;
 	}
 //
-	Blocks[LowestFreeBlock].InUse       = true;
-	Blocks[LowestFreeBlock].Size        = Size;
-	Blocks[LowestFreeBlock].Base        = Block;
-	HighestUsedBlockIndex       = max(LowestFreeBlock, NextHighestUsedBlockIndex);
+	Blocks[LowestFreeBlock].InUse = true;
+	Blocks[LowestFreeBlock].Size = Size;
+	Blocks[LowestFreeBlock].Base = Block;
+	HighestUsedBlockIndex = max(LowestFreeBlock, NextHighestUsedBlockIndex);
 //
 	OS_SetEvent(&EntryFreed);
 	OS_UnLockMutex(&Lock);
@@ -324,12 +324,12 @@ AllocatorStatus_t   AllocatorSimple_c::Free(unsigned int      Size,
 // ------------------------------------------------------------------------
 // Inform the caller of the size of the largest free block
 
-AllocatorStatus_t   AllocatorSimple_c::LargestFreeBlock(unsigned int     *Size)
+AllocatorStatus_t AllocatorSimple_c::LargestFreeBlock(unsigned int *Size)
 {
 	int Index;
 	OS_LockMutex(&Lock);
-	Index   = LargestFreeBlock();
-	*Size   = (Index < 0) ? 0 : Blocks[Index].Size;
+	Index = LargestFreeBlock();
+	*Size = (Index < 0) ? 0 : Blocks[Index].Size;
 	OS_UnLockMutex(&Lock);
 	return AllocatorNoError;
 }
@@ -337,15 +337,15 @@ AllocatorStatus_t   AllocatorSimple_c::LargestFreeBlock(unsigned int     *Size)
 // ------------------------------------------------------------------------
 // Private - internal function to find the largest free block
 
-int   AllocatorSimple_c::LargestFreeBlock(void)
+int AllocatorSimple_c::LargestFreeBlock(void)
 {
-	unsigned int    i;
-	int     Index;
+	unsigned int i;
+	int Index;
 //
-	Index   = -1;
+	Index = -1;
 	for (i = 0; i < (HighestUsedBlockIndex + 1); i++)
 		if (Blocks[i].InUse && ((Index < 0) || (Blocks[i].Size > Blocks[Index].Size)))
-			Index   = i;
+			Index = i;
 	return Index;
 }
 

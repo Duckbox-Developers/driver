@@ -13,22 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : osdev_user.c - derived from osdev_user.h for os21
-Author :           Julian
+Author : Julian
 
 Contains the useful operating system functions/types
 that allow us to implement OS independent device functionality.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Sep-03   Created                                         Nick
-23-Mar-05   Modified for Linux kernel                       Julian
+Date Modification Name
+---- ------------ --------
+08-Sep-03 Created Nick
+23-Mar-05 Modified for Linux kernel Julian
 
 ************************************************************************/
 
@@ -42,18 +42,18 @@ Date        Modification                                    Name
 // Actual structure instantiations
 //
 
-OSDEV_DeviceLink_t               OSDEV_DeviceList[OSDEV_MAXIMUM_DEVICE_LINKS];
-OSDEV_Descriptor_t              *OSDEV_DeviceDescriptors[OSDEV_MAXIMUM_MAJOR_NUMBER];
+OSDEV_DeviceLink_t OSDEV_DeviceList[OSDEV_MAXIMUM_DEVICE_LINKS];
+OSDEV_Descriptor_t *OSDEV_DeviceDescriptors[OSDEV_MAXIMUM_MAJOR_NUMBER];
 
 OSDEV_ExportSymbol(OSDEV_DeviceList);
 OSDEV_ExportSymbol(OSDEV_DeviceDescriptors);
 
 // ====================================================================================================================
-//      The user level device functions
+// The user level device functions
 
-OSDEV_Status_t   OSDEV_Stat(const char                      *Name)
+OSDEV_Status_t OSDEV_Stat(const char *Name)
 {
-	unsigned int     i;
+	unsigned int i;
 //
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
 	{
@@ -65,13 +65,13 @@ OSDEV_Status_t   OSDEV_Stat(const char                      *Name)
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Open(const char                      *Name,
-							OSDEV_DeviceIdentifier_t        *Handle)
+OSDEV_Status_t OSDEV_Open(const char *Name,
+			  OSDEV_DeviceIdentifier_t *Handle)
 {
-	unsigned int     i;
-	unsigned int     Major;
-	unsigned int     Minor;
-	OSDEV_Status_t   Status;
+	unsigned int i;
+	unsigned int Major;
+	unsigned int Minor;
+	OSDEV_Status_t Status;
 //
 	*Handle = OSDEV_INVALID_DEVICE;
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
@@ -88,15 +88,15 @@ OSDEV_Status_t   OSDEV_Open(const char                      *Name,
 			for (i = 0; i < OSDEV_MAX_OPENS; i++)
 				if (!OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open)
 				{
-					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open        = true;
+					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open = true;
 					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].MinorNumber = Minor;
-					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Descriptor  = OSDEV_DeviceDescriptors[Major];
+					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Descriptor = OSDEV_DeviceDescriptors[Major];
 					OSDEV_DeviceDescriptors[Major]->OpenContexts[i].PrivateData = NULL;
 					Status = OSDEV_DeviceDescriptors[Major]->OpenFn(&OSDEV_DeviceDescriptors[Major]->OpenContexts[i]);
 					if (Status == OSDEV_NoError)
-						*Handle                                                 = &OSDEV_DeviceDescriptors[Major]->OpenContexts[i];
+						*Handle = &OSDEV_DeviceDescriptors[Major]->OpenContexts[i];
 					else
-						OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open    = false;
+						OSDEV_DeviceDescriptors[Major]->OpenContexts[i].Open = false;
 					return Status;
 				}
 			printk("Error-%s-\nOSDEV_Open - Too many opens on device '%s'.\n", OS_ThreadName(), OSDEV_DeviceDescriptors[Major]->Name);
@@ -110,9 +110,9 @@ OSDEV_Status_t   OSDEV_Open(const char                      *Name,
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Close(OSDEV_DeviceIdentifier_t     Handle)
+OSDEV_Status_t OSDEV_Close(OSDEV_DeviceIdentifier_t Handle)
 {
-	OSDEV_Status_t   Status;
+	OSDEV_Status_t Status;
 //
 	if ((Handle == NULL) || (!Handle->Open))
 	{
@@ -120,17 +120,17 @@ OSDEV_Status_t   OSDEV_Close(OSDEV_DeviceIdentifier_t     Handle)
 		return OSDEV_Error;
 	}
 //
-	Status              = Handle->Descriptor->CloseFn(Handle);
-	Handle->Open        = false;
+	Status = Handle->Descriptor->CloseFn(Handle);
+	Handle->Open = false;
 	return Status;
 }
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Read(OSDEV_DeviceIdentifier_t         Handle,
-							void                            *Buffer,
-							unsigned int                     SizeToRead,
-							unsigned int                    *SizeRead)
+OSDEV_Status_t OSDEV_Read(OSDEV_DeviceIdentifier_t Handle,
+			  void *Buffer,
+			  unsigned int SizeToRead,
+			  unsigned int *SizeRead)
 {
 	printk("Error-%s-\nOSDEV_Read - Read not a supported function\n", OS_ThreadName());
 	return OSDEV_Error;
@@ -138,10 +138,10 @@ OSDEV_Status_t   OSDEV_Read(OSDEV_DeviceIdentifier_t         Handle,
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Write(OSDEV_DeviceIdentifier_t         Handle,
-							 void                            *Buffer,
-							 unsigned int                     SizeToWrite,
-							 unsigned int                    *SizeWrote)
+OSDEV_Status_t OSDEV_Write(OSDEV_DeviceIdentifier_t Handle,
+			   void *Buffer,
+			   unsigned int SizeToWrite,
+			   unsigned int *SizeWrote)
 {
 	printk("Error-%s-\nOSDEV_Write - Write not a supported function\n", OS_ThreadName());
 	return OSDEV_Error;
@@ -149,12 +149,12 @@ OSDEV_Status_t   OSDEV_Write(OSDEV_DeviceIdentifier_t         Handle,
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Ioctl(OSDEV_DeviceIdentifier_t         Handle,
-							 unsigned int                     Command,
-							 void                            *Argument,
-							 unsigned int                     ArgumentSize)
+OSDEV_Status_t OSDEV_Ioctl(OSDEV_DeviceIdentifier_t Handle,
+			   unsigned int Command,
+			   void *Argument,
+			   unsigned int ArgumentSize)
 {
-	OSDEV_Status_t   Status;
+	OSDEV_Status_t Status;
 //
 	if ((Handle == NULL) || (!Handle->Open))
 	{
@@ -162,19 +162,19 @@ OSDEV_Status_t   OSDEV_Ioctl(OSDEV_DeviceIdentifier_t         Handle,
 		return OSDEV_Error;
 	}
 //
-	Status              = Handle->Descriptor->IoctlFn(Handle, Command, (unsigned long)Argument);
+	Status = Handle->Descriptor->IoctlFn(Handle, Command, (unsigned long)Argument);
 	return Status;
 }
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_Map(OSDEV_DeviceIdentifier_t          Handle,
-						   unsigned int                      Offset,
-						   unsigned int                      Length,
-						   void                            **MapAddress,
-						   unsigned int                      Flags)
+OSDEV_Status_t OSDEV_Map(OSDEV_DeviceIdentifier_t Handle,
+			 unsigned int Offset,
+			 unsigned int Length,
+			 void **MapAddress,
+			 unsigned int Flags)
 {
-	OSDEV_Status_t   Status;
+	OSDEV_Status_t Status;
 //
 	*MapAddress = NULL;
 	if ((Handle == NULL) || (!Handle->Open))
@@ -183,11 +183,11 @@ OSDEV_Status_t   OSDEV_Map(OSDEV_DeviceIdentifier_t          Handle,
 		return OSDEV_Error;
 	}
 //
-	Status              = Handle->Descriptor->MmapFn(Handle, Offset, Length, (unsigned char **)MapAddress);
+	Status = Handle->Descriptor->MmapFn(Handle, Offset, Length, (unsigned char **)MapAddress);
 	// To implement this is userspace then either:
 	//
-	//  1. Don't
-	//  2. Use a magic Offset value (e.g. Offset + OSDEV_MAP_UNCACHED_OFFSET)
+	// 1. Don't
+	// 2. Use a magic Offset value (e.g. Offset + OSDEV_MAP_UNCACHED_OFFSET)
 	//
 	if (Flags & OSDEV_MAP_UNCACHED)
 	{
@@ -198,9 +198,9 @@ OSDEV_Status_t   OSDEV_Map(OSDEV_DeviceIdentifier_t          Handle,
 
 // -----------------------------------------------------------------------------------------------
 
-OSDEV_Status_t   OSDEV_UnMap(OSDEV_DeviceIdentifier_t     Handle,
-							 void                        *MapAddress,
-							 unsigned int                 Length)
+OSDEV_Status_t OSDEV_UnMap(OSDEV_DeviceIdentifier_t Handle,
+			   void *MapAddress,
+			   unsigned int Length)
 {
 	return OSDEV_NoError;
 }

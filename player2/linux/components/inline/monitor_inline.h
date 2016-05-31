@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : monitorinline.h (kernel version)
-Author :           Julian
+Author : Julian
 
 Provides access to the monitor functions and types
 
-Date        Modification                                    Name
-----        ------------                                    --------
-30-Jul-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+30-Jul-08 Created Julian
 
 ************************************************************************/
 
@@ -40,18 +40,18 @@ Date        Modification                                    Name
 #ifdef __cplusplus
 extern "C" {
 #endif
-void                    MonitorSignalEvent(monitor_event_code_t            EventCode,
-		unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
-		const char*                     Description);
+void MonitorSignalEvent(monitor_event_code_t EventCode,
+			unsigned int Parameters[MONITOR_PARAMETER_COUNT],
+			const char *Description);
 #ifdef __cplusplus
 }
 #endif
 
 #else
 
-static inline void      MonitorSignalEvent(monitor_event_code_t            EventCode,
-		unsigned int                    Parameters[MONITOR_PARAMETER_COUNT],
-		const char*                     Description) {}
+static inline void MonitorSignalEvent(monitor_event_code_t EventCode,
+				      unsigned int Parameters[MONITOR_PARAMETER_COUNT],
+				      const char *Description) {}
 
 #endif
 

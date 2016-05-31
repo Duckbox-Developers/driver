@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : demultiplexor_ts.h
-Author :           Nick
+Author : Nick
 
 Definition of the transport stream demultiplexor class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-13-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+13-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -44,9 +44,9 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define DEMULTIPLEXOR_SELECT_ON_PRIORITY    0x00002000
-#define DEMULTIPLEXOR_PRIORITY_HIGH     0x00004000
-#define DEMULTIPLEXOR_PRIORITY_LOW      0x00000000
+#define DEMULTIPLEXOR_SELECT_ON_PRIORITY 0x00002000
+#define DEMULTIPLEXOR_PRIORITY_HIGH 0x00004000
+#define DEMULTIPLEXOR_PRIORITY_LOW 0x00000000
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -55,23 +55,23 @@ Date        Modification                                    Name
 
 typedef struct DemultiplexorStreamContext_s
 {
-	bool        ValidExpectedContinuityCount;
-	unsigned char   ExpectedContinuityCount;
-	bool                SelectOnPriority;
-	bool                DesiredPriority;
+	bool ValidExpectedContinuityCount;
+	unsigned char ExpectedContinuityCount;
+	bool SelectOnPriority;
+	bool DesiredPriority;
 } DemultiplexorStreamContext_t;
 
 //
 
 struct DemultiplexorContext_s
 {
-	struct DemultiplexorBaseContext_s   Base;
+	struct DemultiplexorBaseContext_s Base;
 
-	DemultiplexorStreamContext_t    Streams[DEMULTIPLEXOR_MAX_STREAMS];
-	unsigned char           PidTable[DVB_MAX_PIDS];
+	DemultiplexorStreamContext_t Streams[DEMULTIPLEXOR_MAX_STREAMS];
+	unsigned char PidTable[DVB_MAX_PIDS];
 
-	bool                                AddedNewStream;
-	unsigned int                        BluRayExtraData;
+	bool AddedNewStream;
+	unsigned int BluRayExtraData;
 };
 
 // /////////////////////////////////////////////////////////////////////////
@@ -99,20 +99,20 @@ class Demultiplexor_Ts_c : public Demultiplexor_Base_c
 		// API functions
 		//
 
-		DemultiplexorStatus_t   GetHandledMuxType(PlayerInputMuxType_t   *HandledType);
+		DemultiplexorStatus_t GetHandledMuxType(PlayerInputMuxType_t *HandledType);
 
-		DemultiplexorStatus_t   AddStream(DemultiplexorContext_t      Context,
-										  PlayerStream_t        Stream,
-										  unsigned int          StreamIdentifier);
+		DemultiplexorStatus_t AddStream(DemultiplexorContext_t Context,
+						PlayerStream_t Stream,
+						unsigned int StreamIdentifier);
 
-		DemultiplexorStatus_t   RemoveStream(DemultiplexorContext_t   Context,
-											 unsigned int          StreamIdentifier);
+		DemultiplexorStatus_t RemoveStream(DemultiplexorContext_t Context,
+						   unsigned int StreamIdentifier);
 
-		DemultiplexorStatus_t   InputJump(DemultiplexorContext_t      Context);
+		DemultiplexorStatus_t InputJump(DemultiplexorContext_t Context);
 
-		DemultiplexorStatus_t   Demux(PlayerPlayback_t    Playback,
-									  DemultiplexorContext_t    Context,
-									  Buffer_t          Buffer);
+		DemultiplexorStatus_t Demux(PlayerPlayback_t Playback,
+					    DemultiplexorContext_t Context,
+					    Buffer_t Buffer);
 };
 
 #endif

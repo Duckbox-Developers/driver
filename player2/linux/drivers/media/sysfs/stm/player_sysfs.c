@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -28,10 +28,10 @@ license from ST.
 #include "player_sysfs.h"
 #include "player_interface.h"
 
-#define PLAYBACK_MAX_NUMBER     8
-#define STREAM_MAX_NUMBER       16
+#define PLAYBACK_MAX_NUMBER 8
+#define STREAM_MAX_NUMBER 16
 
-static int PlayerSetEvent(struct player_event_s*       Event);
+static int PlayerSetEvent(struct player_event_s *Event);
 static struct mutex SysfsWriteLock;
 
 enum attribute_id_e
@@ -48,34 +48,34 @@ enum attribute_id_e
 struct attribute_data_s
 {
 	player_component_handle_t *component;
-	//unsigned int               type;
-	//bool          in_use;
-	//player_stream_handle_t        *stream_owner;
+	//unsigned int type;
+	//bool in_use;
+	//player_stream_handle_t *stream_owner;
 };
 
 struct stream_data_s
 {
-	unsigned int                id;
-	player_stream_handle_t     *stream;
-	struct device               stream_class_device;
-	dev_t                       stream_dev_t;
-	struct attribute_data_s     attribute_data[ATTRIBUTE_ID_MAX];
-	bool            notify_on_destroy; //!< True, if the stream has attributes
+	unsigned int id;
+	player_stream_handle_t *stream;
+	struct device stream_class_device;
+	dev_t stream_dev_t;
+	struct attribute_data_s attribute_data[ATTRIBUTE_ID_MAX];
+	bool notify_on_destroy; //!< True, if the stream has attributes
 };
 
 struct playback_data_s
 {
-	unsigned int                id;
-	player_playback_handle_t   *playback;
-	struct device              *playback_class_device;
-	dev_t                       playback_dev_t;
-	struct stream_data_s        stream_data[STREAM_MAX_NUMBER];
+	unsigned int id;
+	player_playback_handle_t *playback;
+	struct device *playback_class_device;
+	dev_t playback_dev_t;
+	struct stream_data_s stream_data[STREAM_MAX_NUMBER];
 };
 
-static struct playback_data_s   playback_data[PLAYBACK_MAX_NUMBER];
-static int                      playback_count          = 0;
+static struct playback_data_s playback_data[PLAYBACK_MAX_NUMBER];
+static int playback_count = 0;
 
-/*{{{  Player2 class and its intimate attributes*/
+/*{{{ Player2 class and its intimate attributes*/
 
 static unsigned long notify_count = 0;
 
@@ -103,14 +103,14 @@ static void do_notify(void)
 	sysfs_notify(&player2_class.subsys.kobj, NULL, "notify");
 #endif
 }
-/*}}}*/
-/*{{{  show_generic_attribute*/
+/*}}} */
+/*{{{ show_generic_attribute*/
 ssize_t show_generic_attribute(struct device *class_dev, char *buf, enum attribute_id_e attr_id, const char *attr_name)
 {
 	int Result = 0;
 	union attribute_descriptor_u value;
-	struct stream_data_s    *streamdata = container_of(class_dev, struct stream_data_s, stream_class_device);
-	struct attribute_data_s     *attributedata  = &streamdata->attribute_data[attr_id];
+	struct stream_data_s *streamdata = container_of(class_dev, struct stream_data_s, stream_class_device);
+	struct attribute_data_s *attributedata = &streamdata->attribute_data[attr_id];
 	Result = ComponentGetAttribute(attributedata->component, attr_name, &value);
 	if (Result < 0)
 	{
@@ -138,14 +138,14 @@ ssize_t show_generic_attribute(struct device *class_dev, char *buf, enum attribu
 			break;
 	}
 }
-/*}}}*/
-/*{{{  store_generic_attribute*/
+/*}}} */
+/*{{{ store_generic_attribute*/
 ssize_t store_generic_attribute(struct device *class_dev, const char *buf, enum attribute_id_e attr_id, const char *attr_name, size_t count)
 {
 	int Result = 0;
 	union attribute_descriptor_u value;
-	struct stream_data_s    *streamdata = container_of(class_dev, struct stream_data_s, stream_class_device);
-	struct attribute_data_s     *attributedata  = &streamdata->attribute_data[attr_id];
+	struct stream_data_s *streamdata = container_of(class_dev, struct stream_data_s, stream_class_device);
+	struct attribute_data_s *attributedata = &streamdata->attribute_data[attr_id];
 	switch (attr_id)
 	{
 		case ATTRIBUTE_ID_decode_errors:
@@ -165,19 +165,19 @@ ssize_t store_generic_attribute(struct device *class_dev, const char *buf, enum 
 	}
 	return count;
 }
-/*}}}*/
+/*}}} */
 
-#define SHOW(x)                                 \
-    ssize_t show_ ## x (struct device *class_dev, struct device_attribute *attr, char *buf)         \
-    {                                       \
-        return show_generic_attribute(class_dev, buf, ATTRIBUTE_ID_ ## x, #x);  \
-    }
+#define SHOW(x) \
+	ssize_t show_ ## x (struct device *class_dev, struct device_attribute *attr, char *buf) \
+	{ \
+		return show_generic_attribute(class_dev, buf, ATTRIBUTE_ID_ ## x, #x); \
+	}
 
-#define STORE(x)                                \
-    ssize_t store_ ## x (struct device *class_dev, struct device_attribute *attr, const char *buf, size_t count)        \
-    {                                       \
-        return store_generic_attribute(class_dev, buf, ATTRIBUTE_ID_ ## x, #x, count);\
-    }
+#define STORE(x) \
+	ssize_t store_ ## x (struct device *class_dev, struct device_attribute *attr, const char *buf, size_t count) \
+	{ \
+		return store_generic_attribute(class_dev, buf, ATTRIBUTE_ID_ ## x, #x, count);\
+	}
 
 /* creation of show_xx methods */
 
@@ -201,8 +201,8 @@ DEVICE_ATTR(sample_frequency, S_IRUGO, show_sample_frequency, NULL);
 DEVICE_ATTR(number_channels, S_IRUGO, show_number_channels, NULL);
 DEVICE_ATTR(number_of_samples_processed, S_IRUGO, show_number_of_samples_processed, NULL);
 
-/*{{{  get_playback*/
-struct playback_data_s* get_playback(void *playback)
+/*{{{ get_playback*/
+struct playback_data_s *get_playback(void *playback)
 {
 	int p;
 	//SYSFS_DEBUG("Playback = %p\n", playback);
@@ -216,9 +216,9 @@ struct playback_data_s* get_playback(void *playback)
 		return NULL;
 	return &playback_data[p];
 }
-/*}}}*/
-/*{{{  get_stream*/
-struct stream_data_s* get_stream(struct playback_data_s* PlaybackData, void* stream)
+/*}}} */
+/*{{{ get_stream*/
+struct stream_data_s *get_stream(struct playback_data_s *PlaybackData, void *stream)
 {
 	int s;
 	//SYSFS_DEBUG("Playback = %p, Stream = %p\n", PlaybackData->playback, stream);
@@ -232,26 +232,26 @@ struct stream_data_s* get_stream(struct playback_data_s* PlaybackData, void* str
 		return NULL;
 	return &PlaybackData->stream_data[s];
 }
-/*}}}*/
+/*}}} */
 
 /*
  * The following function is used by other modules (i.e. stmdvb) when they need to retrieve the proper device class
  * having player playback and stream playback structures pointers
  */
 
-/*{{{  player_sysfs_get_class_device*/
-struct device* player_sysfs_get_class_device(void *playback, void* stream)
+/*{{{ player_sysfs_get_class_device*/
+struct device *player_sysfs_get_class_device(void *playback, void *stream)
 {
-	struct playback_data_s*     PlaybackData;
-	struct stream_data_s*       StreamData;
+	struct playback_data_s *PlaybackData;
+	struct stream_data_s *StreamData;
 	mutex_lock(&SysfsWriteLock);
 	if (playback == NULL)
 	{
-		SYSFS_ERROR("Playback is  NULL. Nothing to do. \n");
+		SYSFS_ERROR("Playback is NULL. Nothing to do. \n");
 		goto err0;
 	}
 	/* Find specific playback */
-	PlaybackData    = get_playback(playback);
+	PlaybackData = get_playback(playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
@@ -263,7 +263,7 @@ struct device* player_sysfs_get_class_device(void *playback, void* stream)
 		return (PlaybackData->playback_class_device);
 	}
 	/* Find specific stream */
-	StreamData              = get_stream(PlaybackData, stream);
+	StreamData = get_stream(PlaybackData, stream);
 	if (!StreamData)
 	{
 		SYSFS_ERROR("This stream does not exist\n");
@@ -275,16 +275,16 @@ err0:
 	mutex_unlock(&SysfsWriteLock);
 	return NULL;
 }
-/*}}}*/
-/*{{{  player_sysfs_get_player_class_device*/
-struct class * player_sysfs_get_player_class(void)
+/*}}} */
+/*{{{ player_sysfs_get_player_class_device*/
+struct class *player_sysfs_get_player_class(void)
 	{
 			return (&player2_class);
 	}
-/*}}}*/
+/*}}} */
 
-/*{{{  player_sysfs_get_class_id*/
-int player_sysfs_get_stream_id(struct device* stream_dev)
+/*{{{ player_sysfs_get_class_id*/
+int player_sysfs_get_stream_id(struct device *stream_dev)
 {
 	struct stream_data_s *streamdata = NULL;
 	mutex_lock(&SysfsWriteLock);
@@ -292,9 +292,9 @@ int player_sysfs_get_stream_id(struct device* stream_dev)
 	mutex_unlock(&SysfsWriteLock);
 	return streamdata->id;
 }
-/*}}}*/
-/*{{{  player_sysfs_new_attribute_notification */
-void player_sysfs_new_attribute_notification(struct device* stream_dev)
+/*}}} */
+/*{{{ player_sysfs_new_attribute_notification */
+void player_sysfs_new_attribute_notification(struct device *stream_dev)
 {
 	if (stream_dev)
 	{
@@ -306,64 +306,64 @@ void player_sysfs_new_attribute_notification(struct device* stream_dev)
 		 * abuse at runtime.
 		 */
 		BUG_ON(((char *) stream_dev < ((char *) playback_data)) ||
-			   ((char *) stream_dev >= ((char *) playback_data) + sizeof(playback_data)));
+		       ((char *) stream_dev >= ((char *) playback_data) + sizeof(playback_data)));
 		streamdata = container_of(stream_dev, struct stream_data_s, stream_class_device);
 		streamdata->notify_on_destroy = true;
 	}
 	do_notify();
 }
-/*}}}*/
-/*{{{  event_playback_created_handler*/
-int event_playback_created_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_playback_created_handler*/
+int event_playback_created_handler(struct player_event_s *Event)
 {
-	struct playback_data_s* PlaybackData;
+	struct playback_data_s *PlaybackData;
 	if (!Event->playback)
 	{
 		SYSFS_ERROR("One or more parameters are NULL. Nothing to do. \n");
 		return 1;
 	}
 	/* Check that this playback does not already exist. In that case, do nothing */
-	PlaybackData    = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (PlaybackData) return 0;
 	/* Search for free slot */
-	PlaybackData    = get_playback(NULL);
+	PlaybackData = get_playback(NULL);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("Unable to create register playback - too many playbacks\n");
 		return -ENOMEM;
 	}
 	/* Populate structure */
-	PlaybackData->playback                  = Event->playback;
+	PlaybackData->playback = Event->playback;
 	/* Create a class device and register it with sysfs ( = sysfs/class/player2/playback0,1,2,3....) */
-	PlaybackData->playback_dev_t            = MKDEV(0, 0);
-	PlaybackData->playback_class_device     = device_create(&player2_class,                  // pointer to the struct class that this device should be registered to
-			NULL,                                 // pointer to the parent struct class_device of this new device, if any
-			PlaybackData->playback_dev_t,         // the dev_t for the (char) device to be added
-			NULL,                                 // a pointer to a struct device that is associated with this class device
-			"playback%d", PlaybackData->id);      // string for the class device's name
+	PlaybackData->playback_dev_t = MKDEV(0, 0);
+	PlaybackData->playback_class_device = device_create(&player2_class, // pointer to the struct class that this device should be registered to
+							    NULL, // pointer to the parent struct class_device of this new device, if any
+							    PlaybackData->playback_dev_t, // the dev_t for the (char) device to be added
+							    NULL, // a pointer to a struct device that is associated with this class device
+							    "playback%d", PlaybackData->id); // string for the class device's name
 	if (IS_ERR(PlaybackData->playback_class_device))
 	{
 		SYSFS_ERROR("Unable to create playback class device (%d)\n", (int)PlaybackData->playback_class_device);
-		PlaybackData->playback_class_device         = NULL;
-		PlaybackData->playback                      = NULL;
+		PlaybackData->playback_class_device = NULL;
+		PlaybackData->playback = NULL;
 		return -ENODEV;
 	}
 	/* Increase playback counter */
 	playback_count++;
 	return 0;
 }
-/*}}}*/
-/*{{{  event_playback_terminated_handler*/
-int event_playback_terminated_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_playback_terminated_handler*/
+int event_playback_terminated_handler(struct player_event_s *Event)
 {
-	struct playback_data_s* PlaybackData;
+	struct playback_data_s *PlaybackData;
 	if (!Event->playback)
 	{
 		SYSFS_ERROR("One or more parameters are NULL. Nothing to do. \n");
 		return 1;
 	}
 	/* Find specific playback */
-	PlaybackData    = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
@@ -375,19 +375,19 @@ int event_playback_terminated_handler(struct player_event_s* Event)
 	//SYSFS_DEBUG("Unregistering %p\n", PlaybackData->playback_class_device);
 	device_unregister(PlaybackData->playback_class_device);
 	/* Zero playback entry in table */
-	PlaybackData->playback_class_device             = NULL;
-	PlaybackData->playback                          = NULL;
+	PlaybackData->playback_class_device = NULL;
+	PlaybackData->playback = NULL;
 	/* Decrease playback counter */
 	playback_count--;
 	return 0;
 }
-/*}}}*/
-/*{{{  event_stream_created_handler*/
-int event_stream_created_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_stream_created_handler*/
+int event_stream_created_handler(struct player_event_s *Event)
 {
 	int Result = 0;
-	struct playback_data_s*     PlaybackData;
-	struct stream_data_s*   StreamData;
+	struct playback_data_s *PlaybackData;
+	struct stream_data_s *StreamData;
 	static char init_name[256];
 	if ((!Event->playback) || (!Event->stream))
 	{
@@ -395,32 +395,32 @@ int event_stream_created_handler(struct player_event_s* Event)
 		return 1;
 	}
 	/* Find specific playback */
-	PlaybackData            = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
 		return 1;
 	}
 	/* Check that this stream does not already exist. In that case, do nothing */
-	StreamData              = get_stream(PlaybackData, Event->stream);
+	StreamData = get_stream(PlaybackData, Event->stream);
 	if (StreamData) return 0;
 	/* Search for free slot */
-	StreamData              = get_stream(PlaybackData, NULL);
+	StreamData = get_stream(PlaybackData, NULL);
 	if (!StreamData)
 	{
 		SYSFS_ERROR("Unable to create stream - too many streams on playback %d\n", PlaybackData->id);
 		return -ENOMEM;
 	}
 	/* Populate structure */
-	StreamData->stream              = Event->stream;
+	StreamData->stream = Event->stream;
 	/* Create a class device and register it with sysfs ( = sysfs/class/player2/playbackx/stream0,1,2,3...) */
 #if 0
-	StreamData->stream_dev_t        = MKDEV(0, 0);
-	StreamData->stream_class_device = class_device_create(player2_class,            // pointer to the struct class that this device should be registered to
-									  PlaybackData->playback_class_device,    // pointer to the parent struct class_device of this new device, if any
-									  StreamData->stream_dev_t,               // the dev_t for the (char) device to be added
-									  NULL,                                   // a pointer to a struct device that is associated with this class device
-									  "stream%d", StreamData->id);            // string for the class device's name
+	StreamData->stream_dev_t = MKDEV(0, 0);
+	StreamData->stream_class_device = class_device_create(player2_class, // pointer to the struct class that this device should be registered to
+							      PlaybackData->playback_class_device, // pointer to the parent struct class_device of this new device, if any
+							      StreamData->stream_dev_t, // the dev_t for the (char) device to be added
+							      NULL, // a pointer to a struct device that is associated with this class device
+							      "stream%d", StreamData->id); // string for the class device's name
 #endif
 	// Populate the class structure in similar way to class_device_create()
 	memset(&StreamData->stream_class_device, 0, sizeof(struct device));
@@ -435,31 +435,31 @@ int event_stream_created_handler(struct player_event_s* Event)
 	if (Result || IS_ERR(&StreamData->stream_class_device))
 	{
 		SYSFS_ERROR("Unable to create stream_class_device %d (%d)\n", StreamData->id, (int)&StreamData->stream_class_device);
-		StreamData->stream          = NULL;
+		StreamData->stream = NULL;
 		return -ENODEV;
 	}
 	return 0;
 }
-/*}}}*/
-/*{{{  event_stream_terminated_handler*/
-int event_stream_terminated_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_stream_terminated_handler*/
+int event_stream_terminated_handler(struct player_event_s *Event)
 {
-	struct playback_data_s*     PlaybackData;
-	struct stream_data_s*   StreamData;
+	struct playback_data_s *PlaybackData;
+	struct stream_data_s *StreamData;
 	if ((!Event->playback) || (!Event->stream))
 	{
 		SYSFS_ERROR("One or more parameters are NULL. Nothing to do. \n");
 		return 1;
 	}
 	/* Find specific playback */
-	PlaybackData            = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
 		return 1;
 	}
 	/* Find specific stream */
-	StreamData              = get_stream(PlaybackData, Event->stream);
+	StreamData = get_stream(PlaybackData, Event->stream);
 	if (!StreamData)
 	{
 		SYSFS_ERROR("This stream does not exist\n");
@@ -471,18 +471,18 @@ int event_stream_terminated_handler(struct player_event_s* Event)
 	if (StreamData->notify_on_destroy)
 		do_notify();
 	/* Remove stream reference from playback database */
-	StreamData->stream              = NULL;
+	StreamData->stream = NULL;
 	return 0;
 }
-/*}}}*/
-/*{{{  event_attribute_created_handler*/
-int event_attribute_created_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_attribute_created_handler*/
+int event_attribute_created_handler(struct player_event_s *Event)
 {
-	struct playback_data_s*             PlaybackData;
-	struct stream_data_s*           StreamData;
-	const struct device_attribute*              attribute       = NULL;
-	unsigned int                attribute_id    = 0;
-	int                     Result      = 0;
+	struct playback_data_s *PlaybackData;
+	struct stream_data_s *StreamData;
+	const struct device_attribute *attribute = NULL;
+	unsigned int attribute_id = 0;
+	int Result = 0;
 	if ((!Event->component) || (!Event->playback) || (!Event->stream))
 	{
 		SYSFS_ERROR("One or more parameters are NULL. Nothing to do. \n");
@@ -493,54 +493,54 @@ int event_attribute_created_handler(struct player_event_s* Event)
 	{
 		case PLAYER_EVENT_INPUT_FORMAT_CREATED:
 			SYSFS_DEBUG("PLAYER_EVENT_INPUT_FORMAT_CREATED\n");
-			attribute_id        = ATTRIBUTE_ID_input_format;
-			attribute           = &dev_attr_input_format;
+			attribute_id = ATTRIBUTE_ID_input_format;
+			attribute = &dev_attr_input_format;
 			break;
 		case PLAYER_EVENT_SUPPORTED_INPUT_FORMAT_CREATED:
 			SYSFS_DEBUG("PLAYER_EVENT_SUPPORTED_INPUT_FORMAT_CREATED\n");
-			attribute_id        = ATTRIBUTE_ID_supported_input_format;
-			attribute           = &dev_attr_supported_input_format;
+			attribute_id = ATTRIBUTE_ID_supported_input_format;
+			attribute = &dev_attr_supported_input_format;
 			break;
 		case PLAYER_EVENT_DECODE_ERRORS_CREATED:
 			SYSFS_DEBUG("PLAYER_EVENT_DECODE_ERRORS_CREATED\n");
-			attribute_id        = ATTRIBUTE_ID_decode_errors;
-			attribute           = &dev_attr_decode_errors;
+			attribute_id = ATTRIBUTE_ID_decode_errors;
+			attribute = &dev_attr_decode_errors;
 			break;
 		case PLAYER_EVENT_SAMPLE_FREQUENCY_CREATED:
 			SYSFS_DEBUG("PLAYER_EVENT_SAMPLE_FREQUENCY_CREATED\n");
-			attribute_id        = ATTRIBUTE_ID_sample_frequency;
-			attribute           = &dev_attr_sample_frequency;
+			attribute_id = ATTRIBUTE_ID_sample_frequency;
+			attribute = &dev_attr_sample_frequency;
 			break;
 		case PLAYER_EVENT_NUMBER_OF_SAMPLES_PROCESSED:
 			SYSFS_DEBUG("PLAYER_EVENT_NUMBER_OF_SAMPLES_PROCESSED\n");
-			attribute_id        = ATTRIBUTE_ID_number_of_samples_processed;
-			attribute           = &dev_attr_number_of_samples_processed;
+			attribute_id = ATTRIBUTE_ID_number_of_samples_processed;
+			attribute = &dev_attr_number_of_samples_processed;
 			break;
 		default:
 			SYSFS_DEBUG("PLAYER_EVENT_NUMBER_CHANNELS_CREATED\n");
-			attribute_id        = ATTRIBUTE_ID_number_channels;
-			attribute           = &dev_attr_number_channels;
+			attribute_id = ATTRIBUTE_ID_number_channels;
+			attribute = &dev_attr_number_channels;
 			break;
 	}
 	/* Find specific playback */
-	PlaybackData            = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
 		goto err1;
 	}
 	/* Find specific stream */
-	StreamData              = get_stream(PlaybackData, Event->stream);
+	StreamData = get_stream(PlaybackData, Event->stream);
 	if (!StreamData)
 	{
 		/* Stream doesn't exist -> create new stream and get it */
-		Result          = event_stream_created_handler(Event);
+		Result = event_stream_created_handler(Event);
 		if (Result)
 		{
 			mutex_unlock(&SysfsWriteLock);
 			return Result;
 		}
-		StreamData      = get_stream(PlaybackData, Event->stream);
+		StreamData = get_stream(PlaybackData, Event->stream);
 		if (!StreamData)
 		{
 			SYSFS_ERROR("This stream does not exist\n");
@@ -548,9 +548,9 @@ int event_attribute_created_handler(struct player_event_s* Event)
 		}
 	}
 	/* Populate structure */
-	StreamData->attribute_data[attribute_id].component   = Event->component;
+	StreamData->attribute_data[attribute_id].component = Event->component;
 	/* Create attribute */
-	Result  = device_create_file(&StreamData->stream_class_device, (struct device_attribute*) attribute);
+	Result = device_create_file(&StreamData->stream_class_device, (struct device_attribute *) attribute);
 	if (Result)
 	{
 		SYSFS_ERROR("class_device_create_file failed (%d)\n", Result);
@@ -564,26 +564,26 @@ err1:
 	mutex_unlock(&SysfsWriteLock);
 	return 1;
 }
-/*}}}*/
-/*{{{  event_input_format_changed_handler*/
-int event_input_format_changed_handler(struct player_event_s* Event)
+/*}}} */
+/*{{{ event_input_format_changed_handler*/
+int event_input_format_changed_handler(struct player_event_s *Event)
 {
-	struct playback_data_s*             PlaybackData;
-	struct stream_data_s*           StreamData;
+	struct playback_data_s *PlaybackData;
+	struct stream_data_s *StreamData;
 	if ((!Event->playback) || (!Event->stream) || (!Event->component))
 	{
 		SYSFS_ERROR("%d: One or more parameters are NULL. Nothing to do. \n", __LINE__);
 		return 1;
 	}
 	/* Find specific playback */
-	PlaybackData            = get_playback(Event->playback);
+	PlaybackData = get_playback(Event->playback);
 	if (!PlaybackData)
 	{
 		SYSFS_ERROR("This playback does not exist\n");
 		return 1;
 	}
 	/* Find specific stream */
-	StreamData              = get_stream(PlaybackData, Event->stream);
+	StreamData = get_stream(PlaybackData, Event->stream);
 	if (!StreamData)
 	{
 		SYSFS_ERROR("This stream does not exist\n");
@@ -593,8 +593,8 @@ int event_input_format_changed_handler(struct player_event_s* Event)
 	sysfs_notify(&(StreamData->stream_class_device.kobj), NULL, "input_format");
 	return 0;
 }
-/*}}}*/
-/*{{{  dump*/
+/*}}} */
+/*{{{ dump*/
 void dump(void)
 {
 	int p;
@@ -603,18 +603,18 @@ void dump(void)
 	{
 		if (playback_data[p].playback)
 		{
-			SYSFS_DEBUG("***** (%d)  Playback %p, dev_t %x, class_device %p\n", p, playback_data[p].playback,
-						playback_data[p].playback_dev_t, playback_data[p].playback_class_device);
+			SYSFS_DEBUG("***** (%d) Playback %p, dev_t %x, class_device %p\n", p, playback_data[p].playback,
+				    playback_data[p].playback_dev_t, playback_data[p].playback_class_device);
 			for (s = 0; s < STREAM_MAX_NUMBER; s++)
 			{
 				if (playback_data[p].stream_data[s].stream)
-					SYSFS_DEBUG("     ***** (%d)  Stream %p\n", s, playback_data[p].stream_data[s].stream);
+					SYSFS_DEBUG(" ***** (%d) Stream %p\n", s, playback_data[p].stream_data[s].stream);
 			}
 		}
 	}
 }
-/*}}}*/
-/*{{{  SysfsInit*/
+/*}}} */
+/*{{{ SysfsInit*/
 void SysfsInit(void)
 {
 	int res;
@@ -629,15 +629,15 @@ void SysfsInit(void)
 	for (p = 0; p < PLAYBACK_MAX_NUMBER; p++)
 	{
 		memset(&playback_data[p], 0, sizeof(struct playback_data_s));
-		playback_data[p].id     = p;
+		playback_data[p].id = p;
 		for (s = 0; s < STREAM_MAX_NUMBER; s++)
-			playback_data[p].stream_data[s].id  = s;
+			playback_data[p].stream_data[s].id = s;
 	}
 	PlayerRegisterEventSignalCallback(PlayerSetEvent);
 	mutex_init(&SysfsWriteLock);
 }
-/*}}}*/
-/*{{{  SysfsDelete*/
+/*}}} */
+/*{{{ SysfsDelete*/
 void SysfsDelete(void)
 {
 	SYSFS_DEBUG("\n");
@@ -649,16 +649,16 @@ void SysfsDelete(void)
 	class_unregister(&player2_class);
 	mutex_destroy(&SysfsWriteLock);
 }
-/*}}}*/
+/*}}} */
 
-/*{{{  PlayerSetEvent*/
-static int PlayerSetEvent(struct player_event_s*       Event)
+/*{{{ PlayerSetEvent*/
+static int PlayerSetEvent(struct player_event_s *Event)
 {
 	int Result = 0;
 	/*SYSFS_DEBUG("\n");*/
 	//dump ();
-	/*SYSFS_DEBUG("DEBUG Event->playback  = %p\n",Event->playback);*/
-	/*SYSFS_DEBUG("DEBUG Event->stream    = %p\n",Event->stream);*/
+	/*SYSFS_DEBUG("DEBUG Event->playback = %p\n",Event->playback);*/
+	/*SYSFS_DEBUG("DEBUG Event->stream = %p\n",Event->stream);*/
 	/*SYSFS_DEBUG("DEBUG Event->component = %p\n",Event->component);*/
 	switch (Event->code)
 	{
@@ -716,7 +716,7 @@ static int PlayerSetEvent(struct player_event_s*       Event)
 	}
 	return Result;
 }
-/*}}}*/
+/*}}} */
 
 EXPORT_SYMBOL(SysfsInit);
 EXPORT_SYMBOL(SysfsDelete);

@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : player_coded_frame.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the coded frame buffer related functions of the
 generic class implementation of player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-23-Feb-09   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+23-Feb-09 Created Nick
 
 ************************************************************************/
 
@@ -36,17 +36,17 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Find the coded frame buffer pool associated with a stream playback
+// Find the coded frame buffer pool associated with a stream playback
 //
 
-PlayerStatus_t   Player_Generic_c::GetCodedFrameBufferPool(
-	PlayerStream_t        Stream,
-	BufferPool_t         *Pool,
-	unsigned int         *MaximumCodedFrameSize)
+PlayerStatus_t Player_Generic_c::GetCodedFrameBufferPool(
+	PlayerStream_t Stream,
+	BufferPool_t *Pool,
+	unsigned int *MaximumCodedFrameSize)
 {
-	PlayerStatus_t          Status;
+	PlayerStatus_t Status;
 #ifdef __KERNEL__
-	allocator_status_t      AStatus;
+	allocator_status_t AStatus;
 #endif
 	//
 	// If we haven't already created the buffer pool, do it now.
@@ -63,18 +63,18 @@ PlayerStatus_t   Player_Generic_c::GetCodedFrameBufferPool(
 			report(severity_error, "Player_Generic_c::GetCodedFrameBufferPool - Failed to allocate memory\n");
 			return PlayerInsufficientMemory;
 		}
-		Stream->CodedFrameMemory[CachedAddress]         = AllocatorUserAddress(Stream->CodedFrameMemoryDevice);
-		Stream->CodedFrameMemory[UnCachedAddress]       = AllocatorUncachedUserAddress(Stream->CodedFrameMemoryDevice);
-		Stream->CodedFrameMemory[PhysicalAddress]       = AllocatorPhysicalAddress(Stream->CodedFrameMemoryDevice);
+		Stream->CodedFrameMemory[CachedAddress] = AllocatorUserAddress(Stream->CodedFrameMemoryDevice);
+		Stream->CodedFrameMemory[UnCachedAddress] = AllocatorUncachedUserAddress(Stream->CodedFrameMemoryDevice);
+		Stream->CodedFrameMemory[PhysicalAddress] = AllocatorPhysicalAddress(Stream->CodedFrameMemoryDevice);
 #else
-		static unsigned char    Memory[4][4 * 1024 * 1024];
-		Stream->CodedFrameMemory[CachedAddress]         = Memory[Stream->StreamType];
-		Stream->CodedFrameMemory[UnCachedAddress]       = NULL;
-		Stream->CodedFrameMemory[PhysicalAddress]       = Memory[Stream->StreamType];
-		Stream->CodedMemorySize             = 4 * 1024 * 1024;
+		static unsigned char Memory[4][4 * 1024 * 1024];
+		Stream->CodedFrameMemory[CachedAddress] = Memory[Stream->StreamType];
+		Stream->CodedFrameMemory[UnCachedAddress] = NULL;
+		Stream->CodedFrameMemory[PhysicalAddress] = Memory[Stream->StreamType];
+		Stream->CodedMemorySize = 4 * 1024 * 1024;
 #endif
 //
-		Status  = BufferManager->CreatePool(&Stream->CodedFrameBufferPool, Stream->CodedFrameBufferType, Stream->CodedFrameCount, Stream->CodedMemorySize, Stream->CodedFrameMemory);
+		Status = BufferManager->CreatePool(&Stream->CodedFrameBufferPool, Stream->CodedFrameBufferType, Stream->CodedFrameCount, Stream->CodedMemorySize, Stream->CodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Player_Generic_c::GetCodedFrameBufferPool - Failed to create the pool.\n");
@@ -85,9 +85,9 @@ PlayerStatus_t   Player_Generic_c::GetCodedFrameBufferPool(
 	// Setup the parameters and return
 	//
 	if (Pool != NULL)
-		*Pool           = Stream->CodedFrameBufferPool;
+		*Pool = Stream->CodedFrameBufferPool;
 	if (MaximumCodedFrameSize != NULL)
-		*MaximumCodedFrameSize  = Stream->CodedFrameMaximumSize;
+		*MaximumCodedFrameSize = Stream->CodedFrameMaximumSize;
 	return PlayerNoError;
 }
 

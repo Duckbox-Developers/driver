@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : sysfs_module.c
-Author :           Julian
+Author : Julian
 
 Implementation of the sysfs access to the ST streaming engine
 
-Date        Modification                                    Name
-----        ------------                                    --------
-28-Apr-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+28-Apr-08 Created Julian
 
 ************************************************************************/
 
@@ -43,8 +43,8 @@ Date        Modification                                    Name
 #include "sysfs_module.h"
 #include "player_interface.h"
 
-static int  __init      SysfsLoadModule(void);
-static void __exit      SysfsUnloadModule(void);
+static int __init SysfsLoadModule(void);
+static void __exit SysfsUnloadModule(void);
 
 module_init(SysfsLoadModule);
 module_exit(SysfsUnloadModule);
@@ -53,13 +53,13 @@ MODULE_DESCRIPTION("Sysfs driver for accessing STM streaming architecture.");
 MODULE_AUTHOR("Julian Wilson");
 MODULE_LICENSE("GPL");
 
-#define MODULE_NAME     "Player sysfs"
+#define MODULE_NAME "Player sysfs"
 
-struct SysfsContext_s*   SysfsContext;
+struct SysfsContext_s *SysfsContext;
 
 static int __init SysfsLoadModule(void)
 {
-	SysfsContext        = kmalloc(sizeof(struct SysfsContext_s),  GFP_KERNEL);
+	SysfsContext = kmalloc(sizeof(struct SysfsContext_s), GFP_KERNEL);
 	if (SysfsContext == NULL)
 	{
 		SYSFS_ERROR("Unable to allocate device memory\n");
@@ -75,7 +75,7 @@ static void __exit SysfsUnloadModule(void)
 	PlayerInterfaceDelete();
 	if (SysfsContext != NULL)
 		kfree(SysfsContext);
-	SysfsContext        = NULL;
+	SysfsContext = NULL;
 	SYSFS_DEBUG("STM sysfs interface to stream device unloaded\n");
 	return;
 }

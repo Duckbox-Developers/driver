@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : player_events.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the event related functions of the
 generic class implementation of player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-06-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+06-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -35,19 +35,19 @@ Date        Modification                                    Name
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Useful defines/macros that need not be user visible
+// Useful defines/macros that need not be user visible
 //
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Specify which ongoing events will be signalled
+// Specify which ongoing events will be signalled
 //
 
-PlayerStatus_t   Player_Generic_c::SpecifySignalledEvents(
-	PlayerPlayback_t          Playback,
-	PlayerStream_t            Stream,
-	PlayerEventMask_t         Events,
-	void                     *UserData)
+PlayerStatus_t Player_Generic_c::SpecifySignalledEvents(
+	PlayerPlayback_t Playback,
+	PlayerStream_t Stream,
+	PlayerEventMask_t Events,
+	void *UserData)
 {
 	//
 	// Check the parameters are legal
@@ -71,31 +71,31 @@ PlayerStatus_t   Player_Generic_c::SpecifySignalledEvents(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Specify an OS independent event to be signalled when a
-//      player 2 event is ready for collection.
+// Specify an OS independent event to be signalled when a
+// player 2 event is ready for collection.
 //
 
-PlayerStatus_t   Player_Generic_c::SetEventSignal(
-	PlayerPlayback_t          Playback,
-	PlayerStream_t            Stream,
-	PlayerEventMask_t         Events,
-	OS_Event_t               *Event)
+PlayerStatus_t Player_Generic_c::SetEventSignal(
+	PlayerPlayback_t Playback,
+	PlayerStream_t Stream,
+	PlayerEventMask_t Events,
+	OS_Event_t *Event)
 {
-	unsigned int      i;
-	PlayerStatus_t    Status;
-	unsigned int     *PtrToIndex;
+	unsigned int i;
+	PlayerStatus_t Status;
+	unsigned int *PtrToIndex;
 	//
 	// Split into two paths, are we clearing a signal registration, or setting one
 	//
 	if (Event == NULL)
 	{
 		for (i = 0; i < PLAYER_MAX_EVENT_SIGNALS; i++)
-			if ((ExternalEventSignals[i].Signal         != NULL)        &&
-					(ExternalEventSignals[i].Playback       == Playback)    &&
-					(ExternalEventSignals[i].Stream         == Stream)      &&
-					(ExternalEventSignals[i].Events         == Events))
+			if ((ExternalEventSignals[i].Signal != NULL) &&
+					(ExternalEventSignals[i].Playback == Playback) &&
+					(ExternalEventSignals[i].Stream == Stream) &&
+					(ExternalEventSignals[i].Events == Events))
 			{
-				ExternalEventSignals[i].Signal  = NULL;
+				ExternalEventSignals[i].Signal = NULL;
 				return PlayerNoError;
 			}
 		report(severity_error, "Player_Generic_c::SetEventSignal - Exact match not found for clearing event signal.\n");
@@ -112,10 +112,10 @@ PlayerStatus_t   Player_Generic_c::SetEventSignal(
 		for (i = 0; i < PLAYER_MAX_EVENT_SIGNALS; i++)
 			if (ExternalEventSignals[i].Signal == NULL)
 			{
-				ExternalEventSignals[i].Playback        = Playback;
-				ExternalEventSignals[i].Stream          = Stream;
-				ExternalEventSignals[i].Events          = Events;
-				ExternalEventSignals[i].Signal          = Event;
+				ExternalEventSignals[i].Playback = Playback;
+				ExternalEventSignals[i].Stream = Stream;
+				ExternalEventSignals[i].Events = Events;
+				ExternalEventSignals[i].Signal = Event;
 				break;
 			}
 		OS_UnLockMutex(&Lock);
@@ -125,7 +125,7 @@ PlayerStatus_t   Player_Generic_c::SetEventSignal(
 			return PlayerToMany;
 		}
 //
-		Status  = ScanEventListForMatch(Playback, Stream, Events, &PtrToIndex);
+		Status = ScanEventListForMatch(Playback, Stream, Events, &PtrToIndex);
 		if (Status == PlayerNoError)
 			OS_SetEvent(Event);
 	}
@@ -135,21 +135,21 @@ PlayerStatus_t   Player_Generic_c::SetEventSignal(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Retrieve the next player 2 event record matching the given criteria.
+// Retrieve the next player 2 event record matching the given criteria.
 //
 
-PlayerStatus_t   Player_Generic_c::GetEventRecord(
-	PlayerPlayback_t          Playback,
-	PlayerStream_t            Stream,
-	PlayerEventMask_t         Events,
-	PlayerEventRecord_t      *Record,
-	bool                      NonBlocking)
+PlayerStatus_t Player_Generic_c::GetEventRecord(
+	PlayerPlayback_t Playback,
+	PlayerStream_t Stream,
+	PlayerEventMask_t Events,
+	PlayerEventRecord_t *Record,
+	bool NonBlocking)
 {
-	PlayerStatus_t            Status;
-	unsigned int              Index;
-	unsigned int             *PtrToIndex;
-	PlayerPlayback_t          PlaybackScan;
-	PlayerStream_t            StreamScan;
+	PlayerStatus_t Status;
+	unsigned int Index;
+	unsigned int *PtrToIndex;
+	PlayerPlayback_t PlaybackScan;
+	PlayerStream_t StreamScan;
 //
 	do
 	{
@@ -158,13 +158,13 @@ PlayerStatus_t   Player_Generic_c::GetEventRecord(
 		// While locked scan and if possible take the event
 		//
 		OS_LockMutex(&Lock);
-		Status  = ScanEventListForMatch(Playback, Stream, Events, &PtrToIndex);
+		Status = ScanEventListForMatch(Playback, Stream, Events, &PtrToIndex);
 		if (Status == PlayerNoError)
 		{
-			Index                       = *PtrToIndex;
+			Index = *PtrToIndex;
 			memcpy(Record, &EventList[Index].Record, sizeof(PlayerEventRecord_t));
-			*PtrToIndex                 = EventList[Index].NextIndex;
-			EventList[Index].NextIndex  = INVALID_INDEX;
+			*PtrToIndex = EventList[Index].NextIndex;
+			EventList[Index].NextIndex = INVALID_INDEX;
 			EventList[Index].Record.Code = EventIllegalIdentifier;
 			//
 			// If we just removed the tail, walk the list to find it again.
@@ -187,9 +187,9 @@ PlayerStatus_t   Player_Generic_c::GetEventRecord(
 			OS_WaitForEvent(&InternalEventSignal, PLAYER_MAX_EVENT_WAIT);
 			if (Playback != PlayerAllPlaybacks)
 			{
-				for (PlaybackScan       = ListOfPlaybacks;
+				for (PlaybackScan = ListOfPlaybacks;
 						(PlaybackScan != NULL) && (PlaybackScan != Playback);
-						PlaybackScan       = PlaybackScan->Next);
+						PlaybackScan = PlaybackScan->Next);
 				if (PlaybackScan == NULL)
 				{
 					report(severity_error, "Player_Generic_c::GetEventRecord - Attempting to get an event record that on a playback that no longer exists.\n");
@@ -215,12 +215,12 @@ PlayerStatus_t   Player_Generic_c::GetEventRecord(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Internal function to generate a player 2 event
+// Internal function to generate a player 2 event
 //
 
-PlayerStatus_t   Player_Generic_c::SignalEvent(PlayerEventRecord_t      *Record)
+PlayerStatus_t Player_Generic_c::SignalEvent(PlayerEventRecord_t *Record)
 {
-	unsigned int    i;
+	unsigned int i;
 //
 	OS_LockMutex(&Lock);
 	//
@@ -230,16 +230,16 @@ PlayerStatus_t   Player_Generic_c::SignalEvent(PlayerEventRecord_t      *Record)
 		if (EventList[i].Record.Code == EventIllegalIdentifier)
 		{
 			memcpy(&EventList[i].Record, Record, sizeof(PlayerEventRecord_t));
-			EventList[i].NextIndex      = INVALID_INDEX;
+			EventList[i].NextIndex = INVALID_INDEX;
 			if (EventListTail != INVALID_INDEX)
 			{
-				EventList[EventListTail].NextIndex      = i;
-				EventListTail                           = i;
+				EventList[EventListTail].NextIndex = i;
+				EventListTail = i;
 			}
 			else
 			{
-				EventListHead                           = i;
-				EventListTail                           = i;
+				EventListHead = i;
+				EventListTail = i;
 			}
 			break;
 		}
@@ -250,8 +250,8 @@ PlayerStatus_t   Player_Generic_c::SignalEvent(PlayerEventRecord_t      *Record)
 		// the oldest event and then recurse into this function.
 		//
 		report(severity_error, "Player_Generic_c::SignalEvent - Discarding uncollected event (%08llx)\n", EventList[EventListHead].Record.Code);
-		EventList[EventListHead].Record.Code    = EventIllegalIdentifier;
-		EventListHead                           = EventList[EventListHead].NextIndex;
+		EventList[EventListHead].Record.Code = EventIllegalIdentifier;
+		EventListHead = EventList[EventListHead].NextIndex;
 		OS_UnLockMutex(&Lock);
 		return SignalEvent(Record);
 	}
@@ -271,20 +271,20 @@ PlayerStatus_t   Player_Generic_c::SignalEvent(PlayerEventRecord_t      *Record)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Internal function to scan the list of events, and see if any of them match the criteria
+// Internal function to scan the list of events, and see if any of them match the criteria
 //
 
-PlayerStatus_t   Player_Generic_c::ScanEventListForMatch(
-	PlayerPlayback_t          Playback,
-	PlayerStream_t            Stream,
-	PlayerEventMask_t         Events,
-	unsigned int            **PtrToIndex)
+PlayerStatus_t Player_Generic_c::ScanEventListForMatch(
+	PlayerPlayback_t Playback,
+	PlayerStream_t Stream,
+	PlayerEventMask_t Events,
+	unsigned int **PtrToIndex)
 {
-	unsigned int    *IndexPtr;
+	unsigned int *IndexPtr;
 //
-	for (IndexPtr        = &EventListHead;
-			*IndexPtr      != INVALID_INDEX;
-			IndexPtr        = &EventList[*IndexPtr].NextIndex)
+	for (IndexPtr = &EventListHead;
+			*IndexPtr != INVALID_INDEX;
+			IndexPtr = &EventList[*IndexPtr].NextIndex)
 		if (EventMatchesCriteria(&EventList[*IndexPtr].Record, Playback, Stream, Events))
 		{
 			*PtrToIndex = IndexPtr;
@@ -296,21 +296,21 @@ PlayerStatus_t   Player_Generic_c::ScanEventListForMatch(
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Internal function to scan the list of events, and see if any of them match the criteria
+// Internal function to scan the list of events, and see if any of them match the criteria
 //
 
-bool   Player_Generic_c::EventMatchesCriteria(PlayerEventRecord_t      *Record,
-		PlayerPlayback_t          Playback,
-		PlayerStream_t            Stream,
-		PlayerEventMask_t         Events)
+bool Player_Generic_c::EventMatchesCriteria(PlayerEventRecord_t *Record,
+					    PlayerPlayback_t Playback,
+					    PlayerStream_t Stream,
+					    PlayerEventMask_t Events)
 {
-	bool    PlaybackMatch;
-	bool    StreamMatch;
-	bool    EventMatch;
+	bool PlaybackMatch;
+	bool StreamMatch;
+	bool EventMatch;
 //
-	PlaybackMatch       = (Playback == PlayerAllPlaybacks) || (Playback == Record->Playback);
-	StreamMatch         = (Stream == PlayerAllStreams)     || (Stream   == Record->Stream);
-	EventMatch          = (Events & Record->Code) != 0;
+	PlaybackMatch = (Playback == PlayerAllPlaybacks) || (Playback == Record->Playback);
+	StreamMatch = (Stream == PlayerAllStreams) || (Stream == Record->Stream);
+	EventMatch = (Events & Record->Code) != 0;
 //
 	return (PlaybackMatch && StreamMatch && EventMatch);
 }

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : display.c
-Author :           Julian
+Author : Julian
 
 Access to all platform specific display information etc
 
-Date        Modification                                    Name
-----        ------------                                    --------
-05-Apr-07   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+05-Apr-07 Created Julian
 
 ************************************************************************/
 
@@ -40,22 +40,22 @@ Date        Modification                                    Name
 #include "player_module.h"
 #include "display.h"
 
-#define MAX_PIPELINES                           4
+#define MAX_PIPELINES 4
 
 #ifdef CONFIG_DUAL_DISPLAY
-static const stm_plane_id_t                     PlaneId[MAX_PIPELINES]  = {OUTPUT_VID1, OUTPUT_GDP3, OUTPUT_VID1, OUTPUT_GDP2};
+static const stm_plane_id_t PlaneId[MAX_PIPELINES] = {OUTPUT_VID1, OUTPUT_GDP3, OUTPUT_VID1, OUTPUT_GDP2};
 #else
-static const stm_plane_id_t                     PlaneId[MAX_PIPELINES]  = {OUTPUT_VID1, OUTPUT_VID2, OUTPUT_VID1, OUTPUT_GDP2};
+static const stm_plane_id_t PlaneId[MAX_PIPELINES] = {OUTPUT_VID1, OUTPUT_VID2, OUTPUT_VID1, OUTPUT_GDP2};
 #endif
 
-static struct stmcore_display_pipeline_data     PipelineData[STMCORE_MAX_PLANES];
-static unsigned int                             Pipelines;
+static struct stmcore_display_pipeline_data PipelineData[STMCORE_MAX_PLANES];
+static unsigned int Pipelines;
 
-/*{{{  DisplayInit*/
+/*{{{ DisplayInit*/
 int DisplayInit(void)
 {
 	int i;
-	Pipelines   = 0;
+	Pipelines = 0;
 	for (i = 0; i < MAX_PIPELINES; i++)
 	{
 		if (stmcore_get_display_pipeline(i, &PipelineData[i]) == 0)
@@ -63,27 +63,27 @@ int DisplayInit(void)
 		else
 			break;
 	}
-	Pipelines   = i;
+	Pipelines = i;
 	return 0;
 }
-/*}}}*/
-/*{{{  GetDisplayInfo*/
-int GetDisplayInfo(unsigned int            Id,
-				   DeviceHandle_t*         Device,
-				   unsigned int*           DisplayPlaneId,
-				   unsigned int*           OutputId,
-				   BufferLocation_t*       BufferLocation)
+/*}}} */
+/*{{{ GetDisplayInfo*/
+int GetDisplayInfo(unsigned int Id,
+		   DeviceHandle_t *Device,
+		   unsigned int *DisplayPlaneId,
+		   unsigned int *OutputId,
+		   BufferLocation_t *BufferLocation)
 {
-	int                                         i;
-	struct stmcore_display_pipeline_data*       Pipeline;
-	*DisplayPlaneId     = PlaneId[Id];
+	int i;
+	struct stmcore_display_pipeline_data *Pipeline;
+	*DisplayPlaneId = PlaneId[Id];
 #if defined (CONFIG_DUAL_DISPLAY)
-	Pipeline            = &PipelineData[Id];
+	Pipeline = &PipelineData[Id];
 #else
 	if (Id == DISPLAY_ID_PIP)
-		Pipeline        = &PipelineData[DISPLAY_ID_MAIN];
+		Pipeline = &PipelineData[DISPLAY_ID_MAIN];
 	else
-		Pipeline        = &PipelineData[Id];
+		Pipeline = &PipelineData[Id];
 #endif
 	for (i = 0; i < STMCORE_MAX_PLANES; i++)
 	{
@@ -97,9 +97,9 @@ int GetDisplayInfo(unsigned int            Id,
 			break;
 		}
 	}
-	*Device     = Pipeline->device;
-	*OutputId   = Pipeline->main_output_id;
+	*Device = Pipeline->device;
+	*OutputId = Pipeline->main_output_id;
 	PLAYER_TRACE("Device %p, DisplayPlaneId %x, OutputId %d, Pipeline %d\n", *Device, *DisplayPlaneId, *OutputId, Id);
-	return  0;
+	return 0;
 }
-/*}}}*/
+/*}}} */

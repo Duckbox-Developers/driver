@@ -13,22 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : wma.h
-Author :           Sylvain
+Author : Sylvain
 
 Definition of the types and constants that are used by several components
 dealing with wma audio decode/display for havana.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-24-Apr-06   Created                                         Mark
-06-June-07  Ported to player2                               Sylvain
+Date Modification Name
+---- ------------ --------
+24-Apr-06 Created Mark
+06-June-07 Ported to player2 Sylvain
 
 ************************************************************************/
 
@@ -40,9 +40,9 @@ Date        Modification                                    Name
 
 // ////////////////////////////////////////////////////////////////////////////
 //
-//  General defines of start codes etc.
+// General defines of start codes etc.
 //
-#define WMA_FRAME_HEADER_SIZE                 0
+#define WMA_FRAME_HEADER_SIZE 0
 
 ////////////////////////////////////////////////////////////////////
 ///
@@ -57,37 +57,37 @@ typedef struct WmaAudioParsedFrameHeader_s
 
 typedef struct WmaAudioStreamParameters_s
 {
-//    unsigned int Unused;
+//	unsigned int Unused;
 
-	unsigned int        StreamNumber;
-	unsigned int        FormatTag;
-	unsigned int        NumberOfChannels;
-	unsigned int        SamplesPerSecond;
-	unsigned int        AverageNumberOfBytesPerSecond;
-	unsigned int        BlockAlignment;
-	unsigned int        BitsPerSample;
-	unsigned int        ValidBitsPerSample;
-	unsigned int        ChannelMask;
-	unsigned int        SamplesPerBlock;
-	unsigned int        EncodeOptions;
-	unsigned int        SuperBlockAlign;
+	unsigned int StreamNumber;
+	unsigned int FormatTag;
+	unsigned int NumberOfChannels;
+	unsigned int SamplesPerSecond;
+	unsigned int AverageNumberOfBytesPerSecond;
+	unsigned int BlockAlignment;
+	unsigned int BitsPerSample;
+	unsigned int ValidBitsPerSample;
+	unsigned int ChannelMask;
+	unsigned int SamplesPerBlock;
+	unsigned int EncodeOptions;
+	unsigned int SuperBlockAlign;
 	// calculated parameters
-	unsigned int        SamplesPerFrame;
-	unsigned int        SamplingFrequency;
+	unsigned int SamplesPerFrame;
+	unsigned int SamplingFrequency;
 //
 
 } WmaAudioStreamParameters_t;
 
-#define BUFFER_WMA_AUDIO_STREAM_PARAMETERS        "WmaAudioStreamParameters"
-#define BUFFER_WMA_AUDIO_STREAM_PARAMETERS_TYPE   {BUFFER_WMA_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(WmaAudioStreamParameters_t)}
+#define BUFFER_WMA_AUDIO_STREAM_PARAMETERS "WmaAudioStreamParameters"
+#define BUFFER_WMA_AUDIO_STREAM_PARAMETERS_TYPE {BUFFER_WMA_AUDIO_STREAM_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(WmaAudioStreamParameters_t)}
 
 ////////////////////////////////////////////////////////////////
 ///
 /// Meta-data unique to WMA audio.
 ///
 /// \todo This is actually pretty generic stuff; if nothing radical emerges
-///       in the other audio codecs perhaps this should be combined. Alternatively
-///       just get rid of this type entirely and rename MpegAudioParsedFrameHeader_t.
+/// in the other audio codecs perhaps this should be combined. Alternatively
+/// just get rid of this type entirely and rename MpegAudioParsedFrameHeader_t.
 ///
 typedef struct WmaAudioFrameParameters_s
 {
@@ -98,7 +98,7 @@ typedef struct WmaAudioFrameParameters_s
 	unsigned int FrameSize;
 } WmaAudioFrameParameters_t;
 
-#define BUFFER_WMA_AUDIO_FRAME_PARAMETERS        "WmaAudioFrameParameters"
-#define BUFFER_WMA_AUDIO_FRAME_PARAMETERS_TYPE   {BUFFER_WMA_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(WmaAudioFrameParameters_t)}
+#define BUFFER_WMA_AUDIO_FRAME_PARAMETERS "WmaAudioFrameParameters"
+#define BUFFER_WMA_AUDIO_FRAME_PARAMETERS_TYPE {BUFFER_WMA_AUDIO_FRAME_PARAMETERS, BufferDataTypeBase, AllocateFromOSMemory, 4, 0, true, true, sizeof(WmaAudioFrameParameters_t)}
 
 #endif /* H_WMA_ */

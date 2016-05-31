@@ -11,10 +11,10 @@
 
 #include "asf.h"
 
-#define WMA_VERSION_1           0x160
-#define WMA_VERSION_2_9         0x161
-#define WMA_VERSION_9_PRO       0x162
-#define WMA_LOSSLESS            0x163
+#define WMA_VERSION_1 0x160
+#define WMA_VERSION_2_9 0x161
+#define WMA_VERSION_9_PRO 0x162
+#define WMA_LOSSLESS 0x163
 
 typedef unsigned char asf_byte;
 typedef unsigned short asf_u16;
@@ -25,16 +25,16 @@ class ASF_StreamPropertiesObject_c
 	public:
 
 		asf_guid_index object_id;
-		asf_u32   object_size;
+		asf_u32 object_size;
 		asf_guid_index stream_type;
 		asf_guid_index error_correction_type;
-		asf_u32   time_offset;
-		asf_u32   time_offset_hi;
-		asf_u32   type_specific_data_length;
-		asf_u32   error_correction_data_length;
-		asf_u32   flags;
-		asf_byte  stream_number;
-		bool      encrypted_content_flag;
+		asf_u32 time_offset;
+		asf_u32 time_offset_hi;
+		asf_u32 type_specific_data_length;
+		asf_u32 error_correction_data_length;
+		asf_u32 flags;
+		asf_byte stream_number;
+		bool encrypted_content_flag;
 		asf_byte *type_specific_data; // this field has 'odd' lifetime
 		asf_byte *error_correction_data; // this field has 'odd' lifetime
 

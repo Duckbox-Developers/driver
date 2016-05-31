@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : buffer_manager.h
-Author :           Nick
+Author : Nick
 
 Definition of the pure virtual class defining the interface to a buffer management
 module for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-03-Jul-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+03-Jul-06 Created Nick
 
 ************************************************************************/
 
@@ -38,13 +38,13 @@ Date        Modification                                    Name
 
 typedef enum
 {
-	NoAllocation        = 0,
+	NoAllocation = 0,
 	AllocateFromOSMemory,
-	AllocateFromDeviceMemory,           // Allocator
-	AllocateFromDeviceVideoLMIMemory,       // Allocator
+	AllocateFromDeviceMemory, // Allocator
+	AllocateFromDeviceVideoLMIMemory, // Allocator
 	AllocateFromSuppliedBlock,
 	AllocateIndividualSuppliedBlocks,
-	AllocateFromNamedDeviceMemory       // Allocator with memory partition name
+	AllocateFromNamedDeviceMemory // Allocator with memory partition name
 } BufferAllocationSource_t;
 
 // ---------------------------------------------------------------------
@@ -54,30 +54,30 @@ typedef enum
 
 typedef enum
 {
-	BufferDataTypeBase      = 0x0000,
-	MetaDataTypeBase        = 0x8000,
+	BufferDataTypeBase = 0x0000,
+	MetaDataTypeBase = 0x8000,
 } BufferPredefinedType_t;
 
 //
 
 typedef struct BufferDataDescriptor_s
 {
-	const char          *TypeName;
-	BufferType_t         Type;
+	const char *TypeName;
+	BufferType_t Type;
 
-	BufferAllocationSource_t     AllocationSource;
-	unsigned int         RequiredAllignment;
-	unsigned int         AllocationUnitSize;
+	BufferAllocationSource_t AllocationSource;
+	unsigned int RequiredAllignment;
+	unsigned int AllocationUnitSize;
 
-	bool             HasFixedSize;
-	bool             AllocateOnPoolCreation;
-	unsigned int         FixedSize;
+	bool HasFixedSize;
+	bool AllocateOnPoolCreation;
+	unsigned int FixedSize;
 } BufferDataDescriptor_t;
 
 //
 
-#define InitializeBufferDataDescriptor(d)   d = { NULL, BufferDataTypeBase, NoAllocation,         32, 4096, false, false, NOT_SPECIFIED }
-#define InitializeMetaDataDescriptor(d)     d = { NULL, MetaDataTypeBase,   AllocateFromOSMemory, 16,    0, true,  false, NOT_SPECIFIED }
+#define InitializeBufferDataDescriptor(d) d = { NULL, BufferDataTypeBase, NoAllocation, 32, 4096, false, false, NOT_SPECIFIED }
+#define InitializeMetaDataDescriptor(d) d = { NULL, MetaDataTypeBase, AllocateFromOSMemory, 16, 0, true, false, NOT_SPECIFIED }
 
 // ---------------------------------------------------------------------
 //
@@ -92,17 +92,17 @@ class BufferManager_c : public BaseComponentClass_c
 		// Add to the defined types
 		//
 
-		virtual BufferStatus_t  CreateBufferDataType(
-			BufferDataDescriptor_t   *Descriptor,
-			BufferType_t         *Type) = 0;
+		virtual BufferStatus_t CreateBufferDataType(
+			BufferDataDescriptor_t *Descriptor,
+			BufferType_t *Type) = 0;
 
-		virtual BufferStatus_t  FindBufferDataType(
-			const char       *TypeName,
-			BufferType_t         *Type) = 0;
+		virtual BufferStatus_t FindBufferDataType(
+			const char *TypeName,
+			BufferType_t *Type) = 0;
 
-		virtual BufferStatus_t  GetDescriptor(BufferType_t        Type,
-											  BufferPredefinedType_t    RequiredKind,
-											  BufferDataDescriptor_t  **Descriptor) = 0;
+		virtual BufferStatus_t GetDescriptor(BufferType_t Type,
+						     BufferPredefinedType_t RequiredKind,
+						     BufferDataDescriptor_t **Descriptor) = 0;
 
 		//
 		// Create/destroy a pool of buffers rather than overload the create function,
@@ -111,21 +111,21 @@ class BufferManager_c : public BaseComponentClass_c
 		// For example no call should specify both a memory pool and an array of memory blocks.
 		//
 
-		virtual BufferStatus_t   CreatePool(BufferPool_t     *Pool,
-											BufferType_t      Type,
-											unsigned int      NumberOfBuffers       = UNRESTRICTED_NUMBER_OF_BUFFERS,
-											unsigned int      Size              = UNSPECIFIED_SIZE,
-											void         *MemoryPool[3]         = NULL,
-											void         *ArrayOfMemoryBlocks[][3]  = NULL,
-											char         *DeviceMemoryPartitionName = NULL) = 0;
+		virtual BufferStatus_t CreatePool(BufferPool_t *Pool,
+						  BufferType_t Type,
+						  unsigned int NumberOfBuffers = UNRESTRICTED_NUMBER_OF_BUFFERS,
+						  unsigned int Size = UNSPECIFIED_SIZE,
+						  void *MemoryPool[3] = NULL,
+						  void *ArrayOfMemoryBlocks[][3] = NULL,
+						  char *DeviceMemoryPartitionName = NULL) = 0;
 
-		virtual BufferStatus_t   DestroyPool(BufferPool_t     Pool) = 0;
+		virtual BufferStatus_t DestroyPool(BufferPool_t Pool) = 0;
 
 		//
 		// Status dump/reporting
 		//
 
-		virtual void         Dump(unsigned int    Flags = DumpAll) = 0;
+		virtual void Dump(unsigned int Flags = DumpAll) = 0;
 };
 
 #endif

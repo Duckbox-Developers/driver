@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_packet_dvp.h
-Author :           Nick
+Author : Nick
 
 Definition of the dvp extension to the basic packet input
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jul-08   Created                     Nick
+Date Modification Name
+---- ------------ --------
+08-Jul-08 Created Nick
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_packet.h"
 
@@ -59,11 +59,11 @@ class Collator_PacketDvp_c : public Collator_Packet_c
 		// Collator class functions
 		//
 
-		CollatorStatus_t   Input(PlayerInputDescriptor_t  *Input,
-								 unsigned int          DataLength,
-								 void                     *Data,
-								 bool              NonBlocking = false,
-								 unsigned int         *DataLengthRemaining = NULL);
+		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+				       unsigned int DataLength,
+				       void *Data,
+				       bool NonBlocking = false,
+				       unsigned int *DataLengthRemaining = NULL);
 };
 
 #endif

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_video_vc1.cpp
-Author :           Julian
+Author : Julian
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-12-Jun-07   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+12-Jun-07 Created Julian
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_video_vc1.h"
 #include "mpeg2.h"
@@ -84,17 +84,17 @@ CollatorStatus_t Collator_PesVideoVc1_c::Reset(void)
 	Status = Collator_PesVideo_c::Reset();
 	if (Status != CollatorNoError)
 		return Status;
-	Configuration.GenerateStartCodeList      = true;
-	Configuration.MaxStartCodes              = 256;
-	Configuration.StreamIdentifierMask       = 0xff;                            // Video
-	Configuration.StreamIdentifierCode       = 0xfd;
-	Configuration.BlockTerminateMask         = 0xfe;                            // allows frame or field
-	Configuration.BlockTerminateCode         = VC1_FIELD_START_CODE;
-	Configuration.IgnoreCodesRangeStart      = MPEG2_FIRST_SLICE_START_CODE + 1; // Slice codes other than first
-	Configuration.IgnoreCodesRangeEnd        = MPEG2_FIRST_SLICE_START_CODE;
-	Configuration.InsertFrameTerminateCode   = true;                            // Add code to force the mme decode to terminate
-	Configuration.TerminalCode               = VC1_FRAME_START_CODE;            // Configuration.BlockTerminateCode
-	Configuration.ExtendedHeaderLength       = 0;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.GenerateStartCodeList = true;
+	Configuration.MaxStartCodes = 256;
+	Configuration.StreamIdentifierMask = 0xff; // Video
+	Configuration.StreamIdentifierCode = 0xfd;
+	Configuration.BlockTerminateMask = 0xfe; // allows frame or field
+	Configuration.BlockTerminateCode = VC1_FIELD_START_CODE;
+	Configuration.IgnoreCodesRangeStart = MPEG2_FIRST_SLICE_START_CODE + 1; // Slice codes other than first
+	Configuration.IgnoreCodesRangeEnd = MPEG2_FIRST_SLICE_START_CODE;
+	Configuration.InsertFrameTerminateCode = true; // Add code to force the mme decode to terminate
+	Configuration.TerminalCode = VC1_FRAME_START_CODE; // Configuration.BlockTerminateCode
+	Configuration.ExtendedHeaderLength = 0;
+	Configuration.DeferredTerminateFlag = false;
 	return CollatorNoError;
 }

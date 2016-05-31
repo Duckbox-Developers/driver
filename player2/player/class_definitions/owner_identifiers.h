@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : owner_identifiers.h
-Author :           Nick
+Author : Nick
 
 A list of pre-defined owner identifiers used to record the placement of buffers
 
-Date        Modification                                    Name
-----        ------------                                    --------
-17-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+17-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 enum
 {
-	IdentifierGetInjectBuffer   = 1,
+	IdentifierGetInjectBuffer = 1,
 	IdentifierInSequenceCall,
 	IdentifierDrain,
 

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_rmv.h
-Author :           Julian
+Author : Julian
 
 Definition of the frame parser video Real Media Video class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-24-Oct-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+24-Oct-08 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "rmv.h"
 #include "frame_parser_video.h"
@@ -62,31 +62,31 @@ class FrameParser_VideoRmv_c : public FrameParser_Video_c
 
 		// Data
 
-		RmvStreamParameters_t      *StreamParameters;
-		RmvFrameParameters_t       *FrameParameters;
+		RmvStreamParameters_t *StreamParameters;
+		RmvFrameParameters_t *FrameParameters;
 
-		RmvStreamParameters_t       CopyOfStreamParameters;
+		RmvStreamParameters_t CopyOfStreamParameters;
 
-		bool                        StreamFormatInfoValid;
-		Rational_t                  FrameRate;
+		bool StreamFormatInfoValid;
+		Rational_t FrameRate;
 
-		unsigned int                LastTemporalReference;
-		unsigned int                TemporalReferenceBase;
-		unsigned long long          FramePTS;
-		unsigned int                FrameNumber;
+		unsigned int LastTemporalReference;
+		unsigned int TemporalReferenceBase;
+		unsigned long long FramePTS;
+		unsigned int FrameNumber;
 #if defined (RECALCULATE_FRAMERATE)
-		unsigned int                InitialTemporalReference;
-		unsigned int                PCount;
-		Rational_t                  CalculatedFrameRate;
+		unsigned int InitialTemporalReference;
+		unsigned int PCount;
+		Rational_t CalculatedFrameRate;
 #endif
 
 		// Functions
 
-		FrameParserStatus_t         ReadStreamFormatInfo(void);
-		FrameParserStatus_t         ReadPictureHeader(void);
+		FrameParserStatus_t ReadStreamFormatInfo(void);
+		FrameParserStatus_t ReadPictureHeader(void);
 
-		bool                        NewStreamParametersCheck(void);
-		FrameParserStatus_t         CommitFrameForDecode(void);
+		bool NewStreamParametersCheck(void);
+		FrameParserStatus_t CommitFrameForDecode(void);
 
 	public:
 
@@ -101,26 +101,26 @@ class FrameParser_VideoRmv_c : public FrameParser_Video_c
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t         RegisterOutputBufferRing(Ring_t          Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		//
 		// Stream specific functions
 		//
 
-		FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t ReadHeaders(void);
 
-		FrameParserStatus_t   ResetReferenceFrameList(void);
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
+		FrameParserStatus_t ResetReferenceFrameList(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
 
-		FrameParserStatus_t   ForPlayUpdateReferenceFrameList(void);
+		FrameParserStatus_t ForPlayUpdateReferenceFrameList(void);
 
-		FrameParserStatus_t   RevPlayProcessDecodeStacks(void);
+		FrameParserStatus_t RevPlayProcessDecodeStacks(void);
 };
 
 #endif

@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_packet.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the generic packet collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jul-08   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+08-Jul-08 Created Nick
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_packet.h"
 
@@ -70,18 +70,18 @@ CollatorStatus_t Collator_Packet_c::Reset(void)
 	Status = Collator_Base_c::Reset();
 	if (Status != CollatorNoError)
 		return Status;
-	Configuration.GenerateStartCodeList      = false;                   // Packets have no start codes
-	Configuration.MaxStartCodes              = 0;
-	Configuration.StreamIdentifierMask       = 0x00;
-	Configuration.StreamIdentifierCode       = 0x00;
-	Configuration.BlockTerminateMask         = 0x00;
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x00;
-	Configuration.IgnoreCodesRangeEnd        = 0x00;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0x00;
-	Configuration.ExtendedHeaderLength       = 0;
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.GenerateStartCodeList = false; // Packets have no start codes
+	Configuration.MaxStartCodes = 0;
+	Configuration.StreamIdentifierMask = 0x00;
+	Configuration.StreamIdentifierCode = 0x00;
+	Configuration.BlockTerminateMask = 0x00;
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x00;
+	Configuration.IgnoreCodesRangeEnd = 0x00;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0x00;
+	Configuration.ExtendedHeaderLength = 0;
+	Configuration.DeferredTerminateFlag = false;
 	return CollatorNoError;
 }
 
@@ -90,10 +90,10 @@ CollatorStatus_t Collator_Packet_c::Reset(void)
 // Input, simply take the supplied packet and pass it on
 //
 
-CollatorStatus_t   Collator_Packet_c::Input(PlayerInputDescriptor_t  *Input,
-		unsigned int          DataLength,
-		void                     *Data,
-		bool              NonBlocking)
+CollatorStatus_t Collator_Packet_c::Input(PlayerInputDescriptor_t *Input,
+					  unsigned int DataLength,
+					  void *Data,
+					  bool NonBlocking)
 {
 	CollatorStatus_t Status;
 //
@@ -107,9 +107,9 @@ CollatorStatus_t   Collator_Packet_c::Input(PlayerInputDescriptor_t  *Input,
 	//
 	// Transfer the packet to the next coded data frame and pass on
 	//
-	Status  = AccumulateData(DataLength, (unsigned char *)Data);
+	Status = AccumulateData(DataLength, (unsigned char *)Data);
 	if (Status == CollatorNoError)
-		Status  = InternalFrameFlush();
+		Status = InternalFrameFlush();
 //
 	InputExit();
 	return Status;

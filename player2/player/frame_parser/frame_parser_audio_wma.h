@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio_wma.h
-Author :           Adam
+Author : Adam
 
 Definition of the frame parser audio wma class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Sep-07   Created (from frame_parser_audio_mpeg.h)        Adam
+Date Modification Name
+---- ------------ --------
+11-Sep-07 Created (from frame_parser_audio_mpeg.h) Adam
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "wma_audio.h"
 #include "frame_parser_audio.h"
@@ -57,12 +57,12 @@ class FrameParser_AudioWma_c : public FrameParser_Audio_c
 		// Data
 
 		/*WmaAudioParsedFrameHeader_t ParsedFrameHeader;*/
-		WmaAudioStreamParameters_t*         StreamParameters;
-		WmaAudioFrameParameters_t*          FrameParameters;
+		WmaAudioStreamParameters_t *StreamParameters;
+		WmaAudioFrameParameters_t *FrameParameters;
 
-		WmaAudioStreamParameters_t          CurrentStreamParameters;
+		WmaAudioStreamParameters_t CurrentStreamParameters;
 
-		unsigned long long                  LastNormalizedDecodeTime;
+		unsigned long long LastNormalizedDecodeTime;
 		// Functions
 
 	public:
@@ -78,35 +78,35 @@ class FrameParser_AudioWma_c : public FrameParser_Audio_c
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t          Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		//
 		// Stream specific functions
 		//
 
-		static FrameParserStatus_t ParseStreamHeader(unsigned char*                  FrameHeaderBytes,
-				WmaAudioStreamParameters_t*     StreamParameters,
-				bool                            Verbose = true);
+		static FrameParserStatus_t ParseStreamHeader(unsigned char *FrameHeaderBytes,
+							     WmaAudioStreamParameters_t *StreamParameters,
+							     bool Verbose = true);
 
-		FrameParserStatus_t   ReadHeaders(void);
-		FrameParserStatus_t   ResetReferenceFrameList(void);
-		FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
-		FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
-		FrameParserStatus_t   UpdateReferenceFrameList(void);
+		FrameParserStatus_t ReadHeaders(void);
+		FrameParserStatus_t ResetReferenceFrameList(void);
+		FrameParserStatus_t PurgeQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
+		FrameParserStatus_t ProcessQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t GeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t UpdateReferenceFrameList(void);
 
-		FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   ProcessReverseDecodeStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeStack(void);
-		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
+		FrameParserStatus_t ProcessReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t ProcessReverseDecodeStack(void);
+		FrameParserStatus_t PurgeReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t PurgeReverseDecodeStack(void);
+		FrameParserStatus_t TestForTrickModeFrameDrop(void);
 
 };
 

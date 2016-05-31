@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_video.h
-Author :           Nick
+Author : Nick
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-19-Apr-07   Created from existing collator_pes_video.h      Daniel
+Date Modification Name
+---- ------------ --------
+19-Apr-07 Created from existing collator_pes_video.h Daniel
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes.h"
 
@@ -57,13 +57,13 @@ class Collator_PesVideo_c : public Collator_Pes_c
 		// Collator class functions
 		//
 
-		virtual CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-										 unsigned int          DataLength,
-										 void             *Data,
-										 bool              NonBlocking = false,
-										 unsigned int         *DataLengthRemaining = NULL);
+		virtual CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+					       unsigned int DataLength,
+					       void *Data,
+					       bool NonBlocking = false,
+					       unsigned int *DataLengthRemaining = NULL);
 
-		CollatorStatus_t   InternalFrameFlush(void);
+		CollatorStatus_t InternalFrameFlush(void);
 
 		//
 		// A frame flush overload that allows the specific setting of a flushed by terminate flag.
@@ -72,7 +72,7 @@ class Collator_PesVideo_c : public Collator_Pes_c
 		// strictly a new stream. This ensures that last framnes will be seen.
 		//
 
-		CollatorStatus_t   InternalFrameFlush(bool                    FlushedByStreamTerminate);
+		CollatorStatus_t InternalFrameFlush(bool FlushedByStreamTerminate);
 
 		//
 		// Some strange additions by someone

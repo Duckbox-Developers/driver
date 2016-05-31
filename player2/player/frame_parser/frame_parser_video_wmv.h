@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_wmv.h
-Author :           Julian
+Author : Julian
 
 Definition of the frame parser video vc1 class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-26-Nov-07   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+26-Nov-07 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "vc1.h"
 #include "frame_parser_video_vc1.h"
@@ -54,17 +54,17 @@ Date        Modification                                    Name
 class FrameParser_VideoWmv_c : public FrameParser_VideoVc1_c
 {
 	private:
-		unsigned int                RoundingControl;
+		unsigned int RoundingControl;
 
-		FrameParserStatus_t         ReadPictureHeaderSimpleMainProfile(void);
+		FrameParserStatus_t ReadPictureHeaderSimpleMainProfile(void);
 
-		unsigned int                RangeReduction;
+		unsigned int RangeReduction;
 
 	public:
 
 		FrameParser_VideoWmv_c(void);
 
-		FrameParserStatus_t         ReadHeaders(void);
+		FrameParserStatus_t ReadHeaders(void);
 
 };
 

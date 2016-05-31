@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : player_types.h
-Author :           Nick
+Author : Nick
 
 Definition of the player types for player 2
 module.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-12-Oct-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+12-Oct-06 Created Nick
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      External types
+// External types
 //
 
 #ifdef __cplusplus
@@ -49,34 +49,34 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      defines that may be used within various classes
+// defines that may be used within various classes
 //
 
-#define PLAYER_MINIMUM_NUMBER_OF_WORKING_CODED_BUFFERS  24      // Absolute minimum number of working coded buffers free in a playback.
+#define PLAYER_MINIMUM_NUMBER_OF_WORKING_CODED_BUFFERS 24 // Absolute minimum number of working coded buffers free in a playback.
 // To support reverse play, you need at least enough for one sequence
 // plus whatever is need for the open group nature of the sequence ie
 // an I and up to 3 Bs on the next sequence
 
-#define PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS 3       // Absolute minimum number of working decode buffers free in a playback
+#define PLAYER_MINIMUM_NUMBER_OF_WORKING_DECODE_BUFFERS 3 // Absolute minimum number of working decode buffers free in a playback
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The invalid values, used as initializers or markers
+// The invalid values, used as initializers or markers
 //
 
-#define INVALID_INDEX                   0xffffffff
-#define INVALID_SEQUENCE_VALUE          0xfeedfacedeadbeefULL
+#define INVALID_INDEX 0xffffffff
+#define INVALID_SEQUENCE_VALUE 0xfeedfacedeadbeefULL
 
-#define INVALID_TIME                    INVALID_SEQUENCE_VALUE
-#define TIME_NOT_APPLICABLE             INVALID_TIME
-#define UNSPECIFIED_TIME                (INVALID_TIME + 1)
+#define INVALID_TIME INVALID_SEQUENCE_VALUE
+#define TIME_NOT_APPLICABLE INVALID_TIME
+#define UNSPECIFIED_TIME (INVALID_TIME + 1)
 
-#define ValidTime(T)                    (((T) != INVALID_TIME) && ((T) != UNSPECIFIED_TIME))
-#define ValidIndex(I)                   ((I) != INVALID_INDEX)
+#define ValidTime(T) (((T) != INVALID_TIME) && ((T) != UNSPECIFIED_TIME))
+#define ValidIndex(I) ((I) != INVALID_INDEX)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The enumerated types, and associated wrapping mask types
+// The enumerated types, and associated wrapping mask types
 //
 
 //
@@ -84,20 +84,20 @@ Date        Modification                                    Name
 // add their own here we define the base values for each component.
 //
 
-#define BASE_PLAYER                 0x0001
-#define BASE_BUFFER                 0x1000
-#define BASE_DEMULTIPLEXOR          0x2000
-#define BASE_COLLATOR               0x3000
-#define BASE_FRAME_PARSER           0x4000
-#define BASE_CODEC                  0x5000
-#define BASE_MANIFESTOR             0x6000
-#define BASE_OUTPUT_TIMER           0x7000
-#define BASE_OUTPUT_COORDINATOR     0x8000
-#define BASE_EXTERNAL               0xf000
+#define BASE_PLAYER 0x0001
+#define BASE_BUFFER 0x1000
+#define BASE_DEMULTIPLEXOR 0x2000
+#define BASE_COLLATOR 0x3000
+#define BASE_FRAME_PARSER 0x4000
+#define BASE_CODEC 0x5000
+#define BASE_MANIFESTOR 0x6000
+#define BASE_OUTPUT_TIMER 0x7000
+#define BASE_OUTPUT_COORDINATOR 0x8000
+#define BASE_EXTERNAL 0xf000
 
 enum
 {
-	PlayerNoError               = BASE_PLAYER,
+	PlayerNoError = BASE_PLAYER,
 	PlayerError,
 	PlayerImplementationError,
 	PlayerNotSupported,
@@ -110,7 +110,7 @@ enum
 	PlayerTimedOut
 };
 
-typedef unsigned int    PlayerStatus_t;
+typedef unsigned int PlayerStatus_t;
 
 //
 // enumeration of the player components - used in parameter block addressing
@@ -118,15 +118,15 @@ typedef unsigned int    PlayerStatus_t;
 
 typedef enum
 {
-	ComponentPlayer             = BASE_PLAYER,
-	ComponentDemultiplexor      = BASE_DEMULTIPLEXOR,
-	ComponentCollator           = BASE_COLLATOR,
-	ComponentFrameParser        = BASE_FRAME_PARSER,
-	ComponentCodec              = BASE_CODEC,
-	ComponentManifestor         = BASE_MANIFESTOR,
-	ComponentOutputTimer        = BASE_OUTPUT_TIMER,
-	ComponentOutputCoordinator  = BASE_OUTPUT_COORDINATOR,
-	ComponentExternal           = BASE_EXTERNAL
+	ComponentPlayer = BASE_PLAYER,
+	ComponentDemultiplexor = BASE_DEMULTIPLEXOR,
+	ComponentCollator = BASE_COLLATOR,
+	ComponentFrameParser = BASE_FRAME_PARSER,
+	ComponentCodec = BASE_CODEC,
+	ComponentManifestor = BASE_MANIFESTOR,
+	ComponentOutputTimer = BASE_OUTPUT_TIMER,
+	ComponentOutputCoordinator = BASE_OUTPUT_COORDINATOR,
+	ComponentExternal = BASE_EXTERNAL
 } PlayerComponent_t;
 
 //
@@ -135,7 +135,7 @@ typedef enum
 
 enum
 {
-	PlayerFnRegisterBufferManager       = BASE_PLAYER,
+	PlayerFnRegisterBufferManager = BASE_PLAYER,
 	PlayerFnRegisterDemultiplexor,
 	PlayerFnSpecifySignalledEvents,
 	PlayerFnSetEventSignal,
@@ -179,12 +179,12 @@ typedef unsigned int PlayerComponentFunction_t;
 //
 // The player policies
 //
-//      NOTE when setting up, 0 will always be the
-//           default initialization value for any policy.
+// NOTE when setting up, 0 will always be the
+// default initialization value for any policy.
 //
 
-#define PolicyValueDisapply                     0
-#define PolicyValueApply                        1
+#define PolicyValueDisapply 0
+#define PolicyValueApply 1
 
 typedef enum
 {
@@ -192,17 +192,17 @@ typedef enum
 	// These are here as placeholders, neither of them are implemented at this time
 	//
 
-	PolicyTrickModeAudio               = 0,             // Discard/ManifestSampleRateConvert/ManifestPitchCorrected
-	PolicyPlay24FPSVideoAt25FPS,                        // Enable/Disable
+	PolicyTrickModeAudio = 0, // Discard/ManifestSampleRateConvert/ManifestPitchCorrected
+	PolicyPlay24FPSVideoAt25FPS, // Enable/Disable
 
 	//
 	// Master clock mechanisms, define which clock is going to be used
 	// to master mappings between system time and playback time
 	//
 
-#define PolicyValueVideoClockMaster             0
-#define PolicyValueAudioClockMaster             1
-#define PolicyValueSystemClockMaster            2
+#define PolicyValueVideoClockMaster 0
+#define PolicyValueAudioClockMaster 1
+#define PolicyValueSystemClockMaster 2
 
 	PolicyMasterClock,
 
@@ -210,14 +210,14 @@ typedef enum
 	// Use externally specified mapping between playback time and system time (use for AVR fixed offset).
 	//
 
-	PolicyExternalTimeMapping,                          // Apply/Disapply
-	PolicyExternalTimeMappingVsyncLocked,               // Apply/Disapply - only relevant if external mapping applied
+	PolicyExternalTimeMapping, // Apply/Disapply
+	PolicyExternalTimeMappingVsyncLocked, // Apply/Disapply - only relevant if external mapping applied
 
 	//
 	// Enable/disable stream synchronization
 	//
 
-	PolicyAVDSynchronization,                           // Apply/Disapply
+	PolicyAVDSynchronization, // Apply/Disapply
 
 	//
 	// Policy to set the value of the number of iterations to wait for synchronization.
@@ -229,24 +229,24 @@ typedef enum
 	// Policy to allow manifestation of the first frame decoded early.
 	//
 
-	PolicyManifestFirstFrameEarly,                      // Apply/Disapply
+	PolicyManifestFirstFrameEarly, // Apply/Disapply
 
 	//
 	// Policy to force a null manifestation on shutdown for video
 	// audio must always mute.
 	//
 
-#define PolicyValueLeaveLastFrameOnScreen       0
-#define PolicyValueBlankScreen                  1
+#define PolicyValueLeaveLastFrameOnScreen 0
+#define PolicyValueBlankScreen 1
 
-	PolicyVideoBlankOnShutdown,                         // Apply/Disapply
+	PolicyVideoBlankOnShutdown, // Apply/Disapply
 
 	//
 	// Trick mode decode controls, to allow Key frames
 	// only, and only one group between discontinuities.
 	//
 
-	PolicyStreamOnlyKeyFrames,                          // Apply/Disapply
+	PolicyStreamOnlyKeyFrames, // Apply/Disapply
 	PolicyStreamSingleGroupBetweenDiscontinuities,
 	PolicyClampPlaybackIntervalOnPlaybackDirectionChange,
 
@@ -254,10 +254,10 @@ typedef enum
 	// Playout policies for terminate/switch/drain stream
 	//
 
-#define PolicyValuePlayout              0
-#define PolicyValueDiscard              1
+#define PolicyValuePlayout 0
+#define PolicyValueDiscard 1
 
-	PolicyPlayoutOnTerminate,                           // PolicyValuePlayout/PolicyValueDiscard
+	PolicyPlayoutOnTerminate, // PolicyValuePlayout/PolicyValueDiscard
 	PolicyPlayoutOnSwitch,
 	PolicyPlayoutOnDrain,
 
@@ -265,17 +265,17 @@ typedef enum
 	// Display policies
 	//
 
-#define PolicyValue4x3                  0
-#define PolicyValue16x9                 1
+#define PolicyValue4x3 0
+#define PolicyValue16x9 1
 
-	PolicyDisplayAspectRatio,                           // PolicyValue4x3/PolicyValue16x9
+	PolicyDisplayAspectRatio, // PolicyValue4x3/PolicyValue16x9
 
 //
 
-#define PolicyValueCentreCutOut         0
-#define PolicyValueLetterBox            1
-#define PolicyValuePanScan              2
-#define PolicyValueFullScreen           3
+#define PolicyValueCentreCutOut 0
+#define PolicyValueLetterBox 1
+#define PolicyValuePanScan 2
+#define PolicyValueFullScreen 3
 
 	PolicyDisplayFormat,
 
@@ -285,13 +285,13 @@ typedef enum
 	// code may well use greater than comparisons.
 	//
 
-#define PolicyValueTrickModeAuto                                        0
-#define PolicyValueTrickModeDecodeAll                                   1
-#define PolicyValueTrickModeDecodeAllDegradeNonReferenceFrames          2
-#define PolicyValueTrickModeStartDiscardingNonReferenceFrames           3
-#define PolicyValueTrickModeDecodeReferenceFramesDegradeNonKeyFrames    4
-#define PolicyValueTrickModeDecodeKeyFrames                             5
-#define PolicyValueTrickModeDiscontinuousKeyFrames                      6
+#define PolicyValueTrickModeAuto 0
+#define PolicyValueTrickModeDecodeAll 1
+#define PolicyValueTrickModeDecodeAllDegradeNonReferenceFrames 2
+#define PolicyValueTrickModeStartDiscardingNonReferenceFrames 3
+#define PolicyValueTrickModeDecodeReferenceFramesDegradeNonKeyFrames 4
+#define PolicyValueTrickModeDecodeKeyFrames 5
+#define PolicyValueTrickModeDiscontinuousKeyFrames 6
 
 	PolicyTrickModeDomain,
 
@@ -306,9 +306,9 @@ typedef enum
 	// frame arrives in time.
 	//
 
-#define PolicyValueDiscardLateFramesNever                               0
-#define PolicyValueDiscardLateFramesAlways                              1
-#define PolicyValueDiscardLateFramesAfterSynchronize                    2
+#define PolicyValueDiscardLateFramesNever 0
+#define PolicyValueDiscardLateFramesAlways 1
+#define PolicyValueDiscardLateFramesAfterSynchronize 2
 
 	PolicyDiscardLateFrames,
 
@@ -381,9 +381,9 @@ typedef enum
 	// colour matrices.
 	//
 
-#define PolicyValueMPEG2ApplicationMpeg2                        0
-#define PolicyValueMPEG2ApplicationAtsc                         1
-#define PolicyValueMPEG2ApplicationDvb                          2
+#define PolicyValueMPEG2ApplicationMpeg2 0
+#define PolicyValueMPEG2ApplicationAtsc 1
+#define PolicyValueMPEG2ApplicationDvb 2
 
 	PolicyMPEG2ApplicationType,
 
@@ -392,9 +392,9 @@ typedef enum
 	// Value equals decimation amount
 	//
 
-#define PolicyValueDecimateDecoderOutputDisabled                        0
-#define PolicyValueDecimateDecoderOutputHalf                            1
-#define PolicyValueDecimateDecoderOutputQuarter                         2
+#define PolicyValueDecimateDecoderOutputDisabled 0
+#define PolicyValueDecimateDecoderOutputHalf 1
+#define PolicyValueDecimateDecoderOutputQuarter 2
 
 	PolicyDecimateDecoderOutput,
 
@@ -423,7 +423,7 @@ typedef enum
 	// Allow the manifestor to know which is the pixel aspect ratio correction requested
 	//
 
-#define PolicyValuePixelAspectRatioCorrectionDisabled   100
+#define PolicyValuePixelAspectRatioCorrectionDisabled 100
 
 	PolicyPixelAspectRatioCorrection,
 
@@ -455,8 +455,8 @@ typedef enum
 	//
 	// Policy to allow the use (as a default) of video frame rates deduced from incoming PTS values
 	// NOTE any specified frame rate will override the deduced values.
-	//      Implementation of this policy is done only by H264 at the
-	//      time of writing.
+	// Implementation of this policy is done only by H264 at the
+	// time of writing.
 	//
 
 	PolicyUsePTSDeducedDefaultFrameRates,
@@ -470,56 +470,56 @@ typedef enum
 // The event codes, and their enveloping mask
 //
 
-#define EventIllegalIdentifier                  0x0000000000000000ull
-#define EventAllEvents                          0xffffffffffffffffull
+#define EventIllegalIdentifier 0x0000000000000000ull
+#define EventAllEvents 0xffffffffffffffffull
 
 // One-shot events
-#define EventFirstFrameManifested               0x0000000000000001ull
-#define EventPlaybackTerminated                 0x0000000000000002ull
-#define EventStreamTerminated                   0x0000000000000004ull
-#define EventStreamSwitched                     0x0000000000000008ull
-#define EventStreamDrained                      0x0000000000000010ull
-#define EventTimeNotification                   0x0000000000000020ull
-#define EventDecodeBufferAvailable              0x0000000000000040ull
-#define EventStreamUnPlayable                   0x0000000000000080ull
-#define EventFailedToQueueBufferToDisplay       0x0000000000000100ull
+#define EventFirstFrameManifested 0x0000000000000001ull
+#define EventPlaybackTerminated 0x0000000000000002ull
+#define EventStreamTerminated 0x0000000000000004ull
+#define EventStreamSwitched 0x0000000000000008ull
+#define EventStreamDrained 0x0000000000000010ull
+#define EventTimeNotification 0x0000000000000020ull
+#define EventDecodeBufferAvailable 0x0000000000000040ull
+#define EventStreamUnPlayable 0x0000000000000080ull
+#define EventFailedToQueueBufferToDisplay 0x0000000000000100ull
 
-#define EventPlaybackCreated                    0x0000000000000200ull
-#define EventStreamCreated                      0x0000000000000400ull
-#define EventInputFormatCreated                 0x0000000000000800ull
-#define EventSupportedInputFormatCreated        0x0000000000001000ull
-#define EventDecodeErrorsCreated                0x0000000000002000ull
-#define EventSampleFrequencyCreated             0x0000000000004000ull
-#define EventNumberChannelsCreated              0x0000000000008000ull
-#define EventNumberOfSamplesProcessedCreated    0x0000000000010000ull
+#define EventPlaybackCreated 0x0000000000000200ull
+#define EventStreamCreated 0x0000000000000400ull
+#define EventInputFormatCreated 0x0000000000000800ull
+#define EventSupportedInputFormatCreated 0x0000000000001000ull
+#define EventDecodeErrorsCreated 0x0000000000002000ull
+#define EventSampleFrequencyCreated 0x0000000000004000ull
+#define EventNumberChannelsCreated 0x0000000000008000ull
+#define EventNumberOfSamplesProcessedCreated 0x0000000000010000ull
 
-#define EventVsyncOffsetMeasured        0x0000000000020000ull
-#define EventFatalHardwareFailure       0x0000000000040000ull
+#define EventVsyncOffsetMeasured 0x0000000000020000ull
+#define EventFatalHardwareFailure 0x0000000000040000ull
 
 // Ongoing events
-#define EventSizeChangeParse                    0x0000000100000000ull
-#define EventSourceSizeChangeManifest           0x0000000200000000ull
-#define EventOutputSizeChangeManifest           0x0000000400000000ull
+#define EventSizeChangeParse 0x0000000100000000ull
+#define EventSourceSizeChangeManifest 0x0000000200000000ull
+#define EventOutputSizeChangeManifest 0x0000000400000000ull
 
-#define EventFrameRateChangeParse               0x0000000800000000ull
-#define EventSourceFrameRateChangeManifest      0x0000001000000000ull
-#define EventOutputFrameRateChangeManifest      0x0000002000000000ull
+#define EventFrameRateChangeParse 0x0000000800000000ull
+#define EventSourceFrameRateChangeManifest 0x0000001000000000ull
+#define EventOutputFrameRateChangeManifest 0x0000002000000000ull
 
-#define EventBufferRelease                      0x0000004000000000ull
+#define EventBufferRelease 0x0000004000000000ull
 
-#define EventTimeMappingEstablished             0x0000008000000000ull
-#define EventTimeMappingReset                   0x0000010000000000ull
+#define EventTimeMappingEstablished 0x0000008000000000ull
+#define EventTimeMappingReset 0x0000010000000000ull
 
-#define EventFailedToDecodeInTime               0x0000020000000000ull
-#define EventFailedToDeliverDataInTime          0x0000040000000000ull
+#define EventFailedToDecodeInTime 0x0000020000000000ull
+#define EventFailedToDeliverDataInTime 0x0000040000000000ull
 
-#define EventTrickModeDomainChange              0x0000080000000000ull
-#define EventFailureToPlaySmoothReverse         0x0000100000000000ull
+#define EventTrickModeDomainChange 0x0000080000000000ull
+#define EventFailureToPlaySmoothReverse 0x0000100000000000ull
 
-#define EventInputFormatChanged                 0x0000200000000000ull
+#define EventInputFormatChanged 0x0000200000000000ull
 
-typedef unsigned long long                      PlayerEventIdentifier_t;
-typedef unsigned long long                      PlayerEventMask_t;
+typedef unsigned long long PlayerEventIdentifier_t;
+typedef unsigned long long PlayerEventMask_t;
 
 //
 // The stream type
@@ -527,7 +527,7 @@ typedef unsigned long long                      PlayerEventMask_t;
 
 typedef enum
 {
-	StreamTypeNone                      = 0,
+	StreamTypeNone = 0,
 	StreamTypeAudio,
 	StreamTypeVideo,
 	StreamTypeOther
@@ -551,7 +551,7 @@ typedef enum
 
 typedef enum
 {
-	SequenceTypeImmediate               = 0,
+	SequenceTypeImmediate = 0,
 	SequenceTypeBeforeSequenceNumber,
 	SequenceTypeAfterSequenceNumber,
 	SequenceTypeBeforePlaybackTime,
@@ -566,13 +566,15 @@ typedef unsigned long long PlayerSequenceValue_t;
 
 typedef enum
 {
-	TimeFormatUs            = 0,
+	TimeFormatUs = 0,
 	TimeFormatPts
 } PlayerTimeFormat_t;
 
+//
+
 typedef enum
 {
-	ChannelSelectStereo                 = 0,
+	ChannelSelectStereo = 0,
 	ChannelSelectLeft,
 	ChannelSelectRight
 } PlayerChannelSelect_t;
@@ -586,22 +588,22 @@ typedef enum
 // and incestuous references.
 //
 
-typedef struct DemultiplexorContext_s   *DemultiplexorContext_t;
+typedef struct DemultiplexorContext_s *DemultiplexorContext_t;
 
-typedef class Demultiplexor_c           *Demultiplexor_t;
-typedef class Collator_c                *Collator_t;
-typedef class FrameParser_c             *FrameParser_t;
-typedef class Codec_c                   *Codec_t;
-typedef class OutputTimer_c             *OutputTimer_t;
-typedef class OutputCoordinator_c       *OutputCoordinator_t;
-typedef class Manifestor_c              *Manifestor_t;
-typedef class Player_c                  *Player_t;
+typedef class Demultiplexor_c *Demultiplexor_t;
+typedef class Collator_c *Collator_t;
+typedef class FrameParser_c *FrameParser_t;
+typedef class Codec_c *Codec_t;
+typedef class OutputTimer_c *OutputTimer_t;
+typedef class OutputCoordinator_c *OutputCoordinator_t;
+typedef class Manifestor_c *Manifestor_t;
+typedef class Player_c *Player_t;
 
-typedef struct PlayerPlayback_s         *PlayerPlayback_t;
-typedef struct PlayerStream_s           *PlayerStream_t;
+typedef struct PlayerPlayback_s *PlayerPlayback_t;
+typedef struct PlayerStream_s *PlayerStream_t;
 
-#define PlayerAllPlaybacks              NULL
-#define PlayerAllStreams                NULL
+#define PlayerAllPlaybacks NULL
+#define PlayerAllStreams NULL
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -615,25 +617,25 @@ typedef struct PlayerStream_s           *PlayerStream_t;
 #ifdef __cplusplus
 typedef struct PlayerEventRecord_s
 {
-	PlayerEventIdentifier_t        Code;
-	PlayerPlayback_t               Playback;
-	PlayerStream_t                 Stream;
-	unsigned long long             PlaybackTime;
+	PlayerEventIdentifier_t Code;
+	PlayerPlayback_t Playback;
+	PlayerStream_t Stream;
+	unsigned long long PlaybackTime;
 
 	union
 	{
-		unsigned int               UnsignedInt;
-		unsigned long long         LongLong;
-		void                      *Pointer;
+		unsigned int UnsignedInt;
+		unsigned long long LongLong;
+		void *Pointer;
 	} Value[4];
 
 	//
 	// Since rationals are a class, we need to separate them from the union and make them specific
 	//
 
-	Rational_t                     Rational;
+	Rational_t Rational;
 
-	void                          *UserData;
+	void *UserData;
 } PlayerEventRecord_t;
 #endif //cplusplus
 
@@ -643,21 +645,21 @@ typedef struct PlayerEventRecord_s
 // The attribute descriptor
 //
 
-#define SYSFS_ATTRIBUTE_ID_BOOL                 0
-#define SYSFS_ATTRIBUTE_ID_INTEGER              SYSFS_ATTRIBUTE_ID_BOOL + 1
-#define SYSFS_ATTRIBUTE_ID_CONSTCHARPOINTER     SYSFS_ATTRIBUTE_ID_INTEGER + 1
-#define SYSFS_ATTRIBUTE_ID_UNSIGNEDLONGLONGINT  SYSFS_ATTRIBUTE_ID_CONSTCHARPOINTER +1
+#define SYSFS_ATTRIBUTE_ID_BOOL 0
+#define SYSFS_ATTRIBUTE_ID_INTEGER SYSFS_ATTRIBUTE_ID_BOOL + 1
+#define SYSFS_ATTRIBUTE_ID_CONSTCHARPOINTER SYSFS_ATTRIBUTE_ID_INTEGER + 1
+#define SYSFS_ATTRIBUTE_ID_UNSIGNEDLONGLONGINT SYSFS_ATTRIBUTE_ID_CONSTCHARPOINTER +1
 
 typedef struct PlayerAttributeDescriptor_s
 {
-	int                                 Id;
+	int Id;
 
 	union
 	{
-		const char                     *ConstCharPointer;
-		int                             Int;
-		unsigned long long int          UnsignedLongLongInt;
-		bool                            Bool;
+		const char *ConstCharPointer;
+		int Int;
+		unsigned long long int UnsignedLongLongInt;
+		bool Bool;
 	} u;
 
 } PlayerAttributeDescriptor_t;

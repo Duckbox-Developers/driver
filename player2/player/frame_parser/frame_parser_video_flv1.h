@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_flv1.h
-Author :           Julian
+Author : Julian
 
 Definition of the frame parser video flv1 class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-19-May_08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+19-May_08 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "h263.h"
 #include "frame_parser_video_h263.h"
@@ -55,13 +55,13 @@ class FrameParser_VideoFlv1_c : public FrameParser_VideoH263_c
 {
 	private:
 
-		FrameParserStatus_t         FlvReadPictureHeader(void);
+		FrameParserStatus_t FlvReadPictureHeader(void);
 
 	public:
 
 		FrameParser_VideoFlv1_c(void);
 
-		FrameParserStatus_t         ReadHeaders(void);
+		FrameParserStatus_t ReadHeaders(void);
 
 };
 

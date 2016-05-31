@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : crc32.c
-Author :           Daniel
+Author : Daniel
 
 Simple 32-bit CRC implementation for debugging purpose.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-30-Aug-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+30-Aug-07 Created Daniel
 
 ************************************************************************/
 
@@ -57,7 +57,7 @@ unsigned int crc32(unsigned char *data, unsigned int length)
 		for (byte = 0; byte <= 255; byte++)
 		{
 			crc = byte;
-			for (i = 7; i >= 0; i--)   // Do eight times.
+			for (i = 7; i >= 0; i--) // Do eight times.
 			{
 				mask = -(crc & 1);
 				crc = (crc >> 1) ^ (0xedb88320 & mask);

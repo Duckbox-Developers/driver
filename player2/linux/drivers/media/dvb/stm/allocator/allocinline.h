@@ -13,22 +13,22 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : allocinline.h
-Author :           Nick
+Author : Nick
 
 Contains the useful operating system dependent inline functions/types
 that allow use of the allocator device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-14-Jan-03   Created                                         Nick
-12-Nov-07   Changed to use partition names for BPA2         Nick
+Date Modification Name
+---- ------------ --------
+14-Jan-03 Created Nick
+12-Nov-07 Changed to use partition names for BPA2 Nick
 
 ************************************************************************/
 
@@ -46,7 +46,7 @@ Date        Modification                                    Name
 
 typedef enum
 {
-	allocator_ok                = 0,
+	allocator_ok = 0,
 	allocator_error
 } allocator_status_t;
 
@@ -54,39 +54,39 @@ typedef enum
 
 struct allocator_device_s
 {
-	OSDEV_DeviceIdentifier_t     UnderlyingDevice;
-	unsigned int                 BufferSize;
-	unsigned char               *CachedAddress;
-	unsigned char               *UnCachedAddress;
-	unsigned char               *PhysicalAddress;
+	OSDEV_DeviceIdentifier_t UnderlyingDevice;
+	unsigned int BufferSize;
+	unsigned char *CachedAddress;
+	unsigned char *UnCachedAddress;
+	unsigned char *PhysicalAddress;
 };
 
-typedef struct allocator_device_s       *allocator_device_t;
-#define ALLOCATOR_INVALID_DEVICE         NULL
+typedef struct allocator_device_s *allocator_device_t;
+#define ALLOCATOR_INVALID_DEVICE NULL
 
-#define DEVICE_NAME                     "/dev/allocator"
+#define DEVICE_NAME "/dev/allocator"
 #if defined(UFS910)
 /* This remapping is only necessary for the UFS910 because it only has 64 MB
-   in SYS_LMI. All other models should have at least 128 MB in SYS_LMI. */
-#define SYS_LMI_PARTITION       "BPA2_Region1"
+ in SYS_LMI. All other models should have at least 128 MB in SYS_LMI. */
+#define SYS_LMI_PARTITION "BPA2_Region1"
 #else /* not UFS910 */
-#define SYS_LMI_PARTITION       "BPA2_Region0"
+#define SYS_LMI_PARTITION "BPA2_Region0"
 #endif
-#define VID_LMI_PARTITION       "BPA2_Region1"
+#define VID_LMI_PARTITION "BPA2_Region1"
 
 // ------------------------------------------------------------------------------------------------------------
-//   The open function
+// The open function
 
-static inline allocator_status_t   AllocatorOpenEx(
-	allocator_device_t    *Device,
-	unsigned int           Size,
-	bool                   UseCachedMemory,
-	const char        *PartitionName)
+static inline allocator_status_t AllocatorOpenEx(
+	allocator_device_t *Device,
+	unsigned int Size,
+	bool UseCachedMemory,
+	const char *PartitionName)
 {
-	OSDEV_Status_t                  Status;
-	allocator_ioctl_allocate_t      Parameters;
+	OSDEV_Status_t Status;
+	allocator_ioctl_allocate_t Parameters;
 //
-//  Check the size of the partition name
+// Check the size of the partition name
 //
 	if (strlen(PartitionName) > (ALLOCATOR_MAX_PARTITION_NAME_SIZE - 1))
 	{
@@ -95,7 +95,7 @@ static inline allocator_status_t   AllocatorOpenEx(
 		return allocator_error;
 	}
 //
-//  Malloc the device structure
+// Malloc the device structure
 //
 	*Device = (allocator_device_t)OS_Malloc(sizeof(struct allocator_device_s));
 	if (*Device == NULL)
@@ -105,7 +105,7 @@ static inline allocator_status_t   AllocatorOpenEx(
 	}
 	memset(*Device, 0, sizeof(struct allocator_device_s));
 //
-//  Open the device
+// Open the device
 //
 	Status = OSDEV_Open(DEVICE_NAME, &((*Device)->UnderlyingDevice));
 	if (Status != OSDEV_NoError)
@@ -116,12 +116,12 @@ static inline allocator_status_t   AllocatorOpenEx(
 		return allocator_error;
 	}
 //
-//  Allocate the memory
+// Allocate the memory
 //
-	Parameters.RequiredSize         = Size;
+	Parameters.RequiredSize = Size;
 	strcpy(Parameters.PartitionName, PartitionName);
 	Status = OSDEV_Ioctl((*Device)->UnderlyingDevice, ALLOCATOR_IOCTL_ALLOCATE_DATA,
-						 &Parameters, sizeof(allocator_ioctl_allocate_t));
+			     &Parameters, sizeof(allocator_ioctl_allocate_t));
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "AllocatorOpenEx : Failed to allocate memory (0x%08x from '%s')\n", Size, PartitionName);
@@ -130,50 +130,50 @@ static inline allocator_status_t   AllocatorOpenEx(
 		*Device = ALLOCATOR_INVALID_DEVICE;
 		return allocator_error;
 	}
-	(*Device)->BufferSize       = Size;
-	(*Device)->CachedAddress    = Parameters.CachedAddress;
-	(*Device)->UnCachedAddress  = Parameters.UnCachedAddress;
-	(*Device)->PhysicalAddress  = Parameters.PhysicalAddress;
+	(*Device)->BufferSize = Size;
+	(*Device)->CachedAddress = Parameters.CachedAddress;
+	(*Device)->UnCachedAddress = Parameters.UnCachedAddress;
+	(*Device)->PhysicalAddress = Parameters.PhysicalAddress;
 //
 	return allocator_ok;
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The open function
+// The open function
 
-static inline allocator_status_t   AllocatorOpen(allocator_device_t    *Device,
-		unsigned int           Size,
-		bool                   UseCachedMemory)
+static inline allocator_status_t AllocatorOpen(allocator_device_t *Device,
+					       unsigned int Size,
+					       bool UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, SYS_LMI_PARTITION);
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The open function
+// The open function
 
-static inline allocator_status_t   LmiAllocatorOpen(allocator_device_t    *Device,
-		unsigned int           Size,
-		bool                   UseCachedMemory)
+static inline allocator_status_t LmiAllocatorOpen(allocator_device_t *Device,
+						  unsigned int Size,
+						  bool UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, VID_LMI_PARTITION);
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The open function
+// The open function
 
-static inline allocator_status_t   PartitionAllocatorOpen(
-	allocator_device_t  *Device,
-	const char      *PartitionName,
-	unsigned int         Size,
-	bool             UseCachedMemory)
+static inline allocator_status_t PartitionAllocatorOpen(
+	allocator_device_t *Device,
+	const char *PartitionName,
+	unsigned int Size,
+	bool UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, PartitionName);
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The close function
+// The close function
 
-static inline void              AllocatorClose(allocator_device_t Device)
+static inline void AllocatorClose(allocator_device_t Device)
 {
 	if (Device != ALLOCATOR_INVALID_DEVICE)
 	{
@@ -183,9 +183,9 @@ static inline void              AllocatorClose(allocator_device_t Device)
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The kernel address function
+// The kernel address function
 
-static inline   unsigned char *AllocatorKernelAddress(allocator_device_t Device)
+static inline unsigned char *AllocatorKernelAddress(allocator_device_t Device)
 {
 // Deprecated call, we assume that kernel address only refers to the physical address
 	if (Device != ALLOCATOR_INVALID_DEVICE)
@@ -195,9 +195,9 @@ static inline   unsigned char *AllocatorKernelAddress(allocator_device_t Device)
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The User address function
+// The User address function
 
-static inline   unsigned char *AllocatorUserAddress(allocator_device_t Device)
+static inline unsigned char *AllocatorUserAddress(allocator_device_t Device)
 {
 	if (Device != ALLOCATOR_INVALID_DEVICE)
 		return Device->CachedAddress;
@@ -206,9 +206,9 @@ static inline   unsigned char *AllocatorUserAddress(allocator_device_t Device)
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The uncached user address function
+// The uncached user address function
 
-static inline   unsigned char *AllocatorUncachedUserAddress(allocator_device_t Device)
+static inline unsigned char *AllocatorUncachedUserAddress(allocator_device_t Device)
 {
 	if (Device != ALLOCATOR_INVALID_DEVICE)
 		return Device->UnCachedAddress;
@@ -217,9 +217,9 @@ static inline   unsigned char *AllocatorUncachedUserAddress(allocator_device_t D
 }
 
 // ------------------------------------------------------------------------------------------------------------
-//   The Physical address function
+// The Physical address function
 
-static inline   unsigned char *AllocatorPhysicalAddress(allocator_device_t Device)
+static inline unsigned char *AllocatorPhysicalAddress(allocator_device_t Device)
 {
 	if (Device != ALLOCATOR_INVALID_DEVICE)
 		return Device->PhysicalAddress;

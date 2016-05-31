@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : dvb_v4l2.h
-Author :           Pete
+Author : Pete
 
 Describes internal v4l interfaces
 
-Date        Modification                                    Name
-----        ------------                                    --------
-09-Dec-07   Created                                         Pete
+Date Modification Name
+---- ------------ --------
+09-Dec-07 Created Pete
 
 ************************************************************************/
 
 #ifndef __DVB_V4L2
 #define __DVB_V4L2
 
-void* stm_v4l2_findbuffer(unsigned long userptr, unsigned int size, int device);
+void *stm_v4l2_findbuffer(unsigned long userptr, unsigned int size, int device);
 
 #endif

@@ -23,7 +23,7 @@ ODIR2?=$(O)
 endif
 endif
 
-ARCH?=$(shell uname -i)
+ARCH ?= $(shell uname -i)
 
 ## We need rules to be included but variables not to be (like CFLAGS)!!!
 include $(ROOT_DIR)/makefile.$(ARCH)
@@ -45,12 +45,12 @@ clean:
 	-rm -r $(ODIR)
 else
 
-CC     =$(CROSS_COMPILE)gcc
-CXX    =$(CROSS_COMPILE)g++
-MAKEDEP=$(CC) -M -MG
-LD     =$(CROSS_COMPILE)ld
-AR     =$(CROSS_COMPILE)ar
-ARFLAGS=rcs
+CC      = $(CROSS_COMPILE)gcc
+CXX     = $(CROSS_COMPILE)g++
+MAKEDEP = $(CC) -M -MG
+LD      = $(CROSS_COMPILE)ld
+AR      = $(CROSS_COMPILE)ar
+ARFLAGS = rcs
 
 subdirs      = $(filter %/,$(targets))
 objects      = $(filter-out %/,$(targets))
@@ -255,3 +255,4 @@ $(dir-y): .PHONY
 
 endif
  
+

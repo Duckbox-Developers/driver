@@ -2,10 +2,10 @@
  * e2_proc_bus
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 #include <linux/dvb/audio.h>
 #include <linux/dvb/version.h>
 #include <linux/smp_lock.h>
@@ -17,12 +17,12 @@
 #include "dvbdev.h"
 #include "dvb_frontend.h"
 
-extern struct DeviceContext_s* ProcDeviceContext;
+extern struct DeviceContext_s *ProcDeviceContext;
 
 #define MAX_NIM_LENGTH 100
 #define nums2minor(num,type,id) ((num << 6) | (id << 4) | type)
 
-static struct dvb_device* dvbdev_find_device(int minor)
+static struct dvb_device *dvbdev_find_device(int minor)
 {
 	struct dvb_adapter *adap = &ProcDeviceContext->DvbContext->DvbAdapter;
 	struct list_head *entry;
@@ -34,18 +34,18 @@ static struct dvb_device* dvbdev_find_device(int minor)
 		return NULL;
 	}
 	/* It is assumed that the STM adapter is registered first (adapter0).
-	   That is, the actual list head is pointed to by adap->list_head.prev
-	   because register_dvb_adapter are added to tail and not to head.
-	   Don't start with &adap->list_head because the actual list_head
-	   is not part of an adapter structure and will produce a crash. */
+	 That is, the actual list head is pointed to by adap->list_head.prev
+	 because register_dvb_adapter are added to tail and not to head.
+	 Don't start with &adap->list_head because the actual list_head
+	 is not part of an adapter structure and will produce a crash. */
 	list_for_each(entry, adap->list_head.prev)
 	{
 		struct dvb_adapter *adap1;
 		adap1 = list_entry(entry, struct dvb_adapter, list_head);
 #if 0
 		printk("adap %d, list_head %p, prev %p, next %p\n",
-			   adap1->num, &adap1->list_head, adap1->list_head.prev,
-			   adap1->list_head.next);
+		       adap1->num, &adap1->list_head, adap1->list_head.prev,
+		       adap1->list_head.next);
 #endif
 		if (adap1->num == number)
 		{
@@ -61,16 +61,17 @@ static struct dvb_device* dvbdev_find_device(int minor)
 	return NULL;
 }
 
-int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
+int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count,
+			      int *eof, void *data_unused)
 {
 	int len = 0;
 	int i, j, k;
 	int feIndex = 0;
 	struct dvb_device *dev;
 #if (DVB_API_VERSION < 5)
-	struct dvbfe_info fe_info;  // old api 3 (insertion)
+	struct dvbfe_info fe_info; // old api 3 (insertion)
 #else
-	struct dtv_property p;      // new api 5 (standard)
+	struct dtv_property p; // new api 5 (standard)
 #endif
 	struct dvb_frontend *fe;
 	char *pType = "unknown";
@@ -87,13 +88,13 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, in
 		{ DVBFE_DELSYS_DVBT, "DVB-T" },
 		{ DVBFE_DELSYS_DVBC, "DVB-C" }
 #else
-		{ SYS_DVBS2,         "DVB-S2"},
-		{ SYS_DVBS,          "DVB-S" },
-		{ SYS_DVBT2,         "DVB-T2" },
-		{ SYS_DVBT,          "DVB-T" },
-		{ SYS_DSS,           "DVB-DSS"},
+		{ SYS_DVBS2, "DVB-S2"},
+		{ SYS_DVBS, "DVB-S" },
+		{ SYS_DVBT2, "DVB-T2" },
+		{ SYS_DVBT, "DVB-T" },
+		{ SYS_DSS, "DVB-DSS"},
 		{ SYS_DVBC_ANNEX_AC, "DVB-C"},
-		{ SYS_DVBC_ANNEX_B,  "DVB-C" }
+		{ SYS_DVBC_ANNEX_B, "DVB-C" }
 #endif
 	};
 	/* loop over all adapters */
@@ -141,17 +142,18 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count, in
 #endif
 			}
 			len += sprintf(page + len, "NIM Socket %d:\n"
-						   "Type: %s\n"
-						   "Name: %s\n"
-						   "Frontend_Device: %d\n",
-						   feIndex, pType, fe->ops.info.name, feIndex);
+				       "Type: %s\n"
+				       "Name: %s\n"
+				       "Frontend_Device: %d\n",
+				       feIndex, pType, fe->ops.info.name, feIndex);
 #if (DVB_API_VERSION >= 5)
 			if (fe->ops.info.caps & FE_CAN_MULTISTREAM)
 				len += sprintf(page + len, "Multistream: yes\n");
 #endif
 			if (pMode)
 			{
-				len += sprintf(page + len, "Mode 0: %s\n" "Mode 1: %s\n", pType, pMode);
+				len += sprintf(page + len, "Mode 0: %s\n"
+					       "Mode 1: %s\n", pType, pMode);
 			}
 			feIndex++;
 		}

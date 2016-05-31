@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio.h
-Author :           Daniel
+Author : Daniel
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-19-Apr-07   Created from existing collator_pes_video.h      Daniel
+Date Modification Name
+---- ------------ --------
+19-Apr-07 Created from existing collator_pes_video.h Daniel
 
 ************************************************************************/
 
@@ -78,10 +78,10 @@ class Collator_PesAudio_c : public Collator_Pes_c
 
 		bool AccumulatedFrameReady; ///< True if we have got a frame but must check the next frame header before emitting it.
 
-		bool          NextPlaybackTimeValid;
-		unsigned long long    NextPlaybackTime;
-		bool          NextDecodeTimeValid;
-		unsigned long long    NextDecodeTime;
+		bool NextPlaybackTimeValid;
+		unsigned long long NextPlaybackTime;
+		bool NextDecodeTimeValid;
+		unsigned long long NextDecodeTime;
 
 		CollatorStatus_t SearchForSyncWord(void);
 		CollatorStatus_t ReadPartialFrameHeader(void);
@@ -102,8 +102,8 @@ class Collator_PesAudio_c : public Collator_Pes_c
 			SeekingSyncWord, ///< means the parser is searching for a synchronization word.
 			GotSynchronized, ///< means the parser got synchronized, but hasn't analysed the frame header yet
 			SeekingFrameEnd, ///< means the parser needs to analyse at least next sub stream to complete the frame
-			ReadSubFrame,    ///< means the parser will read and accumulate the last analysed subframe
-			SkipSubFrame,    ///< means the parser will skip the last analysed subframe
+			ReadSubFrame, ///< means the parser will read and accumulate the last analysed subframe
+			SkipSubFrame, ///< means the parser will skip the last analysed subframe
 			GotCompleteFrame ///< means the parser has a complete frame, and is ready to pass it to the frame parser
 		} CollatorState_t;
 
@@ -148,10 +148,10 @@ class Collator_PesAudio_c : public Collator_Pes_c
 
 		virtual CollatorStatus_t FindNextSyncWord(int *CodeOffset) = 0;
 		virtual CollatorStatus_t DecideCollatorNextStateAndGetLength(unsigned int *FrameLength) = 0;
-		virtual void             SetPesPrivateDataLength(unsigned char SpecificCode) = 0;
+		virtual void SetPesPrivateDataLength(unsigned char SpecificCode) = 0;
 		virtual CollatorStatus_t HandlePesPrivateData(unsigned char *PesPrivateData);
 
-		virtual void             ResetCollatorStateAfterForcedFrameFlush();
+		virtual void ResetCollatorStateAfterForcedFrameFlush();
 
 		/// Determine the offset into the current packet of the RemainingElementaryData pointer.
 		inline int GetOffsetIntoPacket()
@@ -165,17 +165,17 @@ class Collator_PesAudio_c : public Collator_Pes_c
 
 	public:
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 
-		CollatorStatus_t   Input(PlayerInputDescriptor_t     *Input,
-								 unsigned int          DataLength,
-								 void             *Data,
-								 bool              NonBlocking = false,
-								 unsigned int         *DataLengthRemaining = NULL);
+		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+				       unsigned int DataLength,
+				       void *Data,
+				       bool NonBlocking = false,
+				       unsigned int *DataLengthRemaining = NULL);
 
-		CollatorStatus_t   InternalFrameFlush(void);
+		CollatorStatus_t InternalFrameFlush(void);
 
-		CollatorStatus_t   DiscardAccumulatedData(void);
+		CollatorStatus_t DiscardAccumulatedData(void);
 
 };
 

@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -76,25 +76,25 @@ extern struct DvbContext_s *DvbContext;
 
 struct ldvb_v4l2_capture
 {
-	struct task_struct                      *thread;
-	volatile unsigned long                   physical_address;
-	unsigned long                            size;
-	unsigned long                            stride;
-	unsigned long                            buffer_format;
-	volatile unsigned long                   flags;
-	int                                      width;
-	int                                      height;
-	volatile int                             complete;
+	struct task_struct *thread;
+	volatile unsigned long physical_address;
+	unsigned long size;
+	unsigned long stride;
+	unsigned long buffer_format;
+	volatile unsigned long flags;
+	int width;
+	int height;
+	volatile int complete;
 };
 
 struct ldvb_v4l2_description
 {
-	char                       name[32];
+	char name[32];
 	//int audioId (when implemented the id associated with audio description)
-	int                        deviceId;
-	int                        virtualId;
-	int                        inuse;
-	struct linuxdvb_v4l2      *priv;
+	int deviceId;
+	int virtualId;
+	int inuse;
+	struct linuxdvb_v4l2 *priv;
 };
 
 static struct ldvb_v4l2_description g_ldvb_v4l2_device[] =
@@ -106,20 +106,20 @@ static struct ldvb_v4l2_description g_ldvb_v4l2_device[] =
 
 struct linuxdvb_v4l2
 {
-	struct v4l2_input               input;
-	struct v4l2_crop                crop;
-	struct v4l2_buffer              buffer[DVB_V4L2_MAX_BUFFERS];
-	void                            *address[DVB_V4L2_MAX_BUFFERS];
-	struct ldvb_v4l2_capture        *capture;
-	unsigned int                    blank;
+	struct v4l2_input input;
+	struct v4l2_crop crop;
+	struct v4l2_buffer buffer[DVB_V4L2_MAX_BUFFERS];
+	void *address[DVB_V4L2_MAX_BUFFERS];
+	struct ldvb_v4l2_capture *capture;
+	unsigned int blank;
 };
 
-struct bpa2_part     *partition = NULL;
+struct bpa2_part *partition = NULL;
 
 typedef struct
 {
 	struct v4l2_fmtdesc fmt;
-	int    depth;
+	int depth;
 } format_info;
 
 static format_info stmfb_v4l2_mapping_info [] =
@@ -131,49 +131,49 @@ static format_info stmfb_v4l2_mapping_info [] =
 	 * documentation that this is strange and that drivers may well lie for
 	 * pragmatic reasons.
 	 */
-	[SURF_RGB565]     = {{
+	[SURF_RGB565] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"RGB-16 (5-6-5)", V4L2_PIX_FMT_RGB565
-		},    16
+		}, 16
 	},
 
-	[SURF_ARGB1555]     = {{
+	[SURF_ARGB1555] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"RGBA-16 (5-5-5-1)", V4L2_PIX_FMT_BGRA5551
 		}, 16
 	},
 
-	[SURF_ARGB4444]     = {{
+	[SURF_ARGB4444] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"RGBA-16 (4-4-4-4)", V4L2_PIX_FMT_BGRA4444
 		}, 16
 	},
 
-	[SURF_RGB888]     = {{
+	[SURF_RGB888] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"RGB-24 (B-G-R)", V4L2_PIX_FMT_BGR24
-		},     24
+		}, 24
 	},
 
-	[SURF_ARGB8888]   = {{
+	[SURF_ARGB8888] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"ARGB-32 (8-8-8-8)", V4L2_PIX_FMT_BGR32
-		},  32
+		}, 32
 	}, /* Note that V4L2 doesn't define the alpha channel */
 
-	[SURF_BGRA8888]   = {{
+	[SURF_BGRA8888] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"BGRA-32 (8-8-8-8)", V4L2_PIX_FMT_RGB32
-		},  32
+		}, 32
 	}, /* Bigendian BGR as BTTV driver, not as V4L2 spec */
 
-	[SURF_YCBCR422R]  = {{
+	[SURF_YCBCR422R] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:2 (U-Y-V-Y)", V4L2_PIX_FMT_UYVY
 		}, 16
 	},
 
-	[SURF_YUYV]       = {{
+	[SURF_YUYV] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:2 (Y-U-Y-V)", V4L2_PIX_FMT_YUYV
 		}, 16
@@ -182,41 +182,41 @@ static format_info stmfb_v4l2_mapping_info [] =
 	[SURF_YCBCR422MB] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:2MB", V4L2_PIX_FMT_STM422MB
-		},     8
+		}, 8
 	}, /* Bits per pixel for Luma only */
 
 	[SURF_YCBCR420MB] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:0MB", V4L2_PIX_FMT_STM420MB
-		},     8
+		}, 8
 	}, /* Bits per pixel for Luma only */
 
-	[SURF_YUV420]     = {{
+	[SURF_YUV420] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:0 (YUV)", V4L2_PIX_FMT_YUV420
-		},   8
+		}, 8
 	}, /* Bits per pixel for Luma only */
 
-	[SURF_YVU420]     = {{
+	[SURF_YVU420] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:0 (YVU)", V4L2_PIX_FMT_YVU420
-		},   8
+		}, 8
 	}, /* Bits per pixel for Luma only */
 
-	[SURF_YUV422P]    = {{
+	[SURF_YUV422P] = {{
 			0, V4L2_BUF_TYPE_VIDEO_CAPTURE, 0,
 			"YUV 4:2:2 (YUV)", V4L2_PIX_FMT_YUV422P
-		},  8
+		}, 8
 	}, /* Bits per pixel for Luma only */
 
-	/* Make sure the array covers all the SURF_FMT enumerations  */
-	[SURF_END]         = {{ 0, 0, 0, "", 0 }, 0 }
+	/* Make sure the array covers all the SURF_FMT enumerations */
+	[SURF_END] = {{ 0, 0, 0, "", 0 }, 0 }
 };
 
 unsigned long GetPhysicalContiguous(unsigned long ptr, size_t size)
 {
 	struct mm_struct *mm = current->mm;
-//	struct vma_area_struct *vma = find_vma(mm, ptr);
+	//struct vma_area_struct *vma = find_vma(mm, ptr);
 	unsigned virt_base = (ptr / PAGE_SIZE) * PAGE_SIZE;
 	unsigned phys_base = 0;
 	pgd_t *pgd;
@@ -246,7 +246,7 @@ out:
 	return 0;
 }
 
-void* stm_v4l2_findbuffer(unsigned long userptr, unsigned int size, int device)
+void *stm_v4l2_findbuffer(unsigned long userptr, unsigned int size, int device)
 {
 	int i;
 	unsigned long result;
@@ -263,7 +263,7 @@ void* stm_v4l2_findbuffer(unsigned long userptr, unsigned int size, int device)
 			if (ldvb->buffer[i].length &&
 					(result >= ldvb->buffer[i].m.offset) &&
 					((result + size) < (ldvb->buffer[i].m.offset + ldvb->buffer[i].length)))
-				return (void*)virtual;
+				return (void *)virtual;
 		}
 	}
 	return 0;
@@ -276,30 +276,30 @@ EXPORT_SYMBOL(g_ManifestorLastWaitQueue);
 static DECLARE_WAIT_QUEUE_HEAD(buffer_blitted);
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,24)
-#define wait_event_freezable_timeout(wq, condition, timeout)      \
-({                                                                \
-    long __retval = timeout;                                  \
-    do {                                                      \
-        __retval = wait_event_interruptible_timeout(wq,   \
-                (condition) || freezing(current), \
-                __retval);                        \
-    } while (try_to_freeze());                                \
-    __retval;                                                 \
-})
+#define wait_event_freezable_timeout(wq, condition, timeout) \
+	({ \
+		long __retval = timeout; \
+		do { \
+			__retval = wait_event_interruptible_timeout(wq, \
+								    (condition) || freezing(current), \
+								    __retval); \
+		} while (try_to_freeze()); \
+		__retval; \
+	})
 #endif
 
 static int linuxdvb_v4l2_capture_thread(void *data)
 {
-	struct linuxdvb_v4l2 * const ldvb = data;
-	stm_display_buffer_t       buffer;
-	struct stmcore_display_pipeline_data     pipeline_data;
+	struct linuxdvb_v4l2 *const ldvb = data;
+	stm_display_buffer_t buffer;
+	struct stmcore_display_pipeline_data pipeline_data;
 	stm_blitter_operation_t op;
-	stm_rect_t              dstrect;
-	stm_rect_t              srcrect;
+	stm_rect_t dstrect;
+	stm_rect_t srcrect;
 	stm_display_buffer_t *last = NULL;
 	set_freezable();
 	memset(&op, 0, sizeof(op));
-	dstrect.top  = 0;
+	dstrect.top = 0;
 	dstrect.left = 0;
 	// Get a handle to the blitter
 	stmcore_get_display_pipeline(0, &pipeline_data);
@@ -308,22 +308,22 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 		int ret;
 		stm_display_buffer_t *ptr;
 		ret = wait_event_freezable_timeout(g_ManifestorLastWaitQueue,
-										   /* condition is:
-										      a new buffer is
-										      available... */
-										   (last != ManifestorLastDisplayedBuffer
-											/* ...and the previous
-											   buffer has been
-											   dequeued by
-											   userspace... */
-											&& ldvb->capture->complete == 0
-											/* ...and we know where
-											   to capture to... */
-											&& ldvb->capture->physical_address)
-										   /* ...or we should
-										      terminate */
-										   || kthread_should_stop(),
-										   HZ);
+						   /* condition is:
+						   a new buffer is
+						   available... */
+						   (last != ManifestorLastDisplayedBuffer
+						    /* ...and the previous
+						    buffer has been
+						    dequeued by
+						    userspace... */
+						    && ldvb->capture->complete == 0
+						    /* ...and we know where
+						    to capture to... */
+						    && ldvb->capture->physical_address)
+						   /* ...or we should
+						   terminate */
+						   || kthread_should_stop(),
+						   HZ);
 		if (kthread_should_stop())
 			break;
 		if (ret <= 0)
@@ -336,56 +336,56 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 		{
 			memcpy(&buffer, ptr, sizeof(stm_display_buffer_t));
 #if 0
-			printk("%s:%d  %d %d %d %d\n", __FUNCTION__, __LINE__,
-				   ldvb->capture->width,
-				   ldvb->capture->height,
-				   ldvb->capture->stride,
-				   ldvb->capture->size);
+			printk("%s:%d %d %d %d %d\n", __FUNCTION__, __LINE__,
+			       ldvb->capture->width,
+			       ldvb->capture->height,
+			       ldvb->capture->stride,
+			       ldvb->capture->size);
 #endif
-			dstrect.right  = ldvb->capture->width;
+			dstrect.right = ldvb->capture->width;
 			dstrect.bottom = ldvb->capture->height;
 			/* Convert the source origin into something useful to
-			   the blitter. The incoming coordinates can be in
-			   either whole integer or multiples of a 16th or a
-			   32nd of a pixel/scanline. */
+			 the blitter. The incoming coordinates can be in
+			 either whole integer or multiples of a 16th or a
+			 32nd of a pixel/scanline. */
 			switch (buffer.src.ulFlags & (STM_PLANE_SRC_XY_IN_32NDS | STM_PLANE_SRC_XY_IN_16THS))
 			{
 				case STM_PLANE_SRC_XY_IN_32NDS:
 					srcrect.left = (buffer.src.Rect.x << (1 * 10)) / 32;
-					srcrect.top  = (buffer.src.Rect.y << (1 * 10)) / 32;
+					srcrect.top = (buffer.src.Rect.y << (1 * 10)) / 32;
 					break;
 				case STM_PLANE_SRC_XY_IN_16THS:
 					srcrect.left = (buffer.src.Rect.x << (1 * 10)) / 16;
-					srcrect.top  = (buffer.src.Rect.y << (1 * 10)) / 16;
+					srcrect.top = (buffer.src.Rect.y << (1 * 10)) / 16;
 					break;
 				case 0:
 					srcrect.left = buffer.src.Rect.x << (1 * 10);
-					srcrect.top  = buffer.src.Rect.y << (1 * 10);
+					srcrect.top = buffer.src.Rect.y << (1 * 10);
 					break;
 				default:
 					printk("%s:%d Error during blitter operation\n", __FUNCTION__, __LINE__);
 					continue;
 			}
-			srcrect.right  = srcrect.left + buffer.src.Rect.width;
+			srcrect.right = srcrect.left + buffer.src.Rect.width;
 			srcrect.bottom = srcrect.top + buffer.src.Rect.height;
 			op.ulFlags = ((buffer.src.ulFlags & STM_PLANE_SRC_COLORSPACE_709)
-						  ? STM_BLITTER_FLAGS_SRC_COLOURSPACE_709
-						  : 0);
+				      ? STM_BLITTER_FLAGS_SRC_COLOURSPACE_709
+				      : 0);
 			op.ulFlags |= ldvb->capture->flags;
 			//op.ulFlags |= STM_BLITTER_FLAGS_SRC_XY_IN_FIXED_POINT;
-			op.srcSurface.ulMemory       = buffer.src.ulVideoBufferAddr;
-			op.srcSurface.ulSize         = buffer.src.ulVideoBufferSize;
-			op.srcSurface.ulWidth        = buffer.src.ulStride / (buffer.src.ulPixelDepth / 8);
-			op.srcSurface.ulHeight       = buffer.src.ulTotalLines;
-			op.srcSurface.ulStride       = buffer.src.ulStride;
-			op.srcSurface.format         = buffer.src.ulColorFmt;
+			op.srcSurface.ulMemory = buffer.src.ulVideoBufferAddr;
+			op.srcSurface.ulSize = buffer.src.ulVideoBufferSize;
+			op.srcSurface.ulWidth = buffer.src.ulStride / (buffer.src.ulPixelDepth / 8);
+			op.srcSurface.ulHeight = buffer.src.ulTotalLines;
+			op.srcSurface.ulStride = buffer.src.ulStride;
+			op.srcSurface.format = buffer.src.ulColorFmt;
 			op.srcSurface.ulChromaOffset = buffer.src.chromaBufferOffset;
 			op.dstSurface.ulMemory = ldvb->capture->physical_address;
-			op.dstSurface.ulSize   = ldvb->capture->size;
-			op.dstSurface.ulWidth  = ldvb->capture->width;
+			op.dstSurface.ulSize = ldvb->capture->size;
+			op.dstSurface.ulWidth = ldvb->capture->width;
 			op.dstSurface.ulHeight = ldvb->capture->height;
 			op.dstSurface.ulStride = ldvb->capture->stride;
-			op.dstSurface.format   = ldvb->capture->buffer_format;
+			op.dstSurface.format = ldvb->capture->buffer_format;
 			if (stm_display_blitter_blit(pipeline_data.blitter, &op, &srcrect, &dstrect))
 				printk("%s:%d Error during blitter operation\n", __FUNCTION__, __LINE__);
 			ldvb->capture->complete = 1;
@@ -405,7 +405,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 	{
 		case VIDIOC_ENUMINPUT:
 		{
-			struct v4l2_input* input = arg;
+			struct v4l2_input *input = arg;
 			int index = input->index - driver->index_offset[device];
 			// check consistency of index
 			if (index < 0 || index >= ARRAY_SIZE(g_ldvb_v4l2_device))
@@ -446,12 +446,13 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 				DVB_ERROR("driver handle NULL. Need to call VIDIOC_S_INPUT first. \n");
 				return -ENODEV;
 			}
-			*((int *) arg) = (ldvb->input.index + driver->index_offset[device]);
+			*((int *) arg) = (ldvb->input.index
+					  + driver->index_offset[device]);
 			break;
 		}
 		case VIDIOC_S_CROP:
 		{
-			struct v4l2_crop *crop = (struct v4l2_crop*)arg;
+			struct v4l2_crop *crop = (struct v4l2_crop *)arg;
 			if (ldvb == NULL)
 			{
 				DVB_ERROR("driver handle NULL. Need to call VIDIOC_S_INPUT first. \n");
@@ -467,16 +468,16 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			ldvb->crop.c = crop->c;
 			if (crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY)
 				VideoSetOutputWindow(&DvbContext->DeviceContext[ldvb->input.index],
-									 crop->c.left, crop->c.top, crop->c.width, crop->c.height);
+						     crop->c.left, crop->c.top, crop->c.width, crop->c.height);
 			else if (crop->type == V4L2_BUF_TYPE_PRIVATE + 1)
 				VideoSetInputWindow(&DvbContext->DeviceContext[ldvb->input.index],
-									crop->c.left, crop->c.top, crop->c.width, crop->c.height);
+						    crop->c.left, crop->c.top, crop->c.width, crop->c.height);
 			break;
 		}
 		case VIDIOC_CROPCAP:
 		{
-			struct v4l2_cropcap *cropcap = (struct v4l2_cropcap*)arg;
-			video_size_t         video_size;
+			struct v4l2_cropcap *cropcap = (struct v4l2_cropcap *)arg;
+			video_size_t video_size;
 			if (ldvb == NULL)
 			{
 				printk("%s Error: driver handle NULL. Need to call VIDIOC_S_INPUT first. \n", __FUNCTION__);
@@ -484,12 +485,12 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			}
 			//if (cropcap->type == V4L2_BUF_TYPE_PRIVATE+1) {
 			VideoIoctlGetSize(&DvbContext->DeviceContext[ldvb->input.index], &video_size);
-			cropcap->bounds.left                    = 0;
-			cropcap->bounds.top                     = 0;
-			cropcap->bounds.width                   = video_size.w;
-			cropcap->bounds.height                  = video_size.h;
+			cropcap->bounds.left = 0;
+			cropcap->bounds.top = 0;
+			cropcap->bounds.width = video_size.w;
+			cropcap->bounds.height = video_size.h;
 			VideoGetPixelAspectRatio(&DvbContext->DeviceContext[ldvb->input.index],
-									 &cropcap->pixelaspect.numerator, &cropcap->pixelaspect.denominator);
+						 &cropcap->pixelaspect.numerator, &cropcap->pixelaspect.denominator);
 			//printk("%s VIDIOC_CROPCAP, type = %d\n", __FUNCTION__, cropcap->type);
 			//}
 			break;
@@ -521,7 +522,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			if (ldvb->capture->thread)
 				goto err_inval;
 			ldvb->capture->thread = kthread_run(linuxdvb_v4l2_capture_thread,
-												ldvb, "%s", task_name);
+							    ldvb, "%s", task_name);
 			break;
 		}
 		case VIDIOC_STREAMOFF:
@@ -562,8 +563,8 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 				goto err_inval;
 			}
 			ldvb->capture->buffer_format = surface;
-			ldvb->capture->width         = fmt->fmt.pix.width;
-			ldvb->capture->height        = fmt->fmt.pix.height;
+			ldvb->capture->width = fmt->fmt.pix.width;
+			ldvb->capture->height = fmt->fmt.pix.height;
 			if (!fmt->fmt.pix.bytesperline)
 				fmt->fmt.pix.bytesperline = (stmfb_v4l2_mapping_info[surface].depth * fmt->fmt.pix.width) / 8;
 			ldvb->capture->stride = fmt->fmt.pix.bytesperline;
@@ -572,7 +573,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 		case VIDIOC_QBUF:
 		{
 			struct v4l2_buffer *buf = arg;
-			unsigned long addr              = 0;
+			unsigned long addr = 0;
 			if (!ldvb)
 				goto err_inval;
 			if (!ldvb->capture)
@@ -588,11 +589,11 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			addr = GetPhysicalContiguous(buf->m.userptr, buf->length);
 			if (!addr) return -EIO;
 			ldvb->capture->physical_address = addr;
-			ldvb->capture->size             = buf->length;
+			ldvb->capture->size = buf->length;
 #if 0
 			ldvb->capture->flags = ((buf->flags & V4L2_BUF_FLAG_FULLRANGE)
-									? STM_BLITTER_FLAGS_DST_FULLRANGE
-									: 0);
+						? STM_BLITTER_FLAGS_DST_FULLRANGE
+						: 0);
 #endif
 			break;
 		}
@@ -607,23 +608,24 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 				goto err_inval;
 			if (!ldvb->capture->physical_address) // If there is no physical address
 				if (!ldvb->capture->complete) // And we are not complete
-					return -EIO;          // Return an IO error, please queue a buffer...
+					return -EIO; // Return an IO error, please queue a buffer...
 			if ((file->f_flags & O_NONBLOCK) == O_NONBLOCK)
 				if (ldvb->capture->complete == 0)
 					return -EAGAIN;
 			// Otherwise loop until the blit has been completed
-			if (wait_event_interruptible(buffer_blitted, ldvb->capture->complete != 0))
+			if (wait_event_interruptible(buffer_blitted,
+						     ldvb->capture->complete != 0))
 				return -ERESTARTSYS;
 			if (ldvb->capture->complete != 1)
 				/* capture thread aborted */
 				return -EIO;
-			ldvb->capture->physical_address = 0;           // Mark as done, so we can queue a new buffer
-			ldvb->capture->complete         = 0;
+			ldvb->capture->physical_address = 0; // Mark as done, so we can queue a new buffer
+			ldvb->capture->complete = 0;
 			break;
 		}
 		// We use the buf type private to allow obtaining physically contiguous buffers.
 		// We also need this to get capture buffers so we can do capture of mpeg2 stream etc.
-		case VIDIOC_REQBUFS:          //_IOWR ('V',  8, struct v4l2_requestbuffers)
+		case VIDIOC_REQBUFS: //_IOWR ('V', 8, struct v4l2_requestbuffers)
 		{
 			struct v4l2_requestbuffers *rb = arg;
 			int n, m, count;
@@ -678,18 +680,18 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 						}
 						dataSize = (rb->reserved[0] + (PAGE_SIZE - 1)) / PAGE_SIZE ;
 						/* Let's see if we can allocate some memory */
-						data = (void*)bpa2_alloc_pages(partition, dataSize, 4, GFP_KERNEL);
+						data = (void *)bpa2_alloc_pages(partition, dataSize, 4, GFP_KERNEL);
 						if (!data)
 						{
 							if (m == 0) return -EIO;
 							else return 0;
 						}
 						/* Now we know everything good fill the info in */
-						ldvb->buffer[n].index     = n;
-						ldvb->buffer[n].length    = rb->reserved[0];
-						ldvb->buffer[n].m.offset  = (unsigned int)data;
-						ldvb->buffer[n].type      = rb->type;
-						ldvb->address[n]          = ioremap_cache((unsigned int)data, dataSize);
+						ldvb->buffer[n].index = n;
+						ldvb->buffer[n].length = rb->reserved[0];
+						ldvb->buffer[n].m.offset = (unsigned int)data;
+						ldvb->buffer[n].type = rb->type;
+						ldvb->address[n] = ioremap_cache((unsigned int)data, dataSize);
 						rb->count = m + 1;
 					}
 					break;
@@ -701,12 +703,12 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 		}
 		case VIDIOC_S_CTRL:
 		{
-			uint32_t  ctrlid            = 0;
-			uint32_t  ctrlvalue         = 0;
-			struct v4l2_control* pctrl  = arg;
-			int ret                     = 0;
-			ctrlid      = pctrl->id;
-			ctrlvalue   = pctrl->value;
+			ULONG ctrlid = 0;
+			ULONG ctrlvalue = 0;
+			struct v4l2_control *pctrl = arg;
+			int ret = 0;
+			ctrlid = pctrl->id;
+			ctrlvalue = pctrl->value;
 			switch (ctrlid)
 			{
 				case V4L2_CID_STM_BLANK:
@@ -722,17 +724,17 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 						DVB_ERROR("StreamEnable failed (ctrlvalue = %lu)\n", (long unsigned int)ctrlvalue);
 						return -EINVAL;
 					}
-					ldvb->blank     = ctrlvalue;
+					ldvb->blank = ctrlvalue;
 					break;
 				}
 				/*
-				    case V4L2_CID_STM_SRC_COLOUR_MODE:
-				    case V4L2_CID_STM_FULL_RANGE :
-				    case V4L2_CID_AUDIO_MUTE:
-				    case V4L2_CID_STM_AUDIO_SAMPLE_RATE:
-				    case V4L2_CID_STM_BACKGROUND_RED:
-				    case V4L2_CID_STM_BACKGROUND_GREEN:
-				    case V4L2_CID_STM_BACKGROUND_BLUE:
+				 case V4L2_CID_STM_SRC_COLOUR_MODE:
+				 case V4L2_CID_STM_FULL_RANGE :
+				 case V4L2_CID_AUDIO_MUTE:
+				 case V4L2_CID_STM_AUDIO_SAMPLE_RATE:
+				 case V4L2_CID_STM_BACKGROUND_RED:
+				 case V4L2_CID_STM_BACKGROUND_GREEN:
+				 case V4L2_CID_STM_BACKGROUND_BLUE:
 				 */
 				default:
 				{
@@ -744,7 +746,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 		}
 		case VIDIOC_G_CTRL:
 		{
-			struct v4l2_control* pctrl = arg;
+			struct v4l2_control *pctrl = arg;
 			switch (pctrl->id)
 			{
 				case V4L2_CID_STM_BLANK:
@@ -804,7 +806,7 @@ static int linuxdvb_vm_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 	 * the pfn of the physical address to be mapped. This will get more complex
 	 * when the 32bit SH4 address space becomes available.
 	 */
-	page_addr = (void*)(((unsigned long)vmf->virtual_address - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT));
+	page_addr = (void *)(((unsigned long)vmf->virtual_address - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT));
 	page_frame = ((unsigned long)page_addr >> PAGE_SHIFT);
 	if (!pfn_valid(page_frame))
 		return VM_FAULT_SIGBUS;
@@ -813,8 +815,7 @@ static int linuxdvb_vm_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 	return 0;
 }
 #else
-
-static struct page* linuxdvb_vm_nopage(struct vm_area_struct *vma, unsigned long vaddr, int *type)
+static struct page *linuxdvb_vm_nopage(struct vm_area_struct *vma, unsigned long vaddr, int *type)
 {
 	struct page *page;
 	void *page_addr;
@@ -826,7 +827,7 @@ static struct page* linuxdvb_vm_nopage(struct vm_area_struct *vma, unsigned long
 	 * the pfn of the physical address to be mapped. This will get more complex
 	 * when the 32bit SH4 address space becomes available.
 	 */
-	page_addr = (void*)((vaddr - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT));
+	page_addr = (void *)((vaddr - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT));
 	page_frame = ((unsigned long)page_addr >> PAGE_SHIFT);
 	if (!pfn_valid(page_frame))
 		return NOPAGE_SIGBUS;
@@ -850,23 +851,23 @@ static void linuxdvb_vm_close(struct vm_area_struct *vma)
 
 static struct vm_operations_struct linuxdvb_vm_ops_memory =
 {
-	.open     = linuxdvb_vm_open,
-	.close    = linuxdvb_vm_close,
+	.open = linuxdvb_vm_open,
+	.close = linuxdvb_vm_close,
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,30))
-	.fault    = linuxdvb_vm_nopage,
+	.fault = linuxdvb_vm_nopage,
 #else
-	.nopage   = linuxdvb_vm_nopage,
+	.nopage = linuxdvb_vm_nopage,
 #endif
 };
 
-static int linuxdvb_mmap(struct stm_v4l2_handles *handle, enum _stm_v4l2_driver_type type, struct file *file, struct vm_area_struct*  vma)
+static int linuxdvb_mmap(struct stm_v4l2_handles *handle, enum _stm_v4l2_driver_type type, struct file *file, struct vm_area_struct *vma)
 {
 	struct linuxdvb_v4l2 *ldvb = handle->v4l2type[type].handle;
 	int n;
 	if (!(vma->vm_flags & VM_WRITE))
 		return -EINVAL;
-//  if (!(vma->vm_flags & VM_SHARED))
-//    return -EINVAL;
+// if (!(vma->vm_flags & VM_SHARED))
+// return -EINVAL;
 	for (n = 0; n < DVB_V4L2_MAX_BUFFERS; n++)
 		if (ldvb->buffer[n].length && (ldvb->buffer[n].m.offset == (vma->vm_pgoff * PAGE_SIZE)))
 			break;
@@ -874,8 +875,8 @@ static int linuxdvb_mmap(struct stm_v4l2_handles *handle, enum _stm_v4l2_driver_
 		return -EINVAL;
 	if (ldvb->buffer[n].length != (vma->vm_end - vma->vm_start))
 		return -EINVAL;
-	vma->vm_flags       |= /*VM_RESERVED | VM_IO |*/ VM_DONTEXPAND | VM_LOCKED;
-//  vma->vm_page_prot    = pgprot_noncached(vma->vm_page_prot);
+	vma->vm_flags |= /*VM_RESERVED | VM_IO |*/ VM_DONTEXPAND | VM_LOCKED;
+// vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
 	vma->vm_private_data = ldvb;
 	vma->vm_ops = &linuxdvb_vm_ops_memory;
 	return 0;
@@ -883,12 +884,12 @@ static int linuxdvb_mmap(struct stm_v4l2_handles *handle, enum _stm_v4l2_driver_
 
 struct stm_v4l2_driver linuxdvb_overlay =
 {
-	.type         = STM_V4L2_VIDEO_INPUT,
-	.ioctl        = linuxdvb_ioctl,
-	.close        = linuxdvb_close,
-	.poll         = NULL,
-	.mmap         = linuxdvb_mmap,
-	.name         = "Linux DVB Overlay",
+	.type = STM_V4L2_VIDEO_INPUT,
+	.ioctl = linuxdvb_ioctl,
+	.close = linuxdvb_close,
+	.poll = NULL,
+	.mmap = linuxdvb_mmap,
+	.name = "Linux DVB Overlay",
 };
 
 void linuxdvb_v4l2_init(void)
@@ -897,7 +898,7 @@ void linuxdvb_v4l2_init(void)
 	for (i = 0; i < STM_V4L2_MAX_DEVICES; i++)
 	{
 		linuxdvb_overlay.control_range[i].first = V4L2_CID_STM_DVBV4L2_FIRST;
-		linuxdvb_overlay.control_range[i].last  = V4L2_CID_STM_DVBV4L2_LAST;
+		linuxdvb_overlay.control_range[i].last = V4L2_CID_STM_DVBV4L2_LAST;
 		linuxdvb_overlay.n_indexes[i] = ARRAY_SIZE(g_ldvb_v4l2_device);
 	}
 	stm_v4l2_register_driver(&linuxdvb_overlay);

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes.cpp
-Author :           Audio
+Author : Audio
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-19-Apr-07   Created from existing collator_pes_video.cpp    Daniel
+Date Modification Name
+---- ------------ --------
+19-Apr-07 Created from existing collator_pes_video.cpp Daniel
 
 ************************************************************************/
 
@@ -47,8 +47,8 @@ Date        Modification                                    Name
 /// and Collator_PesAudio_c::GetFrameLength.
 ///
 /// \todo Currently this class does not honour PES padding (causing
-///       accumulated data to be spuriously discarded when playing back
-///       padded streams).
+/// accumulated data to be spuriously discarded when playing back
+/// padded streams).
 ///
 
 // /////////////////////////////////////////////////////////////////////
@@ -146,7 +146,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForSyncWord(void)
 			COLLATOR_DEBUG("Synchronization sequence spans multiple PES packets\n");
 			// accumulate any data from the old block
 			Status = AccumulateData(-1 * CodeOffset,
-									PotentialFrameHeader + PotentialFrameHeaderLength + CodeOffset);
+						PotentialFrameHeader + PotentialFrameHeaderLength + CodeOffset);
 			if (Status != CollatorNoError)
 				COLLATOR_DEBUG("Cannot accumulate data #1 (%d)\n", Status);
 			GotPartialFrameHeaderBytes += (-1 * CodeOffset);
@@ -168,19 +168,19 @@ CollatorStatus_t Collator_PesAudio_c::SearchForSyncWord(void)
 				PotentialFrameHeaderLength = BytesToKeep;
 			}
 			memcpy(PotentialFrameHeader + PotentialFrameHeaderLength,
-				   RemainingElementaryData,
-				   RemainingElementaryLength);
+			       RemainingElementaryData,
+			       RemainingElementaryLength);
 			PotentialFrameHeaderLength += RemainingElementaryLength;
 		}
 		else
 		{
 			memcpy(PotentialFrameHeader,
-				   RemainingElementaryData + RemainingElementaryLength - FrameHeaderLength,
-				   FrameHeaderLength);
+			       RemainingElementaryData + RemainingElementaryLength - FrameHeaderLength,
+			       FrameHeaderLength);
 			PotentialFrameHeaderLength = FrameHeaderLength;
 		}
 		COLLATOR_DEBUG("Discarded %d bytes while searching for synchronization sequence\n",
-					   RemainingElementaryLength);
+			       RemainingElementaryLength);
 		RemainingElementaryLength = 0;
 		// we have contained the 'error' and don't want to propagate it
 		Status = CollatorNoError;
@@ -285,21 +285,21 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialFrameHeader(void)
 				if (WantSpanningTime)
 				{
 					NextPlaybackTimeValid = SpanningPlaybackTimeValid;
-					NextPlaybackTime  = SpanningPlaybackTime;
+					NextPlaybackTime = SpanningPlaybackTime;
 					SpanningPlaybackTimeValid = false;
-					NextDecodeTimeValid   = SpanningDecodeTimeValid;
-					NextDecodeTime    = SpanningDecodeTime;
+					NextDecodeTimeValid = SpanningDecodeTimeValid;
+					NextDecodeTime = SpanningDecodeTime;
 					SpanningDecodeTimeValid = false;
-					UseSpanningTime       = false;
+					UseSpanningTime = false;
 				}
 				else
 				{
 					NextPlaybackTimeValid = PlaybackTimeValid;
-					NextPlaybackTime  = PlaybackTime;
+					NextPlaybackTime = PlaybackTime;
 					PlaybackTimeValid = false;
-					NextDecodeTimeValid   = DecodeTimeValid;
-					NextDecodeTime    = DecodeTime;
-					DecodeTimeValid   = false;
+					NextDecodeTimeValid = DecodeTimeValid;
+					NextDecodeTime = DecodeTime;
+					DecodeTimeValid = false;
 				}
 			}
 			// switch states and absorb the packet
@@ -357,8 +357,8 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 	// Remember the original elementary stream pointers for when we return to 'normal' processing.
 	//
 	unsigned char *OldRemainingElementaryOrigin = RemainingElementaryOrigin;
-	unsigned char *OldRemainingElementaryData   = RemainingElementaryData;
-	unsigned int OldRemainingElementaryLength   = RemainingElementaryLength;
+	unsigned char *OldRemainingElementaryData = RemainingElementaryData;
+	unsigned int OldRemainingElementaryLength = RemainingElementaryLength;
 	//
 	// Take ownership of the already accumulated data
 	//
@@ -366,7 +366,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 	unsigned char *ReprocessingData = BufferBase;
 	unsigned int ReprocessingDataLength = AccumulatedDataSize;
 	ReprocessingDataBuffer->SetUsedDataSize(ReprocessingDataLength);
-	Status      = ReprocessingDataBuffer->ShrinkBuffer(max(ReprocessingDataLength, 1));
+	Status = ReprocessingDataBuffer->ShrinkBuffer(max(ReprocessingDataLength, 1));
 	if (Status != BufferNoError)
 	{
 		COLLATOR_ERROR("Failed to shrink the reprocessing buffer to size (%08x).\n", Status);
@@ -386,9 +386,9 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 	AlreadyHandlingMissingNextFrameHeader = true;
 	//
 	// WARNING: From this point on we own the ReprocessingDataBuffer, have set the recursion avoidance
-	//          marker and may have damaged the RemainingElementaryData pointer. There should be no
-	//          short-circuit exit paths used after this point otherwise we risk avoiding the clean up
-	//          at the bottom of the method.
+	// marker and may have damaged the RemainingElementaryData pointer. There should be no
+	// short-circuit exit paths used after this point otherwise we risk avoiding the clean up
+	// at the bottom of the method.
 	//
 	while (ReprocessingDataLength > 1)
 	{
@@ -402,7 +402,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 		// know will never need reprocessing which makes the recursion avoidance code more efficient.
 		//
 		RemainingElementaryOrigin = ReprocessingData;
-		RemainingElementaryData   = ReprocessingData;
+		RemainingElementaryData = ReprocessingData;
 		RemainingElementaryLength = ReprocessingDataLength;
 		int CodeOffset;
 		PotentialFrameHeaderLength = 0; // ensure no (now voided) historic data is considered by sub-class
@@ -411,7 +411,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 		{
 			COLLATOR_ASSERT(CodeOffset >= 0);
 			COLLATOR_DEBUG("Found start code during error recovery (byte %d of %d)\n",
-						   CodeOffset, ReprocessingDataLength);
+				       CodeOffset, ReprocessingDataLength);
 			// We found a start code, snip off all preceding data
 			ReprocessingData += CodeOffset;
 			ReprocessingDataLength -= CodeOffset;
@@ -423,7 +423,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 			// elementary stream handler again.
 			unsigned FinalBytes = min(ReprocessingDataLength, FrameHeaderLength - 1);
 			COLLATOR_DEBUG("Found no start code during error recovery (processing final %d bytes of %d)\n",
-						   ReprocessingDataLength, FinalBytes);
+				       ReprocessingDataLength, FinalBytes);
 			ReprocessingData += ReprocessingDataLength;
 			ReprocessingDataLength = FinalBytes;
 			ReprocessingData -= ReprocessingDataLength;
@@ -455,7 +455,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 	// Free the buffer we just consumed and restore the original elementary stream pointers
 	//
 	RemainingElementaryOrigin = OldRemainingElementaryOrigin;
-	RemainingElementaryData   = OldRemainingElementaryData;
+	RemainingElementaryData = OldRemainingElementaryData;
 	RemainingElementaryLength = OldRemainingElementaryLength;
 	(void) ReprocessingDataBuffer->DecrementReferenceCount(IdentifierCollator);
 	AlreadyHandlingMissingNextFrameHeader = false;
@@ -488,7 +488,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadFrame(void)
 		CollatorState = SeekingFrameEnd;
 		return CollatorNoError;
 	}
-	//
+	// FramePayloadRemaining is postive so no worry about casting
 	BytesToRead = min((unsigned int)FramePayloadRemaining, RemainingElementaryLength);
 	if (CollatorState == ReadSubFrame)
 	{
@@ -543,7 +543,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleElementaryStream(unsigned int Length
 	// act upon it.
 	//
 	RemainingElementaryOrigin = Data;
-	RemainingElementaryData   = Data;
+	RemainingElementaryData = Data;
 	RemainingElementaryLength = Length;
 	//
 	// Continually handle units of input until all input is exhausted (or an error occurs).
@@ -552,7 +552,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleElementaryStream(unsigned int Length
 	// that result in a different branch being taken next time round the loop.
 	//
 	Status = CollatorNoError;
-	while (Status == CollatorNoError &&  RemainingElementaryLength != 0)
+	while (Status == CollatorNoError && RemainingElementaryLength != 0)
 	{
 		COLLATOR_DEBUG("ES loop has %d bytes remaining\n", RemainingElementaryLength);
 		//report_dump_hex( severity_note, RemainingElementaryData, min(RemainingElementaryLength, 188), 32, 0);
@@ -628,7 +628,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForPesHeader(void)
 			// We've got the 0, 0, 1 so if the code is *not* in the ignore range then we've got one
 			unsigned char SpecificCode = RemainingData[0];
 			if (!inrange(SpecificCode, Configuration.IgnoreCodesRangeStart,
-						 Configuration.IgnoreCodesRangeEnd))
+					Configuration.IgnoreCodesRangeEnd))
 			{
 				COLLATOR_DEBUG("Found a trailing startcode 00, 00, 01, %x\n", SpecificCode);
 				// Consume the specific start code
@@ -741,7 +741,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForPesHeader(void)
 			}
 		}
 		COLLATOR_DEBUG("Discarded %d bytes while searching for PES header (%d might be start code)\n",
-					   RemainingLength, TrailingStartCodeBytes);
+			       RemainingLength, TrailingStartCodeBytes);
 		RemainingLength = 0;
 	}
 //
@@ -814,8 +814,8 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialPesHeader(void)
 					CollatorNoError != (Status = ReadPesHeader()))
 			{
 				COLLATOR_DEBUG("%s; seeking new PES header",
-							   (Status == CollatorNoError ? "Start code not where expected" :
-								"Badly formed PES header"));
+					       (Status == CollatorNoError ? "Start code not where expected" :
+						"Badly formed PES header"));
 				SeekingPesHeader = true;
 				DiscardAccumulatedData();
 				// we have contained the error by changing states...
@@ -823,7 +823,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialPesHeader(void)
 			}
 			//
 			// Placeholder: Generic stream id based PES filtering (configured by sub-class) could be inserted
-			//              here (set DiscardPesPacket to true to discard).
+			// here (set DiscardPesPacket to true to discard).
 			//
 			if (Configuration.ExtendedHeaderLength)
 			{
@@ -852,7 +852,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialPesHeader(void)
 			PesPayloadRemaining = PesPayloadLength;
 			// switch states and absorb the packet
 			COLLATOR_DEBUG("Discovered PES packet (header %d bytes, payload %d bytes)\n",
-						   PesPacketLength - PesPayloadLength + 6, PesPayloadLength);
+				       PesPacketLength - PesPayloadLength + 6, PesPayloadLength);
 			GotPartialPesHeader = false;
 			if (PassPesPrivateDataToElementaryStreamHandler && Configuration.ExtendedHeaderLength)
 			{
@@ -930,13 +930,13 @@ void Collator_PesAudio_c::ResetCollatorStateAfterForcedFrameFlush()
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///
-CollatorStatus_t   Collator_PesAudio_c::Input(PlayerInputDescriptor_t    *Input,
-		unsigned int        DataLength,
-		void           *Data,
-		bool            NonBlocking,
-		unsigned int       *DataLengthRemaining)
+CollatorStatus_t Collator_PesAudio_c::Input(PlayerInputDescriptor_t *Input,
+					    unsigned int DataLength,
+					    void *Data,
+					    bool NonBlocking,
+					    unsigned int *DataLengthRemaining)
 {
-	CollatorStatus_t    Status;
+	CollatorStatus_t Status;
 //
 	st_relayfs_write(ST_RELAY_TYPE_PES_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_COLLATOR, (unsigned char *)Data, DataLength, 0);
 	COLLATOR_ASSERT(!NonBlocking);
@@ -947,7 +947,7 @@ CollatorStatus_t   Collator_PesAudio_c::Input(PlayerInputDescriptor_t    *Input,
 	// Copy our arguments to class members so the utility functions can
 	// act upon it.
 	//
-	RemainingData   = (unsigned char *)Data;
+	RemainingData = (unsigned char *)Data;
 	RemainingLength = DataLength;
 	//
 	// Continually handle units of input until all input is exhausted (or an error occurs).
@@ -956,7 +956,7 @@ CollatorStatus_t   Collator_PesAudio_c::Input(PlayerInputDescriptor_t    *Input,
 	// that result in a different branch being taken next time round the loop.
 	//
 	Status = CollatorNoError;
-	while (Status == CollatorNoError &&  RemainingLength != 0)
+	while (Status == CollatorNoError && RemainingLength != 0)
 	{
 		//COLLATOR_DEBUG("De-PESing loop has %d bytes remaining\n", RemainingLength);
 		//report_dump_hex( severity_note, RemainingData, min(RemainingLength, 188), 32, 0);
@@ -999,7 +999,7 @@ CollatorStatus_t   Collator_PesAudio_c::Input(PlayerInputDescriptor_t    *Input,
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///
-CollatorStatus_t   Collator_PesAudio_c::Reset(void)
+CollatorStatus_t Collator_PesAudio_c::Reset(void)
 {
 	PesPayloadRemaining = 0;
 	TrailingStartCodeBytes = 0;
@@ -1015,7 +1015,7 @@ CollatorStatus_t   Collator_PesAudio_c::Reset(void)
 	PotentialFrameHeaderLength = 0;
 	RemainingElementaryLength = 0;
 	RemainingElementaryOrigin = NULL;
-	RemainingElementaryData   = NULL;
+	RemainingElementaryData = NULL;
 	FrameHeaderLength = 0;
 	return Collator_Pes_c::Reset();
 }
@@ -1025,13 +1025,13 @@ CollatorStatus_t   Collator_PesAudio_c::Reset(void)
 /// Pass accumulated data to the output ring and maintain class state variables.
 ///
 /// \todo If we were more clever about buffer management we wouldn't have to
-///       copy the frame header onto the stack.
+/// copy the frame header onto the stack.
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///
-CollatorStatus_t   Collator_PesAudio_c::InternalFrameFlush(void)
+CollatorStatus_t Collator_PesAudio_c::InternalFrameFlush(void)
 {
-	CollatorStatus_t    Status;
+	CollatorStatus_t Status;
 	unsigned char CopiedFrameHeader[FrameHeaderLength];
 //
 	AssertComponentState("Collator_PesAudio_c::InternalFrameFlush", ComponentRunning);
@@ -1045,7 +1045,7 @@ CollatorStatus_t   Collator_PesAudio_c::InternalFrameFlush(void)
 		//Assert( BufferBase + AccumulatedDataLength == StoredFrameHeader );
 	}
 	// now pass the complete frame onward
-	Status                  = Collator_Pes_c::InternalFrameFlush();
+	Status = Collator_Pes_c::InternalFrameFlush();
 	if (Status != CodecNoError)
 		return Status;
 	if (AccumulatedFrameReady)
@@ -1069,7 +1069,7 @@ CollatorStatus_t   Collator_PesAudio_c::InternalFrameFlush(void)
 ///
 /// \return Collator status code, CollatorNoError indicates success.
 ///
-CollatorStatus_t   Collator_PesAudio_c::DiscardAccumulatedData(void)
+CollatorStatus_t Collator_PesAudio_c::DiscardAccumulatedData(void)
 {
 	CollatorStatus_t Status;
 	Status = Collator_Pes_c::DiscardAccumulatedData();

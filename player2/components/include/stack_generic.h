@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : stack_generic.h
-Author :           Nick
+Author : Nick
 
 Implementation of the class defining the interface to a simple stack
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jan-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+08-Jan-07 Created Nick
 
 ************************************************************************/
 
@@ -42,19 +42,19 @@ class StackGeneric_c : public Stack_c
 {
 	private:
 
-		OS_Mutex_t       Lock;
-		unsigned int     Limit;
-		unsigned int     Level;
-		unsigned int    *Storage;
+		OS_Mutex_t Lock;
+		unsigned int Limit;
+		unsigned int Level;
+		unsigned int *Storage;
 
 	public:
 
 		StackGeneric_c(unsigned int MaxEntries = 16);
 		~StackGeneric_c(void);
 
-		StackStatus_t Push(unsigned int  Value);
-		StackStatus_t Pop(unsigned int  *Value);
+		StackStatus_t Push(unsigned int Value);
+		StackStatus_t Pop(unsigned int *Value);
 		StackStatus_t Flush(void);
-		bool          NonEmpty(void);
+		bool NonEmpty(void);
 };
 #endif

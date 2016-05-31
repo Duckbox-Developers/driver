@@ -2,10 +2,10 @@
  * e2_proc_audio
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
@@ -32,35 +32,37 @@
 #include "../../../../../../../../avs/avs_core.h"
 
 #define PSEUDO_ADDR(x) (offsetof(struct snd_pseudo_mixer_settings, x))
-extern struct DeviceContext_s* ProcDeviceContext;
+extern struct DeviceContext_s *ProcDeviceContext;
 
-extern int AudioIoctlSetBypassMode(struct DeviceContext_s* Context, unsigned int Mode);
-extern int AudioIoctlPause(struct DeviceContext_s* Context);
-extern int AudioIoctlContinue(struct DeviceContext_s* Context);
-extern int AudioIoctlClearBuffer(struct DeviceContext_s* Context);
-extern int VideoIoctlFreeze(struct DeviceContext_s* Context);
-extern int VideoIoctlContinue(struct DeviceContext_s* Context);
-extern int VideoIoctlClearBuffer(struct DeviceContext_s* Context);
+extern int AudioIoctlSetBypassMode(struct DeviceContext_s *Context, unsigned int Mode);
+extern int AudioIoctlPause(struct DeviceContext_s *Context);
+extern int AudioIoctlContinue(struct DeviceContext_s *Context);
+extern int AudioIoctlClearBuffer(struct DeviceContext_s *Context);
+extern int VideoIoctlFreeze(struct DeviceContext_s *Context);
+extern int VideoIoctlContinue(struct DeviceContext_s *Context);
+extern int VideoIoctlClearBuffer(struct DeviceContext_s *Context);
 
-extern struct snd_kcontrol** pseudoGetControls(int* numbers);
-extern int snd_pseudo_integer_get(struct snd_kcontrol* kcontrol, struct snd_ctl_elem_value* ucontrol);
-extern int snd_pseudo_integer_put(struct snd_kcontrol* kcontrol, struct snd_ctl_elem_value* ucontrol);
-int avs_command_kernel(unsigned int cmd, void* arg);
+extern struct snd_kcontrol **pseudoGetControls(int *numbers);
+extern int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
+				  struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
+				  struct snd_ctl_elem_value *ucontrol);
+int avs_command_kernel(unsigned int cmd, void *arg);
 
 #if defined(ADB_BOX)
-int proc_audio_delay_pcm_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_audio_delay_pcm_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	printk("%s %d - ", __FUNCTION__, (int) count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -73,7 +75,7 @@ out:
 	return ret;
 }
 
-int proc_audio_delay_pcm_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_audio_delay_pcm_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
@@ -81,20 +83,21 @@ int proc_audio_delay_pcm_read(char* page, char** start, off_t off, int count, in
 }
 #endif
 
-int proc_audio_delay_bitstream_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_audio_delay_bitstream_write(struct file *file, const char __user *buf,
+				     unsigned long count, void *data)
 {
-	char*    page;
-	char*    myString;
-	ssize_t  ret = -ENOMEM;
+	char *page;
+	char *myString;
+	ssize_t ret = -ENOMEM;
 #ifdef VERY_VERBOSE
 	printk("%s %ld - ", __FUNCTION__, count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		int number = 0;
-		struct snd_kcontrol** kcontrol       = pseudoGetControls(&number);
-		struct snd_kcontrol*  single_control = NULL;
+		struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
+		struct snd_kcontrol *single_control = NULL;
 		int vLoop;
 		int delay = 0;
 		ret = -EFAULT;
@@ -105,7 +108,7 @@ int proc_audio_delay_bitstream_write(struct file* file, const char __user* buf, 
 			if (copy_from_user(page, buf, count))
 				goto out;
 		}
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -142,12 +145,13 @@ out:
 	return ret;
 }
 
-int proc_audio_delay_bitstream_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_audio_delay_bitstream_read(char *page, char **start, off_t off, int count,
+				    int *eof, void *data_unused)
 {
 	int len = 0;
 	int number = 0;
-	struct snd_kcontrol*  single_control = NULL;
-	struct snd_kcontrol** kcontrol      = pseudoGetControls(&number);
+	struct snd_kcontrol *single_control = NULL;
+	struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
 	int vLoop;
 	for (vLoop = 0; vLoop < number; vLoop++)
 	{
@@ -172,12 +176,12 @@ int proc_audio_delay_bitstream_read(char* page, char** start, off_t off, int cou
 
 int volume = 0;
 
-static unsigned long ReadRegister(volatile unsigned long* reg)
+static unsigned long ReadRegister(volatile unsigned long *reg)
 {
 	return readl((unsigned long)reg);
 }
 
-static void WriteRegister(volatile unsigned long* reg, unsigned long val)
+static void WriteRegister(volatile unsigned long *reg, unsigned long val)
 {
 	writel(val, (unsigned long)reg);
 }
@@ -197,24 +201,24 @@ static void WriteRegister(volatile unsigned long* reg, unsigned long val)
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
  || defined(SAGEMCOM88)
-#define SPDIF_EN               (1L<<3)
-#define PCM_EN                 (1L<<5)
-#define SPDIF_PCM_DIS          0xFFFFFFD7
-#define SPDIF_DIS              0xFFFFFFF7
-#define STb7105_AUDIO_BASE     0xfe210200
+#define SPDIF_EN (1L<<3)
+#define PCM_EN (1L<<5)
+#define SPDIF_PCM_DIS 0xFFFFFFD7
+#define SPDIF_DIS 0xFFFFFFF7
+#define STb7105_AUDIO_BASE 0xfe210200
 #else
-#define AUD_IO_CTRL            0x200
-#define SPDIF_EN               (1L<<3)
-#define SPDIF_DIS              0xFFFFFFF7
-#define STb7100_REGISTER_BASE  0x18000000
-#define STb7100_AUDIO_BASE     0x01210000
-#define STb7100_REG_ADDR_SIZE  0x02000000
+#define AUD_IO_CTRL 0x200
+#define SPDIF_EN (1L<<3)
+#define SPDIF_DIS 0xFFFFFFF7
+#define STb7100_REGISTER_BASE 0x18000000
+#define STb7100_AUDIO_BASE 0x01210000
+#define STb7100_REG_ADDR_SIZE 0x02000000
 #endif
 
 void spdif_out_mute(int mute)
 {
 	unsigned long val;
-	unsigned long* RegMap;
+	unsigned long *RegMap;
 #if defined(UFS912) \
  || defined(SPARK) \
  || defined(SPARK7162) \
@@ -230,9 +234,9 @@ void spdif_out_mute(int mute)
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
  || defined(SAGEMCOM88)
-	RegMap = (unsigned long*)ioremap(STb7105_AUDIO_BASE, 0x10);
+	RegMap = (unsigned long *)ioremap(STb7105_AUDIO_BASE, 0x10);
 #else
-	RegMap = (unsigned long*)ioremap(STb7100_REGISTER_BASE, STb7100_REG_ADDR_SIZE);
+	RegMap = (unsigned long *)ioremap(STb7100_REGISTER_BASE, STb7100_REG_ADDR_SIZE);
 #endif
 	if (mute == AVS_MUTE)
 	{
@@ -276,7 +280,7 @@ void spdif_out_mute(int mute)
  || defined(VITAMIN_HD5000) \
  || defined(SAGEMCOM88)
 		val = ReadRegister(RegMap);
-		WriteRegister(RegMap , val | SPDIF_EN);
+		WriteRegister(RegMap, val | SPDIF_EN);
 #else
 		val = ReadRegister(RegMap + ((STb7100_AUDIO_BASE + AUD_IO_CTRL) >> 2));
 		WriteRegister(RegMap + ((STb7100_AUDIO_BASE + AUD_IO_CTRL) >> 2), val | SPDIF_EN);
@@ -285,34 +289,35 @@ void spdif_out_mute(int mute)
 	iounmap(RegMap);
 }
 
-int proc_audio_j1_mute_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_audio_j1_mute_write(struct file *file, const char __user *buf,
+			     unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	unsigned int State;
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (int) count);
 #endif
 	mutex_lock(&(ProcDeviceContext->DvbContext->Lock));
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
 		printk("%s\n", myString);
 #endif
 		sscanf(myString, "%d", &State);
-		if (State == 1)   //MUTE
+		if (State == 1) //MUTE
 		{
 			int number = 0;
-			struct snd_kcontrol* single_control = NULL;
-			struct snd_kcontrol** kcontrol = pseudoGetControls(&number);
+			struct snd_kcontrol *single_control = NULL;
+			struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
 			int vLoop;
 			for (vLoop = 0; vLoop < number; vLoop++)
 			{
@@ -342,13 +347,13 @@ int proc_audio_j1_mute_write(struct file* file, const char __user* buf, unsigned
 				printk("Pseudo Mixer does not deliver controls\n");
 			}
 			spdif_out_mute(AVS_MUTE);
-			avs_command_kernel(AVSIOSMUTE, (void*) AVS_MUTE);
+			avs_command_kernel(AVSIOSMUTE, (void *) AVS_MUTE);
 		}
 		else //UNMUTE
 		{
 			int number = 0;
-			struct snd_kcontrol* single_control = NULL;
-			struct snd_kcontrol** kcontrol = pseudoGetControls(&number);
+			struct snd_kcontrol *single_control = NULL;
+			struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
 			int vLoop;
 			for (vLoop = 0; vLoop < number; vLoop++)
 			{
@@ -393,12 +398,13 @@ out:
 	return ret;
 }
 
-int proc_audio_j1_mute_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_audio_j1_mute_read(char *page, char **start, off_t off, int count,
+			    int *eof, void *data_unused)
 {
 	int len = 0;
 	int number = 0;
-	struct snd_kcontrol* single_control = NULL;
-	struct snd_kcontrol** kcontrol = pseudoGetControls(&number);
+	struct snd_kcontrol *single_control = NULL;
+	struct snd_kcontrol **kcontrol = pseudoGetControls(&number);
 	int vLoop;
 	for (vLoop = 0; vLoop < number; vLoop++)
 	{
@@ -435,21 +441,22 @@ int e2_proc_audio_getPassthrough(void)
 	return passthrough;
 }
 
-int proc_audio_ac3_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_audio_ac3_write(struct file *file, const char __user *buf,
+			 unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (int) count);
 #endif
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 #ifdef VERY_VERBOSE
@@ -514,7 +521,8 @@ out:
 	return ret;
 }
 
-int proc_audio_ac3_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_audio_ac3_read(char *page, char **start, off_t off, int count,
+			int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -531,7 +539,8 @@ int proc_audio_ac3_read(char* page, char** start, off_t off, int count, int* eof
 	return len;
 }
 
-int proc_audio_ac3_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_audio_ac3_choices_read(char *page, char **start, off_t off, int count,
+				int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE

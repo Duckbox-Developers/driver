@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : manifestor_base.cpp
-Author :           Julian
+Author : Julian
 
 Implementation of the base manifestor class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Jan-07   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+11-Jan-07 Created Julian
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "manifestor_base.h"
 
@@ -46,38 +46,38 @@ Date        Modification                                    Name
 // Locally defined structures
 //
 
-#define BUFFER_OVERLAP_MAX_TRIES        16
+#define BUFFER_OVERLAP_MAX_TRIES 16
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Constructor :
-//      Action  : Allocate and initialise all necessary structures
-//      Input   :
-//      Output  :
-//      Result  :
+// Constructor :
+// Action : Allocate and initialise all necessary structures
+// Input :
+// Output :
+// Result :
 //
 
 Manifestor_Base_c::Manifestor_Base_c(void)
 {
-	InitializationStatus        = ManifestorError;
+	InitializationStatus = ManifestorError;
 	//MANIFESTOR_DEBUG ("\n");
 	memset(&Configuration, 0x00, sizeof(ManifestorConfiguration_t));
-	Configuration.ManifestorName                = "Noname";
-	Configuration.StreamType                    = StreamTypeNone;
-	Configuration.DecodeBufferDescriptor        = NULL;
+	Configuration.ManifestorName = "Noname";
+	Configuration.StreamType = StreamTypeNone;
+	Configuration.DecodeBufferDescriptor = NULL;
 	Configuration.PostProcessControlBufferCount = 0;
 	Configuration.OutputRateSmoothingFramesBetweenReCalculate = 8;
-	DecodeBufferPool                            = NULL;
-	DecodeMemoryDevice                          = ALLOCATOR_INVALID_DEVICE;
-	LastDecodeBufferSize                        = 1;
-	PostProcessControlBufferPool                = NULL;
+	DecodeBufferPool = NULL;
+	DecodeMemoryDevice = ALLOCATOR_INVALID_DEVICE;
+	LastDecodeBufferSize = 1;
+	PostProcessControlBufferPool = NULL;
 	OutputRateSmoothingFramesSinceLastCalculation = 0;
-	OutputRateSmoothingIndex                    = 0;
-	OutputRateSmoothingLastRate                 = 0;
-	OutputRateSmoothingSubPPMPart               = 0;
-	OutputRateSmoothingBaseValue                = 1000000;
-	OutputRateSmoothingLastValue                = 1000000;
-	OutputRateMovingTo              = false;
+	OutputRateSmoothingIndex = 0;
+	OutputRateSmoothingLastRate = 0;
+	OutputRateSmoothingSubPPMPart = 0;
+	OutputRateSmoothingBaseValue = 1000000;
+	OutputRateSmoothingLastValue = 1000000;
+	OutputRateMovingTo = false;
 	if (OS_InitializeMutex(&EventLock) != OS_NO_ERROR)
 	{
 		MANIFESTOR_ERROR("Failed to init Event mutex\n");
@@ -86,16 +86,16 @@ Manifestor_Base_c::Manifestor_Base_c(void)
 	}
 	EventLockValid = true;
 	Manifestor_Base_c::Reset();
-	InitializationStatus        = ManifestorNoError;
+	InitializationStatus = ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Destructor :
-//      Action  : Give up switch off the lights and go home
-//      Input   :
-//      Output  :
-//      Result  :
+// Destructor :
+// Action : Give up switch off the lights and go home
+// Input :
+// Output :
+// Result :
 //
 
 Manifestor_Base_c::~Manifestor_Base_c(void)
@@ -103,7 +103,7 @@ Manifestor_Base_c::~Manifestor_Base_c(void)
 	if (EventLockValid)
 	{
 		OS_TerminateMutex(&EventLock);
-		EventLockValid  = false;
+		EventLockValid = false;
 	}
 	//MANIFESTOR_DEBUG ("\n");
 	Manifestor_Base_c::Halt();
@@ -112,14 +112,14 @@ Manifestor_Base_c::~Manifestor_Base_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Halt :
-//      Action  : Terminate access to any registered resources
-//      Input   :
-//      Output  :
-//      Result  :
+// Halt :
+// Action : Terminate access to any registered resources
+// Input :
+// Output :
+// Result :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::Halt(void)
+ManifestorStatus_t Manifestor_Base_c::Halt(void)
 {
 	//MANIFESTOR_DEBUG ("Base\n");
 	return BaseComponentClass_c::Halt();
@@ -127,14 +127,14 @@ ManifestorStatus_t      Manifestor_Base_c::Halt(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Reset function
-//      Action  : Release any resources, and reset all variables
-//      Input   :
-//      Output  :
-//      Result  :
+// Reset function
+// Action : Release any resources, and reset all variables
+// Input :
+// Output :
+// Result :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::Reset(void)
+ManifestorStatus_t Manifestor_Base_c::Reset(void)
 {
 	int i;
 	//MANIFESTOR_DEBUG ("Base\n");
@@ -144,42 +144,42 @@ ManifestorStatus_t      Manifestor_Base_c::Reset(void)
 	if (DecodeBufferPool != NULL)
 	{
 		BufferManager->DestroyPool(DecodeBufferPool);
-		DecodeBufferPool        = NULL;
+		DecodeBufferPool = NULL;
 	}
 	if (PostProcessControlBufferPool != NULL)
 	{
 		BufferManager->DestroyPool(PostProcessControlBufferPool);
-		PostProcessControlBufferPool    = NULL;
+		PostProcessControlBufferPool = NULL;
 	}
 	if (DecodeMemoryDevice != ALLOCATOR_INVALID_DEVICE)
 	{
 		AllocatorClose(DecodeMemoryDevice);
-		DecodeMemoryDevice      = ALLOCATOR_INVALID_DEVICE;
+		DecodeMemoryDevice = ALLOCATOR_INVALID_DEVICE;
 	}
-	EventPending        = false;
-	NextEvent           = 0;
-	LastEvent           = 0;
+	EventPending = false;
+	NextEvent = 0;
+	LastEvent = 0;
 	for (i = 0; i < MAXIMUM_WAITING_EVENTS; i++)
 	{
-		EventList[i].Id         = INVALID_BUFFER_ID;
+		EventList[i].Id = INVALID_BUFFER_ID;
 	}
 	return BaseComponentClass_c::Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      SetModuleParameters function
-//      Action  : Allows external user to set up important environmental parameters
-//      Input   :
-//      Output  :
-//      Result  :
+// SetModuleParameters function
+// Action : Allows external user to set up important environmental parameters
+// Input :
+// Output :
+// Result :
 //
 
-CodecStatus_t   Manifestor_Base_c::SetModuleParameters(
-	unsigned int   ParameterBlockSize,
-	void          *ParameterBlock)
+CodecStatus_t Manifestor_Base_c::SetModuleParameters(
+	unsigned int ParameterBlockSize,
+	void *ParameterBlock)
 {
-	ManifestorParameterBlock_t      *ManifestorParameterBlock = (ManifestorParameterBlock_t *)ParameterBlock;
+	ManifestorParameterBlock_t *ManifestorParameterBlock = (ManifestorParameterBlock_t *)ParameterBlock;
 //
 	if (ParameterBlockSize != sizeof(ManifestorParameterBlock_t))
 	{
@@ -197,22 +197,22 @@ CodecStatus_t   Manifestor_Base_c::SetModuleParameters(
 			report(severity_error, "Manifestor_Base_c::SetModuleParameters: Unrecognised parameter block (%d).\n", ManifestorParameterBlock->ParameterType);
 			return ManifestorError;
 	}
-	return  ManifestorNoError;
+	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      GetDecodedBufferPool :
-//      Action  : Retrieve details of decode buffers
-//      Input   : Pointer to location for buffer pool pointer
-//      Output  : Details of the buffer pool holding the decode buffers.
-//      Results :
+// GetDecodedBufferPool :
+// Action : Retrieve details of decode buffers
+// Input : Pointer to location for buffer pool pointer
+// Output : Details of the buffer pool holding the decode buffers.
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t*          Pool)
+ManifestorStatus_t Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t *Pool)
 {
-	PlayerStatus_t          Status;
-	allocator_status_t      AStatus;
+	PlayerStatus_t Status;
+	allocator_status_t AStatus;
 //
 	MANIFESTOR_DEBUG("\n");
 	//
@@ -238,10 +238,10 @@ ManifestorStatus_t      Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t*    
 		//
 		// Initialize the data type we use.
 		//
-		Status          = BufferManager->FindBufferDataType(Configuration.DecodeBufferDescriptor->TypeName, &DecodeBufferType);
+		Status = BufferManager->FindBufferDataType(Configuration.DecodeBufferDescriptor->TypeName, &DecodeBufferType);
 		if (Status != BufferNoError)
 		{
-			Status      = BufferManager->CreateBufferDataType(Configuration.DecodeBufferDescriptor, &DecodeBufferType);
+			Status = BufferManager->CreateBufferDataType(Configuration.DecodeBufferDescriptor, &DecodeBufferType);
 			if (Status != BufferNoError)
 			{
 				report(severity_error, "Manifestor_Base_c::GetDecodeBufferPool(%s) - Failed to create the decode buffer type.\n", Configuration.ManifestorName);
@@ -258,11 +258,11 @@ ManifestorStatus_t      Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t*    
 			report(severity_error, "Manifestor_Base_c::GetDecodeBufferPool(%s) - Failed to allocate memory\n", Configuration.ManifestorName);
 			return PlayerInsufficientMemory;
 		}
-		DecodeBufferMemory[CachedAddress]         = AllocatorUserAddress(DecodeMemoryDevice);
-		DecodeBufferMemory[UnCachedAddress]       = AllocatorUncachedUserAddress(DecodeMemoryDevice);
-		DecodeBufferMemory[PhysicalAddress]       = AllocatorPhysicalAddress(DecodeMemoryDevice);
+		DecodeBufferMemory[CachedAddress] = AllocatorUserAddress(DecodeMemoryDevice);
+		DecodeBufferMemory[UnCachedAddress] = AllocatorUncachedUserAddress(DecodeMemoryDevice);
+		DecodeBufferMemory[PhysicalAddress] = AllocatorPhysicalAddress(DecodeMemoryDevice);
 //
-		Status  = BufferManager->CreatePool(&DecodeBufferPool, DecodeBufferType, BufferConfiguration.MaxBufferCount, BufferConfiguration.TotalBufferMemory, DecodeBufferMemory);
+		Status = BufferManager->CreatePool(&DecodeBufferPool, DecodeBufferType, BufferConfiguration.MaxBufferCount, BufferConfiguration.TotalBufferMemory, DecodeBufferMemory);
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Manifestor_Base_c::GetDecodeBufferPool(%s) - Failed to create the pool.\n", Configuration.ManifestorName);
@@ -271,7 +271,7 @@ ManifestorStatus_t      Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t*    
 		//
 		// Attach the structure data
 		//
-		Status  = DecodeBufferPool->AttachMetaData(Player->MetaDataBufferStructureType);
+		Status = DecodeBufferPool->AttachMetaData(Player->MetaDataBufferStructureType);
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Manifestor_Base_c::GetDecodeBufferPool(%s) - Failed to attach buffer structure data to the pool.\n", Configuration.ManifestorName);
@@ -281,24 +281,24 @@ ManifestorStatus_t      Manifestor_Base_c::GetDecodeBufferPool(BufferPool_t*    
 	//
 	// Setup the parameters and return
 	//
-	*Pool                       = DecodeBufferPool;
+	*Pool = DecodeBufferPool;
 //
 	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      PostProcessControlBufferPool :
-//      Action  : create a buffer pool for postprocessing
-//      Input   : Pointer to location for buffer pool pointer
-//      Output  : Details of the buffer pool holding the post processing control buffers.
-//      Results :
+// PostProcessControlBufferPool :
+// Action : create a buffer pool for postprocessing
+// Input : Pointer to location for buffer pool pointer
+// Output : Details of the buffer pool holding the post processing control buffers.
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::GetPostProcessControlBufferPool(BufferPool_t*          Pool)
+ManifestorStatus_t Manifestor_Base_c::GetPostProcessControlBufferPool(BufferPool_t *Pool)
 {
-	PlayerStatus_t          Status;
-	BufferType_t            Type;
+	PlayerStatus_t Status;
+	BufferType_t Type;
 //
 	MANIFESTOR_DEBUG("\n");
 	//
@@ -313,9 +313,9 @@ ManifestorStatus_t      Manifestor_Base_c::GetPostProcessControlBufferPool(Buffe
 		//
 		// Create the pool
 		//
-		Type    = (Configuration.StreamType == StreamTypeVideo) ? Player->BufferVideoPostProcessingControlType :
-				  Player->BufferAudioPostProcessingControlType;
-		Status  = BufferManager->CreatePool(&PostProcessControlBufferPool, Type, Configuration.PostProcessControlBufferCount);
+		Type = (Configuration.StreamType == StreamTypeVideo) ? Player->BufferVideoPostProcessingControlType :
+		       Player->BufferAudioPostProcessingControlType;
+		Status = BufferManager->CreatePool(&PostProcessControlBufferPool, Type, Configuration.PostProcessControlBufferCount);
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Manifestor_Base_c::GetPostProcessControlBufferPool(%s) - Failed to create the pool.\n", Configuration.ManifestorName);
@@ -325,47 +325,47 @@ ManifestorStatus_t      Manifestor_Base_c::GetPostProcessControlBufferPool(Buffe
 	//
 	// Setup the parameters and return
 	//
-	*Pool                       = PostProcessControlBufferPool;
+	*Pool = PostProcessControlBufferPool;
 //
 	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      RegisterOutputBufferRing :
-//      Action  : Save details of ring on which to place manifested buffers
-//      Input   : Pointer to ring to use for finished decode frames
-//      Output  :
-//      Results :
+// RegisterOutputBufferRing :
+// Action : Save details of ring on which to place manifested buffers
+// Input : Pointer to ring to use for finished decode frames
+// Output :
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::RegisterOutputBufferRing(Ring_t         Ring)
+ManifestorStatus_t Manifestor_Base_c::RegisterOutputBufferRing(Ring_t Ring)
 {
-	BufferPool_t            LocalDecodeBufferPool;
-	ManifestorStatus_t      Status;
+	BufferPool_t LocalDecodeBufferPool;
+	ManifestorStatus_t Status;
 //
 	MANIFESTOR_DEBUG("\n");
 	//
 	// On registration of the output ring we force construction of the decode buffer pool
 	//
-	Status      = Manifestor_Base_c::GetDecodeBufferPool(&LocalDecodeBufferPool);
+	Status = Manifestor_Base_c::GetDecodeBufferPool(&LocalDecodeBufferPool);
 	if (Status != ManifestorNoError)
 		return Status;
 //
-	OutputRing  = Ring;
+	OutputRing = Ring;
 	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      GetSurfaceParameters :
-//      Action  : Fill in private structure with details about display surface
-//      Input   : Opaque pointer to structure to complete
-//      Output  : Filled in structure
-//      Results :
+// GetSurfaceParameters :
+// Action : Fill in private structure with details about display surface
+// Input : Opaque pointer to structure to complete
+// Output : Filled in structure
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::GetSurfaceParameters(void** SurfaceParameters)
+ManifestorStatus_t Manifestor_Base_c::GetSurfaceParameters(void **SurfaceParameters)
 {
 	MANIFESTOR_DEBUG("\n");
 	return ManifestorNoError;
@@ -373,35 +373,35 @@ ManifestorStatus_t      Manifestor_Base_c::GetSurfaceParameters(void** SurfacePa
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The GetNextQueuedManifestTime function :
-//      Action  : Return the earliest system time at which the next frame to be queued will be manifested
-//      Input   : Pointer to 64-bit system time variable
-//      Output  : Estimated time
-//      Results :
+// The GetNextQueuedManifestTime function :
+// Action : Return the earliest system time at which the next frame to be queued will be manifested
+// Input : Pointer to 64-bit system time variable
+// Output : Estimated time
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::GetNextQueuedManifestTime(unsigned long long*    Time)
+ManifestorStatus_t Manifestor_Base_c::GetNextQueuedManifestTime(unsigned long long *Time)
 {
 	MANIFESTOR_DEBUG("\n");
 	return ManifestorNoError;
 }
 
-//{{{  ReleaseQueuedDecodeBuffers
-//{{{  doxynote
-/// \brief      Passes onto the output ring any decode buffers that are currently queued,
-///             but not in the process of being manifested.
-/// \return     Buffer index of last buffer sent for display
+//{{{ ReleaseQueuedDecodeBuffers
+//{{{ doxynote
+/// \brief Passes onto the output ring any decode buffers that are currently queued,
+/// but not in the process of being manifested.
+/// \return Buffer index of last buffer sent for display
 //}}}
-ManifestorStatus_t      Manifestor_Base_c::ReleaseQueuedDecodeBuffers(void)
+ManifestorStatus_t Manifestor_Base_c::ReleaseQueuedDecodeBuffers(void)
 {
 	int i;
 	MANIFESTOR_DEBUG("\n");
 	FlushDisplayQueue();
 	OS_LockMutex(&EventLock);
-	NextEvent   = 0;
-	LastEvent   = 0;
+	NextEvent = 0;
+	LastEvent = 0;
 	for (i = 0; i < MAXIMUM_WAITING_EVENTS; i++)
-		EventList[i].Id         = INVALID_BUFFER_ID;
+		EventList[i].Id = INVALID_BUFFER_ID;
 	OS_UnLockMutex(&EventLock);
 	return ManifestorNoError;
 }
@@ -409,26 +409,26 @@ ManifestorStatus_t      Manifestor_Base_c::ReleaseQueuedDecodeBuffers(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      QueueNullManifestation :
-//      Action  : Insert null frame into display sequence
-//      Input   :
-//      Output  :
-//      Results :
+// QueueNullManifestation :
+// Action : Insert null frame into display sequence
+// Input :
+// Output :
+// Results :
 //
 
-ManifestorStatus_t      Manifestor_Base_c::QueueNullManifestation(void)
+ManifestorStatus_t Manifestor_Base_c::QueueNullManifestation(void)
 {
 	MANIFESTOR_DEBUG("\n");
 	return ManifestorNoError;
 }
 
-//{{{  QueueEventSignal
-//{{{  doxynote
-/// \brief      Copy event record to be signalled when last queued buffer is displayed
-/// \param      Event Pointer to a player 2 event record to be signalled
-/// \return     Success if saved, failure if event queue full
+//{{{ QueueEventSignal
+//{{{ doxynote
+/// \brief Copy event record to be signalled when last queued buffer is displayed
+/// \param Event Pointer to a player 2 event record to be signalled
+/// \return Success if saved, failure if event queue full
 //}}}
-ManifestorStatus_t      Manifestor_Base_c::QueueEventSignal(PlayerEventRecord_t*   Event)
+ManifestorStatus_t Manifestor_Base_c::QueueEventSignal(PlayerEventRecord_t *Event)
 {
 	MANIFESTOR_DEBUG("\n");
 	OS_LockMutex(&EventLock);
@@ -437,48 +437,48 @@ ManifestorStatus_t      Manifestor_Base_c::QueueEventSignal(PlayerEventRecord_t*
 		//MANIFESTOR_ERROR("Event queue overflow\n");
 		NextEvent++;
 		if (NextEvent == MAXIMUM_WAITING_EVENTS)
-			NextEvent   = 0;
+			NextEvent = 0;
 		//OS_UnLockMutex (&EventLock);
 		//return ManifestorError;
 	}
-	EventList[LastEvent].Id     = GetBufferId();
-	EventList[LastEvent].Event  = *Event;
-	EventPending                = true;
+	EventList[LastEvent].Id = GetBufferId();
+	EventList[LastEvent].Event = *Event;
+	EventPending = true;
 	LastEvent++;
 	if (LastEvent == MAXIMUM_WAITING_EVENTS)
-		LastEvent       = 0;
+		LastEvent = 0;
 	OS_UnLockMutex(&EventLock);
 	return ManifestorNoError;
 }
 //}}}
 
-//{{{  ServiceEventQueue
-//{{{  doxynote
-/// \brief      Signal all events associated with buffer just manifested
-///             We need to travel down the event queue signalling all events
-///             including the one associated with the chosen buffer.
-/// \param Id   Index of buffer
+//{{{ ServiceEventQueue
+//{{{ doxynote
+/// \brief Signal all events associated with buffer just manifested
+/// We need to travel down the event queue signalling all events
+/// including the one associated with the chosen buffer.
+/// \param Id Index of buffer
 /// \return
 //}}}
-ManifestorStatus_t      Manifestor_Base_c::ServiceEventQueue(unsigned int    Id)
+ManifestorStatus_t Manifestor_Base_c::ServiceEventQueue(unsigned int Id)
 {
-	bool        EventsToQueue;
-	bool        FoundId         = false;
+	bool EventsToQueue;
+	bool FoundId = false;
 	MANIFESTOR_DEBUG("\n");
 	OS_LockMutex(&EventLock);
-	EventsToQueue       = (LastEvent != NextEvent);
+	EventsToQueue = (LastEvent != NextEvent);
 	while (EventsToQueue)
 	{
 		if (EventList[NextEvent].Id == Id)
-			FoundId     = true;
+			FoundId = true;
 		EventList[NextEvent].Id = INVALID_BUFFER_ID;
 		if (EventList[NextEvent].Event.Code != EventIllegalIdentifier)
 			Player->SignalEvent(&EventList[NextEvent].Event);
 		NextEvent++;
 		if (NextEvent == MAXIMUM_WAITING_EVENTS)
-			NextEvent   = 0;
+			NextEvent = 0;
 		if ((NextEvent == LastEvent) || (FoundId && (EventList[NextEvent].Id != ANY_BUFFER_ID) && (EventList[NextEvent].Id != Id)))
-			EventsToQueue       = false;
+			EventsToQueue = false;
 	}
 	OS_UnLockMutex(&EventLock);
 	return ManifestorNoError;
@@ -487,18 +487,18 @@ ManifestorStatus_t      Manifestor_Base_c::ServiceEventQueue(unsigned int    Id)
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      The get decode buffer function
+// The get decode buffer function
 
-ManifestorStatus_t   Manifestor_Base_c::GetDecodeBuffer(
-	BufferStructure_t        *RequestedStructure,
-	Buffer_t                 *Buffer)
+ManifestorStatus_t Manifestor_Base_c::GetDecodeBuffer(
+	BufferStructure_t *RequestedStructure,
+	Buffer_t *Buffer)
 {
-	ManifestorStatus_t       Status;
-	BufferStructure_t       *AttachedRequestStructure;
-	unsigned char           *Data;
-	Buffer_t                 BufferList[BUFFER_OVERLAP_MAX_TRIES];
-	unsigned int             i;
-	unsigned int             BufferCount;
+	ManifestorStatus_t Status;
+	BufferStructure_t *AttachedRequestStructure;
+	unsigned char *Data;
+	Buffer_t BufferList[BUFFER_OVERLAP_MAX_TRIES];
+	unsigned int i;
+	unsigned int BufferCount;
 //
 	AssertComponentState("Manifestor_Base_c::GetDecodeBuffer", ComponentRunning);
 	//
@@ -506,25 +506,25 @@ ManifestorStatus_t   Manifestor_Base_c::GetDecodeBuffer(
 	//
 	if (RequestedStructure->Format == FormatMarkerFrame)
 	{
-		RequestedStructure->Size        = 0;
+		RequestedStructure->Size = 0;
 	}
 	else
 	{
-		Status  = FillOutBufferStructure(RequestedStructure);
+		Status = FillOutBufferStructure(RequestedStructure);
 		if (Status != ManifestorNoError)
 		{
 			MANIFESTOR_ERROR("(%s) - Failed to flesh out request structure.\n", Configuration.ManifestorName);
 			return Status;
 		}
-		LastDecodeBufferSize    = RequestedStructure->Size;
+		LastDecodeBufferSize = RequestedStructure->Size;
 	}
-	BufferCount                 = 0;
+	BufferCount = 0;
 	while (BufferCount < BUFFER_OVERLAP_MAX_TRIES)
 	{
 		//
 		// Obtain a buffer
 		//
-		Status                  = DecodeBufferPool->GetBuffer(Buffer, IdentifierManifestor, RequestedStructure->Size);
+		Status = DecodeBufferPool->GetBuffer(Buffer, IdentifierManifestor, RequestedStructure->Size);
 		if (Status != ManifestorNoError)
 		{
 			MANIFESTOR_ERROR("(%s) - Failed to obtain a buffer.\n", Configuration.ManifestorName);
@@ -532,7 +532,7 @@ ManifestorStatus_t   Manifestor_Base_c::GetDecodeBuffer(
 		}
 		if (RequestedStructure->Format == FormatMarkerFrame)
 			break;
-		Status                  = (*Buffer)->ObtainDataReference(NULL, NULL, (void**)(&Data), PhysicalAddress);
+		Status = (*Buffer)->ObtainDataReference(NULL, NULL, (void **)(&Data), PhysicalAddress);
 		if (Status != ManifestorNoError)
 		{
 			MANIFESTOR_ERROR("(%s) - Failed to obtain buffer address.\n", Configuration.ManifestorName);
@@ -540,17 +540,17 @@ ManifestorStatus_t   Manifestor_Base_c::GetDecodeBuffer(
 		}
 		if (BufferAvailable(Data, RequestedStructure->Size))
 			break;
-		BufferList[BufferCount++]       = *Buffer;
+		BufferList[BufferCount++] = *Buffer;
 	}
 	if (BufferCount == BUFFER_OVERLAP_MAX_TRIES)
-		BufferCount--;                                          // Accept this last buffer ragardless
+		BufferCount--; // Accept this last buffer ragardless
 	for (i = 0; i < BufferCount; i++)
-		BufferList[i]->DecrementReferenceCount();               // put unwanted buffers back;
+		BufferList[i]->DecrementReferenceCount(); // put unwanted buffers back;
 	//
 	// Copy the request structure into the attached meta data
 	//
-	Status      = (*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
-				  (void **)(&AttachedRequestStructure));
+	Status = (*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
+						    (void **)(&AttachedRequestStructure));
 	if (Status != ManifestorNoError)
 	{
 		report(severity_error, "Manifestor_Base_c::GetDecodeBuffer(%s) - Failed to obtain a reference to the structure meta data.\n", Configuration.ManifestorName);
@@ -562,41 +562,41 @@ ManifestorStatus_t   Manifestor_Base_c::GetDecodeBuffer(
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      The get decode buffer count function
+// The get decode buffer count function
 
-ManifestorStatus_t   Manifestor_Base_c::GetDecodeBufferCount(unsigned int       *Count)
+ManifestorStatus_t Manifestor_Base_c::GetDecodeBufferCount(unsigned int *Count)
 {
-	unsigned int            MinimumBufferSize;
+	unsigned int MinimumBufferSize;
 //
 	AssertComponentState("Manifestor_Base_c::GetDecodeBufferCount", ComponentRunning);
 	//
 	// Calculate the maximum number of buffers that can be allocated
 	//
-	MinimumBufferSize   = max(DecodeBufferDescriptor->RequiredAllignment, DecodeBufferDescriptor->AllocationUnitSize);
-	MinimumBufferSize   = max(LastDecodeBufferSize, MinimumBufferSize);
-	*Count      = min((BufferConfiguration.TotalBufferMemory / MinimumBufferSize), BufferConfiguration.MaxBufferCount);
+	MinimumBufferSize = max(DecodeBufferDescriptor->RequiredAllignment, DecodeBufferDescriptor->AllocationUnitSize);
+	MinimumBufferSize = max(LastDecodeBufferSize, MinimumBufferSize);
+	*Count = min((BufferConfiguration.TotalBufferMemory / MinimumBufferSize), BufferConfiguration.MaxBufferCount);
 	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      The default synchronize output function
+// The default synchronize output function
 
-ManifestorStatus_t   Manifestor_Base_c::SynchronizeOutput(void)
+ManifestorStatus_t Manifestor_Base_c::SynchronizeOutput(void)
 {
 	return PlayerNotSupported;
 }
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      The get decode buffer count function
+// The get decode buffer count function
 
-ManifestorStatus_t   Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
-	Rational_t               OutputRateAdjustment,
-	int                     *PPMValue)
+ManifestorStatus_t Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
+	Rational_t OutputRateAdjustment,
+	int *PPMValue)
 {
-	Rational_t      SubPartValue0;
-	Rational_t      SubPartValue1;
+	Rational_t SubPartValue0;
+	Rational_t SubPartValue1;
 	//
 	// Reset on changed rate
 	//
@@ -605,61 +605,61 @@ ManifestorStatus_t   Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
 #if 0
 		if (Configuration.StreamType == StreamTypeAudio) report(severity_info, "Output Clock Change - %3d (%d)\n", OutputRateSmoothingBaseValue - IntegerPart(OutputRateAdjustment * 1000000), IntegerPart(OutputRateAdjustment * 1000000));
 #endif
-		OutputRateSmoothingFramesSinceLastCalculation   = 0;
-		OutputRateSmoothingIndex                        = 0;
-		OutputRateSmoothingLastRate                     = OutputRateAdjustment;
-		OutputRateSmoothingSubPPMPart                   = Remainder(OutputRateAdjustment * 1000000);
-		OutputRateSmoothingBaseValue                    = IntegerPart(OutputRateAdjustment * 1000000);
-		OutputRateMovingTo                              = true;
+		OutputRateSmoothingFramesSinceLastCalculation = 0;
+		OutputRateSmoothingIndex = 0;
+		OutputRateSmoothingLastRate = OutputRateAdjustment;
+		OutputRateSmoothingSubPPMPart = Remainder(OutputRateAdjustment * 1000000);
+		OutputRateSmoothingBaseValue = IntegerPart(OutputRateAdjustment * 1000000);
+		OutputRateMovingTo = true;
 	}
 	//
 	// If we have changed rate, and are moving to the new rate, we only allow 1 ppm change per frame
 	//
 	if (OutputRateMovingTo && (OutputRateSmoothingLastValue != OutputRateSmoothingBaseValue))
 	{
-		OutputRateSmoothingLastValue            = OutputRateSmoothingLastValue +
-				((OutputRateSmoothingLastValue > OutputRateSmoothingBaseValue) ? -1 : 1);
-		*PPMValue               = OutputRateSmoothingLastValue;
+		OutputRateSmoothingLastValue = OutputRateSmoothingLastValue +
+					       ((OutputRateSmoothingLastValue > OutputRateSmoothingBaseValue) ? -1 : 1);
+		*PPMValue = OutputRateSmoothingLastValue;
 		return ManifestorNoError;
 	}
-	OutputRateMovingTo      = false;
+	OutputRateMovingTo = false;
 	//
 	// Set default value, and check if we should just return
 	//
 	if (OutputRateSmoothingFramesSinceLastCalculation < Configuration.OutputRateSmoothingFramesBetweenReCalculate)
 	{
 		OutputRateSmoothingFramesSinceLastCalculation++;
-		*PPMValue               = OutputRateSmoothingLastValue;
+		*PPMValue = OutputRateSmoothingLastValue;
 		return ManifestorNoError;
 	}
 	//
 	// Calculate current and next subpart values
 	//
-	SubPartValue0                       = OutputRateSmoothingIndex * OutputRateSmoothingSubPPMPart;
-	SubPartValue1                       = SubPartValue0 + OutputRateSmoothingSubPPMPart;
+	SubPartValue0 = OutputRateSmoothingIndex * OutputRateSmoothingSubPPMPart;
+	SubPartValue1 = SubPartValue0 + OutputRateSmoothingSubPPMPart;
 	OutputRateSmoothingIndex++;
-	OutputRateSmoothingLastValue        = (SubPartValue0.IntegerPart() == SubPartValue1.IntegerPart()) ?
-										  OutputRateSmoothingBaseValue :
-										  OutputRateSmoothingBaseValue + 1;
+	OutputRateSmoothingLastValue = (SubPartValue0.IntegerPart() == SubPartValue1.IntegerPart()) ?
+				       OutputRateSmoothingBaseValue :
+				       OutputRateSmoothingBaseValue + 1;
 //
 	OutputRateSmoothingFramesSinceLastCalculation = 0;
-	*PPMValue                           = OutputRateSmoothingLastValue;
+	*PPMValue = OutputRateSmoothingLastValue;
 	return ManifestorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      The validate decode buffer address function
+// The validate decode buffer address function
 
-ManifestorStatus_t   Manifestor_Base_c::ValidatePhysicalDecodeBufferAddress(unsigned int    Address)
+ManifestorStatus_t Manifestor_Base_c::ValidatePhysicalDecodeBufferAddress(unsigned int Address)
 {
 	if (!inrange((unsigned int)Address, (unsigned int)DecodeBufferMemory[PhysicalAddress],
-				 ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1)))
+			((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1)))
 	{
 		report(severity_fatal, "Manifestor_Base_c::ValidateDecodeBufferAddress - Invalid address (%08x not in %08x %08x)\n",
-			   (unsigned int)Address,
-			   (unsigned int)DecodeBufferMemory[PhysicalAddress],
-			   ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1));
+		       (unsigned int)Address,
+		       (unsigned int)DecodeBufferMemory[PhysicalAddress],
+		       ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1));
 	}
 	return ManifestorNoError;
 }

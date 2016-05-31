@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec.h
-Author :           Nick
+Author : Nick
 
 Definition of the codec class module for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-02-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+02-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -42,13 +42,13 @@ Date        Modification                                    Name
 
 enum
 {
-	CodecNoError                = PlayerNoError,
-	CodecError                  = PlayerError,
+	CodecNoError = PlayerNoError,
+	CodecError = PlayerError,
 
-	CodecUnknownFrame               = BASE_CODEC
+	CodecUnknownFrame = BASE_CODEC
 };
 
-typedef PlayerStatus_t  CodecStatus_t;
+typedef PlayerStatus_t CodecStatus_t;
 
 //
 
@@ -68,28 +68,28 @@ enum
 // Class definition
 //
 
-#define CODEC_RELEASE_ALL       INVALID_INDEX
+#define CODEC_RELEASE_ALL INVALID_INDEX
 
 class Codec_c : public BaseComponentClass_c
 {
 	public:
 
-		virtual CodecStatus_t   GetTrickModeParameters(CodecTrickModeParameters_t   *TrickModeParameters) = 0;
+		virtual CodecStatus_t GetTrickModeParameters(CodecTrickModeParameters_t *TrickModeParameters) = 0;
 
-		virtual CodecStatus_t   RegisterOutputBufferRing(Ring_t           Ring) = 0;
+		virtual CodecStatus_t RegisterOutputBufferRing(Ring_t Ring) = 0;
 
-		virtual CodecStatus_t   OutputPartialDecodeBuffers(void) = 0;
+		virtual CodecStatus_t OutputPartialDecodeBuffers(void) = 0;
 
-		virtual CodecStatus_t   DiscardQueuedDecodes(void) = 0;
+		virtual CodecStatus_t DiscardQueuedDecodes(void) = 0;
 
-		virtual CodecStatus_t   ReleaseReferenceFrame(unsigned int        ReferenceFrameDecodeIndex) = 0;
+		virtual CodecStatus_t ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex) = 0;
 
-		virtual CodecStatus_t   CheckReferenceFrameList(unsigned int          NumberOfReferenceFrameLists,
-				ReferenceFrameList_t      ReferenceFrameList[]) = 0;
+		virtual CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
+							      ReferenceFrameList_t ReferenceFrameList[]) = 0;
 
-		virtual CodecStatus_t   ReleaseDecodeBuffer(Buffer_t          Buffer) = 0;
+		virtual CodecStatus_t ReleaseDecodeBuffer(Buffer_t Buffer) = 0;
 
-		virtual CodecStatus_t   Input(Buffer_t        CodedBuffer) = 0;
+		virtual CodecStatus_t Input(Buffer_t CodedBuffer) = 0;
 };
 
 // ---------------------------------------------------------------------
@@ -116,17 +116,17 @@ The partial list of entrypoints used by this class:
 The partial list of meta data types used by this class:
 
 - Attached to input buffers:
-  - <b>ParsedFrameParameters</b>, Describes the coded frame to be decoded.
-  - <b>StartCodeList</b>, Optional input for those codecs that require a list of start codes (IE mpeg2 soft decoder).
-  - <b>Parsed[Video|Audio|Data]Parameters</b>, Optional input attachment to be transferred to the output.
+ - <b>ParsedFrameParameters</b>, Describes the coded frame to be decoded.
+ - <b>StartCodeList</b>, Optional input for those codecs that require a list of start codes (IE mpeg2 soft decoder).
+ - <b>Parsed[Video|Audio|Data]Parameters</b>, Optional input attachment to be transferred to the output.
 
 - Added to output buffers:
-  - <b>ParsedFrameParameters</b>, Copied from the input, or merged with any current data for video decoding of partial frames.
-  - <b>Parsed[Video|Audio|Data]Parameters</b>, Optional Copied from the input, or merged with any current data for video decoding of partial frames.
+ - <b>ParsedFrameParameters</b>, Copied from the input, or merged with any current data for video decoding of partial frames.
+ - <b>Parsed[Video|Audio|Data]Parameters</b>, Optional Copied from the input, or merged with any current data for video decoding of partial frames.
 
 */
 
-/*! \fn CodecStatus_t   GetTrickModeParameters(     CodecTrickModeParameters_t      *TrickModeParameters )
+/*! \fn CodecStatus_t GetTrickModeParameters( CodecTrickModeParameters_t *TrickModeParameters )
 \brief Gain access to parameters describing trick mode capabilities.
 
 This function gains a copy of a datastructuture held within the codec, that
@@ -177,8 +177,8 @@ This function is non-blocking.
 */
 
 /*! \fn CodecStatus_t Codec_c::CheckReferenceFrameList(
-                        unsigned int          NumberOfReferenceFrameLists,
-                        ReferenceFrameList_t      ReferenceFrameList[] )
+ unsigned int NumberOfReferenceFrameLists,
+ ReferenceFrameList_t ReferenceFrameList[] )
 
 \brief Check a reference frame list
 

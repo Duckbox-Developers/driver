@@ -13,32 +13,32 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_divx_hd.cpp
-Author :           Chris
+Author : Chris
 
 Implementation of the divx HD video frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-Jun-06   Created                                         Chris.
+Date Modification Name
+---- ------------ --------
+18-Jun-06 Created Chris.
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 //
 #include "frame_parser_video_divx_hd.h"
 
-FrameParserStatus_t  FrameParser_VideoDivxHd_c::ReadVopHeader(Mpeg4VopHeader_t         *Vop)
+FrameParserStatus_t FrameParser_VideoDivxHd_c::ReadVopHeader(Mpeg4VopHeader_t *Vop)
 {
-	unsigned char* ptr;
+	unsigned char *ptr;
 	unsigned int bits;
 	FrameParserStatus_t Status;
 	Status = FrameParser_VideoDivx_c::ReadVopHeader(Vop);
@@ -60,22 +60,22 @@ FrameParserStatus_t  FrameParser_VideoDivxHd_c::ReadVopHeader(Mpeg4VopHeader_t  
 	return Status;
 }
 
-FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
+FrameParserStatus_t FrameParser_VideoDivxHd_c::ReadHeaders(void)
 {
-	unsigned int  Code;
+	unsigned int Code;
 	ParsedFrameParameters->NewStreamParameters = false;
 	ParsedFrameParameters->NewFrameParameters = false;
 	ParsedFrameParameters->DataOffset = 0xafff0000;
 	/*
-	    report (severity_info, "Start Code List ");
-	    for (unsigned int j = 0 ; j < StartCodeList->NumberOfStartCodes; ++j)
-	        report(severity_info,"%x ",ExtractStartCodeCode(StartCodeList->StartCodes[j]));
-	    report (severity_info,"\n");
+	 report (severity_info, "Start Code List ");
+	 for (unsigned int j = 0 ; j < StartCodeList->NumberOfStartCodes; ++j)
+	 report(severity_info,"%x ",ExtractStartCodeCode(StartCodeList->StartCodes[j]));
+	 report (severity_info,"\n");
 	*/
 #ifdef DUMP_HEADERS
 	++inputCount;
 #endif
-	//      report( severity_error, "%d start codes found\n",StartCodeList->NumberOfStartCodes);
+	// report( severity_error, "%d start codes found\n",StartCodeList->NumberOfStartCodes);
 	for (unsigned int i = 0; i < StartCodeList->NumberOfStartCodes; ++i)
 	{
 		Code = ExtractStartCodeCode(StartCodeList->StartCodes[i]);
@@ -109,7 +109,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 		}
 		else if ((Code & VOL_START_CODE_MASK) == VOL_START_CODE)
 		{
-			FrameParserStatus_t     Status = FrameParserNoError;
+			FrameParserStatus_t Status = FrameParserNoError;
 			// report (severity_error,"%x VOL_START_CODE\n",VOL_START_CODE);
 			if (StreamParameters == NULL)
 			{
@@ -118,7 +118,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 				ParsedFrameParameters->SizeofStreamParameterStructure = sizeof(Mpeg4VideoStreamParameters_t);
 				ParsedFrameParameters->NewStreamParameters = true;
 			}
-			Status  = ReadVolHeader(&StreamParameters->VolHeader);
+			Status = ReadVolHeader(&StreamParameters->VolHeader);
 			if (Status != FrameParserNoError)
 			{
 				ParsedFrameParameters->NewStreamParameters = false;
@@ -132,7 +132,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			StreamParametersSet = true;
 			//report (severity_error,"Stream is %s\n",Interlaced?"Interlaced":"Progressive");
 			if (DivXVersion != 311)
-				ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
+				ParsedFrameParameters->DataOffset = ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
 		}
 		else if ((Code & VOP_START_CODE_MASK) == VOP_START_CODE)
 		{
@@ -141,26 +141,26 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			if (StreamParametersSet)
 			{
 				Mpeg4VopHeader_t Vop;
-				FrameParserStatus_t     Status = FrameParserNoError;
+				FrameParserStatus_t Status = FrameParserNoError;
 				if (DivXVersion == 311)
 				{
-					unsigned char* ptr;
+					unsigned char *ptr;
 					Vop.prediction_type = Bits.Get(2);
-					Vop.quantizer       = Bits.Get(5);
+					Vop.quantizer = Bits.Get(5);
 					Bits.GetPosition(&ptr, &bit_skip_no);
 					ParsedFrameParameters->DataOffset = (unsigned int)(ptr - BufferData);
 				}
 				else
 				{
 					if (DivXVersion != 311 && (ParsedFrameParameters->DataOffset == 0xafff0000))
-						ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
-					Status  = ReadVopHeader(&Vop);
+						ParsedFrameParameters->DataOffset = ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
+					Status = ReadVopHeader(&Vop);
 					if (Status != FrameParserNoError)
 						return Status;
 				}
 				if (FrameParameters == NULL)
 				{
-					FrameParserStatus_t status  = GetNewFrameParameters((void **)&FrameParameters);
+					FrameParserStatus_t status = GetNewFrameParameters((void **)&FrameParameters);
 					if (status != FrameParserNoError)
 					{
 						report(severity_error, "Failed to get new FrameParameters\n");
@@ -181,7 +181,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			else
 			{
 				report(severity_error, "Have Frame without Stream Parameters\n");
-				//                              Code = INVALID_START_CODE;
+				// Code = INVALID_START_CODE;
 			}
 		}
 		else if (Code == VSOS_START_CODE)
@@ -192,7 +192,7 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			// AVI file
 			// some avi files have real ones which upset things.... if it returns back 0
 			// which is from an unknown profile then use the last one, otherwise pick 25fps
-			unsigned int cnpf =  ReadVosHeader();
+			unsigned int cnpf = ReadVosHeader();
 			if (cnpf != 0)
 				CurrentMicroSecondsPerFrame = cnpf;
 			// Nick changed this to sanitize the frame rate (4..120)
@@ -209,30 +209,30 @@ FrameParserStatus_t   FrameParser_VideoDivxHd_c::ReadHeaders(void)
 			ReadVoHeader();
 		}
 		/*
-		                else if( (Code & USER_DATA_START_CODE_MASK) == USER_DATA_START_CODE )
-		                {
-		                        report (severity_info,"%x USER_DATA_START_CODE\n",USER_DATA_START_CODE);
-		                } // No action
-		                else if( Code == VSOS_END_CODE )
-		                {
-		                      report (severity_info,"%x VSOS_END_CODE\n",VSOS_END_CODE);
-		                } // No action
-		                else if( Code == VSO_START_CODE )
-		                {
-		                        report (severity_info,"%x VSO_START_CODE\n",VSO_START_CODE);
-		                } // No action
-		                else if( Code == GOV_START_CODE )
-		                {
-		                        report (severity_info,"%x GOV_START_CODE\n",GOV_START_CODE);
-		                } // No action
-		                else if( Code == END_OF_START_CODE_LIST )
-		                {
-		                        report (severity_error,"%x END_OF_START_CODE_LIST\n",END_OF_START_CODE_LIST);
-		                } // No action
-		                else
-		                {
-		                        report( severity_error, "ReadHeaders - Unknown/Unsupported header 0x%02x\n", Code );
-		                }
+		 else if( (Code & USER_DATA_START_CODE_MASK) == USER_DATA_START_CODE )
+		 {
+		 report (severity_info,"%x USER_DATA_START_CODE\n",USER_DATA_START_CODE);
+		 } // No action
+		 else if( Code == VSOS_END_CODE )
+		 {
+		 report (severity_info,"%x VSOS_END_CODE\n",VSOS_END_CODE);
+		 } // No action
+		 else if( Code == VSO_START_CODE )
+		 {
+		 report (severity_info,"%x VSO_START_CODE\n",VSO_START_CODE);
+		 } // No action
+		 else if( Code == GOV_START_CODE )
+		 {
+		 report (severity_info,"%x GOV_START_CODE\n",GOV_START_CODE);
+		 } // No action
+		 else if( Code == END_OF_START_CODE_LIST )
+		 {
+		 report (severity_error,"%x END_OF_START_CODE_LIST\n",END_OF_START_CODE_LIST);
+		 } // No action
+		 else
+		 {
+		 report( severity_error, "ReadHeaders - Unknown/Unsupported header 0x%02x\n", Code );
+		 }
 		*/
 	}
 	return FrameParserNoError;

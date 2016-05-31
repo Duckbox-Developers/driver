@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_audio_lpcm.h
-Author :           Sylvain Barge
+Author : Sylvain Barge
 
 Definition of the stream specific codec implementation for mpeg audio in player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-Jul-07   Created                                         Sylvain Barge
+Date Modification Name
+---- ------------ --------
+18-Jul-07 Created Sylvain Barge
 
 ************************************************************************/
 
@@ -79,12 +79,12 @@ class Codec_MmeAudioLpcm_c : public Codec_MmeAudio_c
 
 	protected:
 
-		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
-		CodecStatus_t   FillOutTransformerInitializationParameters(void);
-		CodecStatus_t   FillOutSetStreamParametersCommand(void);
-		CodecStatus_t   FillOutDecodeCommand(void);
-		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-		CodecStatus_t   DumpDecodeParameters(void   *Parameters);
+		CodecStatus_t FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t FillOutTransformerInitializationParameters(void);
+		CodecStatus_t FillOutSetStreamParametersCommand(void);
+		CodecStatus_t FillOutDecodeCommand(void);
+		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t DumpSetStreamParameters(void *Parameters);
+		CodecStatus_t DumpDecodeParameters(void *Parameters);
 };
 #endif //H_CODEC_MME_AUDIO_LPCM

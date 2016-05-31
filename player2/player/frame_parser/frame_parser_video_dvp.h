@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_dvp.h
-Author :           Chris
+Author : Chris
 
 Definition of the DVP frame parser video class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Aug-07   Created                                         Chris
+Date Modification Name
+---- ------------ --------
+08-Aug-07 Created Chris
 
 ************************************************************************/
 
@@ -66,10 +66,10 @@ class FrameParser_VideoDvp_c : public FrameParser_Video_c
 
 		// Data
 
-		DvpStreamParameters_t    *StreamParameters;
-		DvpFrameParameters_t     *FrameParameters;
-		DvpRectangle_t        InputWindow;
-		DvpRectangle_t        OutputWindow;
+		DvpStreamParameters_t *StreamParameters;
+		DvpFrameParameters_t *FrameParameters;
+		DvpRectangle_t InputWindow;
+		DvpRectangle_t OutputWindow;
 
 	public:
 
@@ -84,13 +84,13 @@ class FrameParser_VideoDvp_c : public FrameParser_Video_c
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		//
 		// Extensions to the class overriding the base implementations
@@ -100,23 +100,23 @@ class FrameParser_VideoDvp_c : public FrameParser_Video_c
 		// RevPlay.
 		//
 
-		virtual FrameParserStatus_t   ForPlayProcessFrame(void);
-		virtual FrameParserStatus_t   ForPlayQueueFrameForDecode(void);
+		virtual FrameParserStatus_t ForPlayProcessFrame(void);
+		virtual FrameParserStatus_t ForPlayQueueFrameForDecode(void);
 
-		virtual FrameParserStatus_t   RevPlayProcessFrame(void);
-		virtual FrameParserStatus_t   RevPlayQueueFrameForDecode(void);
-		virtual FrameParserStatus_t   RevPlayProcessDecodeStacks(void);
-		virtual FrameParserStatus_t   RevPlayPurgeDecodeStacks(void);
+		virtual FrameParserStatus_t RevPlayProcessFrame(void);
+		virtual FrameParserStatus_t RevPlayQueueFrameForDecode(void);
+		virtual FrameParserStatus_t RevPlayProcessDecodeStacks(void);
+		virtual FrameParserStatus_t RevPlayPurgeDecodeStacks(void);
 
 		//
 		// Extensions to the class to be fulfilled by my inheritors,
 		// these are required to support the process buffer override
 		//
 
-		FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t ReadHeaders(void);
 
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
-		FrameParserStatus_t   ForPlayUpdateReferenceFrameList(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
+		FrameParserStatus_t ForPlayUpdateReferenceFrameList(void);
 
 };
 

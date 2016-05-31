@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_wma.h
-Author :           Adam
+Author : Adam
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Sep-07   Created from existing collator_pes_audio_mpeg.h Adam
+Date Modification Name
+---- ------------ --------
+11-Sep-07 Created from existing collator_pes_audio_mpeg.h Adam
 
 ************************************************************************/
 
@@ -59,14 +59,14 @@ class Collator_PesAudioWma_c : public Collator_PesAudio_c
 
 		CollatorStatus_t FindNextSyncWord(int *CodeOffset);
 		CollatorStatus_t DecideCollatorNextStateAndGetLength(unsigned int *FrameLength);
-		void             SetPesPrivateDataLength(unsigned char SpecificCode);
+		void SetPesPrivateDataLength(unsigned char SpecificCode);
 		CollatorStatus_t HandlePesPrivateData(unsigned char *PesPrivateData);
 
 	public:
 
 		Collator_PesAudioWma_c();
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 };
 
 #endif // H_COLLATOR_PES_AUDIO_WMA

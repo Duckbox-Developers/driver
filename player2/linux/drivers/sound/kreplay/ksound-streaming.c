@@ -11,16 +11,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include <linux/version.h>
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30) )    // STLinux 2.3
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 #include <sound/driver.h>
 #endif
 #include <sound/core.h>
@@ -36,7 +36,7 @@ EXPORT_SYMBOL(ksnd_pcm_streaming_start);
 EXPORT_SYMBOL(ksnd_pcm_streaming_stop);
 
 #define ERROR(fmt, args...) printk(KERN_ERR "%s:%d: ERROR in %s: " fmt, \
-                                   __FILE__, __LINE__, __FUNCTION__, ## args)
+				   __FILE__, __LINE__, __FUNCTION__, ## args)
 
 #define FLAG_BUSY 0
 #define FLAG_STOPPED 1
@@ -84,7 +84,7 @@ static void period_captured_callback(struct snd_pcm_substream *substream)
 	capture_frames -= capture_frames % substream->runtime->period_size;
 	// "Mmap" captured data
 	result = ksnd_pcm_mmap_begin(streaming->capture_handle,
-								 &capture_areas, &streaming->capture_offset, &capture_frames);
+				     &capture_areas, &streaming->capture_offset, &capture_frames);
 	if (result < 0)
 	{
 		ERROR("Failed to mmap capture buffer!\n");
@@ -93,7 +93,7 @@ static void period_captured_callback(struct snd_pcm_substream *substream)
 	// "Mmap" playback buffer
 	streaming->playback_frames = capture_frames;
 	result = ksnd_pcm_mmap_begin(streaming->playback_handle,
-								 &playback_areas, &streaming->playback_offset, &streaming->playback_frames);
+				     &playback_areas, &streaming->playback_offset, &streaming->playback_frames);
 	if (result < 0)
 	{
 		ERROR("Failed to mmap playback buffer\n");
@@ -101,9 +101,9 @@ static void period_captured_callback(struct snd_pcm_substream *substream)
 	}
 	// Setup FDMA transfer
 	src = capture_areas[0].addr + capture_areas[0].first / 8 +
-		  streaming->capture_offset * capture_areas[0].step / 8;
+	      streaming->capture_offset * capture_areas[0].step / 8;
 	dest = playback_areas[0].addr + playback_areas[0].first / 8 +
-		   streaming->playback_offset * playback_areas[0].step / 8;
+	       streaming->playback_offset * playback_areas[0].step / 8;
 	size = frames_to_bytes(substream->runtime, streaming->playback_frames);
 	dma_params_addrs(&streaming->fdma_params, virt_to_phys(src), virt_to_phys(dest), size);
 	result = dma_compile_list(streaming->fdma_channel, &streaming->fdma_params, GFP_KERNEL);
@@ -134,7 +134,7 @@ static void transfer_done_callback(unsigned long param)
 		return;
 	// "Commit" playback data
 	commited_frames = ksnd_pcm_mmap_commit(streaming->playback_handle,
-										   streaming->playback_offset, streaming->playback_frames);
+					       streaming->playback_offset, streaming->playback_frames);
 	if (commited_frames < 0 ||
 			(snd_pcm_uframes_t)commited_frames != streaming->playback_frames)
 	{
@@ -148,7 +148,7 @@ static void transfer_done_callback(unsigned long param)
 	}
 	// "Commit" captured data
 	commited_frames = ksnd_pcm_mmap_commit(streaming->capture_handle,
-										   streaming->capture_offset, streaming->playback_frames);
+					       streaming->capture_offset, streaming->playback_frames);
 	if (commited_frames < 0 ||
 			(snd_pcm_uframes_t)commited_frames != streaming->playback_frames)
 	{
@@ -164,7 +164,7 @@ static void transfer_done_callback(unsigned long param)
 	// Release the lock
 	clear_bit(FLAG_BUSY, &streaming->flags);
 	// If another data period has been received in meantime, trigger it not
-	// (period_captured_callback could be skipped because of transfer   in progress)
+	// (period_captured_callback could be skipped because of transfer in progress)
 	if (ksnd_pcm_avail_update(streaming->capture_handle) >=
 			streaming->capture_handle->substream->runtime->period_size)
 		period_captured_callback(streaming->capture_handle->substream);
@@ -176,7 +176,7 @@ static void transfer_error_callback(unsigned long param)
 }
 
 int ksnd_pcm_streaming_start(ksnd_pcm_streaming_t *handle,
-							 ksnd_pcm_t *capture, ksnd_pcm_t *playback)
+			     ksnd_pcm_t *capture, ksnd_pcm_t *playback)
 {
 	int result;
 	struct ksnd_pcm_streaming *streaming;
@@ -208,9 +208,9 @@ int ksnd_pcm_streaming_start(ksnd_pcm_streaming_t *handle,
 	}
 	dma_params_init(&streaming->fdma_params, MODE_FREERUNNING, STM_DMA_LIST_OPEN);
 	dma_params_comp_cb(&streaming->fdma_params, transfer_done_callback,
-					   (unsigned long)streaming, STM_DMA_CB_CONTEXT_TASKLET);
+			   (unsigned long)streaming, STM_DMA_CB_CONTEXT_TASKLET);
 	dma_params_err_cb(&streaming->fdma_params, transfer_error_callback,
-					  (unsigned long)streaming, STM_DMA_CB_CONTEXT_TASKLET);
+			  (unsigned long)streaming, STM_DMA_CB_CONTEXT_TASKLET);
 	dma_params_DIM_1_x_1(&streaming->fdma_params);
 	result = dma_compile_list(streaming->fdma_channel, &streaming->fdma_params, GFP_KERNEL);
 	if (result < 0)
@@ -222,7 +222,7 @@ int ksnd_pcm_streaming_start(ksnd_pcm_streaming_t *handle,
 	}
 	// Initialize ALSA
 	capture->substream->runtime->transfer_ack_end = period_captured_callback;
-	BUG_ON(capture->substream->runtime->private_data != NULL);  // It used to be not used ;-)
+	BUG_ON(capture->substream->runtime->private_data != NULL); // It used to be not used ;-)
 	capture->substream->runtime->private_data = streaming;
 	ksnd_pcm_start(capture);
 	// Return handle

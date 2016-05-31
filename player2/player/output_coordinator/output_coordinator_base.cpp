@@ -13,26 +13,26 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : output_coordinator_base.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the base output coordinator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-12-Mar-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+12-Mar-06 Created Nick
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "output_coordinator_base.h"
 
@@ -41,29 +41,29 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define SYNCHRONIZE_WAIT                                50
-#define MAX_SYNCHRONIZE_WAITS                           4
+#define SYNCHRONIZE_WAIT 50
+#define MAX_SYNCHRONIZE_WAITS 4
 
-#define MAXIMUM_STARTUP_DELAY                           200             // ms
-#define DEFAULT_STARTUP_DELAY                           40
+#define MAXIMUM_STARTUP_DELAY 200 // ms
+#define DEFAULT_STARTUP_DELAY 40
 
-#define MINIMUM_TIME_TO_MANIFEST                        50000           // I am guessing that it will take at least 50 ms to get from synchronize to the manifestor
+#define MINIMUM_TIME_TO_MANIFEST 50000 // I am guessing that it will take at least 50 ms to get from synchronize to the manifestor
 
-#define NEGATIVE_REASONABLE_LIMIT                       (unsigned long long)(-4000000ll)
-#define POSITIVE_REASONABLE_LIMIT                       (unsigned long long)(+4000000ll)
+#define NEGATIVE_REASONABLE_LIMIT (unsigned long long)(-4000000ll)
+#define POSITIVE_REASONABLE_LIMIT (unsigned long long)(+4000000ll)
 
-#define REBASE_TIME_TRIGGER_VALUE                       0x10000000
+#define REBASE_TIME_TRIGGER_VALUE 0x10000000
 
-#define PLAYBACK_TIME_JUMP_ERROR                        64000           // 64 milli seconds, some PTSs are specified in ms so need at least 2, however DVR adds errors of upto around 32 ms when it calculates it's ptss
-#define OTHER_STREAMS_MUST_FOLLOW_JUMP_BY               250000          // 250ms if you haven't followed a jump in 250 ms, then you probably aren't following it at all
+#define PLAYBACK_TIME_JUMP_ERROR 64000 // 64 milli seconds, some PTSs are specified in ms so need at least 2, however DVR adds errors of upto around 32 ms when it calculates it's ptss
+#define OTHER_STREAMS_MUST_FOLLOW_JUMP_BY 250000 // 250ms if you haven't followed a jump in 250 ms, then you probably aren't following it at all
 
-#define MAX_SYNCHRONIZATION_WINDOW                      10000000        // If two streams are more than 10 seconds apart, we have no hope of avsyncing them
+#define MAX_SYNCHRONIZATION_WINDOW 10000000 // If two streams are more than 10 seconds apart, we have no hope of avsyncing them
 
-#define INTEGRATION_COUNT_FOR_VSYNC_OFFSET              4
+#define INTEGRATION_COUNT_FOR_VSYNC_OFFSET 4
 
-#define CLOCK_RECOVERY_MINIMUM_POINTS                   4
-#define CLOCK_RECOVERY_MINIMUM_INTEGRATION_TIME         2000000         // us
-#define CLOCK_RECOVERY_MAXIMUM_INTEGRATION_TIME         512000000       // us
+#define CLOCK_RECOVERY_MINIMUM_POINTS 4
+#define CLOCK_RECOVERY_MINIMUM_INTEGRATION_TIME 2000000 // us
+#define CLOCK_RECOVERY_MAXIMUM_INTEGRATION_TIME 512000000 // us
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -73,10 +73,10 @@ Date        Modification                                    Name
 //	Ignore between integrations
 //	Maximum Jitter allowed
 
-static OutputRateAdjustmentParameters_t     ORAInputFollowingAudio  = {  128, 2048, 64,  256, 32 };
-static OutputRateAdjustmentParameters_t     ORAOutputDrivenAudio    = {  512, 4096, 64, 2048, 32 };
-static OutputRateAdjustmentParameters_t     ORAInputFollowingVideo  = {  128, 2048, 64,  256, 32 };
-static OutputRateAdjustmentParameters_t     ORAOutputDrivenVideo    = { 2048, 8192, 64, 8192, 32 };
+static OutputRateAdjustmentParameters_t ORAInputFollowingAudio = { 128, 2048, 64, 256, 32 };
+static OutputRateAdjustmentParameters_t ORAOutputDrivenAudio = { 512, 4096, 64, 2048, 32 };
+static OutputRateAdjustmentParameters_t ORAInputFollowingVideo = { 128, 2048, 64, 256, 32 };
+static OutputRateAdjustmentParameters_t ORAOutputDrivenVideo = { 2048, 8192, 64, 8192, 32 };
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -88,28 +88,28 @@ static OutputRateAdjustmentParameters_t     ORAOutputDrivenVideo    = { 2048, 81
 // Locally defined macros
 //
 
-#define StreamType()                    ((Context->StreamType == 1) ? "Audio" : "Video")
+#define StreamType() ((Context->StreamType == 1) ? "Audio" : "Video")
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 OutputCoordinator_Base_c::OutputCoordinator_Base_c(void)
 {
-	InitializationStatus        = OutputCoordinatorError;
+	InitializationStatus = OutputCoordinatorError;
 //
 	OS_InitializeMutex(&Lock);
 	OS_InitializeEvent(&SynchronizeMayHaveCompleted);
-	StreamCount                 = 0;
-	CoordinatedContexts         = NULL;
+	StreamCount = 0;
+	CoordinatedContexts = NULL;
 	Reset();
 //
-	InitializationStatus        = OutputCoordinatorNoError;
+	InitializationStatus = OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destructor function
+// The Destructor function
 //
 
 OutputCoordinator_Base_c::~OutputCoordinator_Base_c(void)
@@ -122,13 +122,13 @@ OutputCoordinator_Base_c::~OutputCoordinator_Base_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Halt function, give up access to any registered resources
+// The Halt function, give up access to any registered resources
 //
-//      NOTE for some calls we ignore the return statuses, this is because
-//      we will proceed with the halt even if we fail (what else can we do)
+// NOTE for some calls we ignore the return statuses, this is because
+// we will proceed with the halt even if we fail (what else can we do)
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::Halt(void)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::Halt(void)
 {
 	if (TestComponentState(ComponentRunning))
 	{
@@ -145,10 +145,10 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::Halt(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Reset function release any resources, and reset all variables
+// The Reset function release any resources, and reset all variables
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::Reset(void)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::Reset(void)
 {
 	//
 	// Delete the contexts
@@ -158,47 +158,47 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::Reset(void)
 	//
 	// Initialize the system/playback time mapping
 	//
-	StreamCount                         = 0;
-	StreamsInSynchronize                = 0;
-	MasterTimeMappingEstablished        = false;
-	MasterTimeMappingVersion            = 0;
-	GotAMasterClock                     = false;
-	GotAnAlternateMasterClock           = false;
-	AlternateMasterContext              = NULL;
-	SystemClockAdjustmentEstablished    = true;
-	SystemClockAdjustment               = 1;
-	GotAVideoStream                     = false;
-	AccumulatedPlaybackTimeJumpsSinceSynchronization    = 0;
-	JumpSeenAtPlaybackTime              = 0;
-	Speed                               = 1;
-	Direction                           = PlayForward;
-	MinimumStreamOffset                 = 0;
-	ClockRecoveryInitialized            = false;
+	StreamCount = 0;
+	StreamsInSynchronize = 0;
+	MasterTimeMappingEstablished = false;
+	MasterTimeMappingVersion = 0;
+	GotAMasterClock = false;
+	GotAnAlternateMasterClock = false;
+	AlternateMasterContext = NULL;
+	SystemClockAdjustmentEstablished = true;
+	SystemClockAdjustment = 1;
+	GotAVideoStream = false;
+	AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+	JumpSeenAtPlaybackTime = 0;
+	Speed = 1;
+	Direction = PlayForward;
+	MinimumStreamOffset = 0;
+	ClockRecoveryInitialized = false;
 //
 	return BaseComponentClass_c::Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      the register a stream function, creates a new Coordinator context
+// the register a stream function, creates a new Coordinator context
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
-	PlayerStream_t                    Stream,
-	PlayerStreamType_t                StreamType,
-	OutputCoordinatorContext_t       *Context)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::RegisterStream(
+	PlayerStream_t Stream,
+	PlayerStreamType_t StreamType,
+	OutputCoordinatorContext_t *Context)
 {
-	PlayerStatus_t                  Status;
-	OutputCoordinatorContext_t      NewContext;
-	unsigned char                   ExternalMapping;
-	unsigned char                   MasterClock;
-	bool                            PossibleMaster;
-	bool                            PossibleAlternateMaster;
+	PlayerStatus_t Status;
+	OutputCoordinatorContext_t NewContext;
+	unsigned char ExternalMapping;
+	unsigned char MasterClock;
+	bool PossibleMaster;
+	bool PossibleAlternateMaster;
 	//
 	// Obtain a new context
 	//
-	*Context    = NULL;
-	NewContext  = new struct OutputCoordinatorContext_s;
+	*Context = NULL;
+	NewContext = new struct OutputCoordinatorContext_s;
 	if (NewContext == NULL)
 	{
 		report(severity_error, "OutputCoordinator_Base_c::RegisterStream - Failed to obtain a new Coordinator context.\n");
@@ -208,22 +208,22 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	// Initialize the new context
 	//
 	memset(NewContext, 0x00, sizeof(struct OutputCoordinatorContext_s));
-	NewContext->Next                                                    = NULL;
-	NewContext->Stream                                                  = Stream;
-	NewContext->StreamType                                              = StreamType;
-	NewContext->TimeMappingEstablished                                  = false;
-	NewContext->BasedOnMasterMappingVersion                             = 0;
-	NewContext->AccumulatedPlaybackTimeJumpsSinceSynchronization        = 0;
-	NewContext->OutputRateAdjustmentType                                = OutputRateAdjustmentNotDetermined;
-	NewContext->OutputRateAdjustmentParameters                          = (StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio;
-	NewContext->ClockAdjustmentEstablished                              = false;
-	NewContext->IntegratingClockDrift                                   = true;
-	NewContext->FramesToIntegrateOver                                   = NewContext->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
-	NewContext->LastIntegrationWasRestarted                             = false;
-	NewContext->IntegrationCount                                        = 0;
+	NewContext->Next = NULL;
+	NewContext->Stream = Stream;
+	NewContext->StreamType = StreamType;
+	NewContext->TimeMappingEstablished = false;
+	NewContext->BasedOnMasterMappingVersion = 0;
+	NewContext->AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+	NewContext->OutputRateAdjustmentType = OutputRateAdjustmentNotDetermined;
+	NewContext->OutputRateAdjustmentParameters = (StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio;
+	NewContext->ClockAdjustmentEstablished = false;
+	NewContext->IntegratingClockDrift = true;
+	NewContext->FramesToIntegrateOver = NewContext->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
+	NewContext->LastIntegrationWasRestarted = false;
+	NewContext->IntegrationCount = 0;
 	NewContext->LeastSquareFit.Reset();
-	NewContext->ManifestorLatency                                       = INVALID_TIME;
-	NewContext->StreamOffset                                            = (long long)INVALID_TIME;
+	NewContext->ManifestorLatency = INVALID_TIME;
+	NewContext->StreamOffset = (long long)INVALID_TIME;
 	OS_InitializeEvent(&NewContext->AbortPerformEntryIntoDecodeWindowWait);
 	//
 	// Obtain the appropriate portion of the class list for this stream
@@ -240,7 +240,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	//
 	if (NewContext->StreamType == StreamTypeVideo)
 	{
-		Status  = NewContext->Manifestor->GetSurfaceParameters((void **)(&NewContext->VideoSurfaceDescriptor));
+		Status = NewContext->Manifestor->GetSurfaceParameters((void **)(&NewContext->VideoSurfaceDescriptor));
 		if (Status != ManifestorNoError)
 		{
 			report(severity_error, "OutputCoordinator_Base_c::RegisterStream - Failed to obtain the output surface descriptor from the manifestor.\n");
@@ -252,14 +252,14 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	// If there is an external time mapping in force,
 	// then we copy it into this context.
 	//
-	ExternalMapping     = Player->PolicyValue(Playback, NewContext->Stream, PolicyExternalTimeMapping);
+	ExternalMapping = Player->PolicyValue(Playback, NewContext->Stream, PolicyExternalTimeMapping);
 	if ((ExternalMapping == PolicyValueApply) && MasterTimeMappingEstablished)
 	{
-		NewContext->BaseSystemTime                                     = MasterBaseSystemTime;
-		NewContext->BaseNormalizedPlaybackTime                         = MasterBaseNormalizedPlaybackTime;
-		NewContext->AccumulatedPlaybackTimeJumpsSinceSynchronization   = 0;
-		NewContext->TimeMappingEstablished                             = MasterTimeMappingEstablished;
-		NewContext->BasedOnMasterMappingVersion                        = MasterTimeMappingVersion;
+		NewContext->BaseSystemTime = MasterBaseSystemTime;
+		NewContext->BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime;
+		NewContext->AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+		NewContext->TimeMappingEstablished = MasterTimeMappingEstablished;
+		NewContext->BasedOnMasterMappingVersion = MasterTimeMappingVersion;
 	}
 	//
 	// Is this the master clock - we follow what is specified, but if it is
@@ -267,33 +267,33 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	// then we use that other as an alternate master clock.
 	//
 	OS_LockMutex(&Lock);
-	MasterClock                 = Player->PolicyValue(Playback, Stream, PolicyMasterClock);
-	PossibleMaster              = ((MasterClock == PolicyValueVideoClockMaster) && (StreamType == StreamTypeVideo)) ||
-								  ((MasterClock == PolicyValueAudioClockMaster) && (StreamType == StreamTypeAudio));
-	PossibleAlternateMaster     = (MasterClock != PolicyValueSystemClockMaster);
+	MasterClock = Player->PolicyValue(Playback, Stream, PolicyMasterClock);
+	PossibleMaster = ((MasterClock == PolicyValueVideoClockMaster) && (StreamType == StreamTypeVideo)) ||
+			 ((MasterClock == PolicyValueAudioClockMaster) && (StreamType == StreamTypeAudio));
+	PossibleAlternateMaster = (MasterClock != PolicyValueSystemClockMaster);
 	if (PossibleMaster && GotAnAlternateMasterClock)
 	{
 		// If we already had an alternate master that we no longer need we re-initialize it as a plain vanilla clock
-		GotAnAlternateMasterClock                               = false;
-		AlternateMasterContext->ClockMaster                     = false;
-		AlternateMasterContext->IntegratingClockDrift           = false;
-		AlternateMasterContext->FramesToIntegrateOver           = NewContext->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
-		AlternateMasterContext->IntegrationCount                = 0;
+		GotAnAlternateMasterClock = false;
+		AlternateMasterContext->ClockMaster = false;
+		AlternateMasterContext->IntegratingClockDrift = false;
+		AlternateMasterContext->FramesToIntegrateOver = NewContext->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
+		AlternateMasterContext->IntegrationCount = 0;
 	}
 	if (!GotAMasterClock && PossibleMaster)
 	{
 		// We have found a real master
-		GotAMasterClock                                         = true;
-		SystemClockAdjustmentEstablished                        = false;
-		NewContext->ClockMaster                                 = true;
+		GotAMasterClock = true;
+		SystemClockAdjustmentEstablished = false;
+		NewContext->ClockMaster = true;
 	}
 	if (!GotAMasterClock && !GotAnAlternateMasterClock && PossibleAlternateMaster)
 	{
 		// Not a real master, but a possible alternate
-		GotAnAlternateMasterClock                               = true;
-		AlternateMasterContext                                  = NewContext;
-		SystemClockAdjustmentEstablished                        = false;
-		NewContext->ClockMaster                                 = true;
+		GotAnAlternateMasterClock = true;
+		AlternateMasterContext = NewContext;
+		SystemClockAdjustmentEstablished = false;
+		NewContext->ClockMaster = true;
 	}
 	//
 	// Fudge this is where I fudge the initial clock values to cope with the duff clocks on a CB101
@@ -303,8 +303,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	if (MasterClock == PolicyValueSystemClockMaster)
 	{
 		report(severity_info, "$$$$$$ Nick friggs the initial ClockAdjustment to match the CB101's duff clock $$$$$$\n");
-		NewContext->ClockAdjustmentEstablished                  = true;
-		NewContext->ClockAdjustment                             = Rational_t(1000000, 999883);
+		NewContext->ClockAdjustmentEstablished = true;
+		NewContext->ClockAdjustment = Rational_t(1000000, 999883);
 	}
 #endif
 	//
@@ -318,22 +318,22 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 	if (!NewContext->ClockMaster)
 #endif
 	{
-		NewContext->IntegratingClockDrift                       = false;
+		NewContext->IntegratingClockDrift = false;
 	}
 	//
 	// Is this the video stream that we will allow to manipulate mappings for AVsync purposes
 	//
 	if (!GotAVideoStream && (StreamType == StreamTypeVideo))
 	{
-		GotAVideoStream                         = true;
-		NewContext->AllowedToAdjustMappingBase  = true;
+		GotAVideoStream = true;
+		NewContext->AllowedToAdjustMappingBase = true;
 	}
 	//
 	// Insert the context into the list
 	//
-	NewContext->Next            = CoordinatedContexts;
-	CoordinatedContexts         = NewContext;
-	*Context                    = NewContext;
+	NewContext->Next = CoordinatedContexts;
+	CoordinatedContexts = NewContext;
+	*Context = NewContext;
 	StreamCount++;
 	OS_UnLockMutex(&Lock);
 	return OutputCoordinatorNoError;
@@ -341,13 +341,13 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RegisterStream(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to de-register a stream.
+// Function to de-register a stream.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::DeRegisterStream(OutputCoordinatorContext_t        Context)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::DeRegisterStream(OutputCoordinatorContext_t Context)
 {
-	OutputCoordinatorContext_t      *PointerToContext;
-	OutputCoordinatorContext_t       ContextLoop;
+	OutputCoordinatorContext_t *PointerToContext;
+	OutputCoordinatorContext_t ContextLoop;
 	//
 	// Make sure no one is trying to synchronize this stream
 	//
@@ -367,17 +367,17 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::DeRegisterStream(OutputCoo
 	//
 	if (Context->ClockMaster)
 	{
-		GotAMasterClock                 = false;
-		GotAnAlternateMasterClock       = false;
-		AlternateMasterContext          = NULL;
-		for (ContextLoop         = CoordinatedContexts;
-				ContextLoop        != NULL;
-				ContextLoop         = ContextLoop->Next)
-			if ((ContextLoop             != Context) &&
+		GotAMasterClock = false;
+		GotAnAlternateMasterClock = false;
+		AlternateMasterContext = NULL;
+		for (ContextLoop = CoordinatedContexts;
+				ContextLoop != NULL;
+				ContextLoop = ContextLoop->Next)
+			if ((ContextLoop != Context) &&
 					(ContextLoop->StreamType == Context->StreamType))
 			{
-				ContextLoop->ClockMaster        = true;
-				GotAMasterClock                 = true;
+				ContextLoop->ClockMaster = true;
+				GotAMasterClock = true;
 				break;
 			}
 	}
@@ -386,28 +386,28 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::DeRegisterStream(OutputCoo
 	//
 	if (Context->AllowedToAdjustMappingBase)
 	{
-		GotAVideoStream         = false;
-		for (ContextLoop         = CoordinatedContexts;
-				ContextLoop        != NULL;
-				ContextLoop         = ContextLoop->Next)
-			if ((ContextLoop             != Context) &&
+		GotAVideoStream = false;
+		for (ContextLoop = CoordinatedContexts;
+				ContextLoop != NULL;
+				ContextLoop = ContextLoop->Next)
+			if ((ContextLoop != Context) &&
 					(ContextLoop->StreamType == StreamTypeVideo))
 			{
 				ContextLoop->AllowedToAdjustMappingBase = true;
-				GotAVideoStream                         = true;
+				GotAVideoStream = true;
 				break;
 			}
 	}
 	//
 	// Remove the context from the list
 	//
-	for (PointerToContext        = &CoordinatedContexts;
-			*PointerToContext      != NULL;
-			PointerToContext        = &((*PointerToContext)->Next))
+	for (PointerToContext = &CoordinatedContexts;
+			*PointerToContext != NULL;
+			PointerToContext = &((*PointerToContext)->Next))
 		if ((*PointerToContext) == Context)
 		{
 			OS_TerminateEvent(&Context->AbortPerformEntryIntoDecodeWindowWait);
-			*PointerToContext   = Context->Next;
+			*PointerToContext = Context->Next;
 			delete Context;
 			//
 			// Reduce stream count
@@ -423,16 +423,16 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::DeRegisterStream(OutputCoo
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to set the speed
+// Function to set the speed
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SetPlaybackSpeed(
-	OutputCoordinatorContext_t        Context,
-	Rational_t                        Speed,
-	PlayDirection_t                   Direction)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::SetPlaybackSpeed(
+	OutputCoordinatorContext_t Context,
+	Rational_t Speed,
+	PlayDirection_t Direction)
 {
-	unsigned long long              Now;
-	OutputCoordinatorContext_t      ContextLoop;
+	unsigned long long Now;
+	OutputCoordinatorContext_t ContextLoop;
 //
 	if (Context != PlaybackContext)
 	{
@@ -444,7 +444,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SetPlaybackSpeed(
 	// anyone waiting on entry into a decode window.
 	//
 	OS_LockMutex(&Lock);
-	Now         = OS_GetTimeInMicroSeconds();
+	Now = OS_GetTimeInMicroSeconds();
 	//
 	// Now split into one of four possible behaviours
 	//
@@ -479,20 +479,20 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SetPlaybackSpeed(
 		if (MasterTimeMappingEstablished)
 		{
 			TranslateSystemTimeToPlayback(PlaybackContext, Now, &MasterBaseNormalizedPlaybackTime);
-			MasterBaseSystemTime        = Now;
+			MasterBaseSystemTime = Now;
 		}
 		//
 		// Rebase the local mappings
 		//
-		for (ContextLoop     = CoordinatedContexts;
-				ContextLoop    != NULL;
-				ContextLoop     = ContextLoop->Next)
+		for (ContextLoop = CoordinatedContexts;
+				ContextLoop != NULL;
+				ContextLoop = ContextLoop->Next)
 		{
 			if (ContextLoop->TimeMappingEstablished)
 			{
 				TranslateSystemTimeToPlayback(ContextLoop, Now, &ContextLoop->BaseNormalizedPlaybackTime);
-				ContextLoop->BaseSystemTime             = Now;
-				ContextLoop->BaseSystemTimeAdjusted     = true;
+				ContextLoop->BaseSystemTime = Now;
+				ContextLoop->BaseSystemTimeAdjusted = true;
 			}
 			OS_SetEvent(&ContextLoop->AbortPerformEntryIntoDecodeWindowWait);
 		}
@@ -500,8 +500,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SetPlaybackSpeed(
 	//
 	// Record the new speed and direction
 	//
-	this->Speed         = Speed;
-	this->Direction     = Direction;
+	this->Speed = Speed;
+	this->Direction = Direction;
 	OS_UnLockMutex(&Lock);
 //
 	return OutputCoordinatorNoError;
@@ -509,14 +509,14 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SetPlaybackSpeed(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Function to reset the time mapping
+// Function to reset the time mapping
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ResetTimeMapping(OutputCoordinatorContext_t        Context)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::ResetTimeMapping(OutputCoordinatorContext_t Context)
 {
-	PlayerStatus_t                  Status;
-	OutputCoordinatorContext_t      ContextLoop;
-	PlayerEventRecord_t             Event;
+	PlayerStatus_t Status;
+	OutputCoordinatorContext_t ContextLoop;
+	PlayerEventRecord_t Event;
 //
 	OS_LockMutex(&Lock);
 	//
@@ -524,18 +524,18 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ResetTimeMapping(OutputCoo
 	//
 	if (Context == PlaybackContext)
 	{
-		MasterTimeMappingEstablished                            = false;
-		AccumulatedPlaybackTimeJumpsSinceSynchronization        = 0;
-		JumpSeenAtPlaybackTime                                  = 0;
+		MasterTimeMappingEstablished = false;
+		AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+		JumpSeenAtPlaybackTime = 0;
 	}
 	//
 	// Release anyone waiting to enter a decode window
 	//
-	for (ContextLoop     = (Context == PlaybackContext) ? CoordinatedContexts : Context;
+	for (ContextLoop = (Context == PlaybackContext) ? CoordinatedContexts : Context;
 			((Context == PlaybackContext) ? (ContextLoop != NULL) : (ContextLoop == Context));
-			ContextLoop     = ContextLoop->Next)
+			ContextLoop = ContextLoop->Next)
 	{
-		ContextLoop->TimeMappingEstablished     = false;
+		ContextLoop->TimeMappingEstablished = false;
 		OS_SetEvent(&ContextLoop->AbortPerformEntryIntoDecodeWindowWait);
 	}
 	//
@@ -543,12 +543,12 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ResetTimeMapping(OutputCoo
 	//
 	if ((EventTimeMappingReset & EventMask) != 0)
 	{
-		Event.Code              = EventTimeMappingReset;
-		Event.Playback          = Playback;
-		Event.Stream            = (Context == PlaybackContext) ? PlayerAllStreams : Context->Stream;
-		Event.PlaybackTime      = TIME_NOT_APPLICABLE;
-		Event.UserData          = EventUserData;
-		Status                  = Player->SignalEvent(&Event);
+		Event.Code = EventTimeMappingReset;
+		Event.Playback = Playback;
+		Event.Stream = (Context == PlaybackContext) ? PlayerAllStreams : Context->Stream;
+		Event.PlaybackTime = TIME_NOT_APPLICABLE;
+		Event.UserData = EventUserData;
+		Status = Player->SignalEvent(&Event);
 		if (Status != PlayerNoError)
 			report(severity_error, "OutputCoordinator_Base_c::ResetTimeMapping - Failed to signal event.\n");
 	}
@@ -559,48 +559,48 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ResetTimeMapping(OutputCoo
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Set a specific mapping
+// Set a specific mapping
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::EstablishTimeMapping(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                NormalizedPlaybackTime,
-	unsigned long long                SystemTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::EstablishTimeMapping(
+	OutputCoordinatorContext_t Context,
+	unsigned long long NormalizedPlaybackTime,
+	unsigned long long SystemTime)
 {
-	PlayerStatus_t                  Status;
-	unsigned long long              Now;
-	OutputCoordinatorContext_t      ContextLoop;
-	PlayerEventRecord_t             Event;
+	PlayerStatus_t Status;
+	unsigned long long Now;
+	OutputCoordinatorContext_t ContextLoop;
+	PlayerEventRecord_t Event;
 //
 	OS_LockMutex(&Lock);
 	//
 	// Set the master mapping as specified
 	//
-	MasterTimeMappingEstablished                        = false;
-	Now                                                 = OS_GetTimeInMicroSeconds();
-	MasterBaseNormalizedPlaybackTime                    = NormalizedPlaybackTime;
-	MasterBaseSystemTime                                = ValidTime(SystemTime) ? SystemTime : Now;
-	AccumulatedPlaybackTimeJumpsSinceSynchronization    = 0;
-	JumpSeenAtPlaybackTime                              = 0;
-	MasterTimeMappingEstablished                        = true;
+	MasterTimeMappingEstablished = false;
+	Now = OS_GetTimeInMicroSeconds();
+	MasterBaseNormalizedPlaybackTime = NormalizedPlaybackTime;
+	MasterBaseSystemTime = ValidTime(SystemTime) ? SystemTime : Now;
+	AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+	JumpSeenAtPlaybackTime = 0;
+	MasterTimeMappingEstablished = true;
 	MasterTimeMappingVersion++;
-	VsyncOffsetIntegrationCount                         = 0;            // Need to re-evaluate the vsync offset - if it is being monitored
-	MinimumVsyncOffset                                  = 0x7fffffffffffffffll;
+	VsyncOffsetIntegrationCount = 0; // Need to re-evaluate the vsync offset - if it is being monitored
+	MinimumVsyncOffset = 0x7fffffffffffffffll;
 	//
 	// Propagate this to the appropriate coordinated contexts
 	//
-	for (ContextLoop     = (Context == PlaybackContext) ? CoordinatedContexts : Context;
+	for (ContextLoop = (Context == PlaybackContext) ? CoordinatedContexts : Context;
 			((Context == PlaybackContext) ? (ContextLoop != NULL) : (ContextLoop == Context));
-			ContextLoop     = ContextLoop->Next)
+			ContextLoop = ContextLoop->Next)
 	{
-		ContextLoop->BaseSystemTime                                     = MasterBaseSystemTime;
-		ContextLoop->BaseNormalizedPlaybackTime                         = MasterBaseNormalizedPlaybackTime;
-		ContextLoop->AccumulatedPlaybackTimeJumpsSinceSynchronization   = 0;
-		ContextLoop->TimeMappingEstablished                             = true;
-		ContextLoop->BasedOnMasterMappingVersion                        = MasterTimeMappingVersion;
-		ContextLoop->IntegratingClockDrift                              = false;
-		ContextLoop->FramesToIntegrateOver                              = ContextLoop->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
-		ContextLoop->IntegrationCount                                   = 0;
+		ContextLoop->BaseSystemTime = MasterBaseSystemTime;
+		ContextLoop->BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime;
+		ContextLoop->AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+		ContextLoop->TimeMappingEstablished = true;
+		ContextLoop->BasedOnMasterMappingVersion = MasterTimeMappingVersion;
+		ContextLoop->IntegratingClockDrift = false;
+		ContextLoop->FramesToIntegrateOver = ContextLoop->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
+		ContextLoop->IntegrationCount = 0;
 		// Ensure no-one is waiting in an out of date decode window.
 		OS_SetEvent(&ContextLoop->AbortPerformEntryIntoDecodeWindowWait);
 	}
@@ -613,13 +613,13 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::EstablishTimeMapping(
 	//
 	if ((EventTimeMappingEstablished & EventMask) != 0)
 	{
-		Event.Code                      = EventTimeMappingEstablished;
-		Event.Playback                  = Playback;
-		Event.Stream                    = (Context == PlaybackContext) ? PlayerAllStreams : Context->Stream;
-		Event.PlaybackTime              = MasterBaseNormalizedPlaybackTime;
-		Event.UserData                  = EventUserData;
-		Event.Value[0].LongLong         = MasterBaseSystemTime;
-		Status                          = Player->SignalEvent(&Event);
+		Event.Code = EventTimeMappingEstablished;
+		Event.Playback = Playback;
+		Event.Stream = (Context == PlaybackContext) ? PlayerAllStreams : Context->Stream;
+		Event.PlaybackTime = MasterBaseNormalizedPlaybackTime;
+		Event.UserData = EventUserData;
+		Event.Value[0].LongLong = MasterBaseSystemTime;
+		Status = Player->SignalEvent(&Event);
 		if (Status != PlayerNoError)
 			report(severity_error, "OutputCoordinator_Base_c::EstablishTimeMapping - Failed to signal event.\n");
 	}
@@ -630,18 +630,18 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::EstablishTimeMapping(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Translate a given playback time to a system time
+// Translate a given playback time to a system time
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslatePlaybackTimeToSystem(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                NormalizedPlaybackTime,
-	unsigned long long               *SystemTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::TranslatePlaybackTimeToSystem(
+	OutputCoordinatorContext_t Context,
+	unsigned long long NormalizedPlaybackTime,
+	unsigned long long *SystemTime)
 {
-	unsigned long long      BaseNormalizedPlaybackTime;
-	unsigned long long      BaseSystemTime;
-	unsigned long long      ElapsedNormalizedPlaybackTime;
-	unsigned long long      ElapsedSystemTime;
+	unsigned long long BaseNormalizedPlaybackTime;
+	unsigned long long BaseSystemTime;
+	unsigned long long ElapsedNormalizedPlaybackTime;
+	unsigned long long ElapsedSystemTime;
 //
 	if (!MasterTimeMappingEstablished)
 		return OutputCoordinatorMappingNotEstablished;
@@ -649,20 +649,20 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslatePlaybackTimeToSys
 	{
 		if (!Context->TimeMappingEstablished)
 			return OutputCoordinatorMappingNotEstablished;
-		BaseNormalizedPlaybackTime      = Context->BaseNormalizedPlaybackTime;
-		BaseSystemTime                  = Context->BaseSystemTime;
+		BaseNormalizedPlaybackTime = Context->BaseNormalizedPlaybackTime;
+		BaseSystemTime = Context->BaseSystemTime;
 	}
 	else
 	{
-		BaseNormalizedPlaybackTime      = MasterBaseNormalizedPlaybackTime;
-		BaseSystemTime                  = MasterBaseSystemTime;
+		BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime;
+		BaseSystemTime = MasterBaseSystemTime;
 	}
 //
-	ElapsedNormalizedPlaybackTime       = NormalizedPlaybackTime - BaseNormalizedPlaybackTime;
-	ElapsedSystemTime                   = SpeedScale(ElapsedNormalizedPlaybackTime);
-	ElapsedSystemTime                   = RoundedLongLongIntegerPart(ElapsedSystemTime / SystemClockAdjustment);
+	ElapsedNormalizedPlaybackTime = NormalizedPlaybackTime - BaseNormalizedPlaybackTime;
+	ElapsedSystemTime = SpeedScale(ElapsedNormalizedPlaybackTime);
+	ElapsedSystemTime = RoundedLongLongIntegerPart(ElapsedSystemTime / SystemClockAdjustment);
 //
-	*SystemTime                         = BaseSystemTime + ElapsedSystemTime;
+	*SystemTime = BaseSystemTime + ElapsedSystemTime;
 	//
 	// Here we rebase if the elapsed times are large
 	//
@@ -670,13 +670,13 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslatePlaybackTimeToSys
 	{
 		if ((Context == PlaybackContext) || (MasterBaseSystemTime == Context->BaseSystemTime))
 		{
-			MasterBaseNormalizedPlaybackTime    = NormalizedPlaybackTime;
-			MasterBaseSystemTime                = *SystemTime;
+			MasterBaseNormalizedPlaybackTime = NormalizedPlaybackTime;
+			MasterBaseSystemTime = *SystemTime;
 		}
 		if (Context != PlaybackContext)
 		{
 			Context->BaseNormalizedPlaybackTime = NormalizedPlaybackTime;
-			Context->BaseSystemTime             = *SystemTime;
+			Context->BaseSystemTime = *SystemTime;
 		}
 	}
 //
@@ -685,18 +685,18 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslatePlaybackTimeToSys
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Translate a given system time to a playback time
+// Translate a given system time to a playback time
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslateSystemTimeToPlayback(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                SystemTime,
-	unsigned long long               *NormalizedPlaybackTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::TranslateSystemTimeToPlayback(
+	OutputCoordinatorContext_t Context,
+	unsigned long long SystemTime,
+	unsigned long long *NormalizedPlaybackTime)
 {
-	unsigned long long      BaseNormalizedPlaybackTime;
-	unsigned long long      BaseSystemTime;
-	unsigned long long      ElapsedNormalizedPlaybackTime;
-	unsigned long long      ElapsedSystemTime;
+	unsigned long long BaseNormalizedPlaybackTime;
+	unsigned long long BaseSystemTime;
+	unsigned long long ElapsedNormalizedPlaybackTime;
+	unsigned long long ElapsedSystemTime;
 //
 	if (!MasterTimeMappingEstablished)
 		return OutputCoordinatorMappingNotEstablished;
@@ -704,88 +704,88 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::TranslateSystemTimeToPlayb
 	{
 		if (!Context->TimeMappingEstablished)
 			return OutputCoordinatorMappingNotEstablished;
-		BaseNormalizedPlaybackTime      = Context->BaseNormalizedPlaybackTime;
-		BaseSystemTime                  = Context->BaseSystemTime;
+		BaseNormalizedPlaybackTime = Context->BaseNormalizedPlaybackTime;
+		BaseSystemTime = Context->BaseSystemTime;
 	}
 	else
 	{
-		BaseNormalizedPlaybackTime      = MasterBaseNormalizedPlaybackTime;
-		BaseSystemTime                  = MasterBaseSystemTime;
+		BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime;
+		BaseSystemTime = MasterBaseSystemTime;
 	}
 //
-	ElapsedSystemTime                   = SystemTime - BaseSystemTime;
-	ElapsedSystemTime                   = RoundedLongLongIntegerPart(ElapsedSystemTime * SystemClockAdjustment);
-	ElapsedNormalizedPlaybackTime       = InverseSpeedScale(ElapsedSystemTime);
+	ElapsedSystemTime = SystemTime - BaseSystemTime;
+	ElapsedSystemTime = RoundedLongLongIntegerPart(ElapsedSystemTime * SystemClockAdjustment);
+	ElapsedNormalizedPlaybackTime = InverseSpeedScale(ElapsedSystemTime);
 //
-	*NormalizedPlaybackTime             = BaseNormalizedPlaybackTime + ElapsedNormalizedPlaybackTime;
+	*NormalizedPlaybackTime = BaseNormalizedPlaybackTime + ElapsedNormalizedPlaybackTime;
 	return OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Synchronize the streams to establish a time mapping
+// Synchronize the streams to establish a time mapping
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                NormalizedPlaybackTime,
-	unsigned long long                NormalizedDecodeTime,
-	unsigned long long               *SystemTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::SynchronizeStreams(
+	OutputCoordinatorContext_t Context,
+	unsigned long long NormalizedPlaybackTime,
+	unsigned long long NormalizedDecodeTime,
+	unsigned long long *SystemTime)
 {
-	OutputCoordinatorStatus_t       Status;
-	unsigned char                   ExternalMapping;
-	bool                            AlternateTimeMappingExists;
-	bool                            AlternateMappingIsReasonable;
-	unsigned long long              Now;
-	unsigned long long              MasterMappingNow;
-	OutputCoordinatorContext_t      LoopContext;
-	OutputCoordinatorContext_t      EarliestVideoContext;
-	OutputCoordinatorContext_t      EarliestContext;
-	unsigned long long              EarliestStartTime;
-	unsigned long long              StartTimeJitter;
-	unsigned long long              StartupDelay;
-	unsigned int                    WaitCount;
-	unsigned char                   VideoStartImmediatePolicy;
-	long long                       StreamOffset;
-	PlayerEventRecord_t             Event;
-	unsigned int                    MaxSynchronizeWaits;
+	OutputCoordinatorStatus_t Status;
+	unsigned char ExternalMapping;
+	bool AlternateTimeMappingExists;
+	bool AlternateMappingIsReasonable;
+	unsigned long long Now;
+	unsigned long long MasterMappingNow;
+	OutputCoordinatorContext_t LoopContext;
+	OutputCoordinatorContext_t EarliestVideoContext;
+	OutputCoordinatorContext_t EarliestContext;
+	unsigned long long EarliestStartTime;
+	unsigned long long StartTimeJitter;
+	unsigned long long StartupDelay;
+	unsigned int WaitCount;
+	unsigned char VideoStartImmediatePolicy;
+	long long StreamOffset;
+	PlayerEventRecord_t Event;
+	unsigned int MaxSynchronizeWaits;
 	//
 	// We do not perform the synchronization if we use an enforced external time mapping
 	//
-	ExternalMapping     = Player->PolicyValue(Playback, Context->Stream, PolicyExternalTimeMapping);
+	ExternalMapping = Player->PolicyValue(Playback, Context->Stream, PolicyExternalTimeMapping);
 	if (ExternalMapping == PolicyValueApply)
 	{
 		report(severity_info, "OutputCoordinator_Base_c::SynchronizeStreams - Function entered when PolicyExternalTimeMapping is set.\n");
-		*SystemTime     = UNSPECIFIED_TIME;
+		*SystemTime = UNSPECIFIED_TIME;
 		return OutputCoordinatorNoError;
 	}
 	//
 	// Is there an appropriate time mapping we can switch to.
 	//
 	report(severity_info, "Sync In - %d - %016llx %016llx\n", Context->StreamType, NormalizedPlaybackTime, NormalizedDecodeTime);
-	Context->InStartupDelay                     = true;
+	Context->InStartupDelay = true;
 	OS_LockMutex(&Lock);
-	AlternateTimeMappingExists  = MasterTimeMappingEstablished &&
-								  (Context->BasedOnMasterMappingVersion != MasterTimeMappingVersion);
+	AlternateTimeMappingExists = MasterTimeMappingEstablished &&
+				     (Context->BasedOnMasterMappingVersion != MasterTimeMappingVersion);
 	if (AlternateTimeMappingExists)
 	{
-		Now             = OS_GetTimeInMicroSeconds();
+		Now = OS_GetTimeInMicroSeconds();
 		TranslatePlaybackTimeToSystem(PlaybackContext, NormalizedPlaybackTime, &MasterMappingNow);
 		AlternateMappingIsReasonable = ((MasterMappingNow - Now) > NEGATIVE_REASONABLE_LIMIT) ||
-									   ((MasterMappingNow - Now) < POSITIVE_REASONABLE_LIMIT);
+					       ((MasterMappingNow - Now) < POSITIVE_REASONABLE_LIMIT);
 		if (AlternateMappingIsReasonable)
 		{
-			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization   = 0;
-			Context->BaseSystemTimeAdjusted                             = true;
-			Context->BaseSystemTime                                     = MasterBaseSystemTime;
-			Context->BaseNormalizedPlaybackTime                         = MasterBaseNormalizedPlaybackTime;
-			Context->TimeMappingEstablished                             = true;
-			Context->BasedOnMasterMappingVersion                        = MasterTimeMappingVersion;
-			Context->StreamOffset                                       = MasterMappingNow - Now;
+			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+			Context->BaseSystemTimeAdjusted = true;
+			Context->BaseSystemTime = MasterBaseSystemTime;
+			Context->BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime;
+			Context->TimeMappingEstablished = true;
+			Context->BasedOnMasterMappingVersion = MasterTimeMappingVersion;
+			Context->StreamOffset = MasterMappingNow - Now;
 			if (Context->StreamOffset < MinimumStreamOffset)
-				MinimumStreamOffset                                     = Context->StreamOffset;
-			Status  = TranslatePlaybackTimeToSystem(Context, NormalizedPlaybackTime, SystemTime);
-			Context->InStartupDelay                             = false;
+				MinimumStreamOffset = Context->StreamOffset;
+			Status = TranslatePlaybackTimeToSystem(Context, NormalizedPlaybackTime, SystemTime);
+			Context->InStartupDelay = false;
 			report(severity_info, "Sync out0 - %d - %016llx %016llx (%6lld)\n", Context->StreamType, MasterBaseNormalizedPlaybackTime, MasterBaseSystemTime, Context->StreamOffset);
 			OS_UnLockMutex(&Lock);
 			return Status;
@@ -796,8 +796,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 	// not appropriate, in either event there is now no valid master time mapping. We therefore
 	// invalidate it before proceding to establish a new one.
 	//
-	MasterTimeMappingEstablished        = false;
-	MinimumStreamOffset                 = 0;
+	MasterTimeMappingEstablished = false;
+	MinimumStreamOffset = 0;
 	OS_UnLockMutex(&Lock);
 	//
 	// Before performing synchronization, we now perform the wait while
@@ -807,22 +807,22 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 	//
 	if (Direction == PlayForward)
 	{
-		StartupDelay    = (NormalizedDecodeTime != UNSPECIFIED_TIME) ?
-						  ((NormalizedPlaybackTime - NormalizedDecodeTime) / 1000) : DEFAULT_STARTUP_DELAY;
+		StartupDelay = (NormalizedDecodeTime != UNSPECIFIED_TIME) ?
+			       ((NormalizedPlaybackTime - NormalizedDecodeTime) / 1000) : DEFAULT_STARTUP_DELAY;
 		if (NormalizedPlaybackTime < NormalizedDecodeTime)
 		{
 			report(severity_error, "OutputCoordinator_Base_c::SynchronizeStreams - Startup delay calculated to be negative! Bad DTS? (%lldms) (%016llx - %016llx).\n", StartupDelay, NormalizedPlaybackTime, NormalizedDecodeTime);
-			StartupDelay    = MAXIMUM_STARTUP_DELAY; //DEFAULT_STARTUP_DELAY;
+			StartupDelay = MAXIMUM_STARTUP_DELAY; //DEFAULT_STARTUP_DELAY;
 		}
 	}
 	else
 	{
-		StartupDelay    = 0;
+		StartupDelay = 0;
 	}
 	if (StartupDelay > MAXIMUM_STARTUP_DELAY)
 	{
 		report(severity_error, "OutputCoordinator_Base_c::SynchronizeStreams - Startup delay calculated to be too large (%lldms) (%016llx - %016llx).\n", StartupDelay, NormalizedPlaybackTime, NormalizedDecodeTime);
-		StartupDelay        = MAXIMUM_STARTUP_DELAY;
+		StartupDelay = MAXIMUM_STARTUP_DELAY;
 	}
 	if (StartupDelay != 0)
 		OS_SleepMilliSeconds((unsigned int)StartupDelay);
@@ -840,14 +840,14 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 	// Now we need to add ourselves to the list of synchronizing streams
 	//
 	OS_LockMutex(&Lock);
-	Context->InStartupDelay                     = false;
-	Context->InSynchronizeFn                    = true;
-	Context->SynchronizingAtPlaybackTime        = NormalizedPlaybackTime;
+	Context->InStartupDelay = false;
+	Context->InSynchronizeFn = true;
+	Context->SynchronizingAtPlaybackTime = NormalizedPlaybackTime;
 	StreamsInSynchronize++;
 	//
 	// Enter the loop where we await synchronization
 	//
-	WaitCount   = 0;
+	WaitCount = 0;
 	while (true)
 	{
 		//
@@ -855,19 +855,19 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 		//
 		if (MasterTimeMappingEstablished)
 		{
-			StreamOffset                                                = NormalizedPlaybackTime - MasterBaseNormalizedPlaybackTime - AccumulatedPlaybackTimeJumpsSinceSynchronization;
-			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization   = 0;
-			Context->BaseSystemTimeAdjusted                             = true;
-			Context->BaseSystemTime                                     = MasterBaseSystemTime;
-			Context->BaseNormalizedPlaybackTime                         = MasterBaseNormalizedPlaybackTime + AccumulatedPlaybackTimeJumpsSinceSynchronization;
-			Context->TimeMappingEstablished                             = true;
-			Context->BasedOnMasterMappingVersion                        = MasterTimeMappingVersion;
-			Context->StreamOffset                                       = 0;
+			StreamOffset = NormalizedPlaybackTime - MasterBaseNormalizedPlaybackTime - AccumulatedPlaybackTimeJumpsSinceSynchronization;
+			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+			Context->BaseSystemTimeAdjusted = true;
+			Context->BaseSystemTime = MasterBaseSystemTime;
+			Context->BaseNormalizedPlaybackTime = MasterBaseNormalizedPlaybackTime + AccumulatedPlaybackTimeJumpsSinceSynchronization;
+			Context->TimeMappingEstablished = true;
+			Context->BasedOnMasterMappingVersion = MasterTimeMappingVersion;
+			Context->StreamOffset = 0;
 			if (StreamOffset != 0)
 			{
 				if (inrange(StreamOffset, -MAX_SYNCHRONIZATION_WINDOW, MAX_SYNCHRONIZATION_WINDOW))
 				{
-					Context->StreamOffset                               = StreamOffset;
+					Context->StreamOffset = StreamOffset;
 //					report( severity_info, "OutputCoordinator_Base_c::SynchronizeStreams(%s) - Stream offset by %12lldus\n", StreamType(), StreamOffset );
 				}
 				else
@@ -875,88 +875,88 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 					report(severity_error, "OutputCoordinator_Base_c::SynchronizeStreams(%s) - Impossible to synchronize, stream offset by %12lldus\n", StreamType(), StreamOffset);
 					report(severity_info, "\t\t\t\t will anticipate a stream jump, and probably re-enter synchronization shortly.\n");
 					// Invert the offset so the code looks the same as an actual jump (in the HandlePlaybackTimeDeltas fn).
-					StreamOffset                                                 = -StreamOffset;
-					AccumulatedPlaybackTimeJumpsSinceSynchronization            += StreamOffset;
-					MasterBaseNormalizedPlaybackTime                            -= StreamOffset;
-					JumpSeenAtPlaybackTime                                       = Context->BaseNormalizedPlaybackTime;
-					Context->BaseNormalizedPlaybackTime                         -= StreamOffset;
-					Context->AccumulatedPlaybackTimeJumpsSinceSynchronization    = AccumulatedPlaybackTimeJumpsSinceSynchronization;
-					Context->BaseSystemTimeAdjusted                              = true;
+					StreamOffset = -StreamOffset;
+					AccumulatedPlaybackTimeJumpsSinceSynchronization += StreamOffset;
+					MasterBaseNormalizedPlaybackTime -= StreamOffset;
+					JumpSeenAtPlaybackTime = Context->BaseNormalizedPlaybackTime;
+					Context->BaseNormalizedPlaybackTime -= StreamOffset;
+					Context->AccumulatedPlaybackTimeJumpsSinceSynchronization = AccumulatedPlaybackTimeJumpsSinceSynchronization;
+					Context->BaseSystemTimeAdjusted = true;
 				}
 			}
 			if (Context->StreamOffset < MinimumStreamOffset)
-				MinimumStreamOffset                                              = Context->StreamOffset;
-			Status      = TranslatePlaybackTimeToSystem(Context, NormalizedPlaybackTime, SystemTime);
+				MinimumStreamOffset = Context->StreamOffset;
+			Status = TranslatePlaybackTimeToSystem(Context, NormalizedPlaybackTime, SystemTime);
 			break;
 		}
 		//
 		// Can we do the synchronization
 		//
 		if ((StreamsInSynchronize == StreamCount) ||
-				(WaitCount            >= MaxSynchronizeWaits))
+				(WaitCount >= MaxSynchronizeWaits))
 		{
 			//
 			// Scan through and find the earliest playback
 			// time, and the earliest video playback time.
 			//
-			EarliestContext             = NULL;
-			EarliestVideoContext        = NULL;
-			for (LoopContext     = CoordinatedContexts;
-					LoopContext    != NULL;
-					LoopContext     = LoopContext->Next)
+			EarliestContext = NULL;
+			EarliestVideoContext = NULL;
+			for (LoopContext = CoordinatedContexts;
+					LoopContext != NULL;
+					LoopContext = LoopContext->Next)
 				if (LoopContext->InSynchronizeFn)
 				{
 					if ((LoopContext->StreamType == StreamTypeVideo) &&
 							((EarliestVideoContext == NULL) ||
 							 (EarliestVideoContext->SynchronizingAtPlaybackTime > LoopContext->SynchronizingAtPlaybackTime)))
-						EarliestVideoContext    = LoopContext;
+						EarliestVideoContext = LoopContext;
 					if ((EarliestContext == NULL) ||
 							(EarliestContext->SynchronizingAtPlaybackTime > LoopContext->SynchronizingAtPlaybackTime))
-						EarliestContext         = LoopContext;
+						EarliestContext = LoopContext;
 				}
 			//
 			// Are we running video start immediate
 			//
-			VideoStartImmediatePolicy   = Player->PolicyValue(Playback, PlayerAllStreams, PolicyVideoStartImmediate);
+			VideoStartImmediatePolicy = Player->PolicyValue(Playback, PlayerAllStreams, PolicyVideoStartImmediate);
 			if ((VideoStartImmediatePolicy == PolicyValueApply) &&
 					(EarliestVideoContext != NULL))
-				EarliestContext         = EarliestVideoContext;
+				EarliestContext = EarliestVideoContext;
 			//
 			// Find the earliest start time
 			//
-			EarliestStartTime   = RestartTime();
+			EarliestStartTime = RestartTime();
 			//
 			// If audio is the starter, Jitter start time so
 			// that first video frame hits a video frame point.
 			//
-			StartTimeJitter             = 0;
+			StartTimeJitter = 0;
 			if ((EarliestVideoContext != NULL) && (EarliestVideoContext != EarliestContext))
 			{
-				StartTimeJitter         = (EarliestVideoContext->SynchronizingAtPlaybackTime - EarliestContext->SynchronizingAtPlaybackTime);
-				StartTimeJitter         = StartTimeJitter - (VideoFrameDuration * (StartTimeJitter / VideoFrameDuration));
-				StartTimeJitter         = VideoFrameDuration - StartTimeJitter;
+				StartTimeJitter = (EarliestVideoContext->SynchronizingAtPlaybackTime - EarliestContext->SynchronizingAtPlaybackTime);
+				StartTimeJitter = StartTimeJitter - (VideoFrameDuration * (StartTimeJitter / VideoFrameDuration));
+				StartTimeJitter = VideoFrameDuration - StartTimeJitter;
 			}
 			//
 			// Establish the mapping
 			//
-			MasterBaseNormalizedPlaybackTime                    = EarliestContext->SynchronizingAtPlaybackTime;
-			MasterBaseSystemTime                                = EarliestStartTime + StartTimeJitter;
-			AccumulatedPlaybackTimeJumpsSinceSynchronization    = 0;
-			JumpSeenAtPlaybackTime                              = 0;
-			MasterTimeMappingEstablished                        = true;
+			MasterBaseNormalizedPlaybackTime = EarliestContext->SynchronizingAtPlaybackTime;
+			MasterBaseSystemTime = EarliestStartTime + StartTimeJitter;
+			AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
+			JumpSeenAtPlaybackTime = 0;
+			MasterTimeMappingEstablished = true;
 			MasterTimeMappingVersion++;
 			//
 			// Signal the player event
 			//
 			if ((EventTimeMappingEstablished & EventMask) != 0)
 			{
-				Event.Code                      = EventTimeMappingEstablished;
-				Event.Playback                  = Playback;
-				Event.Stream                    = PlayerAllStreams;
-				Event.PlaybackTime              = MasterBaseNormalizedPlaybackTime;
-				Event.UserData                  = EventUserData;
-				Event.Value[0].LongLong         = MasterBaseSystemTime;
-				Status                          = Player->SignalEvent(&Event);
+				Event.Code = EventTimeMappingEstablished;
+				Event.Playback = Playback;
+				Event.Stream = PlayerAllStreams;
+				Event.PlaybackTime = MasterBaseNormalizedPlaybackTime;
+				Event.UserData = EventUserData;
+				Event.Value[0].LongLong = MasterBaseSystemTime;
+				Status = Player->SignalEvent(&Event);
 				if (Status != PlayerNoError)
 					report(severity_error, "OutputCoordinator_Base_c::SynchronizeStreams - Failed to signal event.\n");
 			}
@@ -978,33 +978,33 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::SynchronizeStreams(
 		}
 	}
 //
-	Context->InSynchronizeFn    = false;
+	Context->InSynchronizeFn = false;
 	StreamsInSynchronize--;
 	OS_UnLockMutex(&Lock);
 //
-	report(severity_info, "Sync Out1 - %d - %016llx %016llx - %016llx (%6lld)\n", Context->StreamType, NormalizedPlaybackTime, *SystemTime, OS_GetTimeInMicroSeconds(), Context->StreamOffset);
+	report(severity_info, "Sync out1 - %d - %016llx %016llx - %016llx (%6lld)\n", Context->StreamType, NormalizedPlaybackTime, *SystemTime, OS_GetTimeInMicroSeconds(), Context->StreamOffset);
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to await entry into the decode window, if the decode
-//      time is invalid, or if no time mapping has yet been established,
-//      we return immediately.
+// The function to await entry into the decode window, if the decode
+// time is invalid, or if no time mapping has yet been established,
+// we return immediately.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::PerformEntryIntoDecodeWindowWait(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                NormalizedDecodeTime,
-	unsigned long long                DecodeWindowPorch,
-	unsigned long long                MaximumAllowedSleepTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::PerformEntryIntoDecodeWindowWait(
+	OutputCoordinatorContext_t Context,
+	unsigned long long NormalizedDecodeTime,
+	unsigned long long DecodeWindowPorch,
+	unsigned long long MaximumAllowedSleepTime)
 {
-	OutputCoordinatorStatus_t         Status;
-	OS_Status_t                       OSStatus;
-	unsigned long long                SystemTime;
-	unsigned long long                Now;
-	unsigned long long                SleepTime;
-	unsigned long long                MaximumSleepTime;
+	OutputCoordinatorStatus_t Status;
+	OS_Status_t OSStatus;
+	unsigned long long SystemTime;
+	unsigned long long Now;
+	unsigned long long SleepTime;
+	unsigned long long MaximumSleepTime;
 	//
 	// Reset the abort flag
 	//
@@ -1013,61 +1013,61 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::PerformEntryIntoDecodeWind
 	// Get the translation of the decode time, and apply the porch to find the window start
 	// If we do not have a mapping here we can use the master mapping.
 	//
-	Status      = TranslatePlaybackTimeToSystem((Context->TimeMappingEstablished ? Context : PlaybackContext), NormalizedDecodeTime, &SystemTime);
+	Status = TranslatePlaybackTimeToSystem((Context->TimeMappingEstablished ? Context : PlaybackContext), NormalizedDecodeTime, &SystemTime);
 	if (Status == OutputCoordinatorMappingNotEstablished)
 		return OutputCoordinatorNoError;
-	SystemTime  -= DecodeWindowPorch;
+	SystemTime -= DecodeWindowPorch;
 	//
 	// Shall we sleep
 	//
-	Now         = OS_GetTimeInMicroSeconds();
+	Now = OS_GetTimeInMicroSeconds();
 	if (Now >= SystemTime)
 		return OutputCoordinatorNoError;
 	//
 	// How long shall we sleep
 	//
-	SleepTime                   = (SystemTime - Now);
-	MaximumSleepTime            = SpeedScale(MaximumAllowedSleepTime);
+	SleepTime = (SystemTime - Now);
+	MaximumSleepTime = SpeedScale(MaximumAllowedSleepTime);
 	if (SleepTime > MaximumSleepTime)
 	{
-//      Nick Says -> during startup this occurs several times.
-//      report( severity_error, "OutputCoordinator_Base_c::PerformEntryIntoDecodeWindowWait - Sleep period too long (%lluus).\n", SleepTime );
-		SleepTime               = MaximumSleepTime;
+//		Nick Says -> during startup this occurs several times.
+//		report( severity_error, "OutputCoordinator_Base_c::PerformEntryIntoDecodeWindowWait - Sleep period too long (%lluus).\n", SleepTime );
+		SleepTime = MaximumSleepTime;
 	}
 	//
 	// Sleep
 	//
-	OSStatus    = OS_WaitForEvent(&Context->AbortPerformEntryIntoDecodeWindowWait, (unsigned int)(SleepTime / 1000));
+	OSStatus = OS_WaitForEvent(&Context->AbortPerformEntryIntoDecodeWindowWait, (unsigned int)(SleepTime / 1000));
 	return (OSStatus == OS_NO_ERROR) ? OutputCoordinatorAbandonedWait : OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to handle deltas in the playback time versus the
-//      expected playback time of a frame.
+// The function to handle deltas in the playback time versus the
+// expected playback time of a frame.
 //
-//      This function splits into two halves, first checking for any
-//      large delta and performing a rebase of the time mapping when one
-//      occurs.
+// This function splits into two halves, first checking for any
+// large delta and performing a rebase of the time mapping when one
+// occurs.
 //
-//      A second half checking that if we did a rebase, then if this stream
-//      has not matched the rebase then we invalidate mapping to force a
-//      complete re-synchronization.
+// A second half checking that if we did a rebase, then if this stream
+// has not matched the rebase then we invalidate mapping to force a
+// complete re-synchronization.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
-	OutputCoordinatorContext_t        Context,
-	bool                              KnownJump,
-	unsigned long long                ExpectedPlaybackTime,
-	unsigned long long                ActualPlaybackTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
+	OutputCoordinatorContext_t Context,
+	bool KnownJump,
+	unsigned long long ExpectedPlaybackTime,
+	unsigned long long ActualPlaybackTime)
 {
-	long long       DeltaPlaybackTime;
-	long long       JumpError;
-	unsigned char   ExternalMapping;
-	unsigned char   Threshold;
-	unsigned char   Symmetric;
-	long long       PlaybackTimeForwardJumpThreshold;               // Values used in handling jumps in PTSs
-	long long       PlaybackTimeReverseJumpThreshold;
+	long long DeltaPlaybackTime;
+	long long JumpError;
+	unsigned char ExternalMapping;
+	unsigned char Threshold;
+	unsigned char Symmetric;
+	long long PlaybackTimeForwardJumpThreshold; // Values used in handling jumps in PTSs
+	long long PlaybackTimeReverseJumpThreshold;
 	//
 	// Check that this call relates to a particular stream
 	//
@@ -1084,17 +1084,17 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 	//
 	// What are the current value of the jump detector thresholds
 	//
-	Threshold                           = Player->PolicyValue(Playback, Context->Stream, PolicyPtsForwardJumpDetectionThreshold);
-	Threshold                           = min(Threshold, 43);                   // 43 = ln (0x7fff...) / ln 2 - or the maximum time we can hold
-	PlaybackTimeForwardJumpThreshold    = 1000000 * (1ULL << Threshold);
-	Symmetric                           = Player->PolicyValue(Playback, Context->Stream, PolicySymmetricJumpDetection);
-	PlaybackTimeReverseJumpThreshold    = (Symmetric == PolicyValueApply) ? PlaybackTimeForwardJumpThreshold : PLAYBACK_TIME_JUMP_ERROR;
+	Threshold = Player->PolicyValue(Playback, Context->Stream, PolicyPtsForwardJumpDetectionThreshold);
+	Threshold = min(Threshold, 43); // 43 = ln (0x7fff...) / ln 2 - or the maximum time we can hold
+	PlaybackTimeForwardJumpThreshold = 1000000 * (1ULL << Threshold);
+	Symmetric = Player->PolicyValue(Playback, Context->Stream, PolicySymmetricJumpDetection);
+	PlaybackTimeReverseJumpThreshold = (Symmetric == PolicyValueApply) ? PlaybackTimeForwardJumpThreshold : PLAYBACK_TIME_JUMP_ERROR;
 	//
 	// Now evaluate the delta and handle any jump in the playback time
 	//
-	DeltaPlaybackTime   = (Direction == PlayBackward) ?
-						  (long long)(ExpectedPlaybackTime - ActualPlaybackTime) :
-						  (long long)(ActualPlaybackTime - ExpectedPlaybackTime);
+	DeltaPlaybackTime = (Direction == PlayBackward) ?
+			    (long long)(ExpectedPlaybackTime - ActualPlaybackTime) :
+			    (long long)(ActualPlaybackTime - ExpectedPlaybackTime);
 	if (!inrange(DeltaPlaybackTime, -PlaybackTimeReverseJumpThreshold, PlaybackTimeForwardJumpThreshold) || KnownJump)
 	{
 		report(severity_info, "Spotted a delta(%s) %12lld\n", StreamType(), DeltaPlaybackTime);
@@ -1118,21 +1118,21 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 			// (ie a rapid sequence of jumps close together).
 			//
 			report(severity_info, "Cascading a Jump(%s)\n", StreamType());
-			JumpError   = AccumulatedPlaybackTimeJumpsSinceSynchronization - (Context->AccumulatedPlaybackTimeJumpsSinceSynchronization - DeltaPlaybackTime);
+			JumpError = AccumulatedPlaybackTimeJumpsSinceSynchronization - (Context->AccumulatedPlaybackTimeJumpsSinceSynchronization - DeltaPlaybackTime);
 			if (!inrange(JumpError, -PLAYBACK_TIME_JUMP_ERROR, PlaybackTimeForwardJumpThreshold))
 			{
 				//Partial catchup
-				Context->AccumulatedPlaybackTimeJumpsSinceSynchronization       -= DeltaPlaybackTime;
-				Context->BaseNormalizedPlaybackTime                             += DeltaPlaybackTime;
-				Context->BaseSystemTimeAdjusted                                  = true;
+				Context->AccumulatedPlaybackTimeJumpsSinceSynchronization -= DeltaPlaybackTime;
+				Context->BaseNormalizedPlaybackTime += DeltaPlaybackTime;
+				Context->BaseSystemTimeAdjusted = true;
 			}
 			else
 			{
 				//Complete catchup
-				Context->BaseNormalizedPlaybackTime                             += Context->AccumulatedPlaybackTimeJumpsSinceSynchronization;
-				Context->BaseNormalizedPlaybackTime                             -= AccumulatedPlaybackTimeJumpsSinceSynchronization;
-				Context->AccumulatedPlaybackTimeJumpsSinceSynchronization        = AccumulatedPlaybackTimeJumpsSinceSynchronization;
-				Context->BaseSystemTimeAdjusted                                  = true;
+				Context->BaseNormalizedPlaybackTime += Context->AccumulatedPlaybackTimeJumpsSinceSynchronization;
+				Context->BaseNormalizedPlaybackTime -= AccumulatedPlaybackTimeJumpsSinceSynchronization;
+				Context->AccumulatedPlaybackTimeJumpsSinceSynchronization = AccumulatedPlaybackTimeJumpsSinceSynchronization;
+				Context->BaseSystemTimeAdjusted = true;
 			}
 		}
 		//
@@ -1141,12 +1141,12 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 		else
 		{
 			report(severity_info, "Initiating a Jump(%s)\n", StreamType());
-			AccumulatedPlaybackTimeJumpsSinceSynchronization                    -= DeltaPlaybackTime;
-			MasterBaseNormalizedPlaybackTime                                    += DeltaPlaybackTime;
-			JumpSeenAtPlaybackTime                                               = ExpectedPlaybackTime;
-			Context->BaseNormalizedPlaybackTime                                 += DeltaPlaybackTime;
-			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization            = AccumulatedPlaybackTimeJumpsSinceSynchronization;
-			Context->BaseSystemTimeAdjusted                                      = true;
+			AccumulatedPlaybackTimeJumpsSinceSynchronization -= DeltaPlaybackTime;
+			MasterBaseNormalizedPlaybackTime += DeltaPlaybackTime;
+			JumpSeenAtPlaybackTime = ExpectedPlaybackTime;
+			Context->BaseNormalizedPlaybackTime += DeltaPlaybackTime;
+			Context->AccumulatedPlaybackTimeJumpsSinceSynchronization = AccumulatedPlaybackTimeJumpsSinceSynchronization;
+			Context->BaseSystemTimeAdjusted = true;
 		}
 		OS_UnLockMutex(&Lock);
 	}
@@ -1156,7 +1156,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 	//
 	if (AccumulatedPlaybackTimeJumpsSinceSynchronization != Context->AccumulatedPlaybackTimeJumpsSinceSynchronization)
 	{
-		DeltaPlaybackTime       = (long long)(ActualPlaybackTime - JumpSeenAtPlaybackTime);
+		DeltaPlaybackTime = (long long)(ActualPlaybackTime - JumpSeenAtPlaybackTime);
 		if (!inrange(DeltaPlaybackTime, -PlaybackTimeForwardJumpThreshold, OTHER_STREAMS_MUST_FOLLOW_JUMP_BY))
 		{
 			report(severity_error, "OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(%s) - Stream failed to match previous jump in playback times\n", StreamType());
@@ -1169,7 +1169,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 	//
 	if (Context->BasedOnMasterMappingVersion != MasterTimeMappingVersion)
 	{
-		DeltaPlaybackTime       = (long long)(ActualPlaybackTime - MasterBaseNormalizedPlaybackTime);
+		DeltaPlaybackTime = (long long)(ActualPlaybackTime - MasterBaseNormalizedPlaybackTime);
 		if (!inrange(DeltaPlaybackTime, -PlaybackTimeForwardJumpThreshold, PlaybackTimeForwardJumpThreshold))
 		{
 			report(severity_error, "OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(%s) - Stream failed to match previous master mapping change\n", StreamType());
@@ -1182,37 +1182,37 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to calculate the clock rate adjustment values,
-//      and system clock, and for any subsiduary clocks.
+// The function to calculate the clock rate adjustment values,
+// and system clock, and for any subsiduary clocks.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustment(
-		OutputCoordinatorContext_t        Context,
-		unsigned long long                ExpectedDuration,
-		unsigned long long                ActualDuration,
-		long long                         CurrentError,
-		Rational_t                       *OutputRateAdjustment,
-		Rational_t                       *ParamSystemClockAdjustment)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::CalculateOutputRateAdjustment(
+	OutputCoordinatorContext_t Context,
+	unsigned long long ExpectedDuration,
+	unsigned long long ActualDuration,
+	long long CurrentError,
+	Rational_t *OutputRateAdjustment,
+	Rational_t *ParamSystemClockAdjustment)
 {
-	unsigned char           ExternalMapping;
-	long long               Difference;
-	Rational_t              AdjustmentMultiplier;
-	unsigned int            MaximumClockRateAdjustmentPpm;
-	Rational_t              MaximumClockRateMultiplier;
-	Rational_t              MinimumClockRateMultiplier;
-	long long               ClampChange;
-	long long               AnticipatedDriftCorrection;
-	unsigned long long      AnticipatedDriftCorrectionPeriod;
-	Rational_t              AnticipatedDriftAdjustment;
+	unsigned char ExternalMapping;
+	long long Difference;
+	Rational_t AdjustmentMultiplier;
+	unsigned int MaximumClockRateAdjustmentPpm;
+	Rational_t MaximumClockRateMultiplier;
+	Rational_t MinimumClockRateMultiplier;
+	long long ClampChange;
+	long long AnticipatedDriftCorrection;
+	unsigned long long AnticipatedDriftCorrectionPeriod;
+	Rational_t AnticipatedDriftAdjustment;
 	//
 	// If called from a playback context this function just returns the current
 	// system clock adjustment.
 	//
-	Context->CurrentErrorHistory[3]     = Context->CurrentErrorHistory[2];
-	Context->CurrentErrorHistory[2]     = Context->CurrentErrorHistory[1];
-	Context->CurrentErrorHistory[1]     = Context->CurrentErrorHistory[0];
-	Context->CurrentErrorHistory[0]     = CurrentError;
-	*OutputRateAdjustment       = 1;
+	Context->CurrentErrorHistory[3] = Context->CurrentErrorHistory[2];
+	Context->CurrentErrorHistory[2] = Context->CurrentErrorHistory[1];
+	Context->CurrentErrorHistory[1] = Context->CurrentErrorHistory[0];
+	Context->CurrentErrorHistory[0] = CurrentError;
+	*OutputRateAdjustment = 1;
 	*ParamSystemClockAdjustment = SystemClockAdjustment;
 	if (Context == PlaybackContext)
 		return OutputCoordinatorNoError;
@@ -1221,13 +1221,13 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 	//
 	if (Context->OutputRateAdjustmentType == OutputRateAdjustmentNotDetermined)
 	{
-		ExternalMapping             = Player->PolicyValue(Playback, Context->Stream, PolicyExternalTimeMapping);
+		ExternalMapping = Player->PolicyValue(Playback, Context->Stream, PolicyExternalTimeMapping);
 		Context->OutputRateAdjustmentParameters = (ExternalMapping == PolicyValueApply) ?
-				((Context->StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio) :
-				((Context->StreamType == StreamTypeVideo) ? ORAOutputDrivenVideo   : ORAOutputDrivenAudio);
-		Context->OutputRateAdjustmentType   = (ExternalMapping == PolicyValueApply) ? OutputRateAdjustmentInputFollowing : OutputRateAdjustmentOutputDriven;
-		Context->IntegratingClockDrift      = Context->ClockMaster && (ExternalMapping == PolicyValueApply);
-		Context->FramesToIntegrateOver      = Context->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
+							  ((Context->StreamType == StreamTypeVideo) ? ORAInputFollowingVideo : ORAInputFollowingAudio) :
+							  ((Context->StreamType == StreamTypeVideo) ? ORAOutputDrivenVideo : ORAOutputDrivenAudio);
+		Context->OutputRateAdjustmentType = (ExternalMapping == PolicyValueApply) ? OutputRateAdjustmentInputFollowing : OutputRateAdjustmentOutputDriven;
+		Context->IntegratingClockDrift = Context->ClockMaster && (ExternalMapping == PolicyValueApply);
+		Context->FramesToIntegrateOver = Context->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames;
 	}
 	//
 	// Setup the default output rate adjustment
@@ -1239,12 +1239,12 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 		if (!SystemClockAdjustmentEstablished)
 			return OutputCoordinatorNoError;
 		if (Context->ClockAdjustmentEstablished)
-			*OutputRateAdjustment       = Context->ClockAdjustment;
+			*OutputRateAdjustment = Context->ClockAdjustment;
 	}
 	//
 	// Calculate the difference, if too large then return.
 	//
-	Difference  = (int)((long long)ExpectedDuration - (long long)ActualDuration);
+	Difference = (int)((long long)ExpectedDuration - (long long)ActualDuration);
 #if 0
 //
 // Collect and output the actual recorded differences
@@ -1258,8 +1258,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 		if (C == COUNT)
 		{
 			for (C = 0; C < COUNT; C += 8)
-				report(severity_info, "%4d -   %6d  %6d  %6d  %6d  %6d  %6d  %6d  %6d\n", C,
-					   D[C + 0], D[C + 1], D[C + 2], D[C + 3], D[C + 4], D[C + 5], D[C + 6], D[C + 7]);
+				report(severity_info, "%4d - %6d %6d %6d %6d %6d %6d %6d %6d\n", C,
+				       D[C + 0], D[C + 1], D[C + 2], D[C + 3], D[C + 4], D[C + 5], D[C + 6], D[C + 7]);
 			report(severity_fatal, "Thats all folks\n");
 		}
 	}
@@ -1279,32 +1279,32 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 			// now would be a good time to read the current
 			// policy and calculate the clamping values.
 			//
-			MaximumClockRateAdjustmentPpm       = 1 << Player->PolicyValue(Playback, Context->Stream, PolicyClockPullingLimit2ToTheNPartsPerMillion);
-			MaximumClockRateMultiplier          = Rational_t(1000000 + MaximumClockRateAdjustmentPpm, 1000000);
-			MinimumClockRateMultiplier          = Rational_t(1000000 - MaximumClockRateAdjustmentPpm, 1000000);
+			MaximumClockRateAdjustmentPpm = 1 << Player->PolicyValue(Playback, Context->Stream, PolicyClockPullingLimit2ToTheNPartsPerMillion);
+			MaximumClockRateMultiplier = Rational_t(1000000 + MaximumClockRateAdjustmentPpm, 1000000);
+			MinimumClockRateMultiplier = Rational_t(1000000 - MaximumClockRateAdjustmentPpm, 1000000);
 			//
 			// Calculate a new adjustment multiplier, and clamp it
 			// to prevent too rapid adjustment. The clamp range is
 			// driven by a maximum of 16ppm, further restricted as
 			// the sample size grows.
 			//
-			AdjustmentMultiplier                = Context->LeastSquareFit.Gradient();
+			AdjustmentMultiplier = Context->LeastSquareFit.Gradient();
 #if 0
 			report(severity_info, "AAA 0 (%d) Clock adjustment %4d %d.%09d %d.%09d - %06lld\n", Context->StreamType,
-				   Context->IntegrationCount,
-				   AdjustmentMultiplier.IntegerPart(), AdjustmentMultiplier.RemainderDecimal(9),
-				   SystemClockAdjustment.IntegerPart(), SystemClockAdjustment.RemainderDecimal(9),
-				   CurrentError);
+			       Context->IntegrationCount,
+			       AdjustmentMultiplier.IntegerPart(), AdjustmentMultiplier.RemainderDecimal(9),
+			       SystemClockAdjustment.IntegerPart(), SystemClockAdjustment.RemainderDecimal(9),
+			       CurrentError);
 #endif
-			ClampChange                         = (Context->OutputRateAdjustmentParameters.ClockDriftMaximumIntegrationFrames / Context->FramesToIntegrateOver);
-			ClampChange                         = min(128, 4 * (ClampChange * ClampChange));
+			ClampChange = (Context->OutputRateAdjustmentParameters.ClockDriftMaximumIntegrationFrames / Context->FramesToIntegrateOver);
+			ClampChange = min(128, 4 * (ClampChange * ClampChange));
 			Clamp(AdjustmentMultiplier, (1 - Rational_t(ClampChange, 1000000)), (1 + Rational_t(ClampChange, 1000000)));
 			//
 			// Now apply this to the clock adjustment
 			//
-			Context->ClockAdjustment                    = Context->ClockAdjustmentEstablished ?
-					(Context->ClockAdjustment * AdjustmentMultiplier) : AdjustmentMultiplier;
-			Context->ClockAdjustmentEstablished         = true;
+			Context->ClockAdjustment = Context->ClockAdjustmentEstablished ?
+						   (Context->ClockAdjustment * AdjustmentMultiplier) : AdjustmentMultiplier;
+			Context->ClockAdjustmentEstablished = true;
 			//
 			// Now we calculate a long term drift corrector, clamp it,
 			// and re-calculate its anticipated affect after clamping.
@@ -1313,38 +1313,38 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 			//
 			if (Context->ClockMaster)
 			{
-				Rational_t  SysChange;
-				long long   Jerk;
-				SysChange   = (1 / Context->ClockAdjustment) - SystemClockAdjustment;
-				Jerk    = LongLongIntegerPart(SysChange * (OS_GetTimeInMicroSeconds() - MasterBaseSystemTime)) / 2;
+				Rational_t SysChange;
+				long long Jerk;
+				SysChange = (1 / Context->ClockAdjustment) - SystemClockAdjustment;
+				Jerk = LongLongIntegerPart(SysChange * (OS_GetTimeInMicroSeconds() - MasterBaseSystemTime)) / 2;
 //				report( severity_info, "Jerk - %lld\n", Jerk );
-				MasterBaseSystemTime    -= Jerk;
-				CurrentError        -= Jerk;
+				MasterBaseSystemTime -= Jerk;
+				CurrentError -= Jerk;
 			}
-			AnticipatedDriftCorrection          = 0;
+			AnticipatedDriftCorrection = 0;
 			if (Context->FramesToIntegrateOver >= Context->OutputRateAdjustmentParameters.IntegrationThresholdForDriftCorrection)
 			{
-				AnticipatedDriftCorrection          = -CurrentError / 2;
-				AnticipatedDriftCorrectionPeriod    = (Context->FramesToIntegrateOver < Context->OutputRateAdjustmentParameters.ClockDriftMaximumIntegrationFrames) ?
-													  (2 * Context->LeastSquareFit.Y()) :
-													  Context->LeastSquareFit.Y();
-				AnticipatedDriftAdjustment          = Rational_t(AnticipatedDriftCorrection, AnticipatedDriftCorrectionPeriod);
+				AnticipatedDriftCorrection = -CurrentError / 2;
+				AnticipatedDriftCorrectionPeriod = (Context->FramesToIntegrateOver < Context->OutputRateAdjustmentParameters.ClockDriftMaximumIntegrationFrames) ?
+								   (2 * Context->LeastSquareFit.Y()) :
+								   Context->LeastSquareFit.Y();
+				AnticipatedDriftAdjustment = Rational_t(AnticipatedDriftCorrection, AnticipatedDriftCorrectionPeriod);
 				Clamp(AnticipatedDriftAdjustment, Rational_t(-4, 1000000), Rational_t(4, 1000000));
-				AnticipatedDriftCorrection          = IntegerPart(AnticipatedDriftCorrectionPeriod * AnticipatedDriftAdjustment);
-				Context->ClockAdjustment           += AnticipatedDriftAdjustment;
+				AnticipatedDriftCorrection = IntegerPart(AnticipatedDriftCorrectionPeriod * AnticipatedDriftAdjustment);
+				Context->ClockAdjustment += AnticipatedDriftAdjustment;
 			}
 //
 			Clamp(Context->ClockAdjustment, MinimumClockRateMultiplier, MaximumClockRateMultiplier);
 #if 0
-//if( Context->StreamType == 1 )
+			//if( Context->StreamType == 1 )
 			{
-				Rational_t  Tmp;
+				Rational_t Tmp;
 				Tmp = Context->LeastSquareFit.Gradient();
 				report(severity_info, "RateAdjuster (%d) Clock adjustment %d.%09d (%d.%09d) (%5d) %4lld (%5lld %5lld %5lld %5lld)\n", Context->StreamType,
-					   Context->ClockAdjustment.IntegerPart(), Context->ClockAdjustment.RemainderDecimal(9),
-					   Tmp.IntegerPart(), Tmp.RemainderDecimal(9),
-					   Context->FramesToIntegrateOver, AnticipatedDriftCorrection,
-					   Context->CurrentErrorHistory[0], Context->CurrentErrorHistory[1], Context->CurrentErrorHistory[2], Context->CurrentErrorHistory[3]);
+				       Context->ClockAdjustment.IntegerPart(), Context->ClockAdjustment.RemainderDecimal(9),
+				       Tmp.IntegerPart(), Tmp.RemainderDecimal(9),
+				       Context->FramesToIntegrateOver, AnticipatedDriftCorrection,
+				       Context->CurrentErrorHistory[0], Context->CurrentErrorHistory[1], Context->CurrentErrorHistory[2], Context->CurrentErrorHistory[3]);
 			}
 #endif
 			//
@@ -1354,23 +1354,23 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 			//
 			if (Context->ClockMaster)
 			{
-				SystemClockAdjustment           = 1 / Context->ClockAdjustment;
+				SystemClockAdjustment = 1 / Context->ClockAdjustment;
 				SystemClockAdjustmentEstablished = true;
-				*ParamSystemClockAdjustment     = SystemClockAdjustment;
+				*ParamSystemClockAdjustment = SystemClockAdjustment;
 			}
 			//
 			// In the case where we are not the master recalculate the return value.
 			//
 			if (!Context->ClockMaster && SystemClockAdjustmentEstablished)
-				*OutputRateAdjustment   = Context->ClockAdjustment;
+				*OutputRateAdjustment = Context->ClockAdjustment;
 			//
 			// Finally prepare for the ignoring session.
 			//
 			Context->LastIntegrationWasRestarted = false;
-			Context->IntegratingClockDrift       = false;
+			Context->IntegratingClockDrift = false;
 			if (Context->FramesToIntegrateOver < Context->OutputRateAdjustmentParameters.ClockDriftMaximumIntegrationFrames)
-				Context->FramesToIntegrateOver  *= 2;
-			Context->IntegrationCount           = 0;
+				Context->FramesToIntegrateOver *= 2;
+			Context->IntegrationCount = 0;
 		}
 	}
 	else if (Context->IntegrationCount >= Context->OutputRateAdjustmentParameters.ClockDriftIgnoreBetweenIntegrations)
@@ -1378,8 +1378,8 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 		//
 		// Prepare to integrate over the next set of frames
 		//
-		Context->IntegratingClockDrift  = true;
-		Context->IntegrationCount       = 0;
+		Context->IntegratingClockDrift = true;
+		Context->IntegrationCount = 0;
 		Context->LeastSquareFit.Reset();
 	}
 	//
@@ -1390,36 +1390,36 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::CalculateOutputRateAdjustm
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to restart the output rate adjustment
+// The function to restart the output rate adjustment
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::RestartOutputRateIntegration(OutputCoordinatorContext_t  Context)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::RestartOutputRateIntegration(OutputCoordinatorContext_t Context)
 {
 	//
 	// Do we wish to stick with the current integration period
 	//
 	if (Context->LastIntegrationWasRestarted)
-		Context->FramesToIntegrateOver  = max((Context->FramesToIntegrateOver / 2), Context->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames);
+		Context->FramesToIntegrateOver = max((Context->FramesToIntegrateOver / 2), Context->OutputRateAdjustmentParameters.ClockDriftMinimumIntegrationFrames);
 //
-	Context->IntegratingClockDrift              = false;
-	Context->IntegrationCount                   = 0;
+	Context->IntegratingClockDrift = false;
+	Context->IntegrationCount = 0;
 //
-	Context->LastIntegrationWasRestarted        = true;
+	Context->LastIntegrationWasRestarted = true;
 //
 	return OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to adjust the base system time
+// The function to adjust the base system time
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::AdjustMappingBase(
-	OutputCoordinatorContext_t        Context,
-	long long                         Adjustment)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::AdjustMappingBase(
+	OutputCoordinatorContext_t Context,
+	long long Adjustment)
 {
-	OutputCoordinatorContext_t      ContextLoop;
-	unsigned char                   ExternalMapping;
+	OutputCoordinatorContext_t ContextLoop;
+	unsigned char ExternalMapping;
 	//
 	// If we have an externally specified time mapping we cannot perform the adjusment, based on a particular stream
 	//
@@ -1438,7 +1438,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::AdjustMappingBase(
 	// if there is more than one synchronized video stream, one
 	// would hope that they will agree on where the vsync is
 	// (IE if stream A has a frame at PTS X, the stream B
-	//  should not have a frame at PTS X + 1/2 a vsync period).
+	// should not have a frame at PTS X + 1/2 a vsync period).
 	// If two video streams do disagree on the positioning of
 	// the vsync then only the first one seen should allow
 	// adjustment of mapping bases, the other will be ignored.
@@ -1457,15 +1457,15 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::AdjustMappingBase(
 	//
 	OS_LockMutex(&Lock);
 	if (MasterTimeMappingEstablished)
-		MasterBaseSystemTime            += Adjustment;
-	for (ContextLoop     = CoordinatedContexts;
-			ContextLoop    != NULL;
-			ContextLoop     = ContextLoop->Next)
+		MasterBaseSystemTime += Adjustment;
+	for (ContextLoop = CoordinatedContexts;
+			ContextLoop != NULL;
+			ContextLoop = ContextLoop->Next)
 	{
 		if (ContextLoop->TimeMappingEstablished)
 		{
-			ContextLoop->BaseSystemTime         += Adjustment;
-			ContextLoop->BaseSystemTimeAdjusted  = (ContextLoop != Context);    // Tell everyone else it has been adjusted
+			ContextLoop->BaseSystemTime += Adjustment;
+			ContextLoop->BaseSystemTimeAdjusted = (Context != ContextLoop); // Tell everyone else it has been adjusted
 		}
 	}
 	OS_UnLockMutex(&Lock);
@@ -1475,19 +1475,19 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::AdjustMappingBase(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to check if the base system time has been adjusted
+// The function to check if the base system time has been adjusted
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MappingBaseAdjustmentApplied(
-	OutputCoordinatorContext_t        Context)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::MappingBaseAdjustmentApplied(
+	OutputCoordinatorContext_t Context)
 {
-	OutputCoordinatorStatus_t       Status;
+	OutputCoordinatorStatus_t Status;
 //
-	Status      = OutputCoordinatorNoError;
+	Status = OutputCoordinatorNoError;
 	if (Context->BaseSystemTimeAdjusted)
 	{
 		Context->BaseSystemTimeAdjusted = false;
-		Status                          = OutputCoordinatorMappingAdjusted;
+		Status = OutputCoordinatorMappingAdjusted;
 	}
 //
 	return Status;
@@ -1495,36 +1495,36 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MappingBaseAdjustmentAppli
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to return the delay between the first frame of this
-//      stream, and the first frame from any stream in this playback.
+// The function to return the delay between the first frame of this
+// stream, and the first frame from any stream in this playback.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::GetStreamStartDelay(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long               *Delay)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::GetStreamStartDelay(
+	OutputCoordinatorContext_t Context,
+	unsigned long long *Delay)
 {
 	if (Context->StreamOffset == (long long)INVALID_TIME)
 		return OutputCoordinatorMappingNotEstablished;
-	*Delay      = (unsigned long long)(Context->StreamOffset - MinimumStreamOffset);
+	*Delay = (unsigned long long)(Context->StreamOffset - MinimumStreamOffset);
 	return OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function monitors the offset between VSYNCs and the output
-//      times of frames.
+// This function monitors the offset between VSYNCs and the output
+// times of frames.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MonitorVsyncOffset(
-	OutputCoordinatorContext_t        Context,
-	unsigned long long                RequestedOutputTime,
-	unsigned long long                ActualOutputTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::MonitorVsyncOffset(
+	OutputCoordinatorContext_t Context,
+	unsigned long long RequestedOutputTime,
+	unsigned long long ActualOutputTime)
 {
-	PlayerStatus_t                  Status;
-	PlayerEventRecord_t             Event;
-	long long int                   CorrectedOffset;
-	long long                       VideoFrameDuration;
-	unsigned char                   VsyncLocked;
+	PlayerStatus_t Status;
+	PlayerEventRecord_t Event;
+	long long int CorrectedOffset;
+	long long VideoFrameDuration;
+	unsigned char VsyncLocked;
 //
 	if (VsyncOffsetIntegrationCount >= (2 * INTEGRATION_COUNT_FOR_VSYNC_OFFSET))
 		return OutputCoordinatorNoError;
@@ -1533,7 +1533,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MonitorVsyncOffset(
 	if (inrange(VsyncOffsetIntegrationCount, INTEGRATION_COUNT_FOR_VSYNC_OFFSET, (2 * INTEGRATION_COUNT_FOR_VSYNC_OFFSET)))
 	{
 		if ((long long)(ActualOutputTime - RequestedOutputTime) < MinimumVsyncOffset)
-			MinimumVsyncOffset  = (long long)(ActualOutputTime - RequestedOutputTime);
+			MinimumVsyncOffset = (long long)(ActualOutputTime - RequestedOutputTime);
 		if (VsyncOffsetIntegrationCount == (2 * INTEGRATION_COUNT_FOR_VSYNC_OFFSET))
 		{
 			VsyncLocked = Player->PolicyValue(Playback, Context->Stream, PolicyExternalTimeMappingVsyncLocked);
@@ -1543,35 +1543,35 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MonitorVsyncOffset(
 				// Not locked so adjust the mapping, and Normalize offset to 0..frame period
 				//
 				Context->Manifestor->GetSurfaceParameters((void **)(&Context->VideoSurfaceDescriptor));
-				VideoFrameDuration      = RoundedLongLongIntegerPart(1000000 / Context->VideoSurfaceDescriptor->FrameRate);
+				VideoFrameDuration = RoundedLongLongIntegerPart(1000000 / Context->VideoSurfaceDescriptor->FrameRate);
 				if (!Context->VideoSurfaceDescriptor->Progressive)
-					VideoFrameDuration  = 2 * VideoFrameDuration;
-				CorrectedOffset          = MinimumVsyncOffset;
+					VideoFrameDuration = 2 * VideoFrameDuration;
+				CorrectedOffset = MinimumVsyncOffset;
 				if (MinimumVsyncOffset < 0)
-					CorrectedOffset     += (((-MinimumVsyncOffset) + VideoFrameDuration - 1) / VideoFrameDuration) * VideoFrameDuration;
+					CorrectedOffset += (((-MinimumVsyncOffset) + VideoFrameDuration - 1) / VideoFrameDuration) * VideoFrameDuration;
 				else if (MinimumVsyncOffset >= VideoFrameDuration)
-					CorrectedOffset     -= (MinimumVsyncOffset  / VideoFrameDuration) * VideoFrameDuration;
+					CorrectedOffset -= (MinimumVsyncOffset / VideoFrameDuration) * VideoFrameDuration;
 				report(severity_info, "Vsync Offset = %lldus (%lldus)\n", CorrectedOffset, MinimumVsyncOffset);
-				AdjustMappingBase(PlaybackContext,  CorrectedOffset);
+				AdjustMappingBase(PlaybackContext, CorrectedOffset);
 			}
 			else
 			{
 				//
 				// Vsync locked, so just report, and signal zero
 				//
-				report(severity_info, "Vsync Offset = %lldus, as vsync is locked we will not adjust the mapping.\n", CorrectedOffset);
-				CorrectedOffset         = 0;
+				report(severity_info, "Vsync Offset = %lldus, as vsync is locked we will not adjust the mapping.\n");
+				CorrectedOffset = 0;
 			}
 			//
 			// Raise a player event to signal the measurement of vsync offset
 			//
-			Event.Code                  = EventVsyncOffsetMeasured;
-			Event.Playback              = Playback;
-			Event.Stream                = Context->Stream;
-			Event.PlaybackTime          = TIME_NOT_APPLICABLE;
-			Event.UserData              = EventUserData;
-			Event.Value[0].LongLong     = (unsigned long long)CorrectedOffset;
-			Status                      = Player->SignalEvent(&Event);
+			Event.Code = EventVsyncOffsetMeasured;
+			Event.Playback = Playback;
+			Event.Stream = Context->Stream;
+			Event.PlaybackTime = TIME_NOT_APPLICABLE;
+			Event.UserData = EventUserData;
+			Event.Value[0].LongLong = (unsigned long long)CorrectedOffset;
+			Status = Player->SignalEvent(&Event);
 			if (Status != PlayerNoError)
 				report(severity_error, "OutputCoordinator_Base_c::MonitorVsyncOffset - Failed to signal event.\n");
 			return OutputCoordinatorNoError;
@@ -1582,34 +1582,34 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::MonitorVsyncOffset(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - This function trawls the contexts and deduces the next
-//      system time at which we can start playing.
+// Private - This function trawls the contexts and deduces the next
+// system time at which we can start playing.
 //
 
-unsigned long long   OutputCoordinator_Base_c::RestartTime(void)
+unsigned long long OutputCoordinator_Base_c::RestartTime(void)
 {
-	unsigned long long                ManifestTime;
-	unsigned long long                LatestVideoManifestTime;
-	unsigned long long                LatestManifestTime;
-	OutputCoordinatorContext_t        LoopContext;
+	unsigned long long ManifestTime;
+	unsigned long long LatestVideoManifestTime;
+	unsigned long long LatestManifestTime;
+	OutputCoordinatorContext_t LoopContext;
 //
-	VideoFrameDuration          = 1;
-	LatestVideoManifestTime     = OS_GetTimeInMicroSeconds();
-	LatestManifestTime          = LatestVideoManifestTime;
-	for (LoopContext     = CoordinatedContexts;
-			LoopContext    != NULL;
-			LoopContext     = LoopContext->Next)
+	VideoFrameDuration = 1;
+	LatestVideoManifestTime = OS_GetTimeInMicroSeconds();
+	LatestManifestTime = LatestVideoManifestTime;
+	for (LoopContext = CoordinatedContexts;
+			LoopContext != NULL;
+			LoopContext = LoopContext->Next)
 	{
 		//
 		// We have found a video stream, calculate the frame Duration
 		//
 		if ((LoopContext->StreamType == StreamTypeVideo) &&
-				(VideoFrameDuration      == 1))
+				(VideoFrameDuration == 1))
 		{
 			LoopContext->Manifestor->GetSurfaceParameters((void **)(&LoopContext->VideoSurfaceDescriptor));
-			VideoFrameDuration  = RoundedLongLongIntegerPart(1000000 / LoopContext->VideoSurfaceDescriptor->FrameRate);
+			VideoFrameDuration = RoundedLongLongIntegerPart(1000000 / LoopContext->VideoSurfaceDescriptor->FrameRate);
 			if (!LoopContext->VideoSurfaceDescriptor->Progressive)
-				VideoFrameDuration  = 2 * VideoFrameDuration;
+				VideoFrameDuration = 2 * VideoFrameDuration;
 		}
 		//
 		// Get the manifest time - if this is the first time we have done this,
@@ -1617,10 +1617,10 @@ unsigned long long   OutputCoordinator_Base_c::RestartTime(void)
 		//
 		LoopContext->Manifestor->GetNextQueuedManifestationTime(&ManifestTime);
 		if (LoopContext->ManifestorLatency == INVALID_TIME)
-			LoopContext->ManifestorLatency      = ManifestTime - OS_GetTimeInMicroSeconds();
+			LoopContext->ManifestorLatency = ManifestTime - OS_GetTimeInMicroSeconds();
 		if (LoopContext->StreamType == StreamTypeVideo)
-			LatestVideoManifestTime     = max(ManifestTime, LatestVideoManifestTime);
-		LatestManifestTime              = max(ManifestTime, LatestManifestTime);
+			LatestVideoManifestTime = max(ManifestTime, LatestVideoManifestTime);
+		LatestManifestTime = max(ManifestTime, LatestManifestTime);
 		//
 		// Just to check
 		//
@@ -1631,65 +1631,65 @@ unsigned long long   OutputCoordinator_Base_c::RestartTime(void)
 	// Now round up the latest time to the nearest video frame point
 	//
 	if (LatestManifestTime != LatestVideoManifestTime)
-		LatestManifestTime      = LatestVideoManifestTime + (((LatestManifestTime - LatestVideoManifestTime + VideoFrameDuration - 1) / VideoFrameDuration) * VideoFrameDuration);
+		LatestManifestTime = LatestVideoManifestTime + (((LatestManifestTime - LatestVideoManifestTime + VideoFrameDuration - 1) / VideoFrameDuration) * VideoFrameDuration);
 //
 	return LatestManifestTime;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to initialize clock recovery when we have a system
-//      clock master, driven by an external broadcast source such as
-//      a satelite.
-//      We will allow clock recovery when system clock is not master,
-//      but we will not adjust the system clock.
+// The function to initialize clock recovery when we have a system
+// clock master, driven by an external broadcast source such as
+// a satelite.
+// We will allow clock recovery when system clock is not master,
+// but we will not adjust the system clock.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryInitialize(PlayerTimeFormat_t       SourceTimeFormat)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::ClockRecoveryInitialize(PlayerTimeFormat_t SourceTimeFormat)
 {
-	unsigned char   MasterClock;
+	unsigned char MasterClock;
 	//
 	// During clock recovery initialization, we assume that the local clock is 1:1 with the source clock
 	//
-	ClockRecoverySourceTimeFormat       = SourceTimeFormat;
-	ClockRecoveryLastPts                = INVALID_TIME;         // Only used if PTS source time format
-	ClockRecoveryPtsBaseLine            = 0;
-	ClockRecoveryBaseSourceClock        = INVALID_TIME;
-	ClockRecoveryBaseLocalClock         = INVALID_TIME;
-	ClockRecoveryEstablishedGradient    = 0;
-	ClockRecoveryEstablishedBaseSource  = INVALID_TIME;
-	ClockRecoveryEstablishedBaseLocal   = INVALID_TIME;
-	ClockRecoveryInitialized            = true;
-	ClockRecoveryIntegrationTime        = CLOCK_RECOVERY_MINIMUM_INTEGRATION_TIME;
+	ClockRecoverySourceTimeFormat = SourceTimeFormat;
+	ClockRecoveryLastPts = INVALID_TIME; // Only used if PTS source time format
+	ClockRecoveryPtsBaseLine = 0;
+	ClockRecoveryBaseSourceClock = INVALID_TIME;
+	ClockRecoveryBaseLocalClock = INVALID_TIME;
+	ClockRecoveryEstablishedGradient = 0;
+	ClockRecoveryEstablishedBaseSource = INVALID_TIME;
+	ClockRecoveryEstablishedBaseLocal = INVALID_TIME;
+	ClockRecoveryInitialized = true;
+	ClockRecoveryIntegrationTime = CLOCK_RECOVERY_MINIMUM_INTEGRATION_TIME;
 	//
 	// We only reset the system clock here if the system clock is master
 	//
-	MasterClock                 = Player->PolicyValue(Playback, PlayerAllStreams, PolicyMasterClock);
+	MasterClock = Player->PolicyValue(Playback, PlayerAllStreams, PolicyMasterClock);
 	if (MasterClock != PolicyValueSystemClockMaster)
 	{
 		report(severity_error, "OutputCoordinator_Base_c::ClockRecoveryInitialize - Performing clock recovery when system clock is NOT master.\n");
-		report(severity_error, "                                                    clock recovery provided for application use only.\n");
+		report(severity_error, " clock recovery provided for application use only.\n");
 		return OutputCoordinatorNoError;
 	}
-	SystemClockAdjustmentEstablished    = true;
-	SystemClockAdjustment               = 1;
+	SystemClockAdjustmentEstablished = true;
+	SystemClockAdjustment = 1;
 //
 	return OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to handle clock recovery when we have a system
-//      clock master, driven by an external broadcast source such as
-//      a satelite.
+// The function to handle clock recovery when we have a system
+// clock master, driven by an external broadcast source such as
+// a satelite.
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryDataPoint(
-	unsigned long long                SourceTime,
-	unsigned long long                LocalTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::ClockRecoveryDataPoint(
+	unsigned long long SourceTime,
+	unsigned long long LocalTime)
 {
-	unsigned long long      NormalizedSourceTime;
-	unsigned char           MasterClock;
+	unsigned long long NormalizedSourceTime;
+	unsigned char MasterClock;
 	//
 	// Have we been initialized
 	//
@@ -1704,23 +1704,23 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryDataPoint(
 	switch (ClockRecoverySourceTimeFormat)
 	{
 		case TimeFormatUs:
-			NormalizedSourceTime            = SourceTime;
+			NormalizedSourceTime = SourceTime;
 			break;
 		case TimeFormatPts:
 			// This is practically a copy of FrameParser_Base_c::TranslatePlaybackTimeNativeToNormalized()
 			// where all the useful comments can be found.
-#define         WrapMask        0x0000000180000000ULL
-#define         WrapOffset      0x0000000200000000ULL
+#define WrapMask 0x0000000180000000ULL
+#define WrapOffset 0x0000000200000000ULL
 			if (ClockRecoveryLastPts == INVALID_TIME)
-				ClockRecoveryLastPts        = SourceTime;
+				ClockRecoveryLastPts = SourceTime;
 			if (((ClockRecoveryLastPts & WrapMask) == WrapMask) &&
-					((SourceTime           & WrapMask) == 0))
-				ClockRecoveryPtsBaseLine   += WrapOffset;
+					((SourceTime & WrapMask) == 0))
+				ClockRecoveryPtsBaseLine += WrapOffset;
 			else if (((ClockRecoveryLastPts & WrapMask) == 0) &&
-					 ((SourceTime           & WrapMask) == WrapMask))
-				ClockRecoveryPtsBaseLine   -= WrapOffset;
-			ClockRecoveryLastPts            = SourceTime;
-			NormalizedSourceTime            = (((ClockRecoveryPtsBaseLine + SourceTime) * 300) + 13) / 27;
+					((SourceTime & WrapMask) == WrapMask))
+				ClockRecoveryPtsBaseLine -= WrapOffset;
+			ClockRecoveryLastPts = SourceTime;
+			NormalizedSourceTime = (((ClockRecoveryPtsBaseLine + SourceTime) * 300) + 13) / 27;
 			break;
 		default:
 			report(severity_error, "OutputCoordinator_Base_c::ClockRecoveryDataPoint - Unsupported source time format (%d).\n", ClockRecoverySourceTimeFormat);
@@ -1731,23 +1731,23 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryDataPoint(
 	//
 	if (ClockRecoveryBaseSourceClock == INVALID_TIME)
 	{
-		ClockRecoveryBaseSourceClock    = NormalizedSourceTime;
-		ClockRecoveryBaseLocalClock     = LocalTime;
-		ClockRecoveryAccumulatedPoints  = 0;
+		ClockRecoveryBaseSourceClock = NormalizedSourceTime;
+		ClockRecoveryBaseLocalClock = LocalTime;
+		ClockRecoveryAccumulatedPoints = 0;
 		ClockRecoveryLeastSquareFit.Reset();
 		if (ClockRecoveryEstablishedBaseSource == INVALID_TIME)
 		{
 			// If this is our first ever point, establish the minimum needed for guesstimating the source clock
-			ClockRecoveryEstablishedGradient    = 1;
-			ClockRecoveryEstablishedBaseSource  = ClockRecoveryBaseSourceClock;
-			ClockRecoveryEstablishedBaseLocal   = ClockRecoveryBaseLocalClock;
+			ClockRecoveryEstablishedGradient = 1;
+			ClockRecoveryEstablishedBaseSource = ClockRecoveryBaseSourceClock;
+			ClockRecoveryEstablishedBaseLocal = ClockRecoveryBaseLocalClock;
 		}
 	}
 	//
 	// Accumulate the data point (converting the times to deltas first)
 	//
-	NormalizedSourceTime        -= ClockRecoveryBaseSourceClock + ClockRecoveryLeastSquareFit.Y();
-	LocalTime                   -= ClockRecoveryBaseLocalClock  + ClockRecoveryLeastSquareFit.X();
+	NormalizedSourceTime -= ClockRecoveryBaseSourceClock + ClockRecoveryLeastSquareFit.Y();
+	LocalTime -= ClockRecoveryBaseLocalClock + ClockRecoveryLeastSquareFit.X();
 	ClockRecoveryLeastSquareFit.Add(NormalizedSourceTime, LocalTime);
 	ClockRecoveryAccumulatedPoints++;
 	//
@@ -1756,29 +1756,29 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryDataPoint(
 	if ((ClockRecoveryAccumulatedPoints >= CLOCK_RECOVERY_MINIMUM_POINTS) &&
 			((unsigned long long)ClockRecoveryLeastSquareFit.X() >= ClockRecoveryIntegrationTime))
 	{
-		ClockRecoveryEstablishedGradient        = ClockRecoveryLeastSquareFit.Gradient();
-		ClockRecoveryEstablishedBaseSource      = ClockRecoveryBaseSourceClock + RoundedLongLongIntegerPart(ClockRecoveryLeastSquareFit.Intercept());
-		ClockRecoveryEstablishedBaseLocal       = ClockRecoveryBaseLocalClock;
+		ClockRecoveryEstablishedGradient = ClockRecoveryLeastSquareFit.Gradient();
+		ClockRecoveryEstablishedBaseSource = ClockRecoveryBaseSourceClock + RoundedLongLongIntegerPart(ClockRecoveryLeastSquareFit.Intercept());
+		ClockRecoveryEstablishedBaseLocal = ClockRecoveryBaseLocalClock;
 		//
 		// Set us up for a reset
 		//
-		ClockRecoveryLastPts            = INVALID_TIME;         // Only used if PTS source time format
-		ClockRecoveryPtsBaseLine        = 0;
-		ClockRecoveryBaseSourceClock    = INVALID_TIME;
-		ClockRecoveryBaseLocalClock     = INVALID_TIME;
+		ClockRecoveryLastPts = INVALID_TIME; // Only used if PTS source time format
+		ClockRecoveryPtsBaseLine = 0;
+		ClockRecoveryBaseSourceClock = INVALID_TIME;
+		ClockRecoveryBaseLocalClock = INVALID_TIME;
 		//
 		// Adjust the integration time
 		//
 		if (ClockRecoveryIntegrationTime < CLOCK_RECOVERY_MAXIMUM_INTEGRATION_TIME)
-			ClockRecoveryIntegrationTime        *= 2;
+			ClockRecoveryIntegrationTime *= 2;
 		//
 		// Do we need to adjust the system clock rate
 		//
-		MasterClock                     = Player->PolicyValue(Playback, PlayerAllStreams, PolicyMasterClock);
+		MasterClock = Player->PolicyValue(Playback, PlayerAllStreams, PolicyMasterClock);
 		if (MasterClock == PolicyValueSystemClockMaster)
 		{
-			SystemClockAdjustmentEstablished    = true;
-			SystemClockAdjustment               = ClockRecoveryEstablishedGradient;
+			SystemClockAdjustmentEstablished = true;
+			SystemClockAdjustment = ClockRecoveryEstablishedGradient;
 		}
 	}
 //
@@ -1787,23 +1787,23 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryDataPoint(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The function to read out an estimate of the recovered clock
+// The function to read out an estimate of the recovered clock
 //
 
-OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryEstimate(
-	unsigned long long               *SourceTime,
-	unsigned long long               *LocalTime)
+OutputCoordinatorStatus_t OutputCoordinator_Base_c::ClockRecoveryEstimate(
+	unsigned long long *SourceTime,
+	unsigned long long *LocalTime)
 {
-	unsigned long long       Now;
-	unsigned long long       EstimatedSourceTime;
-	Rational_t               ElapsedSourceTime;
+	unsigned long long Now;
+	unsigned long long EstimatedSourceTime;
+	Rational_t ElapsedSourceTime;
 	//
 	// Let us initialize first
 	//
 	if (SourceTime != NULL)
-		*SourceTime     = INVALID_TIME;
+		*SourceTime = INVALID_TIME;
 	if (LocalTime != NULL)
-		*LocalTime      = INVALID_TIME;
+		*LocalTime = INVALID_TIME;
 	//
 	// Is clock recovery live
 	//
@@ -1820,16 +1820,16 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryEstimate(
 	//
 	// Calculate the value
 	//
-	Now                 = OS_GetTimeInMicroSeconds();
-	ElapsedSourceTime   = ClockRecoveryEstablishedGradient * ((int)(Now - ClockRecoveryEstablishedBaseLocal));
+	Now = OS_GetTimeInMicroSeconds();
+	ElapsedSourceTime = ClockRecoveryEstablishedGradient * ((int)(Now - ClockRecoveryEstablishedBaseLocal));
 	EstimatedSourceTime = ClockRecoveryEstablishedBaseSource + ElapsedSourceTime.RoundedLongLongIntegerPart();
 	//
 	// If a large amount of time has passed rebase before we use up all the bits
 	//
 	if (ElapsedSourceTime > (2 << 29))
 	{
-		ClockRecoveryEstablishedBaseLocal       = Now;
-		ClockRecoveryEstablishedBaseSource      = EstimatedSourceTime;
+		ClockRecoveryEstablishedBaseLocal = Now;
+		ClockRecoveryEstablishedBaseSource = EstimatedSourceTime;
 	}
 	//
 	// Convert the estimate to an appropriate format
@@ -1840,7 +1840,7 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryEstimate(
 			// We operate in this format
 			break;
 		case TimeFormatPts:
-			EstimatedSourceTime     = (((EstimatedSourceTime * 27) + 150) / 300) & 0x00000001ffffffffULL;
+			EstimatedSourceTime = (((EstimatedSourceTime * 27) + 150) / 300) & 0x00000001ffffffffULL;
 			break;
 		default:
 			report(severity_error, "OutputCoordinator_Base_c::ClockRecoveryEstimate - Unsupported source time format (%d).\n", ClockRecoverySourceTimeFormat);
@@ -1850,39 +1850,39 @@ OutputCoordinatorStatus_t   OutputCoordinator_Base_c::ClockRecoveryEstimate(
 	// Write the desired outputs
 	//
 	if (SourceTime != NULL)
-		*SourceTime     = EstimatedSourceTime;
+		*SourceTime = EstimatedSourceTime;
 	if (LocalTime != NULL)
-		*LocalTime      = Now;
+		*LocalTime = Now;
 	return OutputCoordinatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Time functions, coded here since direction
-//      of play may change the meaning later.
+// Time functions, coded here since direction
+// of play may change the meaning later.
 //
 
-unsigned long long   OutputCoordinator_Base_c::SpeedScale(unsigned long long      T)
+unsigned long long OutputCoordinator_Base_c::SpeedScale(unsigned long long T)
 {
-	Rational_t      Temp;
+	Rational_t Temp;
 	if (Direction == PlayBackward)
-		T       = -T;
+		T = -T;
 	if (Speed == 1)
 		return T;
-	Temp        = (Speed == 0) ? 0 : T / Speed;
+	Temp = (Speed == 0) ? 0 : T / Speed;
 	return Temp.LongLongIntegerPart();
 }
 
 //
 
-unsigned long long   OutputCoordinator_Base_c::InverseSpeedScale(unsigned long long      T)
+unsigned long long OutputCoordinator_Base_c::InverseSpeedScale(unsigned long long T)
 {
-	Rational_t      Temp;
+	Rational_t Temp;
 	if (Direction == PlayBackward)
-		T       = -T;
+		T = -T;
 	if (Speed == 1)
 		return T;
-	Temp        = Speed * T;
+	Temp = Speed * T;
 	return Temp.LongLongIntegerPart();
 }
 

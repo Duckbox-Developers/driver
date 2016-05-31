@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : demultiplexor.h
-Author :           Nick
+Author : Nick
 
 Definition of the demultiplexor class module for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-01-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+01-Nov-06 Created Nick
 
 ************************************************************************/
 
@@ -42,17 +42,17 @@ Date        Modification                                    Name
 
 enum
 {
-	DemultiplexorNoError            = PlayerNoError,
-	DemultiplexorError              = PlayerError,
+	DemultiplexorNoError = PlayerNoError,
+	DemultiplexorError = PlayerError,
 #ifdef __TDT__
 	DemultiplexorBufferOverflow,
 #endif
 
 	// GetBuffer
-//    Demultiplexor...              = BASE_DEMULTIPLEXOR
+// Demultiplexor... = BASE_DEMULTIPLEXOR
 };
 
-typedef PlayerStatus_t  DemultiplexorStatus_t;
+typedef PlayerStatus_t DemultiplexorStatus_t;
 
 // ---------------------------------------------------------------------
 //
@@ -63,27 +63,27 @@ class Demultiplexor_c : public BaseComponentClass_c
 {
 	public:
 
-		virtual DemultiplexorStatus_t    GetHandledMuxType(PlayerInputMuxType_t  *HandledType) = 0;
+		virtual DemultiplexorStatus_t GetHandledMuxType(PlayerInputMuxType_t *HandledType) = 0;
 
-		virtual DemultiplexorStatus_t    CreateContext(DemultiplexorContext_t    *Context) = 0;
+		virtual DemultiplexorStatus_t CreateContext(DemultiplexorContext_t *Context) = 0;
 
-		virtual DemultiplexorStatus_t    DestroyContext(DemultiplexorContext_t    Context) = 0;
+		virtual DemultiplexorStatus_t DestroyContext(DemultiplexorContext_t Context) = 0;
 
-		virtual DemultiplexorStatus_t    AddStream(DemultiplexorContext_t     Context,
-				PlayerStream_t        Stream,
-				unsigned int          StreamIdentifier) = 0;
+		virtual DemultiplexorStatus_t AddStream(DemultiplexorContext_t Context,
+							PlayerStream_t Stream,
+							unsigned int StreamIdentifier) = 0;
 
-		virtual DemultiplexorStatus_t    RemoveStream(DemultiplexorContext_t      Context,
-				unsigned int          StreamIdentifier) = 0;
+		virtual DemultiplexorStatus_t RemoveStream(DemultiplexorContext_t Context,
+							   unsigned int StreamIdentifier) = 0;
 
-		virtual DemultiplexorStatus_t    SwitchStream(DemultiplexorContext_t      Context,
-				PlayerStream_t        Stream) = 0;
+		virtual DemultiplexorStatus_t SwitchStream(DemultiplexorContext_t Context,
+							   PlayerStream_t Stream) = 0;
 
-		virtual DemultiplexorStatus_t    InputJump(DemultiplexorContext_t     Context) = 0;
+		virtual DemultiplexorStatus_t InputJump(DemultiplexorContext_t Context) = 0;
 
-		virtual DemultiplexorStatus_t    Demux(PlayerPlayback_t   Playback,
-											   DemultiplexorContext_t    Context,
-											   Buffer_t          Buffer) = 0;
+		virtual DemultiplexorStatus_t Demux(PlayerPlayback_t Playback,
+						    DemultiplexorContext_t Context,
+						    Buffer_t Buffer) = 0;
 };
 
 // ---------------------------------------------------------------------
@@ -104,15 +104,15 @@ entrypoints in the Player class.
 The partial list of entrypoints used by this class:
 
 - Supplied by the collator class:
-  - <b>Input</b>, Used to pass on data blocks to the appropriate collators.
+ - <b>Input</b>, Used to pass on data blocks to the appropriate collators.
 
 The partial list of meta data types used by this class:
 
 - Attached to input buffers:
-  - <b>PlayerInputDescriptor</b>, Describes the input block.
+ - <b>PlayerInputDescriptor</b>, Describes the input block.
 
 - There are no output buffers, but as part of the collator call parameter list, the following is attached:
-  - <b>PlayerInputDescriptor</b>, Describing the block being passed.
+ - <b>PlayerInputDescriptor</b>, Describing the block being passed.
 
 */
 
@@ -147,8 +147,8 @@ The partial list of meta data types used by this class:
 
 <b>TODO: This method is not adequately documented.</b>
 
-\param Context          A demultiplexor context identifier.
-\param Stream           A player stream identifier.
+\param Context A demultiplexor context identifier.
+\param Stream A player stream identifier.
 \param StreamIdentifier The demultiplexors native stream identifier (i.e. a PID for MPEG transport stream, a sub stream identifier for DVD-PES).
 
 \return Demultiplexor status code, DemultiplexorNoError indicates success.
@@ -157,7 +157,7 @@ The partial list of meta data types used by this class:
 /*! \fn DemultiplexorStatus_t Demultiplexor_c::RemoveStream(DemultiplexorContext_t Context, unsigned int StreamIdentifier)
 \brief Remove a demultiplexor stream.
 
-\param Context          A demultiplexor context identifier.
+\param Context A demultiplexor context identifier.
 \param StreamIdentifier The demultiplexors native stream identifier (i.e. a PID for MPEG transport stream, a sub stream identifier for DVD-PES).
 
 \return Demultiplexor status code, DemultiplexorNoError indicates success.
@@ -169,8 +169,8 @@ The partial list of meta data types used by this class:
 This call informs a demupltiplexor context that a switch stream event has occurred, consequently any record
 it has regarding the component classes of the stream is now out of date and should be refreshed.
 
-\param Context          A demultiplexor context identifier.
-\param Stream           A player stream identifier.
+\param Context A demultiplexor context identifier.
+\param Stream A player stream identifier.
 
 \return Demultiplexor status code, DemultiplexorNoError indicates success.
 */
@@ -178,7 +178,7 @@ it has regarding the component classes of the stream is now out of date and shou
 /*! \fn DemultiplexorStatus_t Demultiplexor_c::InputJump( DemultiplexorContext_t Context )
 \brief Inform the demultiplxor that a jump has occurred.
 
-\param Context          A demultiplexor context identifier.
+\param Context A demultiplexor context identifier.
 
 \return Demultiplexor status code, DemultiplexorNoError indicates success.
 */
@@ -190,9 +190,9 @@ This is the workhorse function of this class, when it returns, the
 input block will have been demultiplexed, and all components sent to
 the appropriate collator functions.
 
-\param Playback         Playback identifier.
-\param Context          A demultiplexor context identifier.
-\param Buffer           A pointer to a Buffer_c instance.
+\param Playback Playback identifier.
+\param Context A demultiplexor context identifier.
+\param Buffer A pointer to a Buffer_c instance.
 
 \return Demultiplexor status code, DemultiplexorNoError indicates success.
 */

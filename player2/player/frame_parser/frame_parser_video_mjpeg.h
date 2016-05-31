@@ -13,19 +13,19 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_mjpeg.h
-Author :           Andy
+Author : Andy
 
 Definition of the frame parser video MJPEG class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
+Date Modification Name
+---- ------------ --------
 
 ************************************************************************/
 
@@ -34,7 +34,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "mjpeg.h"
 #include "frame_parser_video.h"
@@ -55,22 +55,22 @@ class FrameParser_VideoMjpeg_c : public FrameParser_Video_c
 
 		// Data
 
-		MjpegStreamParameters_t     CopyOfStreamParameters;
-		MjpegStreamParameters_t*    StreamParameters;
-		MjpegFrameParameters_t*     FrameParameters;
+		MjpegStreamParameters_t CopyOfStreamParameters;
+		MjpegStreamParameters_t *StreamParameters;
+		MjpegFrameParameters_t *FrameParameters;
 
 		// Functions
 
-		FrameParserStatus_t         ReadStreamMetadata(void);
-		FrameParserStatus_t         ReadStartOfFrame(void);
+		FrameParserStatus_t ReadStreamMetadata(void);
+		FrameParserStatus_t ReadStartOfFrame(void);
 #if 0
-		FrameParserStatus_t         ReadQuantizationMatrices(void);
-		FrameParserStatus_t         ReadRestartInterval(void);
-		FrameParserStatus_t         ReadHuffmanTables(void);
-		FrameParserStatus_t         ReadStartOfScan(void);
+		FrameParserStatus_t ReadQuantizationMatrices(void);
+		FrameParserStatus_t ReadRestartInterval(void);
+		FrameParserStatus_t ReadHuffmanTables(void);
+		FrameParserStatus_t ReadStartOfScan(void);
 #endif
 
-		FrameParserStatus_t         CommitFrameForDecode(void);
+		FrameParserStatus_t CommitFrameForDecode(void);
 
 	public:
 
@@ -79,15 +79,15 @@ class FrameParser_VideoMjpeg_c : public FrameParser_Video_c
 		~FrameParser_VideoMjpeg_c(void);
 
 		// Overrides for component base class functions
-		FrameParserStatus_t         Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		// FrameParser class functions
-		FrameParserStatus_t         RegisterOutputBufferRing(Ring_t          Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		// Stream specific functions
-		FrameParserStatus_t         ReadHeaders(void);
-		//FrameParserStatus_t         RevPlayProcessDecodeStacks(                     void );
-		//FrameParserStatus_t         RevPlayGeneratePostDecodeParameterSettings(     void );
+		FrameParserStatus_t ReadHeaders(void);
+		//FrameParserStatus_t RevPlayProcessDecodeStacks( void );
+		//FrameParserStatus_t RevPlayGeneratePostDecodeParameterSettings( void );
 
 };
 

@@ -3,12 +3,12 @@
  *
  * Copyright (c) STMicroelectronics 2005
  *
- *   Author:Peter Bennett <peter.bennett@st.com>
+ * Author:Peter Bennett <peter.bennett@st.com>
  *
- *      This program is free software; you can redistribute it and/or
- *      modify it under the terms of the GNU General Public License as
- *      published by the Free Software Foundation; either version 2 of
- *      the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
  */
 #ifndef _ST_COMMON_H
 #define _ST_COMMON_H
@@ -30,11 +30,11 @@ extern int debug ;
 
 struct stfe
 {
-	struct dvb_demux        dvb_demux;
-	struct dmxdev           dmxdev;
+	struct dvb_demux dvb_demux;
+	struct dmxdev dmxdev;
 
-	struct dmx_frontend     hw_frontend;
-	struct dmx_frontend     mem_frontend;
+	struct dmx_frontend hw_frontend;
+	struct dmx_frontend mem_frontend;
 
 	int mapping;
 
@@ -47,20 +47,20 @@ struct stfe
 
 	struct stfe_channel
 	{
-		void                  *havana_id;  // Havana_id must be the first as havana does not have access to this structure
-		struct stfe           *stfe;
+		void *havana_id; // Havana_id must be the first as havana does not have access to this structure
+		struct stfe *stfe;
 		struct dvb_demux_feed *dvbdmxfeed;
 
 		int active;
 		int id;
 		int pid;
-		int type;       /* 1 - TS, 2 - Filter */
+		int type; /* 1 - TS, 2 - Filter */
 	} channel[STFE_MAXCHANNEL];
 
 	//spinlock_t timer_lock;
-	//struct timer_list timer;        /* timer interrupts for outputs */
+	//struct timer_list timer; /* timer interrupts for outputs */
 
-	struct dvb_frontend* fe;
+	struct dvb_frontend *fe;
 
 	int running_feed_count;
 

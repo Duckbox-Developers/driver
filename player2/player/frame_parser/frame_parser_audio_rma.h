@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -24,9 +24,9 @@ Author :
 
 Definition of the frame parser video Real Media Audio class implementation for player 2.
 
-Date        Modification                                Name
-----        ------------                                --------
-28-Jan-09   Created                                     Julian
+Date Modification Name
+---- ------------ --------
+28-Jan-09 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "rma_audio.h"
 #include "frame_parser_audio.h"
@@ -62,18 +62,18 @@ class FrameParser_AudioRma_c : public FrameParser_Audio_c
 
 		// Data
 
-		RmaAudioParsedFrameHeader_t         ParsedFrameHeader;
+		RmaAudioParsedFrameHeader_t ParsedFrameHeader;
 
-		RmaAudioStreamParameters_t*         StreamParameters;
-		RmaAudioStreamParameters_t          CurrentStreamParameters;
-		RmaAudioFrameParameters_t*          FrameParameters;
+		RmaAudioStreamParameters_t *StreamParameters;
+		RmaAudioStreamParameters_t CurrentStreamParameters;
+		RmaAudioFrameParameters_t *FrameParameters;
 
-		bool                                StreamFormatInfoValid;
-		unsigned int                        DataOffset;
+		bool StreamFormatInfoValid;
+		unsigned int DataOffset;
 
 		// Functions
 
-		FrameParserStatus_t         ReadStreamParameters(void);
+		FrameParserStatus_t ReadStreamParameters(void);
 
 	public:
 
@@ -84,28 +84,28 @@ class FrameParser_AudioRma_c : public FrameParser_Audio_c
 
 		// Overrides for component base class functions
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		// FrameParser class functions
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t          Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		// Stream specific functions
 
-		FrameParserStatus_t   ReadHeaders(void);
+		FrameParserStatus_t ReadHeaders(void);
 
-		FrameParserStatus_t   ResetReferenceFrameList(void);
-		FrameParserStatus_t   PurgeQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
-		FrameParserStatus_t   ProcessQueuedPostDecodeParameterSettings(void);
-		FrameParserStatus_t   GeneratePostDecodeParameterSettings(void);
-		FrameParserStatus_t   UpdateReferenceFrameList(void);
+		FrameParserStatus_t ResetReferenceFrameList(void);
+		FrameParserStatus_t PurgeQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
+		FrameParserStatus_t ProcessQueuedPostDecodeParameterSettings(void);
+		FrameParserStatus_t GeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t UpdateReferenceFrameList(void);
 
-		FrameParserStatus_t   ProcessReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   ProcessReverseDecodeStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeUnsatisfiedReferenceStack(void);
-		FrameParserStatus_t   PurgeReverseDecodeStack(void);
-		FrameParserStatus_t   TestForTrickModeFrameDrop(void);
+		FrameParserStatus_t ProcessReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t ProcessReverseDecodeStack(void);
+		FrameParserStatus_t PurgeReverseDecodeUnsatisfiedReferenceStack(void);
+		FrameParserStatus_t PurgeReverseDecodeStack(void);
+		FrameParserStatus_t TestForTrickModeFrameDrop(void);
 };
 
 #endif

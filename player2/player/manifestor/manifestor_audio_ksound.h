@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : manifestor_audio_ksound.h
-Author :           Daniel
+Author : Daniel
 
 Definition of the surface class for havana.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-14-May-07   Created (from manifestor_audio_stmfb.h)         Daniel
+Date Modification Name
+---- ------------ --------
+14-May-07 Created (from manifestor_audio_stmfb.h) Daniel
 
 ************************************************************************/
 
@@ -36,6 +36,7 @@ Date        Modification                                    Name
 #include <mme.h>
 #include <ACC_Transformers/Audio_DecoderTypes.h>
 #include <ACC_Transformers/Mixer_ProcessorTypes.h>
+
 #include "osinline.h"
 #include "allocinline.h"
 #include "manifestor_audio.h"
@@ -60,10 +61,10 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 		enum BypassPhysicalChannel_t
 		{
 			/// The bypass is done over SPDIF
-			SPDIF = 0,
+			SPDIF,
 
 			/// The bypass is done over HDMI
-			HDMI = 1,
+			HDMI,
 
 			/// number of possible values
 			BypassPhysicalChannelCount
@@ -111,12 +112,12 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 		unsigned long long DisplayTimeOfNextCommit;
 		unsigned long long LastDisplayTimeOfNextCommit; ///< Used only for debugging (to display deltas)
 
-		ParsedAudioParameters_t              InputAudioParameters; ///< SampleCount is unused
-		unsigned int             OutputSampleRateHz;
-		unsigned int                         OutputChannelCount;
-		unsigned int                         OutputSampleDepthInBytes;
-		unsigned long long                   LastActualSystemPlaybackTime;
-		unsigned int                         CodedFrameSampleCount;
+		ParsedAudioParameters_t InputAudioParameters; ///< SampleCount is unused
+		unsigned int OutputSampleRateHz;
+		unsigned int OutputChannelCount;
+		unsigned int OutputSampleDepthInBytes;
+		unsigned long long LastActualSystemPlaybackTime;
+		unsigned int CodedFrameSampleCount;
 
 		unsigned int SamplesUntilNextCodedDataRepetitionPeriod;
 		bool FirstCodedDataBufferPartiallyConsumed;
@@ -130,29 +131,29 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 
 		OutputState_t OutputState;
 
-		bool                                 IsTranscoded; ///< keeps track of whether the Coded Buffer has an attached Transcoded Buffer
+		bool IsTranscoded; ///< keeps track of whether the Coded Buffer has an attached Transcoded Buffer
 
 		int HandleRequestedOutputTiming(unsigned int BufferIndex);
 		void HandleAnticipatedOutputTiming(unsigned int BufferIndex, unsigned int SampleOffset);
 
 		ManifestorStatus_t ShortenDataBuffer(MME_DataBuffer_t *DataBuffer,
-											 tMixerFrameParams *MixerFrameParams,
-											 unsigned int SamplesToRemoveBeforeResampling,
-											 unsigned int IdealisedStartOffset,
-											 unsigned int EndOffsetAfterResampling,
-											 Rational_c RescaleFactor);
+						     tMixerFrameParams *MixerFrameParams,
+						     unsigned int SamplesToRemoveBeforeResampling,
+						     unsigned int IdealisedStartOffset,
+						     unsigned int EndOffsetAfterResampling,
+						     Rational_c RescaleFactor);
 		ManifestorStatus_t ExtendDataBuffer(MME_DataBuffer_t *DataBuffer,
-											tMixerFrameParams *MixerFrameParams,
-											unsigned int SamplesToInjectBeforeResampling,
-											unsigned int EndOffsetAfterResampling,
-											Rational_c RescaleFactor);
+						    tMixerFrameParams *MixerFrameParams,
+						    unsigned int SamplesToInjectBeforeResampling,
+						    unsigned int EndOffsetAfterResampling,
+						    Rational_c RescaleFactor);
 
 		ManifestorStatus_t UpdateAudioParameters(unsigned int BufferIndex);
 
 		ManifestorStatus_t FlushInputBuffer(MME_DataBuffer_t *DataBuffer,
-											MME_MixerInputStatus_t *InputStatus,
-											MME_DataBuffer_t *CodedDataBuffer,
-											MME_MixerInputStatus_t *CodedInputStatus);
+						    MME_MixerInputStatus_t *InputStatus,
+						    MME_DataBuffer_t *CodedDataBuffer,
+						    MME_MixerInputStatus_t *CodedInputStatus);
 
 		PcmPlayer_c::OutputEncoding LookupCodedDataBufferOutputEncoding(
 			Buffer_c *CodedFrameBuffer, unsigned int CodedDataBufferSize,
@@ -164,21 +165,21 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 			unsigned int CodedDataBufferSize,
 			unsigned int *RepetitionPeriod);
 
-		static bool DoesTranscodedBufferExist(BypassPhysicalChannel_t BypassChannel, ParsedAudioParameters_t * AudioParameters);
+		static bool DoesTranscodedBufferExist(BypassPhysicalChannel_t BypassChannel, ParsedAudioParameters_t *AudioParameters);
 
 		void DequeueFirstCodedDataBuffer(MME_DataBuffer_t *CodedDataBuffer);
 
 		unsigned int LookupCodedDataBufferLength(MME_DataBuffer_t *CodedDataBuffer);
 
 		ManifestorStatus_t FillOutCodedDataBuffer(MME_DataBuffer_t *PcmBuffer,
-				tMixerFrameParams *PcmFrameParams,
-				MME_DataBuffer_t *CodedDataBuffer,
-				tMixerFrameParams *MixerFrameParams,
-				PcmPlayer_c::OutputEncoding *OutputEncoding,
-				BypassPhysicalChannel_t BypassChannel);
+							  tMixerFrameParams *PcmFrameParams,
+							  MME_DataBuffer_t *CodedDataBuffer,
+							  tMixerFrameParams *MixerFrameParams,
+							  PcmPlayer_c::OutputEncoding *OutputEncoding,
+							  BypassPhysicalChannel_t BypassChannel);
 
 		ManifestorStatus_t UpdateCodedDataBuffer(MME_DataBuffer_t *CodedDataBuffer,
-				MME_MixerInputStatus_t *CodedInputStatus);
+							 MME_MixerInputStatus_t *CodedInputStatus);
 
 		ManifestorStatus_t FlushCodedDataBuffer(MME_DataBuffer_t *CodedDataBuffer);
 
@@ -209,45 +210,45 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 		~Manifestor_AudioKsound_c(void);
 
 		/* Overrides for component base class functions */
-		ManifestorStatus_t   Halt(void);
-		ManifestorStatus_t   Reset(void);
-		ManifestorStatus_t   SetModuleParameters(unsigned int           ParameterBlockSize,
-				void*                  ParameterBlock);
-		ManifestorStatus_t   GetDecodeBufferPool(class BufferPool_c**   Pool);
+		ManifestorStatus_t Halt(void);
+		ManifestorStatus_t Reset(void);
+		ManifestorStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
+						       void *ParameterBlock);
+		ManifestorStatus_t GetDecodeBufferPool(class BufferPool_c **Pool);
 
-	/* Manifestor audio class functions */
-		ManifestorStatus_t  OpenOutputSurface();
-		ManifestorStatus_t  CloseOutputSurface(void);
-		ManifestorStatus_t  CreateDecodeBuffers(unsigned int            Count,
-												unsigned int            Width,
-												unsigned int            Height);
-		ManifestorStatus_t  DestroyDecodeBuffers(void);
-		ManifestorStatus_t  GetNextQueuedManifestationTime(unsigned long long*    Time);
+		/* Manifestor audio class functions */
+		ManifestorStatus_t OpenOutputSurface();
+		ManifestorStatus_t CloseOutputSurface(void);
+		ManifestorStatus_t CreateDecodeBuffers(unsigned int Count,
+						       unsigned int Width,
+						       unsigned int Height);
+		ManifestorStatus_t DestroyDecodeBuffers(void);
+		ManifestorStatus_t GetNextQueuedManifestationTime(unsigned long long *Time);
 
-		ManifestorStatus_t  QueueBuffer(unsigned int                    BufferIndex);
-		ManifestorStatus_t  ReleaseBuffer(unsigned int                    BufferIndex);
-		ManifestorStatus_t  QueueNullManifestation(void);
-		ManifestorStatus_t  FlushDisplayQueue(void);
+		ManifestorStatus_t QueueBuffer(unsigned int BufferIndex);
+		ManifestorStatus_t ReleaseBuffer(unsigned int BufferIndex);
+		ManifestorStatus_t QueueNullManifestation(void);
+		ManifestorStatus_t FlushDisplayQueue(void);
 
-		void                UpdateDisplayTimeOfNextCommit(unsigned long long Time);
+		void UpdateDisplayTimeOfNextCommit(unsigned long long Time);
 
-		void   CallbackFromMME(MME_Event_t        Event,
-							   MME_Command_t        *Command);
+		void CallbackFromMME(MME_Event_t Event,
+				     MME_Command_t *Command);
 
 		ManifestorStatus_t FillOutInputBuffer(unsigned int SamplesToDescatter,
-											  Rational_c RescaleFactor,
-											  bool FinalBuffer,
-											  MME_DataBuffer_t *DataBuffer,
-											  tMixerFrameParams *MixerFrameParams,
-											  MME_DataBuffer_t *CodedDataBuffer = 0,
-											  tMixerFrameParams *CodedMixerFrameParams = 0,
-											  PcmPlayer_c::OutputEncoding *OutputEncoding = 0,
-											  BypassPhysicalChannel_t BypassChannel = SPDIF);
+						      Rational_c RescaleFactor,
+						      bool FinalBuffer,
+						      MME_DataBuffer_t *DataBuffer,
+						      tMixerFrameParams *MixerFrameParams,
+						      MME_DataBuffer_t *CodedDataBuffer = 0,
+						      tMixerFrameParams *CodedMixerFrameParams = 0,
+						      PcmPlayer_c::OutputEncoding *OutputEncoding = 0,
+						      BypassPhysicalChannel_t BypassChannel = SPDIF);
 
 		ManifestorStatus_t UpdateInputBuffer(MME_DataBuffer_t *DataBuffer,
-											 MME_MixerInputStatus_t *InputStatus,
-											 MME_DataBuffer_t *CodedDataBuffer = 0,
-											 MME_MixerInputStatus_t *CodedInputStatus = 0);
+						     MME_MixerInputStatus_t *InputStatus,
+						     MME_DataBuffer_t *CodedDataBuffer = 0,
+						     MME_MixerInputStatus_t *CodedInputStatus = 0);
 
 		static inline const char *LookupOutputState(OutputState_t OutputState)
 		{

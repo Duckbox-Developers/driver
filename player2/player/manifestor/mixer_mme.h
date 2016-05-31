@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : mixer_mme.h
-Author :           Daniel
+Author : Daniel
 
 Concrete definition of an MME mixer driver.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Jun-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+29-Jun-07 Created Daniel
 
 ************************************************************************/
 
@@ -67,18 +67,30 @@ Date        Modification                                    Name
  * (BWC vs. BWD)
  */
 #if (defined(CONFIG_KERNELVERSION) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)) && defined(__TDT__)
-#if (defined(FORTIS_HDBOX) || defined(OCTAGON1008))
+#if (defined(FORTIS_HDBOX) \
+ || defined(OCTAGON1008))
 #define MIXER_NUM_PERIODS 3
 #elif defined(UFS922)
 #define MIXER_NUM_PERIODS 2
-#elif defined(CUBEREVO) || \
-    defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI) || defined(CUBEREVO_250HD) || \
-    defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500HD) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO_3000HD)
+#elif defined(CUBEREVO) \
+ || defined(CUBEREVO_MINI2) \
+ || defined(CUBEREVO_MINI) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO_2000HD) \
+ || defined(CUBEREVO_9500HD) \
+ || defined(CUBEREVO_MINI_FTA) \
+ || defined(CUBEREVO_3000HD)
 #define MIXER_NUM_PERIODS 4
 #elif defined(__TDT__)
 #define MIXER_NUM_PERIODS 3
 #endif
-#elif defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(HL101) || defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008))
+#elif defined(__TDT__) \
+ && (defined(FORTIS_HDBOX) \
+ || defined(UFS922) \
+ || defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(OCTAGON1008))
 #define MIXER_NUM_PERIODS 4
 #elif defined(__TDT__)
 #define MIXER_NUM_PERIODS 3
@@ -86,21 +98,22 @@ Date        Modification                                    Name
 #define MIXER_NUM_PERIODS 2
 #endif
 
-#undef  MIXER_TAG
-#define MIXER_TAG                          "Mixer_Mme_c::"
+#undef MIXER_TAG
+#define MIXER_TAG "Mixer_Mme_c::"
 
-#define MIXER_AUDIO_MAX_INPUT_BUFFERS  (MIXER_MAX_CLIENTS + 1 + MIXER_MAX_INTERACTIVE_CLIENTS)
+#define MIXER_AUDIO_MAX_INPUT_BUFFERS (MIXER_MAX_CLIENTS + 1 + MIXER_MAX_INTERACTIVE_CLIENTS)
 #define MIXER_AUDIO_MAX_OUTPUT_BUFFERS 4
-#define MIXER_AUDIO_MAX_BUFFERS        (MIXER_AUDIO_MAX_INPUT_BUFFERS +\
-                                        MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
-#if defined(__TDT__)
-#define MIXER_AUDIO_PAGES_PER_BUFFER   32
-#else
-#define MIXER_AUDIO_PAGES_PER_BUFFER   8
-#endif
-#define MIXER_AUDIO_MAX_PAGES          (MIXER_AUDIO_PAGES_PER_BUFFER * MIXER_AUDIO_MAX_BUFFERS)
+#define MIXER_AUDIO_MAX_BUFFERS (MIXER_AUDIO_MAX_INPUT_BUFFERS +\
+				 MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
 
-#define MIXER_AUDIO_MAX_OUTPUT_ATTENUATION    -96
+#if defined(__TDT__)
+#define MIXER_AUDIO_PAGES_PER_BUFFER 32
+#else
+#define MIXER_AUDIO_PAGES_PER_BUFFER 8
+#endif
+#define MIXER_AUDIO_MAX_PAGES (MIXER_AUDIO_PAGES_PER_BUFFER * MIXER_AUDIO_MAX_BUFFERS)
+
+#define MIXER_AUDIO_MAX_OUTPUT_ATTENUATION -96
 #define MIXER_MIN_FREQ_AC3_ENCODER 48000
 #define MIXER_MAX_FREQ_AC3_ENCODER 48000
 #define MIXER_MIN_FREQ_DTS_ENCODER 44100
@@ -110,7 +123,7 @@ Date        Modification                                    Name
 #define MIXER_LIMITER_MUTE_RAMP_DOWN_PERIOD ( 128 / 128)
 
 /// Number of 128 sample chunks taken for the 'limiter' gain processing module to perform an unmute.
-#define MIXER_LIMITER_MUTE_RAMP_UP_PERIOD   (1024 / 128)
+#define MIXER_LIMITER_MUTE_RAMP_UP_PERIOD (1024 / 128)
 
 //Freeze this structure as it is now.
 //Otherwise, changes to AudioMixer_ProcessorTypes.h that inserted structures
@@ -120,65 +133,65 @@ Date        Modification                                    Name
 //taking a bet they'll change less
 typedef struct
 {
-	enum eAccMixerId            Id;                //!< Id of the PostProcessing structure.
-	U16                         StructSize;        //!< Size of this structure
-	U8                          NbPcmProcessings;  //!< NbPcmProcessings on main[0..3] and aux[4..7]
-	U8                          AuxSplit;          //!< Point of split between Main output and Aux output
-	MME_BassMgtGlobalParams_t   BassMgt;
+	enum eAccMixerId Id; //!< Id of the PostProcessing structure.
+	U16 StructSize; //!< Size of this structure
+	U8 NbPcmProcessings; //!< NbPcmProcessings on main[0..3] and aux[4..7]
+	U8 AuxSplit; //!< Point of split between Main output and Aux output
+	MME_BassMgtGlobalParams_t BassMgt;
 	MME_EqualizerGlobalParams_t Equalizer;
-	MME_TempoGlobalParams_t     TempoControl;
-	MME_DCRemoveGlobalParams_t  DCRemove;
-	MME_DelayGlobalParams_t     Delay;
+	MME_TempoGlobalParams_t TempoControl;
+	MME_DCRemoveGlobalParams_t DCRemove;
+	MME_DelayGlobalParams_t Delay;
 	MME_EncoderPPGlobalParams_t Encoder;
-	MME_SfcPPGlobalParams_t     Sfc;
+	MME_SfcPPGlobalParams_t Sfc;
 	MME_Resamplex2GlobalParams_t Resamplex2;
-	MME_CMCGlobalParams_t       CMC;
-	MME_DMixGlobalParams_t      Dmix;
-	MME_FatpipeGlobalParams_t   FatPipeOrSpdifOut;
-	MME_LimiterGlobalParams_t   Limiter;
+	MME_CMCGlobalParams_t CMC;
+	MME_DMixGlobalParams_t Dmix;
+	MME_FatpipeGlobalParams_t FatPipeOrSpdifOut;
+	MME_LimiterGlobalParams_t Limiter;
 } MME_LxPcmPostProcessingGlobalParameters_Frozen_t; //!< PcmPostProcessings Params
 
 //Redefine this to deal with aggregation of parameter chains
 typedef struct
 {
-	U32                                        StructSize;      //!< Size of this structure
-	MME_LxMixerInConfig_t                      InConfig;        //!< Specific configuration of input
-	MME_LxMixerGainSet_t                       InGainConfig;    //!< Specific configuration of input gains
-	MME_LxMixerPanningSet_t                    InPanningConfig; //!< Specific configuration of input panning
-	MME_LxMixerInIAudioConfig_t                InIaudioConfig;  //!< Specific configuration of iaudio input
-	MME_LxMixerBDGeneral_t                     InBDGenConfig;   //!< some general config for BD mixer
-	MME_LxMixerOutConfig_t                     OutConfig;       //!< output specific configuration information
+	U32 StructSize; //!< Size of this structure
+	MME_LxMixerInConfig_t InConfig; //!< Specific configuration of input
+	MME_LxMixerGainSet_t InGainConfig; //!< Specific configuration of input gains
+	MME_LxMixerPanningSet_t InPanningConfig; //!< Specific configuration of input panning
+	MME_LxMixerInIAudioConfig_t InIaudioConfig; //!< Specific configuration of iaudio input
+	MME_LxMixerBDGeneral_t InBDGenConfig; //!< some general config for BD mixer
+	MME_LxMixerOutConfig_t OutConfig; //!< output specific configuration information
 	MME_LxPcmPostProcessingGlobalParameters_Frozen_t PcmParams[MIXER_AUDIO_MAX_OUTPUT_BUFFERS]; //!< PcmPostProcessings Params
 } MME_LxMixerBDTransformerGlobalParams_Extended_t;
 
 typedef struct
 {
-	U32                                         BytesUsed;  // Amount of this structure already filled
-	MME_MixerFrameOutExtStatus_t                FrameOutStatus;
-	MME_LimiterStatus_t                         LimiterStatus[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
+	U32 BytesUsed; // Amount of this structure already filled
+	MME_MixerFrameOutExtStatus_t FrameOutStatus;
+	MME_LimiterStatus_t LimiterStatus[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
 } MME_MixerFrameExtStatusLimit_t;
 
 typedef struct
 {
-	MME_LxMixerTransformerFrameDecodeStatusParams_t     MixStatus;
-	MME_MixerFrameExtStatusLimit_t                      MixExtStatus;
+	MME_LxMixerTransformerFrameDecodeStatusParams_t MixStatus;
+	MME_MixerFrameExtStatusLimit_t MixExtStatus;
 } MME_LxMixerTransformerFrameMix_ExtendedParams_t;
 
 //Redefine this too, to incorporate the above extension
 typedef struct
 {
-	U32                   StructSize; //!< Size of this structure
+	U32 StructSize; //!< Size of this structure
 
 	//! System Init
 	enum eAccProcessApply CacheFlush; //!< If ACC_DISABLED then the cached
 	//!< data aren't sent back at the end of the command
 
 	//! Mixer Init Params
-	U32                   NbInput; //the number of inputs that the mixer will control simultaneously (this number is limited by definition to 4)
-	U32                   MaxNbOutputSamplesPerTransform; //the largest window size the host wants to control
+	U32 NbInput; //the number of inputs that the mixer will control simultaneously (this number is limited by definition to 4)
+	U32 MaxNbOutputSamplesPerTransform; //the largest window size the host wants to control
 
-	U32                   OutputNbChannels;     //the interleaving of the output buffer that the host will send to the mixer at each transform
-	enum eAccFsCode       OutputSamplingFreq;   //the target output sampling frequency at which the audio will be played back
+	U32 OutputNbChannels; //the interleaving of the output buffer that the host will send to the mixer at each transform
+	enum eAccFsCode OutputSamplingFreq; //the target output sampling frequency at which the audio will be played back
 
 	//! Mixer specific global parameters
 	MME_LxMixerBDTransformerGlobalParams_Extended_t GlobalParams;
@@ -215,7 +228,7 @@ class Mixer_Mme_c: public Mixer_c
 		OS_Event_t PlaybackThreadTerminated;
 
 		MME_TransformerHandle_t MMEHandle;
-		MME_TransformerInitParams_t MMEInitParams;
+		MME_TransformerInitParams_t InitParams;
 		bool MMEInitialized;
 		OS_Semaphore_t MMECallbackSemaphore;
 		OS_Semaphore_t MMEParamCallbackSemaphore;
@@ -283,7 +296,7 @@ class Mixer_Mme_c: public Mixer_c
 
 		struct
 		{
-			char         TransformName[MME_MAX_TRANSFORMER_NAME];
+			char TransformName[MME_MAX_TRANSFORMER_NAME];
 			unsigned int MixerPriority;
 		} AudioConfiguration;
 
@@ -309,7 +322,7 @@ class Mixer_Mme_c: public Mixer_c
 		/// Nominal (meaning pre-optimisation) PCM processing chains for each of the outputs.
 		MME_LxPcmPostProcessingGlobalParameters_Frozen_t NominalPcmParams[MIXER_AUDIO_MAX_OUTPUT_BUFFERS];
 
-		int LookupClient(Manifestor_AudioKsound_c * Manifestor);
+		int LookupClient(Manifestor_AudioKsound_c *Manifestor);
 		unsigned int LookupMaxMixerSamplingFrequency();
 		unsigned int LookupMixerSamplingFrequency();
 		enum eAccAcMode LookupMixerAudioMode();
@@ -341,35 +354,35 @@ class Mixer_Mme_c: public Mixer_c
 		void ResetMixingMetadata();
 
 		PlayerStatus_t FillOutTransformerGlobalParameters(MME_LxMixerBDTransformerGlobalParams_Extended_t *
-				GlobalParams);
+								  GlobalParams);
 
 		PcmPlayer_c::OutputEncoding LookupOutputEncoding(int dev_num, unsigned int freq = 0);
 		unsigned int LookupOutputSamplingFrequency(int dev_num);
 #if 0
 		unsigned int LookupOutputNumberOfSamples(int dev_num, unsigned int NominalMixerGranuleSize,
-				unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
+							 unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
 #endif
 		unsigned int LookupOutputNumberOfChannels(int dev_num);
 
 		unsigned int LookupIec60958FrameRate(PcmPlayer_c::OutputEncoding Encoding);
 		unsigned int LookupRepetitionPeriod(PcmPlayer_c::OutputEncoding Encoding);
 
-		void FillOutDeviceDownmixParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams,
-											int dev_num, bool EnableDMix);
-		void FillOutDeviceSpdifParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams,
-										  int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding);
+		void FillOutDeviceDownmixParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams,
+						    int dev_num, bool EnableDMix);
+		void FillOutDeviceSpdifParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams,
+						  int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding);
 		PlayerStatus_t FillOutDevicePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-				PcmParams , int dev_num);
+							  PcmParams, int dev_num);
 
 		PlayerStatus_t AggregatePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-											  PcmParams);
+						      PcmParams);
 
 		PlayerStatus_t FillOutMixCommand();
 		PlayerStatus_t FillOutOutputBuffer(MME_DataBuffer_t *DataBuffer);
 		void FillOutInputBuffer(unsigned int ManifestorId);
 		void FillOutInteractiveBuffer(unsigned int InteractiveId);
 		void FillOutSilentBuffer(MME_DataBuffer_t *DataBuffer,
-								 tMixerFrameParams *MixerFrameParams = NULL);
+					 tMixerFrameParams *MixerFrameParams = NULL);
 
 		PlayerStatus_t UpdateOutputBuffer(MME_DataBuffer_t *DataBuffer);
 		void UpdateInputBuffer(unsigned int ManifestorId);
@@ -380,14 +393,18 @@ class Mixer_Mme_c: public Mixer_c
 		static enum eAccFsCode TranslateIntegerSamplingFrequencyToDiscrete(unsigned int SamplingFrequency);
 		static unsigned int TranslateDiscreteSamplingFrequencyToInteger(enum eAccFsCode DiscreteFrequency);
 		static enum eFsRange TranslateIntegerSamplingFrequencyToRange(unsigned int IntegerFrequency);
-		static const char * LookupDiscreteSamplingFrequency(enum eAccFsCode DiscreteFrequency);
-		static const char * LookupDiscreteSamplingFrequencyRange(enum eFsRange DiscreteRange);
+		static const char *LookupDiscreteSamplingFrequency(enum eAccFsCode DiscreteFrequency);
+		static const char *LookupDiscreteSamplingFrequencyRange(enum eFsRange DiscreteRange);
 		static unsigned int LookupSpdifPreamblePc(PcmPlayer_c::OutputEncoding Encoding);
-		static const char * LookupAudioMode(enum eAccAcMode DiscreteMode);
-		static enum eAccAcMode TranslateChannelAssignmentToAudioMode(struct snd_pseudo_mixer_channel_assignment ChannelAssignment);
-		static struct snd_pseudo_mixer_channel_assignment TranslateAudioModeToChannelAssignment(enum eAccAcMode AudioMode);
-		static enum eAccAcMode TranslateDownstreamCardToMainAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard);
-		static enum eAccAcMode TranslateDownstreamCardToAuxAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard);
+		static const char *LookupAudioMode(enum eAccAcMode DiscreteMode);
+		static enum eAccAcMode TranslateChannelAssignmentToAudioMode(
+			struct snd_pseudo_mixer_channel_assignment ChannelAssignment);
+		static struct snd_pseudo_mixer_channel_assignment TranslateAudioModeToChannelAssignment(
+			enum eAccAcMode AudioMode);
+		static enum eAccAcMode TranslateDownstreamCardToMainAudioMode(
+			struct snd_pseudo_mixer_downstream_card *DownstreamCard);
+		static enum eAccAcMode TranslateDownstreamCardToAuxAudioMode(
+			struct snd_pseudo_mixer_downstream_card *DownstreamCard);
 		static enum eAccAcMode LookupFatPipeOutputMode(enum eAccAcMode InputMode);
 
 	public:
@@ -397,19 +414,19 @@ class Mixer_Mme_c: public Mixer_c
 
 		PlayerStatus_t Halt();
 		PlayerStatus_t Reset();
-		PlayerStatus_t SetModuleParameters(unsigned int  ParameterBlockSize,
-										   void         *ParameterBlock);
+		PlayerStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
+						   void *ParameterBlock);
 
 		PlayerStatus_t RegisterManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t DeRegisterManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t EnableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t DisableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t UpdateManifestorParameters(Manifestor_AudioKsound_c *Manifestor,
-				ParsedAudioParameters_t *ParsedAudioParameters);
+							  ParsedAudioParameters_t *ParsedAudioParameters);
 		PlayerStatus_t SetManifestorEmergencyMuteState(Manifestor_AudioKsound_c *Manifestor, bool Muted);
 
-		PlayerStatus_t LookupDataBuffer(Manifestor_AudioKsound_c * Manifestor,
-										MME_DataBuffer_t **DataBufferPP);
+		PlayerStatus_t LookupDataBuffer(Manifestor_AudioKsound_c *Manifestor,
+						MME_DataBuffer_t **DataBufferPP);
 
 		PlayerStatus_t SetOutputRateAdjustment(int adjust);
 

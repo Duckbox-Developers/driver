@@ -13,33 +13,33 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_divx.cpp
-Author :           Chris
+Author : Chris
 
 Implementation of the divx video frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-Jun-06   Created                                         Chris.
+Date Modification Name
+---- ------------ --------
+18-Jun-06 Created Chris.
 
 ************************************************************************/
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 //
 #include "frame_parser_video_divx.h"
 
 //#define DUMP_HEADERS 1
 
-static BufferDataDescriptor_t     DivxStreamParametersBuffer = BUFFER_MPEG4_STREAM_PARAMETERS_TYPE;
-static BufferDataDescriptor_t     DivxFrameParametersBuffer = BUFFER_MPEG4_FRAME_PARAMETERS_TYPE;
+static BufferDataDescriptor_t DivxStreamParametersBuffer = BUFFER_MPEG4_STREAM_PARAMETERS_TYPE;
+static BufferDataDescriptor_t DivxFrameParametersBuffer = BUFFER_MPEG4_FRAME_PARAMETERS_TYPE;
 
 #ifdef DUMP_HEADERS
 static int parsedCount = 0;
@@ -53,10 +53,10 @@ static int vopCount = 0;
 //
 static QuantiserMatrix_t ZigZagScan =
 {
-	0,  1,  8, 16,  9,  2,  3, 10,
-	17, 24, 32, 25, 18, 11,  4,  5,
+	0, 1, 8, 16, 9, 2, 3, 10,
+	17, 24, 32, 25, 18, 11, 4, 5,
 	12, 19, 26, 33, 40, 48, 41, 34,
-	27, 20, 13,  6,  7, 14, 21, 28,
+	27, 20, 13, 6, 7, 14, 21, 28,
 	35, 42, 49, 56, 57, 50, 43, 36,
 	29, 22, 15, 23, 30, 37, 44, 51,
 	58, 59, 52, 45, 38, 31, 39, 46,
@@ -87,15 +87,15 @@ static QuantiserMatrix_t DefaultNonIntraQuantizationMatrix =
 	23, 24, 25, 27, 28, 30, 31, 33
 };
 
-#define PAR_SQUARE                      0x01                    /* 1:1 */
-#define PAR_4_3_PAL                     0x02                    /* 12:11 */
-#define PAR_4_3_NTSC                    0x03                    /* 10:11 */
-#define PAR_16_9_PAL                    0x04                    /* 16:11 */
-#define PAR_16_9_NTSC                   0x05                    /* 40:33 */
+#define PAR_SQUARE 0x01 /* 1:1 */
+#define PAR_4_3_PAL 0x02 /* 12:11 */
+#define PAR_4_3_NTSC 0x03 /* 10:11 */
+#define PAR_16_9_PAL 0x04 /* 16:11 */
+#define PAR_16_9_NTSC 0x05 /* 40:33 */
 
 // BEWARE !!!! you cannot declare static initializers of a constructed type such as Rational_t
-//             the compiler will silently ignore them..........
-static unsigned int     DivxAspectRatioValues[][2]     =
+// the compiler will silently ignore them..........
+static unsigned int DivxAspectRatioValues[][2] =
 {
 	{1, 1},
 	{1, 1},
@@ -109,34 +109,34 @@ static unsigned int     DivxAspectRatioValues[][2]     =
 
 //
 
-static SliceType_t SliceTypeTranslation[]  = { SliceTypeI, SliceTypeP, SliceTypeB };
+static SliceType_t SliceTypeTranslation[] = { SliceTypeI, SliceTypeP, SliceTypeB };
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 FrameParser_VideoDivx_c::FrameParser_VideoDivx_c(void)
 {
-	Configuration.FrameParserName               = "VideoDivx";
-	Configuration.StreamParametersCount         = 32;
-	Configuration.StreamParametersDescriptor    = &DivxStreamParametersBuffer;
-	Configuration.FrameParametersCount          = 32;
-	Configuration.FrameParametersDescriptor     = &DivxFrameParametersBuffer;
+	Configuration.FrameParserName = "VideoDivx";
+	Configuration.StreamParametersCount = 32;
+	Configuration.StreamParametersDescriptor = &DivxStreamParametersBuffer;
+	Configuration.FrameParametersCount = 32;
+	Configuration.FrameParametersDescriptor = &DivxFrameParametersBuffer;
 	//
-	DivXVersion                                 = 100;
-	FrameParameters  = NULL;
+	DivXVersion = 100;
+	FrameParameters = NULL;
 	StreamParameters = NULL;
 	StreamParametersSet = false;
-	TimeIncrementResolution                     = 1;
-	prev_time_base                              = 0;
-	old_time_base                               = 0;
+	TimeIncrementResolution = 1;
+	prev_time_base = 0;
+	old_time_base = 0;
 	ReverseQueuedPostDecodeSettingsRing = NULL;
 	Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destructor function
+// The Destructor function
 //
 
 FrameParser_VideoDivx_c::~FrameParser_VideoDivx_c(void)
@@ -152,10 +152,10 @@ FrameParser_VideoDivx_c::~FrameParser_VideoDivx_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Reset function release any resources, and reset all variable
+// The Reset function release any resources, and reset all variable
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::Reset(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::Reset(void)
 {
 	FrameParameters = NULL;
 	FirstDecodeOfFrame = true;
@@ -174,114 +174,114 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::Reset(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The register output ring function
+// The register output ring function
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::RegisterOutputBufferRing(
-	Ring_t          Ring)
+FrameParserStatus_t FrameParser_VideoDivx_c::RegisterOutputBufferRing(
+	Ring_t Ring)
 {
-	FrameParserStatus_t     Status = FrameParserNoError;
+	FrameParserStatus_t Status = FrameParserNoError;
 	//report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
 	// Clear our parameter pointers
 	//
-	StreamParameters                    = NULL;
-	FrameParameters                     = NULL;
-	DeferredParsedFrameParameters       = NULL;
-	DeferredParsedVideoParameters       = NULL;
+	StreamParameters = NULL;
+	FrameParameters = NULL;
+	DeferredParsedFrameParameters = NULL;
+	DeferredParsedVideoParameters = NULL;
 	Status = FrameParser_Video_c::RegisterOutputBufferRing(Ring);
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Deal with decode of a single frame in forward play
+// Deal with decode of a single frame in forward play
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::ForPlayProcessFrame(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::ForPlayProcessFrame(void)
 {
-	//      report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
+	// report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
 	//
 	return FrameParser_Video_c::ForPlayProcessFrame();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Deal with a single frame in reverse play
+// Deal with a single frame in reverse play
 //
 /*
-FrameParserStatus_t   FrameParser_VideoDivx_c::RevPlayProcessFrame(      void )
+FrameParserStatus_t FrameParser_VideoDivx_c::RevPlayProcessFrame( void )
 {
-    //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
-    return FrameParser_Video_c::RevPlayProcessFrame();
+ //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
+ return FrameParser_Video_c::RevPlayProcessFrame();
 }
 */
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Addition to the base queue a buffer for decode increments
-//      the field index.
+// Addition to the base queue a buffer for decode increments
+// the field index.
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::ForPlayQueueFrameForDecode(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::ForPlayQueueFrameForDecode(void)
 {
-	return  FrameParser_Video_c::ForPlayQueueFrameForDecode();
+	return FrameParser_Video_c::ForPlayQueueFrameForDecode();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Specific reverse play implementation of queue for decode
-//      the field index.
+// Specific reverse play implementation of queue for decode
+// the field index.
 //
 /*
-FrameParserStatus_t   FrameParser_VideoDivx_c::RevPlayQueueFrameForDecode( void )
+FrameParserStatus_t FrameParser_VideoDivx_c::RevPlayQueueFrameForDecode( void )
 {
-    //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
-    return FrameParser_Video_c::RevPlayQueueFrameForDecode();
+ //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
+ return FrameParser_Video_c::RevPlayQueueFrameForDecode();
 }
 */
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is responsible for walking the stacks to handle
-//      reverse decode.
+// This function is responsible for walking the stacks to handle
+// reverse decode.
 //
 /*
-FrameParserStatus_t   FrameParser_VideoDivx_c::RevPlayProcessDecodeStacks(              void )
+FrameParserStatus_t FrameParser_VideoDivx_c::RevPlayProcessDecodeStacks( void )
 {
-    ReverseQueuedPostDecodeSettingsRing->Flush();
-    //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
-    return FrameParser_Video_c::RevPlayProcessDecodeStacks();
+ ReverseQueuedPostDecodeSettingsRing->Flush();
+ //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
+ return FrameParser_Video_c::RevPlayProcessDecodeStacks();
 }
 */
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is responsible for walking the stacks to discard
-//      everything on them when we abandon reverse decode.
+// This function is responsible for walking the stacks to discard
+// everything on them when we abandon reverse decode.
 //
 /*
-FrameParserStatus_t   FrameParser_VideoDivx_c::RevPlayPurgeDecodeStacks(                void )
+FrameParserStatus_t FrameParser_VideoDivx_c::RevPlayPurgeDecodeStacks( void )
 {
-    //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
-    return FrameParser_Video_c::RevPlayPurgeDecodeStacks();
+ //report ( severity_error, "%s : %d\n",__FUNCTION__,__LINE__);
+ return FrameParser_Video_c::RevPlayPurgeDecodeStacks();
 }
 */
-FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::ReadHeaders(void)
 {
-	unsigned int  Code;
+	unsigned int Code;
 	ParsedFrameParameters->NewStreamParameters = false;
 	ParsedFrameParameters->NewFrameParameters = false;
 	ParsedFrameParameters->DataOffset = 0xafff0000;
 	/*
-	    report (severity_info, "Start Code List ");
-	    for (unsigned int j = 0 ; j < StartCodeList->NumberOfStartCodes; ++j)
-	        report(severity_info,"%x ",ExtractStartCodeCode(StartCodeList->StartCodes[j]));
-	    report (severity_info,"\n");
+	 report (severity_info, "Start Code List ");
+	 for (unsigned int j = 0 ; j < StartCodeList->NumberOfStartCodes; ++j)
+	 report(severity_info,"%x ",ExtractStartCodeCode(StartCodeList->StartCodes[j]));
+	 report (severity_info,"\n");
 	*/
 #ifdef DUMP_HEADERS
 	++inputCount;
 #endif
-	//      report( severity_error, "%d start codes found\n",StartCodeList->NumberOfStartCodes);
+	// report( severity_error, "%d start codes found\n",StartCodeList->NumberOfStartCodes);
 	for (unsigned int i = 0; i < StartCodeList->NumberOfStartCodes; ++i)
 	{
 		Code = ExtractStartCodeCode(StartCodeList->StartCodes[i]);
@@ -315,7 +315,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 		}
 		else if ((Code & VOL_START_CODE_MASK) == VOL_START_CODE)
 		{
-			FrameParserStatus_t     Status = FrameParserNoError;
+			FrameParserStatus_t Status = FrameParserNoError;
 			// report (severity_error,"%x VOL_START_CODE\n",VOL_START_CODE);
 			if (StreamParameters == NULL)
 			{
@@ -324,7 +324,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 				ParsedFrameParameters->SizeofStreamParameterStructure = sizeof(Mpeg4VideoStreamParameters_t);
 				ParsedFrameParameters->NewStreamParameters = true;
 			}
-			Status  = ReadVolHeader(&StreamParameters->VolHeader);
+			Status = ReadVolHeader(&StreamParameters->VolHeader);
 			if (Status != FrameParserNoError)
 			{
 				ParsedFrameParameters->NewStreamParameters = false;
@@ -338,7 +338,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 			StreamParametersSet = true;
 			//report (severity_error,"Stream is %s\n",Interlaced?"Interlaced":"Progressive");
 			if (DivXVersion != 311)
-				ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
+				ParsedFrameParameters->DataOffset = ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
 		}
 		else if ((Code & VOP_START_CODE_MASK) == VOP_START_CODE)
 		{
@@ -347,17 +347,17 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 			if (StreamParametersSet)
 			{
 				Mpeg4VopHeader_t Vop;
-				FrameParserStatus_t     Status = FrameParserNoError;
-				//                              report (severity_error,"VOP Addr %08llx\n",(BufferData + ExtractStartCodeOffset(StartCodeList->StartCodes[i]) +4));
+				FrameParserStatus_t Status = FrameParserNoError;
+				// report (severity_error,"VOP Addr %08llx\n",(BufferData + ExtractStartCodeOffset(StartCodeList->StartCodes[i]) +4));
 				//
 				if (DivXVersion != 311 && (ParsedFrameParameters->DataOffset == 0xafff0000))
-					ParsedFrameParameters->DataOffset =  ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
-				Status  = ReadVopHeader(&Vop);
+					ParsedFrameParameters->DataOffset = ExtractStartCodeOffset(StartCodeList->StartCodes[i]);
+				Status = ReadVopHeader(&Vop);
 				if (Status != FrameParserNoError)
 					return Status;
 				if (FrameParameters == NULL)
 				{
-					FrameParserStatus_t status  = GetNewFrameParameters((void **)&FrameParameters);
+					FrameParserStatus_t status = GetNewFrameParameters((void **)&FrameParameters);
 					if (status != FrameParserNoError)
 					{
 						report(severity_error, "Failed to get new FrameParameters\n");
@@ -375,7 +375,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 #endif
 				if (DivXVersion == 311)
 				{
-					unsigned char* ptr;
+					unsigned char *ptr;
 					unsigned int bits;
 					Bits.GetPosition(&ptr, &bits);
 					unsigned int position = ptr - BufferData;
@@ -387,7 +387,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 			else
 			{
 				report(severity_error, "Have Frame without Stream Parameters\n");
-				//                              Code = INVALID_START_CODE;
+				// Code = INVALID_START_CODE;
 			}
 		}
 		else if (Code == VSOS_START_CODE)
@@ -398,7 +398,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 			// AVI file
 			// some avi files have real ones which upset things.... if it returns back 0
 			// which is from an unknown profile then use the last one, otherwise pick 25fps
-			unsigned int cnpf =  ReadVosHeader();
+			unsigned int cnpf = ReadVosHeader();
 			if (cnpf != 0)
 				CurrentMicroSecondsPerFrame = cnpf;
 			// Nick changed this to sanitize the frame rate (4..120)
@@ -415,40 +415,40 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::ReadHeaders(void)
 			ReadVoHeader();
 		}
 		/*
-		                else if( (Code & USER_DATA_START_CODE_MASK) == USER_DATA_START_CODE )
-		                {
-		                        report (severity_info,"%x USER_DATA_START_CODE\n",USER_DATA_START_CODE);
-		                } // No action
-		                else if( Code == VSOS_END_CODE )
-		                {
-		                      report (severity_info,"%x VSOS_END_CODE\n",VSOS_END_CODE);
-		                } // No action
-		                else if( Code == VSO_START_CODE )
-		                {
-		                        report (severity_info,"%x VSO_START_CODE\n",VSO_START_CODE);
-		                } // No action
-		                else if( Code == GOV_START_CODE )
-		                {
-		                        report (severity_info,"%x GOV_START_CODE\n",GOV_START_CODE);
-		                } // No action
-		                else if( Code == END_OF_START_CODE_LIST )
-		                {
-		                        report (severity_error,"%x END_OF_START_CODE_LIST\n",END_OF_START_CODE_LIST);
-		                } // No action
-		                else
-		                {
-		                        report( severity_error, "ReadHeaders - Unknown/Unsupported header 0x%02x\n", Code );
-		                }
+		 else if( (Code & USER_DATA_START_CODE_MASK) == USER_DATA_START_CODE )
+		 {
+		 report (severity_info,"%x USER_DATA_START_CODE\n",USER_DATA_START_CODE);
+		 } // No action
+		 else if( Code == VSOS_END_CODE )
+		 {
+		 report (severity_info,"%x VSOS_END_CODE\n",VSOS_END_CODE);
+		 } // No action
+		 else if( Code == VSO_START_CODE )
+		 {
+		 report (severity_info,"%x VSO_START_CODE\n",VSO_START_CODE);
+		 } // No action
+		 else if( Code == GOV_START_CODE )
+		 {
+		 report (severity_info,"%x GOV_START_CODE\n",GOV_START_CODE);
+		 } // No action
+		 else if( Code == END_OF_START_CODE_LIST )
+		 {
+		 report (severity_error,"%x END_OF_START_CODE_LIST\n",END_OF_START_CODE_LIST);
+		 } // No action
+		 else
+		 {
+		 report( severity_error, "ReadHeaders - Unknown/Unsupported header 0x%02x\n", Code );
+		 }
 		*/
 	}
 	return FrameParserNoError;
 }
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::CommitFrameForDecode(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::CommitFrameForDecode(void)
 {
-	SliceType_t      SliceType;
-	Mpeg4VideoFrameParameters_t* VFP = (Mpeg4VideoFrameParameters_t*)(ParsedFrameParameters->FrameParameterStructure);
-	Mpeg4VopHeader_t*  Vop = &(VFP->VopHeader);
+	SliceType_t SliceType;
+	Mpeg4VideoFrameParameters_t *VFP = (Mpeg4VideoFrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure);
+	Mpeg4VopHeader_t *Vop = &(VFP->VopHeader);
 #ifdef DUMP_HEADERS
 	++parsedCount;
 #endif
@@ -463,7 +463,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::CommitFrameForDecode(void)
 		}
 		return FrameParserError;
 	}
-	SliceType       = SliceTypeTranslation[Vop->prediction_type];
+	SliceType = SliceTypeTranslation[Vop->prediction_type];
 	ParsedFrameParameters->SizeofStreamParameterStructure = sizeof(Mpeg4VideoStreamParameters_t);
 	ParsedFrameParameters->StreamParameterStructure = StreamParameters;
 	if (StreamParameters->VolHeader.aspect_ratio_info <= PAR_16_9_NTSC)
@@ -487,8 +487,8 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::CommitFrameForDecode(void)
 	ParsedFrameParameters->FirstParsedParametersAfterInputJump = FirstDecodeAfterInputJump;
 	ParsedFrameParameters->SurplusDataInjected = SurplusDataInjected;
 	ParsedFrameParameters->ContinuousReverseJump = ContinuousReverseJump;
-	ParsedFrameParameters->KeyFrame     = SliceType == SliceTypeI;
-	ParsedFrameParameters->ReferenceFrame   = SliceType != SliceTypeB;
+	ParsedFrameParameters->KeyFrame = SliceType == SliceTypeI;
+	ParsedFrameParameters->ReferenceFrame = SliceType != SliceTypeB;
 	ParsedFrameParameters->IndependentFrame = ParsedFrameParameters->KeyFrame;
 	ParsedFrameParameters->NumberOfReferenceFrameLists = 1;
 	ParsedVideoParameters->DisplayCount[0] = 1 + (DroppedFrame * 1);
@@ -499,10 +499,10 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::CommitFrameForDecode(void)
 	ParsedVideoParameters->SliceType = SliceType;
 	ParsedVideoParameters->TopFieldFirst = Vop->top_field_first;
 	ParsedVideoParameters->PictureStructure = StructureFrame;
-	ParsedVideoParameters->PanScan.Count                            = 1;
-	ParsedVideoParameters->PanScan.DisplayCount[0]                  = ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1];
-	ParsedVideoParameters->PanScan.HorizontalOffset[0]              = 0;
-	ParsedVideoParameters->PanScan.VerticalOffset[0]                = 0;
+	ParsedVideoParameters->PanScan.Count = 1;
+	ParsedVideoParameters->PanScan.DisplayCount[0] = ParsedVideoParameters->DisplayCount[0] + ParsedVideoParameters->DisplayCount[1];
+	ParsedVideoParameters->PanScan.HorizontalOffset[0] = 0;
+	ParsedVideoParameters->PanScan.VerticalOffset[0] = 0;
 	FirstDecodeOfFrame = true;
 	FrameToDecode = true;
 	FrameParameters = NULL;
@@ -510,7 +510,7 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::CommitFrameForDecode(void)
 	return FrameParserNoError;
 }
 
-FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVoHeader(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::ReadVoHeader(void)
 {
 	unsigned int IsVisualObjectIdentifier;
 	unsigned int VisualObjectVerId;
@@ -548,9 +548,9 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVoHeader(void)
 			}
 			else
 			{
-				ColourPrimaries = 1;   /*COLOUR_PRIMARIES_ITU_R_BT_709 */
-				TransferCharacteristics = 1;   /*TRANSFER_ITU_R_BT_709 */
-				MatrixCoefficients = 1;        /*MATRIX_COEFFICIENTS_ITU_R_BT_709 */
+				ColourPrimaries = 1; /*COLOUR_PRIMARIES_ITU_R_BT_709 */
+				TransferCharacteristics = 1; /*TRANSFER_ITU_R_BT_709 */
+				MatrixCoefficients = 1; /*MATRIX_COEFFICIENTS_ITU_R_BT_709 */
 			}
 			switch (MatrixCoefficients)
 			{
@@ -586,55 +586,55 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVoHeader(void)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Private - Read in the vol header.
+// Private - Read in the vol header.
 //
 
-FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t       *Vol)
+FrameParserStatus_t FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t *Vol)
 {
 	int i;
 	memset(Vol, 0, sizeof(Mpeg4VolHeader_t));
 	//
-	Vol->random_accessible_vol                  = Bits.Get(1);
-	Vol->type_indication                        = Bits.Get(8);
-	Vol->is_object_layer_identifier             = Bits.Get(1);
+	Vol->random_accessible_vol = Bits.Get(1);
+	Vol->type_indication = Bits.Get(8);
+	Vol->is_object_layer_identifier = Bits.Get(1);
 	if (Vol->is_object_layer_identifier)
 	{
-		Vol->visual_object_layer_verid          = Bits.Get(4);
-		Vol->visual_object_layer_priority       = Bits.Get(3);
+		Vol->visual_object_layer_verid = Bits.Get(4);
+		Vol->visual_object_layer_priority = Bits.Get(3);
 	}
 	else
 	{
-		Vol->visual_object_layer_verid          = 1;
-		Vol->visual_object_layer_priority       = 1;
+		Vol->visual_object_layer_verid = 1;
+		Vol->visual_object_layer_priority = 1;
 	}
-	Vol->aspect_ratio_info                      = Bits.Get(4);
+	Vol->aspect_ratio_info = Bits.Get(4);
 	if (Vol->aspect_ratio_info == PAR_EXTENDED)
 	{
-		Vol->par_width                          = Bits.Get(8);
-		Vol->par_height                         = Bits.Get(8);
+		Vol->par_width = Bits.Get(8);
+		Vol->par_height = Bits.Get(8);
 	}
-	Vol->vol_control_parameters                 = Bits.Get(1);
+	Vol->vol_control_parameters = Bits.Get(1);
 	if (Vol->vol_control_parameters)
 	{
-		Vol->chroma_format                      = Bits.Get(2);
-		Vol->low_delay                          = Bits.Get(1);
-		Vol->vbv_parameters                     = Bits.Get(1);
+		Vol->chroma_format = Bits.Get(2);
+		Vol->low_delay = Bits.Get(1);
+		Vol->vbv_parameters = Bits.Get(1);
 		if (Vol->vbv_parameters)
 		{
-			Vol->first_half_bit_rate            = Bits.Get(15);
+			Vol->first_half_bit_rate = Bits.Get(15);
 			Bits.Get(1);
-			Vol->latter_half_bit_rate           = Bits.Get(15);
+			Vol->latter_half_bit_rate = Bits.Get(15);
 			Bits.Get(1);
-			Vol->first_half_vbv_buffer_size     = Bits.Get(15);
+			Vol->first_half_vbv_buffer_size = Bits.Get(15);
 			Bits.Get(1);
-			Vol->latter_half_vbv_buffer_size    = Bits.Get(3);
-			Vol->first_half_vbv_occupancy       = Bits.Get(11);
+			Vol->latter_half_vbv_buffer_size = Bits.Get(3);
+			Vol->first_half_vbv_occupancy = Bits.Get(11);
 			Bits.Get(1);
-			Vol->latter_half_vbv_occupancy      = Bits.Get(15);
+			Vol->latter_half_vbv_occupancy = Bits.Get(15);
 			Bits.Get(1);
 		}
 	}
-	Vol->shape                                  = Bits.Get(2);
+	Vol->shape = Bits.Get(2);
 	if (Vol->shape != SHAPE_RECTANGULAR)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader shape other than RECTANGULAR not supported\n");
@@ -644,25 +644,25 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 	// NICK ... The following code is adjusted to only cater for shape == RECTANGULAR
 	//
 	Bits.Get(1);
-	Vol->time_increment_resolution              = Bits.Get(16);
-	TimeIncrementBits                           = INCREMENT_BITS(Vol->time_increment_resolution);
-	TimeIncrementResolution                     = Vol->time_increment_resolution;
+	Vol->time_increment_resolution = Bits.Get(16);
+	TimeIncrementBits = INCREMENT_BITS(Vol->time_increment_resolution);
+	TimeIncrementResolution = Vol->time_increment_resolution;
 	Bits.Get(1);
-	Vol->fixed_vop_rate                         = Bits.Get(1);
+	Vol->fixed_vop_rate = Bits.Get(1);
 	if (Vol->fixed_vop_rate)
-		Vol->fixed_vop_time_increment           = Bits.Get(TimeIncrementBits);
+		Vol->fixed_vop_time_increment = Bits.Get(TimeIncrementBits);
 	Bits.Get(1);
-	Vol->width                                  = Bits.Get(13);
+	Vol->width = Bits.Get(13);
 	Bits.Get(1);
-	Vol->height                                 = Bits.Get(13);
+	Vol->height = Bits.Get(13);
 	Bits.Get(1);
 	Vol->version = DivXVersion;
-	Vol->interlaced                             = Bits.Get(1);
-	Vol->obmc_disable                           = Bits.Get(1);
+	Vol->interlaced = Bits.Get(1);
+	Vol->obmc_disable = Bits.Get(1);
 	if (Vol->visual_object_layer_verid == 1)
-		Vol->sprite_usage                       = Bits.Get(1);
+		Vol->sprite_usage = Bits.Get(1);
 	else
-		Vol->sprite_usage                       = Bits.Get(2);
+		Vol->sprite_usage = Bits.Get(2);
 	if (Vol->sprite_usage != SPRITE_NOT_USED)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader sprite_usage other than NOT_USED not supported.\n");
@@ -691,30 +691,30 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 		// 11: 1/16 pel
 		//
 		Vol->sprite_brightness_change = Bits.Get(1);
-		//       assert(!Vol->sprite_brightness_change);
+		// assert(!Vol->sprite_brightness_change);
 		if (Vol->sprite_usage != GMC_SPRITE)
 		{
-			//           int low_latency_sprite_enable=
+			// int low_latency_sprite_enable=
 			Bits.Get(1);
 		}
 	}
 	// NICK ... The following code is adjusted to only cater for sprite_usage == SPRITE_NOT_USED
 	//
-	Vol->not_8_bit                              = Bits.Get(1);
+	Vol->not_8_bit = Bits.Get(1);
 	if (Vol->not_8_bit)
 	{
-		Vol->quant_precision                    = Bits.Get(4);
-		Vol->bits_per_pixel                     = Bits.Get(4);
+		Vol->quant_precision = Bits.Get(4);
+		Vol->bits_per_pixel = Bits.Get(4);
 	}
 	else
 	{
-		Vol->quant_precision                    = 5;
-		Vol->bits_per_pixel                     = 8;
+		Vol->quant_precision = 5;
+		Vol->bits_per_pixel = 8;
 	}
-	Vol->quant_type                             = Bits.Get(1);
+	Vol->quant_type = Bits.Get(1);
 	if (Vol->quant_type)
 	{
-		Vol->load_intra_quant_matrix            = Bits.Get(1);
+		Vol->load_intra_quant_matrix = Bits.Get(1);
 		if (Vol->load_intra_quant_matrix)
 		{
 			for (i = 0; i < QUANTISER_MATRIX_SIZE; i++)
@@ -728,7 +728,7 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 		}
 		else
 			memcpy(Vol->intra_quant_matrix, DefaultIntraQuantizationMatrix, QUANTISER_MATRIX_SIZE);
-		Vol->load_non_intra_quant_matrix        = Bits.Get(1);
+		Vol->load_non_intra_quant_matrix = Bits.Get(1);
 		if (Vol->load_non_intra_quant_matrix)
 		{
 			for (i = 0; i < QUANTISER_MATRIX_SIZE; i++)
@@ -744,31 +744,31 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 			memcpy(Vol->non_intra_quant_matrix, DefaultNonIntraQuantizationMatrix, QUANTISER_MATRIX_SIZE);
 	}
 	if (Vol->visual_object_layer_verid != 1)
-		Vol->quarter_pixel                      = Bits.Get(1);
+		Vol->quarter_pixel = Bits.Get(1);
 	else
-		Vol->quarter_pixel                      = 0;
+		Vol->quarter_pixel = 0;
 	if (Vol->quarter_pixel)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader quarter_pixel not supported.\n");
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
-	Vol->complexity_estimation_disable          = Bits.Get(1);
-	Vol->resync_marker_disable                  = Bits.Get(1);
-	Vol->data_partitioning                      = Bits.Get(1);
+	Vol->complexity_estimation_disable = Bits.Get(1);
+	Vol->resync_marker_disable = Bits.Get(1);
+	Vol->data_partitioning = Bits.Get(1);
 	if (Vol->data_partitioning)
-		Vol->reversible_vlc                     = Bits.Get(1);
+		Vol->reversible_vlc = Bits.Get(1);
 	if (Vol->visual_object_layer_verid != 1)
 	{
-		Vol->intra_acdc_pred_disable            = Bits.Get(1);
+		Vol->intra_acdc_pred_disable = Bits.Get(1);
 		if (Vol->intra_acdc_pred_disable)
 		{
-			Vol->request_upstream_message_type  = Bits.Get(2);
-			Vol->newpred_segment_type           = Bits.Get(1);
+			Vol->request_upstream_message_type = Bits.Get(2);
+			Vol->newpred_segment_type = Bits.Get(1);
 		}
-		Vol->reduced_resolution_vop_enable      = Bits.Get(1);
+		Vol->reduced_resolution_vop_enable = Bits.Get(1);
 	}
-	Vol->scalability                            = Bits.Get(1);
+	Vol->scalability = Bits.Get(1);
 	if (Vol->scalability)
 	{
 		report(severity_error, "Frame_Mpeg4Video_c::ReadVolHeader - ERROR **** VolHeader scalability not supported.\n");
@@ -794,48 +794,48 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVolHeader(Mpeg4VolHeader_t    
 	//
 #ifdef DUMP_HEADERS
 	report(severity_info, "Vol header :- \n");
-	report(severity_info, "        random_accessible_vol             %6d\n", Vol->random_accessible_vol);
-	report(severity_info, "        type_indication                   %6d\n", Vol->type_indication);
-	report(severity_info, "        is_object_layer_identifier        %6d\n", Vol->is_object_layer_identifier);
-	report(severity_info, "        visual_object_layer_verid         %6d\n", Vol->visual_object_layer_verid);
-	report(severity_info, "        visual_object_layer_priority      %6d\n", Vol->visual_object_layer_priority);
-	report(severity_info, "        aspect_ratio_info                 %6d\n", Vol->aspect_ratio_info);
-	report(severity_info, "        par_width                         %6d\n", Vol->par_width);
-	report(severity_info, "        par_height                        %6d\n", Vol->par_height);
-	report(severity_info, "        vol_control_parameters            %6d\n", Vol->vol_control_parameters);
-	report(severity_info, "        chroma_format                     %6d\n", Vol->chroma_format);
-	report(severity_info, "        low_delay                         %6d\n", Vol->low_delay);
-	report(severity_info, "        vbv_parameters                    %6d\n", Vol->vbv_parameters);
-	report(severity_info, "        first_half_bit_rate               %6d\n", Vol->first_half_bit_rate);
-	report(severity_info, "        latter_half_bit_rate              %6d\n", Vol->latter_half_bit_rate);
-	report(severity_info, "        first_half_vbv_buffer_size        %6d\n", Vol->first_half_vbv_buffer_size);
-	report(severity_info, "        latter_half_vbv_buffer_size       %6d\n", Vol->latter_half_vbv_buffer_size);
-	report(severity_info, "        first_half_vbv_occupancy          %6d\n", Vol->first_half_vbv_occupancy);
-	report(severity_info, "        latter_half_vbv_occupancy         %6d\n", Vol->latter_half_vbv_occupancy);
-	report(severity_info, "        shape                             %6d\n", Vol->shape);
-	report(severity_info, "        time_increment_resolution         %6d\n", Vol->time_increment_resolution);
-	report(severity_info, "        fixed_vop_rate                    %6d\n", Vol->fixed_vop_rate);
-	report(severity_info, "        fixed_vop_time_increment          %6d\n", Vol->fixed_vop_time_increment);
-	report(severity_info, "        width                             %6d\n", Vol->width);
-	report(severity_info, "        height                            %6d\n", Vol->height);
-	report(severity_info, "        interlaced                        %6d\n", Vol->interlaced);
-	report(severity_info, "        obmc_disable                      %6d\n", Vol->obmc_disable);
-	report(severity_info, "        sprite_usage                      %6d\n", Vol->sprite_usage);
-	report(severity_info, "        not_8_bit                         %6d\n", Vol->not_8_bit);
-	report(severity_info, "        quant_precision                   %6d\n", Vol->quant_precision);
-	report(severity_info, "        bits_per_pixel                    %6d\n", Vol->bits_per_pixel);
-	report(severity_info, "        quant_type                        %6d\n", Vol->quant_type);
-	report(severity_info, "        load_intra_quant_matrix           %6d\n", Vol->load_intra_quant_matrix);
-	report(severity_info, "        load_non_intra_quant_matrix       %6d\n", Vol->load_non_intra_quant_matrix);
-	report(severity_info, "        quarter_pixel                     %6d\n", Vol->quarter_pixel);
-	report(severity_info, "        complexity_estimation_disable     %6d\n", Vol->complexity_estimation_disable);
-	//report( severity_info, "        error_res_disable                 %6d\n", Vol->error_res_disable );
-	report(severity_info, "        data_partitioning                 %6d\n", Vol->data_partitioning);
-	report(severity_info, "        intra_acdc_pred_disable           %6d\n", Vol->intra_acdc_pred_disable);
-	report(severity_info, "        request_upstream_message_type     %6d\n", Vol->request_upstream_message_type);
-	report(severity_info, "        newpred_segment_type              %6d\n", Vol->newpred_segment_type);
-	report(severity_info, "        reduced_resolution_vop_enable     %6d\n", Vol->reduced_resolution_vop_enable);
-	report(severity_info, "        scalability                       %6d\n", Vol->scalability);
+	report(severity_info, " random_accessible_vol %6d\n", Vol->random_accessible_vol);
+	report(severity_info, " type_indication %6d\n", Vol->type_indication);
+	report(severity_info, " is_object_layer_identifier %6d\n", Vol->is_object_layer_identifier);
+	report(severity_info, " visual_object_layer_verid %6d\n", Vol->visual_object_layer_verid);
+	report(severity_info, " visual_object_layer_priority %6d\n", Vol->visual_object_layer_priority);
+	report(severity_info, " aspect_ratio_info %6d\n", Vol->aspect_ratio_info);
+	report(severity_info, " par_width %6d\n", Vol->par_width);
+	report(severity_info, " par_height %6d\n", Vol->par_height);
+	report(severity_info, " vol_control_parameters %6d\n", Vol->vol_control_parameters);
+	report(severity_info, " chroma_format %6d\n", Vol->chroma_format);
+	report(severity_info, " low_delay %6d\n", Vol->low_delay);
+	report(severity_info, " vbv_parameters %6d\n", Vol->vbv_parameters);
+	report(severity_info, " first_half_bit_rate %6d\n", Vol->first_half_bit_rate);
+	report(severity_info, " latter_half_bit_rate %6d\n", Vol->latter_half_bit_rate);
+	report(severity_info, " first_half_vbv_buffer_size %6d\n", Vol->first_half_vbv_buffer_size);
+	report(severity_info, " latter_half_vbv_buffer_size %6d\n", Vol->latter_half_vbv_buffer_size);
+	report(severity_info, " first_half_vbv_occupancy %6d\n", Vol->first_half_vbv_occupancy);
+	report(severity_info, " latter_half_vbv_occupancy %6d\n", Vol->latter_half_vbv_occupancy);
+	report(severity_info, " shape %6d\n", Vol->shape);
+	report(severity_info, " time_increment_resolution %6d\n", Vol->time_increment_resolution);
+	report(severity_info, " fixed_vop_rate %6d\n", Vol->fixed_vop_rate);
+	report(severity_info, " fixed_vop_time_increment %6d\n", Vol->fixed_vop_time_increment);
+	report(severity_info, " width %6d\n", Vol->width);
+	report(severity_info, " height %6d\n", Vol->height);
+	report(severity_info, " interlaced %6d\n", Vol->interlaced);
+	report(severity_info, " obmc_disable %6d\n", Vol->obmc_disable);
+	report(severity_info, " sprite_usage %6d\n", Vol->sprite_usage);
+	report(severity_info, " not_8_bit %6d\n", Vol->not_8_bit);
+	report(severity_info, " quant_precision %6d\n", Vol->quant_precision);
+	report(severity_info, " bits_per_pixel %6d\n", Vol->bits_per_pixel);
+	report(severity_info, " quant_type %6d\n", Vol->quant_type);
+	report(severity_info, " load_intra_quant_matrix %6d\n", Vol->load_intra_quant_matrix);
+	report(severity_info, " load_non_intra_quant_matrix %6d\n", Vol->load_non_intra_quant_matrix);
+	report(severity_info, " quarter_pixel %6d\n", Vol->quarter_pixel);
+	report(severity_info, " complexity_estimation_disable %6d\n", Vol->complexity_estimation_disable);
+	//report( severity_info, " error_res_disable %6d\n", Vol->error_res_disable );
+	report(severity_info, " data_partitioning %6d\n", Vol->data_partitioning);
+	report(severity_info, " intra_acdc_pred_disable %6d\n", Vol->intra_acdc_pred_disable);
+	report(severity_info, " request_upstream_message_type %6d\n", Vol->request_upstream_message_type);
+	report(severity_info, " newpred_segment_type %6d\n", Vol->newpred_segment_type);
+	report(severity_info, " reduced_resolution_vop_enable %6d\n", Vol->reduced_resolution_vop_enable);
+	report(severity_info, " scalability %6d\n", Vol->scalability);
 #endif
 	return FrameParserNoError;
 }
@@ -847,19 +847,19 @@ static unsigned int divround1(int v1, int v2)
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Private - Read in a Vop header
+// Private - Read in a Vop header
 //
 
-FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t         *Vop)
+FrameParserStatus_t FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t *Vop)
 {
-	unsigned int    display_time = 0;
+	unsigned int display_time = 0;
 	//
 	memset(Vop, 0, sizeof(Mpeg4VopHeader_t));
 	// Not sure this is true now!
-	// NOTE this code assumes that VolHeader        shape           == RECTANGULAR
-	//                                              sprite_usage    == SPRITE_NOT_USED
+	// NOTE this code assumes that VolHeader shape == RECTANGULAR
+	// sprite_usage == SPRITE_NOT_USED
 	//
-	Vop->prediction_type                        = Bits.Get(2);
+	Vop->prediction_type = Bits.Get(2);
 	if (Vop->prediction_type != PREDICTION_TYPE_B)
 	{
 		prev_time_base = old_time_base;
@@ -875,19 +875,19 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 	}
 	old_time_base += Vop->time_base;
 	Bits.Get(1);
-	Vop->time_inc                               = Bits.Get(TimeIncrementBits);
+	Vop->time_inc = Bits.Get(TimeIncrementBits);
 	Bits.Get(1);
 	// trb/trd - display_time calculation
 	//
 	display_time = display_time * TimeIncrementResolution + Vop->time_inc;
 	if (Vop->prediction_type != PREDICTION_TYPE_B)
 	{
-		LastVop.display_time_prev       = LastVop.display_time_next;
-		LastVop.display_time_next       = display_time;
+		LastVop.display_time_prev = LastVop.display_time_next;
+		LastVop.display_time_next = display_time;
 		if (display_time != LastVop.display_time_prev)
 		{
-			Vop->trd        = LastVop.display_time_next - LastVop.display_time_prev;
-			LastVop.trd     = Vop->trd;
+			Vop->trd = LastVop.display_time_next - LastVop.display_time_prev;
+			LastVop.trd = Vop->trd;
 		}
 		/* to make the code match the firmware test env */
 		Vop->trb = LastVop.trb;
@@ -896,8 +896,8 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 	}
 	else
 	{
-		Vop->trd        = LastVop.trd;
-		Vop->trb        = display_time - LastVop.display_time_prev;
+		Vop->trd = LastVop.trd;
+		Vop->trb = display_time - LastVop.display_time_prev;
 		if (Interlaced)
 		{
 			if (Vop->tframe == -1)
@@ -918,24 +918,24 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 	LastVop.trd = Vop->trd;
 	LastVop.trb_trd = Vop->trb_trd;
 	LastVop.trb_trd_trd = Vop->trb_trd_trd;
-	Vop->vop_coded                              = Bits.Get(1);
+	Vop->vop_coded = Bits.Get(1);
 	if (Vop->vop_coded)
 	{
 		if (Vop->prediction_type == PREDICTION_TYPE_P)
 		{
-			Vop->rounding_type                  = Bits.Get(1);
+			Vop->rounding_type = Bits.Get(1);
 		}
 		else
-			Vop->rounding_type                  = 0;
-		Vop->intra_dc_vlc_thr                   = Bits.Get(3);
+			Vop->rounding_type = 0;
+		Vop->intra_dc_vlc_thr = Bits.Get(3);
 		if (Interlaced)
 		{
-			Vop->top_field_first                = Bits.Get(1);
-			Vop->alternate_vertical_scan_flag   = Bits.Get(1);
+			Vop->top_field_first = Bits.Get(1);
+			Vop->alternate_vertical_scan_flag = Bits.Get(1);
 #if 0
 			report(severity_error, "interlaced info : tff %d, avsf %d\n",
-				   Vop->top_field_first,
-				   Vop->alternate_vertical_scan_flag);
+			       Vop->top_field_first,
+			       Vop->alternate_vertical_scan_flag);
 #endif
 			// 25fps is a frame rate of 40ms per frame
 			if ((CurrentMicroSecondsPerFrame == 40000) && (Vop->top_field_first == 0))
@@ -948,15 +948,15 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 		}
 		else
 		{
-			Vop->top_field_first                = 0;
-			Vop->alternate_vertical_scan_flag   = 0;
+			Vop->top_field_first = 0;
+			Vop->alternate_vertical_scan_flag = 0;
 		}
-		Vop->quantizer                          = Bits.Get(QuantPrecision);
+		Vop->quantizer = Bits.Get(QuantPrecision);
 		if (Vop->prediction_type != PREDICTION_TYPE_I)
-			Vop->fcode_forward                  = Bits.Get(3);
+			Vop->fcode_forward = Bits.Get(3);
 		Vop->fcode_backward = LastVop.fcode_backward; // seems to match what the firmware test app does
 		if (Vop->prediction_type == PREDICTION_TYPE_B)
-			Vop->fcode_backward                 = Bits.Get(3);
+			Vop->fcode_backward = Bits.Get(3);
 		LastVop.fcode_backward = Vop->fcode_backward; // seems to match what the firmware test app does
 	}
 	else
@@ -968,10 +968,10 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 		{
 #if 0
 			report(severity_info, "DivX NVOP detected %d %d %d %d\n",
-				   Vop->prediction_type,
-				   LastPredictionType,
-				   LastTimeIncrement,
-				   Vop->time_inc);
+			       Vop->prediction_type,
+			       LastPredictionType,
+			       LastTimeIncrement,
+			       Vop->time_inc);
 #endif
 			Vop->divx_nvop = 1;
 		}
@@ -979,10 +979,10 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 		else
 		{
 			report(severity_info, "real NVOP detected %d %d %d %d\n",
-				   Vop->prediction_type,
-				   LastPredictionType,
-				   LastTimeIncrement,
-				   Vop->time_inc);
+			       Vop->prediction_type,
+			       LastPredictionType,
+			       LastTimeIncrement,
+			       Vop->time_inc);
 		}
 #endif
 	}
@@ -994,51 +994,51 @@ FrameParserStatus_t  FrameParser_VideoDivx_c::ReadVopHeader(Mpeg4VopHeader_t    
 	//
 #ifdef DUMP_HEADERS
 	report(severity_info, "Vop header :- \n");
-	report(severity_info, "        prediction_type                   %6d\n", Vop->prediction_type);
-	report(severity_info, "        quantizer                         %6d\n", Vop->quantizer);
-	report(severity_info, "        rounding_type                     %6d\n", Vop->rounding_type);
-	report(severity_info, "        fcode_for                         %6d\n", Vop->fcode_forward);
-	report(severity_info, "        vop_coded                         %6d\n", Vop->vop_coded);
-	report(severity_info, "        use_intra_dc_vlc                  %6d\n", Vop->intra_dc_vlc_thr ? 0 : 1);
-	report(severity_info, "        trbi                              %6d\n", Vop->trbi);
-	report(severity_info, "        trdi                              %6d\n", Vop->trdi);
-	report(severity_info, "        trb_trd                           %6d\n", Vop->trb_trd);
-	report(severity_info, "        trb_trd_trd                       %6d\n", Vop->trb_trd_trd);
-	report(severity_info, "        trd                               %6d\n", Vop->trd);
-	report(severity_info, "        trb                               %6d\n", Vop->trb);
-	report(severity_info, "        intra_dc_vlc_thr                  %6d\n", Vop->intra_dc_vlc_thr);
-	report(severity_info, "        time_inc                          %6d\n", Vop->time_inc);
-	report(severity_info, "        fcode_back                        %6d\n", Vop->fcode_backward);
-	report(severity_info, "        shape_coding_type                 %6d\n", 0);
-	report(severity_info, "        bit_skip_no                       %6d\n", bit_skip_no);
-	report(severity_info, "        time_base                         %6d\n", Vop->time_base);
-	report(severity_info, "        rounding_type                     %6d\n", Vop->rounding_type);
+	report(severity_info, " prediction_type %6d\n", Vop->prediction_type);
+	report(severity_info, " quantizer %6d\n", Vop->quantizer);
+	report(severity_info, " rounding_type %6d\n", Vop->rounding_type);
+	report(severity_info, " fcode_for %6d\n", Vop->fcode_forward);
+	report(severity_info, " vop_coded %6d\n", Vop->vop_coded);
+	report(severity_info, " use_intra_dc_vlc %6d\n", Vop->intra_dc_vlc_thr ? 0 : 1);
+	report(severity_info, " trbi %6d\n", Vop->trbi);
+	report(severity_info, " trdi %6d\n", Vop->trdi);
+	report(severity_info, " trb_trd %6d\n", Vop->trb_trd);
+	report(severity_info, " trb_trd_trd %6d\n", Vop->trb_trd_trd);
+	report(severity_info, " trd %6d\n", Vop->trd);
+	report(severity_info, " trb %6d\n", Vop->trb);
+	report(severity_info, " intra_dc_vlc_thr %6d\n", Vop->intra_dc_vlc_thr);
+	report(severity_info, " time_inc %6d\n", Vop->time_inc);
+	report(severity_info, " fcode_back %6d\n", Vop->fcode_backward);
+	report(severity_info, " shape_coding_type %6d\n", 0);
+	report(severity_info, " bit_skip_no %6d\n", bit_skip_no);
+	report(severity_info, " time_base %6d\n", Vop->time_base);
+	report(severity_info, " rounding_type %6d\n", Vop->rounding_type);
 #endif
 	/*
-	    report( severity_info, "        prediction_type is %d\n", Vop->prediction_type );
-	    report( severity_info, "        quantizer is %d\n", Vop->quantizer );
-	    report( severity_info, "        rounding_type is %d\n", Vop->rounding_type );
-	    report( severity_info, "        fcode_for is %d\n", Vop->fcode_forward );
-	    report( severity_info, "        vop_coded is %d\n", Vop->vop_coded );
-	    report( severity_info, "        use_intra_dc_vlc is %d\n", Vop->intra_dc_vlc_thr?0:1 );
-	    report( severity_info, "        trbi is %d\n", Vop->trbi );
-	    report( severity_info, "        trdi is %d\n", Vop->trdi );
-	    report( severity_info, "        trb_trd is %d\n", Vop->trb_trd );
-	    report( severity_info, "        trb_trd_trd is %d\n", Vop->trb_trd_trd );
-	    report( severity_info, "        trd is %d\n", Vop->trd );
-	    report( severity_info, "        trb is %d\n", Vop->trb );
-	    report( severity_info, "        intra_dc_vlc_thr is %d\n", Vop->intra_dc_vlc_thr );
-	    report( severity_info, "        time_inc is %d\n", Vop->time_inc );
-	    report( severity_info, "        fcode_back is %d\n", Vop->fcode_backward );
-	    report( severity_info, "        shape_coding_type is %d\n", 0);
-	    report( severity_info, "        bit_skip_no is %d\n", bit_skip_no );
+	 report( severity_info, " prediction_type is %d\n", Vop->prediction_type );
+	 report( severity_info, " quantizer is %d\n", Vop->quantizer );
+	 report( severity_info, " rounding_type is %d\n", Vop->rounding_type );
+	 report( severity_info, " fcode_for is %d\n", Vop->fcode_forward );
+	 report( severity_info, " vop_coded is %d\n", Vop->vop_coded );
+	 report( severity_info, " use_intra_dc_vlc is %d\n", Vop->intra_dc_vlc_thr?0:1 );
+	 report( severity_info, " trbi is %d\n", Vop->trbi );
+	 report( severity_info, " trdi is %d\n", Vop->trdi );
+	 report( severity_info, " trb_trd is %d\n", Vop->trb_trd );
+	 report( severity_info, " trb_trd_trd is %d\n", Vop->trb_trd_trd );
+	 report( severity_info, " trd is %d\n", Vop->trd );
+	 report( severity_info, " trb is %d\n", Vop->trb );
+	 report( severity_info, " intra_dc_vlc_thr is %d\n", Vop->intra_dc_vlc_thr );
+	 report( severity_info, " time_inc is %d\n", Vop->time_inc );
+	 report( severity_info, " fcode_back is %d\n", Vop->fcode_backward );
+	 report( severity_info, " shape_coding_type is %d\n", 0);
+	 report( severity_info, " bit_skip_no is %d\n", bit_skip_no );
 	*/
 	return FrameParserNoError;
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-//      Private - Read in the vos header.
+// Private - Read in the vos header.
 //
 unsigned int FrameParser_VideoDivx_c::ReadVosHeader()
 {
@@ -1046,7 +1046,7 @@ unsigned int FrameParser_VideoDivx_c::ReadVosHeader()
 	if (profile != 0)
 	{
 		//report(severity_error, "bad Vos header - profile = %d\n", profile);
-		return 0;         /* STTC has a profile set to 0 which is Reserved in the mpeg4 spec */
+		return 0; /* STTC has a profile set to 0 which is Reserved in the mpeg4 spec */
 	}
 	if (Bits.Get(32) == 0x1b2)
 	{
@@ -1059,13 +1059,13 @@ unsigned int FrameParser_VideoDivx_c::ReadVosHeader()
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to prepare a reference frame list
+// Stream specific function to prepare a reference frame list
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::PrepareReferenceFrameList(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::PrepareReferenceFrameList(void)
 {
-	unsigned int    i;
-	unsigned int    ReferenceFramesNeeded;
+	unsigned int i;
+	unsigned int ReferenceFramesNeeded;
 	//
 	// Note we cannot use StreamParameters or FrameParameters to address data directly,
 	// as these may no longer apply to the frame we are dealing with.
@@ -1075,14 +1075,14 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::PrepareReferenceFrameList(void)
 	ReferenceFramesNeeded = ((Mpeg4VideoFrameParameters_t *)(ParsedFrameParameters->FrameParameterStructure))->VopHeader.prediction_type;
 	if (ReferenceFrameList.EntryCount < ReferenceFramesNeeded)
 	{
-		report(severity_error, "Insufficient Ref Frames %d vs %d\n", ReferenceFrameList.EntryCount,  ReferenceFramesNeeded);
+		report(severity_error, "Insufficient Ref Frames %d vs %d\n", ReferenceFrameList.EntryCount, ReferenceFramesNeeded);
 		return FrameParserInsufficientReferenceFrames;
 	}
-	ParsedFrameParameters->NumberOfReferenceFrameLists                  = 1;
-	ParsedFrameParameters->ReferenceFrameList[0].EntryCount             = ReferenceFramesNeeded;
+	ParsedFrameParameters->NumberOfReferenceFrameLists = 1;
+	ParsedFrameParameters->ReferenceFrameList[0].EntryCount = ReferenceFramesNeeded;
 	for (i = 0; i < ReferenceFramesNeeded; i++)
 	{
-		ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[i]   =
+		ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[i] =
 			ReferenceFrameList.EntryIndicies[ReferenceFrameList.EntryCount - ReferenceFramesNeeded + i];
 	}
 	return FrameParserNoError;
@@ -1090,13 +1090,13 @@ FrameParserStatus_t   FrameParser_VideoDivx_c::PrepareReferenceFrameList(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Stream specific function to manage a reference frame list in forward play
-//      we only record a reference frame as such on the last field, in order to
-//      ensure the correct management of reference frames in the codec, we immediately
-//      inform the codec of a release on the first field of a field picture.
+// Stream specific function to manage a reference frame list in forward play
+// we only record a reference frame as such on the last field, in order to
+// ensure the correct management of reference frames in the codec, we immediately
+// inform the codec of a release on the first field of a field picture.
 //
 
-FrameParserStatus_t   FrameParser_VideoDivx_c::ForPlayUpdateReferenceFrameList(void)
+FrameParserStatus_t FrameParser_VideoDivx_c::ForPlayUpdateReferenceFrameList(void)
 {
 	if (ParsedFrameParameters->ReferenceFrame)
 	{

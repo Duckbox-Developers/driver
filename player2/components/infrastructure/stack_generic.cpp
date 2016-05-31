@@ -2,14 +2,14 @@
 COPYRIGHT (C) STMicroelectronics 2007
 
 Source file name : stack_generic.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the class defining the interface to a simple stack
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jan-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+08-Jan-07 Created Nick
 
 ************************************************************************/
 
@@ -21,9 +21,9 @@ Date        Modification                                    Name
 StackGeneric_c::StackGeneric_c(unsigned int MaxEntries)
 {
 	OS_InitializeMutex(&Lock);
-	Limit       = MaxEntries;
-	Level       = 0;
-	Storage     = new unsigned int[Limit];
+	Limit = MaxEntries;
+	Level = 0;
+	Storage = new unsigned int[Limit];
 	InitializationStatus = (Storage == NULL) ? StackNoMemory : StackNoError;
 }
 
@@ -40,7 +40,7 @@ StackGeneric_c::~StackGeneric_c(void)
 // ------------------------------------------------------------------------
 // Insert function
 
-StackStatus_t   StackGeneric_c::Push(unsigned int       Value)
+StackStatus_t StackGeneric_c::Push(unsigned int Value)
 {
 	OS_LockMutex(&Lock);
 	if (Level == Limit)
@@ -48,7 +48,7 @@ StackStatus_t   StackGeneric_c::Push(unsigned int       Value)
 		OS_UnLockMutex(&Lock);
 		return StackTooManyEntries;
 	}
-	Storage[Level++]    = Value;
+	Storage[Level++] = Value;
 	OS_UnLockMutex(&Lock);
 	return StackNoError;
 }
@@ -56,7 +56,7 @@ StackStatus_t   StackGeneric_c::Push(unsigned int       Value)
 // ------------------------------------------------------------------------
 // Extract function
 
-StackStatus_t   StackGeneric_c::Pop(unsigned int    *Value)
+StackStatus_t StackGeneric_c::Pop(unsigned int *Value)
 {
 	//
 	// If there is nothing in the Stack we return
@@ -74,16 +74,16 @@ StackStatus_t   StackGeneric_c::Pop(unsigned int    *Value)
 // ------------------------------------------------------------------------
 // Flush function
 
-StackStatus_t   StackGeneric_c::Flush(void)
+StackStatus_t StackGeneric_c::Flush(void)
 {
-	Level   = 0;
+	Level = 0;
 	return StackNoError;
 }
 
 // ------------------------------------------------------------------------
 // Non-empty function
 
-bool   StackGeneric_c::NonEmpty(void)
+bool StackGeneric_c::NonEmpty(void)
 {
 	return (Level != 0);
 }

@@ -60,7 +60,7 @@ static MME_ERROR SilenceGen_Transform(void *ctx, MME_Command_t *cmd)
 	}
 #ifdef __KERNEL__
 	// TODO: most of the Linux cache flush functions "don't do what you think they do". We take a
-	//       conservative approach here.
+	// conservative approach here.
 	OSDEV_FlushCacheAll();
 #endif
 	return MME_SUCCESS;
@@ -88,9 +88,9 @@ static MME_ERROR SilenceGen_TermTransformer(void *ctx)
 MME_ERROR SilenceGen_RegisterTransformer(const char *name)
 {
 	return MME_RegisterTransformer(name,
-								   SilenceGen_AbortCommand,
-								   SilenceGen_GetTransformerCapability,
-								   SilenceGen_InitTransformer,
-								   SilenceGen_ProcessCommand,
-								   SilenceGen_TermTransformer);
+				       SilenceGen_AbortCommand,
+				       SilenceGen_GetTransformerCapability,
+				       SilenceGen_InitTransformer,
+				       SilenceGen_ProcessCommand,
+				       SilenceGen_TermTransformer);
 }

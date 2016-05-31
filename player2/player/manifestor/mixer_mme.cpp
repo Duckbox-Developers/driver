@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : mixer_mme.cpp
-Author :           Daniel
+Author : Daniel
 
 Concrete implementation of an MME mixer driver.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Jun-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+29-Jun-07 Created Daniel
 
 ************************************************************************/
 
@@ -43,13 +43,13 @@ Date        Modification                                    Name
 //
 
 #define MIXER_MME_TRANSFORMER_NAME "MME_TRANSFORMER_TYPE_AUDIO_MIXER"
-#define MIXER_MAX_WAIT_FOR_MME_COMMAND_COMPLETION  100     /* Ms */
+#define MIXER_MAX_WAIT_FOR_MME_COMMAND_COMPLETION 100 /* Ms */
 #define MIXER_MIN_FREQUENCY 32000
 
 #define Q15_UNITY 0x7fff
 
-//#define SPLIT_AUX  ACC_DONT_SPLIT
-#define SPLIT_AUX  ACC_SPLIT_AUTO
+//#define SPLIT_AUX ACC_DONT_SPLIT
+#define SPLIT_AUX ACC_SPLIT_AUTO
 static const unsigned int SAMPLES_NEEDED_FOR_FADE_OUT = 128;
 
 static OS_TaskEntry(PlaybackThreadStub)
@@ -64,9 +64,9 @@ static OS_TaskEntry(PlaybackThreadStub)
 ///
 /// Stub function with C linkage to connect the MME callback to the manifestor.
 ///
-static void MMECallbackStub(MME_Event_t      Event,
-							MME_Command_t   *CallbackData,
-							void            *UserData)
+static void MMECallbackStub(MME_Event_t Event,
+			    MME_Command_t *CallbackData,
+			    void *UserData)
 {
 	Mixer_Mme_c *Self = (Mixer_Mme_c *) UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -88,6 +88,7 @@ Mixer_Mme_c::Mixer_Mme_c()
 	memset(&AudioConfiguration, 0, sizeof(AudioConfiguration));
 	strcpy(AudioConfiguration.TransformName, MIXER_MME_TRANSFORMER_NAME);
 	AudioConfiguration.MixerPriority = OS_MID_PRIORITY + 14;
+//
 	UpstreamConfiguration = NULL;
 	ResetOutputConfiguration();
 	DownmixFirmware = NULL;
@@ -162,7 +163,7 @@ PlayerStatus_t Mixer_Mme_c::Reset()
 	MixerGranuleSize = 0;
 	PrimaryCodedDataType = PcmPlayer_c::OUTPUT_IEC60958;
 	ResetMixingMetadata();
-	// Do not touch other parts of the OutputConfiguration. These are immnue to reset.
+	// Do not touch other parts of the OutputConfiguration. These are immune to reset.
 	// Do not touch the DownmixFirmware. It is immune to reset.
 	for (int i = 0; i < MIXER_AUDIO_MAX_OUTPUT_BUFFERS; ++i)
 	{
@@ -178,7 +179,7 @@ PlayerStatus_t Mixer_Mme_c::Reset()
 	MixerCommand.Command.StructSize = sizeof(MixerCommand.Command);
 	MixerCommand.Command.CmdCode = MME_TRANSFORM;
 	MixerCommand.Command.CmdEnd = MME_COMMAND_END_RETURN_NOTIFY;
-	MixerCommand.Command.DueTime = 0;   // no sorting by time
+	MixerCommand.Command.DueTime = 0; // no sorting by time
 	MixerCommand.Command.NumberInputBuffers = MIXER_AUDIO_MAX_INPUT_BUFFERS;
 	// MixerCommand.Command.NumberOutputBuffers is not constant and must be set later
 	MixerCommand.Command.DataBuffers_p = MixerCommand.DataBufferList;
@@ -191,7 +192,8 @@ PlayerStatus_t Mixer_Mme_c::Reset()
 		MixerCommand.DataBufferList[i] = &MixerCommand.DataBuffers[i];
 		MixerCommand.DataBuffers[i].StructSize = sizeof(MME_DataBuffer_t);
 		MixerCommand.DataBuffers[i].UserData_p = &MixerCommand.BufferIndex[i * MIXER_AUDIO_PAGES_PER_BUFFER];
-		MixerCommand.DataBuffers[i].ScatterPages_p = &MixerCommand.ScatterPages[i * MIXER_AUDIO_PAGES_PER_BUFFER];
+		MixerCommand.DataBuffers[i].ScatterPages_p =
+			&MixerCommand.ScatterPages[i * MIXER_AUDIO_PAGES_PER_BUFFER];
 		//MixerCommand.StreamNumber = i;
 	}
 	for (unsigned int i = 0; i < MIXER_AUDIO_MAX_PAGES; i++)
@@ -205,7 +207,7 @@ PlayerStatus_t Mixer_Mme_c::Reset()
 	ParamsCommand.Command.StructSize = sizeof(ParamsCommand.Command);
 	ParamsCommand.Command.CmdCode = MME_SET_GLOBAL_TRANSFORM_PARAMS;
 	ParamsCommand.Command.CmdEnd = MME_COMMAND_END_RETURN_NOTIFY;
-	ParamsCommand.Command.DueTime = 0;  // no sorting by time
+	ParamsCommand.Command.DueTime = 0; // no sorting by time
 	ParamsCommand.Command.NumberInputBuffers = 0;
 	ParamsCommand.Command.NumberOutputBuffers = 0;
 	ParamsCommand.Command.DataBuffers_p = NULL;
@@ -221,7 +223,8 @@ PlayerStatus_t Mixer_Mme_c::Reset()
 ///
 ///
 ///
-PlayerStatus_t Mixer_Mme_c::SetModuleParameters(unsigned int ParameterBlockSize, void *ParameterBlock)
+PlayerStatus_t Mixer_Mme_c::SetModuleParameters(unsigned int ParameterBlockSize,
+						void *ParameterBlock)
 {
 	PlayerStatus_t Status;
 	MIXER_DEBUG("\n");
@@ -242,12 +245,14 @@ PlayerStatus_t Mixer_Mme_c::SetModuleParameters(unsigned int ParameterBlockSize,
 			return PlayerNoError;
 		}
 	}
-	if (ParameterBlockSize > sizeof(struct snd_pseudo_mixer_downmix_header) && ((char *) ParameterBlock)[0] == 'D')
+	if (ParameterBlockSize > sizeof(struct snd_pseudo_mixer_downmix_header) &&
+			((char *) ParameterBlock)[0] == 'D')
 	{
-		struct snd_pseudo_mixer_downmix_header *Header = (struct snd_pseudo_mixer_downmix_header *) ParameterBlock;
-		if ((SND_PSEUDO_MIXER_DOWNMIX_HEADER_MAGIC == Header->magic) &&
-				(SND_PSEUDO_MIXER_DOWNMIX_HEADER_VERSION == Header->version) &&
-				(SND_PSEUDO_MIXER_DOWNMIX_HEADER_SIZE(*Header) == ParameterBlockSize))
+		struct snd_pseudo_mixer_downmix_header *Header =
+			(struct snd_pseudo_mixer_downmix_header *) ParameterBlock;
+		if (SND_PSEUDO_MIXER_DOWNMIX_HEADER_MAGIC == Header->magic &&
+				SND_PSEUDO_MIXER_DOWNMIX_HEADER_VERSION == Header->version &&
+				SND_PSEUDO_MIXER_DOWNMIX_HEADER_SIZE(*Header) == ParameterBlockSize)
 		{
 			// the firmware loader is responsible for validating the index section, by the time we reach
 			// this point it is known to be valid.
@@ -257,10 +262,12 @@ PlayerStatus_t Mixer_Mme_c::SetModuleParameters(unsigned int ParameterBlockSize,
 	}
 	if (ParameterBlockSize == sizeof(struct snd_pseudo_transformer_name))
 	{
-		struct snd_pseudo_transformer_name *TransformerName = (struct snd_pseudo_transformer_name *) ParameterBlock;
+		struct snd_pseudo_transformer_name *TransformerName =
+			(struct snd_pseudo_transformer_name *) ParameterBlock;
 		if (TransformerName->magic == SND_PSEUDO_TRANSFORMER_NAME_MAGIC)
 		{
-			strncpy(AudioConfiguration.TransformName, TransformerName->name, sizeof(AudioConfiguration.TransformName) - 1);
+			strncpy(AudioConfiguration.TransformName, TransformerName->name,
+				sizeof(AudioConfiguration.TransformName) - 1);
 			AudioConfiguration.TransformName[sizeof(AudioConfiguration.TransformName) - 1] = '\0';
 			return PlayerNoError;
 		}
@@ -272,7 +279,7 @@ PlayerStatus_t Mixer_Mme_c::SetModuleParameters(unsigned int ParameterBlockSize,
 ///
 ///
 ///
-PlayerStatus_t Mixer_Mme_c::RegisterManifestor(Manifestor_AudioKsound_c * Manifestor)
+PlayerStatus_t Mixer_Mme_c::RegisterManifestor(Manifestor_AudioKsound_c *Manifestor)
 {
 	PlayerStatus_t Status;
 	int i;
@@ -309,11 +316,11 @@ PlayerStatus_t Mixer_Mme_c::RegisterManifestor(Manifestor_AudioKsound_c * Manife
 /// Remove the specified manifestor from the client table.
 ///
 /// \todo This method must re-order the table if a client is disconnected from
-///       the middle (due to very simple mappings from clients to buffers elsewhere
-///       in this class). Until that happens expect to see odd things for DISCONNECTED
-///       clients.
+/// the middle (due to very simple mappings from clients to buffers elsewhere
+/// in this class). Until that happens expect to see odd things for DISCONNECTED
+/// clients.
 ///
-PlayerStatus_t Mixer_Mme_c::DeRegisterManifestor(Manifestor_AudioKsound_c * Manifestor)
+PlayerStatus_t Mixer_Mme_c::DeRegisterManifestor(Manifestor_AudioKsound_c *Manifestor)
 {
 	int i;
 	MIXER_DEBUG(">><<\n");
@@ -339,7 +346,7 @@ PlayerStatus_t Mixer_Mme_c::DeRegisterManifestor(Manifestor_AudioKsound_c * Mani
 ///
 ///
 ///
-PlayerStatus_t Mixer_Mme_c::EnableManifestor(Manifestor_AudioKsound_c * Manifestor)
+PlayerStatus_t Mixer_Mme_c::EnableManifestor(Manifestor_AudioKsound_c *Manifestor)
 {
 	PlayerStatus_t Status;
 	int i;
@@ -360,7 +367,7 @@ PlayerStatus_t Mixer_Mme_c::EnableManifestor(Manifestor_AudioKsound_c * Manifest
 	// we must move out of the STOPPED state before calling UpdatePlayerComponentsModuleParameters()
 	// otherwise the update will not take place.
 	MIXER_DEBUG("Moving manifestor %p-%d from %s to UNCONFIGURED\n",
-				Manifestor, i, LookupInputState(Clients[i].State));
+		    Manifestor, i, LookupInputState(Clients[i].State));
 	Clients[i].State = UNCONFIGURED;
 	Status = UpdatePlayerComponentsModuleParameters();
 	if (Status != PlayerNoError)
@@ -382,7 +389,7 @@ PlayerStatus_t Mixer_Mme_c::EnableManifestor(Manifestor_AudioKsound_c * Manifest
 ///
 ///
 ///
-PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c * Manifestor)
+PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c *Manifestor)
 {
 	int i;
 	i = LookupClient(Manifestor);
@@ -408,7 +415,7 @@ PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c * Manifes
 		// to the STOPPED state without waiting for a handshake from the main thread.
 		MIXER_DEBUG("Moving manifestor %p-%d from UNCONFIGURED to STOPPED\n", Manifestor, i);
 		Clients[i].State = STOPPED;
-		OS_UnLockMutex(&ClientsStateManagementMutex);   // match other branch
+		OS_UnLockMutex(&ClientsStateManagementMutex); // match other branch
 	}
 	else
 	{
@@ -416,9 +423,9 @@ PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c * Manifes
 		// (request a swan song from the manifestor and then release all resources) before placing the
 		// client into the STOPPED state.
 		MIXER_DEBUG("Moving manifestor %p-%d from %s to STOPPED\n",
-					Manifestor, i, LookupInputState(Clients[i].State));
+			    Manifestor, i, LookupInputState(Clients[i].State));
 		Clients[i].State = STOPPING;
-		OS_UnLockMutex(&ClientsStateManagementMutex);   // must be released before the busy wait
+		OS_UnLockMutex(&ClientsStateManagementMutex); // must be released before the busy wait
 		// The event is used to nudge the playback thread if it has never dispatched any samples
 		// to the MME transformer (it has not entered its main loop yet).
 		OS_SetEvent(&PcmPlayerSurfaceParametersUpdated);
@@ -427,7 +434,7 @@ PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c * Manifes
 			if (l > 100)
 			{
 				MIXER_ERROR("Time out waiting for manifestor %p-%d to enter STOPPED state\n",
-							Manifestor, i);
+					    Manifestor, i);
 				return PlayerError;
 			}
 			OS_SleepMilliSeconds(10);
@@ -442,7 +449,7 @@ PlayerStatus_t Mixer_Mme_c::DisableManifestor(Manifestor_AudioKsound_c * Manifes
 ///
 ///
 PlayerStatus_t Mixer_Mme_c::UpdateManifestorParameters(Manifestor_AudioKsound_c *Manifestor,
-		ParsedAudioParameters_t *ParsedAudioParameters)
+						       ParsedAudioParameters_t *ParsedAudioParameters)
 {
 	int i;
 	//
@@ -494,7 +501,7 @@ PlayerStatus_t Mixer_Mme_c::SetManifestorEmergencyMuteState(Manifestor_AudioKsou
 		return PlayerError;
 	}
 	MIXER_TRACE("Set mute state to %s (was %s)\n",
-				(Muted ? "true" : "false"), (Clients[i].Muted ? "true" : "false"));
+		    (Muted ? "true" : "false"), (Clients[i].Muted ? "true" : "false"));
 	Clients[i].Muted = Muted;
 	MMENeedsParameterUpdate = true;
 	return PlayerNoError;
@@ -505,10 +512,10 @@ PlayerStatus_t Mixer_Mme_c::SetManifestorEmergencyMuteState(Manifestor_AudioKsou
 /// Provide a pointer to the ::MME_DataBuffer_t associated with a manifestor.
 ///
 /// \todo This method is, arguably, evidence of the unacceptable level of
-///       coupling between the audio manifestors and the mixer.
+/// coupling between the audio manifestors and the mixer.
 ///
-PlayerStatus_t Mixer_Mme_c::LookupDataBuffer(Manifestor_AudioKsound_c * Manifestor,
-		MME_DataBuffer_t **DataBufferPP)
+PlayerStatus_t Mixer_Mme_c::LookupDataBuffer(Manifestor_AudioKsound_c *Manifestor,
+					     MME_DataBuffer_t **DataBufferPP)
 {
 	int Index = LookupClient(Manifestor);
 	if (Index < 0)
@@ -543,7 +550,7 @@ PlayerStatus_t Mixer_Mme_c::SetOutputRateAdjustment(int adjust)
 /// Main mixer processing thread.
 ///
 /// \b WARNING: This method is public only to allow it to be called from a
-///             C linkage callback. Do not call it directly.
+/// C linkage callback. Do not call it directly.
 ///
 void Mixer_Mme_c::PlaybackThread()
 {
@@ -564,7 +571,7 @@ void Mixer_Mme_c::PlaybackThread()
 				if (Clients[i].State == STOPPING)
 				{
 					MIXER_DEBUG("Moving manifestor %p-%d from STOPPING to STOPPED\n",
-								Clients[i].Manifestor, i);
+						    Clients[i].Manifestor, i);
 					Clients[i].State = STOPPED;
 				}
 			for (int i = 0; i < MIXER_MAX_INTERACTIVE_CLIENTS; i++)
@@ -710,7 +717,7 @@ PlayerStatus_t Mixer_Mme_c::AllocInteractiveInput(int *InteractiveId)
 		return PlayerError;
 	}
 	MIXER_DEBUG("Moving interactive input %d from %s to UNCONFIGURED\n",
-				i, LookupInputState(InteractiveClients[i].State));
+		    i, LookupInputState(InteractiveClients[i].State));
 	InteractiveClients[i].State = UNCONFIGURED;
 	Status = UpdateGlobalState();
 	if (Status != PlayerNoError)
@@ -754,11 +761,11 @@ PlayerStatus_t Mixer_Mme_c::FreeInteractiveInput(int InteractiveId)
 			InteractiveClients[InteractiveId].State != STOPPED)
 	{
 		MIXER_ERROR("Cannot free interactive input %d while in state %s\n",
-					InteractiveId,  LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerError;
 	}
 	MIXER_DEBUG("Moving interactive input %d from %s to DISCONNECTED\n",
-				InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+		    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 	InteractiveClients[InteractiveId].State = DISCONNECTED;
 	return UpdateGlobalState();
 }
@@ -771,7 +778,7 @@ PlayerStatus_t Mixer_Mme_c::FreeInteractiveInput(int InteractiveId)
 /// is stopped (or stopping).
 ///
 PlayerStatus_t Mixer_Mme_c::SetupInteractiveInput(int InteractiveId,
-		struct alsa_substream_descriptor *Descriptor)
+						  struct alsa_substream_descriptor *Descriptor)
 {
 	PlayerStatus_t Status;
 	if (InteractiveId > MIXER_MAX_INTERACTIVE_CLIENTS)
@@ -791,24 +798,24 @@ PlayerStatus_t Mixer_Mme_c::SetupInteractiveInput(int InteractiveId,
 			InteractiveClients[InteractiveId].State != STOPPED)
 	{
 		MIXER_ERROR("Cannot setup interactive input %d while in state %s\n",
-					InteractiveId,  LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerError;
 	}
 	MIXER_DEBUG("Configuration for interactive input %d\n", InteractiveId);
-	MIXER_DEBUG("  hw_buffer %p (%d bytes)\n", Descriptor->hw_buffer, Descriptor->hw_buffer_size);
-	MIXER_DEBUG("  channels %u sampling freq %u bytes_per_sample %u\n",
-				Descriptor->channels, Descriptor->sampling_freq, Descriptor->bytes_per_sample);
-	MIXER_DEBUG("  callback %p(%p, ...)\n", Descriptor->callback, Descriptor->user_data);
+	MIXER_DEBUG(" hw_buffer %p (%d bytes)\n", Descriptor->hw_buffer, Descriptor->hw_buffer_size);
+	MIXER_DEBUG(" channels %u sampling freq %u bytes_per_sample %u\n",
+		    Descriptor->channels, Descriptor->sampling_freq, Descriptor->bytes_per_sample);
+	MIXER_DEBUG(" callback %p(%p, ...)\n", Descriptor->callback, Descriptor->user_data);
 	InteractiveClients[InteractiveId].Descriptor = *Descriptor;
 	MIXER_DEBUG("Moving interactive input %d from %s to STOPPED\n",
-				InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+		    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 	InteractiveClients[InteractiveId].State = STOPPED;
 	Status = UpdateGlobalState();
 	if (Status != PlayerNoError)
 	{
 		MIXER_ERROR("Failed to update global state\n");
 		MIXER_DEBUG("Moving interactive input %d from %s to UNCONFIGURED\n",
-					InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		InteractiveClients[InteractiveId].State = UNCONFIGURED;
 		return Status;
 	}
@@ -845,7 +852,7 @@ PlayerStatus_t Mixer_Mme_c::PrepareInteractiveInput(int InteractiveId)
 	if (InteractiveClients[InteractiveId].State == STOPPED)
 	{
 		MIXER_DEBUG("Preparing interactive input %d while in state %s is a no-op\n",
-					InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerNoError;
 	}
 	if (InteractiveClients[InteractiveId].State != STARTING &&
@@ -853,7 +860,7 @@ PlayerStatus_t Mixer_Mme_c::PrepareInteractiveInput(int InteractiveId)
 			InteractiveClients[InteractiveId].State != STOPPING)
 	{
 		MIXER_ERROR("Cannot prepare interactive input %d while in state %s\n",
-					InteractiveId,  LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerError;
 	}
 	if (InteractiveClients[InteractiveId].State == STARTING ||
@@ -870,7 +877,7 @@ PlayerStatus_t Mixer_Mme_c::PrepareInteractiveInput(int InteractiveId)
 		if (i > 1000)
 		{
 			MIXER_ERROR("Time out waiting for interactive input %d to enter STOPPED state\n",
-						InteractiveId);
+				    InteractiveId);
 			// forcibly disconnect
 			InteractiveClients[InteractiveId].State = STOPPED;
 			break;
@@ -900,17 +907,17 @@ PlayerStatus_t Mixer_Mme_c::EnableInteractiveInput(int InteractiveId)
 			InteractiveClients[InteractiveId].State == STARTED)
 	{
 		MIXER_DEBUG("Starting interactive input %d again while in state %s\n",
-					InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerNoError;
 	}
 	if (InteractiveClients[InteractiveId].State != STOPPED)
 	{
 		MIXER_ERROR("Cannot start interactive input %d while in state %s\n",
-					InteractiveId,  LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerError;
 	}
 	MIXER_DEBUG("Moving interactive input %d from %s to STARTING\n",
-				InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+		    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 	InteractiveClients[InteractiveId].State = STARTING;
 	MMENeedsParameterUpdate = true;
 	return PlayerNoError;
@@ -935,18 +942,18 @@ PlayerStatus_t Mixer_Mme_c::DisableInteractiveInput(int InteractiveId)
 			InteractiveClients[InteractiveId].State == STOPPED)
 	{
 		MIXER_DEBUG("Stopping interactive input %d again while in state %s\n",
-					InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerNoError;
 	}
 	if (InteractiveClients[InteractiveId].State != STARTING &&
 			InteractiveClients[InteractiveId].State != STARTED)
 	{
 		MIXER_ERROR("Cannot start interactive input %d while in state %s\n",
-					InteractiveId,  LookupInputState(InteractiveClients[InteractiveId].State));
+			    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 		return PlayerError;
 	}
 	MIXER_DEBUG("Moving interactive input %d from %s to STOPPING\n",
-				InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
+		    InteractiveId, LookupInputState(InteractiveClients[InteractiveId].State));
 	InteractiveClients[InteractiveId].State = STOPPING;
 	return PlayerNoError;
 }
@@ -987,7 +994,7 @@ PlayerStatus_t Mixer_Mme_c::UpdateMixerParameters()
 			Clients[i].State = STARTED;
 			// place the buffer descriptor (especially NumberOfScatterPages) to the 'silent' state.
 			FillOutSilentBuffer(MixerCommand.Command.DataBuffers_p[i],
-								MixerCommand.InputParams.InputParam + i);
+					    MixerCommand.InputParams.InputParam + i);
 		}
 	for (int i = 0; i < MIXER_MAX_INTERACTIVE_CLIENTS; i++)
 		if (InteractiveClients[i].State == STARTING)
@@ -1002,11 +1009,11 @@ PlayerStatus_t Mixer_Mme_c::UpdateMixerParameters()
 ///
 /// Lookup the index into Mixer_Mme_c::Clients of the supplied manifestor.
 ///
-int Mixer_Mme_c::LookupClient(Manifestor_AudioKsound_c * Manifestor)
+int Mixer_Mme_c::LookupClient(Manifestor_AudioKsound_c *Manifestor)
 {
 	int i;
 	for (i = 0; i < MIXER_MAX_CLIENTS && Clients[i].Manifestor != Manifestor; i++)
-		;           // do nothing
+		; // do nothing
 	if (i >= MIXER_MAX_CLIENTS)
 		return -1;
 	return i;
@@ -1079,7 +1086,7 @@ unsigned int Mixer_Mme_c::LookupMixerSamplingFrequency()
 		if (MixerSamplingFrequency)
 		{
 			MIXER_DEBUG("No input dictates mixer frequency (falling back to previous value of %d)\n",
-						MixerSamplingFrequency);
+				    MixerSamplingFrequency);
 			return MixerSamplingFrequency;
 		}
 		MIXER_DEBUG("No input dictates mixer frequency (falling back to 48KHz)\n");
@@ -1185,7 +1192,7 @@ int Mixer_Mme_c::SelectGainBasedOnMuteSettings(int ClientIdOrMixingStage, int No
 							 MIXER_STAGE_POST_MIX == ClientIdOrMixingStage))
 					{
 						MIXER_TRACE("Deploying %s-mix mute due to client %d\n",
-									(MIXER_STAGE_PRE_MIX == ClientIdOrMixingStage ? "pre" : "post"), i);
+							    (MIXER_STAGE_PRE_MIX == ClientIdOrMixingStage ? "pre" : "post"), i);
 						return MutedValue;
 					}
 			break;
@@ -1304,29 +1311,29 @@ PlayerStatus_t Mixer_Mme_c::UpdateGlobalState()
 /// in inappropriate.
 ///
 /// Warning: This method is called by userspace threads that have updated the
-///          mixer controls. There is therefore absolutely no predictability about
-///          when in the startup/shutdown sequences is will be called.
+/// mixer controls. There is therefore absolutely no predictability about
+/// when in the startup/shutdown sequences is will be called.
 ///
 PlayerStatus_t Mixer_Mme_c::UpdatePlayerComponentsModuleParameters()
 {
 	ManifestorStatus_t Status;
 	PlayerStatus_t Result = PlayerNoError;
 	OutputTimerParameterBlock_t ParameterBlockOT;
-	CodecParameterBlock_t       ParameterBlockDRC;
-	CodecParameterBlock_t       ParameterBlockDownmix;
+	CodecParameterBlock_t ParameterBlockDRC;
+	CodecParameterBlock_t ParameterBlockDownmix;
 	// Prepare the A/V offset command
 	ParameterBlockOT.ParameterType = OutputTimerSetNormalizedTimeOffset;
-	ParameterBlockOT.Offset.Value  = OutputConfiguration.master_latency * 1000; // Value is in microseconds
+	ParameterBlockOT.Offset.Value = OutputConfiguration.master_latency * 1000; // Value is in microseconds
 	MIXER_DEBUG("Master A/V sync offset is %lld us\n", ParameterBlockOT.Offset.Value);
 	// Prepare the DRC command
 	ParameterBlockDRC.ParameterType = CodecSpecifyDRC;
-	ParameterBlockDRC.DRC.Enable    = OutputConfiguration.drc_enable; // ON/OFF switch of DRC
-	ParameterBlockDRC.DRC.Type      = OutputConfiguration.drc_type;   // Line/RF/Custom mode
-	ParameterBlockDRC.DRC.HDR       = OutputConfiguration.hdr;        // Boost factor
-	ParameterBlockDRC.DRC.LDR       = OutputConfiguration.ldr;        // Cut   factor
-	MIXER_DEBUG("Master A/V  DRC is {Enable = %d / Type = %d / HDR = %d / LDR = %d} \n",
-				ParameterBlockDRC.DRC.Enable, ParameterBlockDRC.DRC.Type,
-				ParameterBlockDRC.DRC.HDR,  ParameterBlockDRC.DRC.LDR);
+	ParameterBlockDRC.DRC.Enable = OutputConfiguration.drc_enable; // ON/OFF switch of DRC
+	ParameterBlockDRC.DRC.Type = OutputConfiguration.drc_type; // Line/RF/Custom mode
+	ParameterBlockDRC.DRC.HDR = OutputConfiguration.hdr; // Boost factor
+	ParameterBlockDRC.DRC.LDR = OutputConfiguration.ldr; // Cut factor
+	MIXER_DEBUG("Master A/V DRC is {Enable = %d / Type = %d / HDR = %d / LDR = %d} \n",
+		    ParameterBlockDRC.DRC.Enable, ParameterBlockDRC.DRC.Type,
+		    ParameterBlockDRC.DRC.HDR, ParameterBlockDRC.DRC.LDR);
 	// Prepare the downmix command
 	ParameterBlockDownmix.ParameterType = CodecSpecifyDownmix;
 	if (OutputConfiguration.downmix_promotion_enable)
@@ -1338,7 +1345,7 @@ PlayerStatus_t Mixer_Mme_c::UpdatePlayerComponentsModuleParameters()
 			if (CurrentOutmode != OutmodeMain)
 			{
 				MIXER_ERROR("Output topology precludes downmix promotion (%s versus %s)\n",
-							LookupAudioMode(OutmodeMain), LookupAudioMode(CurrentOutmode));
+					    LookupAudioMode(OutmodeMain), LookupAudioMode(CurrentOutmode));
 				OutmodeMain = ACC_MODE_ID;
 				break;
 			}
@@ -1367,21 +1374,21 @@ PlayerStatus_t Mixer_Mme_c::UpdatePlayerComponentsModuleParameters()
 		if (Clients[i].State != DISCONNECTED && Clients[i].State != STOPPED && Clients[i].State != STOPPING)
 		{
 			Status = Clients[i].Manifestor->SetModuleParameters(sizeof(ParameterBlockOT),
-					 (void *) &ParameterBlockOT);
+									    (void *) &ParameterBlockOT);
 			if (ManifestorNoError != Status)
 			{
 				Result = PlayerError;
 				break;
 			}
 			Status = Clients[i].Manifestor->SetModuleParameters(sizeof(ParameterBlockDRC),
-					 (void *) &ParameterBlockDRC);
+									    (void *) &ParameterBlockDRC);
 			if (ManifestorNoError != Status)
 			{
 				Result = PlayerError;
 				break;
 			}
 			Status = Clients[i].Manifestor->SetModuleParameters(sizeof(ParameterBlockDownmix),
-					 (void *) &ParameterBlockDownmix);
+									    (void *) &ParameterBlockDownmix);
 			if (ManifestorNoError != Status)
 			{
 				Result = PlayerError;
@@ -1436,7 +1443,7 @@ PlayerStatus_t Mixer_Mme_c::StartPlaybackThread()
 	}
 	PlaybackThreadRunning = true;
 	if (OS_CreateThread(&PlaybackThreadId, PlaybackThreadStub, this, "Player_Aud_Mixer",
-						AudioConfiguration.MixerPriority) != OS_NO_ERROR)
+			    AudioConfiguration.MixerPriority) != OS_NO_ERROR)
 	{
 		MIXER_ERROR("Unable to create mixer playback thread\n");
 		PlaybackThreadRunning = false;
@@ -1499,7 +1506,7 @@ PlayerStatus_t Mixer_Mme_c::InitializePcmPlayer()
 		char *alsaname = ActualTopology.card[n].alsaname;
 		unsigned int major, minor;
 		// TODO: This is a hack version of the card name parsing (only accepts hw:X,Y form).
-		//       The alsa name handling should be moved into ksound.
+		// The alsa name handling should be moved into ksound.
 		if (6 != strlen(alsaname) || 0 != strncmp(alsaname, "hw:", 3) ||
 				alsaname[3] < '0' || alsaname[4] != ',' || alsaname[5] < '0')
 		{
@@ -1564,6 +1571,16 @@ PlayerStatus_t Mixer_Mme_c::CommitMappedSamples()
 {
 	PlayerStatus_t Status;
 	unsigned long long DisplayTimeOfNextCommit;
+	/*
+	 //copy output to other PCM Players' memory
+	 if(ActualTopology.num_cards>1) {
+	 for(unsigned int n=1;n<ActualTopology.num_cards;n++) {
+	 memcpy(PcmPlayerMappedSamples[n],
+	 PcmPlayerMappedSamples[0],
+	 PcmPlayer[n]->SamplesToBytes(PcmPlayerSurfaceParameters.PeriodSize));
+	 }
+	 }
+	*/
 	for (unsigned int n = 0; n < ActualNumDownstreamCards; n++)
 	{
 		PcmPlayerMappedSamples[n] = NULL;
@@ -1657,9 +1674,9 @@ PlayerStatus_t Mixer_Mme_c::UpdatePcmPlayerParameters()
 		NewSurfaceParameters[n].PeriodSize = NominalMixerGranuleSize; //LookupOutputNumberOfSamples( n, NominalMixerGranuleSize, ActualSampleRateHz, NominalOutputSamplingFrequency );
 		NewSurfaceParameters[n].NumPeriods = MIXER_NUM_PERIODS;
 		MIXER_DEBUG("Card %d: #Samples: %d Sampling Rate: %d, # channels: %d\n", n,
-					NewSurfaceParameters[n].PeriodSize,
-					NewSurfaceParameters[n].ActualSampleRateHz,
-					NewSurfaceParameters[n].PeriodParameters.ChannelCount);
+			    NewSurfaceParameters[n].PeriodSize,
+			    NewSurfaceParameters[n].ActualSampleRateHz,
+			    NewSurfaceParameters[n].PeriodParameters.ChannelCount);
 	}
 	for (unsigned int n = 0; n < ActualNumDownstreamCards; n++)
 	{
@@ -1689,7 +1706,7 @@ PlayerStatus_t Mixer_Mme_c::UpdatePcmPlayerParameters()
 	}
 	PcmPlayerSurfaceParameters = NewSurfaceParameters[0];
 	MIXER_DEBUG("PcmPlayer parameters - NumPeriods %u PeriodSize %u\n",
-				PcmPlayerSurfaceParameters.NumPeriods, PcmPlayerSurfaceParameters.PeriodSize);
+		    PcmPlayerSurfaceParameters.NumPeriods, PcmPlayerSurfaceParameters.PeriodSize);
 	if (PcmPlayerSurfaceParameters.PeriodSize != NominalMixerGranuleSize)
 	{
 		MIXER_ERROR("Invalid PCM player period size %u\n", PcmPlayerSurfaceParameters.PeriodSize);
@@ -1717,8 +1734,8 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 	MME_ERROR MMEStatus;
 	MME_TransformerCapability_t Capability = { 0 };
 	MME_LxMixerTransformerInfo_t MixerInfo = { 0 };
-	// Ensure that we clear down the MMEInitParams
-	MMEInitParams = (MME_TransformerInitParams_t)
+	// Ensure that we clear down the InitParams
+	InitParams = (MME_TransformerInitParams_t)
 	{
 		0
 	};
@@ -1744,7 +1761,7 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 	// Dump the transformer capability structure
 	MIXER_DEBUG("\tMixerCapabilityFlags = %08x\n", MixerInfo.MixerCapabilityFlags);
 	MIXER_DEBUG("\tPcmProcessorCapabilityFlags[0..1] = %08x %08x\n",
-				MixerInfo.PcmProcessorCapabilityFlags[0], MixerInfo.PcmProcessorCapabilityFlags[1]);
+		    MixerInfo.PcmProcessorCapabilityFlags[0], MixerInfo.PcmProcessorCapabilityFlags[1]);
 	//
 	// Verify that is it fit for purpose
 	//
@@ -1753,6 +1770,8 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 		MIXER_ERROR("Detected structure size skew between firmware and driver\n");
 		return PlayerError;
 	}
+	// TODO: should check that interactive audio is supported
+//
 	//
 	// Initialize other components whose lifetime is linked to the transformer
 	//
@@ -1770,15 +1789,16 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 		OS_SemaphoreTerminate(&MMECallbackSemaphore);
 		return PlayerError;
 	}
+//
 	//
 	// Initialize the transformer
 	//
-	MMEInitParams.StructSize = sizeof(MMEInitParams);
-	MMEInitParams.Priority = MME_PRIORITY_ABOVE_NORMAL; // we are more important than a decode...
-	MMEInitParams.Callback = MMECallbackStub;
-	MMEInitParams.CallbackUserData = static_cast<void*>(this);
-	MMEInitParams.TransformerInitParamsSize = sizeof(MixerParams);
-	MMEInitParams.TransformerInitParams_p = &MixerParams;
+	InitParams.StructSize = sizeof(InitParams);
+	InitParams.Priority = MME_PRIORITY_ABOVE_NORMAL; // we are more important than a decode...
+	InitParams.Callback = MMECallbackStub;
+	InitParams.CallbackUserData = (void *) this;
+	InitParams.TransformerInitParamsSize = sizeof(MixerParams);
+	InitParams.TransformerInitParams_p = &MixerParams;
 	MixerParams.StructSize = sizeof(MixerParams);
 	MixerParams.CacheFlush = ACC_MME_ENABLED;
 	MixerParams.NbInput = MIXER_MAX_INPUTS;
@@ -1792,15 +1812,15 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 	// choose the output mode (either the sampling frequency of the mixer or a 'floating' value that can
 	// be specified later)
 	MixerParams.OutputSamplingFreq = (OutputConfiguration.fixed_output_frequency == 1 ?
-									  ACC_FS48k : (eAccFsCode) AUDIOMIXER_OVERRIDE_OUTFS);
+					  ACC_FS48k : (eAccFsCode) AUDIOMIXER_OVERRIDE_OUTFS);
 	InitializedSamplingFrequency = TranslateDiscreteSamplingFrequencyToInteger(MixerParams.OutputSamplingFreq);
 	// provide sane default values (to ensure they are never zero when consumed)
 	MixerSamplingFrequency = NominalOutputSamplingFrequency = LookupMixerSamplingFrequency();
 	MIXER_DEBUG("MixerParams.OutputSamplingFreq = %s (%d)\n",
-				LookupDiscreteSamplingFrequency(MixerParams.OutputSamplingFreq),
-				PrimaryAudioParameters.Source.SampleRateHz);
+		    LookupDiscreteSamplingFrequency(MixerParams.OutputSamplingFreq),
+		    PrimaryAudioParameters.Source.SampleRateHz);
 	MMENeedsParameterUpdate = false;
-	Status = FillOutTransformerGlobalParameters(&MixerParams.GlobalParams);
+	Status = FillOutTransformerGlobalParameters(&(MixerParams.GlobalParams));
 	if (Status != PlayerNoError)
 	{
 		MIXER_ERROR("Could not fill out the transformer global parameters\n");
@@ -1810,8 +1830,8 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 	}
 	//As dynamic, we need to fixup the sizes we've declared
 	MixerParams.StructSize -= (sizeof(MixerParams.GlobalParams) - MixerParams.GlobalParams.StructSize);
-	MMEInitParams.TransformerInitParamsSize = MixerParams.StructSize;
-	MMEStatus = MME_InitTransformer(AudioConfiguration.TransformName, &MMEInitParams, &MMEHandle);
+	InitParams.TransformerInitParamsSize = MixerParams.StructSize;
+	MMEStatus = MME_InitTransformer(AudioConfiguration.TransformName, &InitParams, &MMEHandle);
 	if (MMEStatus != MME_SUCCESS)
 	{
 		MIXER_ERROR("Failed to initialize %s (%08x).\n", AudioConfiguration.TransformName, MMEStatus);
@@ -1819,6 +1839,7 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 		OS_SemaphoreTerminate(&MMEParamCallbackSemaphore);
 		return PlayerError;
 	}
+//
 	MMEInitialized = true;
 	MMECallbackThreadBoosted = false;
 	return PlayerNoError;
@@ -1835,13 +1856,14 @@ PlayerStatus_t Mixer_Mme_c::InitializeMMETransformer(void)
 PlayerStatus_t Mixer_Mme_c::TerminateMMETransformer(void)
 {
 	MME_ERROR Status;
+	int TimeToWait;
+//
 	if (MMEInitialized)
 	{
 		//
 		// Wait a reasonable time for all mme transactions to terminate
 		//
-		// CAUTION about signed int !!
-		int32_t TimeToWait(MIXER_MAX_WAIT_FOR_MME_COMMAND_COMPLETION);
+		TimeToWait = MIXER_MAX_WAIT_FOR_MME_COMMAND_COMPLETION;
 		for (;;)
 		{
 			Status = MME_TermTransformer(MMEHandle);
@@ -1894,7 +1916,7 @@ PlayerStatus_t Mixer_Mme_c::SendMMEMixCommand()
 /// Block until the MME delivers its callback and update the client structures.
 ///
 /// \todo Review this method for unmuted stops (I think we need an extra STOPPING state so we are
-///       aware whether or not soft mute has been applied yet).
+/// aware whether or not soft mute has been applied yet).
 ///
 PlayerStatus_t Mixer_Mme_c::WaitForMMECallback()
 {
@@ -1904,7 +1926,7 @@ PlayerStatus_t Mixer_Mme_c::WaitForMMECallback()
 	if (MixerCommand.Command.CmdStatus.State != MME_COMMAND_COMPLETED)
 	{
 		MIXER_ERROR("MME command failed (State %d Error %d)\n",
-					MixerCommand.Command.CmdStatus.State, MixerCommand.Command.CmdStatus.Error);
+			    MixerCommand.Command.CmdStatus.State, MixerCommand.Command.CmdStatus.Error);
 	}
 	Status = UpdateOutputBuffer(MixerCommand.Command.DataBuffers_p[OutputBufferIndex]);
 	if (Status != PlayerNoError)
@@ -2016,11 +2038,12 @@ void Mixer_Mme_c::ResetMixingMetadata()
 ///
 /// Populate a pointer to the mixer's global parameters structure.
 ///
-PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTransformerGlobalParams_Extended_t * GlobalParams)
+PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTransformerGlobalParams_Extended_t *
+							       GlobalParams)
 {
 	struct snd_pseudo_mixer_settings &Configuration = OutputConfiguration;
 //
-	// Set the global reference for the actual mixer frequency and granule size.
+	// set the global reference for the actual mixer frequency and granule size
 	MixerSamplingFrequency = LookupMixerSamplingFrequency();
 	MixerGranuleSize = LookupMixerGranuleSize(MixerSamplingFrequency);
 	UpdateMixingMetadata();
@@ -2028,16 +2051,16 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 	memset(GlobalParams, 0, sizeof(*GlobalParams));
 	GlobalParams->StructSize = sizeof(*GlobalParams);
 //
-	MME_LxMixerInConfig_t & InConfig = GlobalParams->InConfig;
+	MME_LxMixerInConfig_t &InConfig = GlobalParams->InConfig;
 	InConfig.Id = ACC_RENDERER_MIXER_ID;
 	InConfig.StructSize = sizeof(InConfig);
 	for (int i = 0; i < MIXER_MAX_CLIENTS; i++)
 	{
 		// b[7..4] :: Input Type | b[3..0] :: Input Number
 		InConfig.Config[i].InputId = (ACC_MIXER_LINEARISER << 4) + i;
-		InConfig.Config[i].Alpha = 0xffff;  // Mixing Coefficient for Each Input
-		InConfig.Config[i].Mono2Stereo = ACC_MME_TRUE;  // [enum eAccBoolean] Mono 2 Stereo upmix of a mono input
-		InConfig.Config[i].WordSize = ACC_WS32;     // Input WordSize : ACC_WS32 / ACC_WS16
+		InConfig.Config[i].Alpha = 0xffff; // Mixing Coefficient for Each Input
+		InConfig.Config[i].Mono2Stereo = ACC_MME_TRUE; // [enum eAccBoolean] Mono 2 Stereo upmix of a mono input
+		InConfig.Config[i].WordSize = ACC_WS32; // Input WordSize : ACC_WS32 / ACC_WS16
 		// To which output channel is mixer the 1st channel of
 		// this input stream
 		InConfig.Config[i].FirstOutputChan = ACC_MAIN_LEFT;
@@ -2047,15 +2070,15 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 		{
 			ParsedAudioParameters_t &AudioParameters = Clients[i].Parameters;
 			InConfig.Config[i].NbChannels = AudioParameters.Source.ChannelCount; // Interleaving of the input pcm buffers
-			InConfig.Config[i].AudioMode = (eAccAcMode) AudioParameters.Organisation;    //  Channel Configuration
+			InConfig.Config[i].AudioMode = (eAccAcMode) AudioParameters.Organisation; // Channel Configuration
 			InConfig.Config[i].SamplingFreq =
 				TranslateIntegerSamplingFrequencyToDiscrete(AudioParameters.Source.SampleRateHz);
-			MIXER_DEBUG("Input %d: AudioMode %s (%d)  SamplingFreq %s (%d)\n",
-						i,
-						LookupAudioMode(InConfig.Config[i].AudioMode),
-						InConfig.Config[i].AudioMode,
-						LookupDiscreteSamplingFrequency(InConfig.Config[i].SamplingFreq),
-						AudioParameters.Source.SampleRateHz);
+			MIXER_DEBUG("Input %d: AudioMode %s (%d) SamplingFreq %s (%d)\n",
+				    i,
+				    LookupAudioMode(InConfig.Config[i].AudioMode),
+				    InConfig.Config[i].AudioMode,
+				    LookupDiscreteSamplingFrequency(InConfig.Config[i].SamplingFreq),
+				    AudioParameters.Source.SampleRateHz);
 		}
 		else
 		{
@@ -2063,10 +2086,10 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 			InConfig.Config[i].NbChannels = 8;
 			InConfig.Config[i].AudioMode = ACC_MODE20;
 			InConfig.Config[i].SamplingFreq = TranslateIntegerSamplingFrequencyToDiscrete(
-												  MixerSamplingFrequency);;
+								  MixerSamplingFrequency);;
 		}
 	}
-	MME_MixerInputConfig_t & CodedDataInConfig = InConfig.Config[MIXER_CODED_DATA_INPUT];
+	MME_MixerInputConfig_t &CodedDataInConfig = InConfig.Config[MIXER_CODED_DATA_INPUT];
 	CodedDataInConfig.InputId = 2;
 	CodedDataInConfig.NbChannels = 2;
 	CodedDataInConfig.Alpha = 0; // N/A
@@ -2090,7 +2113,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 			break;
 		}
 	}
-	MME_MixerInputConfig_t & IAudioInConfig = InConfig.Config[MIXER_INTERACTIVE_INPUT];
+	MME_MixerInputConfig_t &IAudioInConfig = InConfig.Config[MIXER_INTERACTIVE_INPUT];
 	IAudioInConfig.InputId = (ACC_MIXER_IAUDIO << 4) + 3;
 	IAudioInConfig.NbChannels = InConfig.Config[PrimaryClient].NbChannels; // same as primary audio
 	IAudioInConfig.Alpha = 0xffff;
@@ -2098,14 +2121,14 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 	IAudioInConfig.WordSize = ACC_WS16;
 	IAudioInConfig.AudioMode = ACC_MODE_ID;
 	IAudioInConfig.SamplingFreq = TranslateIntegerSamplingFrequencyToDiscrete(
-									  InteractiveClients[0].Descriptor.sampling_freq ?
-									  InteractiveClients[0].Descriptor.sampling_freq :
-									  MixerSamplingFrequency);
+					      InteractiveClients[0].Descriptor.sampling_freq ?
+					      InteractiveClients[0].Descriptor.sampling_freq :
+					      MixerSamplingFrequency);
 	IAudioInConfig.FirstOutputChan = ACC_MAIN_LEFT;
 	IAudioInConfig.AutoFade = ACC_MME_FALSE; // no point when it plays all the time
 	IAudioInConfig.Config = 0;
 //
-	MME_LxMixerGainSet_t & InGainConfig = GlobalParams->InGainConfig;
+	MME_LxMixerGainSet_t &InGainConfig = GlobalParams->InGainConfig;
 	InGainConfig.Id = ACC_RENDERER_MIXER_BD_GAIN_ID;
 	InGainConfig.StructSize = sizeof(InGainConfig);
 	for (unsigned int i = 0; i < MIXER_MAX_INPUTS; i++)
@@ -2127,7 +2150,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 		}
 	}
 //
-	MME_LxMixerPanningSet_t & InPanningConfig = GlobalParams->InPanningConfig;
+	MME_LxMixerPanningSet_t &InPanningConfig = GlobalParams->InPanningConfig;
 	InPanningConfig.Id = ACC_RENDERER_MIXER_BD_PANNING_ID;
 	InPanningConfig.StructSize = sizeof(InPanningConfig);
 	for (unsigned int i = 0; i < MIXER_MAX_INPUTS; i++)
@@ -2140,7 +2163,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 				InPanningConfig.PanningSet[i].Panning[j] = Configuration.secondary_pan[j];
 	}
 //
-	MME_LxMixerInIAudioConfig_t & InIaudioConfig = GlobalParams->InIaudioConfig;
+	MME_LxMixerInIAudioConfig_t &InIaudioConfig = GlobalParams->InIaudioConfig;
 	InIaudioConfig.Id = ACC_RENDERER_MIXER_BD_IAUDIO_ID;
 	InIaudioConfig.StructSize = sizeof(InIaudioConfig);
 	InIaudioConfig.NbInteractiveAudioInput = MIXER_MAX_INTERACTIVE_CLIENTS;
@@ -2167,14 +2190,14 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 		}
 	}
 //
-	MME_LxMixerBDGeneral_t & InBDGenConfig = GlobalParams->InBDGenConfig;
+	MME_LxMixerBDGeneral_t &InBDGenConfig = GlobalParams->InBDGenConfig;
 	InBDGenConfig.Id = ACC_RENDERER_MIXER_BD_GENERAL_ID;
 	InBDGenConfig.StructSize = sizeof(InBDGenConfig);
 	InBDGenConfig.PostMixGain = Configuration.post_mix_gain;
 	InBDGenConfig.GainSmoothEnable = ACC_MME_TRUE;
 	InBDGenConfig.OutputLimiterEnable = ACC_MME_FALSE;
 //
-	MME_LxMixerOutConfig_t & OutConfig = GlobalParams->OutConfig;
+	MME_LxMixerOutConfig_t &OutConfig = GlobalParams->OutConfig;
 	OutConfig.Id = ACC_RENDERER_MIXER_OUTPUT_CONFIG_ID;
 	OutConfig.StructSize = sizeof(OutConfig);
 	OutConfig.NbOutputSamplesPerTransform = MixerGranuleSize;
@@ -2221,7 +2244,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutTransformerGlobalParameters(MME_LxMixerBDTran
 PcmPlayer_c::OutputEncoding Mixer_Mme_c::LookupOutputEncoding(int dev_num, unsigned int freq)
 {
 	// this boolean tells whether the output is connected to the hdmi cell
-	bool IsConnectedToHdmi        = ActualTopology.card[dev_num].flags & SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING;
+	bool IsConnectedToHdmi = ActualTopology.card[dev_num].flags & SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING;
 	// this boolean tells whether the output is connected to a spdif player
 	bool IsConnectedToSpdifPlayer = ActualTopology.card[dev_num].flags & SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING;
 	// this boolean tells whether the output is a spdif output (i.e. connected to a spdif player, but not to hdmi)
@@ -2233,8 +2256,8 @@ PcmPlayer_c::OutputEncoding Mixer_Mme_c::LookupOutputEncoding(int dev_num, unsig
 				 (OutputConfiguration.spdif_bypass && IsConnectedToSpdifOnly)))
 		{
 			MIXER_DEBUG("Output %d (%s) is bypassed (%s)\n",
-						dev_num, ActualTopology.card[dev_num].alsaname,
-						PcmPlayer_c::LookupOutputEncoding(PrimaryCodedDataType));
+				    dev_num, ActualTopology.card[dev_num].alsaname,
+				    PcmPlayer_c::LookupOutputEncoding(PrimaryCodedDataType));
 			return PrimaryCodedDataType;
 		}
 		enum snd_pseudo_mixer_spdif_encoding RequiredEncoding = IsConnectedToSpdifOnly ? OutputConfiguration.spdif_encoding : OutputConfiguration.hdmi_encoding;
@@ -2242,45 +2265,45 @@ PcmPlayer_c::OutputEncoding Mixer_Mme_c::LookupOutputEncoding(int dev_num, unsig
 		{
 			case SND_PSEUDO_MIXER_SPDIF_ENCODING_PCM:
 				MIXER_DEBUG("Output %d (%s) is PCM\n",
-							dev_num, ActualTopology.card[dev_num].alsaname);
+					    dev_num, ActualTopology.card[dev_num].alsaname);
 				return PcmPlayer_c::OUTPUT_IEC60958;
 			case SND_PSEUDO_MIXER_SPDIF_ENCODING_AC3:
 				if (freq == 0 || (freq >= MIXER_MIN_FREQ_AC3_ENCODER && freq <= MIXER_MAX_FREQ_AC3_ENCODER))
 				{
 					MIXER_DEBUG("Output %d (%s) is AC3\n",
-								dev_num, ActualTopology.card[dev_num].alsaname);
+						    dev_num, ActualTopology.card[dev_num].alsaname);
 					return PcmPlayer_c::OUTPUT_AC3;
 				}
 				else
 				{
 					MIXER_DEBUG("Output %d (%s) is PCM (because AC3 encoder doesn't support %d hz\n",
-								dev_num, ActualTopology.card[dev_num].alsaname, freq);
+						    dev_num, ActualTopology.card[dev_num].alsaname, freq);
 					return PcmPlayer_c::OUTPUT_IEC60958;
 				}
 			case SND_PSEUDO_MIXER_SPDIF_ENCODING_DTS:
 				if (freq == 0 || (freq >= MIXER_MIN_FREQ_DTS_ENCODER && freq <= MIXER_MAX_FREQ_DTS_ENCODER))
 				{
 					MIXER_DEBUG("Output %d (%s) is DTS\n",
-								dev_num, ActualTopology.card[dev_num].alsaname);
+						    dev_num, ActualTopology.card[dev_num].alsaname);
 					return PcmPlayer_c::OUTPUT_DTS;
 				}
 				else
 				{
 					MIXER_DEBUG("Output %d (%s) is PCM (because DTS encoder doesn't support %d hz\n",
-								dev_num, ActualTopology.card[dev_num].alsaname, freq);
+						    dev_num, ActualTopology.card[dev_num].alsaname, freq);
 					return PcmPlayer_c::OUTPUT_IEC60958;
 				}
 			case SND_PSEUDO_MIXER_SPDIF_ENCODING_FATPIPE:
 				if (ActualTopology.card[dev_num].flags & SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
 				{
 					MIXER_DEBUG("Output %d (%s) is FatPipe\n",
-								dev_num, ActualTopology.card[dev_num].alsaname);
+						    dev_num, ActualTopology.card[dev_num].alsaname);
 					return PcmPlayer_c::OUTPUT_FATPIPE;
 				}
 			/*FALLTHRU*/
 			default:
 				MIXER_DEBUG("Output %d (%s) has an invalid encoding (assuming PCM)\n",
-							dev_num, ActualTopology.card[dev_num].alsaname);
+					    dev_num, ActualTopology.card[dev_num].alsaname);
 				return PcmPlayer_c::OUTPUT_IEC60958;
 		}
 	}
@@ -2299,10 +2322,10 @@ PcmPlayer_c::OutputEncoding Mixer_Mme_c::LookupOutputEncoding(int dev_num, unsig
 /// the output topology.
 ///
 /// \todo Strictly speaking there is a cyclic dependency between
-///       Mixer_Mme_c::LookupOutputSamplingFrequency() and
-///       Mixer_Mme_c::LookupOutputEncoding(). If the output has to
-///       fallback to LPCM there is no need to clamp the frequency
-///       below 48khz.
+/// Mixer_Mme_c::LookupOutputSamplingFrequency() and
+/// Mixer_Mme_c::LookupOutputEncoding(). If the output has to
+/// fallback to LPCM there is no need to clamp the frequency
+/// below 48khz.
 ///
 unsigned int Mixer_Mme_c::LookupOutputSamplingFrequency(int dev_num)
 {
@@ -2342,8 +2365,8 @@ unsigned int Mixer_Mme_c::LookupOutputSamplingFrequency(int dev_num)
 	// maximum frequency is not impossible to honour)
 	if (Freq < MIXER_MIN_FREQUENCY)
 		MIXER_ERROR("Unexpected mixer output frequency %d (%s)\n",
-					Freq, (MixerFreq < MIXER_MIN_FREQUENCY ? "pre-mix SRC did not deploy" :
-						   "max_freq is too aggressive"));
+			    Freq, (MixerFreq < MIXER_MIN_FREQUENCY ? "pre-mix SRC did not deploy" :
+				   "max_freq is too aggressive"));
 	while (Freq < MIXER_MIN_FREQUENCY)
 		Freq *= 2;
 	if (Freq != MixerFreq)
@@ -2386,7 +2409,7 @@ unsigned int Mixer_Mme_c::LookupOutputNumberOfChannels(int dev_num)
 /// arbitrary repetition period
 ///
 unsigned int Mixer_Mme_c::LookupOutputNumberOfSamples(int dev_num, unsigned int NominalMixerGranuleSize,
-		unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency)
+						      unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency)
 {
 	PcmPlayer_c::OutputEncoding Encoding = LookupOutputEncoding(dev_num);
 	unsigned int ClockRatio, NumberOfSamples;
@@ -2417,7 +2440,7 @@ unsigned int Mixer_Mme_c::LookupOutputNumberOfSamples(int dev_num, unsigned int 
 /// a separate method.
 ///
 inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
-	MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams, int dev_num, bool EnableDMix)
+	MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams, int dev_num, bool EnableDMix)
 {
 	unsigned int min_index = 0, max_index = 0, mid_index = 0;
 	uint64_t TargetSortValue = 0, CurrentSortValue = 0;
@@ -2430,26 +2453,30 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 		uint32_t n;
 	} TargetOutputId, TargetInputId, OutputId, InputId;
 	// Initialize the donwmixer structure before population
-	MME_DMixGlobalParams_t & DMix   = PcmParams.Dmix;
-	DMix.Id                 = PCMPROCESS_SET_ID(ACC_PCM_DMIX_ID, dev_num);
-	DMix.Apply              = (EnableDMix ? ACC_MME_ENABLED : ACC_MME_DISABLED);
-	DMix.StructSize             = sizeof(DMix);
-	DMix.Config[DMIX_USER_DEFINED]  = ACC_MME_FALSE;
-	DMix.Config[DMIX_STEREO_UPMIX]  = ACC_MME_FALSE;
-	DMix.Config[DMIX_MONO_UPMIX]    = ACC_MME_FALSE;
-	DMix.Config[DMIX_MEAN_SURROUND]     = ACC_MME_FALSE;
-	DMix.Config[DMIX_SECOND_STEREO]     = ACC_MME_FALSE;
-	DMix.Config[DMIX_MIX_LFE]       = ACC_MME_FALSE;
-	DMix.Config[DMIX_NORMALIZE]     = ACC_MME_TRUE;
-	DMix.Config[DMIX_NORM_IDX]      = 0;
-	DMix.Config[DMIX_DIALOG_ENHANCE]    = ACC_MME_FALSE;
+	MME_DMixGlobalParams_t &DMix = PcmParams.Dmix;
+	DMix.Id = PCMPROCESS_SET_ID(ACC_PCM_DMIX_ID, dev_num);
+	DMix.Apply = (EnableDMix ? ACC_MME_ENABLED : ACC_MME_DISABLED);
+	DMix.StructSize = sizeof(DMix);
+	DMix.Config[DMIX_USER_DEFINED] = ACC_MME_FALSE;
+	DMix.Config[DMIX_STEREO_UPMIX] = ACC_MME_FALSE;
+	DMix.Config[DMIX_MONO_UPMIX] = ACC_MME_FALSE;
+	DMix.Config[DMIX_MEAN_SURROUND] = ACC_MME_FALSE;
+	DMix.Config[DMIX_SECOND_STEREO] = ACC_MME_FALSE;
+	DMix.Config[DMIX_MIX_LFE] = ACC_MME_FALSE;
+	DMix.Config[DMIX_NORMALIZE] = ACC_MME_TRUE;
+	DMix.Config[DMIX_NORM_IDX] = 0;
+	DMix.Config[DMIX_DIALOG_ENHANCE] = ACC_MME_FALSE;
+	// table already initialized to null
+	//for (int i=0; i<DMIX_NB_IN_CHANNELS; i++)
+	//for (int j=0; j<DMIX_NB_IN_CHANNELS; j++)
+	// DMix.MainMixTable[i][j] = 0000;
 	PcmParams.StructSize += sizeof(DMix);
 	// if the downmixer isn't enabled we're done
 	if (!EnableDMix)
 		return;
 	// get output and input audio modes
-	enum eAccAcMode OutputMode  = (enum eAccAcMode) PcmParams.CMC.Config[CMC_OUTMODE_MAIN];
-	enum eAccAcMode InputMode   = LookupMixerAudioMode();
+	enum eAccAcMode OutputMode = (enum eAccAcMode) PcmParams.CMC.Config[CMC_OUTMODE_MAIN];
+	enum eAccAcMode InputMode = LookupMixerAudioMode();
 	MIXER_ASSERT(ACC_MODE_ID == PcmParams.CMC.Config[CMC_OUTMODE_AUX]); // no auxillary output at the moment
 	/* STEREO INPUT AND ALL SPEAKER ENABLED */
 	if ((InputMode == ACC_MODE20) && (OutputConfiguration.all_speaker_stereo_enable))
@@ -2469,13 +2496,13 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 			DMix.MainMixTable[4][1] = Q15_UNITY / 2;
 		}
 		MIXER_DEBUG("Used custom UpMix table for %s to %s\n",
-					LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
+			    LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
 		for (int i = 0; i < DMIX_NB_IN_CHANNELS; i++)
 			MIXER_DEBUG("%04x %04x %04x %04x %04x %04x %04x %04x\n",
-						DMix.MainMixTable[i][0], DMix.MainMixTable[i][1],
-						DMix.MainMixTable[i][2], DMix.MainMixTable[i][3],
-						DMix.MainMixTable[i][4], DMix.MainMixTable[i][5],
-						DMix.MainMixTable[i][6], DMix.MainMixTable[i][7]);
+				    DMix.MainMixTable[i][0], DMix.MainMixTable[i][1],
+				    DMix.MainMixTable[i][2], DMix.MainMixTable[i][3],
+				    DMix.MainMixTable[i][4], DMix.MainMixTable[i][5],
+				    DMix.MainMixTable[i][6], DMix.MainMixTable[i][7]);
 		return;
 	}
 	/* OTHER CASES */
@@ -2497,8 +2524,8 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 	{
 		// Note: (max_index + min_index) / 2 is not overflow-safe
 		mid_index = min_index + ((max_index - min_index) / 2);
-		InputId.ca       = DownmixFirmware->index[mid_index].input_id;
-		OutputId.ca      = DownmixFirmware->index[mid_index].output_id;
+		InputId.ca = DownmixFirmware->index[mid_index].input_id;
+		OutputId.ca = DownmixFirmware->index[mid_index].output_id;
 		CurrentSortValue = ((uint64_t) InputId.n << 32) + OutputId.n;
 		if (CurrentSortValue < TargetSortValue)
 			min_index = mid_index + 1;
@@ -2507,8 +2534,8 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 	}
 	MIXER_ASSERT(min_index == max_index);
 	// regenerate the sort value; it is state if CurrentSortValue < TargetSortValue during final iteration
-	InputId.ca       = DownmixFirmware->index[min_index].input_id;
-	OutputId.ca      = DownmixFirmware->index[min_index].output_id;
+	InputId.ca = DownmixFirmware->index[min_index].input_id;
+	OutputId.ca = DownmixFirmware->index[min_index].output_id;
 	CurrentSortValue = ((uint64_t) InputId.n << 32) + OutputId.n;
 	// malleable surface handling (a malleable output surface can dynamically change its
 	// channel topology depending on the data being presented).
@@ -2525,7 +2552,7 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 	{
 		OutputMode = TranslateChannelAssignmentToAudioMode(OutputId.ca);
 		MIXER_TRACE("Downmix firmware requested %s as malleable output surface\n",
-					LookupAudioMode(OutputMode));
+			    LookupAudioMode(OutputMode));
 		// update the CMC configuration with the value found in the firmware
 		PcmParams.CMC.Config[CMC_OUTMODE_MAIN] = OutputMode;
 		// update the target value since now we know what we were looking for
@@ -2536,27 +2563,27 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 	{
 		struct snd_pseudo_mixer_downmix_index *index = DownmixFirmware->index + min_index;
 		snd_pseudo_mixer_downmix_Q15 *data = (snd_pseudo_mixer_downmix_Q15 *)(DownmixFirmware->index +
-											 DownmixFirmware->header.num_index_entries);
+										      DownmixFirmware->header.num_index_entries);
 		snd_pseudo_mixer_downmix_Q15 *table = data + index->offset;
 		DMix.Config[DMIX_USER_DEFINED] = ACC_MME_TRUE;
 		for (int x = 0; x < index->output_dimension; x++)
 			for (int y = 0; y < index->input_dimension; y++)
 				DMix.MainMixTable[x][y] = table[x * index->input_dimension + y];
 		MIXER_DEBUG("Found custom downmix table for %s to %s\n",
-					LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
+			    LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
 		for (int i = 0; i < DMIX_NB_IN_CHANNELS; i++)
 			MIXER_DEBUG("%04x %04x %04x %04x %04x %04x %04x %04x\n",
-						DMix.MainMixTable[i][0], DMix.MainMixTable[i][1],
-						DMix.MainMixTable[i][2], DMix.MainMixTable[i][3],
-						DMix.MainMixTable[i][4], DMix.MainMixTable[i][5],
-						DMix.MainMixTable[i][6], DMix.MainMixTable[i][7]);
+				    DMix.MainMixTable[i][0], DMix.MainMixTable[i][1],
+				    DMix.MainMixTable[i][2], DMix.MainMixTable[i][3],
+				    DMix.MainMixTable[i][4], DMix.MainMixTable[i][5],
+				    DMix.MainMixTable[i][6], DMix.MainMixTable[i][7]);
 	}
 	else
 	{
 		// not an error but certainly worthy of note
 		if (TraceDownmixLookups)
 			MIXER_TRACE("Downmix firmware has no entry for %s to %s - using defaults\n",
-						LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
+				    LookupAudioMode(InputMode), LookupAudioMode(OutputMode));
 	}
 }
 
@@ -2567,9 +2594,9 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 /// Contract: The PcmParams structure is zeroed before population. At the time
 /// it is handed to this method it may already have been partially filled in.
 ///
-/// This method is, semantically, part of FillOutDevicePcmParameters() (hence
-/// it is inlined) but is quite complex enough to justify splitting it out into
-/// a separate method.
+/// This method is, semanticlly, part of FillOutDevicePcmParameters() (hence
+/// it is inlined) but is quite complex enough to justify spliting it out into
+/// a seperate method.
 ///
 /// The primary responsibility of the function is to set dynamically changing
 /// fields (such as the sample rate), static fields are provided by userspace.
@@ -2580,14 +2607,14 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 /// to validate their correctness.
 ///
 inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
-	MME_LxPcmPostProcessingGlobalParameters_Frozen_t & PcmParams,
+	MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams,
 	int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding)
 {
-	// A convenience macro to allow the entries below to be copied from the IEC
-	// standards document. The sub-macro chops of the high bits (the ones that
-	// select which word within the channel mask we need). The full macro then
-	// performs an endian swap since the firmware expects big endian values.
-#define B(x) (((_B(x) & 0xff) << 24) | ((_B(x) & 0xff00) << 8) | ((_B(x) >> 8)  & 0xff00) | ((_B(x) >> 24) & 0xff))
+// A convenience macro to allow the entries below to be copied from the IEC
+// standards document. The sub-macro chops of the high bits (the ones that
+// select which word within the channel mask we need). The full macro then
+// performs an endian swap since the firmware expects big endian values.
+#define B(x) (((_B(x) & 0xff) << 24) | ((_B(x) & 0xff00) << 8) | ((_B(x) >> 8) & 0xff00) | ((_B(x) >> 24) & 0xff))
 #define _B(x) (1 << ((x) % 32))
 	const unsigned int use_of_channel_status_block = B(0);
 	const unsigned int linear_pcm_identification = B(1);
@@ -2612,8 +2639,8 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 	//
 	if (OutputEncoding == PcmPlayer_c::OUTPUT_FATPIPE)
 	{
-		MME_FatpipeGlobalParams_t & FatPipe = PcmParams.FatPipeOrSpdifOut;
-		StreamMetadata_t * MetaData = &Clients[PrimaryClient].Parameters.StreamMetadata;
+		MME_FatpipeGlobalParams_t &FatPipe = PcmParams.FatPipeOrSpdifOut;
+		StreamMetadata_t *MetaData = &Clients[PrimaryClient].Parameters.StreamMetadata;
 		FatPipe.Id = PCMPROCESS_SET_ID(ACC_PCM_SPDIFOUT_ID, dev_num);
 		FatPipe.StructSize = sizeof(MME_FatpipeGlobalParams_t);
 		PcmParams.StructSize += sizeof(MME_FatpipeGlobalParams_t);
@@ -2654,23 +2681,23 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 	//
 	for (int i = 0; i < STSZ; i++)
 		ChannelStatusMask[i] = OutputConfiguration.iec958_mask.status[i * 4 + 0] << 24 |
-							   OutputConfiguration.iec958_mask.status[i * 4 + 1] << 16 |
-							   OutputConfiguration.iec958_mask.status[i * 4 + 2] <<  8 |
-							   OutputConfiguration.iec958_mask.status[i * 4 + 3] <<  0;
+				       OutputConfiguration.iec958_mask.status[i * 4 + 1] << 16 |
+				       OutputConfiguration.iec958_mask.status[i * 4 + 2] << 8 |
+				       OutputConfiguration.iec958_mask.status[i * 4 + 3] << 0;
 	// these should never be overlaid
 	ChannelStatusMask[0] &= ~(use_of_channel_status_block |
-							  linear_pcm_identification |
-							  additional_format_information | /* auto fill in for PCM, 000 for coded data */
-							  mode |
-							  sampling_frequency);  /* auto fill in */
+				  linear_pcm_identification |
+				  additional_format_information | /* auto fill in for PCM, 000 for coded data */
+				  mode |
+				  sampling_frequency); /* auto fill in */
 	ChannelStatusMask[1] &= ~(word_length);
 	//
 	// Handle, in a unified manner, all the IEC SPDIF formatings
 	//
-	MME_SpdifOutGlobalParams_t & SpdifOut = *((MME_SpdifOutGlobalParams_t *)(&PcmParams.FatPipeOrSpdifOut));
+	MME_SpdifOutGlobalParams_t &SpdifOut = *((MME_SpdifOutGlobalParams_t *)(&PcmParams.FatPipeOrSpdifOut));
 	SpdifOut.Id = PCMPROCESS_SET_ID(ACC_PCM_SPDIFOUT_ID, dev_num);
-	SpdifOut.StructSize = sizeof(MME_FatpipeGlobalParams_t);   // use fatpipe size (to match frozen structure)
-	PcmParams.StructSize += sizeof(MME_FatpipeGlobalParams_t);   // use fatpipe size
+	SpdifOut.StructSize = sizeof(MME_FatpipeGlobalParams_t); // use fatpipe size (to match frozen structure)
+	PcmParams.StructSize += sizeof(MME_FatpipeGlobalParams_t); // use fatpipe size
 	if (OutputEncoding == PcmPlayer_c::OUTPUT_IEC60958 || OutputEncoding == PcmPlayer_c::BYPASS_DTS_CDDA)
 	{
 		SpdifOut.Apply = ACC_MME_ENABLED;
@@ -2686,7 +2713,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 			SpdifOut.Spdifout.ChannelStatus[1] = 0x00000000; /* word length not indiciated */
 	}
 	else if (OutputEncoding == PcmPlayer_c::OUTPUT_AC3 || OutputEncoding == PcmPlayer_c::BYPASS_AC3 ||
-			 OutputEncoding == PcmPlayer_c::BYPASS_DDPLUS)
+			OutputEncoding == PcmPlayer_c::BYPASS_DDPLUS)
 	{
 		SpdifOut.Apply = ACC_MME_ENABLED;
 		SpdifOut.Config.Mode = 0; // SPDIF mode
@@ -2707,9 +2734,9 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 		SpdifOut.Spdifout.Preamble_PC = LookupSpdifPreamblePc(OutputEncoding);
 	}
 	else if (OutputEncoding == PcmPlayer_c::OUTPUT_DTS || OutputEncoding == PcmPlayer_c::BYPASS_DTS_512 ||
-			 OutputEncoding == PcmPlayer_c::BYPASS_DTS_1024 || OutputEncoding == PcmPlayer_c::BYPASS_DTS_2048 ||
-			 (OutputEncoding >= PcmPlayer_c::BYPASS_DTSHD_LBR && OutputEncoding <= PcmPlayer_c::BYPASS_DTSHD_DTS_8192) ||
-			 OutputEncoding == PcmPlayer_c::BYPASS_DTSHD_MA)
+			OutputEncoding == PcmPlayer_c::BYPASS_DTS_1024 || OutputEncoding == PcmPlayer_c::BYPASS_DTS_2048 ||
+			(OutputEncoding >= PcmPlayer_c::BYPASS_DTSHD_LBR && OutputEncoding <= PcmPlayer_c::BYPASS_DTSHD_DTS_8192) ||
+			OutputEncoding == PcmPlayer_c::BYPASS_DTSHD_MA)
 	{
 		SpdifOut.Apply = ACC_MME_ENABLED;
 		SpdifOut.Config.Mode = 0; // SPDIF mode
@@ -2763,8 +2790,8 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 			ChannelStatusMask[i] &
 			(OutputConfiguration.iec958_metadata.status[i * 4 + 0] << 24 |
 			 OutputConfiguration.iec958_metadata.status[i * 4 + 1] << 16 |
-			 OutputConfiguration.iec958_metadata.status[i * 4 + 2] <<  8 |
-			 OutputConfiguration.iec958_metadata.status[i * 4 + 3] <<  0);
+			 OutputConfiguration.iec958_metadata.status[i * 4 + 2] << 8 |
+			 OutputConfiguration.iec958_metadata.status[i * 4 + 3] << 0);
 	if (ActualTopology.card[dev_num].flags & SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 	{
 		if (ConfigureHDMICell(OutputEncoding, ActualTopology.card[dev_num].flags) != PlayerNoError)
@@ -2779,7 +2806,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 /// Fill out the PCM post-processing required for a single physical output.
 ///
 PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-		PcmParams , int dev_num)
+						       PcmParams, int dev_num)
 {
 	const int PER_SPEAKER_DELAY_NULL = 0;
 	unsigned int SampleRateHz = LookupOutputSamplingFrequency(dev_num);
@@ -2806,10 +2833,10 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 	memset(&PcmParams, 0, sizeof(PcmParams));
 	PcmParams.Id = ACC_RENDERER_MIXER_POSTPROCESSING_ID;
 	PcmParams.StructSize = 8; //sizeof( PcmParams ); Just the header - we'll increment as go along
-	// These next two would be relevant if doing a single card
+//these next two would be relevant if doing a single card
 	PcmParams.NbPcmProcessings = 0; //!< NbPcmProcessings on main[0..3] and aux[4..7]
-	PcmParams.AuxSplit = SPLIT_AUX;     //! Point of split between Main output and Aux output
-	MME_BassMgtGlobalParams_t & BassMgt = PcmParams.BassMgt;
+	PcmParams.AuxSplit = SPLIT_AUX; //! Point of split between Main output and Aux output
+	MME_BassMgtGlobalParams_t &BassMgt = PcmParams.BassMgt;
 	BassMgt.Id = PCMPROCESS_SET_ID(ACC_PCM_BASSMGT_ID, dev_num);
 	BassMgt.StructSize = sizeof(BassMgt);
 	PcmParams.StructSize += sizeof(BassMgt);
@@ -2837,24 +2864,24 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 		BassMgt.DelayUpdate = ACC_MME_FALSE;
 		// From ACC-BL023-3BD
 		BassMgt.CutOffFrequency = 100; // within [50, 200] Hz
-		BassMgt.FilterOrder = 2;       // could be 1 or 2 .
+		BassMgt.FilterOrder = 2; // could be 1 or 2 .
 	}
-	MME_EqualizerGlobalParams_t & Equalizer = PcmParams.Equalizer;
+	MME_EqualizerGlobalParams_t &Equalizer = PcmParams.Equalizer;
 	Equalizer.Id = PCMPROCESS_SET_ID(ACC_PCM_EQUALIZER_ID, dev_num);
 	Equalizer.StructSize = sizeof(Equalizer);
 	PcmParams.StructSize += sizeof(Equalizer);
 	Equalizer.Apply = ACC_MME_DISABLED;
-	MME_TempoGlobalParams_t & TempoControl = PcmParams.TempoControl;
+	MME_TempoGlobalParams_t &TempoControl = PcmParams.TempoControl;
 	TempoControl.Id = PCMPROCESS_SET_ID(ACC_PCM_TEMPO_ID, dev_num);
 	TempoControl.StructSize = sizeof(TempoControl);
 	PcmParams.StructSize += sizeof(TempoControl);
 	TempoControl.Apply = ACC_MME_DISABLED;
-	MME_DCRemoveGlobalParams_t & DCRemove = PcmParams.DCRemove;
+	MME_DCRemoveGlobalParams_t &DCRemove = PcmParams.DCRemove;
 	DCRemove.Id = PCMPROCESS_SET_ID(ACC_PCM_DCREMOVE_ID, dev_num);
 	DCRemove.StructSize = sizeof(DCRemove);
 	PcmParams.StructSize += sizeof(DCRemove);
 	DCRemove.Apply = (EnableDcRemove ? ACC_MME_ENABLED : ACC_MME_DISABLED);
-	MME_DelayGlobalParams_t & Delay = PcmParams.Delay;
+	MME_DelayGlobalParams_t &Delay = PcmParams.Delay;
 	Delay.Id = PCMPROCESS_SET_ID(ACC_PCM_DELAY_ID, dev_num);
 	Delay.StructSize = sizeof(Delay);
 	PcmParams.StructSize += sizeof(Delay);
@@ -2866,7 +2893,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 		Delay.Delay[i] = OutputConfiguration.chain_delay[dev_num][i] / 1000;
 		MIXER_DEBUG("Delay.Delay[%d] = %d\n", i, Delay.Delay[i]);
 	}
-	MME_EncoderPPGlobalParams_t & Encoder = PcmParams.Encoder;
+	MME_EncoderPPGlobalParams_t &Encoder = PcmParams.Encoder;
 	Encoder.Id = PCMPROCESS_SET_ID(ACC_PCM_ENCODER_ID, dev_num);
 	Encoder.StructSize = sizeof(Encoder);
 	PcmParams.StructSize += sizeof(Encoder);
@@ -2891,17 +2918,17 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 			break;
 		case PcmPlayer_c::OUTPUT_AC3:
 			Encoder.Apply = ACC_MME_ENABLED;
-			Encoder.Type = ACC_ENCODERPP_DDCE;  //type=bits0-3, subtype=bits4-7
+			Encoder.Type = ACC_ENCODERPP_DDCE; //type=bits0-3, subtype=bits4-7
 			// let the encoder insert preambles
-			ACC_ENCODERPP_SET_IECENABLE(((MME_EncoderPPGlobalParams_t*)&Encoder), 1);
-			Encoder.BitRate = 448;           //DDCE:448000bps DTS:1536000bps
+			ACC_ENCODERPP_SET_IECENABLE(((MME_EncoderPPGlobalParams_t *)&Encoder), 1);
+			Encoder.BitRate = 448; //DDCE:448000bps DTS:1536000bps
 			break;
 		case PcmPlayer_c::OUTPUT_DTS:
 			Encoder.Apply = ACC_MME_ENABLED;
-			Encoder.Type = ACC_ENCODERPP_DTSE;  //type=bits0-3, subtype=bits4-7
+			Encoder.Type = ACC_ENCODERPP_DTSE; //type=bits0-3, subtype=bits4-7
 			// let the encoder insert preambles
-			ACC_ENCODERPP_SET_IECENABLE(((MME_EncoderPPGlobalParams_t*)&Encoder), 1);
-			Encoder.BitRate = 1536000;          //DDCE:448000bps DTS:1536000bps
+			ACC_ENCODERPP_SET_IECENABLE(((MME_EncoderPPGlobalParams_t *)&Encoder), 1);
+			Encoder.BitRate = 1536000; //DDCE:448000bps DTS:1536000bps
 			break;
 		case PcmPlayer_c::OUTPUT_FATPIPE:
 			Encoder.Apply = ACC_MME_DISABLED;
@@ -2910,13 +2937,13 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 			MIXER_ASSERT(0);
 	}
 //
-	MME_SfcPPGlobalParams_t & Sfc = PcmParams.Sfc;
+	MME_SfcPPGlobalParams_t &Sfc = PcmParams.Sfc;
 	Sfc.Id = PCMPROCESS_SET_ID(ACC_PCM_SFC_ID, dev_num);
 	Sfc.StructSize = sizeof(Sfc);
 	PcmParams.StructSize += sizeof(Sfc);
 	Sfc.Apply = ACC_MME_DISABLED;
 //
-	MME_Resamplex2GlobalParams_t & Resamplex2 = PcmParams.Resamplex2;
+	MME_Resamplex2GlobalParams_t &Resamplex2 = PcmParams.Resamplex2;
 	Resamplex2.Id = PCMPROCESS_SET_ID(ACC_PCM_RESAMPLE_ID, dev_num);
 	Resamplex2.StructSize = sizeof(Resamplex2);
 	PcmParams.StructSize += sizeof(Resamplex2);
@@ -2944,21 +2971,21 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 			// best.using _ENABLE causes the processing to unconditionally applied at the start of the chain.
 			ProcessApply = ACC_MME_AUTO;
 		}
-		MIXER_DEBUG("SampleRateHz %d  FsRange %d  ACC_FSRANGE_48k %d  ProcessApply %d\n",
-					SampleRateHz, FsRange, ACC_FSRANGE_48k, ProcessApply);
+		MIXER_DEBUG("SampleRateHz %d FsRange %d ACC_FSRANGE_48k %d ProcessApply %d\n",
+			    SampleRateHz, FsRange, ACC_FSRANGE_48k, ProcessApply);
 		Resamplex2.Apply = ProcessApply;
 		Resamplex2.Range = FsRange;
 	}
 	MIXER_DEBUG("%s post-mix resampling (%s)\n",
-				(Resamplex2.Apply == ACC_MME_ENABLED ? "Enabled" :
-				 Resamplex2.Apply == ACC_MME_AUTO ? "Automatic" : "Disabled"),
-				LookupDiscreteSamplingFrequencyRange(Resamplex2.Range));
+		    (Resamplex2.Apply == ACC_MME_ENABLED ? "Enabled" :
+		     Resamplex2.Apply == ACC_MME_AUTO ? "Automatic" : "Disabled"),
+		    LookupDiscreteSamplingFrequencyRange(Resamplex2.Range));
 //
-	MME_CMCGlobalParams_t & CMC = PcmParams.CMC;
+	MME_CMCGlobalParams_t &CMC = PcmParams.CMC;
 	CMC.Id = PCMPROCESS_SET_ID(ACC_PCM_CMC_ID, dev_num);
 	CMC.StructSize = sizeof(CMC);
 	PcmParams.StructSize += sizeof(CMC);
-	CMC.Config[CMC_DUAL_MODE] = 0; /*DUAL_LR */ ;   // not applied
+	CMC.Config[CMC_DUAL_MODE] = 0; /*DUAL_LR */ ; // not applied
 	CMC.Config[CMC_PCM_DOWN_SCALED] = ACC_MME_FALSE;
 	CMC.CenterMixCoeff = ACC_M3DB;
 	CMC.SurroundMixCoeff = ACC_M3DB;
@@ -3011,16 +3038,16 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 #endif
 			break;
 	}
-	MIXER_DEBUG("CMC output mode (%d): %d channels  %s and %s (main and auxilliary)\n",
-				dev_num, ActualTopology.card[dev_num].num_channels,
-				LookupAudioMode((eAccAcMode) CMC.Config[CMC_OUTMODE_MAIN]),
-				LookupAudioMode((eAccAcMode) CMC.Config[CMC_OUTMODE_AUX]));
+	MIXER_DEBUG("CMC output mode (%d): %d channels %s and %s (main and auxilliary)\n",
+		    dev_num, ActualTopology.card[dev_num].num_channels,
+		    LookupAudioMode((eAccAcMode) CMC.Config[CMC_OUTMODE_MAIN]),
+		    LookupAudioMode((eAccAcMode) CMC.Config[CMC_OUTMODE_AUX]));
 //
 	FillOutDeviceDownmixParameters(PcmParams, dev_num, EnableDMix);
 //
 	FillOutDeviceSpdifParameters(PcmParams, dev_num, OutputEncoding);
 //
-	MME_LimiterGlobalParams_t&  Limiter = PcmParams.Limiter;
+	MME_LimiterGlobalParams_t &Limiter = PcmParams.Limiter;
 	Limiter.Id = PCMPROCESS_SET_ID(ACC_PCM_LIMITER_ID, dev_num);
 	Limiter.StructSize = sizeof(Limiter);
 	PcmParams.StructSize += sizeof(Limiter);
@@ -3032,7 +3059,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 	// soft mute is triggered by a 0 to 1 transition, and unmute by a 1 to 0 transition
 	Limiter.SoftMute = (OutputConfiguration.chain_enable[dev_num] ? 0 : 1);
 	Limiter.SoftMute = SelectGainBasedOnMuteSettings(MIXER_STAGE_POST_MIX, Limiter.SoftMute, 1);
-	Limiter.DelayEnable = 1;  // enable delay engine
+	Limiter.DelayEnable = 1; // enable delay engine
 	Limiter.MuteDuration = MIXER_LIMITER_MUTE_RAMP_DOWN_PERIOD;
 	Limiter.UnMuteDuration = MIXER_LIMITER_MUTE_RAMP_UP_PERIOD;
 	Limiter.Gain = OutputConfiguration.chain_volume[dev_num];
@@ -3040,7 +3067,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 	// prevents the Limiter from setting the initial gain to -96db and applying gain smoothing
 	// (which takes ~500ms to reach 0db) during startup.
 	Limiter.HardGain = (MMEInitialized ? 0 : 1);
-	//  Limiter.Threshold = ;
+	// Limiter.Threshold = ;
 	Limiter.DelayBuffer = NULL; // delay buffer will be allocated by firmware
 	Limiter.DelayBufSize = 0;
 	Limiter.Delay = OutputConfiguration.chain_latency[dev_num]; //in ms
@@ -3055,7 +3082,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutDevicePcmParameters(MME_LxPcmPostProcessingGl
 /// This method doesn't really do much useful at present.
 ///
 PlayerStatus_t Mixer_Mme_c::AggregatePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-		PcmParams)
+						   PcmParams)
 {
 	unsigned int HeaderSize;
 	unsigned char *DestP;
@@ -3064,7 +3091,7 @@ PlayerStatus_t Mixer_Mme_c::AggregatePcmParameters(MME_LxPcmPostProcessingGlobal
 	// Calculate the header size and pointer to the first parameter structure
 	//
 	HeaderSize = offsetof(MME_LxPcmPostProcessingGlobalParameters_Frozen_t, AuxSplit) +
-				 sizeof(PcmParams.AuxSplit);
+		     sizeof(PcmParams.AuxSplit);
 	DestP = ((unsigned char *)(&PcmParams)) + HeaderSize;
 	//
 	// Populate the header values
@@ -3112,7 +3139,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutMixCommand()
 	for (int i = 0; i < MIXER_MAX_INTERACTIVE_CLIENTS; i++)
 		FillOutInteractiveBuffer(i);
 	// \todo Unconditionally plaing the interactive streams even when they are not present is harmless but
-	//       theoretically may harm power consumption.
+	// theoretically may harm power consumption.
 	MixerCommand.InputParams.InputParam[MIXER_INTERACTIVE_INPUT].Command = MIXER_PLAY;
 	MixerCommand.InputParams.InputParam[MIXER_INTERACTIVE_INPUT].StartOffset = 0;
 	MixerCommand.InputParams.InputParam[MIXER_INTERACTIVE_INPUT].PTS = 0;
@@ -3167,14 +3194,14 @@ void Mixer_Mme_c::FillOutInputBuffer(unsigned int Id)
 		if (0 == Id && (OutputConfiguration.spdif_bypass || OutputConfiguration.hdmi_bypass))
 		{
 			Status = Clients[Id].Manifestor->FillOutInputBuffer(MixerGranuleSize, ResamplingFactor,
-					 Clients[Id].State == STOPPING,
-					 MixerCommand.Command.DataBuffers_p[Id],
-					 MixerCommand.InputParams.InputParam + Id,
-					 MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
-					 MixerCommand.InputParams.InputParam + MIXER_CODED_DATA_INPUT,
-					 &OutputEncoding,
-					 OutputConfiguration.spdif_bypass ? Manifestor_AudioKsound_c::SPDIF : Manifestor_AudioKsound_c::HDMI);
-			if (PlayerNoError ==  Status && OutputEncoding != PrimaryCodedDataType)
+									    Clients[Id].State == STOPPING,
+									    MixerCommand.Command.DataBuffers_p[Id],
+									    MixerCommand.InputParams.InputParam + Id,
+									    MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
+									    MixerCommand.InputParams.InputParam + MIXER_CODED_DATA_INPUT,
+									    &OutputEncoding,
+									    OutputConfiguration.spdif_bypass ? Manifestor_AudioKsound_c::SPDIF : Manifestor_AudioKsound_c::HDMI);
+			if (PlayerNoError == Status && OutputEncoding != PrimaryCodedDataType)
 			{
 				PrimaryCodedDataType = OutputEncoding;
 				// encoding has changed, so the sample rate and the number of samples of the
@@ -3188,16 +3215,16 @@ void Mixer_Mme_c::FillOutInputBuffer(unsigned int Id)
 		}
 		else
 			Status = Clients[Id].Manifestor->FillOutInputBuffer(MixerGranuleSize, ResamplingFactor,
-					 Clients[Id].State == STOPPING,
-					 MixerCommand.Command.DataBuffers_p[Id],
-					 MixerCommand.InputParams.InputParam + Id);
+									    Clients[Id].State == STOPPING,
+									    MixerCommand.Command.DataBuffers_p[Id],
+									    MixerCommand.InputParams.InputParam + Id);
 		if (Status == PlayerNoError)
 			return;
 		MIXER_ERROR("Manifestor failed to populate its input buffer\n");
 		// error recovery is provided by falling through and filling out a silent buffer
 	}
 	FillOutSilentBuffer(MixerCommand.Command.DataBuffers_p[Id],
-						MixerCommand.InputParams.InputParam + Id);
+			    MixerCommand.InputParams.InputParam + Id);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -3215,8 +3242,8 @@ void Mixer_Mme_c::FillOutInteractiveBuffer(unsigned int Id)
 		// fun.
 		//
 		DataBuffer->Flags = (InteractiveClients[Id].Descriptor.channels == 1 ?
-							 ACC_MIXER_DATABUFFER_FLAG_IAUDIO_MONO :
-							 ACC_MIXER_DATABUFFER_FLAG_IAUDIO_STEREO);
+				     ACC_MIXER_DATABUFFER_FLAG_IAUDIO_MONO :
+				     ACC_MIXER_DATABUFFER_FLAG_IAUDIO_STEREO);
 		DataBuffer->NumberOfScatterPages = 0;
 		DataBuffer->TotalSize = 0;
 		DataBuffer->StartOffset = 0;
@@ -3255,7 +3282,7 @@ void Mixer_Mme_c::FillOutInteractiveBuffer(unsigned int Id)
 /// stop the associated mixer output.
 ///
 void Mixer_Mme_c::FillOutSilentBuffer(MME_DataBuffer_t *DataBuffer,
-									  tMixerFrameParams *MixerFrameParams)
+				      tMixerFrameParams *MixerFrameParams)
 {
 	DataBuffer->NumberOfScatterPages = 0;
 	DataBuffer->TotalSize = 0;
@@ -3300,14 +3327,14 @@ void Mixer_Mme_c::UpdateInputBuffer(unsigned int Id)
 	{
 		if (0 == Id && (OutputConfiguration.spdif_bypass || OutputConfiguration.hdmi_bypass))
 			Status = Clients[Id].Manifestor->UpdateInputBuffer(
-						 MixerCommand.Command.DataBuffers_p[Id],
-						 MixerCommand.OutputParams.MixStatus.InputStreamStatus + Id,
-						 MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
-						 MixerCommand.OutputParams.MixStatus.InputStreamStatus + MIXER_CODED_DATA_INPUT);
+					 MixerCommand.Command.DataBuffers_p[Id],
+					 MixerCommand.OutputParams.MixStatus.InputStreamStatus + Id,
+					 MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
+					 MixerCommand.OutputParams.MixStatus.InputStreamStatus + MIXER_CODED_DATA_INPUT);
 		else
 			Status = Clients[Id].Manifestor->UpdateInputBuffer(
-						 MixerCommand.Command.DataBuffers_p[Id],
-						 MixerCommand.OutputParams.MixStatus.InputStreamStatus + Id);
+					 MixerCommand.Command.DataBuffers_p[Id],
+					 MixerCommand.OutputParams.MixStatus.InputStreamStatus + Id);
 		if (Status != ManifestorNoError && Status != ManifestorNullQueued)
 		{
 			MIXER_ERROR("Failed to update the input buffer\n");
@@ -3370,7 +3397,7 @@ void Mixer_Mme_c::UpdateMixingMetadata()
 {
 	// Read the code carefully here. We use lots of x = y = z statements.
 	// I bet the secondary client is at index 1...
-	ParsedAudioParameters_t * SecondaryAudioParameters = &Clients[1].Parameters;
+	ParsedAudioParameters_t *SecondaryAudioParameters = &Clients[1].Parameters;
 	if ((SecondaryAudioParameters->MixingMetadata.IsMixingMetadataPresent) &&
 			(OutputConfiguration.metadata_update != SND_PSEUDO_MIXER_METADATA_UPDATE_NEVER))
 	{
@@ -3427,14 +3454,14 @@ static const struct
 }
 SamplingFrequencyLookupTable[] =
 {
-	/* Range : 2^4  */ { ACC_FS768k, 768000 }, { ACC_FS705k, 705600 }, { ACC_FS512k, 512000 },
-	/* Range : 2^3  */ { ACC_FS384k, 384000 }, { ACC_FS352k, 352800 }, { ACC_FS256k, 256000 },
-	/* Range : 2^2  */ { ACC_FS192k, 192000 }, { ACC_FS176k, 176400 }, { ACC_FS128k, 128000 },
-	/* Range : 2^1  */ {  ACC_FS96k,  96000 }, {  ACC_FS88k,  88200 }, {  ACC_FS64k,  64000 },
-	/* Range : 2^0  */ {  ACC_FS48k,  48000 }, {  ACC_FS44k,  44100 }, {  ACC_FS32k,  32000 },
-	/* Range : 2^-1 */ {  ACC_FS24k,  24000 }, {  ACC_FS22k,  22050 }, {  ACC_FS16k,  16000 },
-	/* Range : 2^-2 */ {  ACC_FS12k,  12000 }, {  ACC_FS11k,  11025 }, {   ACC_FS8k,   8000 },
-	/* Delimiter    */                                                 {   ACC_FS8k,      0 }
+	/* Range : 2^4 */ { ACC_FS768k, 768000 }, { ACC_FS705k, 705600 }, { ACC_FS512k, 512000 },
+	/* Range : 2^3 */ { ACC_FS384k, 384000 }, { ACC_FS352k, 352800 }, { ACC_FS256k, 256000 },
+	/* Range : 2^2 */ { ACC_FS192k, 192000 }, { ACC_FS176k, 176400 }, { ACC_FS128k, 128000 },
+	/* Range : 2^1 */ { ACC_FS96k, 96000 }, { ACC_FS88k, 88200 }, { ACC_FS64k, 64000 },
+	/* Range : 2^0 */ { ACC_FS48k, 48000 }, { ACC_FS44k, 44100 }, { ACC_FS32k, 32000 },
+	/* Range : 2^-1 */ { ACC_FS24k, 24000 }, { ACC_FS22k, 22050 }, { ACC_FS16k, 16000 },
+	/* Range : 2^-2 */ { ACC_FS12k, 12000 }, { ACC_FS11k, 11025 }, { ACC_FS8k, 8000 },
+	/* Delimiter */ { ACC_FS8k, 0 }
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -3445,10 +3472,8 @@ SamplingFrequencyLookupTable[] =
 enum eAccFsCode Mixer_Mme_c::TranslateIntegerSamplingFrequencyToDiscrete(unsigned int IntegerFrequency)
 {
 	int i;
-
 	for (i = 0; IntegerFrequency < SamplingFrequencyLookupTable[i].Integer; i++)
 		; // do nothing
-
 	return SamplingFrequencyLookupTable[i].Discrete;
 }
 
@@ -3461,11 +3486,9 @@ enum eAccFsCode Mixer_Mme_c::TranslateIntegerSamplingFrequencyToDiscrete(unsigne
 unsigned int Mixer_Mme_c::TranslateDiscreteSamplingFrequencyToInteger(enum eAccFsCode DiscreteFrequency)
 {
 	int i;
-
 	for (i = 0; DiscreteFrequency != SamplingFrequencyLookupTable[i].Discrete; i++)
 		if (0 == SamplingFrequencyLookupTable[i].Integer)
 			break;
-
 	return SamplingFrequencyLookupTable[i].Integer;
 }
 
@@ -3484,13 +3507,10 @@ enum eFsRange Mixer_Mme_c::TranslateIntegerSamplingFrequencyToRange(unsigned int
 			return ACC_FSRANGE_24k;
 		return ACC_FSRANGE_12k;
 	}
-
 	if (IntegerFrequency < 128000)
 		return ACC_FSRANGE_96k;
-
 	if (IntegerFrequency < 256000)
 		return ACC_FSRANGE_192k;
-
 	return ACC_FSRANGE_384k;
 }
 
@@ -3498,7 +3518,7 @@ enum eFsRange Mixer_Mme_c::TranslateIntegerSamplingFrequencyToRange(unsigned int
 ///
 /// Lookup a discrete sampling frequency and convert it to a string.
 ///
-const char * Mixer_Mme_c::LookupDiscreteSamplingFrequency(enum eAccFsCode DiscreteFrequency)
+const char *Mixer_Mme_c::LookupDiscreteSamplingFrequency(enum eAccFsCode DiscreteFrequency)
 {
 	switch (DiscreteFrequency)
 	{
@@ -3507,12 +3527,12 @@ const char * Mixer_Mme_c::LookupDiscreteSamplingFrequency(enum eAccFsCode Discre
 			E(ACC_FS44k);
 			E(ACC_FS32k);
 			E(ACC_FS_reserved_3);
-			/* Range : 2^1  */
+			/* Range : 2^1 */
 			E(ACC_FS96k);
 			E(ACC_FS88k);
 			E(ACC_FS64k);
 			E(ACC_FS_reserved_7);
-			/* Range : 2^2  */
+			/* Range : 2^2 */
 			E(ACC_FS192k);
 			E(ACC_FS176k);
 			E(ACC_FS128k);
@@ -3537,8 +3557,8 @@ const char * Mixer_Mme_c::LookupDiscreteSamplingFrequency(enum eAccFsCode Discre
 			E(ACC_FS705k);
 			E(ACC_FS512k);
 			E(ACC_FS_reserved_27);
-			E(ACC_FS_reserved);  // Undefined
-			E(ACC_FS_ID);        // Used by Mixer : if FS_ID then OutSFreq = InSFreq
+			E(ACC_FS_reserved); // Undefined
+			E(ACC_FS_ID); // Used by Mixer : if FS_ID then OutSFreq = InSFreq
 #undef E
 		default:
 			if (DiscreteFrequency == AUDIOMIXER_OVERRIDE_OUTFS)
@@ -3553,7 +3573,7 @@ const char * Mixer_Mme_c::LookupDiscreteSamplingFrequency(enum eAccFsCode Discre
 ///
 /// Lookup a discrete sampling frequency range and convert it to a string.
 ///
-const char * Mixer_Mme_c::LookupDiscreteSamplingFrequencyRange(enum eFsRange DiscreteRange)
+const char *Mixer_Mme_c::LookupDiscreteSamplingFrequencyRange(enum eFsRange DiscreteRange)
 {
 	switch (DiscreteRange)
 	{
@@ -3573,25 +3593,25 @@ const char * Mixer_Mme_c::LookupDiscreteSamplingFrequencyRange(enum eFsRange Dis
 unsigned int Mixer_Mme_c::LookupSpdifPreamblePc(PcmPlayer_c::OutputEncoding Encoding)
 {
 #if 0
-	Value   Corresponding frame
-	0     NULL data
-	1     Ac3(1536 samples)
-	3     Pause burst
-	4     MPEG - 1 layer - 1
-	5     MPEG - 1 layer - 2 or - 3 data or MPEG - 2 without extension
-	6     MPEG - 2 data with extension
-	7     MPEG - 2 AAC
-	8     MPEG - 2, layer - 1 low sampling frequency
-	9     MPEG - 2, layer - 2 low sampling frequency
-	10     MPEG - 2, layer - 3 low sampling frequency
-	11     DTS type I(512 samples)
-	12     DTS type II(1024 samples)
-	13     DTS type III(2048 samples)
-	14     ATRAC(512 samples)
-	15     ATRAC 2 / 3(1 024 samples)
-	17     DTS Type 4
-	21     DDPLUS
-	22     Dolby TrueHD
+	Value Corresponding frame
+	0 NULL data
+	1 Ac3(1536 samples)
+	3 Pause burst
+	4 MPEG - 1 layer - 1
+	5 MPEG - 1 layer - 2 or - 3 data or MPEG - 2 without extension
+	6 MPEG - 2 data with extension
+	7 MPEG - 2 AAC
+	8 MPEG - 2, layer - 1 low sampling frequency
+	9 MPEG - 2, layer - 2 low sampling frequency
+	10 MPEG - 2, layer - 3 low sampling frequency
+	11 DTS type I(512 samples)
+	12 DTS type II(1024 samples)
+	13 DTS type III(2048 samples)
+	14 ATRAC(512 samples)
+	15 ATRAC 2 / 3(1 024 samples)
+	17 DTS Type 4
+	21 DDPLUS
+	22 Dolby TrueHD
 #endif
 	switch (Encoding)
 	{
@@ -3655,7 +3675,7 @@ unsigned int Mixer_Mme_c::LookupRepetitionPeriod(PcmPlayer_c::OutputEncoding Enc
 
 unsigned int Mixer_Mme_c::LookupIec60958FrameRate(PcmPlayer_c::OutputEncoding Encoding)
 {
-	ParsedAudioParameters_t * PrimaryAudioParameters = &Clients[PrimaryClient].Parameters;
+	ParsedAudioParameters_t *PrimaryAudioParameters = &Clients[PrimaryClient].Parameters;
 	unsigned int OriginalSamplingFreq = PrimaryAudioParameters->BackwardCompatibleProperties.SampleRateHz;
 	if (OriginalSamplingFreq == 0)
 		OriginalSamplingFreq = MixerSamplingFrequency;
@@ -3694,127 +3714,127 @@ static const struct
 ChannelAssignmentLookupTable[] =
 {
 #define E(mode, p0, p1, p2, p3) { mode, #mode, { SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p0, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p1, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p2, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p3, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED }, true }
-	// as E but mark the output unsuitable for direct output
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p1, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p2, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p3, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED }, true }
+// as E but mark the output unsuitable for direct output
 #define XXX(mode, p0, p1, p2, p3) { mode, #mode, { SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p0, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p1, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p2, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p3, \
-            SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED }, false }
-	// as XXX but for a different reason: there is already a better candidate for direct output, not a bug
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p1, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p2, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_ ## p3, \
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED }, false }
+// as XXX but for a different reason: there is already a better candidate for direct output, not a bug
 #define DUPE(mode, p0, p1, p2, p3) XXX(mode, p0, p1, p2, p3)
 
 	// Weird modes ;-)
-	XXX(ACC_MODE10,         NOT_CONNECTED,  CNTR_0,     NOT_CONNECTED,  NOT_CONNECTED),     // Mad
-	E(ACC_MODE20t,          LT_RT,      NOT_CONNECTED,  NOT_CONNECTED,  NOT_CONNECTED),
-	//XXX( ACC_MODE53,              ...                                                             ), // Not 8ch
-	//XXX( ACC_MODE53_LFE,          ...                                                             ), // Not 8ch
+	XXX(ACC_MODE10, NOT_CONNECTED, CNTR_0, NOT_CONNECTED, NOT_CONNECTED), // Mad
+	E(ACC_MODE20t, LT_RT, NOT_CONNECTED, NOT_CONNECTED, NOT_CONNECTED),
+	//XXX( ACC_MODE53, ... ), // Not 8ch
+	//XXX( ACC_MODE53_LFE, ... ), // Not 8ch
 
 	// CEA-861 (A to D) modes (in numerical order)
-	E(ACC_MODE20,           L_R,        NOT_CONNECTED,  NOT_CONNECTED,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE20,         L_R,            NOT_CONNECTED,  NOT_CONNECTED,  NOT_CONNECTED),
-	E(ACC_MODE20_LFE,           L_R,        0_LFE1,         NOT_CONNECTED,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE20_LFE,       L_R,        0_LFE1,         NOT_CONNECTED,  NOT_CONNECTED),
-	E(ACC_MODE30,               L_R,        CNTR_0,         NOT_CONNECTED,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE30,           L_R,        CNTR_0,         NOT_CONNECTED,  NOT_CONNECTED),
-	E(ACC_MODE30_LFE,           L_R,        CNTR_LFE1,      NOT_CONNECTED,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE30_LFE,       L_R,        CNTR_LFE1,      NOT_CONNECTED,  NOT_CONNECTED),
-	E(ACC_MODE21,           L_R,        NOT_CONNECTED,  CSURR_0,    NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE21,           L_R,        NOT_CONNECTED,  CSURR_0,    NOT_CONNECTED),
-	E(ACC_MODE21_LFE,           L_R,        0_LFE1,     CSURR_0,    NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE21_LFE,       L_R,        0_LFE1,     CSURR_0,    NOT_CONNECTED),
-	E(ACC_MODE31,               L_R,        CNTR_0,         CSURR_0,        NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE31,           L_R,        CNTR_0,         CSURR_0,        NOT_CONNECTED),
-	E(ACC_MODE31_LFE,           L_R,        CNTR_LFE1,      CSURR_0,        NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE31_LFE,       L_R,        CNTR_LFE1,      CSURR_0,        NOT_CONNECTED),
-	E(ACC_MODE22,           L_R,        NOT_CONNECTED,  LSUR_RSUR,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE22,           L_R,        NOT_CONNECTED,  LSUR_RSUR,  NOT_CONNECTED),
-	E(ACC_MODE22_LFE,           L_R,        0_LFE1,     LSUR_RSUR,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE22_LFE,       L_R,        0_LFE1,     LSUR_RSUR,  NOT_CONNECTED),
-	E(ACC_MODE32,           L_R,        CNTR_0,     LSUR_RSUR,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE32,           L_R,        CNTR_0,     LSUR_RSUR,  NOT_CONNECTED),
-	E(ACC_MODE32_LFE,           L_R,        CNTR_LFE1,  LSUR_RSUR,  NOT_CONNECTED),
-	DUPE(ACC_HDMI_MODE32_LFE,       L_R,        CNTR_LFE1,  LSUR_RSUR,  NOT_CONNECTED),
-	XXX(ACC_MODE23,         L_R,        NOT_CONNECTED,  LSUR_RSUR,  CSURR_0),       // Bug 4518
-	DUPE(ACC_HDMI_MODE23,           L_R,        NOT_CONNECTED,  LSUR_RSUR,  CSURR_0),
-	XXX(ACC_MODE23_LFE,         L_R,        0_LFE1,     LSUR_RSUR,  CSURR_0),       // Bug 4518
-	DUPE(ACC_HDMI_MODE23_LFE,       L_R,        0_LFE1,     LSUR_RSUR,  CSURR_0),
-	XXX(ACC_MODE33,         L_R,        CNTR_0,     LSUR_RSUR,  CSURR_0),       // Bug 4518
-	DUPE(ACC_HDMI_MODE33,           L_R,        CNTR_0,     LSUR_RSUR,  CSURR_0),
-	XXX(ACC_MODE33_LFE,         L_R,        CNTR_LFE1,  LSUR_RSUR,  CSURR_0),       // Bug 4518
-	DUPE(ACC_HDMI_MODE33_LFE,       L_R,        CNTR_LFE1,  LSUR_RSUR,  CSURR_0),
-	XXX(ACC_MODE24,         L_R,        NOT_CONNECTED,  LSUR_RSUR,  LSURREAR_RSURREAR),  //Bug 4518
-	DUPE(ACC_HDMI_MODE24,           L_R,        NOT_CONNECTED,  LSUR_RSUR,  LSURREAR_RSURREAR),
-	XXX(ACC_MODE24_LFE,         L_R,        0_LFE1,     LSUR_RSUR,  LSURREAR_RSURREAR),  //Bug 4518
-	DUPE(ACC_HDMI_MODE24_LFE,   L_R,        0_LFE1,     LSUR_RSUR,  LSURREAR_RSURREAR),
-	E(ACC_MODE34,           L_R,        CNTR_0,     LSUR_RSUR,  LSURREAR_RSURREAR),
-	DUPE(ACC_HDMI_MODE34,           L_R,        CNTR_0,     LSUR_RSUR,  LSURREAR_RSURREAR),
-	E(ACC_MODE34_LFE,           L_R,        CNTR_LFE1,  LSUR_RSUR,  LSURREAR_RSURREAR),
-	DUPE(ACC_HDMI_MODE34_LFE,       L_R,        CNTR_LFE1,  LSUR_RSUR,  LSURREAR_RSURREAR),
-	XXX(ACC_HDMI_MODE40,            L_R,        NOT_CONNECTED,  NOT_CONNECTED,  CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE40_LFE,    L_R,        0_LFE1,     NOT_CONNECTED,  CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE50,            L_R,        CNTR_0,     NOT_CONNECTED,  CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE50_LFE,    L_R,        CNTR_LFE1,  NOT_CONNECTED,  CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE41,            L_R,        NOT_CONNECTED,  CSURR_0,    CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE41_LFE,        L_R,        0_LFE1,     CSURR_0,    CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE51,            L_R,        CNTR_0,     CSURR_0,    CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_HDMI_MODE51_LFE,    L_R,        CNTR_LFE1,  CSURR_0,    CNTRL_CNTRR),   // Bug 4518
-	XXX(ACC_MODE42,         L_R,        NOT_CONNECTED,  LSUR_RSUR,  CNTRL_CNTRR),   // Bug 4518
-	DUPE(ACC_HDMI_MODE42,           L_R,        NOT_CONNECTED,  LSUR_RSUR,  CNTRL_CNTRR),
-	XXX(ACC_MODE42_LFE,         L_R,        0_LFE1,     LSUR_RSUR,  CNTRL_CNTRR),   // Bug 4518
-	DUPE(ACC_HDMI_MODE42_LFE,   L_R,        0_LFE1,     LSUR_RSUR,  CNTRL_CNTRR),
-	XXX(ACC_MODE52,         L_R,        CNTR_0,     LSUR_RSUR,  CNTRL_CNTRR),   // Bug 4518
-	DUPE(ACC_HDMI_MODE52,           L_R,        CNTR_0,     LSUR_RSUR,  CNTRL_CNTRR),
-	XXX(ACC_MODE52_LFE,         L_R,        CNTR_LFE1,  LSUR_RSUR,  CNTRL_CNTRR),   // Bug 4518
-	DUPE(ACC_HDMI_MODE52_LFE,       L_R,        CNTR_LFE1,  LSUR_RSUR,  CNTRL_CNTRR),
+	E(ACC_MODE20, L_R, NOT_CONNECTED, NOT_CONNECTED, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE20, L_R, NOT_CONNECTED, NOT_CONNECTED, NOT_CONNECTED),
+	E(ACC_MODE20_LFE, L_R, 0_LFE1, NOT_CONNECTED, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE20_LFE, L_R, 0_LFE1, NOT_CONNECTED, NOT_CONNECTED),
+	E(ACC_MODE30, L_R, CNTR_0, NOT_CONNECTED, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE30, L_R, CNTR_0, NOT_CONNECTED, NOT_CONNECTED),
+	E(ACC_MODE30_LFE, L_R, CNTR_LFE1, NOT_CONNECTED, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE30_LFE, L_R, CNTR_LFE1, NOT_CONNECTED, NOT_CONNECTED),
+	E(ACC_MODE21, L_R, NOT_CONNECTED, CSURR_0, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE21, L_R, NOT_CONNECTED, CSURR_0, NOT_CONNECTED),
+	E(ACC_MODE21_LFE, L_R, 0_LFE1, CSURR_0, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE21_LFE, L_R, 0_LFE1, CSURR_0, NOT_CONNECTED),
+	E(ACC_MODE31, L_R, CNTR_0, CSURR_0, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE31, L_R, CNTR_0, CSURR_0, NOT_CONNECTED),
+	E(ACC_MODE31_LFE, L_R, CNTR_LFE1, CSURR_0, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE31_LFE, L_R, CNTR_LFE1, CSURR_0, NOT_CONNECTED),
+	E(ACC_MODE22, L_R, NOT_CONNECTED, LSUR_RSUR, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE22, L_R, NOT_CONNECTED, LSUR_RSUR, NOT_CONNECTED),
+	E(ACC_MODE22_LFE, L_R, 0_LFE1, LSUR_RSUR, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE22_LFE, L_R, 0_LFE1, LSUR_RSUR, NOT_CONNECTED),
+	E(ACC_MODE32, L_R, CNTR_0, LSUR_RSUR, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE32, L_R, CNTR_0, LSUR_RSUR, NOT_CONNECTED),
+	E(ACC_MODE32_LFE, L_R, CNTR_LFE1, LSUR_RSUR, NOT_CONNECTED),
+	DUPE(ACC_HDMI_MODE32_LFE, L_R, CNTR_LFE1, LSUR_RSUR, NOT_CONNECTED),
+	XXX(ACC_MODE23, L_R, NOT_CONNECTED, LSUR_RSUR, CSURR_0), // Bug 4518
+	DUPE(ACC_HDMI_MODE23, L_R, NOT_CONNECTED, LSUR_RSUR, CSURR_0),
+	XXX(ACC_MODE23_LFE, L_R, 0_LFE1, LSUR_RSUR, CSURR_0), // Bug 4518
+	DUPE(ACC_HDMI_MODE23_LFE, L_R, 0_LFE1, LSUR_RSUR, CSURR_0),
+	XXX(ACC_MODE33, L_R, CNTR_0, LSUR_RSUR, CSURR_0), // Bug 4518
+	DUPE(ACC_HDMI_MODE33, L_R, CNTR_0, LSUR_RSUR, CSURR_0),
+	XXX(ACC_MODE33_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CSURR_0), // Bug 4518
+	DUPE(ACC_HDMI_MODE33_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CSURR_0),
+	XXX(ACC_MODE24, L_R, NOT_CONNECTED, LSUR_RSUR, LSURREAR_RSURREAR), //Bug 4518
+	DUPE(ACC_HDMI_MODE24, L_R, NOT_CONNECTED, LSUR_RSUR, LSURREAR_RSURREAR),
+	XXX(ACC_MODE24_LFE, L_R, 0_LFE1, LSUR_RSUR, LSURREAR_RSURREAR), //Bug 4518
+	DUPE(ACC_HDMI_MODE24_LFE, L_R, 0_LFE1, LSUR_RSUR, LSURREAR_RSURREAR),
+	E(ACC_MODE34, L_R, CNTR_0, LSUR_RSUR, LSURREAR_RSURREAR),
+	DUPE(ACC_HDMI_MODE34, L_R, CNTR_0, LSUR_RSUR, LSURREAR_RSURREAR),
+	E(ACC_MODE34_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LSURREAR_RSURREAR),
+	DUPE(ACC_HDMI_MODE34_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LSURREAR_RSURREAR),
+	XXX(ACC_HDMI_MODE40, L_R, NOT_CONNECTED, NOT_CONNECTED, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE40_LFE, L_R, 0_LFE1, NOT_CONNECTED, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE50, L_R, CNTR_0, NOT_CONNECTED, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE50_LFE, L_R, CNTR_LFE1, NOT_CONNECTED, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE41, L_R, NOT_CONNECTED, CSURR_0, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE41_LFE, L_R, 0_LFE1, CSURR_0, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE51, L_R, CNTR_0, CSURR_0, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_HDMI_MODE51_LFE, L_R, CNTR_LFE1, CSURR_0, CNTRL_CNTRR), // Bug 4518
+	XXX(ACC_MODE42, L_R, NOT_CONNECTED, LSUR_RSUR, CNTRL_CNTRR), // Bug 4518
+	DUPE(ACC_HDMI_MODE42, L_R, NOT_CONNECTED, LSUR_RSUR, CNTRL_CNTRR),
+	XXX(ACC_MODE42_LFE, L_R, 0_LFE1, LSUR_RSUR, CNTRL_CNTRR), // Bug 4518
+	DUPE(ACC_HDMI_MODE42_LFE, L_R, 0_LFE1, LSUR_RSUR, CNTRL_CNTRR),
+	XXX(ACC_MODE52, L_R, CNTR_0, LSUR_RSUR, CNTRL_CNTRR), // Bug 4518
+	DUPE(ACC_HDMI_MODE52, L_R, CNTR_0, LSUR_RSUR, CNTRL_CNTRR),
+	XXX(ACC_MODE52_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CNTRL_CNTRR), // Bug 4518
+	DUPE(ACC_HDMI_MODE52_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CNTRL_CNTRR),
 
 	// CEA-861 (E) modes
-	XXX(ACC_HDMI_MODE32_T100,   L_R,        CNTR_0,     LSUR_RSUR,      CHIGH_0),       // Bug 4518
-	XXX(ACC_HDMI_MODE32_T100_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      CHIGH_0),      // Bug 4518
-	XXX(ACC_HDMI_MODE32_T010,   L_R,        CNTR_0,     LSUR_RSUR,      TOPSUR_0),      // Bug 4518
-	XXX(ACC_HDMI_MODE32_T010_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      TOPSUR_0),     // Bug 4518
-	XXX(ACC_HDMI_MODE22_T200,   L_R,        NOT_CONNECTED,  LSUR_RSUR,      LHIGH_RHIGH),   // Bug 4518
-	XXX(ACC_HDMI_MODE22_T200_LFE, L_R,       0_LFE1,     LSUR_RSUR,      LHIGH_RHIGH),  // Bug 4518
-	XXX(ACC_HDMI_MODE42_WIDE,   L_R,        NOT_CONNECTED,  LSUR_RSUR,      LWIDE_RWIDE),   // Bug 4518
-	XXX(ACC_HDMI_MODE42_WIDE_LFE, L_R,       0_LFE1,     LSUR_RSUR,      LWIDE_RWIDE),  // Bug 4518
-	XXX(ACC_HDMI_MODE33_T010,   L_R,        CNTR_0,     LSUR_RSUR,      CSURR_TOPSUR),      // Bug 4518
-	XXX(ACC_HDMI_MODE33_T010_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      CSURR_TOPSUR),     // Bug 4518
-	XXX(ACC_HDMI_MODE33_T100    , L_R,       CNTR_LFE1,  LSUR_RSUR,      CSURR_CHIGH),  // Bug 4518
-	XXX(ACC_HDMI_MODE33_T100_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      CSURR_CHIGH),  // Bug 4518
-	XXX(ACC_HDMI_MODE32_T110,   L_R,        CNTR_0,     LSUR_RSUR,      CHIGH_TOPSUR),      // Bug 4518
-	XXX(ACC_HDMI_MODE32_T110_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      CHIGH_TOPSUR),     // Bug 4518
-	XXX(ACC_HDMI_MODE32_T200,   L_R,        CNTR_0,     LSUR_RSUR,      LHIGH_RHIGH),   // Bug 4518
-	XXX(ACC_HDMI_MODE32_T200_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      LHIGH_RHIGH),  // Bug 4518
-	XXX(ACC_HDMI_MODE52_WIDE,   L_R,        CNTR_0,     LSUR_RSUR,      LWIDE_RWIDE),   // Bug 4518
-	XXX(ACC_HDMI_MODE52_WIDE_LFE, L_R,       CNTR_LFE1,  LSUR_RSUR,      LWIDE_RWIDE),  // Bug 4518
+	XXX(ACC_HDMI_MODE32_T100, L_R, CNTR_0, LSUR_RSUR, CHIGH_0), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T100_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CHIGH_0), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T010, L_R, CNTR_0, LSUR_RSUR, TOPSUR_0), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T010_LFE, L_R, CNTR_LFE1, LSUR_RSUR, TOPSUR_0), // Bug 4518
+	XXX(ACC_HDMI_MODE22_T200, L_R, NOT_CONNECTED, LSUR_RSUR, LHIGH_RHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE22_T200_LFE, L_R, 0_LFE1, LSUR_RSUR, LHIGH_RHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE42_WIDE, L_R, NOT_CONNECTED, LSUR_RSUR, LWIDE_RWIDE), // Bug 4518
+	XXX(ACC_HDMI_MODE42_WIDE_LFE, L_R, 0_LFE1, LSUR_RSUR, LWIDE_RWIDE), // Bug 4518
+	XXX(ACC_HDMI_MODE33_T010, L_R, CNTR_0, LSUR_RSUR, CSURR_TOPSUR), // Bug 4518
+	XXX(ACC_HDMI_MODE33_T010_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CSURR_TOPSUR), // Bug 4518
+	XXX(ACC_HDMI_MODE33_T100, L_R, CNTR_LFE1, LSUR_RSUR, CSURR_CHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE33_T100_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CSURR_CHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T110, L_R, CNTR_0, LSUR_RSUR, CHIGH_TOPSUR), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T110_LFE, L_R, CNTR_LFE1, LSUR_RSUR, CHIGH_TOPSUR), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T200, L_R, CNTR_0, LSUR_RSUR, LHIGH_RHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE32_T200_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LHIGH_RHIGH), // Bug 4518
+	XXX(ACC_HDMI_MODE52_WIDE, L_R, CNTR_0, LSUR_RSUR, LWIDE_RWIDE), // Bug 4518
+	XXX(ACC_HDMI_MODE52_WIDE_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LWIDE_RWIDE), // Bug 4518
 
 #if PCMPROCESSINGS_API_VERSION >= 0x100325
 	// Unusual speaker topologies (not inclued in CEA-861 E)
-	XXX(ACC_MODE30_T100,         L_R,            CNTR_0,         NOT_CONNECTED,  CHIGH_0),
-	XXX(ACC_MODE30_T100_LFE,     L_R,            CNTR_LFE1,      NOT_CONNECTED,  CHIGH_0),
-	XXX(ACC_MODE30_T200,         L_R,            CNTR_0,         NOT_CONNECTED,  LHIGH_RHIGH),
-	XXX(ACC_MODE30_T200_LFE,     L_R,            CNTR_LFE1,      NOT_CONNECTED,  LHIGH_RHIGH),
-	XXX(ACC_MODE22_T010,         L_R,            NOT_CONNECTED,  LSUR_RSUR,      TOPSUR_0),
-	XXX(ACC_MODE22_T010_LFE,     L_R,            0_LFE1,         LSUR_RSUR,      TOPSUR_0),
-	XXX(ACC_MODE32_T020,         L_R,            CNTR_0,         LSUR_RSUR,      LHIGHSIDE_RHIGHSIDE),
-	XXX(ACC_MODE32_T020_LFE,     L_R,            CNTR_LFE1,      LSUR_RSUR,      LHIGHSIDE_RHIGHSIDE),
-	XXX(ACC_MODE23_T100,         L_R,            NOT_CONNECTED,  LSUR_RSUR,      CHIGH_0),
-	XXX(ACC_MODE23_T100_LFE,     L_R,            0_LFE1,         LSUR_RSUR,      CHIGH_0),
-	XXX(ACC_MODE23_T010,         L_R,            NOT_CONNECTED,  LSUR_RSUR,      TOPSUR_0),
-	XXX(ACC_MODE23_T010_LFE,     L_R,            0_LFE1,         LSUR_RSUR,      TOPSUR_0),
+	XXX(ACC_MODE30_T100, L_R, CNTR_0, NOT_CONNECTED, CHIGH_0),
+	XXX(ACC_MODE30_T100_LFE, L_R, CNTR_LFE1, NOT_CONNECTED, CHIGH_0),
+	XXX(ACC_MODE30_T200, L_R, CNTR_0, NOT_CONNECTED, LHIGH_RHIGH),
+	XXX(ACC_MODE30_T200_LFE, L_R, CNTR_LFE1, NOT_CONNECTED, LHIGH_RHIGH),
+	XXX(ACC_MODE22_T010, L_R, NOT_CONNECTED, LSUR_RSUR, TOPSUR_0),
+	XXX(ACC_MODE22_T010_LFE, L_R, 0_LFE1, LSUR_RSUR, TOPSUR_0),
+	XXX(ACC_MODE32_T020, L_R, CNTR_0, LSUR_RSUR, LHIGHSIDE_RHIGHSIDE),
+	XXX(ACC_MODE32_T020_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LHIGHSIDE_RHIGHSIDE),
+	XXX(ACC_MODE23_T100, L_R, NOT_CONNECTED, LSUR_RSUR, CHIGH_0),
+	XXX(ACC_MODE23_T100_LFE, L_R, 0_LFE1, LSUR_RSUR, CHIGH_0),
+	XXX(ACC_MODE23_T010, L_R, NOT_CONNECTED, LSUR_RSUR, TOPSUR_0),
+	XXX(ACC_MODE23_T010_LFE, L_R, 0_LFE1, LSUR_RSUR, TOPSUR_0),
 #endif
 
 	// DTS-HD speaker topologies (not included in CEA-861)
 	// These are all disabled at the moment because there is no matching entry in the AccAcMode
 	// enumeration. The automatic fallback code (below) will select ACC_MODE32_LFE automatically
 	// (by disconnecting pair3) if the user requests any of these modes.
-	//XXX( ACC_MODE32_LFE,          L_R,        CNTR_LFE1,  LSUR_RSUR,  LSIDESURR_RSIDESURR ), No enum
+	//XXX( ACC_MODE32_LFE, L_R, CNTR_LFE1, LSUR_RSUR, LSIDESURR_RSIDESURR ), No enum
 
 	// delimiter
-	E(ACC_MODE_ID,      NOT_CONNECTED,  NOT_CONNECTED,  NOT_CONNECTED,  NOT_CONNECTED)
+	E(ACC_MODE_ID, NOT_CONNECTED, NOT_CONNECTED, NOT_CONNECTED, NOT_CONNECTED)
 
 #undef E
 #undef XXX
@@ -3824,7 +3844,7 @@ ChannelAssignmentLookupTable[] =
 ///
 /// Lookup a discrete audio mode (2.0, 5.1, etc) and convert it to a string.
 ///
-const char * Mixer_Mme_c::LookupAudioMode(enum eAccAcMode DiscreteMode)
+const char *Mixer_Mme_c::LookupAudioMode(enum eAccAcMode DiscreteMode)
 {
 	int i;
 	for (i = 0; ACC_MODE_ID != ChannelAssignmentLookupTable[i].AccAcMode; i++)
@@ -3860,7 +3880,7 @@ enum eAccAcMode Mixer_Mme_c::TranslateChannelAssignmentToAudioMode(struct snd_ps
 	{
 		for (i = 0; ACC_MODE_ID != ChannelAssignmentLookupTable[i].AccAcMode; i++)
 			if (0 == memcmp(&ChannelAssignmentLookupTable[i].ChannelAssignment,
-							&ChannelAssignment, sizeof(ChannelAssignment)) &&
+					&ChannelAssignment, sizeof(ChannelAssignment)) &&
 					ChannelAssignmentLookupTable[i].SuitableForDirectOutput)
 				return ChannelAssignmentLookupTable[i].AccAcMode;
 		// Progressively disconnect pairs of outputs until we find something that matches
@@ -3892,7 +3912,8 @@ enum eAccAcMode Mixer_Mme_c::TranslateChannelAssignmentToAudioMode(struct snd_ps
 /// This method and Mixer_Mme_c::TranslateChannelAssignmentToAudioMode are *not* reversible for
 /// audio modes that are not marked as suitable for output.
 ///
-struct snd_pseudo_mixer_channel_assignment Mixer_Mme_c::TranslateAudioModeToChannelAssignment(enum eAccAcMode AudioMode)
+struct snd_pseudo_mixer_channel_assignment Mixer_Mme_c::TranslateAudioModeToChannelAssignment(
+	enum eAccAcMode AudioMode)
 {
 	struct snd_pseudo_mixer_channel_assignment Zeros = { 0 };
 	if (ACC_MODE_ID == AudioMode)
@@ -3916,7 +3937,8 @@ struct snd_pseudo_mixer_channel_assignment Mixer_Mme_c::TranslateAudioModeToChan
 ///
 /// Lookup the most appropriate ACC_MODE for the primary output.
 ///
-enum eAccAcMode Mixer_Mme_c::TranslateDownstreamCardToMainAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard)
+enum eAccAcMode Mixer_Mme_c::TranslateDownstreamCardToMainAudioMode(
+	struct snd_pseudo_mixer_downstream_card *DownstreamCard)
 {
 	struct snd_pseudo_mixer_channel_assignment ChannelAssignment = DownstreamCard->channel_assignment;
 	// Disconnect any pair that is deselected by the number of channels
@@ -3945,13 +3967,18 @@ enum eAccAcMode Mixer_Mme_c::TranslateDownstreamCardToMainAudioMode(struct snd_p
 ///
 /// Lookup the most appropriate ACC_MODE for the auxillary output.
 ///
-enum eAccAcMode Mixer_Mme_c::TranslateDownstreamCardToAuxAudioMode(struct snd_pseudo_mixer_downstream_card *DownstreamCard)
+enum eAccAcMode Mixer_Mme_c::TranslateDownstreamCardToAuxAudioMode(
+	struct snd_pseudo_mixer_downstream_card *DownstreamCard)
 {
 	struct snd_pseudo_mixer_channel_assignment ChannelAssignment = DownstreamCard->channel_assignment;
-	if (DownstreamCard->num_channels < 10 || SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED == ChannelAssignment.pair4)
+	if (DownstreamCard->num_channels < 10 ||
+			SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED == ChannelAssignment.pair4)
 		return ACC_MODE_ID;
 	ChannelAssignment.pair0 = ChannelAssignment.pair4;
-	ChannelAssignment.pair1 = ChannelAssignment.pair2 = ChannelAssignment.pair3 = ChannelAssignment.pair4 = SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED;
+	ChannelAssignment.pair1 =
+		ChannelAssignment.pair2 =
+			ChannelAssignment.pair3 =
+				ChannelAssignment.pair4 = SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED;
 	return TranslateChannelAssignmentToAudioMode(ChannelAssignment);
 }
 
@@ -4013,7 +4040,7 @@ enum eAccAcMode Mixer_Mme_c::LookupFatPipeOutputMode(enum eAccAcMode InputMode)
 PlayerStatus_t Mixer_Mme_c::ConfigureHDMICell(PcmPlayer_c::OutputEncoding OutputEncoding, unsigned int CardFlags)
 {
 	// get a handle to the output device
-	stm_display_device_t * pDev = stm_display_get_device(OutputConfiguration.display_device_id);
+	stm_display_device_t *pDev = stm_display_get_device(OutputConfiguration.display_device_id);
 	if (pDev == NULL)
 	{
 		MIXER_ERROR("Unable to get display device %d\n", OutputConfiguration.display_device_id);

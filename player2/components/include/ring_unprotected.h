@@ -13,21 +13,21 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : ring_unprotected.h
-Author :           Nick
+Author : Nick
 
 Definition of the class defining the interface to a simple ring
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Dec-03   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+11-Dec-03 Created Nick
 
 ************************************************************************/
 
@@ -45,20 +45,20 @@ class RingUnprotected_c : public Ring_c
 {
 	private:
 
-		unsigned int         Limit;
-		unsigned int         NextExtract;
-		unsigned int         NextInsert;
-		uintptr_t           *Storage;
+		unsigned int Limit;
+		unsigned int NextExtract;
+		unsigned int NextInsert;
+		unsigned int *Storage;
 
 	public:
 
 		RingUnprotected_c(unsigned int MaxEntries = 16);
 		~RingUnprotected_c(void);
 
-		RingStatus_t Insert(uintptr_t    Value);
-		RingStatus_t Extract(uintptr_t  *Value);
+		RingStatus_t Insert(unsigned int Value);
+		RingStatus_t Extract(unsigned int *Value);
 		RingStatus_t Flush(void);
-		bool         NonEmpty(void);
+		bool NonEmpty(void);
 };
 
 #endif

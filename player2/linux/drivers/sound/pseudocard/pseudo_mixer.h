@@ -1,6 +1,5 @@
 /*
- * Pseudo ALSA device (mixer and PCM player) implemented in software
- * by the player.
+ * Pseudo ALSA device (mixer and PCM player) implemented in software by the player.
  * Copyright (C) 2007 STMicroelectronics R&D Limited <daniel.thompson@st.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -10,32 +9,33 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #ifndef PSEUDO_DEV_H_
 #define PSEUDO_DEV_H_
-#define SND_PSEUDO_MIXER_CHANNELS       8
-#define SND_PSEUDO_MIXER_INTERACTIVE    8
-#define SND_PSEUDO_MIXER_MAGIC          0xf051
+
+#define SND_PSEUDO_MIXER_CHANNELS 8
+#define SND_PSEUDO_MIXER_INTERACTIVE 8
+#define SND_PSEUDO_MIXER_MAGIC 0xf051
 
 #define SND_PSEUDO_TRANSFORMER_NAME_MAGIC 0xf052
 
 /** Maximum number of supported outputs (subordinate ALSA soundcards) */
-#define SND_PSEUDO_MAX_OUTPUTS          4
+#define SND_PSEUDO_MAX_OUTPUTS 4
 
-#define Q3_13_MIN               0
-#define Q3_13_UNITY             ((1 << 13) - 1)
-#define Q3_13_MAX               0xffff
+#define Q3_13_MIN 0
+#define Q3_13_UNITY ((1 << 13) - 1)
+#define Q3_13_MAX 0xffff
 
-#define Q0_8_MIN                0
-#define Q0_8_UNITY              ((1 << 8) - 1)
-#define Q0_8_MAX                0xFF
+#define Q0_8_MIN 0
+#define Q0_8_UNITY ((1 << 8) - 1)
+#define Q0_8_MAX 0xFF
 
 enum snd_pseudo_mixer_metadata_update
 {
@@ -78,10 +78,10 @@ enum snd_pseudo_mixer_emergency_mute
 /* must be binary compatible with struct snd_aes_iec958 (which was can't include in C++ code) */
 struct snd_pseudo_mixer_aes_iec958
 {
-	unsigned char status[24];       /* AES/IEC958 channel status bits */
-	unsigned char subcode[147];     /* AES/IEC958 subcode bits */
-	unsigned char pad;              /* nothing */
-	unsigned char dig_subframe[4];  /* AES/IEC958 subframe bits */
+	unsigned char status[24]; /* AES/IEC958 channel status bits */
+	unsigned char subcode[147]; /* AES/IEC958 subcode bits */
+	unsigned char pad; /* nothing */
+	unsigned char dig_subframe[4]; /* AES/IEC958 subframe bits */
 };
 
 struct snd_pseudo_mixer_fatpipe
@@ -89,62 +89,64 @@ struct snd_pseudo_mixer_fatpipe
 	unsigned short md[16];
 };
 
+// *INDENT-OFF*
 enum snd_pseudo_mixer_channel_pair                           /* pair0   pair1   pair2   pair3   pair4   */
 {
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_DEFAULT,                   /*   Y       Y       Y       Y       Y     */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_L_R = 0,                   /*   Y                               Y     */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_LFE1 = 0,             /*           Y                             */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSUR_RSUR = 0,             /*                   Y                     */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSURREAR_RSURREAR = 0,     /*                           Y             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_DEFAULT,               /*   Y       Y       Y       Y       Y     */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_L_R = 0,               /*   Y                               Y     */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_LFE1 = 0,         /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSUR_RSUR = 0,         /*                   Y                     */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSURREAR_RSURREAR = 0, /*                           Y             */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LT_RT,                     /*   Y                               Y     */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LPLII_RPLII,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTRL_CNTRR,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGH_RHIGH,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LWIDE_RWIDE,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LRDUALMONO,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_RESERVED1,                 /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LT_RT,                 /*   Y                               Y     */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LPLII_RPLII,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTRL_CNTRR,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGH_RHIGH,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LWIDE_RWIDE,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LRDUALMONO,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_RESERVED1,             /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_0,                    /*           Y                             */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_0_LFE1,                    /*           Y                             */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_0_LFE2,                    /*           Y                             */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_0,                   /*           Y                             */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_0,               /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_0,                /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_0_LFE1,                /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_0_LFE2,                /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_0,               /*           Y                             */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_0,           /*           Y                             */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CSURR,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CHIGH,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_TOPSUR,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CHIGHREAR,            /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CLOWFRONT,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CSURR,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CHIGH,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_TOPSUR,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CHIGHREAR,        /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_CLOWFRONT,        /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_TOPSUR,              /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_CHIGHREAR,           /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_CLOWFRONT,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_TOPSUR,          /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_CHIGHREAR,       /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_CLOWFRONT,       /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_LFE2,                 /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_LFE1,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_LFE2,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_LFE1,            /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_LFE2,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CNTR_LFE2,             /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_LFE1,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGH_LFE2,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_LFE1,        /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CLOWFRONT_LFE2,        /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSIDESURR_RSIDESURR,       /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGHSIDE_RHIGHSIDE,       /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LDIRSUR_RDIRSUR,           /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGHREAR_RHIGHREAR,       /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LSIDESURR_RSIDESURR,   /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGHSIDE_RHIGHSIDE,   /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LDIRSUR_RDIRSUR,       /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_LHIGHREAR_RHIGHREAR,   /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_0,                   /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_TOPSUR_0,                  /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_TOPSUR,              /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CHIGH,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CHIGHREAR,           /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CLOWFRONT,           /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_LFE1,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_LFE2,                /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGHREAR_0,               /*                                         */
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_DSTEREO_LsRs,              /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_0,               /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_TOPSUR_0,              /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_TOPSUR,          /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CHIGH,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CHIGHREAR,       /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_CLOWFRONT,       /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_LFE1,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CSURR_LFE2,            /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_CHIGHREAR_0,           /*                                         */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_DSTEREO_LsRs,          /*                                         */
 
-	SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED,             /*   Y       Y       Y       Y       Y     */
+	SND_PSEUDO_MIXER_CHANNEL_PAIR_NOT_CONNECTED,         /*   Y       Y       Y       Y       Y     */
 };
+// *INDENT-ON*
 
 struct snd_pseudo_mixer_channel_assignment
 {
@@ -197,7 +199,7 @@ struct snd_pseudo_mixer_settings
 	char spdif_bypass;
 	char hdmi_bypass;
 
-	/* The next two indicies help us getting an handle to the hdmi output device */
+	/* The next two indicies help us getting an handle to the hdmi output device*/
 	unsigned int display_device_id;
 	int display_output_id;
 
@@ -214,16 +216,16 @@ struct snd_pseudo_mixer_settings
 	enum snd_pseudo_mixer_metadata_update metadata_update;
 
 	/* post-mix gain control */
-	int     master_volume[SND_PSEUDO_MIXER_CHANNELS]; /* logarithmic */
-	int     chain_delay[SND_PSEUDO_MAX_OUTPUTS][SND_PSEUDO_MIXER_CHANNELS]; /* in microseconds */
-	int     chain_volume[SND_PSEUDO_MAX_OUTPUTS];
-	char    chain_enable[SND_PSEUDO_MAX_OUTPUTS];
-	char    chain_limiter_enable[SND_PSEUDO_MAX_OUTPUTS];
+	int master_volume[SND_PSEUDO_MIXER_CHANNELS]; /* logarithmic */
+	int chain_delay[SND_PSEUDO_MAX_OUTPUTS][SND_PSEUDO_MIXER_CHANNELS]; /* in microseconds */
+	int chain_volume[SND_PSEUDO_MAX_OUTPUTS];
+	char chain_enable[SND_PSEUDO_MAX_OUTPUTS];
+	char chain_limiter_enable[SND_PSEUDO_MAX_OUTPUTS];
 	/* DRC info */
-	char                           drc_enable;
+	char drc_enable;
 	enum snd_pseudo_mixer_drc_type drc_type;
-	int                            hdr;
-	int                            ldr;
+	int hdr;
+	int ldr;
 
 	/* emergency mute control */
 	enum snd_pseudo_mixer_emergency_mute emergency_mute;
@@ -301,12 +303,13 @@ struct snd_pseudo_mixer_downmix_rom
 typedef int16_t snd_pseudo_mixer_downmix_Q15;
 
 typedef void (snd_pseudo_mixer_observer_t)(void *ctx,
-		const struct snd_pseudo_mixer_settings *mixer_settings);
+					   const struct snd_pseudo_mixer_settings *mixer_settings);
 
 int snd_pseudo_register_mixer_observer(int mixer_num,
-									   snd_pseudo_mixer_observer_t *observer, void *ctx);
+				       snd_pseudo_mixer_observer_t *observer, void *ctx);
 int snd_pseudo_deregister_mixer_observer(int mixer_num,
-		snd_pseudo_mixer_observer_t *observer, void *ctx);
+					 snd_pseudo_mixer_observer_t *observer, void *ctx);
+
 struct snd_pseudo_mixer_downmix_rom *snd_pseudo_get_downmix_rom(int mixer_num);
 
 #endif /*PSEUDO_DEV_H_*/

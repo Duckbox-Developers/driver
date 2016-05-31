@@ -2,10 +2,11 @@
  * e2_proc_info.c
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-int proc_info_model_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
+int proc_info_model_read(char *page, char **start, off_t off, int count,
+			 int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -53,8 +54,6 @@ int proc_info_model_read(char *page, char **start, off_t off, int count, int *eo
 	len = sprintf(page, "sagemcom88\n");
 #elif defined(ARIVALINK200)
 	len = sprintf(page, "ariva@link200\n");
-#elif defined(FORTIS_DP7000)
-	len = sprintf(page, "dp7000\n");
 #elif defined(UFS910)
 	len = sprintf(page, "ufs910\n");
 #else

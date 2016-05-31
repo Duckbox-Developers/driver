@@ -4,15 +4,15 @@
  * TODO/ISSUES:
  * - must be updated with every new player ->options are defined in player_types.h and backend_ops.h
  * - currently missing is PolicyH264AllowBadPreProcessedFrames in backend_ops.h
- * -  HavanaStream_c::GetOption in havana_stream.cpp misses many of the otions so the GetOption
+ * - HavanaStream_c::GetOption in havana_stream.cpp misses many of the otions so the GetOption
  * will fail here.
  * - a _choices proc for each policy should be implemented.
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 #include <linux/dvb/audio.h>
 #include <linux/string.h>
 
@@ -20,9 +20,9 @@
 #include "../dvb_module.h"
 #include "linux/dvb/stm_ioctls.h"
 
-extern struct DeviceContext_s* ProcDeviceContext;
+extern struct DeviceContext_s *ProcDeviceContext;
 
-int proc_stream_AV_SYNC_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_AV_SYNC_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -39,20 +39,20 @@ int proc_stream_AV_SYNC_read(char* page, char** start, off_t off, int count, int
 	return len;
 }
 
-int proc_stream_AV_SYNC_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_AV_SYNC_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -84,7 +84,7 @@ out:
 	return ret;
 }
 
-int proc_stream_TRICK_MODE_AUDIO_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_TRICK_MODE_AUDIO_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -101,20 +101,20 @@ int proc_stream_TRICK_MODE_AUDIO_read(char* page, char** start, off_t off, int c
 	return len;
 }
 
-int proc_stream_TRICK_MODE_AUDIO_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_TRICK_MODE_AUDIO_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -146,7 +146,7 @@ out:
 	return ret;
 }
 
-int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -163,20 +163,20 @@ int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_read(char* page, char** start, off_t o
 	return len;
 }
 
-int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_PLAY_24FPS_VIDEO_AT_25FPS_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -208,7 +208,7 @@ out:
 	return ret;
 }
 
-int proc_stream_MASTER_CLOCK_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_MASTER_CLOCK_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -225,20 +225,20 @@ int proc_stream_MASTER_CLOCK_read(char* page, char** start, off_t off, int count
 	return len;
 }
 
-int proc_stream_MASTER_CLOCK_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_MASTER_CLOCK_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -270,7 +270,7 @@ out:
 	return ret;
 }
 
-int proc_stream_EXTERNAL_TIME_MAPPING_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_EXTERNAL_TIME_MAPPING_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -287,20 +287,20 @@ int proc_stream_EXTERNAL_TIME_MAPPING_read(char* page, char** start, off_t off, 
 	return len;
 }
 
-int proc_stream_EXTERNAL_TIME_MAPPING_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_EXTERNAL_TIME_MAPPING_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -332,7 +332,7 @@ out:
 	return ret;
 }
 
-int proc_stream_DISPLAY_FIRST_FRAME_EARLY_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_DISPLAY_FIRST_FRAME_EARLY_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -349,20 +349,20 @@ int proc_stream_DISPLAY_FIRST_FRAME_EARLY_read(char* page, char** start, off_t o
 	return len;
 }
 
-int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_DISPLAY_FIRST_FRAME_EARLY_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -394,7 +394,7 @@ out:
 	return ret;
 }
 
-int proc_stream_STREAM_ONLY_KEY_FRAMES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_STREAM_ONLY_KEY_FRAMES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -411,20 +411,20 @@ int proc_stream_STREAM_ONLY_KEY_FRAMES_read(char* page, char** start, off_t off,
 	return len;
 }
 
-int proc_stream_STREAM_ONLY_KEY_FRAMES_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_STREAM_ONLY_KEY_FRAMES_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -456,7 +456,7 @@ out:
 	return ret;
 }
 
-int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -473,20 +473,20 @@ int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_read(char* page, cha
 	return len;
 }
 
-int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_STREAM_SINGLE_GROUP_BETWEEN_DISCONTINUITIES_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -518,7 +518,7 @@ out:
 	return ret;
 }
 
-int proc_stream_PLAYOUT_ON_TERMINATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_PLAYOUT_ON_TERMINATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -535,20 +535,20 @@ int proc_stream_PLAYOUT_ON_TERMINATE_read(char* page, char** start, off_t off, i
 	return len;
 }
 
-int proc_stream_PLAYOUT_ON_TERMINATE_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_PLAYOUT_ON_TERMINATE_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -580,7 +580,7 @@ out:
 	return ret;
 }
 
-int proc_stream_PLAYOUT_ON_SWITCH_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_PLAYOUT_ON_SWITCH_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -597,20 +597,20 @@ int proc_stream_PLAYOUT_ON_SWITCH_read(char* page, char** start, off_t off, int 
 	return len;
 }
 
-int proc_stream_PLAYOUT_ON_SWITCH_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_PLAYOUT_ON_SWITCH_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -642,7 +642,7 @@ out:
 	return ret;
 }
 
-int proc_stream_PLAYOUT_ON_DRAIN_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_PLAYOUT_ON_DRAIN_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -659,20 +659,20 @@ int proc_stream_PLAYOUT_ON_DRAIN_read(char* page, char** start, off_t off, int c
 	return len;
 }
 
-int proc_stream_PLAYOUT_ON_DRAIN_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_PLAYOUT_ON_DRAIN_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -704,7 +704,7 @@ out:
 	return ret;
 }
 
-int proc_stream_TRICK_MODE_DOMAIN_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_TRICK_MODE_DOMAIN_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -733,20 +733,20 @@ int proc_stream_TRICK_MODE_DOMAIN_read(char* page, char** start, off_t off, int 
 	return len;
 }
 
-int proc_stream_TRICK_MODE_DOMAIN_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_TRICK_MODE_DOMAIN_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -818,7 +818,7 @@ out:
 	return ret;
 }
 
-int proc_stream_DISCARD_LATE_FRAMES_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_DISCARD_LATE_FRAMES_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -837,20 +837,20 @@ int proc_stream_DISCARD_LATE_FRAMES_read(char* page, char** start, off_t off, in
 	return len;
 }
 
-int proc_stream_DISCARD_LATE_FRAMES_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_DISCARD_LATE_FRAMES_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -870,7 +870,7 @@ int proc_stream_DISCARD_LATE_FRAMES_write(struct file* file, const char __user* 
 				printk("failed to set policy\n");
 			}
 		}
-		else  if (strncmp("aftersync", myString, count - 1) == 0)
+		else if (strncmp("aftersync", myString, count - 1) == 0)
 		{
 			result = DvbStreamSetOption(ProcDeviceContext->VideoStream, PLAY_OPTION_DISCARD_LATE_FRAMES, PLAY_OPTION_VALUE_DISCARD_LATE_FRAMES_AFTER_SYNCHRONIZE);
 			if (result != 0)
@@ -890,7 +890,7 @@ out:
 	return ret;
 }
 
-int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -907,20 +907,20 @@ int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_read(char* page, char** start, off_
 	return len;
 }
 
-int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_REBASE_ON_DATA_DELIVERY_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -952,7 +952,7 @@ out:
 	return ret;
 }
 
-int proc_stream_REBASE_ON_FRAME_DECODE_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_REBASE_ON_FRAME_DECODE_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -969,20 +969,20 @@ int proc_stream_REBASE_ON_FRAME_DECODE_LATE_read(char* page, char** start, off_t
 	return len;
 }
 
-int proc_stream_REBASE_ON_FRAME_DECODE_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_REBASE_ON_FRAME_DECODE_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -1014,7 +1014,7 @@ out:
 	return ret;
 }
 
-int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -1031,20 +1031,20 @@ int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_read(char* page, 
 	return len;
 }
 
-int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_LOWER_CODEC_DECODE_LIMITS_ON_FRAME_DECODE_LATE_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -1076,7 +1076,7 @@ out:
 	return ret;
 }
 
-int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -1093,20 +1093,20 @@ int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_read(char* page, char** sta
 	return len;
 }
 
-int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_H264_ALLOW_NON_IDR_RESYNCHRONIZATION_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);
@@ -1138,7 +1138,7 @@ out:
 	return ret;
 }
 
-int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value;
@@ -1155,20 +1155,20 @@ int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_read(char* page, char** start
 	return len;
 }
 
-int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_stream_MPEG2_IGNORE_PROGESSIVE_FRAME_FLAG_write(struct file *file, const char __user *buf, unsigned long count, void *data)
 {
-	char* page;
-	char* myString;
+	char *page;
+	char *myString;
 	ssize_t ret = -ENOMEM;
 	int result;
 	printk("%s %ld - ", __FUNCTION__, count);
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
 		if (copy_from_user(page, buf, count))
 			goto out;
-		myString = (char*) kmalloc(count + 1, GFP_KERNEL);
+		myString = (char *) kmalloc(count + 1, GFP_KERNEL);
 		strncpy(myString, page, count);
 		myString[count] = '\0';
 		printk("%s\n", myString);

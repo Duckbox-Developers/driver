@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_packet.h
-Author :           Nick
+Author : Nick
 
 Definition of the base collator packet class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-08-Jul-08   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+08-Jul-08 Created Nick
 
 ************************************************************************/
 
@@ -71,16 +71,16 @@ class Collator_Packet_c : public Collator_Base_c
 		// Base class overrides
 		//
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 
 		//
 		// Collator class functions
 		//
 
-		CollatorStatus_t   Input(PlayerInputDescriptor_t  *Input,
-								 unsigned int          DataLength,
-								 void                     *Data,
-								 bool              NonBlocking = false);
+		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+				       unsigned int DataLength,
+				       void *Data,
+				       bool NonBlocking = false);
 };
 
 #endif

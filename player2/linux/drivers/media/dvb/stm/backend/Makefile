@@ -68,12 +68,14 @@ infrastructure-objs := \
 			stack_generic.o \
 			allocator_simple.o
 
-inline-objs :=          osinline.o \
+inline-objs := \
+			osinline.o \
 			osdev_user.o \
 			osdev_device.o \
 			sh4cache.o 
 
-backend-objs :=         player_module.o \
+backend-objs := \
+			player_module.o \
 			display.o \
 			player_backend.o \
 			player_factory.o \
@@ -84,11 +86,13 @@ backend-objs :=         player_module.o \
 			havana_demux.o \
 			havana_stream.o
 
-buffer-objs :=          buffer_individual_generic.o \
+buffer-objs := \
+			buffer_individual_generic.o \
 			buffer_manager_generic.o \
 			buffer_pool_generic.o
 
-player-objs :=          player_coded_frame.o \
+player-objs := \
+			player_coded_frame.o \
 			player_construct.o \
 			player_events.o \
 			player_extraction.o \
@@ -105,10 +109,12 @@ player-objs :=          player_coded_frame.o \
 			player_time.o \
 			player_tostring.o
 
-demultiplexor-objs :=   demultiplexor_base.o \
+demultiplexor-objs := \
+			demultiplexor_base.o \
 			demultiplexor_ts.o
 
-collator-objs :=        collator_base.o \
+collator-objs := \
+			collator_base.o \
 			collator_packet.o \
 			collator_packet_dvp.o \
 			collator_pes.o \
@@ -130,12 +136,14 @@ collator-objs :=        collator_base.o \
 			collator_pes_audio_wma.o \
 			collator_pes_audio_mlp.o
 
-collator2-objs :=       collator2_base.o \
+collator2-objs := \
+			collator2_base.o \
 			collator2_pes.o \
 			collator2_pes_video.o \
 			collator2_pes_video_h264.o
 
-frame_parser-objs :=    frame_parser_base.o \
+frame_parser-objs := \
+			frame_parser_base.o \
 			frame_parser_video.o \
 			frame_parser_video_mpeg2.o \
 			frame_parser_video_h264.o \
@@ -164,25 +172,26 @@ frame_parser-objs :=    frame_parser_base.o \
 			frame_parser_audio_vorbis.o \
 			frame_parser_audio_pcm.o
 
-codec-objs :=           codec_mme_base.o        \
-			codec_mme_video.o       \
+codec-objs := \
+			codec_mme_base.o \
+			codec_mme_video.o \
 			codec_mme_video_mpeg2.o \
-			codec_mme_video_h264.o  \
+			codec_mme_video_h264.o \
 			codec_mme_video_divx.o \
 			codec_mme_video_divx_hd.o \
-			codec_mme_video_vc1.o   \
-			codec_mme_video_h263.o  \
-			codec_mme_video_flv1.o  \
-			codec_mme_video_vp6.o  \
-			codec_mme_video_rmv.o  \
-			codec_mme_video_theora.o  \
-			codec_mme_video_mjpeg.o  \
-			codec_dvp_video.o       \
-			codec_mme_audio.o       \
+			codec_mme_video_vc1.o \
+			codec_mme_video_h263.o \
+			codec_mme_video_flv1.o \
+			codec_mme_video_vp6.o \
+			codec_mme_video_rmv.o \
+			codec_mme_video_theora.o \
+			codec_mme_video_mjpeg.o \
+			codec_dvp_video.o \
+			codec_mme_audio.o \
 			codec_mme_audio_stream.o \
-			codec_mme_audio_aac.o  \
-			codec_mme_audio_mpeg.o  \
-			codec_mme_audio_eac3.o  \
+			codec_mme_audio_aac.o \
+			codec_mme_audio_mpeg.o \
+			codec_mme_audio_eac3.o \
 			codec_mme_audio_dtshd.o \
 			codec_mme_audio_lpcm.o \
 			codec_mme_audio_wma.o \
@@ -193,7 +202,8 @@ codec-objs :=           codec_mme_base.o        \
 			codec_mme_audio_vorbis.o \
 			codec_mme_audio_pcm.o
 
-manifestor-objs :=      manifestor_base.o \
+manifestor-objs := \
+			manifestor_base.o \
 			manifestor_video.o \
 			manifestor_video_stmfb.o \
 			manifestor_audio.o \
@@ -202,9 +212,11 @@ manifestor-objs :=      manifestor_base.o \
 			pcmplayer_ksound.o \
 			manifestor_clone.o
 
-output_coordinator-objs :=      output_coordinator_base.o
+output_coordinator-objs := \
+			output_coordinator_base.o
 
-output_timer-objs :=    output_timer_base.o \
+output_timer-objs := \
+			output_timer_base.o \
 			output_timer_video.o \
 			output_timer_audio.o
 

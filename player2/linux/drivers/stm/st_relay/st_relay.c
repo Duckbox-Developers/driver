@@ -1,6 +1,5 @@
 #include <linux/autoconf.h>
 #include <linux/init.h>
-#include <linux/module.h>
 #include <linux/err.h>
 #include <linux/platform_device.h>
 #include <linux/jiffies.h>
@@ -25,8 +24,8 @@ EXPORT_SYMBOL(st_relayfs_getindex);
 EXPORT_SYMBOL(st_relayfs_freeindex);
 
 unsigned long g_flags;
-struct rchan *  fatpipe_chan;
-struct dentry * strelay_dir;
+struct rchan *fatpipe_chan;
+struct dentry *strelay_dir;
 
 //must correlate to relay_type_ids in st_relay.h
 unsigned char relay_type_names[RELAY_NUMBER_OF_TYPES][ST_RELAY_TYPE_NAME_LEN] =
@@ -59,20 +58,20 @@ unsigned int audio_manifestor_indexes[4] = { 0, 0, 0, 0 };
 unsigned int video_manifestor_indexes[4] = { 0, 0, 0, 0 };
 
 #define SUBBUF_SIZE (768*1024)
-#define N_SUBBUFS   10
+#define N_SUBBUFS 10
 
 struct rchan *st_relay_chan = NULL;
 struct rchan *st_test_chan = NULL;
 static DEFINE_SPINLOCK(st_chan_lock);
 
 /*
- * file_create() callback.  Creates relay file in debugfs.
+ * file_create() callback. Creates relay file in debugfs.
  */
 static struct dentry *st_create_buf_file_handler(const char *filename,
-		struct dentry *parent,
-		int mode,
-		struct rchan_buf *buf,
-		int *is_global)
+						 struct dentry *parent,
+						 int mode,
+						 struct rchan_buf *buf,
+						 int *is_global)
 {
 	struct dentry *buf_file;
 	buf_file = debugfs_create_file(filename, mode, parent, buf, &relay_file_operations);
@@ -81,7 +80,7 @@ static struct dentry *st_create_buf_file_handler(const char *filename,
 }
 
 /*
- * file_remove() default callback.  Removes relay file in debugfs.
+ * file_remove() default callback. Removes relay file in debugfs.
  */
 static int st_remove_buf_file_handler(struct dentry *dentry)
 {
@@ -102,8 +101,8 @@ static struct rchan_callbacks st_relayfs_callbacks =
 //cloned this from kernels include/linux/relay.h to add length written return value
 //and avoid changing it in the kernel tree itself
 static inline int st_relay_write(struct rchan *chan,
-								 const void *data,
-								 size_t length)
+				 const void *data,
+				 size_t length)
 {
 	unsigned long flags;
 	struct rchan_buf *buf;
@@ -135,46 +134,46 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 		if (relay_entries[id].active)
 		{
 			int wrote1, wrote2, wrote3;
-			relay_entries[id].x      = 0;   //mini meta data
-			relay_entries[id].y      = 0;
-			relay_entries[id].z      = 0;
-			relay_entries[id].ident  = 0x12345678;
+			relay_entries[id].x = 0; //mini meta data
+			relay_entries[id].y = 0;
+			relay_entries[id].z = 0;
+			relay_entries[id].ident = 0x12345678;
 			relay_entries[id].source = source;
-			relay_entries[id].count  = relay_source_item_counts[source][id];
-			relay_entries[id].len    = len;
+			relay_entries[id].count = relay_source_item_counts[source][id];
+			relay_entries[id].len = len;
 			if (id == ST_RELAY_TYPE_DECODED_VIDEO_BUFFER)
 			{
 				//for these we need to hunt two separate parts, Luma and Chroma
 				//TODO - we assume info->type is SURF_YCBCR420MB right now...
 				struct relay_video_frame_info_s *vid_info = info;
-				relay_entries[id].x      = vid_info->width;
-				relay_entries[id].y      = vid_info->height;
-				relay_entries[id].len    = (((relay_entries[id].x * relay_entries[id].y) * 3) / 2);
+				relay_entries[id].x = vid_info->width;
+				relay_entries[id].y = vid_info->height;
+				relay_entries[id].len = (((relay_entries[id].x * relay_entries[id].y) * 3) / 2);
 				spin_lock_irqsave(&st_chan_lock, flags);
 				wrote1 = st_relay_write(st_relay_chan, relay_entries[id].name, ST_RELAY_ENTRY_HEADER_LEN);
 				if (wrote1 != 0)
 				{
 					wrote2 = st_relay_write(st_relay_chan, buf + (vid_info->luma_offset),
-											(relay_entries[id].x * relay_entries[id].y));
+								(relay_entries[id].x * relay_entries[id].y));
 					if (wrote2 != 0)
 					{
 						wrote3 = st_relay_write(st_relay_chan, buf + (vid_info->chroma_offset),
-												((relay_entries[id].x * relay_entries[id].y) / 2));
+									((relay_entries[id].x * relay_entries[id].y) / 2));
 						if (wrote3 != 0)
 						{
 							relay_source_item_counts[source][id]++;
 						}
 						else
 						{
-							wrote1 = wrote3 - len;  //use wrote1 to signify error and how much failed to write
+							wrote1 = wrote3 - len; //use wrote1 to signify error and how much failed to write
 						}
 					}
 					else
 					{
-						wrote1 = wrote2 - len;      //use wrote1 to signify error and how much failed to write
+						wrote1 = wrote2 - len; //use wrote1 to signify error and how much failed to write
 					}
 				}
-				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN;   //use wrote1 to signify error and how much failed to write
+				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN; //use wrote1 to signify error and how much failed to write
 				spin_unlock_irqrestore(&st_chan_lock, flags);
 			}
 			else
@@ -190,16 +189,16 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 					}
 					else
 					{
-						wrote1 = wrote2 - len;      //use wrote1 to signify error and how much failed to write
+						wrote1 = wrote2 - len; //use wrote1 to signify error and how much failed to write
 					}
 				}
-				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN;   //use wrote1 to signify error and how much failed to write
+				else wrote1 -= ST_RELAY_ENTRY_HEADER_LEN; //use wrote1 to signify error and how much failed to write
 				spin_unlock_irqrestore(&st_chan_lock, flags);
 			}
 			if (wrote1 < 0)
 			{
 				printk("st_relayfs_write: DISABLING %s - client not reading data quick enough! (%d lost) \n",
-					   relay_entries[id].name, (0 - wrote1));
+				       relay_entries[id].name, (0 - wrote1));
 				relay_entries[id].active = 0;
 			}
 		}
@@ -274,7 +273,7 @@ int st_relayfs_open(void)
 	else
 	{
 		st_relay_chan = relay_open("data", strelay_dir, SUBBUF_SIZE,
-								   N_SUBBUFS, &st_relayfs_callbacks, 0);
+					   N_SUBBUFS, &st_relayfs_callbacks, 0);
 		if (st_relay_chan)
 		{
 			for (n = 0; n < RELAY_NUMBER_OF_TYPES; n++)

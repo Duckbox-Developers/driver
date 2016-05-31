@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio.cpp
-Author :           Daniel
+Author : Daniel
 
 Implementation of the base audio frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-30-Mar-07   Created (from frame_parser_video.cpp)           Daniel
+Date Modification Name
+---- ------------ --------
+30-Mar-07 Created (from frame_parser_video.cpp) Daniel
 
 ************************************************************************/
 
@@ -52,50 +52,50 @@ Date        Modification                                    Name
 
 ///////////////////////////////////////////////////////////////////////////
 ///
-///     Constructor
+/// Constructor
 ///
 FrameParser_Audio_c::FrameParser_Audio_c()
 {
-	PtsJitterTollerenceThreshold = 1000;        // Changed to 1ms by nick, because some file formats specify pts times to 1 ms accuracy
+	PtsJitterTollerenceThreshold = 1000; // Changed to 1ms by nick, because some file formats specify pts times to 1 ms accuracy
 //
 	Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  The Reset function release any resources, and reset all variable
+// The Reset function release any resources, and reset all variable
 //
 
-FrameParserStatus_t   FrameParser_Audio_c::Reset(void)
+FrameParserStatus_t FrameParser_Audio_c::Reset(void)
 {
-	ParsedAudioParameters   = NULL;
-	LastNormalizedPlaybackTime               = UNSPECIFIED_TIME;
-	NextFrameNormalizedPlaybackTime          = UNSPECIFIED_TIME;
-	NextFramePlaybackTimeAccumulatedError    = 0;
-	UpdateStreamParameters              = false;
+	ParsedAudioParameters = NULL;
+	LastNormalizedPlaybackTime = UNSPECIFIED_TIME;
+	NextFrameNormalizedPlaybackTime = UNSPECIFIED_TIME;
+	NextFramePlaybackTimeAccumulatedError = 0;
+	UpdateStreamParameters = false;
 	return FrameParser_Base_c::Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The register output ring function
+// The register output ring function
 //
 
-FrameParserStatus_t   FrameParser_Audio_c::RegisterOutputBufferRing(
-	Ring_t      Ring)
+FrameParserStatus_t FrameParser_Audio_c::RegisterOutputBufferRing(
+	Ring_t Ring)
 {
 	FrameParserStatus_t Status;
 	//
 	// First allow the base class to perform it's operations,
 	// as we operate on the buffer pool obtained by it.
 	//
-	Status  = FrameParser_Base_c::RegisterOutputBufferRing(Ring);
+	Status = FrameParser_Base_c::RegisterOutputBufferRing(Ring);
 	if (Status != FrameParserNoError)
 		return Status;
 	//
 	// Attach the audio specific parsed frame parameters to every element of the pool
 	//
-	Status      = CodedFrameBufferPool->AttachMetaData(Player->MetaDataParsedAudioParametersType);
+	Status = CodedFrameBufferPool->AttachMetaData(Player->MetaDataParsedAudioParametersType);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "FrameParser_Audio_c::RegisterCodedFrameBufferPool - Failed to attach parsed audio parameters to all coded frame buffers.\n");
@@ -108,10 +108,10 @@ FrameParserStatus_t   FrameParser_Audio_c::RegisterOutputBufferRing(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//  The input function perform audio specific operations
+// The input function perform audio specific operations
 //
 
-FrameParserStatus_t   FrameParser_Audio_c::Input(Buffer_t         CodedBuffer)
+FrameParserStatus_t FrameParser_Audio_c::Input(Buffer_t CodedBuffer)
 {
 	FrameParserStatus_t Status;
 	//
@@ -121,18 +121,18 @@ FrameParserStatus_t   FrameParser_Audio_c::Input(Buffer_t         CodedBuffer)
 	//
 	// Initialize context pointers
 	//
-	ParsedAudioParameters   = NULL;
+	ParsedAudioParameters = NULL;
 	//
 	// First perform base operations
 	//
-	Status  = FrameParser_Base_c::Input(CodedBuffer);
+	Status = FrameParser_Base_c::Input(CodedBuffer);
 	if (Status != FrameParserNoError)
 		return Status;
 	st_relayfs_write(ST_RELAY_TYPE_CODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_FRAME_PARSER, (unsigned char *)BufferData, BufferLength, 0);
 	//
 	// Obtain audio specific pointers to data associated with the buffer.
 	//
-	Status  = Buffer->ObtainMetaDataReference(Player->MetaDataParsedAudioParametersType, (void **)(&ParsedAudioParameters));
+	Status = Buffer->ObtainMetaDataReference(Player->MetaDataParsedAudioParametersType, (void **)(&ParsedAudioParameters));
 	if (Status != PlayerNoError)
 	{
 		report(severity_error, "FrameParser_Audio_c::Input - Unable to obtain the meta data \"ParsedVideoParameters\".\n");
@@ -147,20 +147,20 @@ FrameParserStatus_t   FrameParser_Audio_c::Input(Buffer_t         CodedBuffer)
 
 // /////////////////////////////////////////////////////////////////////////
 ///
-///     \brief Common portion of read headers
+/// \brief Common portion of read headers
 ///
-///     Handle invalidation of what we knew about time on a discontinuity
+/// Handle invalidation of what we knew about time on a discontinuity
 ///
-///     \return Frame parser status code, FrameParserNoError indicates success.
+/// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 
-FrameParserStatus_t   FrameParser_Audio_c::ReadHeaders(void)
+FrameParserStatus_t FrameParser_Audio_c::ReadHeaders(void)
 {
 	if (FirstDecodeAfterInputJump && !ContinuousReverseJump)
 	{
-		LastNormalizedPlaybackTime               = UNSPECIFIED_TIME;
-		NextFrameNormalizedPlaybackTime          = UNSPECIFIED_TIME;
-		NextFramePlaybackTimeAccumulatedError    = 0;
+		LastNormalizedPlaybackTime = UNSPECIFIED_TIME;
+		NextFrameNormalizedPlaybackTime = UNSPECIFIED_TIME;
+		NextFramePlaybackTimeAccumulatedError = 0;
 	}
 	return FrameParserNoError;
 }
@@ -180,37 +180,18 @@ FrameParserStatus_t   FrameParser_Audio_c::ReadHeaders(void)
 ///
 FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTime()
 {
-	FrameParserStatus_t Status;
 	if (ParsedFrameParameters->NormalizedPlaybackTime == INVALID_TIME)
 	{
-		ParsedFrameParameters->NormalizedPlaybackTime = NextFrameNormalizedPlaybackTime;
-		FRAME_DEBUG("Using synthetic PTS for frame %d: %lluus (delta %lldus)\n",
-					NextDecodeFrameIndex,
-					ParsedFrameParameters->NormalizedPlaybackTime,
-					ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
-		if (ValidTime(ParsedFrameParameters->NormalizedPlaybackTime))
-		{
-			Status = TranslatePlaybackTimeNormalizedToNative(NextFrameNormalizedPlaybackTime,
-					 &ParsedFrameParameters->NativePlaybackTime);
-			/* Non-fatal error. Having no native timestamp does not harm the player but may harm the values it
-			 * reports to applications (e.g. get current PTS).
-			 */
-			if (Status != FrameParserNoError)
-				FRAME_ERROR("Cannot translate synthetic timestamp to native time\n");
-		}
-		else
-		{
-			ParsedFrameParameters->NativePlaybackTime = ParsedFrameParameters->NormalizedPlaybackTime;
-		}
+		HandleInvalidPlaybackTime();
 	}
 	else
 	{
 		// reset the accumulated error
 		NextFramePlaybackTimeAccumulatedError = 0;
-		FRAME_DEBUG("Using real PTS for frame %d:      %lluus (delta %lldus)\n",
-					NextDecodeFrameIndex,
-					ParsedFrameParameters->NormalizedPlaybackTime,
-					ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
+		FRAME_DEBUG("Using real PTS for frame %d: %lluus (delta %lldus)\n",
+			    NextDecodeFrameIndex,
+			    ParsedFrameParameters->NormalizedPlaybackTime,
+			    ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
 		// Squawk if time does not progress quite as expected.
 		if (LastNormalizedPlaybackTime != UNSPECIFIED_TIME)
 		{
@@ -220,9 +201,9 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
 			// Check that the predicted and actual times deviate by no more than the threshold
 			if (DeltaDelta < -PtsJitterTollerenceThreshold || DeltaDelta > PtsJitterTollerenceThreshold)
 			{
-				FRAME_ERROR("Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld  got %lld )\n",
-							NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
-							SyntheticDelta, RealDelta);
+				FRAME_ERROR("Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld got %lld )\n",
+					    NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
+					    SyntheticDelta, RealDelta);
 			}
 		}
 	}
@@ -263,7 +244,7 @@ void FrameParser_Audio_c::HandleUpdateStreamParameters()
 	//
 	// Unconditionally send the stream parameters down the chain.
 	//
-	Status      = StreamParametersBuffer->ObtainDataReference(NULL, NULL, &StreamParameters);
+	Status = StreamParametersBuffer->ObtainDataReference(NULL, NULL, &StreamParameters);
 	if (BufferNoError == Status)
 	{
 		ParsedFrameParameters->SizeofStreamParameterStructure = FrameParametersDescriptor->FixedSize;
@@ -300,6 +281,38 @@ void FrameParser_Audio_c::GenerateNextFrameNormalizedPlaybackTime(
 	{
 		NextFrameNormalizedPlaybackTime++;
 		NextFramePlaybackTimeAccumulatedError -= (unsigned long long) SamplingFrequency * 1000000ull;
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////
+///
+/// Handle case of invalid Playback Time : null PTS also fall into this case
+///
+/// If the frame was not provided with a timestamp (and non null) then the time
+/// previously calculated by FrameParser_Audio_c::GenerateNextFrameNormalizedPlaybackTime
+/// will be used. If no time has been previously recorded then the method fails.
+///
+void FrameParser_Audio_c::HandleInvalidPlaybackTime()
+{
+	FrameParserStatus_t Status;
+	ParsedFrameParameters->NormalizedPlaybackTime = NextFrameNormalizedPlaybackTime;
+	FRAME_DEBUG("Using synthetic PTS for frame %d: %lluus (delta %lldus)\n",
+		    NextDecodeFrameIndex,
+		    ParsedFrameParameters->NormalizedPlaybackTime,
+		    ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
+	if (ValidTime(ParsedFrameParameters->NormalizedPlaybackTime))
+	{
+		Status = TranslatePlaybackTimeNormalizedToNative(NextFrameNormalizedPlaybackTime,
+								 &ParsedFrameParameters->NativePlaybackTime);
+		/* Non-fatal error. Having no native timestamp does not harm the player but may harm the values it
+		 * reports to applications (e.g. get current PTS).
+		 */
+		if (Status != FrameParserNoError)
+			FRAME_ERROR("Cannot translate synthetic timestamp to native time\n");
+	}
+	else
+	{
+		ParsedFrameParameters->NativePlaybackTime = ParsedFrameParameters->NormalizedPlaybackTime;
 	}
 }
 

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : mixer_mme.h
-Author :           Daniel
+Author : Daniel
 
 Concrete definition of an MME mixer driver.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-29-Jun-07   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+29-Jun-07 Created Daniel
 
 ************************************************************************/
 
@@ -44,12 +44,12 @@ Date        Modification                                    Name
 #define ENABLE_MIXER_DEBUG 0
 #endif
 
-#define MIXER_TAG                          "Mixer_c::"
-#define MIXER_FUNCTION                     __FUNCTION__
+#define MIXER_TAG "Mixer_c::"
+#define MIXER_FUNCTION __FUNCTION__
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define MIXER_DEBUG(fmt, args...) ((void)(ENABLE_MIXER_DEBUG && \
-                                          (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args), 0)))
+					  (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define MIXER_TRACE(fmt, args...) (report(severity_note, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args))
@@ -57,7 +57,7 @@ Date        Modification                                    Name
 #define MIXER_ERROR(fmt, args...) (report(severity_error, "%s%s: " fmt, MIXER_TAG, MIXER_FUNCTION, ##args))
 
 #define MIXER_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-                                                   MIXER_FUNCTION, #x, __FILE__, __LINE__); while(0)
+							   MIXER_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 class Mixer_c: public BaseComponentClass_c
 {

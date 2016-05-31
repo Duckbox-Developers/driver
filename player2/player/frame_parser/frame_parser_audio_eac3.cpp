@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio_eac3.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the EAC3 audio frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-22-May-07   Created (from frame_parser_audio_ac3.cpp)      Sylvain
+Date Modification Name
+---- ------------ --------
+22-May-07 Created (from frame_parser_audio_ac3.cpp) Sylvain
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "eac3_audio.h"
 #include "frame_parser_audio_eac3.h"
@@ -57,8 +57,8 @@ Date        Modification                                    Name
 #undef FRAME_TAG
 #define FRAME_TAG "EAC3 audio frame parser"
 
-static BufferDataDescriptor_t     EAc3AudioStreamParametersBuffer = BUFFER_EAC3_AUDIO_STREAM_PARAMETERS_TYPE;
-static BufferDataDescriptor_t     EAc3AudioFrameParametersBuffer = BUFFER_EAC3_AUDIO_FRAME_PARAMETERS_TYPE;
+static BufferDataDescriptor_t EAc3AudioStreamParametersBuffer = BUFFER_EAC3_AUDIO_STREAM_PARAMETERS_TYPE;
+static BufferDataDescriptor_t EAc3AudioFrameParametersBuffer = BUFFER_EAC3_AUDIO_FRAME_PARAMETERS_TYPE;
 
 //
 // Lookup tables for EAC3 header parsing
@@ -66,7 +66,7 @@ static BufferDataDescriptor_t     EAc3AudioFrameParametersBuffer = BUFFER_EAC3_A
 
 static int AC3Rate[] =
 {
-	32,  40,  48,  56,  64,  80,  96, 112,
+	32, 40, 48, 56, 64, 80, 96, 112,
 	128, 160, 192, 224, 256, 320, 384, 448,
 	512, 576, 640
 };
@@ -104,10 +104,10 @@ static int EAC3SamplingFreq[] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 
 FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-		EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
-		int GivenFrameSize)
+							      EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
+							      int GivenFrameSize)
 {
-	int StreamIndex =  0, FrameSize =  0 ;
+	int StreamIndex = 0, FrameSize = 0 ;
 	EAc3AudioParsedFrameHeader_t NextParsedFrameHeader;
 	int NumberOfIndependantSubStreams = 0;
 	int NumberOfDependantSubStreams = 0;
@@ -117,12 +117,12 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 	{
 		// At this point we got the idependant substream or stream length, now search for
 		// the other dependant substreams
-		unsigned char* NextFrameHeader = &FrameHeaderBytes[StreamIndex];
+		unsigned char *NextFrameHeader = &FrameHeaderBytes[StreamIndex];
 		FrameParserStatus_t Status;
 		memset(&NextParsedFrameHeader, 0, sizeof(EAc3AudioParsedFrameHeader_t));
 		// parse a single frame
 		Status = FrameParser_AudioEAc3_c::ParseSingleFrameHeader(NextFrameHeader, &NextParsedFrameHeader, false);
-		if (Status !=  FrameParserNoError)
+		if (Status != FrameParserNoError)
 		{
 			return (Status);
 		}
@@ -169,29 +169,29 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 	}
 	// remember the last frame header type to know if this stream is DD+ or Ac3 (dependant eac3 substreams
 	// are always located after eac3 independant substreams or ac3 substreams)
-	ParsedFrameHeader->Type    = NextParsedFrameHeader.Type;
-	ParsedFrameHeader->Length  =  FrameSize;
+	ParsedFrameHeader->Type = NextParsedFrameHeader.Type;
+	ParsedFrameHeader->Length = FrameSize;
 	ParsedFrameHeader->NumberOfSamples = NumberOfSamples;
 	FRAME_DEBUG("SamplingFrequency %d, FrameSize %d, Indp substreams: %d, Dep substreams: %d\n",
-				ParsedFrameHeader->SamplingFrequency,
-				ParsedFrameHeader->Length,
-				NumberOfIndependantSubStreams,
-				NumberOfDependantSubStreams);
+		    ParsedFrameHeader->SamplingFrequency,
+		    ParsedFrameHeader->Length,
+		    NumberOfIndependantSubStreams,
+		    NumberOfDependantSubStreams);
 	if (FirstTime)
 	{
 		if (ParsedFrameHeader->Type == TypeAc3)
 		{
 			FRAME_TRACE("AC3 stream properties: SamplingFrequency %d, FrameSize %d\n",
-						ParsedFrameHeader->SamplingFrequency,
-						ParsedFrameHeader->Length);
+				    ParsedFrameHeader->SamplingFrequency,
+				    ParsedFrameHeader->Length);
 		}
 		else
 		{
 			FRAME_TRACE("DD+ stream properties: SamplingFrequency %d, FrameSize %d, Indp substreams: %d, Dep substreams: %d\n",
-						ParsedFrameHeader->SamplingFrequency,
-						ParsedFrameHeader->Length,
-						NumberOfIndependantSubStreams,
-						NumberOfDependantSubStreams);
+				    ParsedFrameHeader->SamplingFrequency,
+				    ParsedFrameHeader->Length,
+				    NumberOfIndependantSubStreams,
+				    NumberOfDependantSubStreams);
 		}
 		FirstTime = false;
 	}
@@ -212,7 +212,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 /// From RFC-4184 (http://www.rfc-editor.org/rfc/rfc4184.txt).
 ///
 /// <pre>
-/// AC-3 bit streams are organized into synchronization frames.  Each AC-3 frame
+/// AC-3 bit streams are organized into synchronization frames. Each AC-3 frame
 /// contains a Sync Information (SI) field, a Bit Stream Information (BSI) field,
 /// and 6 audio blocks (AB), each representing 256 PCM samples for each channel.
 /// The entire frame represents a time duration of 1536 PCM samples across all
@@ -220,29 +220,29 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 /// frame format.
 ///
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/// |SI |BSI|  AB0  |  AB1  |  AB2  |  AB3  |  AB4  |  AB5  |AUX|CRC|
+/// |SI |BSI| AB0 | AB1 | AB2 | AB3 | AB4 | AB5 |AUX|CRC|
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ///
-///                     Figure 1. AC-3 Frame Format
+/// Figure 1. AC-3 Frame Format
 ///
 /// The Synchronization Information field contains information needed to acquire
-/// and maintain codec synchronization.  The Bit Stream Information field contains
-/// parameters that describe the coded audio service.  Each audio block also
+/// and maintain codec synchronization. The Bit Stream Information field contains
+/// parameters that describe the coded audio service. Each audio block also
 /// contains fields that indicate the use of various coding tools: block switching,
-/// dither, coupling, and exponent strategy.  They also contain metadata,
+/// dither, coupling, and exponent strategy. They also contain metadata,
 /// optionally used to enhance the playback, such as dynamic range control. Figure
-/// 2 shows the structure of an AC-3 audio block.  Note that field sizes vary
+/// 2 shows the structure of an AC-3 audio block. Note that field sizes vary
 /// depending on the coded data.
 ///
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/// |  Block  |Dither |Dynamic    |Coupling |Coupling     |Exponent |
-/// |  switch |Flags  |Range Ctrl |Strategy |Coordinates  |Strategy |
+/// | Block |Dither |Dynamic |Coupling |Coupling |Exponent |
+/// | switch |Flags |Range Ctrl |Strategy |Coordinates |Strategy |
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/// |     Exponents       | Bit Allocation  |        Mantissas      |
-/// |                     | Parameters      |                       |
+/// | Exponents | Bit Allocation | Mantissas |
+/// | | Parameters | |
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ///
-///                   Figure 2. AC-3 Audio Block Format
+/// Figure 2. AC-3 Audio Block Format
 ///
 /// </pre>
 ///
@@ -253,18 +253,18 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-		EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
-		bool SearchForConvSync)
+								    EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
+								    bool SearchForConvSync)
 {
-	unsigned int    SamplingFrequency;
-	unsigned int    FrameSize = 0;
-	unsigned int    NbSamples;
-	unsigned char   Bsid;
+	unsigned int SamplingFrequency;
+	unsigned int FrameSize = 0;
+	unsigned int NbSamples;
+	unsigned char Bsid;
 	Ac3StreamType_t Type;
-	bool            convsync = false;
-	BitStreamClass_c  Bits;
+	bool convsync = false;
+	BitStreamClass_c Bits;
 	Bits.SetPointer(FrameHeaderBytes);
-	unsigned short SyncWord  = Bits.Get(16);
+	unsigned short SyncWord = Bits.Get(16);
 	if (SyncWord != EAC3_START_CODE)
 	{
 		if (SearchForConvSync == false)
@@ -275,14 +275,14 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 	}
 	Bits.SetPointer(&FrameHeaderBytes[5]);
 	Bsid = Bits.Get(5);
-	if (Bsid <= 8)                                // bsid <= 8 and bsid >= 0
+	if (Bsid <= 8) // bsid <= 8 and bsid >= 0
 	{
-		unsigned int   RateCode;
-		unsigned int   FsCode;
-		unsigned int   BitRate;
+		unsigned int RateCode;
+		unsigned int FsCode;
+		unsigned int BitRate;
 		Type = TypeAc3;
 		Bits.SetPointer(&FrameHeaderBytes[4]);
-		FsCode  = Bits.Get(2);
+		FsCode = Bits.Get(2);
 		if (FsCode >= 3)
 		{
 			FRAME_ERROR("Invalid frequency code\n");
@@ -297,25 +297,25 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 		BitRate = AC3Rate[RateCode >> 1];
 		SamplingFrequency = EAC3SamplingFreq[FsCode];
 		FrameSize = 2 * ((FsCode == 1) ? ((320 * BitRate / 147 + (RateCode & 1))) : (EAC3FsCodeToFrameSize[FsCode] * BitRate));
-		NbSamples =  1536;
+		NbSamples = 1536;
 	}
-	else if ((Bsid > 10) && (Bsid <= 16))                              // bsid >10 and bsid <= 16
+	else if ((Bsid > 10) && (Bsid <= 16)) // bsid >10 and bsid <= 16
 	{
 		Bits.SetPointer(&FrameHeaderBytes[2]);
 		char StrmType = Bits.Get(2);
 		int fscod;
 		int fscod2_numblk;
 		/* sub stream id (used for programme identification) */
-		ParsedFrameHeader->SubStreamId =  Bits.Get(3);
+		ParsedFrameHeader->SubStreamId = Bits.Get(3);
 		if ((StrmType == 0) || (StrmType == 2))
 		{
 			/* independant stream or substream */
-			Type =  TypeEac3Ind;
+			Type = TypeEac3Ind;
 		}
 		else
 		{
 			/* dependant stream or substream */
-			Type =  TypeEac3Dep;
+			Type = TypeEac3Dep;
 		}
 		FrameSize = (Bits.Get(11) + 1) * 2;
 		fscod = Bits.Get(2);
@@ -327,7 +327,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 		}
 		else
 		{
-			SamplingFrequency =  EAC3SamplingFreq[fscod];
+			SamplingFrequency = EAC3SamplingFreq[fscod];
 			if ((fscod2_numblk != 3) && (SearchForConvSync))
 			{
 				// search for a convsync to be sure we are at the first block
@@ -337,10 +337,10 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 				int bsid = Bits.Get(5);
 				int dialnorm = Bits.Get(5);
 				FRAME_DEBUG("StrmType: %d, substream id: %d, FrameSize: %d, fscod: %d, fscod2_numblk: %d\n",
-							StrmType, ParsedFrameHeader->SubStreamId, FrameSize, fscod, fscod2_numblk);
+					    StrmType, ParsedFrameHeader->SubStreamId, FrameSize, fscod, fscod2_numblk);
 				FRAME_DEBUG("acmod: %d, lfeon: %d, bsid: %d, dialnorm: %d\n",
-							acmod, lfeon, bsid, dialnorm);
-				if (Bits.Get(1))  // compre
+					    acmod, lfeon, bsid, dialnorm);
+				if (Bits.Get(1)) // compre
 				{
 					FRAME_DEBUG("compre on\n");
 					Bits.FlushUnseen(8); // compr
@@ -356,7 +356,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 					if (Bits.Get(1)) //chanmape
 						Bits.FlushUnseen(16); // chanmap
 				}
-				if (Bits.Get(1))  // mixmdate
+				if (Bits.Get(1)) // mixmdate
 				{
 					FRAME_DEBUG("mixmdat enabled\n");
 					if (acmod > 2) /* if more than 2 channels */
@@ -431,7 +431,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 						}
 					}
 				}
-				if (Bits.Get(1))  // infomdate
+				if (Bits.Get(1)) // infomdate
 				{
 					FRAME_DEBUG("infomdat enabled\n");
 					Bits.FlushUnseen(5); //bsmod, copyrightb, origbs
@@ -439,11 +439,11 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 						Bits.FlushUnseen(4); //dsurmod, dheadphonmod
 					if (acmod >= 6) /* if both surround channels exists */
 						Bits.FlushUnseen(2); //dsurexmod
-					if (Bits.Get(1))  // audprodie
+					if (Bits.Get(1)) // audprodie
 						Bits.FlushUnseen(8); // mixlevel, roomtyp, adconvtyp
 					if (acmod == 0) /* if 1+1 mode */
 					{
-						if (Bits.Get(1))  // audprodi2e
+						if (Bits.Get(1)) // audprodi2e
 							Bits.FlushUnseen(8); // mixlevel2, roomtyp2, adconvtyp2
 					}
 					if (fscod < 3) /* if not half sample rate */
@@ -457,7 +457,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 				}
 			}
 		}
-		NbSamples =  256 * EAC3Blocks[fscod2_numblk];
+		NbSamples = 256 * EAC3Blocks[fscod2_numblk];
 	}
 	else
 	{
@@ -465,7 +465,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 		return FrameParserError;
 	}
 	FRAME_DEBUG("SamplingFrequency: %d, FrameSize: %d, Frame type: % d, NbSamples: %d, convsync: %d \n",
-				SamplingFrequency, FrameSize, Type, NbSamples, convsync);
+		    SamplingFrequency, FrameSize, Type, NbSamples, convsync);
 	//
 	ParsedFrameHeader->Type = Type;
 	ParsedFrameHeader->SamplingFrequency = SamplingFrequency;
@@ -478,14 +478,14 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 
 ///////////////////////////////////////////////////////////////////////////
 ///
-///     Constructor
+/// Constructor
 ///
 FrameParser_AudioEAc3_c::FrameParser_AudioEAc3_c(void)
 {
-	Configuration.FrameParserName       = "AudioEAc3";
-	Configuration.StreamParametersCount     = 32;
-	Configuration.StreamParametersDescriptor    = &EAc3AudioStreamParametersBuffer;
-	Configuration.FrameParametersCount      = 32;
+	Configuration.FrameParserName = "AudioEAc3";
+	Configuration.StreamParametersCount = 32;
+	Configuration.StreamParametersDescriptor = &EAc3AudioStreamParametersBuffer;
+	Configuration.FrameParametersCount = 32;
 	Configuration.FrameParametersDescriptor = &EAc3AudioFrameParametersBuffer;
 //
 	Reset();
@@ -493,7 +493,7 @@ FrameParser_AudioEAc3_c::FrameParser_AudioEAc3_c(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor
+/// Destructor
 ///
 FrameParser_AudioEAc3_c::~FrameParser_AudioEAc3_c(void)
 {
@@ -503,9 +503,9 @@ FrameParser_AudioEAc3_c::~FrameParser_AudioEAc3_c(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The Reset function release any resources, and reset all variable
+/// The Reset function release any resources, and reset all variable
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::Reset(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::Reset(void)
 {
 	memset(&CurrentStreamParameters, 0, sizeof(CurrentStreamParameters));
 	FirstTime = true;
@@ -514,15 +514,15 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::Reset(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The register output ring function
+/// The register output ring function
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::RegisterOutputBufferRing(Ring_t          Ring)
+FrameParserStatus_t FrameParser_AudioEAc3_c::RegisterOutputBufferRing(Ring_t Ring)
 {
 	//
 	// Clear our parameter pointers
 	//
-	StreamParameters                    = NULL;
-	FrameParameters                     = NULL;
+	StreamParameters = NULL;
+	FrameParameters = NULL;
 	//
 	// Pass the call down the line
 	//
@@ -533,7 +533,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::RegisterOutputBufferRing(Ring_t  
 ///
 /// Parse the frame header and store the results for when we emit the frame.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::ReadHeaders(void)
 {
 	FrameParserStatus_t Status;
 	//
@@ -550,7 +550,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders(void)
 	if (ParsedFrameHeader.Length != BufferLength)
 	{
 		FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
-					BufferLength, ParsedFrameHeader.Length);
+			    BufferLength, ParsedFrameHeader.Length);
 		return FrameParserError;
 	}
 	FrameToDecode = true;
@@ -561,18 +561,18 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders(void)
 		return Status;
 	}
 	// Nick inserted some default values here
-	ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
-	ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
-	ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
-	ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
-	ParsedFrameParameters->KeyFrame                                     = true;
-	ParsedFrameParameters->ReferenceFrame                               = false;
-	ParsedFrameParameters->NewFrameParameters        = true;
+	ParsedFrameParameters->FirstParsedParametersForOutputFrame = true;
+	ParsedFrameParameters->FirstParsedParametersAfterInputJump = FirstDecodeAfterInputJump;
+	ParsedFrameParameters->SurplusDataInjected = SurplusDataInjected;
+	ParsedFrameParameters->ContinuousReverseJump = ContinuousReverseJump;
+	ParsedFrameParameters->KeyFrame = true;
+	ParsedFrameParameters->ReferenceFrame = false;
+	ParsedFrameParameters->NewFrameParameters = true;
 	ParsedFrameParameters->SizeofFrameParameterStructure = sizeof(EAc3AudioFrameParameters_t);
-	ParsedFrameParameters->FrameParameterStructure       = FrameParameters;
+	ParsedFrameParameters->FrameParameterStructure = FrameParameters;
 	FrameParameters->FrameSize = ParsedFrameHeader.Length;
 	ParsedAudioParameters->Source.BitsPerSample = 0; // filled in by codec
-	ParsedAudioParameters->Source.ChannelCount = 0;  // filled in by codec
+	ParsedAudioParameters->Source.ChannelCount = 0; // filled in by codec
 	ParsedAudioParameters->Source.SampleRateHz = ParsedFrameHeader.SamplingFrequency;
 	ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
 	ParsedAudioParameters->Organisation = 0; // filled in by codec
@@ -582,9 +582,9 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ReadHeaders(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The reset reference frame list function
+/// The reset reference frame list function
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::ResetReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::ResetReferenceFrameList(void)
 {
 	FRAME_DEBUG(">><<");
 	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
@@ -597,7 +597,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ResetReferenceFrameList(void)
 ///
 /// \copydoc FrameParser_Audio_c::PurgeQueuedPostDecodeParameterSettings()
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::PurgeQueuedPostDecodeParameterSettings(void)
 {
 	return FrameParserNoError;
 }
@@ -608,7 +608,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeQueuedPostDecodeParameterSet
 ///
 /// \copydoc FrameParser_Audio_c::ProcessQueuedPostDecodeParameterSettings()
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::ProcessQueuedPostDecodeParameterSettings(void)
 {
 	return FrameParserNoError;
 }
@@ -620,29 +620,29 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessQueuedPostDecodeParameterS
 /// For EAC3 audio these can be determined immediately (although it the first
 /// frame for decode does not contain a PTS we must synthesize one).
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::GeneratePostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::GeneratePostDecodeParameterSettings(void)
 {
 	FrameParserStatus_t Status;
 //
 	//
 	// Default setting
 	//
-	ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
-	ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
-	ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
-	ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
-	ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
+	ParsedFrameParameters->DisplayFrameIndex = INVALID_INDEX;
+	ParsedFrameParameters->NativePlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedPlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NativeDecodeTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedDecodeTime = INVALID_TIME;
 	//
 	// Record in the structure the decode and presentation times if specified
 	//
 	if (CodedFrameParameters->PlaybackTimeValid)
 	{
-		ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
+		ParsedFrameParameters->NativePlaybackTime = CodedFrameParameters->PlaybackTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
 	}
 	if (CodedFrameParameters->DecodeTimeValid)
 	{
-		ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
+		ParsedFrameParameters->NativeDecodeTime = CodedFrameParameters->DecodeTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
 	}
 	//
@@ -656,14 +656,14 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::GeneratePostDecodeParameterSettin
 	//
 	// We can't fail after this point so this is a good time to provide a display frame index
 	//
-	ParsedFrameParameters->DisplayFrameIndex         = NextDisplayFrameIndex++;
+	ParsedFrameParameters->DisplayFrameIndex = NextDisplayFrameIndex++;
 	//
 	// Use the super-class utilities to complete our housekeeping chores
 	//
 	// no call to HandleUpdateStreamParameters() because UpdateStreamParameters is always false
 	FRAME_ASSERT(false == UpdateStreamParameters && NULL == StreamParametersBuffer);
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-											ParsedFrameHeader.SamplingFrequency);
+						ParsedFrameHeader.SamplingFrequency);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;
@@ -673,7 +673,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::GeneratePostDecodeParameterSettin
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::PrepareReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::PrepareReferenceFrameList(void)
 {
 	return FrameParserNoError;
 }
@@ -682,7 +682,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::PrepareReferenceFrameList(void)
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::UpdateReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::UpdateReferenceFrameList(void)
 {
 	return FrameParserNoError;
 }
@@ -691,7 +691,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::UpdateReferenceFrameList(void)
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
 {
 	return FrameParserNoError;
 }
@@ -700,7 +700,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessReverseDecodeUnsatisfiedRe
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessReverseDecodeStack(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::ProcessReverseDecodeStack(void)
 {
 	return FrameParserNoError;
 }
@@ -709,7 +709,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::ProcessReverseDecodeStack(void)
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
 {
 	return FrameParserNoError;
 }
@@ -718,7 +718,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeReverseDecodeUnsatisfiedRefe
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeReverseDecodeStack(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::PurgeReverseDecodeStack(void)
 {
 	return FrameParserNoError;
 }
@@ -727,7 +727,7 @@ FrameParserStatus_t   FrameParser_AudioEAc3_c::PurgeReverseDecodeStack(void)
 ///
 /// Not required or implemented for EAC3 audio.
 ///
-FrameParserStatus_t   FrameParser_AudioEAc3_c::TestForTrickModeFrameDrop(void)
+FrameParserStatus_t FrameParser_AudioEAc3_c::TestForTrickModeFrameDrop(void)
 {
 	return FrameParserNoError;
 }

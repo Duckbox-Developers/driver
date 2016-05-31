@@ -13,19 +13,19 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_video_avs.h
-Author :           Julian
+Author : Julian
 
 Definition of the frame parser video AVS class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
+Date Modification Name
+---- ------------ --------
 
 ************************************************************************/
 
@@ -34,7 +34,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "avs.h"
 #include "frame_parser_video.h"
@@ -44,8 +44,8 @@ Date        Modification                                    Name
 // Locally defined structures
 //
 
-#define AVS_PICTURE_DISTANCE_RANGE              256
-#define AVS_PICTURE_DISTANCE_HALF_RANGE         (AVS_PICTURE_DISTANCE_RANGE >> 1)
+#define AVS_PICTURE_DISTANCE_RANGE 256
+#define AVS_PICTURE_DISTANCE_HALF_RANGE (AVS_PICTURE_DISTANCE_RANGE >> 1)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -58,41 +58,41 @@ class FrameParser_VideoAvs_c : public FrameParser_Video_c
 
 		// Data
 
-		AvsStreamParameters_t   CopyOfStreamParameters;
-		AvsStreamParameters_t  *StreamParameters;
-		AvsFrameParameters_t   *FrameParameters;
+		AvsStreamParameters_t CopyOfStreamParameters;
+		AvsStreamParameters_t *StreamParameters;
+		AvsFrameParameters_t *FrameParameters;
 
-		int                     LastPanScanHorizontalOffset;
-		int                     LastPanScanVerticalOffset;
+		int LastPanScanHorizontalOffset;
+		int LastPanScanVerticalOffset;
 
-		bool                    EverSeenRepeatFirstField;
-		bool                    LastFirstFieldWasAnI; // Support for self referencing IP field pairs
+		bool EverSeenRepeatFirstField;
+		bool LastFirstFieldWasAnI; // Support for self referencing IP field pairs
 
-		unsigned int            PictureDistanceBase;
-		unsigned int            LastPictureDistance;
+		unsigned int PictureDistanceBase;
+		unsigned int LastPictureDistance;
 
-		unsigned int            LastReferenceFramePictureCodingType;
+		unsigned int LastReferenceFramePictureCodingType;
 
-		int                     ImgtrNextP;
-		int                     ImgtrLastP;
-		int                     ImgtrLastPrevP;
+		int ImgtrNextP;
+		int ImgtrLastP;
+		int ImgtrLastPrevP;
 
 		// Functions
 
-		FrameParserStatus_t     ReadSequenceHeader(void);
-		FrameParserStatus_t     ReadSequenceDisplayExtensionHeader(void);
-		FrameParserStatus_t     ReadCopyrightExtensionHeader(void);
-		FrameParserStatus_t     ReadCameraParametersExtensionHeader(void);
+		FrameParserStatus_t ReadSequenceHeader(void);
+		FrameParserStatus_t ReadSequenceDisplayExtensionHeader(void);
+		FrameParserStatus_t ReadCopyrightExtensionHeader(void);
+		FrameParserStatus_t ReadCameraParametersExtensionHeader(void);
 
-		FrameParserStatus_t     ReadPictureHeader(unsigned int            PictureStartCode);
-		FrameParserStatus_t     ReadPictureDisplayExtensionHeader(void);
-		FrameParserStatus_t     ReadSliceHeader(unsigned int            StartCodeIndex);
+		FrameParserStatus_t ReadPictureHeader(unsigned int PictureStartCode);
+		FrameParserStatus_t ReadPictureDisplayExtensionHeader(void);
+		FrameParserStatus_t ReadSliceHeader(unsigned int StartCodeIndex);
 
-		FrameParserStatus_t     CommitFrameForDecode(void);
-		bool                    NewStreamParametersCheck(void);
+		FrameParserStatus_t CommitFrameForDecode(void);
+		bool NewStreamParametersCheck(void);
 
 #if 0
-		FrameParserStatus_t     CalculateFieldOffsets(unsigned int            FirstSliceCodeIndex);
+		FrameParserStatus_t CalculateFieldOffsets(unsigned int FirstSliceCodeIndex);
 #endif
 
 	public:
@@ -102,19 +102,19 @@ class FrameParser_VideoAvs_c : public FrameParser_Video_c
 		~FrameParser_VideoAvs_c(void);
 
 		// Overrides for component base class functions
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		// FrameParser class functions
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		// Stream specific functions
-		FrameParserStatus_t   ReadHeaders(void);
-		FrameParserStatus_t   PrepareReferenceFrameList(void);
-		FrameParserStatus_t   ForPlayUpdateReferenceFrameList(void);
-		FrameParserStatus_t   RevPlayProcessDecodeStacks(void);
+		FrameParserStatus_t ReadHeaders(void);
+		FrameParserStatus_t PrepareReferenceFrameList(void);
+		FrameParserStatus_t ForPlayUpdateReferenceFrameList(void);
+		FrameParserStatus_t RevPlayProcessDecodeStacks(void);
 #if 0
-		FrameParserStatus_t   RevPlayGeneratePostDecodeParameterSettings(void);
-		FrameParserStatus_t   RevPlayRemoveReferenceFrameFromList(void);
+		FrameParserStatus_t RevPlayGeneratePostDecodeParameterSettings(void);
+		FrameParserStatus_t RevPlayRemoveReferenceFrameFromList(void);
 #endif
 
 };

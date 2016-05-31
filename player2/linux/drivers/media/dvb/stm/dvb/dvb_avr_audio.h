@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -31,7 +31,7 @@ typedef enum
 {
 	AVR_HDMI_LAYOUT0 = 2,
 	AVR_HDMI_LAYOUT1 = 8,
-	AVR_HDMI_HBRA    = 3
+	AVR_HDMI_HBRA = 3
 } avr_hdmi_layout_t;
 
 typedef enum
@@ -46,8 +46,8 @@ typedef enum
 typedef enum
 {
 	AVR_LATENCY_MODE_DEFAULT, // default latency mode, will result into a 100ms latency
-	AVR_LATENCY_MODE_SPDIF,   // SPDIF-restricted mode (AC3 and some DTS modes), will result into a 60ms latency
-	AVR_LATENCY_MODE_PCM,     // PCM-mode, will result into a 20ms latency
+	AVR_LATENCY_MODE_SPDIF, // SPDIF-restricted mode (AC3 and some DTS modes), will result into a 60ms latency
+	AVR_LATENCY_MODE_PCM, // PCM-mode, will result into a 20ms latency
 	AVR_LATENCY_MODE_MAX
 } avr_audio_latency_mode_t;
 
@@ -86,10 +86,10 @@ typedef struct dvp_v4l2_audio_handle_s
 	unsigned int PreviousSampleRate;
 	avr_audio_discrete_sample_rate_t DiscreteSampleRate;
 
-	unsigned int      AudioInputId;   // id of the pcm reader we're connected to
-	avr_hdmi_layout_t HdmiLayout;     // {layout0 = 0 / layout1 = 1 / hbra = 3}
-	unsigned int      HdmiAudioMode;  // { direct from info frame }
-	bool              EmphasisFlag;
+	unsigned int AudioInputId; // id of the pcm reader we're connected to
+	avr_hdmi_layout_t HdmiLayout; // {layout0 = 0 / layout1 = 1 / hbra = 3}
+	unsigned int HdmiAudioMode; // { direct from info frame }
+	bool EmphasisFlag;
 
 	struct semaphore ThreadStatusSemaphore;
 	struct task_struct *ThreadHandle;
@@ -98,7 +98,7 @@ typedef struct dvp_v4l2_audio_handle_s
 
 	// class device for the sysfs mirrorred player stream
 	struct class_device StreamClassDevice;
-	struct class_device * PlaybackClassDevice; // pointer to a structure created by the sysfs_player
+	struct class_device *PlaybackClassDevice; // pointer to a structure created by the sysfs_player
 	bool IsSysFsStructureCreated;
 
 	MME_LxAudioDecoderHDInfo_t AudioDecoderTransformCapability;
@@ -116,21 +116,21 @@ typedef struct dvp_v4l2_audio_handle_s
 
 	ksnd_pcm_t *SoundcardHandle[AVR_LOW_LATENCY_MAX_OUTPUT_CARDS];
 
-	struct semaphore    DecoderStatusSemaphore;
+	struct semaphore DecoderStatusSemaphore;
 	volatile bool UpdateMixerSettings;
 	volatile bool GotTransformCommandCallback;
 	volatile bool GotSetGlobalCommandCallback;
 	volatile bool NeedAnotherSetGlobalCommand;
 	volatile bool GotSendBufferCommandCallback;
 
-	MME_Command_t                              TransformCommand, SetGlobalCommand, SendBufferCommands[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
-	MME_LowlatencySpecializedGlobalParams_t    SetGlobalParams;
-	MME_LowlatencyTransformParams_t            TransformParams;
+	MME_Command_t TransformCommand, SetGlobalCommand, SendBufferCommands[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
+	MME_LowlatencySpecializedGlobalParams_t SetGlobalParams;
+	MME_LowlatencyTransformParams_t TransformParams;
 	MME_LowlatencySpecializedTransformStatus_t TransformStatus, SetGlobalStatus;
 
-	MME_DataBuffer_t   DataBuffers[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
-	MME_DataBuffer_t  * DataBufferList[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
-	MME_ScatterPage_t  ScatterPages[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
+	MME_DataBuffer_t DataBuffers[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
+	MME_DataBuffer_t *DataBufferList[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
+	MME_ScatterPage_t ScatterPages[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
 
 	// this block of data is protected by the DecoderStatusSemaphore semaphore
 	LLDecoderStatus_t LLDecoderStatus;
@@ -138,19 +138,19 @@ typedef struct dvp_v4l2_audio_handle_s
 
 	struct
 	{
-		BufferPool_t  Pool;
+		BufferPool_t Pool;
 		BufferEntry_t Entries[AVR_LOW_LATENCY_MAX_LOG_INPUT_SEND_BUFFERS];
-		//        bool          IsInitalized;
+		// bool IsInitalized;
 	} InputPool;
 
 	struct
 	{
-		BufferPool_t  Pool;
+		BufferPool_t Pool;
 		BufferEntry_t Entries[AVR_LOW_LATENCY_MAX_LOG_OUTPUT_SEND_BUFFERS];
-		//        bool          IsInitalized;
+		// bool IsInitalized;
 	} OutputPool;
 
-	BufferEntry_t * BufferEntries[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
+	BufferEntry_t *BufferEntries[AVR_LOW_LATENCY_MAX_TOTAL_SEND_BUFFERS];
 
 	wait_queue_head_t WaitQueue;
 
@@ -174,27 +174,27 @@ int AvrAudioSetEmergencyMuteReason(avr_v4l2_audio_handle_t *Context, avr_audio_e
 bool AvrAudioGetFormatRecogniserEnable(avr_v4l2_audio_handle_t *AudioContext);
 void AvrAudioSetFormatRecogniserEnable(avr_v4l2_audio_handle_t *AudioContext, bool Enabled);
 
-int  AvrAudioGetInput(avr_v4l2_audio_handle_t *AudioContext);
+int AvrAudioGetInput(avr_v4l2_audio_handle_t *AudioContext);
 void AvrAudioSetInput(avr_v4l2_audio_handle_t *AudioContext, unsigned int InputId);
 
 void AvrAudioSetHdmiLayout(avr_v4l2_audio_handle_t *AudioContext, int layout);
-int  AvrAudioGetHdmiLayout(avr_v4l2_audio_handle_t *AudioContext);
+int AvrAudioGetHdmiLayout(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetHdmiAudioMode(avr_v4l2_audio_handle_t *AudioContext, int audio_mode);
-int  AvrAudioGetHdmiAudioMode(avr_v4l2_audio_handle_t *AudioContext);
+int AvrAudioGetHdmiAudioMode(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetEmphasis(avr_v4l2_audio_handle_t *AudioContext, bool Emphasis);
 bool AvrAudioGetEmphasis(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetChannelSelect(avr_v4l2_audio_handle_t *AudioContext,
-							  enum v4l2_avr_audio_channel_select ChannelSelect);
+			      enum v4l2_avr_audio_channel_select ChannelSelect);
 enum v4l2_avr_audio_channel_select AvrAudioGetChannelSelect(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetSilenceThreshold(avr_v4l2_audio_handle_t *AudioContext, int Threshold);
-int  AvrAudioGetSilenceThreshold(avr_v4l2_audio_handle_t *AudioContext);
+int AvrAudioGetSilenceThreshold(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetSilenceDuration(avr_v4l2_audio_handle_t *AudioContext, int Duration);
-unsigned long  AvrAudioGetSilenceDuration(avr_v4l2_audio_handle_t *AudioContext);
+unsigned long AvrAudioGetSilenceDuration(avr_v4l2_audio_handle_t *AudioContext);
 
 int AvrAudioIoctlOverlayStart(avr_v4l2_audio_handle_t *AudioContext);
 int AvrAudioIoctlOverlayStop(avr_v4l2_audio_handle_t *AudioContext);

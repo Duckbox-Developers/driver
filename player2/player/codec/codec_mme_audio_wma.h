@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_audio_wma.h
-Author :           Adam
+Author : Adam
 
 Definition of the stream specific codec implementation for wma audio in player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Sep-07   Created (from codec_mme_audio_mpeg.h)           Adam
+Date Modification Name
+---- ------------ --------
+11-Sep-07 Created (from codec_mme_audio_mpeg.h) Adam
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "codec_mme_audio.h"
 #include "codec_mme_audio_stream.h"
@@ -45,8 +45,8 @@ Date        Modification                                    Name
 //
 // Locally defined constants
 //
-#define SENDBUF_TRIGGER_TRANSFORM_COUNT         1
-#define SENDBUF_DECODE_CONTEXT_COUNT            (SENDBUF_TRIGGER_TRANSFORM_COUNT+4)
+#define SENDBUF_TRIGGER_TRANSFORM_COUNT 1
+#define SENDBUF_DECODE_CONTEXT_COUNT (SENDBUF_TRIGGER_TRANSFORM_COUNT+4)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -78,7 +78,7 @@ class Codec_MmeAudioWma_c : public Codec_MmeAudioStream_c
 	protected:
 
 		// Stream specific functions
-		CodecStatus_t   FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
+		CodecStatus_t FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
 
 };
 #endif

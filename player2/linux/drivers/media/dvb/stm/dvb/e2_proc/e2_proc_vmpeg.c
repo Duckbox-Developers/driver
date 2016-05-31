@@ -2,10 +2,10 @@
  * e2_proc_vmpeg.c
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
@@ -16,23 +16,24 @@
 #include "../dvb_module.h"
 #include "linux/dvb/stm_ioctls.h"
 
-extern struct stmfb_info* stmfb_get_fbinfo_ptr(void);
+extern struct stmfb_info *stmfb_get_fbinfo_ptr(void);
 
-int proc_vmpeg_0_dst_left_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf,
+				unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	int value, err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (unsigned int)count);
 #endif
 	fb = stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -44,7 +45,7 @@ int proc_vmpeg_0_dst_left_write(struct file* file, const char __user* buf, unsig
 		y = 576;
 		x = 720;
 	}
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		int l, t, w, h;
@@ -86,20 +87,21 @@ out:
 	return ret;
 }
 
-int proc_vmpeg_0_dst_left_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count,
+			       int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
 	int err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -130,21 +132,22 @@ int proc_vmpeg_0_dst_left_read(char* page, char** start, off_t off, int count, i
 	return len;
 }
 
-int proc_vmpeg_0_dst_top_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf,
+			       unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	int value, err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (unsigned int)count);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -156,7 +159,7 @@ int proc_vmpeg_0_dst_top_write(struct file* file, const char __user* buf, unsign
 		y = 576;
 		x = 720;
 	}
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -198,20 +201,21 @@ out:
 	return ret;
 }
 
-int proc_vmpeg_0_dst_top_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count,
+			      int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
 	int err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -242,21 +246,22 @@ int proc_vmpeg_0_dst_top_read(char* page, char** start, off_t off, int count, in
 	return len;
 }
 
-int proc_vmpeg_0_dst_width_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf,
+				 unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	int value, err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (unsigned int)count);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -268,7 +273,7 @@ int proc_vmpeg_0_dst_width_write(struct file* file, const char __user* buf, unsi
 		y = 576;
 		x = 720;
 	}
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -310,20 +315,21 @@ out:
 	return ret;
 }
 
-int proc_vmpeg_0_dst_width_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count,
+				int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
 	int err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -354,21 +360,22 @@ int proc_vmpeg_0_dst_width_read(char* page, char** start, off_t off, int count, 
 	return len;
 }
 
-int proc_vmpeg_0_dst_height_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf,
+				  unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	int value, err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (unsigned int)count);
 #endif
-	fb =  stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	fb = stmfb_get_fbinfo_ptr();
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -380,7 +387,7 @@ int proc_vmpeg_0_dst_height_write(struct file* file, const char __user* buf, uns
 		y = 576;
 		x = 720;
 	}
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -422,20 +429,21 @@ out:
 	return ret;
 }
 
-int proc_vmpeg_0_dst_height_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count,
+				 int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
 	int err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
 	fb = stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -466,10 +474,11 @@ int proc_vmpeg_0_dst_height_read(char* page, char** start, off_t off, int count,
 	return len;
 }
 
-int proc_vmpeg_0_yres_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count,
+			   int *eof, void *data)
 {
 	int len = 0;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
@@ -482,10 +491,11 @@ int proc_vmpeg_0_yres_read(char* page, char** start, off_t off, int count, int* 
 	return len;
 }
 
-int proc_vmpeg_0_xres_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count,
+			   int *eof, void *data)
 {
 	int len = 0;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
@@ -498,10 +508,11 @@ int proc_vmpeg_0_xres_read(char* page, char** start, off_t off, int count, int* 
 	return len;
 }
 
-int proc_vmpeg_0_framerate_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_framerate_read(char *page, char **start, off_t off, int count,
+				int *eof, void *data)
 {
 	int len = 0;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
@@ -514,10 +525,11 @@ int proc_vmpeg_0_framerate_read(char* page, char** start, off_t off, int count, 
 	return len;
 }
 
-int proc_vmpeg_0_aspect_read(char* page, char** start, off_t off, int count, int* eof, void* data)
+int proc_vmpeg_0_aspect_read(char *page, char **start, off_t off, int count,
+			     int *eof, void *data)
 {
 	int len = 0;
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s\n", __FUNCTION__);
 #endif
@@ -530,21 +542,22 @@ int proc_vmpeg_0_aspect_read(char* page, char** start, off_t off, int count, int
 	return len;
 }
 
-int proc_vmpeg_0_dst_all_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf,
+			       unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	int err, x, y;
-	void* fb;
-	struct fb_info* info;
+	void *fb;
+	struct fb_info *info;
 	struct fb_var_screeninfo screen_info;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
-	struct DeviceContext_s* pContext = (struct DeviceContext_s*)data;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
+	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
 #ifdef VERY_VERBOSE
 	printk("%s %d - ", __FUNCTION__, (unsigned int)count);
 #endif
 	fb = stmfb_get_fbinfo_ptr();
-	info = (struct fb_info*) fb;
+	info = (struct fb_info *) fb;
 	memcpy(&screen_info, &info->var, sizeof(struct fb_var_screeninfo));
 	if (fb != NULL)
 	{
@@ -556,7 +569,7 @@ int proc_vmpeg_0_dst_all_write(struct file* file, const char __user* buf, unsign
 		y = 576;
 		x = 720;
 	}
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		int l, t, w, h;
@@ -568,7 +581,7 @@ int proc_vmpeg_0_dst_all_write(struct file* file, const char __user* buf, unsign
 #ifdef VERY_VERBOSE
 		printk("%s\n", myString);
 #endif
-		sscanf(myString, "%x %x %x %x", &l , &t, &w, &h);
+		sscanf(myString, "%x %x %x %x", &l, &t, &w, &h);
 #ifdef VERY_VERBOSE
 		printk("%x, %x, %x, %x\n", l, t, w, h);
 #endif

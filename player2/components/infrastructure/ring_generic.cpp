@@ -2,14 +2,14 @@
 COPYRIGHT (C) STMicroelectronics 2004
 
 Source file name : ring_generic.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the class defining the interface to a simple ring
 storage device.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-23-Sep-04   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+23-Sep-04 Created Nick
 
 ************************************************************************/
 
@@ -22,10 +22,10 @@ RingGeneric_c::RingGeneric_c(unsigned int MaxEntries)
 {
 	OS_InitializeMutex(&Lock);
 	OS_InitializeEvent(&Signal);
-	Limit       = MaxEntries + 1;
+	Limit = MaxEntries + 1;
 	NextExtract = 0;
-	NextInsert  = 0;
-	Storage     = new uintptr_t[Limit];
+	NextInsert = 0;
+	Storage = new unsigned int[Limit];
 	InitializationStatus = (Storage == NULL) ? RingNoMemory : RingNoError;
 }
 
@@ -39,24 +39,24 @@ RingGeneric_c::~RingGeneric_c(void)
 	OS_TerminateMutex(&Lock);
 	OS_TerminateEvent(&Signal);
 	if (Storage != NULL)
-		delete [] Storage;
+		delete Storage;
 }
 
 // ------------------------------------------------------------------------
 // Insert function
 
-RingStatus_t   RingGeneric_c::Insert(uintptr_t      Value)
+RingStatus_t RingGeneric_c::Insert(unsigned int Value)
 {
 	unsigned int OldNextInsert;
 	OS_LockMutex(&Lock);
-	OldNextInsert       = NextInsert;
+	OldNextInsert = NextInsert;
 	Storage[NextInsert] = Value;
 	NextInsert++;
 	if (NextInsert == Limit)
 		NextInsert = 0;
 	if (NextInsert == NextExtract)
 	{
-		NextInsert      = OldNextInsert;
+		NextInsert = OldNextInsert;
 		OS_UnLockMutex(&Lock);
 		return RingTooManyEntries;
 	}
@@ -68,8 +68,8 @@ RingStatus_t   RingGeneric_c::Insert(uintptr_t      Value)
 // ------------------------------------------------------------------------
 // Extract function
 
-RingStatus_t   RingGeneric_c::Extract(uintptr_t       *Value,
-									  unsigned int     BlockingPeriod)
+RingStatus_t RingGeneric_c::Extract(unsigned int *Value,
+				    unsigned int BlockingPeriod)
 {
 	//
 	// If there is nothing in the ring we wait for up to the specified period.
@@ -94,11 +94,11 @@ RingStatus_t   RingGeneric_c::Extract(uintptr_t       *Value,
 // ------------------------------------------------------------------------
 // Flush function
 
-RingStatus_t   RingGeneric_c::Flush(void)
+RingStatus_t RingGeneric_c::Flush(void)
 {
 	OS_LockMutex(&Lock);
 	NextExtract = 0;
-	NextInsert  = 0;
+	NextInsert = 0;
 	OS_UnLockMutex(&Lock);
 	return RingNoError;
 }
@@ -106,12 +106,8 @@ RingStatus_t   RingGeneric_c::Flush(void)
 // ------------------------------------------------------------------------
 // Non-empty function
 
-bool   RingGeneric_c::NonEmpty(void)
+bool RingGeneric_c::NonEmpty(void)
 {
-	bool result;
-	OS_LockMutex(&Lock);
-	result = (NextExtract != NextInsert);
-	OS_UnLockMutex(&Lock);
-	return result;
+	return (NextExtract != NextInsert);
 }
 

@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : codec_mme_video_h263.h
-Author :           Julian
+Author : Julian
 
 Definition of the stream specific codec implementation for H263 video in player 2
 
-Date        Modification                                    Name
-----        ------------                                    --------
-20-May-08   Created                                         Julian
+Date Modification Name
+---- ------------ --------
+20-May-08 Created Julian
 
 ************************************************************************/
 
@@ -35,7 +35,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "codec_mme_video.h"
 #include "H263Dec_TransformerTypes.h"
@@ -44,15 +44,15 @@ Date        Modification                                    Name
 //
 // Locally defined constants
 //
-#define H263_MME_TRANSFORMER_NAME               "H263_TRANSFORMER"
+#define H263_MME_TRANSFORMER_NAME "H263_TRANSFORMER"
 
-#define H263_NUM_MME_INPUT_BUFFERS              1
-#define H263_NUM_MME_OUTPUT_BUFFERS             2
-#define H263_NUM_MME_BUFFERS                    (H263_NUM_MME_INPUT_BUFFERS+H263_NUM_MME_OUTPUT_BUFFERS)
+#define H263_NUM_MME_INPUT_BUFFERS 1
+#define H263_NUM_MME_OUTPUT_BUFFERS 2
+#define H263_NUM_MME_BUFFERS (H263_NUM_MME_INPUT_BUFFERS+H263_NUM_MME_OUTPUT_BUFFERS)
 
-#define H263_MME_CURRENT_FRAME_BUFFER           0
-#define H263_MME_REFERENCE_FRAME_BUFFER         1
-#define H263_MME_CODED_DATA_BUFFER              2
+#define H263_MME_CURRENT_FRAME_BUFFER 0
+#define H263_MME_REFERENCE_FRAME_BUFFER 1
+#define H263_MME_CODED_DATA_BUFFER 2
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -71,8 +71,8 @@ class Codec_MmeVideoH263_c : public Codec_MmeVideo_c
 
 		// Data
 
-		H263D_Capability_t                  H263TransformerCapability;
-		H263D_GlobalParams_t                H263InitializationParameters;
+		H263D_Capability_t H263TransformerCapability;
+		H263D_GlobalParams_t H263InitializationParameters;
 
 		// Functions
 
@@ -91,15 +91,15 @@ class Codec_MmeVideoH263_c : public Codec_MmeVideo_c
 
 	protected:
 
-		CodecStatus_t   Reset(void);
-		CodecStatus_t   HandleCapabilities(void);
+		CodecStatus_t Reset(void);
+		CodecStatus_t HandleCapabilities(void);
 
-		CodecStatus_t   FillOutTransformerInitializationParameters(void);
-		CodecStatus_t   FillOutSetStreamParametersCommand(void);
-		CodecStatus_t   FillOutDecodeCommand(void);
+		CodecStatus_t FillOutTransformerInitializationParameters(void);
+		CodecStatus_t FillOutSetStreamParametersCommand(void);
+		CodecStatus_t FillOutDecodeCommand(void);
 
-		CodecStatus_t   ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
-		CodecStatus_t   DumpSetStreamParameters(void    *Parameters);
-		CodecStatus_t   DumpDecodeParameters(void    *Parameters);
+		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
+		CodecStatus_t DumpSetStreamParameters(void *Parameters);
+		CodecStatus_t DumpDecodeParameters(void *Parameters);
 };
 #endif

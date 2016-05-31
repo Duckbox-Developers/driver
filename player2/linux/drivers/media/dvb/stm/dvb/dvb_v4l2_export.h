@@ -13,7 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
@@ -54,4 +54,4 @@ enum
 	V4L2_CID_STM_DVBV4L2_LAST
 };
 
-#endif /*DVB_V4L2_EXPORT_H_ */
+#endif /*DVB_V4L2_EXPORT_H_*/

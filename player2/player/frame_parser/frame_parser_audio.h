@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio.h
-Author :           Daniel
+Author : Daniel
 
 Definition of the frame parser video base class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-30-Mar-07   Created (from frame_parser_video.h)             Daniel
+Date Modification Name
+---- ------------ --------
+30-Mar-07 Created (from frame_parser_video.h) Daniel
 
 ************************************************************************/
 
@@ -52,11 +52,16 @@ Date        Modification                                    Name
 /// Framework to unify the approach to audio frame parsing.
 class FrameParser_Audio_c : public FrameParser_Base_c
 {
+	private:
+
+		// Functions
+		void HandleInvalidPlaybackTime();
+
 	protected:
 
 		// Data
 
-		ParsedAudioParameters_t  *ParsedAudioParameters;
+		ParsedAudioParameters_t *ParsedAudioParameters;
 
 		/// The maximum value by which the actual PTS is permitted to differ from the synthesised PTS
 		/// (use to identify bad streams or poor predictions).
@@ -67,7 +72,7 @@ class FrameParser_Audio_c : public FrameParser_Base_c
 		/// 'then' and 'now'.
 		unsigned long long LastNormalizedPlaybackTime;
 		/// Expected time at which the following frame must be presented.
-		unsigned long long  NextFrameNormalizedPlaybackTime;
+		unsigned long long NextFrameNormalizedPlaybackTime;
 		/// Error that is accumulated by calculating the PTS based on its last recorded value.
 		unsigned long long NextFramePlaybackTimeAccumulatedError;
 
@@ -81,27 +86,28 @@ class FrameParser_Audio_c : public FrameParser_Base_c
 
 	public:
 
+		//controctor & destroctor
 		FrameParser_Audio_c();
 
 		//
 		// Overrides for component base class functions
 		//
 
-		FrameParserStatus_t   Reset(void);
+		FrameParserStatus_t Reset(void);
 
 		//
 		// FrameParser class functions
 		//
 
-		FrameParserStatus_t   RegisterOutputBufferRing(Ring_t       Ring);
+		FrameParserStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
-		FrameParserStatus_t   Input(Buffer_t          CodedBuffer);
+		FrameParserStatus_t Input(Buffer_t CodedBuffer);
 
 		//
 		// Common portion of read headers
 		//
 
-		virtual FrameParserStatus_t   ReadHeaders(void);
+		virtual FrameParserStatus_t ReadHeaders(void);
 
 };
 

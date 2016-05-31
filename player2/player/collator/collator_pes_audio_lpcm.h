@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_lpcm.h
-Author :           Sylvain
+Author : Sylvain
 
 Definition of the base collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-12-Jul-07   Creation                                        Sylvain
+Date Modification Name
+---- ------------ --------
+12-Jul-07 Creation Sylvain
 
 ************************************************************************/
 
@@ -56,28 +56,28 @@ class Collator_PesAudioLpcm_c : public Collator_PesAudio_c
 		///
 		LpcmAudioParsedFrameHeader_t ParsedFrameHeader;
 		LpcmAudioParsedFrameHeader_t NextParsedFrameHeader;
-		unsigned int                 GuessedNextFirstAccessUnit; ///< In debug mode, try to guess the next first access unit pointer
-		bool                         IsPesPrivateDataAreaNew;    ///< Indicates if the private dara area of the pes has some key parameters
+		unsigned int GuessedNextFirstAccessUnit; ///< In debug mode, try to guess the next first access unit pointer
+		bool IsPesPrivateDataAreaNew; ///< Indicates if the private dara area of the pes has some key parameters
 		///< different from the previous one
-		bool                         AccumulatePrivateDataArea;  ///< Indicates if it there is a ned to store the pda at the beginning of the frame
-		bool                         IsPesPrivateDataAreaValid;  ///< Validity of Private Data Area
-		bool                         IsFirstPacket;
+		bool AccumulatePrivateDataArea; ///< Indicates if it there is a ned to store the pda at the beginning of the frame
+		bool IsPesPrivateDataAreaValid; ///< Validity of Private Data Area
+		bool IsFirstPacket;
 
-		unsigned char                NewPesPrivateDataArea[LPCM_MAX_PRIVATE_HEADER_LENGTH];
-		int                          AccumulatedFrameNumber;
-		unsigned char                StreamId;
-		unsigned int                 RemainingDataLength;
-		unsigned int                 PesPrivateToSkip;
-		int                          GlobbedFramesOfNewPacket;
+		unsigned char NewPesPrivateDataArea[LPCM_MAX_PRIVATE_HEADER_LENGTH];
+		int AccumulatedFrameNumber;
+		unsigned char StreamId;
+		unsigned int RemainingDataLength;
+		unsigned int PesPrivateToSkip;
+		int GlobbedFramesOfNewPacket;
 
 	protected:
 
 		CollatorStatus_t FindNextSyncWord(int *CodeOffset);
 
 		CollatorStatus_t DecideCollatorNextStateAndGetLength(unsigned int *FrameLength);
-		void             SetPesPrivateDataLength(unsigned char SpecificCode);
+		void SetPesPrivateDataLength(unsigned char SpecificCode);
 		CollatorStatus_t HandlePesPrivateData(unsigned char *PesPrivateData);
-		void             ResetCollatorStateAfterForcedFrameFlush();
+		void ResetCollatorStateAfterForcedFrameFlush();
 
 	public:
 
@@ -85,7 +85,7 @@ class Collator_PesAudioLpcm_c : public Collator_PesAudio_c
 
 		Collator_PesAudioLpcm_c(LpcmStreamType_t StreamType);
 
-		CollatorStatus_t   Reset(void);
+		CollatorStatus_t Reset(void);
 
 };
 

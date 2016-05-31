@@ -13,25 +13,25 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : least_squares.h
-Author :           Nick
+Author : Nick
 
 Definition of the class supporting least squares approximation in player 2.
 The algorithm used is detailed in :-
 
-    http://en.wikipedia.org/wiki/Linear_least_squares
+ http://en.wikipedia.org/wiki/Linear_least_squares
 
 NOTE the individual points here are delta's from the last point pair
 
-Date        Modification                                    Name
-----        ------------                                    --------
-18-Mar-07   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+18-Mar-07 Created Nick
 
 ************************************************************************/
 
@@ -46,15 +46,15 @@ Date        Modification                                    Name
 class LeastSquares_c
 {
 	private:
-		unsigned int        Count;
+		unsigned int Count;
 
-		long long       CumulativeX;
-		long long       CumulativeY;
+		long long CumulativeX;
+		long long CumulativeY;
 
-		LongLongLong_t      SigmaXSquared;
-		LongLongLong_t      SigmaX;
-		LongLongLong_t      SigmaY;
-		LongLongLong_t      SigmaYX;
+		LongLongLong_t SigmaXSquared;
+		LongLongLong_t SigmaX;
+		LongLongLong_t SigmaY;
+		LongLongLong_t SigmaYX;
 
 	public:
 
@@ -71,27 +71,27 @@ class LeastSquares_c
 		// Reset the accumulation
 		//
 
-		void   Reset(void)
+		void Reset(void)
 		{
-			Count       = 0;
+			Count = 0;
 			CumulativeX = 0;
 			CumulativeY = 0;
-			SigmaXSquared   = 0;
-			SigmaX      = 0;
-			SigmaY      = 0;
-			SigmaYX     = 0;
+			SigmaXSquared = 0;
+			SigmaX = 0;
+			SigmaY = 0;
+			SigmaYX = 0;
 		}
 
 		//
 		// Read out functions for X and Y
 		//
 
-		long long   Y(void)
+		long long Y(void)
 		{
 			return CumulativeY;
 		}
 
-		long long   X(void)
+		long long X(void)
 		{
 			return CumulativeX;
 		}
@@ -100,15 +100,15 @@ class LeastSquares_c
 		// Add a new pair of values
 		//
 
-		void   Add(long long    DeltaY,
-				   long long   DeltaX)
+		void Add(long long DeltaY,
+			 long long DeltaX)
 		{
 			CumulativeY += DeltaY;
 			CumulativeX += DeltaX;
-			SigmaY      += CumulativeY;
-			SigmaYX     += CumulativeY * CumulativeX;
-			SigmaXSquared   += CumulativeX * CumulativeX;
-			SigmaX      += CumulativeX;
+			SigmaY += CumulativeY;
+			SigmaYX += CumulativeY * CumulativeX;
+			SigmaXSquared += CumulativeX * CumulativeX;
+			SigmaX += CumulativeX;
 			Count++;
 		}
 
@@ -116,29 +116,29 @@ class LeastSquares_c
 		// Read out the Gradient
 		//
 
-		Rational_t   Gradient(void)
+		Rational_t Gradient(void)
 		{
-			LongLongLong_t  Top;
-			LongLongLong_t  Bottom;
-			long long   TopLong;
-			long long   BottomLong;
-			unsigned int    TopShift;
-			unsigned int    BottomShift;
+			LongLongLong_t Top;
+			LongLongLong_t Bottom;
+			long long TopLong;
+			long long BottomLong;
+			unsigned int TopShift;
+			unsigned int BottomShift;
 			if (Count < 2)
 			{
 				report(severity_error, "LeastSquares_c::Gradient - Attepmpt to obtain least squares fit with less than 2 values\n");
 				return 0;
 			}
 			Top = ((SigmaY * SigmaX) - (Count * SigmaYX));
-			Bottom  = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
+			Bottom = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
 			Top.Get(&TopLong, &TopShift);
 			Bottom.Get(&BottomLong, &BottomShift);
 			if (TopShift != BottomShift)
 			{
 				if (TopShift > BottomShift)
-					BottomLong  /= (1 << (TopShift - BottomShift));
+					BottomLong /= (1 << (TopShift - BottomShift));
 				else
-					TopLong     /= (1 << (BottomShift - TopShift));
+					TopLong /= (1 << (BottomShift - TopShift));
 			}
 			return Rational_t(TopLong, BottomLong);
 		}
@@ -147,27 +147,27 @@ class LeastSquares_c
 		// Read out the intercept
 		//
 
-		Rational_t   Intercept(void)
+		Rational_t Intercept(void)
 		{
-			LongLongLong_t  Top;
-			LongLongLong_t  Bottom;
-			long long   TopLong;
-			long long   BottomLong;
-			unsigned int    TopShift;
-			unsigned int    BottomShift;
+			LongLongLong_t Top;
+			LongLongLong_t Bottom;
+			long long TopLong;
+			long long BottomLong;
+			unsigned int TopShift;
+			unsigned int BottomShift;
 			if (Count < 2)
 			{
 				report(severity_error, "LeastSquares_c::Intercept - Attepmpt to obtain least squares fit with less than 2 values\n");
 				return 0;
 			}
 			Top = ((SigmaX * SigmaYX) - (SigmaY * SigmaXSquared));
-			Bottom  = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
+			Bottom = ((SigmaX * SigmaX) - (Count * SigmaXSquared));
 			Top.Get(&TopLong, &TopShift);
 			Bottom.Get(&BottomLong, &BottomShift);
 			if (TopShift != BottomShift)
 			{
 				if (TopShift > BottomShift)
-					BottomLong  /= (1 << (TopShift - BottomShift));
+					BottomLong /= (1 << (TopShift - BottomShift));
 				else
 					TopLong /= (1 << (BottomShift - TopShift));
 			}

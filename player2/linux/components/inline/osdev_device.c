@@ -13,14 +13,14 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : osdev_device.c
-Author :           Daniel
+Author : Daniel
 
 Takes all the inline symbols in osdev_device.h and make them available
 to the rest of the kernel as normal functions. This allows C++
@@ -30,9 +30,9 @@ Linux headers (which are not C++ safe).
 Note that it is not possible to export all the OSDEV_ functions as
 functions since some will break quite badly when un-inlined.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-10-Oct-05   Created                                         Daniel
+Date Modification Name
+---- ------------ --------
+10-Oct-05 Created Daniel
 
 ************************************************************************/
 

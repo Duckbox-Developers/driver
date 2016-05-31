@@ -3,7 +3,7 @@ CONFIG_STGFB_PATH?=$(DRIVER_TOPDIR)/stgfb/stmfb
 
 CCFLAGSY += -I$(DRIVER_TOPDIR)/include
 CCFLAGSY += -I$(DRIVER_TOPDIR)/include/player2
-CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/media/video/stm/
+CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/media/video/stm
 CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/sound/pseudocard
 CCFLAGSY += -I$(TREE_ROOT)/linux/drivers/stm/mmelog/
 CCFLAGSY += -I$(CONFIG_STGFB_PATH)/include
@@ -18,7 +18,8 @@ ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)
 endif
 
-stmdvb-objs:=   backend.o \
+stmdvb-objs:= \
+		backend.o \
 		dvb_audio.o \
 		dvb_demux.o \
 		dvb_dvr.o \
@@ -43,15 +44,16 @@ stmdvb-objs:=   backend.o \
 		st-pti.o \
 		st-merger.o \
 		st-common.o
-##	stmdvp.o
+##		stmdvp.o
 
 ifeq (,$(findstring 2.6.3,$(KERNELVERSION)))
 # these object files are required for stm22/stm23 according to BPanther 
-stmdvb-objs +=  dvb_cap.o \
-		dvb_cap_video.o \
+stmdvb-objs += \
 		dvb_avr.o \
 		dvb_avr_audio.o \
-		dvb_avr_video.o
+		dvb_avr_video.o \
+		dvb_cap_video.o \
+		dvb_cap.o
 endif
 
 obj-$(CONFIG_STM_UNIFY_STMDVB) += stmdvb.o

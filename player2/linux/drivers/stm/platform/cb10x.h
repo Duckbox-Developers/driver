@@ -5,7 +5,7 @@
  * Author: Peter Bennett <peter.bennett@st.com>
  *
  * May be copied or modified under the terms of the GNU General Public
- * License.  See linux/COPYING for more information.
+ * License. See linux/COPYING for more information.
  */
 
 #if defined(CONFIG_SH_ST_CB102) || defined(CONFIG_SH_ST_CB103) || defined(CONFIG_SH_ST_CB104) || defined(CONFIG_SH_ST_CB104_MC)
@@ -15,21 +15,21 @@
 
 struct platform_device dvp_device_7200 =
 {
-	.name          = "dvp",
-	.id            = -1,
-	.num_resources =  2,
-	.resource      = (struct resource[])
+	.name = "dvp",
+	.id = -1,
+	.num_resources = 2,
+	.resource = (struct resource[])
 	{
-		[0] = {
+		[0] =
+		{
 			.start = 0xFDA40000,
-			.end   = 0xFDA40FFF,
+			.end = 0xFDA40FFF,
 			.flags = IORESOURCE_MEM,
 		},
-		[1] = {
-			.start = ILC_IRQ(46),
-				.end   = ILC_IRQ(46),
-				.flags = IORESOURCE_IRQ
-			  },
+		[1] = { .start = ILC_IRQ(46),
+			.end = ILC_IRQ(46),
+			.flags = IORESOURCE_IRQ
+		      },
 	},
 };
 
@@ -48,6 +48,6 @@ static int __init register_board_drivers(void)
 	*syscfg40 = 1 << 16;
 	syscfg7 = ioremap(0xfd70411c, 4);
 	*syscfg7 = *syscfg7 | (1 << 29);
-	return platform_add_devices(platform_cb10x, sizeof(platform_cb10x) / sizeof(struct platform_device*));
+	return platform_add_devices(platform_cb10x, sizeof(platform_cb10x) / sizeof(struct platform_device *));
 }
 #endif

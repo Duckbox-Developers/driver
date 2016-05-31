@@ -2,15 +2,15 @@
  * e2_proc_hdmi.c
  */
 
-#include <linux/proc_fs.h>      /* proc fs */
-#include <asm/uaccess.h>        /* copy_from_user */
+#include <linux/proc_fs.h> /* proc fs */
+#include <asm/uaccess.h> /* copy_from_user */
 
-#include <linux/dvb/video.h>    /* Video Format etc */
+#include <linux/dvb/video.h> /* Video Format etc */
 
 #include <linux/dvb/audio.h>
 #include <linux/smp_lock.h>
 #include <linux/string.h>
-#include <linux/kernel.h>      /* sscanf */
+#include <linux/kernel.h> /* sscanf */
 #include <linux/fb.h>
 
 #include "../backend.h"
@@ -18,30 +18,30 @@
 #include "linux/dvb/stm_ioctls.h"
 
 #define STMHDMIIO_AUDIO_SOURCE_2CH_I2S (0)
-#define STMHDMIIO_AUDIO_SOURCE_PCM     STMHDMIIO_AUDIO_SOURCE_2CH_I2S
-#define STMHDMIIO_AUDIO_SOURCE_SPDIF   (1)
+#define STMHDMIIO_AUDIO_SOURCE_PCM STMHDMIIO_AUDIO_SOURCE_2CH_I2S
+#define STMHDMIIO_AUDIO_SOURCE_SPDIF (1)
 #define STMHDMIIO_AUDIO_SOURCE_8CH_I2S (2)
-#define STMHDMIIO_AUDIO_SOURCE_NONE    (0xffffffff)
+#define STMHDMIIO_AUDIO_SOURCE_NONE (0xffffffff)
 
 #define STMHDMIIO_EDID_STRICT_MODE_HANDLING 0
 #define STMHDMIIO_EDID_NON_STRICT_MODE_HANDLING 1
 
-#define STMFBIO_ACTIVATE_IMMEDIATE           0
-#define STMFBIO_OUTPUT_CAPS_HDMI_CONFIG      (1L<<3)
-#define STMFBIO_OUTPUT_HDMI_DISABLED         (1L<<0)
+#define STMFBIO_ACTIVATE_IMMEDIATE 0
+#define STMFBIO_OUTPUT_CAPS_HDMI_CONFIG (1L<<3)
+#define STMFBIO_OUTPUT_HDMI_DISABLED (1L<<0)
 
 struct stmfb_info;
 struct stmfbio_output_configuration;
 
 extern long stmhdmiio_set_audio_source(unsigned int arg);
-extern long stmhdmiio_get_audio_source(unsigned int* arg);
+extern long stmhdmiio_get_audio_source(unsigned int *arg);
 
 extern long stmhdmiio_set_edid_handling(unsigned int arg);
-extern long stmhdmiio_get_edid_handling(unsigned int* arg);
+extern long stmhdmiio_get_edid_handling(unsigned int *arg);
 
-extern int stmfb_set_output_configuration(struct stmfbio_output_configuration* c, struct stmfb_info* i);
-extern int stmfb_get_output_configuration(struct stmfbio_output_configuration* c, struct stmfb_info* i);
-struct stmfb_info* stmfb_get_fbinfo_ptr(void);
+extern int stmfb_set_output_configuration(struct stmfbio_output_configuration *c, struct stmfb_info *i);
+extern int stmfb_get_output_configuration(struct stmfbio_output_configuration *c, struct stmfb_info *i);
+struct stmfb_info *stmfb_get_fbinfo_ptr(void);
 
 //stgfb.h
 struct stmfbio_output_configuration
@@ -56,23 +56,24 @@ struct stmfbio_output_configuration
 	__u32 dvo_config;
 	__u32 hdmi_config;
 	__u32 mixer_background;
-	__u8  brightness;
-	__u8  saturation;
-	__u8  contrast;
-	__u8  hue;
+	__u8 brightness;
+	__u8 saturation;
+	__u8 contrast;
+	__u8 hue;
 };
 
-extern struct DeviceContext_s* ProcDeviceContext;
+extern struct DeviceContext_s *ProcDeviceContext;
 
-int proc_hdmi_audio_source_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_hdmi_audio_source_write(struct file *file, const char __user *buf,
+				 unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	unsigned int value;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
 	printk("%s %ld - ", __FUNCTION__, count);
 	mutex_lock(&(ProcDeviceContext->DvbContext->Lock));
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -108,7 +109,8 @@ out:
 	return ret;
 }
 
-int proc_hdmi_audio_source_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_hdmi_audio_source_read(char *page, char **start, off_t off, int count,
+				int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value = 0;
@@ -136,7 +138,8 @@ int proc_hdmi_audio_source_read(char* page, char** start, off_t off, int count, 
 	return len;
 }
 
-int proc_hdmi_audio_source_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_hdmi_audio_source_choices_read(char *page, char **start, off_t off, int count,
+					int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -146,17 +149,18 @@ int proc_hdmi_audio_source_choices_read(char* page, char** start, off_t off, int
 	return len;
 }
 
-int proc_hdmi_edid_handling_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf,
+				  unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	unsigned int value;
 	int argument = -1;
 	int test = -1;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
 	printk("%s %ld - ", __FUNCTION__, count);
 	mutex_lock(&(ProcDeviceContext->DvbContext->Lock));
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -186,7 +190,8 @@ out:
 	return ret;
 }
 
-int proc_hdmi_edid_handling_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count,
+				 int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value = 0;
@@ -208,16 +213,17 @@ int proc_hdmi_edid_handling_read(char* page, char** start, off_t off, int count,
 	return len;
 }
 
-int proc_hdmi_output_write(struct file* file, const char __user* buf, unsigned long count, void* data)
+int proc_hdmi_output_write(struct file *file, const char __user *buf,
+			   unsigned long count, void *data)
 {
-	char* page;
+	char *page;
 	ssize_t ret = -ENOMEM;
 	struct stmfbio_output_configuration outputConfig = {0};
-	struct stmfb_info* info = NULL;
-	char* myString = kmalloc(count + 1, GFP_KERNEL);
+	struct stmfb_info *info = NULL;
+	char *myString = kmalloc(count + 1, GFP_KERNEL);
 	printk("%s %ld - ", __FUNCTION__, count);
 	mutex_lock(&(ProcDeviceContext->DvbContext->Lock));
-	page = (char*)__get_free_page(GFP_KERNEL);
+	page = (char *)__get_free_page(GFP_KERNEL);
 	if (page)
 	{
 		ret = -EFAULT;
@@ -252,12 +258,13 @@ out:
 	return ret;
 }
 
-int proc_hdmi_output_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_hdmi_output_read(char *page, char **start, off_t off, int count,
+			  int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int disabled = 0;
 	struct stmfbio_output_configuration outputConfig = {0};
-	struct stmfb_info* info = NULL;
+	struct stmfb_info *info = NULL;
 	mutex_lock(&(ProcDeviceContext->DvbContext->Lock));
 	outputConfig.outputid = 1;
 	info = stmfb_get_fbinfo_ptr();
@@ -278,7 +285,8 @@ int proc_hdmi_output_read(char* page, char** start, off_t off, int count, int* e
 	return len;
 }
 
-int proc_hdmi_output_choices_read(char* page, char** start, off_t off, int count, int* eof, void* data_unused)
+int proc_hdmi_output_choices_read(char *page, char **start, off_t off, int count,
+				  int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);

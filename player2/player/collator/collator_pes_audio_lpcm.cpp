@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_lpcm.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-06-Jun-07   Created                                         Sylvain
+Date Modification Name
+---- ------------ --------
+06-Jun-07 Created Sylvain
 
 ************************************************************************/
 
@@ -82,9 +82,7 @@ const static char FirstAccessUnitOffset[] =
 
 #define NB_SAMPLES_SPDIFIN 1024
 
-/*
- * todo Update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync.
- */
+/* #warning "FIXME:update NB_SAMPLES_192_KHZ to 3840 when Dan improves the AVSync" */
 
 const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast] =
 {
@@ -104,8 +102,8 @@ const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast]
 	},
 	// DVD Audio
 	{
-		NB_SAMPLES_48_KHZ / 40,  ///< 48 kHz
-		NB_SAMPLES_96_KHZ / 80,  ///< 96 kHz
+		NB_SAMPLES_48_KHZ / 40, ///< 48 kHz
+		NB_SAMPLES_96_KHZ / 80, ///< 96 kHz
 		NB_SAMPLES_192_KHZ / 160, ///< 192 kHz
 		0,
 		0,
@@ -118,8 +116,8 @@ const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast]
 	},
 	// HD-DVD
 	{
-		NB_SAMPLES_48_KHZ / 40,  ///< 48 kHz
-		NB_SAMPLES_96_KHZ / 80,  ///< 96 kHz
+		NB_SAMPLES_48_KHZ / 40, ///< 48 kHz
+		NB_SAMPLES_96_KHZ / 80, ///< 96 kHz
 		NB_SAMPLES_192_KHZ / 160, ///< 192 kHz
 		0,
 		0,
@@ -132,8 +130,8 @@ const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast]
 	},
 	// HDMV (BD)
 	{
-		NB_SAMPLES_48_KHZ / 240,  ///< 48 kHz
-		NB_SAMPLES_96_KHZ / 480,  ///< 96 kHz
+		NB_SAMPLES_48_KHZ / 240, ///< 48 kHz
+		NB_SAMPLES_96_KHZ / 480, ///< 96 kHz
 		NB_SAMPLES_192_KHZ / 960, ///< 192 kHz
 		0,
 		0,
@@ -171,11 +169,11 @@ const static char NbAudioFramesToGlob[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqLast]
 
 const static unsigned int LpcmPresentationTime[TypeLpcmSPDIFIN + 1][LpcmSamplingFreqNone] =
 {
-	{  1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 0,                  0, 0, 0, 0, 0, 0,                 0,                 0   }, // DVD Video
-	{  833 / PTS_TIME_UNIT,  833 / PTS_TIME_UNIT,  833 / PTS_TIME_UNIT,  0, 0, 0, 0, 0, 907 / PTS_TIME_UNIT, 907 / PTS_TIME_UNIT, 907 / PTS_TIME_UNIT }, // DVD Audio
-	{  1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 0, 0, 0, 0, 0, 0,                 0,                 0   }, // HD-DVD
-	{  0,                  0,                  0,                  0, 0, 0, 0, 0, 0,                 0,                 0   }, // BD
-	{  0,                  0,                  0,                  0, 0, 0, 0, 0, 0,                 0,                 0   }, // SpdifIn
+	{ 1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // DVD Video
+	{ 833 / PTS_TIME_UNIT, 833 / PTS_TIME_UNIT, 833 / PTS_TIME_UNIT, 0, 0, 0, 0, 0, 907 / PTS_TIME_UNIT, 907 / PTS_TIME_UNIT, 907 / PTS_TIME_UNIT }, // DVD Audio
+	{ 1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 1667 / PTS_TIME_UNIT, 0, 0, 0, 0, 0, 0, 0, 0 }, // HD-DVD
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // BD
+	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // SpdifIn
 };
 
 ////////////////////////////////////////////////////////////////////////////
@@ -237,9 +235,9 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		// since Configuration.ExtendedHeaderLength is not the same as PrivateHeaderLength,
 		// so skip these bytes in this case
 		*FrameLength = PesPrivateToSkip +
-					   NextParsedFrameHeader.FirstAccessUnitPointer +
-					   FirstAccessUnitOffset[StreamType] -
-					   NextParsedFrameHeader.PrivateHeaderLength;
+			       NextParsedFrameHeader.FirstAccessUnitPointer +
+			       FirstAccessUnitOffset[StreamType] -
+			       NextParsedFrameHeader.PrivateHeaderLength;
 		PesPrivateToSkip = 0;
 		COLLATOR_TRACE("First packet: Skipping %d bytes\n", *FrameLength);
 		return (Status);
@@ -278,7 +276,7 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		COLLATOR_DEBUG("Reading %d bytes (rest of frame)\n", *FrameLength);
 	}
 	else if ((AccumulatedFrameNumber >= NbAudioFramesToGlob[StreamType][NextParsedFrameHeader.SamplingFrequency1]) ||
-			 IsPesPrivateDataAreaNew)
+			IsPesPrivateDataAreaNew)
 	{
 		// flush the frame if we have already more than x accumulated frames
 		// or if some pda key parameters are new
@@ -314,16 +312,16 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		if ((RemainingElementaryLength < NextParsedFrameHeader.AudioFrameSize))
 		{
 			RemainingDataLength = NextParsedFrameHeader.AudioFrameSize - RemainingElementaryLength;
-			*FrameLength        = RemainingElementaryLength;
+			*FrameLength = RemainingElementaryLength;
 		}
 		else
 		{
 			// read the whole frame!
-			*FrameLength        = NextParsedFrameHeader.AudioFrameSize;
+			*FrameLength = NextParsedFrameHeader.AudioFrameSize;
 		}
 		COLLATOR_DEBUG("Read frame of size %d (total frames in this chunk: %d)\n",
-					   *FrameLength,
-					   AccumulatedFrameNumber);
+			       *FrameLength,
+			       AccumulatedFrameNumber);
 	}
 	return Status;
 }
@@ -350,7 +348,7 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 ///
 CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *PesPrivateData)
 {
-	FrameParserStatus_t  FPStatus;
+	FrameParserStatus_t FPStatus;
 	COLLATOR_DEBUG(">><<\n");
 	if (StreamId != Configuration.StreamIdentifierCode)
 	{
@@ -359,8 +357,8 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 	}
 	NextParsedFrameHeader.Type = StreamType;
 	FPStatus = FrameParser_AudioLpcm_c::ParseFrameHeader(PesPrivateData,
-			   &NextParsedFrameHeader,
-			   PesPayloadLength + Configuration.ExtendedHeaderLength);
+							     &NextParsedFrameHeader,
+							     PesPayloadLength + Configuration.ExtendedHeaderLength);
 	if (FPStatus != FrameParserNoError)
 	{
 		IsPesPrivateDataAreaValid = false;
@@ -426,17 +424,17 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 void Collator_PesAudioLpcm_c::ResetCollatorStateAfterForcedFrameFlush()
 {
 	Collator_PesAudio_c::ResetCollatorStateAfterForcedFrameFlush();
-	GuessedNextFirstAccessUnit               = 0;
-	AccumulatedFrameNumber                   = 0;
-	IsPesPrivateDataAreaNew                  = false;
-	AccumulatePrivateDataArea                = false;
-	IsPesPrivateDataAreaValid                = false;
-	IsFirstPacket                            = true;
-	RemainingDataLength                      = 0;
-	PesPrivateToSkip                         = 0;
-	GlobbedFramesOfNewPacket                 = 0;
-	memset(&ParsedFrameHeader, 0 , sizeof(LpcmAudioParsedFrameHeader_t));
-	memset(&NextParsedFrameHeader, 0 , sizeof(LpcmAudioParsedFrameHeader_t));
+	GuessedNextFirstAccessUnit = 0;
+	AccumulatedFrameNumber = 0;
+	IsPesPrivateDataAreaNew = false;
+	AccumulatePrivateDataArea = false;
+	IsPesPrivateDataAreaValid = false;
+	IsFirstPacket = true;
+	RemainingDataLength = 0;
+	PesPrivateToSkip = 0;
+	GlobbedFramesOfNewPacket = 0;
+	memset(&ParsedFrameHeader, 0, sizeof(LpcmAudioParsedFrameHeader_t));
+	memset(&NextParsedFrameHeader, 0, sizeof(LpcmAudioParsedFrameHeader_t));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -445,11 +443,11 @@ void Collator_PesAudioLpcm_c::ResetCollatorStateAfterForcedFrameFlush()
 ///
 /// \return void
 ///
-void  Collator_PesAudioLpcm_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioLpcm_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* length of PDA has already been given, but store the Stream Id to make further checks... */
 	StreamId = SpecificCode;
-	//  Configuration.ExtendedHeaderLength = AudioPesPrivateDataLength[StreamType];
+	// Configuration.ExtendedHeaderLength = AudioPesPrivateDataLength[StreamType];
 }
 
 CollatorStatus_t Collator_PesAudioLpcm_c::Reset(void)
@@ -462,16 +460,16 @@ CollatorStatus_t Collator_PesAudioLpcm_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = LPCM_FRAME_HEADER_SIZE;
-	Configuration.StreamIdentifierMask       = 0xff;
-	Configuration.StreamIdentifierCode       = 0xbd; // lpcm packets always have a stream_id equal to 0xbd
-	Configuration.BlockTerminateMask         = 0xff;
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = 0xbd - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = AudioPesPrivateDataLength[StreamType];
-	Configuration.DeferredTerminateFlag      = false;
+	Configuration.StreamIdentifierMask = 0xff;
+	Configuration.StreamIdentifierCode = 0xbd; // lpcm packets always have a stream_id equal to 0xbd
+	Configuration.BlockTerminateMask = 0xff;
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = 0xbd - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = AudioPesPrivateDataLength[StreamType];
+	Configuration.DeferredTerminateFlag = false;
 	ResetCollatorStateAfterForcedFrameFlush();
 	return CollatorNoError;
 }

@@ -13,32 +13,32 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_base.cpp
-Author :           Nick
+Author : Nick
 
 Implementation of the base collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-16-Nov-06   Created                                         Nick
+Date Modification Name
+---- ------------ --------
+16-Nov-06 Created Nick
 
 ************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////
-///     \class Collator_Base_c
+/// \class Collator_Base_c
 ///
-///     Provides a buffer management framework to assist collator implementation.
+/// Provides a buffer management framework to assist collator implementation.
 ///
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_base.h"
 
@@ -47,8 +47,8 @@ Date        Modification                                    Name
 // Locally defined constants
 //
 
-#define LIMITED_EARLY_INJECTION_WINDOW      500000      // Say half a second
-#define MAXIMUM_LIMITED_EARLY_INJECTION_DELAY   42000       // Restrict to 42ms norm for 24fps
+#define LIMITED_EARLY_INJECTION_WINDOW 500000 // Say half a second
+#define MAXIMUM_LIMITED_EARLY_INJECTION_DELAY 42000 // Restrict to 42ms norm for 24fps
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -57,23 +57,23 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Constructor function
+// The Constructor function
 //
 
 Collator_Base_c::Collator_Base_c(void)
 {
-	InitializationStatus        = CollatorError;
+	InitializationStatus = CollatorError;
 //
 	OS_InitializeMutex(&Lock);
-	InputEntryDepth     = 0;
+	InputEntryDepth = 0;
 	Collator_Base_c::Reset();
 //
-	InitializationStatus        = CollatorNoError;
+	InitializationStatus = CollatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Destructor function
+// The Destructor function
 //
 
 Collator_Base_c::~Collator_Base_c(void)
@@ -85,10 +85,10 @@ Collator_Base_c::~Collator_Base_c(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Halt function, give up access to any registered resources
+// The Halt function, give up access to any registered resources
 //
 
-CollatorStatus_t   Collator_Base_c::Halt(void)
+CollatorStatus_t Collator_Base_c::Halt(void)
 {
 	unsigned int Count;
 	//
@@ -112,13 +112,13 @@ CollatorStatus_t   Collator_Base_c::Halt(void)
 	if (CodedFrameBuffer != NULL)
 	{
 		CodedFrameBuffer->DecrementReferenceCount(IdentifierCollator);
-		CodedFrameBuffer        = NULL;
+		CodedFrameBuffer = NULL;
 	}
-	CodedFrameBufferPool        = NULL;
-	BufferBase                  = NULL;
-	CodedFrameParameters        = NULL;
-	StartCodeList               = NULL;
-	OutputRing                  = NULL;
+	CodedFrameBufferPool = NULL;
+	BufferBase = NULL;
+	CodedFrameParameters = NULL;
+	StartCodeList = NULL;
+	OutputRing = NULL;
 	BaseComponentClass_c::Halt();
 //
 	OS_UnLockMutex(&Lock);
@@ -127,42 +127,42 @@ CollatorStatus_t   Collator_Base_c::Halt(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Reset function release any resources, and reset all variable
+// The Reset function release any resources, and reset all variable
 //
 
-CollatorStatus_t   Collator_Base_c::Reset(void)
+CollatorStatus_t Collator_Base_c::Reset(void)
 {
 	memset(&Configuration, 0x00, sizeof(CollatorConfiguration_t));
-	Configuration.DetermineFrameBoundariesByPresentationToFrameParser   = false;
+	Configuration.DetermineFrameBoundariesByPresentationToFrameParser = false;
 //
-	CodedFrameBufferPool        = NULL;
-	CodedFrameBuffer            = NULL;
-	MaximumCodedFrameSize       = 0;
-	AccumulatedDataSize         = 0;
-	BufferBase                  = NULL;
-	StartCodeList               = NULL;
-	OutputRing                  = NULL;
-	LimitHandlingLastPTS    = INVALID_TIME;
-	LimitHandlingJumpInEffect   = false;
-	LimitHandlingJumpAt     = INVALID_TIME;
-	Glitch          = false;
-	LastFramePreGlitchPTS   = INVALID_TIME;
-	FrameSinceLastPTS       = 0;
-	InputExitPerformFrameFlush  = false;
+	CodedFrameBufferPool = NULL;
+	CodedFrameBuffer = NULL;
+	MaximumCodedFrameSize = 0;
+	AccumulatedDataSize = 0;
+	BufferBase = NULL;
+	StartCodeList = NULL;
+	OutputRing = NULL;
+	LimitHandlingLastPTS = INVALID_TIME;
+	LimitHandlingJumpInEffect = false;
+	LimitHandlingJumpAt = INVALID_TIME;
+	Glitch = false;
+	LastFramePreGlitchPTS = INVALID_TIME;
+	FrameSinceLastPTS = 0;
+	InputExitPerformFrameFlush = false;
 	return BaseComponentClass_c::Reset();
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Override for component base class set module parameters function
+// Override for component base class set module parameters function
 //
 
-CollatorStatus_t   Collator_Base_c::SetModuleParameters(
-	unsigned int              ParameterBlockSize,
-	void                     *ParameterBlock)
+CollatorStatus_t Collator_Base_c::SetModuleParameters(
+	unsigned int ParameterBlockSize,
+	void *ParameterBlock)
 {
-	CollatorParameterBlock_t        *CollatorParameterBlock = (CollatorParameterBlock_t *)ParameterBlock;
-	CollatorStatus_t                 Status;
+	CollatorParameterBlock_t *CollatorParameterBlock = (CollatorParameterBlock_t *)ParameterBlock;
+	CollatorStatus_t Status;
 //
 	if (ParameterBlockSize != sizeof(CollatorParameterBlock_t))
 	{
@@ -184,7 +184,7 @@ CollatorStatus_t   Collator_Base_c::SetModuleParameters(
 			memcpy(&Configuration, &CollatorParameterBlock->Configuration, sizeof(CollatorConfiguration_t));
 			if (Configuration.GenerateStartCodeList && (CodedFrameBufferPool != NULL))
 			{
-				Status      = CodedFrameBufferPool->AttachMetaData(Player->MetaDataStartCodeListType, SizeofStartCodeList(Configuration.MaxStartCodes));
+				Status = CodedFrameBufferPool->AttachMetaData(Player->MetaDataStartCodeListType, SizeofStartCodeList(Configuration.MaxStartCodes));
 				if (Status != BufferNoError)
 				{
 					report(severity_error, "Collator_Base_c::SetModuleParameters - Failed to attach start code list to all coded frame buffers.\n");
@@ -192,7 +192,7 @@ CollatorStatus_t   Collator_Base_c::SetModuleParameters(
 				}
 				// In order to cleanly get pointers, we release and get a new buffer
 				CodedFrameBuffer->DecrementReferenceCount(IdentifierCollator);
-				Status      = GetNewBuffer();
+				Status = GetNewBuffer();
 				return Status;
 			}
 			break;
@@ -200,19 +200,19 @@ CollatorStatus_t   Collator_Base_c::SetModuleParameters(
 			report(severity_error, "Collator_Base_c::SetModuleParameters - Unrecognised parameter block (%d).\n", CollatorParameterBlock->ParameterType);
 			return CollatorError;
 	}
-	return  CollatorNoError;
+	return CollatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The register output ring function function
+// The register output ring function function
 //
 
-CollatorStatus_t   Collator_Base_c::RegisterOutputBufferRing(Ring_t                       Ring)
+CollatorStatus_t Collator_Base_c::RegisterOutputBufferRing(Ring_t Ring)
 {
-	PlayerStatus_t  Status;
+	PlayerStatus_t Status;
 //
-	OutputRing  = Ring;
+	OutputRing = Ring;
 	//
 	// Obtain the class list, and the coded frame buffer pool
 	//
@@ -220,11 +220,11 @@ CollatorStatus_t   Collator_Base_c::RegisterOutputBufferRing(Ring_t             
 	//
 	// Attach the coded frame parameters to every element of the pool
 	//
-	Status      = CodedFrameBufferPool->AttachMetaData(Player->MetaDataCodedFrameParametersType);
+	Status = CodedFrameBufferPool->AttachMetaData(Player->MetaDataCodedFrameParametersType);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "Collator_Base_c::RegisterOutputBufferRing - Failed to attach coded frame descriptor to all coded frame buffers.\n");
-		CodedFrameBufferPool    = NULL;
+		CodedFrameBufferPool = NULL;
 		return Status;
 	}
 	//
@@ -232,21 +232,21 @@ CollatorStatus_t   Collator_Base_c::RegisterOutputBufferRing(Ring_t             
 	//
 	if (Configuration.GenerateStartCodeList)
 	{
-		Status  = CodedFrameBufferPool->AttachMetaData(Player->MetaDataStartCodeListType, SizeofStartCodeList(Configuration.MaxStartCodes));
+		Status = CodedFrameBufferPool->AttachMetaData(Player->MetaDataStartCodeListType, SizeofStartCodeList(Configuration.MaxStartCodes));
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Collator_Base_c::RegisterOutputBufferRing - Failed to attach start code list to all coded frame buffers.\n");
-			CodedFrameBufferPool        = NULL;
+			CodedFrameBufferPool = NULL;
 			return Status;
 		}
 	}
 	//
 	// Acquire an operating buffer
 	//
-	Status      = GetNewBuffer();
+	Status = GetNewBuffer();
 	if (Status != CollatorNoError)
 	{
-		CodedFrameBufferPool    = NULL;
+		CodedFrameBufferPool = NULL;
 		return Status;
 	}
 	//
@@ -258,31 +258,31 @@ CollatorStatus_t   Collator_Base_c::RegisterOutputBufferRing(Ring_t             
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Frame Flush function
+// The Frame Flush function
 //
 
-CollatorStatus_t   Collator_Base_c::FrameFlush(void)
+CollatorStatus_t Collator_Base_c::FrameFlush(void)
 {
-	CollatorStatus_t    Status = CollatorNoError;
+	CollatorStatus_t Status = CollatorNoError;
 	OS_LockMutex(&Lock);
 	if (InputEntryDepth != 0)
-		InputExitPerformFrameFlush  = true;
+		InputExitPerformFrameFlush = true;
 	else
-		Status  = InternalFrameFlush();
+		Status = InternalFrameFlush();
 	OS_UnLockMutex(&Lock);
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The Frame Flush implementation
+// The Frame Flush implementation
 //
 
-CollatorStatus_t   Collator_Base_c::InternalFrameFlush(void)
+CollatorStatus_t Collator_Base_c::InternalFrameFlush(void)
 {
-	CollatorStatus_t        Status;
-	unsigned char           TerminalStartCode[4];
-	Buffer_t        BufferToOutput;
+	CollatorStatus_t Status;
+	unsigned char TerminalStartCode[4];
+	Buffer_t BufferToOutput;
 //
 	if ((AccumulatedDataSize == 0) &&
 			!CodedFrameParameters->StreamDiscontinuity &&
@@ -291,11 +291,11 @@ CollatorStatus_t   Collator_Base_c::InternalFrameFlush(void)
 //
 	if ((AccumulatedDataSize != 0) && Configuration.InsertFrameTerminateCode)
 	{
-		TerminalStartCode[0]    = 0x00;
-		TerminalStartCode[1]    = 0x00;
-		TerminalStartCode[2]    = 0x01;
-		TerminalStartCode[3]    = Configuration.TerminalCode;
-		Status  = AccumulateData(4, TerminalStartCode);
+		TerminalStartCode[0] = 0x00;
+		TerminalStartCode[1] = 0x00;
+		TerminalStartCode[2] = 0x01;
+		TerminalStartCode[3] = Configuration.TerminalCode;
+		Status = AccumulateData(4, TerminalStartCode);
 		if (Status != CollatorNoError)
 		{
 			report(severity_error, "Collator_Base_c::InternalFrameFlush - Failed to add terminal start code.\n");
@@ -307,7 +307,7 @@ CollatorStatus_t   Collator_Base_c::InternalFrameFlush(void)
 		return CollatorNoError;
 //
 	CodedFrameBuffer->SetUsedDataSize(AccumulatedDataSize);
-	Status      = CodedFrameBuffer->ShrinkBuffer(max(AccumulatedDataSize, 1));
+	Status = CodedFrameBuffer->ShrinkBuffer(max(AccumulatedDataSize, 1));
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "Collator_Base_c::InternalFrameFlush - Failed to shrink the operating buffer to size (%08x).\n", Status);
@@ -321,26 +321,26 @@ CollatorStatus_t   Collator_Base_c::InternalFrameFlush(void)
 	//
 	CheckForGlitchPromotion();
 	DelayForInjectionThrottling();
-	BufferToOutput  = CodedFrameBuffer;
-	Status          = GetNewBuffer();
-	OutputRing->Insert((uintptr_t)BufferToOutput);
+	BufferToOutput = CodedFrameBuffer;
+	Status = GetNewBuffer();
+	OutputRing->Insert((unsigned int)BufferToOutput);
 //
 	return Status;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      The discard all accumulated data function
+// The discard all accumulated data function
 //
 
-CollatorStatus_t   Collator_Base_c::DiscardAccumulatedData(void)
+CollatorStatus_t Collator_Base_c::DiscardAccumulatedData(void)
 {
 	if (CodedFrameBuffer != NULL)
 	{
-		AccumulatedDataSize                         = 0;
+		AccumulatedDataSize = 0;
 		CodedFrameBuffer->SetUsedDataSize(AccumulatedDataSize);
 		if (Configuration.GenerateStartCodeList)
-			StartCodeList->NumberOfStartCodes       = 0;
+			StartCodeList->NumberOfStartCodes = 0;
 		memset(CodedFrameParameters, 0x00, sizeof(CodedFrameParameters_t));
 	}
 	return CollatorNoError;
@@ -348,14 +348,14 @@ CollatorStatus_t   Collator_Base_c::DiscardAccumulatedData(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      This function is called when we enter input
+// This function is called when we enter input
 //	for a specific collator
 
-CollatorStatus_t   Collator_Base_c::InputEntry(
-	PlayerInputDescriptor_t  *Input,
-	unsigned int          DataLength,
-	void             *Data,
-	bool              NonBlocking)
+CollatorStatus_t Collator_Base_c::InputEntry(
+	PlayerInputDescriptor_t *Input,
+	unsigned int DataLength,
+	void *Data,
+	bool NonBlocking)
 {
 	OS_LockMutex(&Lock);
 	InputEntryDepth++;
@@ -365,19 +365,19 @@ CollatorStatus_t   Collator_Base_c::InputEntry(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - This function is called when we exit input
+// Protected - This function is called when we exit input
 //	for a specific collator
 
-CollatorStatus_t   Collator_Base_c::InputExit(void)
+CollatorStatus_t Collator_Base_c::InputExit(void)
 {
-	CollatorStatus_t    Status;
+	CollatorStatus_t Status;
 //
 	OS_LockMutex(&Lock);
-	Status      = CollatorNoError;
+	Status = CollatorNoError;
 	if ((InputEntryDepth == 1) && InputExitPerformFrameFlush)
 	{
-		Status              = InternalFrameFlush();
-		InputExitPerformFrameFlush  = false;
+		Status = InternalFrameFlush();
+		InputExitPerformFrameFlush = false;
 	}
 	InputEntryDepth--;
 	OS_UnLockMutex(&Lock);
@@ -387,12 +387,12 @@ CollatorStatus_t   Collator_Base_c::InputExit(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Handle a jump
+// Handle a jump
 //
 
-CollatorStatus_t   Collator_Base_c::InputJump(
-	bool                      SurplusDataInjected,
-	bool                      ContinuousReverseJump)
+CollatorStatus_t Collator_Base_c::InputJump(
+	bool SurplusDataInjected,
+	bool ContinuousReverseJump)
 {
 	AssertComponentState("Collator_Base_c::InputJump", ComponentRunning);
 //
@@ -400,37 +400,37 @@ CollatorStatus_t   Collator_Base_c::InputJump(
 		DiscardAccumulatedData();
 	else
 		FrameFlush();
-	CodedFrameParameters->StreamDiscontinuity           = true;
-	CodedFrameParameters->FlushBeforeDiscontinuity      = SurplusDataInjected;
-	CodedFrameParameters->ContinuousReverseJump         = ContinuousReverseJump;
+	CodedFrameParameters->StreamDiscontinuity = true;
+	CodedFrameParameters->FlushBeforeDiscontinuity = SurplusDataInjected;
+	CodedFrameParameters->ContinuousReverseJump = ContinuousReverseJump;
 	FrameFlush();
 	return CollatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Handle a glitch
+// Handle a glitch
 //
 
-CollatorStatus_t   Collator_Base_c::InputGlitch(void)
+CollatorStatus_t Collator_Base_c::InputGlitch(void)
 {
 	AssertComponentState("Collator_Base_c::InputGlitch", ComponentRunning);
 //
 	DiscardAccumulatedData();
-	Glitch      = true;
+	Glitch = true;
 	return CollatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - Get a new buffer
+// Protected - Get a new buffer
 //
 
-CollatorStatus_t   Collator_Base_c::GetNewBuffer(void)
+CollatorStatus_t Collator_Base_c::GetNewBuffer(void)
 {
-	CollatorStatus_t        Status;
+	CollatorStatus_t Status;
 //
-	Status      = CodedFrameBufferPool->GetBuffer(&CodedFrameBuffer, IdentifierCollator, MaximumCodedFrameSize);
+	Status = CodedFrameBufferPool->GetBuffer(&CodedFrameBuffer, IdentifierCollator, MaximumCodedFrameSize);
 	if (Status != BufferNoError)
 	{
 		CodedFrameBuffer = NULL;
@@ -441,7 +441,7 @@ CollatorStatus_t   Collator_Base_c::GetNewBuffer(void)
 	AccumulatedDataSize = 0;
 	CodedFrameBuffer->ObtainDataReference(NULL, NULL, (void **)(&BufferBase));
 //
-	Status      = CodedFrameBuffer->ObtainMetaDataReference(Player->MetaDataCodedFrameParametersType, (void **)(&CodedFrameParameters));
+	Status = CodedFrameBuffer->ObtainMetaDataReference(Player->MetaDataCodedFrameParametersType, (void **)(&CodedFrameParameters));
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "Collator_Base_c::GetNewBuffer - Unable to obtain the meta data coded frame parameters.\n");
@@ -451,29 +451,29 @@ CollatorStatus_t   Collator_Base_c::GetNewBuffer(void)
 //
 	if (Configuration.GenerateStartCodeList)
 	{
-		Status  = CodedFrameBuffer->ObtainMetaDataReference(Player->MetaDataStartCodeListType, (void **)(&StartCodeList));
+		Status = CodedFrameBuffer->ObtainMetaDataReference(Player->MetaDataStartCodeListType, (void **)(&StartCodeList));
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Collator_Base_c::GetNewBuffer - Unable to obtain the meta data start code list.\n");
 			return Status;
 		}
-		StartCodeList->NumberOfStartCodes       = 0;
+		StartCodeList->NumberOfStartCodes = 0;
 	}
 	return CollatorNoError;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - The accumulate data into the buffer function
+// Protected - The accumulate data into the buffer function
 //
 
-CollatorStatus_t   Collator_Base_c::AccumulateData(
-	unsigned int              Length,
-	unsigned char            *Data)
+CollatorStatus_t Collator_Base_c::AccumulateData(
+	unsigned int Length,
+	unsigned char *Data)
 {
 	if ((AccumulatedDataSize + Length) > MaximumCodedFrameSize)
 	{
-		report(severity_error, "Collator_Base_c::AccumulateData - Buffer overflow. (%d > %d)\n", (AccumulatedDataSize + Length) , MaximumCodedFrameSize);
+		report(severity_error, "Collator_Base_c::AccumulateData - Buffer overflow. (%d > %d)\n", (AccumulatedDataSize + Length), MaximumCodedFrameSize);
 		return CollatorBufferOverflow;
 	}
 	memcpy(BufferBase + AccumulatedDataSize, Data, Length);
@@ -483,10 +483,10 @@ CollatorStatus_t   Collator_Base_c::AccumulateData(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Protected - The accumulate data into the buffer function
+// Protected - The accumulate data into the buffer function
 //
 
-CollatorStatus_t   Collator_Base_c::AccumulateStartCode(PackedStartCode_t      Code)
+CollatorStatus_t Collator_Base_c::AccumulateStartCode(PackedStartCode_t Code)
 {
 	if (!Configuration.GenerateStartCodeList)
 		return CollatorNoError;
@@ -496,100 +496,100 @@ CollatorStatus_t   Collator_Base_c::AccumulateStartCode(PackedStartCode_t      C
 		report(severity_error, "Collator_Base_c::AccumulateStartCode - Start code list overflow.\n");
 		return CollatorBufferOverflow;
 	}
-	StartCodeList->StartCodes[StartCodeList->NumberOfStartCodes++]      = Code;
+	StartCodeList->StartCodes[StartCodeList->NumberOfStartCodes++] = Code;
 	return CollatorNoError;
 }
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Copy any important information held in the input descriptor to the
-///     coded frame parameters.
+/// Copy any important information held in the input descriptor to the
+/// coded frame parameters.
 ///
-///     If the input descriptor provides any hints about playback or
-///     presentation time then initialize Collator_Base_c::CodedFrameParameters
-///     with these values.
+/// If the input descriptor provides any hints about playback or
+/// presentation time then initialize Collator_Base_c::CodedFrameParameters
+/// with these values.
 ///
-///     \param Input The input descriptor
+/// \param Input The input descriptor
 ///
-void Collator_Base_c::ActOnInputDescriptor(PlayerInputDescriptor_t   *Input)
+void Collator_Base_c::ActOnInputDescriptor(PlayerInputDescriptor_t *Input)
 {
 	if (Input->PlaybackTimeValid && !CodedFrameParameters->PlaybackTimeValid)
 	{
 		CodedFrameParameters->PlaybackTimeValid = true;
-		CodedFrameParameters->PlaybackTime      = Input->PlaybackTime;
+		CodedFrameParameters->PlaybackTime = Input->PlaybackTime;
 	}
 	if (Input->DecodeTimeValid && !CodedFrameParameters->DecodeTimeValid)
 	{
-		CodedFrameParameters->DecodeTimeValid   = true;
-		CodedFrameParameters->DecodeTime        = Input->DecodeTime;
+		CodedFrameParameters->DecodeTimeValid = true;
+		CodedFrameParameters->DecodeTime = Input->DecodeTime;
 	}
-	CodedFrameParameters->DataSpecificFlags     |= Input->DataSpecificFlags;
+	CodedFrameParameters->DataSpecificFlags |= Input->DataSpecificFlags;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - Check if we should promote a glitch to a full blown
-//        discontinuity. This works by checking pts flow around
-//        the glitch.
+// Private - Check if we should promote a glitch to a full blown
+// discontinuity. This works by checking pts flow around
+//		 the glitch.
 //
 
-void   Collator_Base_c::CheckForGlitchPromotion(void)
+void Collator_Base_c::CheckForGlitchPromotion(void)
 {
-	long long        DeltaPTS;
-	long long        Range;
+	long long DeltaPTS;
+	long long Range;
 	if (CodedFrameParameters->PlaybackTimeValid)
 	{
 		//
 		// Handle any glitch promotion
-		//     We promote if there is a glitch, and if the
-		//     PTS varies by more than the maximum of 1/4 second, and 40ms times the number of frames that have passed since a pts.
+		// We promote if there is a glitch, and if the
+		// PTS varies by more than the maximum of 1/4 second, and 40ms times the number of frames that have passed since a pts.
 		//
 		if (Glitch &&
 				(LastFramePreGlitchPTS != INVALID_TIME))
 		{
-			DeltaPTS        = CodedFrameParameters->PlaybackTime - LastFramePreGlitchPTS;
-			Range       = max(22500, (3600 * FrameSinceLastPTS));
+			DeltaPTS = CodedFrameParameters->PlaybackTime - LastFramePreGlitchPTS;
+			Range = max(22500, (3600 * FrameSinceLastPTS));
 			if (!inrange(DeltaPTS, -Range, Range))
 			{
 				report(severity_info, "Collator_Base_c::CheckForGlitchPromotion (%d) Promoted\n", Configuration.GenerateStartCodeList);
-				CodedFrameParameters->StreamDiscontinuity           = true;
-				CodedFrameParameters->FlushBeforeDiscontinuity      = false;
-				CodedFrameParameters->ContinuousReverseJump         = false;
+				CodedFrameParameters->StreamDiscontinuity = true;
+				CodedFrameParameters->FlushBeforeDiscontinuity = false;
+				CodedFrameParameters->ContinuousReverseJump = false;
 			}
 		}
 		//
 		// Remember the frame pts
 		//
-		Glitch          = false;
-		LastFramePreGlitchPTS   = CodedFrameParameters->PlaybackTime;
-		FrameSinceLastPTS   = 0;
+		Glitch = false;
+		LastFramePreGlitchPTS = CodedFrameParameters->PlaybackTime;
+		FrameSinceLastPTS = 0;
 	}
 	FrameSinceLastPTS++;
 }
 
 // /////////////////////////////////////////////////////////////////////////
 //
-//      Private - If the input is to be throttled, the the delay
-//        will occur here.
+// Private - If the input is to be throttled, the the delay
+//		 will occur here.
 //
 
-void   Collator_Base_c::DelayForInjectionThrottling(void)
+void Collator_Base_c::DelayForInjectionThrottling(void)
 {
-	PlayerStatus_t       Status;
-	unsigned char        Policy;
-	Rational_t       Speed;
-	PlayDirection_t      Direction;
-	unsigned long long   StreamDelay;
-	unsigned long long   SystemPlaybackTime;
-	unsigned long long   Now;
-	unsigned long long   CurrentPTS;
-	long long        DeltaPTS;
-	long long        EarliestInjectionTime;
-	long long        Delay;
+	PlayerStatus_t Status;
+	unsigned char Policy;
+	Rational_t Speed;
+	PlayDirection_t Direction;
+	unsigned long long StreamDelay;
+	unsigned long long SystemPlaybackTime;
+	unsigned long long Now;
+	unsigned long long CurrentPTS;
+	long long DeltaPTS;
+	long long EarliestInjectionTime;
+	long long Delay;
 	//
 	// Is throttling enabled, and do we have a pts to base the limit on
 	//
-	Policy  = Player->PolicyValue(Playback, Stream, PolicyLimitInputInjectAhead);
+	Policy = Player->PolicyValue(Playback, Stream, PolicyLimitInputInjectAhead);
 	if ((Policy != PolicyValueApply) || !CodedFrameParameters->PlaybackTimeValid)
 		return;
 	Player->GetPlaybackSpeed(Playback, &Speed, &Direction);
@@ -598,24 +598,24 @@ void   Collator_Base_c::DelayForInjectionThrottling(void)
 	//
 	// Obtain the relevant data
 	//
-	Status  = OutputTimer->GetStreamStartDelay(&StreamDelay);
+	Status = OutputTimer->GetStreamStartDelay(&StreamDelay);
 	if (Status == PlayerNoError)
-		Status  = Player->TranslateNativePlaybackTime(Playback, CodedFrameParameters->PlaybackTime, &SystemPlaybackTime);
+		Status = Player->TranslateNativePlaybackTime(Playback, CodedFrameParameters->PlaybackTime, &SystemPlaybackTime);
 	if (Status != PlayerNoError)
 		return;
 	//
 	// Watch out for jumping PTS values, they can confuse us
 	//
 	if (LimitHandlingLastPTS == INVALID_TIME)
-		LimitHandlingLastPTS    = CodedFrameParameters->PlaybackTime;
+		LimitHandlingLastPTS = CodedFrameParameters->PlaybackTime;
 //
-	DeltaPTS            = CodedFrameParameters->PlaybackTime - LimitHandlingLastPTS;
+	DeltaPTS = CodedFrameParameters->PlaybackTime - LimitHandlingLastPTS;
 	if (!inrange(DeltaPTS, -90000, 90000))
 	{
-		LimitHandlingJumpInEffect   = true;
-		LimitHandlingJumpAt     = CodedFrameParameters->PlaybackTime;
+		LimitHandlingJumpInEffect = true;
+		LimitHandlingJumpAt = CodedFrameParameters->PlaybackTime;
 	}
-	LimitHandlingLastPTS    = CodedFrameParameters->PlaybackTime;
+	LimitHandlingLastPTS = CodedFrameParameters->PlaybackTime;
 //
 	if (LimitHandlingJumpInEffect)
 	{
@@ -623,17 +623,17 @@ void   Collator_Base_c::DelayForInjectionThrottling(void)
 		if ((Status != PlayerNoError) ||
 				!inrange((CurrentPTS - LimitHandlingJumpAt), 0, 16 * 90000))
 			return;
-		LimitHandlingJumpInEffect   = false;
+		LimitHandlingJumpInEffect = false;
 	}
 	//
 	// Calculate and perform a delay if necessary
 	//
-	Now             = OS_GetTimeInMicroSeconds();
-	EarliestInjectionTime   = SystemPlaybackTime - StreamDelay - LIMITED_EARLY_INJECTION_WINDOW;
-	Delay           = EarliestInjectionTime - (long long)Now;
+	Now = OS_GetTimeInMicroSeconds();
+	EarliestInjectionTime = SystemPlaybackTime - StreamDelay - LIMITED_EARLY_INJECTION_WINDOW;
+	Delay = EarliestInjectionTime - (long long)Now;
 	if (Delay <= 1000)
 		return;
 	if (Delay > MAXIMUM_LIMITED_EARLY_INJECTION_DELAY)
-		Delay           = MAXIMUM_LIMITED_EARLY_INJECTION_DELAY;
+		Delay = MAXIMUM_LIMITED_EARLY_INJECTION_DELAY;
 	OS_SleepMilliSeconds(Delay / 1000);
 }

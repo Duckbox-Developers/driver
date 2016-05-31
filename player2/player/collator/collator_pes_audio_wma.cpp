@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : collator_pes_audio_wma.cpp
-Author :           Adam
+Author : Adam
 
 Implementation of the pes collator class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-11-Sep-07   Created                                         Adam
+Date Modification Name
+---- ------------ --------
+11-Sep-07 Created Adam
 
 ************************************************************************/
 
@@ -46,7 +46,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #define ENABLE_COLLATOR_DEBUG 0
 
@@ -130,7 +130,7 @@ CollatorStatus_t Collator_PesAudioWma_c::DecideCollatorNextStateAndGetLength(uns
 	// check if the block we are *about* to accumulate is a stream properties object
 	if ((RemainingElementaryLength > sizeof(asf_guid_t)) &&
 			(0 == memcmp(RemainingElementaryData,
-						 asf_guid_lookup[ASF_GUID_STREAM_PROPERTIES_OBJECT], sizeof(asf_guid_t))))
+				     asf_guid_lookup[ASF_GUID_STREAM_PROPERTIES_OBJECT], sizeof(asf_guid_t))))
 	{
 		COLLATOR_TRACE("Anticipating a Stream Properties Object - Clearing WMADataBlockSize\n");
 		WMADataBlockSize = 0;
@@ -146,8 +146,8 @@ CollatorStatus_t Collator_PesAudioWma_c::DecideCollatorNextStateAndGetLength(uns
 		*FrameLength = WMADataBlockSize;
 	else
 		*FrameLength = RemainingElementaryLength;
-	COLLATOR_DEBUG("WMADataBlockSize %4d  RemainingElementaryLength %4d  FrameLength %4d\n",
-				   WMADataBlockSize, RemainingElementaryLength, *FrameLength);
+	COLLATOR_DEBUG("WMADataBlockSize %4d RemainingElementaryLength %4d FrameLength %4d\n",
+		       WMADataBlockSize, RemainingElementaryLength, *FrameLength);
 	CollatorState = GotCompleteFrame;
 	return CollatorNoError;
 }
@@ -158,7 +158,7 @@ CollatorStatus_t Collator_PesAudioWma_c::DecideCollatorNextStateAndGetLength(uns
 ///
 /// \return void
 ///
-void  Collator_PesAudioWma_c::SetPesPrivateDataLength(unsigned char SpecificCode)
+void Collator_PesAudioWma_c::SetPesPrivateDataLength(unsigned char SpecificCode)
 {
 	/* do nothing, configuration already set to the right value... */
 }
@@ -184,18 +184,18 @@ CollatorStatus_t Collator_PesAudioWma_c::Reset(void)
 		return Status;
 	// FrameHeaderLength belongs to Collator_PesAudio_c so we must set it after the class has been reset
 	FrameHeaderLength = WMA_HEADER_SIZE;
-	Configuration.StreamIdentifierMask       = PES_START_CODE_MASK;
-	Configuration.StreamIdentifierCode       = PES_START_CODE_AUDIO;
-	Configuration.BlockTerminateMask         = 0xff;         // Picture
-	Configuration.BlockTerminateCode         = 0x00;
-	Configuration.IgnoreCodesRangeStart      = 0x01; // All slice codes
-	Configuration.IgnoreCodesRangeEnd        = PES_START_CODE_PRIVATE_STREAM_1 - 1;
-	Configuration.InsertFrameTerminateCode   = false;
-	Configuration.TerminalCode               = 0;
-	Configuration.ExtendedHeaderLength       = 0;       //private data area after pes header
-	Configuration.DeferredTerminateFlag      = false;
-	//Configuration.DeferredTerminateCode[0]   =  Configuration.BlockTerminateCode;
-	//Configuration.DeferredTerminateCode[1]   =  Configuration.BlockTerminateCode;
+	Configuration.StreamIdentifierMask = PES_START_CODE_MASK;
+	Configuration.StreamIdentifierCode = PES_START_CODE_AUDIO;
+	Configuration.BlockTerminateMask = 0xff; // Picture
+	Configuration.BlockTerminateCode = 0x00;
+	Configuration.IgnoreCodesRangeStart = 0x01; // All slice codes
+	Configuration.IgnoreCodesRangeEnd = PES_START_CODE_PRIVATE_STREAM_1 - 1;
+	Configuration.InsertFrameTerminateCode = false;
+	Configuration.TerminalCode = 0;
+	Configuration.ExtendedHeaderLength = 0; //private data area after pes header
+	Configuration.DeferredTerminateFlag = false;
+	//Configuration.DeferredTerminateCode[0] = Configuration.BlockTerminateCode;
+	//Configuration.DeferredTerminateCode[1] = Configuration.BlockTerminateCode;
 	PassPesPrivateDataToElementaryStreamHandler = false;
 	WMADataBlockSize = 0;
 	return CollatorNoError;

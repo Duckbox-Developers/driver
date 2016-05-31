@@ -20,7 +20,7 @@ static struct task_struct *kreplay_kthread;
 
 static int xrun_recovery(ksnd_pcm_t *handle, int err)
 {
-	if (err == -EPIPE)      /* under-run */
+	if (err == -EPIPE) /* under-run */
 	{
 		/*err = snd_pcm_prepare(handle); */
 		err = ksnd_pcm_prepare(handle);
@@ -34,7 +34,7 @@ static int xrun_recovery(ksnd_pcm_t *handle, int err)
 	{
 #if 0
 		while ((err = snd_pcm_resume(handle)) == -EAGAIN)
-			sleep(1);   /* wait until the suspend flag is released */
+			sleep(1); /* wait until the suspend flag is released */
 		if (err < 0)
 		{
 			err = snd_pcm_prepare(handle);

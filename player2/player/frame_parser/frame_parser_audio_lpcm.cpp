@@ -13,20 +13,20 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along
-with player2; see the file COPYING.  If not, write to the Free Software
+with player2; see the file COPYING. If not, write to the Free Software
 Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 The Player2 Library may alternatively be licensed under a proprietary
 license from ST.
 
 Source file name : frame_parser_audio_lpcm.cpp
-Author :           Sylvain
+Author : Sylvain
 
 Implementation of the LPCM audio frame parser class for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-12-Jul-07   Created                                         Sylvain
+Date Modification Name
+---- ------------ --------
+12-Jul-07 Created Sylvain
 
 ************************************************************************/
 
@@ -38,7 +38,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "lpcm.h"
 #include "frame_parser_audio_lpcm.h"
@@ -56,20 +56,20 @@ Date        Modification                                    Name
 #undef FRAME_TAG
 #define FRAME_TAG "LPCM audio frame parser"
 
-static BufferDataDescriptor_t     LpcmAudioStreamParametersBuffer = BUFFER_LPCM_AUDIO_STREAM_PARAMETERS_TYPE;
-static BufferDataDescriptor_t     LpcmAudioFrameParametersBuffer = BUFFER_LPCM_AUDIO_FRAME_PARAMETERS_TYPE;
+static BufferDataDescriptor_t LpcmAudioStreamParametersBuffer = BUFFER_LPCM_AUDIO_STREAM_PARAMETERS_TYPE;
+static BufferDataDescriptor_t LpcmAudioFrameParametersBuffer = BUFFER_LPCM_AUDIO_FRAME_PARAMETERS_TYPE;
 
 // this array is based on the LpcmSamplingFreq_t enum
 static const int LpcmDVDSamplingFreq[LpcmSamplingFreqLast] =
 {
 	// DVD Video sfreq :
-	48000, 96000 , 192000, 0 ,
+	48000, 96000, 192000, 0,
 
 	// Spdifin additional sfreq :
-	32000, 16000 , 22050 , 24000,
+	32000, 16000, 22050, 24000,
 
 	// DVD Audio additional sfreq :
-	44100, 88200 , 176400, 0 ,
+	44100, 88200, 176400, 0,
 };
 
 // this array is based on the LpcmSamplingFreq_t enum
@@ -182,48 +182,48 @@ const static char FirstAccessUnitOffset[] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 
 FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-		LpcmAudioParsedFrameHeader_t *NextParsedFrameHeader,
-		int GivenFrameSize)
+							      LpcmAudioParsedFrameHeader_t *NextParsedFrameHeader,
+							      int GivenFrameSize)
 {
-	BitStreamClass_c       Bits;
-	LpcmSamplingFreq_t     AudioSamplingFrequency1;
-	LpcmSamplingFreq_t     AudioSamplingFrequency2  = LpcmSamplingFreqNone;
-	unsigned int           NbSamples                = 0;
-	char                   NumberOfAudioChannels    = 1;
-	LpcmWordSize_t         WordSize1;
-	LpcmWordSize_t         WordSize2                = LpcmWordSizeNone;
-	int                    DynamicRangeControl      = 0;
-	int                    ChannelAssignment        = 0xff; // this is the default assignment for the firmware (not exported by the firmware headers)
-	bool                   MuteFlag                 = false;
-	bool                   EmphasisFlag             = false;
-	int                    FirstAccessUnitPointer   = 1;
-	int                    AudioFrameNumber         = 0;
-	int                    NbAccessUnits            = 1;
-	int                    BitShiftChannel2         = 0;
-	int                    FrameSize                = 0;
-	unsigned int           ExtraPrivateHeaderLength = 0;
-	unsigned char          SubStreamId              = 0;
-	unsigned int           AudioFrameSize           = 0;
+	BitStreamClass_c Bits;
+	LpcmSamplingFreq_t AudioSamplingFrequency1;
+	LpcmSamplingFreq_t AudioSamplingFrequency2 = LpcmSamplingFreqNone;
+	unsigned int NbSamples = 0;
+	char NumberOfAudioChannels = 1;
+	LpcmWordSize_t WordSize1;
+	LpcmWordSize_t WordSize2 = LpcmWordSizeNone;
+	int DynamicRangeControl = 0;
+	int ChannelAssignment = 0xff; // this is the default assignment for the firmware (not exported by the firmware headers)
+	bool MuteFlag = false;
+	bool EmphasisFlag = false;
+	int FirstAccessUnitPointer = 1;
+	int AudioFrameNumber = 0;
+	int NbAccessUnits = 1;
+	int BitShiftChannel2 = 0;
+	int FrameSize = 0;
+	unsigned int ExtraPrivateHeaderLength = 0;
+	unsigned char SubStreamId = 0;
+	unsigned int AudioFrameSize = 0;
 	LpcmStreamType_t StreamType = NextParsedFrameHeader->Type;
 	memset(NextParsedFrameHeader, 0, sizeof(LpcmAudioParsedFrameHeader_t));
 	Bits.SetPointer(FrameHeaderBytes);
 	switch (StreamType)
 	{
-		case   TypeLpcmDVDVideo:
+		case TypeLpcmDVDVideo:
 		{
 			///< frame is a DVD video lpcm
-			SubStreamId                  = Bits.Get(8);
-			NbAccessUnits                = Bits.Get(8);
-			FirstAccessUnitPointer       = Bits.Get(16);
-			EmphasisFlag                 = Bits.Get(1);
-			MuteFlag                     = Bits.Get(1);
+			SubStreamId = Bits.Get(8);
+			NbAccessUnits = Bits.Get(8);
+			FirstAccessUnitPointer = Bits.Get(16);
+			EmphasisFlag = Bits.Get(1);
+			MuteFlag = Bits.Get(1);
 			Bits.FlushUnseen(1);
-			AudioFrameNumber             = Bits.Get(5);
-			WordSize1                    = (LpcmWordSize_t) Bits.Get(2);
-			AudioSamplingFrequency1      = (LpcmSamplingFreq_t) Bits.Get(2);
+			AudioFrameNumber = Bits.Get(5);
+			WordSize1 = (LpcmWordSize_t) Bits.Get(2);
+			AudioSamplingFrequency1 = (LpcmSamplingFreq_t) Bits.Get(2);
 			Bits.FlushUnseen(1);
-			NumberOfAudioChannels        = Bits.Get(3) + 1;
-			DynamicRangeControl          = Bits.Get(8);
+			NumberOfAudioChannels = Bits.Get(3) + 1;
+			DynamicRangeControl = Bits.Get(8);
 			// sanity checks...
 			if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
 			{
@@ -250,7 +250,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 				FRAME_ERROR("Invalid Sampling Frequency (%d)\n", AudioSamplingFrequency1);
 				return FrameParserError;
 			}
-			NbSamples          = LpcmDVDVideoSampleCount[AudioSamplingFrequency1];
+			NbSamples = LpcmDVDVideoSampleCount[AudioSamplingFrequency1];
 			if (WordSize1 == LPCM_DVD_WS_20)
 			{
 				// 20 bits special case: 4 bits of the sample are loacted at the end of a
@@ -268,28 +268,28 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 		case TypeLpcmDVDAudio:
 		{
 			///< frame is a DVD audio lpcm
-			SubStreamId                  = Bits.Get(8);
+			SubStreamId = Bits.Get(8);
 			Bits.FlushUnseen(3); // reserved
-			// char upc_ean_isrc_number     = Bits.Get(5);
-			// char upc_ean_isrc_data       = Bits.Get(8);
+			// char upc_ean_isrc_number = Bits.Get(5);
+			// char upc_ean_isrc_data = Bits.Get(8);
 			Bits.FlushUnseen(13); // replaces the commented code out above...
-			ExtraPrivateHeaderLength     = Bits.Get(8) + LPCM_DVD_AUDIO_PRIVATE_HEADER_LENGTH;
-			FirstAccessUnitPointer       = Bits.Get(16);
-			EmphasisFlag                 = Bits.Get(1);
+			ExtraPrivateHeaderLength = Bits.Get(8) + LPCM_DVD_AUDIO_PRIVATE_HEADER_LENGTH;
+			FirstAccessUnitPointer = Bits.Get(16);
+			EmphasisFlag = Bits.Get(1);
 			Bits.FlushUnseen(1); // reserved
-			//char StereoPlayBackMode      = Bits.Get(1);
-			//char DownMixCodeValidity     = Bits.Get(1);
-			//char DownMixCode             = Bits.Get(4);
+			//char StereoPlayBackMode = Bits.Get(1);
+			//char DownMixCodeValidity = Bits.Get(1);
+			//char DownMixCode = Bits.Get(4);
 			Bits.FlushUnseen(6); // replaces the commented code out above...
-			WordSize1                    = (LpcmWordSize_t)Bits.Get(4);
-			WordSize2                    = (LpcmWordSize_t)Bits.Get(4);
-			AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(4);
-			AudioSamplingFrequency2      = (LpcmSamplingFreq_t)Bits.Get(4);
+			WordSize1 = (LpcmWordSize_t)Bits.Get(4);
+			WordSize2 = (LpcmWordSize_t)Bits.Get(4);
+			AudioSamplingFrequency1 = (LpcmSamplingFreq_t)Bits.Get(4);
+			AudioSamplingFrequency2 = (LpcmSamplingFreq_t)Bits.Get(4);
 			Bits.FlushUnseen(4); // reserved
-			Bits.FlushUnseen(4); // char MultiChannelType        = Bits.Get(4);
-			BitShiftChannel2             = Bits.Get(3);
-			ChannelAssignment            = Bits.Get(5);
-			DynamicRangeControl          = Bits.Get(8);
+			Bits.FlushUnseen(4); // char MultiChannelType = Bits.Get(4);
+			BitShiftChannel2 = Bits.Get(3);
+			ChannelAssignment = Bits.Get(5);
+			DynamicRangeControl = Bits.Get(8);
 			// sanity checks...
 			if ((SubStreamId & LPCM_DVD_AUDIO_SUBSTREAM_ID_MASK) != LPCM_DVD_AUDIO_SUBSTREAM_ID)
 			{
@@ -359,22 +359,22 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 		case TypeLpcmDVDHD:
 		{
 			///< frame is a DVD HD lpcm
-			SubStreamId                  = Bits.Get(8);
-			NbAccessUnits                = Bits.Get(8);
-			FirstAccessUnitPointer       = Bits.Get(16);
-			EmphasisFlag                 = Bits.Get(1);
-			MuteFlag                     = Bits.Get(1);
-			AudioFrameNumber             = Bits.Get(5);
-			WordSize1                    = (LpcmWordSize_t)Bits.Get(2);
-			AudioSamplingFrequency1      = (LpcmSamplingFreq_t)Bits.Get(3);
-			NumberOfAudioChannels        = Bits.Get(4) + 1;
-			DynamicRangeControl          = Bits.Get(8);
+			SubStreamId = Bits.Get(8);
+			NbAccessUnits = Bits.Get(8);
+			FirstAccessUnitPointer = Bits.Get(16);
+			EmphasisFlag = Bits.Get(1);
+			MuteFlag = Bits.Get(1);
+			AudioFrameNumber = Bits.Get(5);
+			WordSize1 = (LpcmWordSize_t)Bits.Get(2);
+			AudioSamplingFrequency1 = (LpcmSamplingFreq_t)Bits.Get(3);
+			NumberOfAudioChannels = Bits.Get(4) + 1;
+			DynamicRangeControl = Bits.Get(8);
 			Bits.FlushUnseen(3); // reserved
-			//char DownMixCodeValidity     = Bits.Get(1);
-			//char DownMixCode             = Bits.Get(4);
+			//char DownMixCodeValidity = Bits.Get(1);
+			//char DownMixCode = Bits.Get(4);
 			Bits.FlushUnseen(5); // replaces the commented code out above...
 			Bits.FlushUnseen(3); // reserved
-			ChannelAssignment            = Bits.Get(5);
+			ChannelAssignment = Bits.Get(5);
 			// sanity checks...
 			if ((SubStreamId & LPCM_DVD_VIDEO_SUBSTREAM_ID_MASK) != LPCM_DVD_VIDEO_SUBSTREAM_ID)
 			{
@@ -419,14 +419,14 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 		case TypeLpcmDVDBD:
 		case TypeLpcmSPDIFIN:
 		{
-			unsigned int  Sfreq;
+			unsigned int Sfreq;
 			unsigned char BitsPerSample;
-			unsigned int  BytesPerSample;
+			unsigned int BytesPerSample;
 			///< frame is a BD lpcm or SPDIFIN
-			FrameSize          = Bits.Get(16);
-			ChannelAssignment  = Bits.Get(4);
-			Sfreq              = Bits.Get(4);
-			BitsPerSample      = Bits.Get(2);
+			FrameSize = Bits.Get(16);
+			ChannelAssignment = Bits.Get(4);
+			Sfreq = Bits.Get(4);
+			BitsPerSample = Bits.Get(2);
 			if ((ChannelAssignment == 0) || (ChannelAssignment > 11))
 			{
 				FRAME_ERROR("Invalid channel assignment (%d)\n", ChannelAssignment);
@@ -434,12 +434,12 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 			}
 			if (StreamType == TypeLpcmSPDIFIN)
 			{
-				EmphasisFlag            = Bits.Get(1); // Reuse StartFlag from BD spec.
-				WordSize1               = (BitsPerSample) ? /* BD Definition */ (LpcmWordSize_t)(BitsPerSample - 1) : /* SPDIFIN extension */ LpcmWordSize32;
-				NumberOfAudioChannels   = 2;
+				EmphasisFlag = Bits.Get(1); // Reuse StartFlag from BD spec.
+				WordSize1 = (BitsPerSample) ? /* BD Definition */ (LpcmWordSize_t)(BitsPerSample - 1) : /* SPDIFIN extension */ LpcmWordSize32;
+				NumberOfAudioChannels = 2;
 				// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
 				AudioSamplingFrequency1 = LpcmSpdifin2DVDSamplingFreq[Sfreq];
-				BytesPerSample          = (WordSize1 < LpcmWordSize24) ? (WordSize1 + 2) : (WordSize1 + 1); /* As per BD : if WordSize == WS24 or WS20 then 3 bytes per sample */
+				BytesPerSample = (WordSize1 < LpcmWordSize24) ? (WordSize1 + 2) : (WordSize1 + 1); /* As per BD : if WordSize == WS24 or WS20 then 3 bytes per sample */
 				if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
 				{
 					FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
@@ -449,7 +449,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 			else
 			{
 				// Sfreq is a 4-bit value and cannot possibly overflow the tables - invalid comes back None
-				AudioSamplingFrequency1     = LpcmBD2DVDSamplingFreq[Sfreq];
+				AudioSamplingFrequency1 = LpcmBD2DVDSamplingFreq[Sfreq];
 				if (AudioSamplingFrequency1 == LpcmSamplingFreqNone)
 				{
 					FRAME_ERROR("Invalid sampling frequency (Sfreq %d)\n", Sfreq);
@@ -460,12 +460,12 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 					FRAME_ERROR("Invalid bits per sample value\n");
 					return FrameParserError;
 				}
-				WordSize1         = (LpcmWordSize_t)(BitsPerSample - 1);
-				BytesPerSample    = ((BitsPerSample >= 2) ? 3 : 2);
+				WordSize1 = (LpcmWordSize_t)(BitsPerSample - 1);
+				BytesPerSample = ((BitsPerSample >= 2) ? 3 : 2);
 			}
 			NumberOfAudioChannels = BDChannelAssignment2ChannelCount[ChannelAssignment];
-			NbSamples             = FrameSize / (BytesPerSample * NumberOfAudioChannels);
-			AudioFrameSize        = FrameSize;
+			NbSamples = FrameSize / (BytesPerSample * NumberOfAudioChannels);
+			AudioFrameSize = FrameSize;
 			break;
 		}
 		default:
@@ -482,73 +482,73 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	else if ((FirstAccessUnitPointer + FirstAccessUnitOffset[StreamType]) < AudioPesPrivateDataLength[StreamType])
 	{
 		FRAME_ERROR("Invalid FirstAccessUnitPointer (%d) + FirstAccessUnitOffset (%d) must be >= AudioPesPrivateDataLength (%d)\n",
-					FirstAccessUnitPointer, FirstAccessUnitOffset[StreamType], AudioPesPrivateDataLength[StreamType]);
+			    FirstAccessUnitPointer, FirstAccessUnitOffset[StreamType], AudioPesPrivateDataLength[StreamType]);
 		return FrameParserError;
 		//FirstAccessUnitPointer = AudioPesPrivateDataLength[StreamType] - FirstAccessUnitOffset[StreamType];
 	}
 	// compute the real number of access units, according to the frame size
 	{
-		unsigned int Payload          = (GivenFrameSize - (FirstAccessUnitPointer + FirstAccessUnitOffset[StreamType]));
+		unsigned int Payload = (GivenFrameSize - (FirstAccessUnitPointer + FirstAccessUnitOffset[StreamType]));
 		FRAME_DEBUG("Payload %d , GivenFrameSize %d\n",
-					Payload, GivenFrameSize);
+			    Payload, GivenFrameSize);
 		// take ceiled number of frame header
-		NbAccessUnits     = Payload / AudioFrameSize;
-		NbAccessUnits     = ((NbAccessUnits * AudioFrameSize) < Payload) ? NbAccessUnits + 1 : NbAccessUnits;
-		FrameSize =  NbAccessUnits * AudioFrameSize;
+		NbAccessUnits = Payload / AudioFrameSize;
+		NbAccessUnits = ((NbAccessUnits * AudioFrameSize) < Payload) ? NbAccessUnits + 1 : NbAccessUnits;
+		FrameSize = NbAccessUnits * AudioFrameSize;
 		NbSamples *= NbAccessUnits;
 	}
 	if (StreamType != TypeLpcmSPDIFIN)
 	{
 		FRAME_DEBUG("SamplingFreq %d Hz, FrameSize %d, Type % d, WordSize %d , Aud Frame Id %d\n",
-					LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
-		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d,  Nb Channels % d, Nb Samples %d \n",
-					FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
+			    LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
+		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d, Nb Channels % d, Nb Samples %d \n",
+			    FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
 		if (StreamType == TypeLpcmDVDAudio)
 		{
 			FRAME_DEBUG("GR2 properties: SamplingFreq %d Hz, WordSize2 %d\n",
-						LpcmDVDSamplingFreq[AudioSamplingFrequency2], WordSize2);
+				    LpcmDVDSamplingFreq[AudioSamplingFrequency2], WordSize2);
 		}
 	}
 	else
 	{
 		FRAME_DEBUG("SamplingFreq %d Hz, FrameSize %d, Type % d, WordSize %d , Aud Frame Id %d\n",
-					LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
-		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d,  Nb Channels % d, Nb Samples %d \n",
-					FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
+			    LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
+		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d, Nb Channels % d, Nb Samples %d \n",
+			    FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
 	}
 	// we will send a whole audio frame
-	NextParsedFrameHeader->Type                = StreamType;
-	NextParsedFrameHeader->SamplingFrequency1  = AudioSamplingFrequency1;
-	NextParsedFrameHeader->SamplingFrequency2  = AudioSamplingFrequency2;
-	NextParsedFrameHeader->NumberOfSamples     = NbSamples;
-	NextParsedFrameHeader->NumberOfChannels    = NumberOfAudioChannels;
-	NextParsedFrameHeader->Length              = FrameSize;
-	NextParsedFrameHeader->WordSize1           = WordSize1;
-	NextParsedFrameHeader->WordSize2           = WordSize2;
-	NextParsedFrameHeader->NbAccessUnits       = NbAccessUnits;
+	NextParsedFrameHeader->Type = StreamType;
+	NextParsedFrameHeader->SamplingFrequency1 = AudioSamplingFrequency1;
+	NextParsedFrameHeader->SamplingFrequency2 = AudioSamplingFrequency2;
+	NextParsedFrameHeader->NumberOfSamples = NbSamples;
+	NextParsedFrameHeader->NumberOfChannels = NumberOfAudioChannels;
+	NextParsedFrameHeader->Length = FrameSize;
+	NextParsedFrameHeader->WordSize1 = WordSize1;
+	NextParsedFrameHeader->WordSize2 = WordSize2;
+	NextParsedFrameHeader->NbAccessUnits = NbAccessUnits;
 	NextParsedFrameHeader->FirstAccessUnitPointer = FirstAccessUnitPointer;
-	NextParsedFrameHeader->DrcCode             = DynamicRangeControl;
-	NextParsedFrameHeader->BitShiftChannel2    = BitShiftChannel2;
-	NextParsedFrameHeader->EmphasisFlag        = EmphasisFlag;
-	NextParsedFrameHeader->MuteFlag            = MuteFlag;
+	NextParsedFrameHeader->DrcCode = DynamicRangeControl;
+	NextParsedFrameHeader->BitShiftChannel2 = BitShiftChannel2;
+	NextParsedFrameHeader->EmphasisFlag = EmphasisFlag;
+	NextParsedFrameHeader->MuteFlag = MuteFlag;
 	NextParsedFrameHeader->PrivateHeaderLength = ((StreamType == TypeLpcmDVDAudio) ? ExtraPrivateHeaderLength : AudioPesPrivateDataLength[StreamType]);
-	NextParsedFrameHeader->AudioFrameNumber    = AudioFrameNumber;
-	NextParsedFrameHeader->SubStreamId         = SubStreamId;
-	NextParsedFrameHeader->ChannelAssignment   = ChannelAssignment;
-	NextParsedFrameHeader->AudioFrameSize      = AudioFrameSize;
+	NextParsedFrameHeader->AudioFrameNumber = AudioFrameNumber;
+	NextParsedFrameHeader->SubStreamId = SubStreamId;
+	NextParsedFrameHeader->ChannelAssignment = ChannelAssignment;
+	NextParsedFrameHeader->AudioFrameSize = AudioFrameSize;
 	return FrameParserNoError;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 ///
-///     Constructor
+/// Constructor
 ///
 FrameParser_AudioLpcm_c::FrameParser_AudioLpcm_c(unsigned int DecodeLatencyInSamples)
 {
-	Configuration.FrameParserName       = "AudioLpcm";
-	Configuration.StreamParametersCount     = 64;
-	Configuration.StreamParametersDescriptor    = &LpcmAudioStreamParametersBuffer;
-	Configuration.FrameParametersCount      = 64;
+	Configuration.FrameParserName = "AudioLpcm";
+	Configuration.StreamParametersCount = 64;
+	Configuration.StreamParametersDescriptor = &LpcmAudioStreamParametersBuffer;
+	Configuration.FrameParametersCount = 64;
 	Configuration.FrameParametersDescriptor = &LpcmAudioFrameParametersBuffer;
 	IndirectDecodeLatencyInSamples = DecodeLatencyInSamples;
 //
@@ -557,7 +557,7 @@ FrameParser_AudioLpcm_c::FrameParser_AudioLpcm_c(unsigned int DecodeLatencyInSam
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     Destructor
+/// Destructor
 ///
 FrameParser_AudioLpcm_c::~FrameParser_AudioLpcm_c(void)
 {
@@ -567,9 +567,9 @@ FrameParser_AudioLpcm_c::~FrameParser_AudioLpcm_c(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The Reset function release any resources, and reset all variable
+/// The Reset function release any resources, and reset all variable
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::Reset(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::Reset(void)
 {
 	// CurrentStreamParameters is initialized in RegisterOutputBufferRing()
 	return FrameParser_Audio_c::Reset();
@@ -577,16 +577,16 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::Reset(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The register output ring function
+/// The register output ring function
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::RegisterOutputBufferRing(Ring_t          Ring)
+FrameParserStatus_t FrameParser_AudioLpcm_c::RegisterOutputBufferRing(Ring_t Ring)
 {
 	FrameParserStatus_t Status;
 	//
 	// Clear our parameter pointers
 	//
-	StreamParameters                    = NULL;
-	FrameParameters                     = NULL;
+	StreamParameters = NULL;
+	FrameParameters = NULL;
 	//
 	// Set illegal state forcing a parameter update on the first frame
 	//
@@ -617,7 +617,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::RegisterOutputBufferRing(Ring_t  
 ///
 /// Parse the frame header and store the results for when we emit the frame.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::ReadHeaders(void)
 {
 	FrameParserStatus_t Status;
 	LpcmAudioParsedFrameHeader_t ParsedFrameHeader;
@@ -638,7 +638,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders(void)
 	if ((ParsedFrameHeader.Length + AudioPesPrivateDataLength[ParsedFrameHeader.Type]) != BufferLength)
 	{
 		FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
-					BufferLength, ParsedFrameHeader.Length);
+			    BufferLength, ParsedFrameHeader.Length);
 		return FrameParserError;
 	}
 	FrameToDecode = true;
@@ -649,15 +649,15 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders(void)
 		return Status;
 	}
 	// Nick inserted some default values here
-	ParsedFrameParameters->FirstParsedParametersForOutputFrame          = true;
-	ParsedFrameParameters->FirstParsedParametersAfterInputJump          = FirstDecodeAfterInputJump;
-	ParsedFrameParameters->SurplusDataInjected                          = SurplusDataInjected;
-	ParsedFrameParameters->ContinuousReverseJump                        = ContinuousReverseJump;
-	ParsedFrameParameters->KeyFrame                                     = true;
-	ParsedFrameParameters->ReferenceFrame                               = false;
-	ParsedFrameParameters->NewFrameParameters        = true;
+	ParsedFrameParameters->FirstParsedParametersForOutputFrame = true;
+	ParsedFrameParameters->FirstParsedParametersAfterInputJump = FirstDecodeAfterInputJump;
+	ParsedFrameParameters->SurplusDataInjected = SurplusDataInjected;
+	ParsedFrameParameters->ContinuousReverseJump = ContinuousReverseJump;
+	ParsedFrameParameters->KeyFrame = true;
+	ParsedFrameParameters->ReferenceFrame = false;
+	ParsedFrameParameters->NewFrameParameters = true;
 	ParsedFrameParameters->SizeofFrameParameterStructure = sizeof(LpcmAudioFrameParameters_t);
-	ParsedFrameParameters->FrameParameterStructure       = FrameParameters;
+	ParsedFrameParameters->FrameParameterStructure = FrameParameters;
 	FrameParameters->DrcCode = ParsedFrameHeader.DrcCode;
 	FrameParameters->NumberOfSamples = ParsedFrameHeader.NumberOfSamples;
 	ParsedFrameParameters->DataOffset = AudioPesPrivateDataLength[ParsedFrameHeader.Type];
@@ -685,7 +685,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders(void)
 		UpdateStreamParameters = false;
 	}
 	ParsedAudioParameters->Source.BitsPerSample = 0; // filled in by codec
-	ParsedAudioParameters->Source.ChannelCount = 0;  // filled in by codec
+	ParsedAudioParameters->Source.ChannelCount = 0; // filled in by codec
 	ParsedAudioParameters->Source.SampleRateHz = LpcmDVDSamplingFreq[ParsedFrameHeader.SamplingFrequency1];
 	ParsedAudioParameters->SampleCount = ParsedFrameHeader.NumberOfSamples;
 	ParsedAudioParameters->Organisation = 0; // filled in by codec
@@ -694,9 +694,9 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ReadHeaders(void)
 
 ////////////////////////////////////////////////////////////////////////////
 ///
-///     The reset reference frame list function
+/// The reset reference frame list function
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::ResetReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::ResetReferenceFrameList(void)
 {
 	FRAME_DEBUG(">><<");
 	Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, CODEC_RELEASE_ALL);
@@ -709,7 +709,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ResetReferenceFrameList(void)
 ///
 /// \copydoc FrameParser_Audio_c::PurgeQueuedPostDecodeParameterSettings()
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::PurgeQueuedPostDecodeParameterSettings(void)
 {
 	return FrameParserNoError;
 }
@@ -720,7 +720,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeQueuedPostDecodeParameterSet
 ///
 /// \copydoc FrameParser_Audio_c::ProcessQueuedPostDecodeParameterSettings()
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessQueuedPostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::ProcessQueuedPostDecodeParameterSettings(void)
 {
 	return FrameParserNoError;
 }
@@ -732,7 +732,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessQueuedPostDecodeParameterS
 /// For LPCM audio these can be determined immediately (although it the first
 /// frame for decode does not contain a PTS we must synthesize one).
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettings(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettings(void)
 {
 	FrameParserStatus_t Status;
 	unsigned int SamplingFrequency = LpcmDVDSamplingFreq[CurrentStreamParameters.SamplingFrequency1];
@@ -740,22 +740,22 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettin
 	//
 	// Default setting
 	//
-	ParsedFrameParameters->DisplayFrameIndex            = INVALID_INDEX;
-	ParsedFrameParameters->NativePlaybackTime           = INVALID_TIME;
-	ParsedFrameParameters->NormalizedPlaybackTime       = INVALID_TIME;
-	ParsedFrameParameters->NativeDecodeTime             = INVALID_TIME;
-	ParsedFrameParameters->NormalizedDecodeTime         = INVALID_TIME;
+	ParsedFrameParameters->DisplayFrameIndex = INVALID_INDEX;
+	ParsedFrameParameters->NativePlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedPlaybackTime = INVALID_TIME;
+	ParsedFrameParameters->NativeDecodeTime = INVALID_TIME;
+	ParsedFrameParameters->NormalizedDecodeTime = INVALID_TIME;
 	//
 	// Record in the structure the decode and presentation times if specified
 	//
 	if (CodedFrameParameters->PlaybackTimeValid)
 	{
-		ParsedFrameParameters->NativePlaybackTime       = CodedFrameParameters->PlaybackTime;
+		ParsedFrameParameters->NativePlaybackTime = CodedFrameParameters->PlaybackTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
 	}
 	if (CodedFrameParameters->DecodeTimeValid)
 	{
-		ParsedFrameParameters->NativeDecodeTime         = CodedFrameParameters->DecodeTime;
+		ParsedFrameParameters->NativeDecodeTime = CodedFrameParameters->DecodeTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->DecodeTime, &ParsedFrameParameters->NormalizedDecodeTime);
 	}
 	//
@@ -778,20 +778,20 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettin
 		DecodeLatencyInMicroseconds = IndirectDecodeLatencyInSamples + CurrentStreamParameters.NumberOfSamples;
 		DecodeLatencyInMicroseconds *= 1000000;
 		DecodeLatencyInMicroseconds /= SamplingFrequency;
-//        if( ParsedFrameParameters->NormalizedPlaybackTime > DecodeLatencyInMicroseconds )
-//        {
+// if( ParsedFrameParameters->NormalizedPlaybackTime > DecodeLatencyInMicroseconds )
+// {
 		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime -
-				DecodeLatencyInMicroseconds;
-//        }
-//        else
-//        {
-//            FRAME_ERROR("Cannot apply indirect decode latency because PTS is too small\n");
-//        }
+							      DecodeLatencyInMicroseconds;
+// }
+// else
+// {
+// FRAME_ERROR("Cannot apply indirect decode latency because PTS is too small\n");
+// }
 	}
 	//
 	// We can't fail after this point so this is a good time to provide a display frame index
 	//
-	ParsedFrameParameters->DisplayFrameIndex         = NextDisplayFrameIndex++;
+	ParsedFrameParameters->DisplayFrameIndex = NextDisplayFrameIndex++;
 	//
 	// Use the super-class utilities to complete our housekeeping chores
 	//
@@ -806,7 +806,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettin
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::PrepareReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::PrepareReferenceFrameList(void)
 {
 	return FrameParserNoError;
 }
@@ -815,7 +815,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::PrepareReferenceFrameList(void)
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::UpdateReferenceFrameList(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::UpdateReferenceFrameList(void)
 {
 	return FrameParserNoError;
 }
@@ -824,7 +824,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::UpdateReferenceFrameList(void)
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::ProcessReverseDecodeUnsatisfiedReferenceStack(void)
 {
 	return FrameParserNoError;
 }
@@ -833,7 +833,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessReverseDecodeUnsatisfiedRe
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessReverseDecodeStack(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::ProcessReverseDecodeStack(void)
 {
 	return FrameParserNoError;
 }
@@ -842,7 +842,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::ProcessReverseDecodeStack(void)
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::PurgeReverseDecodeUnsatisfiedReferenceStack(void)
 {
 	return FrameParserNoError;
 }
@@ -851,7 +851,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeReverseDecodeUnsatisfiedRefe
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeReverseDecodeStack(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::PurgeReverseDecodeStack(void)
 {
 	return FrameParserNoError;
 }
@@ -860,7 +860,7 @@ FrameParserStatus_t   FrameParser_AudioLpcm_c::PurgeReverseDecodeStack(void)
 ///
 /// Not required or implemented for LPCM audio.
 ///
-FrameParserStatus_t   FrameParser_AudioLpcm_c::TestForTrickModeFrameDrop(void)
+FrameParserStatus_t FrameParser_AudioLpcm_c::TestForTrickModeFrameDrop(void)
 {
 	return FrameParserNoError;
 }

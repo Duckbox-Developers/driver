@@ -12,15 +12,14 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <linux/module.h>
 #include <linux/ioport.h>
 #include <linux/bpa2.h>
 #include <linux/init.h>
@@ -40,7 +39,7 @@
 #include <sound/pcm_params.h>
 #include <sound/rawmidi.h>
 #include <sound/initval.h>
-#include <linux/io.h>
+#include <asm/io.h>
 #include <asm/cacheflush.h>
 
 #include <ACC_Transformers/acc_mmedefines.h>
@@ -58,35 +57,35 @@ MODULE_SUPPORTED_DEVICE("{{ALSA,Pseudo soundcard}}");
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 /* #warning Need to remove these typedefs */
 typedef struct snd_pcm_substream snd_pcm_substream_t;
-typedef struct snd_pcm_runtime   snd_pcm_runtime_t;
+typedef struct snd_pcm_runtime snd_pcm_runtime_t;
 #else
 #if defined (CONFIG_KERNELVERSION) /* STLinux 2.3 */
 /* #warning Need to remove these typedefs */
 typedef struct snd_pcm_substream snd_pcm_substream_t;
-typedef struct snd_pcm_runtime   snd_pcm_runtime_t;
+typedef struct snd_pcm_runtime snd_pcm_runtime_t;
 #endif
 #endif
 
-#define MAX_PCM_DEVICES         4
-#define MAX_PCM_SUBSTREAMS      16
-#define MAX_MIDI_DEVICES        2
-#define MAX_DYNAMIC_CONTROLS    20
+#define MAX_PCM_DEVICES 4
+#define MAX_PCM_SUBSTREAMS 16
+#define MAX_MIDI_DEVICES 2
+#define MAX_DYNAMIC_CONTROLS 20
 
-#define MAX_BUFFER_SIZE         (2 * 2 * 3 * 2048) /* 2 channel, 16-bit, 3 2048 sample periods */
-#define MAX_PERIOD_SIZE         MAX_BUFFER_SIZE
-#define USE_FORMATS             (SNDRV_PCM_FMTBIT_S16_LE)
-#define USE_RATE                SNDRV_PCM_RATE_CONTINUOUS | SNDRV_PCM_RATE_8000_48000
-#define USE_RATE_MIN            5500
-#define USE_RATE_MAX            48000
-#define USE_CHANNELS_MIN        1
-#define USE_CHANNELS_MAX        2
-#define USE_PERIODS_MIN         2
-#define USE_PERIODS_MAX         1024
+#define MAX_BUFFER_SIZE (2 * 2 * 3 * 2048) /* 2 channel, 16-bit, 3 2048 sample periods */
+#define MAX_PERIOD_SIZE MAX_BUFFER_SIZE
+#define USE_FORMATS (SNDRV_PCM_FMTBIT_S16_LE)
+#define USE_RATE SNDRV_PCM_RATE_CONTINUOUS | SNDRV_PCM_RATE_8000_48000
+#define USE_RATE_MIN 5500
+#define USE_RATE_MAX 48000
+#define USE_CHANNELS_MIN 1
+#define USE_CHANNELS_MAX 2
+#define USE_PERIODS_MIN 2
+#define USE_PERIODS_MAX 1024
 #define add_playback_constraints(x) 0
 #define add_capture_constraints(x) 0
 
-static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX;      /* Index 0-MAX */
-static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR;       /* ID for this card */
+static int index[SNDRV_CARDS] = SNDRV_DEFAULT_IDX; /* Index 0-MAX */
+static char *id[SNDRV_CARDS] = SNDRV_DEFAULT_STR; /* ID for this card */
 static int enable[SNDRV_CARDS] = SNDRV_DEFAULT_ENABLE_PNP;
 static int pcm_devs[SNDRV_CARDS] = {[0 ...(SNDRV_CARDS - 1)] = 1};
 static int pcm_substreams[SNDRV_CARDS] = {[0 ...(SNDRV_CARDS - 1)] = 8};
@@ -96,7 +95,7 @@ module_param_array(index, int, NULL, 0444);
 MODULE_PARM_DESC(index, "Index value for pseudo soundcard.");
 module_param_array(id, charp, NULL, 0444);
 MODULE_PARM_DESC(id, "ID string for pseudo soundcard.");
-module_param_array(enable, int, NULL, 0444);
+module_param_array(enable, bool, NULL, 0444);
 MODULE_PARM_DESC(enable, "Enable this pseudo soundcard.");
 module_param_array(pcm_devs, int, NULL, 0444);
 MODULE_PARM_DESC(pcm_devs, "PCM devices # (0-4) for pseudo driver.");
@@ -106,6 +105,7 @@ module_param_array(bpa2_partition, charp, NULL, 0444);
 MODULE_PARM_DESC(bpa2_partition, "BPA2 partition ID string from which to allocate memory.");
 static struct platform_device *devices[SNDRV_CARDS];
 
+// *INDENT-OFF*
 #define _CARD(n, major, minor, freq, chan, f) { \
 	.name = n, \
 	.alsaname = "hw:" #major "," #minor, \
@@ -113,22 +113,23 @@ static struct platform_device *devices[SNDRV_CARDS];
 	.max_freq = freq, \
 	.num_channels = chan, \
 }
+// *INDENT-ON*
 
 #define CARD(n, major, minor, freq, chan) \
-    _CARD(n, major, minor, freq, chan, 0)
+	_CARD(n, major, minor, freq, chan, 0)
 #define CARD_SPDIF(n, major, minor, freq, chan) \
-    _CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING)
+	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING)
 #define CARD_FATPIPE(n, major, minor, freq, chan) \
-    _CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
-          SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
-/* the following macro indicates the card is connected to a hdmi cell through the spdif player */
+	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
+	      SND_PSEUDO_TOPOLOGY_FLAGS_FATPIPE)
+// the following macro indicates the card is connected to a hdmi cell through the spdif player
 #define CARD_SPDIF_HDMI(n, major, minor, freq, chan) \
-    _CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
-          SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
+	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_SPDIF_FORMATING | \
+	      SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 
-/* the following macro indicates the card is connected to a hdmi cell through the pcm player */
+// the following macro indicates the card is connected to a hdmi cell through the pcm player
 #define CARD_HDMI(n, major, minor, freq, chan) \
-    _CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
+	_CARD(n, major, minor, freq, chan, SND_PSEUDO_TOPOLOGY_FLAGS_ENABLE_HDMI_FORMATING)
 
 #if defined CONFIG_CPU_SUBTYPE_STX7200 && !defined CONFIG_DUAL_DISPLAY
 
@@ -136,10 +137,10 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_FATPIPE("SPDIF",   0, 5, 192000, 2),
-			CARD        ("Analog0", 0, 0, 192000, 2),
-			CARD        ("Analog1", 0, 1, 192000, 2),
-			CARD_HDMI   ("HDMI",    0, 4, 192000, 2),
+			CARD_FATPIPE("SPDIF", 0, 5, 192000, 2),
+			CARD("Analog0", 0, 0, 192000, 2),
+			CARD("Analog1", 0, 1, 192000, 2),
+			CARD_HDMI("HDMI", 0, 4, 192000, 2),
 		},
 	},
 };
@@ -150,14 +151,14 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD        ("Analog0", 0, 0, 192000, 2),
-			CARD_SPDIF  ("HDMI",    0, 6, 192000, 2),
+			CARD("Analog0", 0, 0, 192000, 2),
+			CARD_SPDIF("HDMI", 0, 6, 192000, 2),
 		},
 	},
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 5, 192000, 2),
-			CARD        ("Analog1", 0, 1, 192000, 2),
+			CARD_SPDIF("SPDIF", 0, 5, 192000, 2),
+			CARD("Analog1", 0, 1, 192000, 2),
 		},
 	},
 };
@@ -169,24 +170,24 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("Analog",  0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 #else
 #if defined (CONFIG_KERNELVERSION)
-#if defined(__TDT__) && ! defined(UFS922) && !defined(UFC960)  && !defined(OCTAGON1008) && !defined(UFS910) && !defined(FORTIS_HDBOX) && !defined(ADB_BOX)
-			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-			CARD        ("Analog",  1, 0,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+#if defined(__TDT__) && ! defined(UFS922) && !defined(UFC960) && !defined(OCTAGON1008) && !defined(UFS910) && !defined(FORTIS_HDBOX) && !defined(ADB_BOX)
+			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
+			CARD("Analog", 1, 0, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 #else
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("Analog",  0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 #endif
 #else /* STLinux 2.2 */
-			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-			CARD        ("Analog",  1, 0,  48000, 2),
-			CARD        ("HDMI",    3, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
+			CARD("Analog", 1, 0, 48000, 2),
+			CARD("HDMI", 3, 0, 48000, 2),
 #endif
 #endif
 		},
@@ -200,20 +201,20 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-			CARD        ("Analog",  0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
+			CARD("Analog", 0, 0, 48000, 2),
 #else
 #if defined (CONFIG_KERNELVERSION)
 #if defined(__TDT__)
-			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-			CARD        ("Analog",  0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
+			CARD("Analog", 0, 0, 48000, 2),
 #else
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 #endif
 #else /* STLinux-2.2 */
-			CARD_SPDIF  ("SPDIF",   2, 0,  48000, 2),
-			CARD        ("Analog",  0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
+			CARD("Analog", 0, 0, 48000, 2),
 #endif
 #endif
 		},
@@ -221,16 +222,16 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 	{
 		{
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-			CARD        ("Analog",  1, 0,  48000, 2),
+			CARD("Analog", 1, 0, 48000, 2),
 #else
 #if defined (CONFIG_KERNELVERSION)
 #if define(__TDT__)
-			CARD        ("Analog",  1, 0,  48000, 2),
+			CARD("Analog", 1, 0, 48000, 2),
 #else
-			CARD        ("Analog",  0, 1,  48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
 #endif
 #else /* STLinux-2.2 */
-			CARD        ("Analog",  1, 0,  48000, 2),
+			CARD("Analog", 1, 0, 48000, 2),
 #endif
 #endif
 		},
@@ -243,10 +244,10 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD        ("Analog0", 0, 0,  48000, 2),
-			CARD        ("Analog1", 0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 2,  48000, 2),
-			CARD_SPDIF  ("SPDIF",   0, 3,  48000, 2),
+			CARD("Analog0", 0, 0, 48000, 2),
+			CARD("Analog1", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 2, 48000, 2),
+			CARD_SPDIF("SPDIF", 0, 3, 48000, 2),
 		},
 	},
 };
@@ -257,9 +258,9 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("Analog",  0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 		},
 	},
 };
@@ -270,9 +271,9 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 3,  48000, 2),
-//			CARD        ("Analog",  0, 1,  48000, 2),
-//			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 3, 48000, 2),
+//			CARD ("Analog", 0, 1, 48000, 2),
+//			CARD ("HDMI", 0, 0, 48000, 2),
 		},
 	},
 };
@@ -283,9 +284,9 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("Analog",  0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 		},
 	},
 };
@@ -296,9 +297,9 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("Analog",  0, 1,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 		},
 	},
 };
@@ -309,14 +310,14 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 3,  48000, 2),
-			CARD        ("HDMI",    0, 2,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 3, 48000, 2),
+			CARD("HDMI", 0, 2, 48000, 2),
 		},
 	},
 	{
 		{
-			CARD        ("Analog0", 0, 0,  48000, 2),
-			CARD        ("Analog1", 0, 1,  48000, 2),
+			CARD("Analog0", 0, 0, 48000, 2),
+			CARD("Analog1", 0, 1, 48000, 2),
 		},
 	},
 };
@@ -327,31 +328,31 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("HDMI",    0, 1,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("HDMI", 0, 1, 48000, 2),
 		},
 	},
 	{
 		{
-			CARD        ("Analog0", 0, 0,  48000, 2),
-			CARD        ("Analog1", 0, 1,  48000, 2),
+			CARD("Analog0", 0, 0, 48000, 2),
+			CARD("Analog1", 0, 1, 48000, 2),
 		},
 	},
 };
 
-#elif defined CONFIG_CPU_SUBTYPE_STX7105 || defined CONFIG_CPU_SUBTYPE_STX7111  || defined CONFIG_CPU_SUBTYPE_STX7106
+#elif defined CONFIG_CPU_SUBTYPE_STX7105 || defined CONFIG_CPU_SUBTYPE_STX7111 || defined CONFIG_CPU_SUBTYPE_STX7106
 
 static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-			CARD_SPDIF  ("SPDIF",   0, 2,  48000, 2),
-			CARD        ("HDMI",    0, 0,  48000, 2),
+			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
+			CARD("HDMI", 0, 0, 48000, 2),
 		},
 	},
 	{
 		{
-			CARD        ("Analog0", 0, 1,  48000, 2),
+			CARD("Analog0", 0, 1, 48000, 2),
 		},
 	},
 };
@@ -360,7 +361,7 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 #error Unsupported CPU subtype/dual display combination
 #endif
 
-#ifdef CONFIG_CPU_SUBTYPE_STX7200
+#if defined (CONFIG_CPU_SUBTYPE_STX7200)
 
 static const struct snd_pseudo_transformer_name default_transformer_name =
 {
@@ -404,8 +405,8 @@ struct snd_pseudo_pcm
 	spinlock_t lock;
 	unsigned int pcm_size;
 	unsigned int pcm_count;
-	unsigned int pcm_irq_pos;   /* IRQ position */
-	unsigned int pcm_buf_pos;   /* position in buffer */
+	unsigned int pcm_irq_pos; /* IRQ position */
+	unsigned int pcm_buf_pos; /* position in buffer */
 	struct snd_pcm_substream *substream;
 	int substream_identifier;
 	int backend_is_setup;
@@ -444,20 +445,22 @@ static inline void snd_card_pseudo_pcm_callback(void *p, unsigned int playp)
 
 static int snd_card_pseudo_pcm_trigger(struct snd_pcm_substream *substream, int cmd)
 {
-	struct snd_pseudo* pseudo = substream->private_data;
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_pseudo_pcm *ppcm = runtime->private_data;
+	struct snd_pseudo *pseudo = substream->private_data;
 	int err = 0;
 	spin_lock(&ppcm->lock);
 	switch (cmd)
 	{
 		case SNDRV_PCM_TRIGGER_START:
 		case SNDRV_PCM_TRIGGER_RESUME:
-			err = pseudo->backend_ops->mixer_start_substream(pseudo->backend_mixer, ppcm->substream_identifier);
+			err = pseudo->backend_ops->mixer_start_substream(
+				      pseudo->backend_mixer, ppcm->substream_identifier);
 			break;
 		case SNDRV_PCM_TRIGGER_STOP:
 		case SNDRV_PCM_TRIGGER_SUSPEND:
-			err = pseudo->backend_ops->mixer_stop_substream(pseudo->backend_mixer, ppcm->substream_identifier);
+			err = pseudo->backend_ops->mixer_stop_substream(
+				      pseudo->backend_mixer, ppcm->substream_identifier);
 			break;
 		default:
 			err = -EINVAL;
@@ -476,7 +479,8 @@ static int snd_card_pseudo_pcm_prepare(struct snd_pcm_substream *substream)
 	ppcm->pcm_count = snd_pcm_lib_period_bytes(substream);
 	ppcm->pcm_irq_pos = 0;
 	ppcm->pcm_buf_pos = 0;
-	return pseudo->backend_ops->mixer_prepare_substream(pseudo->backend_mixer, ppcm->substream_identifier);
+	return pseudo->backend_ops->mixer_prepare_substream(
+		       pseudo->backend_mixer, ppcm->substream_identifier);
 }
 
 static snd_pcm_uframes_t snd_card_pseudo_pcm_pointer(struct snd_pcm_substream *substream)
@@ -489,19 +493,19 @@ static snd_pcm_uframes_t snd_card_pseudo_pcm_pointer(struct snd_pcm_substream *s
 static struct snd_pcm_hardware snd_card_pseudo_playback =
 {
 	.info = (SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_INTERLEAVED |
-			SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
-	.formats =              USE_FORMATS,
-	.rates =                USE_RATE,
-	.rate_min =             USE_RATE_MIN,
-	.rate_max =             USE_RATE_MAX,
-	.channels_min =         USE_CHANNELS_MIN,
-	.channels_max =         USE_CHANNELS_MAX,
-	.buffer_bytes_max =     MAX_BUFFER_SIZE,
-	.period_bytes_min =     64,
-	.period_bytes_max =     MAX_BUFFER_SIZE / 2,
-	.periods_min =          USE_PERIODS_MIN,
-	.periods_max =          USE_PERIODS_MAX,
-	.fifo_size =            0,
+	SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
+	.formats = USE_FORMATS,
+	.rates = USE_RATE,
+	.rate_min = USE_RATE_MIN,
+	.rate_max = USE_RATE_MAX,
+	.channels_min = USE_CHANNELS_MIN,
+	.channels_max = USE_CHANNELS_MAX,
+	.buffer_bytes_max = MAX_BUFFER_SIZE,
+	.period_bytes_min = 64,
+	.period_bytes_max = MAX_BUFFER_SIZE / 2,
+	.periods_min = USE_PERIODS_MIN,
+	.periods_max = USE_PERIODS_MAX,
+	.fifo_size = 0,
 };
 
 static void snd_card_pseudo_runtime_free(struct snd_pcm_runtime *runtime)
@@ -523,14 +527,15 @@ static void snd_card_pseudo_free_pages(struct snd_pcm_substream *substream)
 	runtime->dma_bytes = 0;
 }
 
-static int snd_card_pseudo_alloc_pages(struct snd_pcm_substream *substream, unsigned int size)
+static int snd_card_pseudo_alloc_pages(
+	struct snd_pcm_substream *substream, unsigned int size)
 {
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_pseudo *pseudo = substream->private_data;
 	int num_pages;
 	num_pages = (size + (PAGE_SIZE - 1)) / PAGE_SIZE;
 	runtime->dma_addr = bpa2_alloc_pages(pseudo->allocator,
-										 num_pages, 0, GFP_KERNEL);
+					     num_pages, 0, GFP_KERNEL);
 	if (!runtime->dma_addr)
 		return -ENOMEM;
 	runtime->dma_area = ioremap_nocache(runtime->dma_addr, size);
@@ -547,7 +552,7 @@ static int snd_card_pseudo_alloc_pages(struct snd_pcm_substream *substream, unsi
 static int snd_card_pseudo_hw_free(struct snd_pcm_substream *substream);
 
 static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
-									 struct snd_pcm_hw_params *hw_params)
+				     struct snd_pcm_hw_params *hw_params)
 {
 	struct snd_pcm_runtime *runtime = substream->runtime;
 	struct snd_pseudo_pcm *ppcm = runtime->private_data;
@@ -558,7 +563,7 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
 		.user_data = substream,
 	};
 	int err;
-	/* might have been called before ...  --martii */
+	/* might have been called before ... --martii */
 	snd_card_pseudo_hw_free(substream);
 	/* allocate the hardware buffer and map it appropriately */
 	err = snd_card_pseudo_alloc_pages(substream, params_buffer_bytes(hw_params));
@@ -572,7 +577,9 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
 	descriptor.channels = params_channels(hw_params);
 	descriptor.sampling_freq = params_rate(hw_params);
 	descriptor.bytes_per_sample = snd_pcm_format_width(params_format(hw_params)) / 8;
-	err = pseudo->backend_ops->mixer_setup_substream(pseudo->backend_mixer, ppcm->substream_identifier, &descriptor);
+	err = pseudo->backend_ops->mixer_setup_substream(
+		      pseudo->backend_mixer, ppcm->substream_identifier,
+		      &descriptor);
 	if (err < 0)
 	{
 		snd_card_pseudo_free_pages(substream);
@@ -591,7 +598,8 @@ static int snd_card_pseudo_hw_free(struct snd_pcm_substream *substream)
 	if (ppcm->backend_is_setup)
 	{
 		/* must bring the backend to a halt before releasing the h/ware buffer */
-		err = pseudo->backend_ops->mixer_prepare_substream(pseudo->backend_mixer, ppcm->substream_identifier);
+		err = pseudo->backend_ops->mixer_prepare_substream(
+			      pseudo->backend_mixer, ppcm->substream_identifier);
 		if (err < 0)
 			return err;
 	}
@@ -600,15 +608,13 @@ static int snd_card_pseudo_hw_free(struct snd_pcm_substream *substream)
 }
 
 #if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
-/*
- * copied from player2_131
- */
+/* copied from player2_131 */
 static int snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *vma, struct vm_fault *vmf)
 {
 	struct snd_pcm_substream *substream = vma->vm_private_data;
 	struct snd_pcm_runtime *runtime;
 	unsigned long offset;
-	struct page * page;
+	struct page *page;
 	void *vaddr;
 	size_t dma_bytes;
 	if (substream == NULL)
@@ -640,12 +646,12 @@ static int snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *vma, stru
  * Copied verbaitum from snd_pcm_mmap_data_nopage()
  */
 static struct page *snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *area,
-		unsigned long address, int *type)
+							 unsigned long address, int *type)
 {
 	struct snd_pcm_substream *substream = area->vm_private_data;
 	struct snd_pcm_runtime *runtime;
 	unsigned long offset;
-	struct page * page;
+	struct page *page;
 	void *vaddr;
 	size_t dma_bytes;
 	if (substream == NULL)
@@ -677,7 +683,7 @@ static struct page *snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *
 
 static struct vm_operations_struct snd_card_pseudo_pcm_vm_ops_data =
 {
-	.open  = snd_pcm_mmap_data_open,
+	.open = snd_pcm_mmap_data_open,
 	.close = snd_pcm_mmap_data_close,
 	.fault = snd_card_pseudo_pcm_mmap_data_nopage,
 };
@@ -687,7 +693,7 @@ static struct vm_operations_struct snd_card_pseudo_pcm_vm_ops_data =
  * is not cached.
  */
 static int snd_card_pseudo_pcm_mmap(struct snd_pcm_substream *substream,
-									struct vm_area_struct *area)
+				    struct vm_area_struct *area)
 {
 	area->vm_page_prot = pgprot_noncached(area->vm_page_prot);
 	area->vm_ops = &snd_card_pseudo_pcm_vm_ops_data;
@@ -701,12 +707,12 @@ static struct snd_pseudo_pcm *new_pcm_stream(struct snd_pcm_substream *substream
 {
 	struct snd_pseudo_pcm *ppcm;
 	ppcm = kzalloc(sizeof(*ppcm), GFP_KERNEL);
-	if (!ppcm)
+	if (! ppcm)
 		return ppcm;
 	spin_lock_init(&ppcm->lock);
 	ppcm->substream = substream;
 	ppcm->substream_identifier = -1; /* invalid */
-	/* ppcm->backend_is_setup = 0; */ /* kzalloc... */
+	/*ppcm->backend_is_setup = 0;*/ /* kzalloc... */
 	return ppcm;
 }
 
@@ -735,7 +741,8 @@ static int snd_card_pseudo_playback_open(struct snd_pcm_substream *substream)
 		return err;
 	sigfillset(&allset);
 	sigprocmask(SIG_BLOCK, &allset, &oldset);
-	err = pseudo->backend_ops->mixer_alloc_substream(pseudo->backend_mixer, &ppcm->substream_identifier);
+	err = pseudo->backend_ops->mixer_alloc_substream(
+		      pseudo->backend_mixer, &ppcm->substream_identifier);
 	sigprocmask(SIG_SETMASK, &oldset, NULL);
 	if (err < 0)
 		return err;
@@ -745,11 +752,12 @@ static int snd_card_pseudo_playback_open(struct snd_pcm_substream *substream)
 static int snd_card_pseudo_playback_close(struct snd_pcm_substream *substream)
 {
 	struct snd_pcm_runtime *runtime = substream->runtime;
-	struct snd_pseudo *pseudo = substream->private_data;
 	struct snd_pseudo_pcm *ppcm = runtime->private_data;
+	struct snd_pseudo *pseudo = substream->private_data;
 	int err;
 	BUG_ON(-1 == ppcm->substream_identifier);
-	err = pseudo->backend_ops->mixer_free_substream(pseudo->backend_mixer, ppcm->substream_identifier);
+	err = pseudo->backend_ops->mixer_free_substream(
+		      pseudo->backend_mixer, ppcm->substream_identifier);
 	if (err < 0)
 		return err;
 	ppcm->backend_is_setup = 0;
@@ -758,22 +766,23 @@ static int snd_card_pseudo_playback_close(struct snd_pcm_substream *substream)
 
 static struct snd_pcm_ops snd_card_pseudo_playback_ops =
 {
-	.open =         snd_card_pseudo_playback_open,
-	.close =        snd_card_pseudo_playback_close,
-	.ioctl =        snd_pcm_lib_ioctl,
-	.hw_params =    snd_card_pseudo_hw_params,
-	.hw_free =      snd_card_pseudo_hw_free,
-	.prepare =      snd_card_pseudo_pcm_prepare,
-	.trigger =      snd_card_pseudo_pcm_trigger,
-	.pointer =      snd_card_pseudo_pcm_pointer,
-	.mmap =         snd_card_pseudo_pcm_mmap,
+	.open = snd_card_pseudo_playback_open,
+	.close = snd_card_pseudo_playback_close,
+	.ioctl = snd_pcm_lib_ioctl,
+	.hw_params = snd_card_pseudo_hw_params,
+	.hw_free = snd_card_pseudo_hw_free,
+	.prepare = snd_card_pseudo_pcm_prepare,
+	.trigger = snd_card_pseudo_pcm_trigger,
+	.pointer = snd_card_pseudo_pcm_pointer,
+	.mmap = snd_card_pseudo_pcm_mmap,
 };
 
 static int __init snd_card_pseudo_pcm(struct snd_pseudo *pseudo, int device, int substreams)
 {
 	struct snd_pcm *pcm;
 	int err;
-	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device, substreams, 0, &pcm)) < 0)
+	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device,
+			       substreams, 0, &pcm)) < 0)
 		return err;
 	pseudo->pcm = pcm;
 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &snd_card_pseudo_playback_ops);
@@ -786,7 +795,8 @@ static int __init snd_card_pseudo_pcm(struct snd_pseudo *pseudo, int device, int
 static void snd_pseudo_mixer_update(struct snd_pseudo *pseudo)
 {
 	int err;
-	err = pseudo->backend_ops->mixer_set_module_parameters(pseudo->backend_mixer, &pseudo->mixer, sizeof(pseudo->mixer));
+	err = pseudo->backend_ops->mixer_set_module_parameters(
+		      pseudo->backend_mixer, &pseudo->mixer, sizeof(pseudo->mixer));
 	if (0 != err)
 		printk(KERN_ERR "%s: Could not update mixer parameters\n", pseudo->card->shortname);
 	/* lock prevents the observer from being deregistered whilst we update the observer */
@@ -797,15 +807,18 @@ static void snd_pseudo_mixer_update(struct snd_pseudo *pseudo)
 
 #define PSEUDO_ADDR(x) (offsetof(struct snd_pseudo_mixer_settings, x))
 
+// *INDENT-OFF*
 #define PSEUDO_INTEGER(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_integer_info, \
-  .get = snd_pseudo_integer_get, \
-  .put = snd_pseudo_integer_put, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_integer_info, \
+	  .get = snd_pseudo_integer_get, \
+	  .put = snd_pseudo_integer_put, \
+	  .private_value = PSEUDO_ADDR(addr) }
+// *INDENT-ON*
 
 static int snd_pseudo_integer_info(struct snd_kcontrol *kcontrol,
-								   struct snd_ctl_elem_info *uinfo)
+				   struct snd_ctl_elem_info *uinfo)
 {
 	int addr = kcontrol->private_value;
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
@@ -922,7 +935,7 @@ static unsigned int remap_channels[SND_PSEUDO_MIXER_CHANNELS] =
 };
 
 static int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
-								  struct snd_ctl_elem_value *ucontrol)
+				  struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -949,7 +962,7 @@ EXPORT_SYMBOL(snd_pseudo_integer_get);
 #endif
 
 static int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
-								  struct snd_ctl_elem_value *ucontrol)
+				  struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -988,15 +1001,18 @@ static int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
 EXPORT_SYMBOL(snd_pseudo_integer_put);
 #endif
 
+// *INDENT-OFF*
 #define PSEUDO_SWITCH(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_switch_info, \
-  .get = snd_pseudo_switch_get, \
-  .put = snd_pseudo_switch_put, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_switch_info, \
+	  .get = snd_pseudo_switch_get, \
+	  .put = snd_pseudo_switch_put, \
+	  .private_value = PSEUDO_ADDR(addr) }
+// *INDENT-ON*
 
 static int snd_pseudo_switch_info(struct snd_kcontrol *kcontrol,
-								  struct snd_ctl_elem_info *uinfo)
+				  struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_BOOLEAN;
 	uinfo->count = 1;
@@ -1006,7 +1022,7 @@ static int snd_pseudo_switch_info(struct snd_kcontrol *kcontrol,
 }
 
 static int snd_pseudo_switch_get(struct snd_kcontrol *kcontrol,
-								 struct snd_ctl_elem_value *ucontrol)
+				 struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1021,7 +1037,7 @@ EXPORT_SYMBOL(snd_pseudo_switch_get);
 #endif
 
 static int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol,
-								 struct snd_ctl_elem_value *ucontrol)
+				 struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1040,18 +1056,21 @@ static int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol,
 EXPORT_SYMBOL(snd_pseudo_switch_put);
 #endif
 
+// *INDENT-OFF*
 #define PSEUDO_ROUTE(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_route_info, \
-  .get = snd_pseudo_route_get, \
-  .put = snd_pseudo_route_put, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_route_info, \
+	  .get = snd_pseudo_route_get, \
+	  .put = snd_pseudo_route_put, \
+	  .private_value = PSEUDO_ADDR(addr) }
+// *INDENT-ON*
 
 /* Take care with this info function. Unusually it is called from
  * snd_pseudo_route_put to determine safe bounds for enumerations.
  */
 static int snd_pseudo_route_info(struct snd_kcontrol *kcontrol,
-								 struct snd_ctl_elem_info *uinfo)
+				 struct snd_ctl_elem_info *uinfo)
 {
 	static char *metadata_update[] =
 	{
@@ -1111,12 +1130,12 @@ static int snd_pseudo_route_info(struct snd_kcontrol *kcontrol,
 	if (uinfo->value.enumerated.item > (num_texts - 1))
 		uinfo->value.enumerated.item = (num_texts - 1);
 	strcpy(uinfo->value.enumerated.name,
-		   texts[uinfo->value.enumerated.item]);
+	       texts[uinfo->value.enumerated.item]);
 	return 0;
 }
 
 static int snd_pseudo_route_get(struct snd_kcontrol *kcontrol,
-								struct snd_ctl_elem_value *ucontrol)
+				struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1127,7 +1146,7 @@ static int snd_pseudo_route_get(struct snd_kcontrol *kcontrol,
 }
 
 static int snd_pseudo_route_put(struct snd_kcontrol *kcontrol,
-								struct snd_ctl_elem_value *ucontrol)
+				struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1150,31 +1169,37 @@ static int snd_pseudo_route_put(struct snd_kcontrol *kcontrol,
 	return changed;
 }
 
+// *INDENT-OFF*
 #define PSEUDO_BLOB(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_blob_info, \
-  .get = snd_pseudo_blob_get, \
-  .put = snd_pseudo_blob_put, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_blob_info, \
+	  .get = snd_pseudo_blob_get, \
+	  .put = snd_pseudo_blob_put, \
+	  .private_value = PSEUDO_ADDR(addr) }
 
 #define PSEUDO_BLOB_READONLY(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_blob_info, \
-  .get = snd_pseudo_blob_get, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_blob_info, \
+	  .get = snd_pseudo_blob_get, \
+	  .private_value = PSEUDO_ADDR(addr) }
 
 #define PSEUDO_IEC958(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_iec958_info, \
-  .get = snd_pseudo_blob_get, \
-  .put = snd_pseudo_blob_put, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_iec958_info, \
+	  .get = snd_pseudo_blob_get, \
+	  .put = snd_pseudo_blob_put, \
+	  .private_value = PSEUDO_ADDR(addr) }
 
 #define PSEUDO_IEC958_READONLY(xname, xindex, addr) \
-{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, .index = xindex, \
-  .info = snd_pseudo_iec958_info, \
-  .get = snd_pseudo_blob_get, \
-  .private_value = PSEUDO_ADDR(addr) }
+	{ .iface = SNDRV_CTL_ELEM_IFACE_MIXER, \
+	  .name = xname, .index = xindex, \
+	  .info = snd_pseudo_iec958_info, \
+	  .get = snd_pseudo_blob_get, \
+	  .private_value = PSEUDO_ADDR(addr) }
+// *INDENT-ON*
 
 static int snd_pseudo_blob_size(unsigned long private_value)
 {
@@ -1194,7 +1219,7 @@ static int snd_pseudo_blob_size(unsigned long private_value)
 }
 
 static int snd_pseudo_blob_info(struct snd_kcontrol *kcontrol,
-								struct snd_ctl_elem_info *uinfo)
+				struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_BYTES;
 	uinfo->count = snd_pseudo_blob_size(kcontrol->private_value);
@@ -1202,7 +1227,7 @@ static int snd_pseudo_blob_info(struct snd_kcontrol *kcontrol,
 }
 
 static int snd_pseudo_iec958_info(struct snd_kcontrol *kcontrol,
-								  struct snd_ctl_elem_info *uinfo)
+				  struct snd_ctl_elem_info *uinfo)
 {
 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
 	uinfo->count = 1;
@@ -1210,7 +1235,7 @@ static int snd_pseudo_iec958_info(struct snd_kcontrol *kcontrol,
 }
 
 static int snd_pseudo_blob_get(struct snd_kcontrol *kcontrol,
-							   struct snd_ctl_elem_value *ucontrol)
+			       struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1224,7 +1249,7 @@ static int snd_pseudo_blob_get(struct snd_kcontrol *kcontrol,
 }
 
 static int snd_pseudo_blob_put(struct snd_kcontrol *kcontrol,
-							   struct snd_ctl_elem_value *ucontrol)
+			       struct snd_ctl_elem_value *ucontrol)
 {
 	struct snd_pseudo *pseudo = snd_kcontrol_chip(kcontrol);
 	int addr = kcontrol->private_value;
@@ -1254,7 +1279,7 @@ static int snd_pseudo_blob_put(struct snd_kcontrol *kcontrol,
 			up_read(&card->controls_rwsem);
 			if ((err = snd_card_pseudo_register_dynamic_controls_locked(pseudo)) < 0)
 				printk(KERN_ERR "%s: Failed to update dynamic controls (%d)\n",
-					   card->shortname, err);
+				       card->shortname, err);
 			down_read(&card->controls_rwsem);
 		}
 	}
@@ -1316,9 +1341,9 @@ static struct snd_kcontrol_new snd_pseudo_controls[] =
 	PSEUDO_INTEGER("Master Playback Latency", 0, master_latency),
 	/* drc settings */
 	PSEUDO_SWITCH("DRC Enable", 0, drc_enable),
-	PSEUDO_ROUTE("DRC Type  ", 0, drc_type),
+	PSEUDO_ROUTE("DRC Type ", 0, drc_type),
 	PSEUDO_INTEGER("Boost factor", 0, hdr),
-	PSEUDO_INTEGER("Cut   factor", 0, ldr),
+	PSEUDO_INTEGER("Cut factor", 0, ldr),
 
 	/* generic spdif meta data */
 	PSEUDO_IEC958("IEC958 Playback Default", 0, iec958_metadata),
@@ -1360,7 +1385,7 @@ static struct snd_kcontrol_new snd_pseudo_dynamic_controls[] =
 //Dagobert: Save the controls so we can cold it from our proc handling
 struct snd_kcontrol **kcontrol = NULL;
 
-struct snd_kcontrol ** pseudoGetControls(int* numbers)
+struct snd_kcontrol **pseudoGetControls(int *numbers)
 {
 	*numbers = ARRAY_SIZE(snd_pseudo_controls);
 	return kcontrol;
@@ -1371,14 +1396,14 @@ EXPORT_SYMBOL(pseudoGetControls);
 
 static int __init snd_card_pseudo_new_mixer(struct snd_pseudo *pseudo)
 {
-	struct snd_card *card = pseudo->card;
+	struct snd_card *card;
 	unsigned int idx;
 	int err;
 	if (pseudo == NULL)
 		return -EINVAL;
+	card = pseudo->card;
 	mutex_init(&pseudo->mixer_lock);
 	strcpy(card->mixername, "Pseudo Mixer");
-#ifdef __TDT__
 	//Dagobert: Save the controls so we can call it from our proc handling
 	kcontrol = kmalloc(ARRAY_SIZE(snd_pseudo_controls) * sizeof(struct snd_kcontrol), GFP_KERNEL);
 	for (idx = 0; idx < ARRAY_SIZE(snd_pseudo_controls); idx++)
@@ -1387,13 +1412,6 @@ static int __init snd_card_pseudo_new_mixer(struct snd_pseudo *pseudo)
 		if ((err = snd_ctl_add(card, kcontrol[idx])) < 0)
 			return err;
 	}
-#else
-	for (idx = 0; idx < ARRAY_SIZE(snd_pseudo_controls); idx++)
-	{
-		if ((err = snd_ctl_add(card, snd_ctl_new1(&snd_pseudo_controls[idx], pseudo))) < 0)
-			return err;
-	}
-#endif
 	return 0;
 }
 
@@ -1452,9 +1470,9 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
 	mixer->spacialization_mode = 0; /* Off */
 	/* drc */
 	mixer->drc_enable = 0;
-	mixer->drc_type   = SND_PSEUDO_MIXER_DRC_LINE_OUT;
-	mixer->hdr        = Q0_8_MAX; /* Off */
-	mixer->ldr        = Q0_8_MAX; /* Off */
+	mixer->drc_type = SND_PSEUDO_MIXER_DRC_LINE_OUT;
+	mixer->hdr = Q0_8_MAX; /* Off */
+	mixer->ldr = Q0_8_MAX; /* Off */
 	/* latency tuning */
 	mixer->master_latency = 0;
 	for (i = 0; i < SND_PSEUDO_MAX_OUTPUTS; i++)
@@ -1478,7 +1496,7 @@ static void __init snd_pseudo_mixer_init(struct snd_pseudo *pseudo, int dev)
 	mixer->display_output_id = -1;
 	/* search for a valid hdmi output in the default display device 0 */
 	{
-		stm_display_device_t* pDev = stm_display_get_device(mixer->display_device_id);
+		stm_display_device_t *pDev = stm_display_get_device(mixer->display_device_id);
 		if (pDev == NULL)
 		{
 			printk(KERN_ERR "Cannot get handle to display device %d \n", mixer->display_device_id);
@@ -1543,7 +1561,7 @@ static int snd_card_pseudo_register_dynamic_controls_locked(struct snd_pseudo *p
 		if ('\0' == name[0])
 		{
 			/* skip over cards with a higher number then this one */
-			idx += SND_PSEUDO_MAX_OUTPUTS - (1 +  cardno);
+			idx += SND_PSEUDO_MAX_OUTPUTS - (1 + cardno);
 			continue;
 		}
 		kctl = snd_ctl_new1(&snd_pseudo_dynamic_controls[idx], pseudo);
@@ -1551,7 +1569,7 @@ static int snd_card_pseudo_register_dynamic_controls_locked(struct snd_pseudo *p
 			return -ENOMEM;
 		/* generate the name (this is the dynamic bit) */
 		snprintf(kctl->id.name, sizeof(kctl->id.name),
-				 "%s %s", name, snd_pseudo_dynamic_controls[idx].name);
+			 "%s %s", name, snd_pseudo_dynamic_controls[idx].name);
 		if ((err = snd_ctl_add(card, kctl)) < 0)
 			return err;
 		pseudo->dynamic_controls[idx] = kctl;
@@ -1568,13 +1586,13 @@ static int snd_card_pseudo_register_dynamic_controls(struct snd_pseudo *pseudo)
 	return res;
 }
 
-static int snd_pseudo_default_backend_get_instance(int StreamId, component_handle_t* Classoid)
+static int snd_pseudo_default_backend_get_instance(int StreamId, component_handle_t *Classoid)
 {
 	return -ENODEV;
 }
 
 static int snd_pseudo_default_backend_set_module_parameters(component_handle_t Classoid,
-		void *Data, unsigned int Size)
+							    void *Data, unsigned int Size)
 {
 	return 0;
 }
@@ -1586,10 +1604,11 @@ static int snd_pseudo_default_backend_alloc_substream(component_handle_t Compone
 
 static struct alsa_backend_operations snd_psuedo_default_backend_ops =
 {
-	.owner                       = THIS_MODULE,
-	.mixer_get_instance          = snd_pseudo_default_backend_get_instance,
+	.owner = THIS_MODULE,
+
+	.mixer_get_instance = snd_pseudo_default_backend_get_instance,
 	.mixer_set_module_parameters = snd_pseudo_default_backend_set_module_parameters,
-	.mixer_alloc_substream       = snd_pseudo_default_backend_alloc_substream,
+	.mixer_alloc_substream = snd_pseudo_default_backend_alloc_substream,
 	/* we ignore the other members since they cannot be reached unless the alloc succeeds */
 };
 
@@ -1612,8 +1631,7 @@ static int __init snd_pseudo_validate_downmix_index(
 	struct snd_pseudo_mixer_downmix_index *index)
 {
 	int i;
-	/* known to be illegal because pair4 is not NOT_CONNECTED */
-	uint64_t last_sort_value = 0;
+	uint64_t last_sort_value = 0; /* known to be illegal because pair4 is not NOT_CONNECTED */
 	for (i = 0; i < header->num_index_entries; i++)
 	{
 		union
@@ -1641,7 +1659,9 @@ static int __init snd_pseudo_probe(struct platform_device *devptr)
 	int idx, err;
 	int dev = devptr->id;
 	int result;
-	result = snd_card_create(index[dev], id[dev], THIS_MODULE, sizeof(struct snd_pseudo), &card);
+	result = snd_card_create(index[dev], id[dev], THIS_MODULE,
+				 sizeof(struct snd_pseudo),
+				 &card);
 	if (result != 0)
 		return result;
 	pseudo = card->private_data;
@@ -1737,7 +1757,7 @@ static int snd_pseudo_resume(struct platform_device *pdev)
 }
 #endif
 
-#define SND_PSEUDO_DRIVER       "snd_pseudo"
+#define SND_PSEUDO_DRIVER "snd_pseudo"
 
 static struct platform_driver snd_pseudo_driver =
 {
@@ -1752,7 +1772,8 @@ static struct platform_driver snd_pseudo_driver =
 	},
 };
 
-static int snd_card_pseudo_register_backend(struct platform_device *pdev, struct alsa_backend_operations *alsa_backend_ops)
+static int snd_card_pseudo_register_backend(struct platform_device *pdev,
+					    struct alsa_backend_operations *alsa_backend_ops)
 {
 	struct snd_card *card = platform_get_drvdata(pdev);
 	struct snd_pseudo *pseudo = card->private_data;
@@ -1765,16 +1786,15 @@ static int snd_card_pseudo_register_backend(struct platform_device *pdev, struct
 		return err;
 	pseudo->backend_mixer = mixer;
 	if (default_transformer_name.magic)
-		(void) pseudo->backend_ops->mixer_set_module_parameters
-		(pseudo->backend_mixer,
-		 (void *) &default_transformer_name,
-		 sizeof(default_transformer_name));
+		(void) pseudo->backend_ops->mixer_set_module_parameters(
+			pseudo->backend_mixer,
+			(void *) &default_transformer_name, sizeof(default_transformer_name));
 	/* only only update of the downmix firmware (if it exists) */
 	if (pseudo->downmix_firmware)
 	{
-		err = pseudo->backend_ops->mixer_set_module_parameters
-			  (pseudo->backend_mixer,
-			   (void *)(pseudo->downmix_firmware->data), pseudo->downmix_firmware->size);
+		err = pseudo->backend_ops->mixer_set_module_parameters(
+			      pseudo->backend_mixer,
+			      (void *)pseudo->downmix_firmware->data, pseudo->downmix_firmware->size);
 		if (0 != err)
 			printk(KERN_ERR "%s: Can not pass downmix firmware to mixer\n", pseudo->card->shortname);
 		/* do not propagate error */
@@ -1786,7 +1806,8 @@ static int snd_card_pseudo_register_backend(struct platform_device *pdev, struct
 	return 0;
 }
 
-int register_alsa_backend(char *name, struct alsa_backend_operations *alsa_backend_ops)
+int register_alsa_backend(char *name,
+			  struct alsa_backend_operations *alsa_backend_ops)
 {
 	int i;
 	for (i = 0; i < SNDRV_CARDS; i++)
@@ -1803,12 +1824,11 @@ EXPORT_SYMBOL_GPL(register_alsa_backend);
 /**
  * Register a mixer observer which will receive a callback whenever the mixer settings change.
  *
- * The API (register/deregister) supports multiple clients but at present
- * the implementation supports only one because there is only a single client
- * at the moment.
+ * The API (register/deregister) supports multiple clients but at present the implementation
+ * supports only one because there is only a single client at the moment.
  */
 int snd_pseudo_register_mixer_observer(int mixer_num,
-									   snd_pseudo_mixer_observer_t *observer, void *ctx)
+				       snd_pseudo_mixer_observer_t *observer, void *ctx)
 {
 	struct snd_card *card;
 	struct snd_pseudo *pseudo;
@@ -1831,7 +1851,7 @@ int snd_pseudo_register_mixer_observer(int mixer_num,
 EXPORT_SYMBOL_GPL(snd_pseudo_register_mixer_observer);
 
 int snd_pseudo_deregister_mixer_observer(int mixer_num,
-		snd_pseudo_mixer_observer_t *observer, void *ctx)
+					 snd_pseudo_mixer_observer_t *observer, void *ctx)
 {
 	struct snd_card *card;
 	struct snd_pseudo *pseudo;
@@ -1887,7 +1907,7 @@ static int __init alsa_card_pseudo_init(void)
 		if (! enable[i])
 			continue;
 		device = platform_device_register_simple(SND_PSEUDO_DRIVER,
-				 i, NULL, 0);
+							 i, NULL, 0);
 		if (IS_ERR(device))
 			continue;
 		devices[i] = device;
@@ -1897,14 +1917,14 @@ static int __init alsa_card_pseudo_init(void)
 	{
 #ifdef MODULE
 		printk(KERN_ERR "%s: Pseudo soundcard not found or device busy\n",
-			   KBUILD_MODNAME);
+		       KBUILD_MODNAME);
 #endif
 		snd_pseudo_unregister_all();
 		return -ENODEV;
 	}
 #ifdef MODULE
 	printk(KERN_INFO "%s: %d pseudo soundcard(s) found\n",
-		   KBUILD_MODNAME, cards);
+	       KBUILD_MODNAME, cards);
 #endif
 	return 0;
 }

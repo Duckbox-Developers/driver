@@ -2,13 +2,13 @@
 COPYRIGHT (C) SGS-THOMSON Microelectronics 2010
 
 Source file name : collator_pes_video_raw.h
-Author :           Julian
+Author : Julian
 
 Definition of the raw collator pes class implementation for player 2.
 
-Date        Modification                                    Name
-----        ------------                                    --------
-23-Feb-10   Created from existing collator_pes_video_wmv.h  Julian
+Date Modification Name
+---- ------------ --------
+23-Feb-10 Created from existing collator_pes_video_wmv.h Julian
 
 ************************************************************************/
 
@@ -17,7 +17,7 @@ Date        Modification                                    Name
 
 // /////////////////////////////////////////////////////////////////////
 //
-//      Include any component headers
+// Include any component headers
 
 #include "collator_pes_video.h"
 #include "dvp.h"
@@ -42,10 +42,10 @@ structure in the pes header.
 class Collator_PesVideoRaw_c : public Collator_PesVideo_c
 {
 	private:
-		int                         DataRemaining;
-		unsigned int                DataCopied;
-		unsigned int*               DecodeBuffer;
-		StreamInfo_t                StreamInfo;
+		int DataRemaining;
+		unsigned int DataCopied;
+		unsigned int *DecodeBuffer;
+		StreamInfo_t StreamInfo;
 	protected:
 
 	public:
@@ -54,14 +54,14 @@ class Collator_PesVideoRaw_c : public Collator_PesVideo_c
 		Collator_PesVideoRaw_c(void);
 
 		// Base class overrides
-		CollatorStatus_t    Reset(void);
+		CollatorStatus_t Reset(void);
 
 		// Collator class functions
-		CollatorStatus_t    Input(PlayerInputDescriptor_t  *Input,
-								  unsigned int              DataLength,
-								  void                     *Data,
-								  bool                      NonBlocking = false,
-								  unsigned int             *DataLengthRemaining = NULL);
+		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
+				       unsigned int DataLength,
+				       void *Data,
+				       bool NonBlocking = false,
+				       unsigned int *DataLengthRemaining = NULL);
 
 };
 
