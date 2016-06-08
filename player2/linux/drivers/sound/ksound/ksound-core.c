@@ -715,9 +715,19 @@ static inline snd_pcm_uframes_t _ksnd_pcm_avail_update(snd_pcm_substream_t
 {
 	snd_pcm_runtime_t *runtime = substream->runtime;
 	/*NICK added if to remove real updates which we do not want*/
-#if defined(__TDT__) && (defined(FORTIS_HDBOX) || defined(UFS922) || defined(UFC960) || defined(HL101) || \
- defined(VIP1_V2) || defined(VIP2_V1) || defined(OCTAGON1008) || defined(IPBOX9900) || \
- defined(IPBOX99) || defined(IPBOX55) || defined(CUBEREVO_250HD) || defined(CUBEREVO))
+#if defined(__TDT__) \
+ && (defined(FORTIS_HDBOX) \
+ || defined(UFS922) \
+ || defined(UFC960) \
+ || defined(HL101) \
+ || defined(VIP1_V2) \
+ || defined(VIP2_V1) \
+ || defined(OCTAGON1008) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(CUBEREVO_250HD) \
+ || defined(CUBEREVO))
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
 	if (runtime->sleep_min == 0 &&
 			_ksnd_pcm_state(substream) == SNDRV_PCM_STATE_RUNNING)

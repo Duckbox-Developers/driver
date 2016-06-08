@@ -2594,9 +2594,9 @@ inline void Mixer_Mme_c::FillOutDeviceDownmixParameters(
 /// Contract: The PcmParams structure is zeroed before population. At the time
 /// it is handed to this method it may already have been partially filled in.
 ///
-/// This method is, semanticlly, part of FillOutDevicePcmParameters() (hence
-/// it is inlined) but is quite complex enough to justify spliting it out into
-/// a seperate method.
+/// This method is, semantically, part of FillOutDevicePcmParameters() (hence
+/// it is inlined) but is quite complex enough to justify splitting it out into
+/// a separate method.
 ///
 /// The primary responsibility of the function is to set dynamically changing
 /// fields (such as the sample rate), static fields are provided by userspace.

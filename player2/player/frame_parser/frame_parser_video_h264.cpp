@@ -4094,7 +4094,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ForPlayPurgeQueuedPostDecodeParamet
 // Stream specific function to process deferred post decode parameter
 // settings, these consist of the display frame index, and presentation
 // time, if we have an IDR or a B frame, we can process any frames with a
-//	lower pic order count, we also allow the processing of all frames upto
+//	lower pic order count, we also allow the processing of all frames up to
 //	a pic order cnt when a reference frame falls out of the sliding window
 //	in reference framme marking.
 //
