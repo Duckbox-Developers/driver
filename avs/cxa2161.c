@@ -37,6 +37,8 @@
  
 /* ---------------------------------------------------------------------- */
  
+static int debug = AVS_DEBUG;
+
 static struct s_cxa2161_data cxa2161_data;
 static struct s_cxa2161_data tmp_cxa2161_data;
 static int s_old_src;

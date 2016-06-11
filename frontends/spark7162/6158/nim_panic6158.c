@@ -1894,8 +1894,9 @@ INT32 nim_panic6158_attach(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig, TUNER_
 		}
 		else
 		{
-			NIM_PANIC6158_PRINTF("Error: Init Tuner Failure!\n");
 			TUNER_IOARCH_CloseParams_t  CloseParams;
+
+			NIM_PANIC6158_PRINTF("Error: Init Tuner Failure!\n");
 			TUNER_IOARCH_Close(dev->DemodIOHandle[2], &CloseParams);
 			//FREE(priv);
 			//dev_free(dev);
@@ -2502,8 +2503,9 @@ INT32 nim_panic6158_attach_earda(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig, 
 	priv->i2c_mutex_id = osal_mutex_create();
 	if (OSAL_INVALID_ID == priv->i2c_mutex_id)
 	{
-		osal_flag_delete(priv->flag_id);
 		TUNER_IOARCH_CloseParams_t  CloseParams;
+
+		osal_flag_delete(priv->flag_id);
 		TUNER_IOARCH_Close(dev->DemodIOHandle[2], &CloseParams);
 		FREE(priv);
 		dev_free(dev);
@@ -2515,10 +2517,11 @@ INT32 nim_panic6158_attach_earda(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig, 
 	/* Add this device to queue */
 	if (SUCCESS != dev_register(dev))
 	{
+		TUNER_IOARCH_CloseParams_t  CloseParams;
+
 		NIM_PANIC6158_PRINTF("Error: Register nim device error!\n");
 		osal_flag_delete(priv->flag_id);
 		osal_mutex_delete(priv->i2c_mutex_id);
-		TUNER_IOARCH_CloseParams_t  CloseParams;
 		TUNER_IOARCH_Close(dev->DemodIOHandle[2], &CloseParams);
 		FREE(priv);
 		dev_free(dev);
@@ -2535,9 +2538,10 @@ INT32 nim_panic6158_attach_earda(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig, 
 
 	if (3 <= i || 0 < ret)
 	{
+		TUNER_IOARCH_CloseParams_t  CloseParams;
+
 		osal_flag_delete(priv->flag_id);
 		osal_mutex_delete(priv->i2c_mutex_id);
-		TUNER_IOARCH_CloseParams_t  CloseParams;
 		TUNER_IOARCH_Close(dev->DemodIOHandle[2], &CloseParams);
 		FREE(priv);
 		dev_free(dev);

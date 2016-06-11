@@ -48,7 +48,7 @@ VOID NICInitRT3370RFRegisters(IN PRTMP_ADAPTER pAd)
 	INT i;
 	UINT8 RfReg = 0;
 	UINT32 data;
-	CHAR bbpreg;
+//	CHAR bbpreg;
 
 	/* Driver must read EEPROM to get RfIcType before initial RF registers*/
 	/* Initialize RF register to default value*/

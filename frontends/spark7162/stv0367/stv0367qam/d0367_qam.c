@@ -39,6 +39,9 @@
 #include "stv0367qam_drv.h"
 #include "d0367_qam.h"
 
+extern int debug_fe7162;
+#define _DEBUG if (debug_fe7162)
+
 STCHIP_Register_t Def367qamVal[STV0367qam_NBREGS] =
 {
 	{ R367qam_ID,    0x60 }    ,/* ID */
@@ -250,11 +253,13 @@ YW_ErrorType_T  demod_d0367qam_Identify(IOARCH_Handle_t   IOHandle, U8  ucID, U8
 	//if (TUNER_IOARCH_ReadWrite(IOHandle, TUNER_IO_SA_READ, R367qam_ID, pucActualID, 1, 50) == YW_NO_ERROR)
 	if (YW_NO_ERROR == YW_NO_ERROR)
 	{
+_DEBUG
 		printk("demod_d0367qam_Identify pucActualID = 0x%x\n", *pucActualID);//question
 		return YW_NO_ERROR;
 	}
 	else
 	{
+_DEBUG
 		printk("demod_d0367qam_Identify YWHAL_ERROR_UNKNOWN_DEVICE \n");//question
 		return YWHAL_ERROR_UNKNOWN_DEVICE;
 	}

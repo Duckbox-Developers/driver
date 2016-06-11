@@ -118,13 +118,12 @@ static void sms_board_dvb3_event(struct smsdvb_client_t *client,
 	}
 }
 
-extern void extern_inject_data(u32 *data, off_t size);
+//extern void extern_inject_data(u32 *data, off_t size);
 
 static int smsdvb_onresponse(void *context, struct smscore_buffer_t *cb)
 {
 	struct smsdvb_client_t *client = (struct smsdvb_client_t *) context;
-	struct SmsMsgHdr_ST *phdr = (struct SmsMsgHdr_ST *) (((u8 *) cb->p)
-			+ cb->offset);
+	struct SmsMsgHdr_ST *phdr = (struct SmsMsgHdr_ST *) (((u8 *) cb->p) + cb->offset);
 	u32 *pMsgData = (u32 *) phdr + 1;
 	/*u32 MsgDataLen = phdr->msgLength - sizeof(struct SmsMsgHdr_ST);*/
 	bool is_status_update = false;
@@ -132,11 +131,10 @@ static int smsdvb_onresponse(void *context, struct smscore_buffer_t *cb)
 	smsendian_handle_rx_message((struct SmsMsgData_ST *) phdr);
 
 	switch (phdr->msgType) {
-	case MSG_SMS_DVBT_BDA_DATA:
-		//dvb_dmx_swfilter(&client->demux, (u8 *)(phdr + 1),
-		//		 cb->size - sizeof(struct SmsMsgHdr_ST));
-		extern_inject_data((u8 *)(phdr + 1), cb->size - sizeof(struct SmsMsgHdr_ST));//freebox
-		break;
+//	case MSG_SMS_DVBT_BDA_DATA:
+//		//dvb_dmx_swfilter(&client->demux, (u8 *)(phdr + 1), cb->size - sizeof(struct SmsMsgHdr_ST));
+//		extern_inject_data((u8 *)(phdr + 1), cb->size - sizeof(struct SmsMsgHdr_ST)); //freebox
+//		break;
 
 	case MSG_SMS_RF_TUNE_RES:
 		complete(&client->tune_done);
@@ -691,10 +689,10 @@ client_error:
 frontend_error:
 	dvb_dmxdev_release(&client->dmxdev);
 
-dmxdev_error:
+//dmxdev_error:
 	dvb_dmx_release(&client->demux);
 
-dvbdmx_error:
+//dvbdmx_error:
 	dvb_unregister_adapter(&client->adapter);
 
 adapter_error:

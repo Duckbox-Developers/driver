@@ -305,28 +305,27 @@ VOID MlmeAssocReqAction(
 		MgtMacHeaderInit(pAd, &AssocHdr, SUBTYPE_ASSOC_REQ, 0, ApAddr, ApAddr);
 		
 		// Build basic frame first
-		MakeOutgoingFrame(pOutBuffer,				&FrameLen,
-						  sizeof(HEADER_802_11),	&AssocHdr,
-						  2,						&CapabilityInfo,
-						  2,						&ListenIntv,
-						  1,						&SsidIe,
-						  1,						&pAd->MlmeAux.SsidLen, 
-						  pAd->MlmeAux.SsidLen, 	pAd->MlmeAux.Ssid,
-						  1,						&SupRateIe,
-						  1,						&pAd->MlmeAux.SupRateLen,
-						  pAd->MlmeAux.SupRateLen,  pAd->MlmeAux.SupRate,
-						  END_OF_ARGS);
+		MakeOutgoingFrame(pOutBuffer, &FrameLen,
+			sizeof(HEADER_802_11),	&AssocHdr,
+			2, &CapabilityInfo,
+			2, &ListenIntv,
+			1, &SsidIe,
+			1, &pAd->MlmeAux.SsidLen, 
+			pAd->MlmeAux.SsidLen, pAd->MlmeAux.Ssid,
+			1, &SupRateIe,
+			1, &pAd->MlmeAux.SupRateLen,
+			pAd->MlmeAux.SupRateLen, pAd->MlmeAux.SupRate,
+			END_OF_ARGS);
 
 		if (pAd->MlmeAux.ExtRateLen != 0)
 		{
-			MakeOutgoingFrame(pOutBuffer + FrameLen,    &tmp,
-							  1,                        &ExtRateIe,
-							  1,                        &pAd->MlmeAux.ExtRateLen,
-							  pAd->MlmeAux.ExtRateLen,  pAd->MlmeAux.ExtRate,							
-							  END_OF_ARGS);
+			MakeOutgoingFrame(pOutBuffer + FrameLen, &tmp,
+				1, &ExtRateIe,
+				1, &pAd->MlmeAux.ExtRateLen,
+				pAd->MlmeAux.ExtRateLen,  pAd->MlmeAux.ExtRate,							
+				END_OF_ARGS);
 			FrameLen += tmp;
 		}
-
 
 #ifdef DOT11_N_SUPPORT
 		// HT
@@ -350,20 +349,20 @@ VOID MlmeAssocReqAction(
 			if (pAd->StaActive.SupportedPhyInfo.bPreNHt == TRUE)
 			{
 				HtLen = SIZE_HT_CAP_IE + 4;
-				MakeOutgoingFrame(pOutBuffer + FrameLen,			&TmpLen,
-									1,							&WpaIe,
-									1,							&HtLen,
-									4,							&BROADCOM[0],
-									pAd->MlmeAux.HtCapabilityLen,	pHtCapability, 
-									END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer + FrameLen, &TmpLen,
+					1, &WpaIe,
+					1, &HtLen,
+					4, &BROADCOM[0],
+					pAd->MlmeAux.HtCapabilityLen, pHtCapability, 
+					END_OF_ARGS);
 			}
 			else				
 			{
-				MakeOutgoingFrame(pOutBuffer + FrameLen,			&TmpLen,
-									1,							&HtCapIe,
-									1,							&pAd->MlmeAux.HtCapabilityLen,
-									pAd->MlmeAux.HtCapabilityLen,	pHtCapability, 
-									END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer + FrameLen, &TmpLen,
+					1, &HtCapIe,
+					1, &pAd->MlmeAux.HtCapabilityLen,
+					pAd->MlmeAux.HtCapabilityLen, pHtCapability, 
+					END_OF_ARGS);
 			}
 			FrameLen += TmpLen;
 		}
@@ -371,10 +370,11 @@ VOID MlmeAssocReqAction(
 
 #if defined(DOT11N_DRAFT3) || defined(DOT11V_WNM_SUPPORT)
 		{
-			ULONG TmpLen, infoPos;
-			EXT_CAP_INFO_ELEMENT	extCapInfo;
+//			ULONG TmpLen, infoPos;
+			ULONG TmpLen;
+			EXT_CAP_INFO_ELEMENT extCapInfo;
 			UCHAR extInfoLen;
-			PUCHAR pInfo;
+//			PUCHAR pInfo;
 
 
 			extInfoLen = sizeof(EXT_CAP_INFO_ELEMENT);
@@ -389,12 +389,11 @@ VOID MlmeAssocReqAction(
 			}
 #endif // DOT11N_DRAFT3 //
 
-
 			MakeOutgoingFrame(pOutBuffer+FrameLen, &TmpLen,
-								1, &ExtCapIe,
-								1, &extInfoLen,
-								extInfoLen, &extCapInfo,
-								END_OF_ARGS);
+				1, &ExtCapIe,
+				1, &extInfoLen,
+				extInfoLen, &extCapInfo,
+				END_OF_ARGS);
 			FrameLen += TmpLen;
 		}
 #endif // defined(DOT11N_DRAFT3) || defined(DOT11V_WNM_SUPPORT) //
@@ -454,7 +453,7 @@ VOID MlmeAssocReqAction(
 			}
 			else
 			{
-                // The Parameter Set Count is set to ¡§0¡¨ in the association request frames
+                // The Parameter Set Count is set to 0 in the association request frames
                 // WmeIe[8] |= (pAd->MlmeAux.APEdcaParm.EdcaUpdateCount & 0x0f);
 			}
 
@@ -737,20 +736,20 @@ VOID MlmeReassocReqAction(
 			if (pAd->StaActive.SupportedPhyInfo.bPreNHt == TRUE)
 			{
 				HtLen = SIZE_HT_CAP_IE + 4;
-				MakeOutgoingFrame(pOutBuffer + FrameLen,			&TmpLen,
-									1,							&WpaIe,
-									1,							&HtLen,
-									4,							&BROADCOM[0],
-									pAd->MlmeAux.HtCapabilityLen,	pHtCapability, 
-									END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer + FrameLen, &TmpLen,
+					1, &WpaIe,
+					1, &HtLen,
+					4, &BROADCOM[0],
+					pAd->MlmeAux.HtCapabilityLen,	pHtCapability, 
+					END_OF_ARGS);
 			}
-			else				
+			else
 			{
-				MakeOutgoingFrame(pOutBuffer + FrameLen,			&TmpLen,
-									1,							&HtCapIe,
-									1,							&pAd->MlmeAux.HtCapabilityLen,
-									pAd->MlmeAux.HtCapabilityLen,	pHtCapability, 
-									END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer + FrameLen, &TmpLen,
+					1, &HtCapIe,
+					1, &pAd->MlmeAux.HtCapabilityLen,
+					pAd->MlmeAux.HtCapabilityLen, pHtCapability, 
+					END_OF_ARGS);
 			}
 			FrameLen += TmpLen;
 		}
@@ -771,18 +770,18 @@ VOID MlmeReassocReqAction(
 			{
 				ULONG TmpLen;
 				UCHAR RalinkIe[9] = {IE_VENDOR_SPECIFIC, 7, 0x00, 0x0c, 0x43, 0x03, 0x00, 0x00, 0x00}; 
-				MakeOutgoingFrame(pOutBuffer+FrameLen,           &TmpLen,
-								  9,                             RalinkIe,
-								  END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer+FrameLen, &TmpLen,
+					9, RalinkIe,
+					END_OF_ARGS);
 				FrameLen += TmpLen;
 			}
 			else if (pAd->MlmeAux.APRalinkIe & 0x00000001)
 			{
 				ULONG TmpLen;
 				UCHAR RalinkIe[9] = {IE_VENDOR_SPECIFIC, 7, 0x00, 0x0c, 0x43, 0x01, 0x00, 0x00, 0x00}; 
-				MakeOutgoingFrame(pOutBuffer+FrameLen,           &TmpLen,
-								  9,                             RalinkIe,
-								  END_OF_ARGS);
+				MakeOutgoingFrame(pOutBuffer+FrameLen, &TmpLen,
+					9, RalinkIe,
+					END_OF_ARGS);
 				FrameLen += TmpLen;
 			}
 		}
@@ -790,9 +789,9 @@ VOID MlmeReassocReqAction(
 		{
 			ULONG TmpLen;
 			UCHAR RalinkIe[9] = {IE_VENDOR_SPECIFIC, 7, 0x00, 0x0c, 0x43, 0x04, 0x00, 0x00, 0x00}; 
-			MakeOutgoingFrame(pOutBuffer+FrameLen,		 &TmpLen,
-							  9,						 RalinkIe,
-							  END_OF_ARGS);
+			MakeOutgoingFrame(pOutBuffer+FrameLen, &TmpLen,
+				9, RalinkIe,
+				END_OF_ARGS);
 			FrameLen += TmpLen;
 		}
 

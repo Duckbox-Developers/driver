@@ -133,7 +133,7 @@ VOID StopFrequencyCalibration(
 VOID FrequencyCalibration(
 	IN PRTMP_ADAPTER pAd)
 {
-	BOOLEAN bUpdateRFR = FALSE;
+//	BOOLEAN bUpdateRFR = FALSE;
 	UCHAR RFValue = 0;
 	UCHAR PreRFValue = 0;
 	CHAR HighFreqTriggerPoint = 0, LowFreqTriggerPoint = 0;

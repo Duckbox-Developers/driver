@@ -41,6 +41,8 @@
 #include "avs_core.h"
 #include "vip1_avs.h"
 
+static int debug = AVS_DEBUG;
+
 /* hold old values for mute/unmute */
 static unsigned char t_mute;
 

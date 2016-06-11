@@ -750,22 +750,22 @@ VOID RT5390_AsicEeBufferInit(
  The original name of this function is AsicSetRxAnt(), now change to 
 */
 VOID RT5390SetRxAnt(
-	IN PRTMP_ADAPTER	pAd,
-	IN UCHAR			Ant)
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR         Ant)
 {
-	UINT32	Value;
+//	UINT32	Value;
 
-	if (/*(!pAd->NicConfig2.field.AntDiversity) || */
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RESET_IN_PROGRESS))	||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))	||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF)) ||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST)))
+	if (/*(!pAd->NicConfig2.field.AntDiversity)
+	|| */
+	   (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RESET_IN_PROGRESS))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST)))
 	{
 		return;
 	}
 
-	if ((IS_RT5390(pAd)) && (!IS_RT5392(pAd))
-		)
+	if ((IS_RT5390(pAd)) && (!IS_RT5392(pAd)))
 	{
 		UCHAR BbpValue = 0;
 
@@ -912,7 +912,7 @@ VOID RT5390LoadRFNormalModeSetup(
 VOID RT5390LoadRFSleepModeSetup(
 	IN PRTMP_ADAPTER 	pAd)
 {
-	UCHAR RFValue;
+//	UCHAR RFValue;
 	UINT32 MACValue;
 
 
@@ -985,10 +985,10 @@ VOID RT5390HaltAction(
 	==========================================================================
  */
 VOID RT5390ReverseRFSleepModeSetup(
-	IN PRTMP_ADAPTER 	pAd,
-	IN BOOLEAN			FlgIsInitState)
+	IN PRTMP_ADAPTER pAd,
+	IN BOOLEAN       FlgIsInitState)
 {
-	UCHAR RFValue;
+//	UCHAR RFValue;
 	UINT32 MACValue;
 
 
@@ -1493,9 +1493,9 @@ VOID RT5390_ChipSwitchChannel(
 #endif /* DOT11N_SS3_SUPPORT */
 
 #if defined(RT5370) || defined(RT5372) || defined(RT5390) || defined(RT5392)
-       UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
-       BBP_R109_STRUC BbpR109 = {{0}};
-	BBP_R110_STRUC BbpR110 = {{0}};
+	UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
+//	BBP_R109_STRUC BbpR109 = {{0}};
+//	BBP_R110_STRUC BbpR110 = {{0}};
 	UCHAR TxRxh20M = 0;
 	UCHAR PreRFValue = 0;
 #endif /* defined(RT5370) || defined(RT5372) || defined(RT5390) || defined(RT5392) */
@@ -3362,7 +3362,8 @@ INT RT5390_ATETssiCalibration(
 	}
 	
 	UINT 		i = 0;
-	UCHAR		BbpData, RFValue, OrgBbp47Value, ChannelPower;
+//	UCHAR		BbpData, RFValue, OrgBbp47Value, ChannelPower;
+	UCHAR		BbpData, RFValue, OrgBbp47Value;
 	USHORT		EEPData;
 	UCHAR 		BSSID_ADDR[MAC_ADDR_LEN] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
 	BBP_R47_STRUC	BBPR47;
@@ -3592,7 +3593,7 @@ CHAR GetPowerDeltaFromTssiRatio(CHAR TssiOfChannel, CHAR TssiBase)
 	
 	TssiRatio = TssiOfChannel * TssiRatioTable[0][1] / TssiBase;
 
-	DBGPRINT(RT_DEBUG_WARN, ("TssiOfChannel = %d, TssiBase = %d, TssiRatio = %d\n", TssiOfChannel,  TssiBase, TssiRatio));
+	DBGPRINT(RT_DEBUG_WARN, ("TssiOfChannel = %d, TssiBase = %d, TssiRatio = %d\n", TssiOfChannel, TssiBase, (int)TssiRatio));
 
 	PowerDeltaStatIndex = 4;
 	PowerDeltaEndIndex = 19;
@@ -3621,7 +3622,7 @@ CHAR GetPowerDeltaFromTssiRatio(CHAR TssiOfChannel, CHAR TssiBase)
 
 	PowerDelta = MinTssiDeltaIndex - TSSI_RATIO_TABLE_OFFSET;
 
-	DBGPRINT(RT_DEBUG_WARN, ("MinTssiDeltaIndex = %d, MinTssiDelta = %d, PowerDelta = %d\n", MinTssiDeltaIndex,  MinTssiDelta, PowerDelta));
+	DBGPRINT(RT_DEBUG_WARN, ("MinTssiDeltaIndex = %d, MinTssiDelta = %d, PowerDelta = %d\n", MinTssiDeltaIndex,  MinTssiDelta, (int)PowerDelta));
 	
 	return (PowerDelta);
 }

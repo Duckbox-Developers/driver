@@ -33,6 +33,8 @@
 #undef u32
 #define	u32 unsigned int
 //typedef unsigned int u32;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 static const u32 Te0[256] = {
     0xc66363a5U, 0xf87c7c84U, 0xee777799U, 0xf67b7b8dU,
@@ -3500,5 +3502,6 @@ VOID AES_CMAC (
     } /* End of if */
     RT_AES_Encrypt(Y, sizeof(Y) , Key, KeyLength, MACText, MACTextLength);
 } /* End of AES_CMAC */
+#pragma GCC diagnostic pop
 
 

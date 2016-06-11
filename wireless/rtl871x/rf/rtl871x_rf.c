@@ -155,7 +155,6 @@ void set_channelset_bg(_adapter  *padapter, struct regulatory_class *reg_class, 
 */     	   	  
 void init_phyinfo(_adapter  *adapter, struct setphyinfo_parm* psetphyinfopara)
 {
-
 	struct eeprom_priv* peeprompriv = &adapter->eeprompriv;
 	unsigned long country_string = (unsigned long)(peeprompriv->country_string[0])<<16 | (unsigned long)(peeprompriv->country_string[1])<<8 | (peeprompriv->country_string[2]);
 

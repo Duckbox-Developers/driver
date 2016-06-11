@@ -46,6 +46,8 @@
 #endif
 #include <net/iw_handler.h>
 #include <linux/if_arp.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,27))
 #define  iwe_stream_add_event(a, b, c, d, e)  iwe_stream_add_event(b, c, d, e)
@@ -3870,4 +3872,5 @@ struct iw_handler_def r871x_handlers_def =
 	.get_wireless_stats = r871x_get_wireless_stats,
 #endif
 };
+#pragma GCC diagnostic pop
 

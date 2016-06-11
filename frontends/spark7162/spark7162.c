@@ -44,8 +44,6 @@
 #include "dvb_frontend.h"
 #include "dvb_demux.h"
 
-#include "dvb_dummy_fe.h"
-
 
 
 //#include "git_version.h" // file is missing
@@ -102,6 +100,7 @@ enum
 
 static int eUnionTunerType = UNION_TUNER_T;
 static char *UnionTunerType = "t";
+int debug_fe7162 = 0;
 
 /*******************************  数据结构*********************************/
 
@@ -319,7 +318,8 @@ int spark_dvb_register_s(struct dvb_adapter *dvb_adap,
 
 	if (spark_dvb_attach_s(dvb_adap, &d3501config, &pFrontend))
 	{
-		pFrontend = dvb_dummy_fe_qpsk_attach();
+		i2c_put_adapter(pI2c);
+		return -1;
 	}
 
 	pFrontend->id = tuner_resource;
@@ -431,7 +431,8 @@ int spark_dvb_register_t(struct dvb_adapter *dvb_adap,
 
 	if (spark_dvb_attach_t(dvb_adap, *ppI2c, &pFrontend))
 	{
-		pFrontend = dvb_dummy_fe_ofdm_attach();
+		i2c_put_adapter(*ppI2c);
+		return -1;
 	}
 
 	pFrontend->id = 3;
@@ -545,10 +546,9 @@ int spark_dvb_register_c(struct dvb_adapter *dvb_adap,
 
 	if (spark_dvb_attach_c(dvb_adap, pI2c, &pFrontend))
 	{
-		pFrontend = dvb_dummy_fe_qam_attach();
+		i2c_put_adapter(pI2c);
+		return -1;
 	}
-
-	pFrontend->id = 3;
 
 	if (dvb_register_frontend(dvb_adap, pFrontend))
 	{
@@ -582,51 +582,6 @@ static DemodIdentifyDbase_T  DemodIdentifyTable[MAX_TER_DEMOD_TYPES] =
 	},
 };
 
-int spark_dvb_register_dummy_t(struct dvb_adapter *dvb_adap,
-							   struct dvb_frontend **ppFrontend,
-							   struct i2c_adapter **ppI2c)
-{
-	struct dvb_frontend *pFrontend;
-
-	pFrontend = dvb_dummy_fe_ofdm_attach();
-
-	pFrontend->id = 3;
-
-	if (dvb_register_frontend(dvb_adap, pFrontend))
-	{
-		printk("dummy_fe t: Frontend registration failed!\n");
-		dvb_frontend_detach(pFrontend);
-		i2c_put_adapter(*ppI2c);
-		return -1;
-	}
-
-	(*ppFrontend)   = pFrontend;
-
-	return 0;
-}
-
-int spark_dvb_register_dummy_c(struct dvb_adapter *dvb_adap,
-							   struct dvb_frontend **ppFrontend,
-							   struct i2c_adapter **ppI2c)
-{
-	struct dvb_frontend *pFrontend;
-
-	pFrontend = dvb_dummy_fe_qam_attach();
-
-	pFrontend->id = 3;
-
-	if (dvb_register_frontend(dvb_adap, pFrontend))
-	{
-		printk("dummy_fe c: Frontend registration failed!\n");
-		dvb_frontend_detach(pFrontend);
-		i2c_put_adapter(*ppI2c);
-		return -1;
-	}
-
-	(*ppFrontend)   = pFrontend;
-
-	return 0;
-}
 
 int spark_dvb_AutoRegister_TER(struct dvb_adapter *dvb_adap,
 							   struct dvb_frontend **ppFrontend,
@@ -652,14 +607,6 @@ int spark_dvb_AutoRegister_TER(struct dvb_adapter *dvb_adap,
 		}
 
 	}
-
-	if (MAX_TER_DEMOD_TYPES == i)
-	{
-		*ppI2c = pI2c;
-
-		ret = spark_dvb_register_dummy_t(dvb_adap, ppFrontend, ppI2c);
-	}
-
 	return ret;
 
 }
@@ -689,14 +636,6 @@ int spark_dvb_AutoRegister_Cab(struct dvb_adapter *dvb_adap,
 		}
 
 	}
-
-	if (MAX_TER_DEMOD_TYPES == i)
-	{
-		*ppI2c = pI2c;
-
-		ret = spark_dvb_register_dummy_c(dvb_adap, ppFrontend, ppI2c);
-	}
-
 	return ret;
 
 }
@@ -845,19 +784,16 @@ int spark7162_register_frontend(struct dvb_adapter *dvb_adap)
 {
 	struct spark_dvb_adapter_adddata *pDvbAddData;
 
-	pDvbAddData = kmalloc(sizeof(struct spark_dvb_adapter_adddata), GFP_KERNEL);
-
-	memset(pDvbAddData, 0, sizeof(struct spark_dvb_adapter_adddata));
+	pDvbAddData = kzalloc(sizeof(struct spark_dvb_adapter_adddata), GFP_KERNEL);
 
 	dvb_adap->priv = (void *)pDvbAddData;
+
+	spark_dvb_register_s1(dvb_adap, &pDvbAddData->pD3501_frontend_2, &pDvbAddData->qpsk_i2c_adap_2);
+	spark_dvb_register_s0(dvb_adap, &pDvbAddData->pD3501_frontend, &pDvbAddData->qpsk_i2c_adap);
 
 	eUnionTunerType = UnionTunerConfig(UnionTunerType);
 	spark_dvb_register_tc_by_type(dvb_adap, eUnionTunerType);
 
-#if 1
-	spark_dvb_register_s1(dvb_adap, &pDvbAddData->pD3501_frontend_2, &pDvbAddData->qpsk_i2c_adap_2);
-	spark_dvb_register_s0(dvb_adap, &pDvbAddData->pD3501_frontend, &pDvbAddData->qpsk_i2c_adap);
-#endif  /* 0 */
 	return 0;
 }
 
@@ -956,6 +892,9 @@ module_exit(spark_cleanup);
 
 module_param(UnionTunerType, charp, 0);
 MODULE_PARM_DESC(UnionTunerType, "Union Tuner Type (t, c)");
+
+module_param(debug_fe7162, int, 0);
+MODULE_PARM_DESC(debug_fe7162, "debug (very noisy!), default 0");
 
 /* EOF------------------------------------------------------------------------*/
 

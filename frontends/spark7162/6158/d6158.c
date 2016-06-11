@@ -351,6 +351,7 @@ static YW_ErrorType_T demod_d6158_ScanFreq(U8 Handle,
 	struct nim_device           *dev;
 	INT32 ret = 0;
 	struct NIM_Channel_Change param;
+	UINT8 *pPlpNum;
 
 	YWLIB_Memset((void*)&param, 0, sizeof(struct NIM_Channel_Change));
 
@@ -358,7 +359,7 @@ static YW_ErrorType_T demod_d6158_ScanFreq(U8 Handle,
 
 	Inst = TUNER_GetScanInfo(Handle);
 	Inst->Status = TUNER_INNER_STATUS_SCANNING;
-	UINT8 *pPlpNum = &(Inst->DriverParam.Ter.Param.T2PlpNum);
+	pPlpNum = &(Inst->DriverParam.Ter.Param.T2PlpNum);
 
 	dev = (struct nim_device *)Inst->userdata;
 	if (dev == NULL)

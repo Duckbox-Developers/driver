@@ -26,6 +26,8 @@
 
 
 #include "rt_config.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 #if defined(RT30xx) || defined(RT305x) || defined(RT3350) || defined(RT3352) || defined(RT2883) || defined(RT5350)
 #define ATE_BBP_REG_NUM	168
@@ -1041,7 +1043,8 @@ VOID DefaultATEAsicSwitchChannel(
 #endif /* defined(RT28xx) || defined(RT2880) || defined(RT2883) */
 #ifdef RTMP_RF_RW_SUPPORT
 	/* added to prevent RF register reading error */
-	UCHAR RFValue = 0, RFValue2 = 0;
+//	UCHAR RFValue = 0, RFValue2 = 0;
+	UCHAR RFValue = 0;
 #endif /* RTMP_RF_RW_SUPPORT */
 
 #ifdef DOT11N_SS3_SUPPORT
@@ -5355,7 +5358,7 @@ static INT ATETxPwrHandler(
 		by the MAC and the BBP R1
 	*/
 	CHAR		TotalDeltaPower = 0; 
-	CONFIGURATION_OF_TX_POWER_CONTROL_OVER_MAC CfgOfTxPwrCtrlOverMAC = {0};
+//	CONFIGURATION_OF_TX_POWER_CONTROL_OVER_MAC CfgOfTxPwrCtrlOverMAC = {0};
 	INT			i,j;
 	CHAR		Value;
 	ULONG		TxPwr[5];
@@ -9480,6 +9483,7 @@ INT Set_ATE_TSSI_CALIBRATION_Proc(
 	IN	PSTRING			arg)
 {    
 	RTMP_CHIP_ATE_TSSI_CALIBRATION(pAd, arg);
+	return 0;
 }
 
 
@@ -9488,14 +9492,15 @@ INT Set_ATE_TSSI_CALIBRATION_EX_Proc(
 	IN	PRTMP_ADAPTER	pAd,
 	IN	PSTRING			arg)
 {    
-	UCHAR		BbpData = 0, RFValue, RF27Value, RF28Value, BBP49Value;
-	CHAR		TssiRefPerChannel[14], TssiDeltaPerChannel[14];
-	USHORT		EEPData;
-	USHORT		ChannelPower;
-	UCHAR		BSSID_ADDR[MAC_ADDR_LEN] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
-	UCHAR		CurrentChannel;
+//	UCHAR		BbpData = 0, RFValue, RF27Value, RF28Value, BBP49Value;
+//	CHAR		TssiRefPerChannel[14], TssiDeltaPerChannel[14];
+//	USHORT		EEPData;
+//	USHORT		ChannelPower;
+//	UCHAR		BSSID_ADDR[MAC_ADDR_LEN] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
+//	UCHAR		CurrentChannel;
 	
 	RTMP_CHIP_ATE_TSSI_CALIBRATION_EXTEND(pAd, arg);
+	return 0;
 }
 #endif /* RTMP_INTERNAL_TX_ALC */
 
@@ -9646,3 +9651,4 @@ INT Set_ATE_TX_EVM_CALIBRATION_Fill_Proc(
 	return TRUE; 
 }
 #endif /* RT33xx */
+#pragma GCC diagnostic pop

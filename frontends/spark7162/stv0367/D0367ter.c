@@ -23,6 +23,9 @@
 #include "dvb_frontend.h"
 #include "D0367.h"
 
+extern int debug_fe7162;
+#define _DEBUG if (debug_fe7162)
+
 struct dvb_d0367_fe_ofdm_state
 {
 	struct i2c_adapter          *i2c;
@@ -140,6 +143,7 @@ static int dvb_d0367_fe_ofdm_read_status(struct dvb_frontend* fe,
 #endif  /* 0 */
 	{
 		bIsLocked = FE_367ofdm_lock(&state->DeviceMap, state->IOHandle);
+_DEBUG
 		printk("bIsLocked = %d\n", bIsLocked);
 	}
 	if (bIsLocked)
@@ -770,8 +774,11 @@ YW_ErrorType_T D0367ter_ScanFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
 	// printk("demod_d0367ter_ScanFreq #########Index = %d\n", Index);
 	pParams.Frequency = D0367ter_GeFrequency(DeviceMap, IOHandle);
 	pParams.ChannelBW = D0367ter_GeChannelBW(DeviceMap, IOHandle);
+_DEBUG
+{
 	printk("pParams.Frequency = %d\n", pParams.Frequency);
 	printk("pParams.ChannelBW = %d\n", pParams.ChannelBW);
+}
 	pParams.Crystal_Hz = DeviceMap->RegExtClk;
 	pParams.IF_IQ_Mode = FE_TER_NORMAL_IF_TUNER;//FE_TER_IQ_TUNER;  //most tuner is IF mode, stv4100 is I/Q mode
 	pParams.Inv        = FE_TER_INVERSION_AUTO; //FE_TER_INVERSION_AUTO

@@ -26,6 +26,8 @@
  */
 
 #include "rt_config.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 #ifdef RALINK_ATE
 
@@ -4261,8 +4263,9 @@ INT	Set_ATE_Help_Proc(
 VOID ATEAsicSwitchChannel(
     IN PRTMP_ADAPTER pAd) 
 {
-	UINT32 R2 = 0, R3 = DEFAULT_RF_TX_POWER, R4 = 0, Value = 0;
-	RTMP_RF_REGS *RFRegTable = NULL;
+//	UINT32 R2 = 0, R3 = DEFAULT_RF_TX_POWER, R4 = 0, Value = 0;
+	UINT32 Value = 0;
+//	RTMP_RF_REGS *RFRegTable = NULL;
 	UCHAR index = 0, BbpValue = 0, R66 = 0x30, Channel = 0;
 	CHAR TxPwer = 0, TxPwer2 = 0;
 
@@ -4616,7 +4619,7 @@ VOID ATEAsicSwitchChannel(
 		}
 	}
 #endif // RT28xx //
-    ;
+;
 
 
 	// Change BBP setting during switch from a->g, g->a
@@ -6472,4 +6475,4 @@ INT Set_RFWrite_Proc(
 
 
 #endif	// RALINK_ATE //
-
+#pragma GCC diagnostic pop

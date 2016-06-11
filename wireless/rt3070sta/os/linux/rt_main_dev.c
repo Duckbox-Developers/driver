@@ -952,20 +952,15 @@ BOOLEAN RtmpPhyNetDevExit(
  *******************************************************************************/
 int RtmpOSIRQRequest(IN PNET_DEV pNetDev)
 {
-	struct net_device *net_dev = pNetDev;
+//	struct net_device *net_dev = pNetDev;
 	PRTMP_ADAPTER pAd = NULL;
 	int retval = 0;
 	
 	GET_PAD_FROM_NET_DEV(pAd, pNetDev);	
 	
 	ASSERT(pAd);
-	
-
-
 	return retval; 
-	
 }
-
 
 int RtmpOSIRQRelease(IN PNET_DEV pNetDev)
 {

@@ -37,6 +37,8 @@
 */
 #include "rt_config.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 #define ADHOC_ENTRY_BEACON_LOST_TIME	(2*OS_HZ)	// 2 sec
 
@@ -2326,4 +2328,4 @@ VOID CntlChannelWidth(
 
 #endif // DOT11N_DRAFT3 //
 #endif // DOT11_N_SUPPORT //
-
+#pragma GCC diagnostic pop

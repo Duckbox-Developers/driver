@@ -26,7 +26,16 @@ static struct stv090x_config tt1600_stv090x_config = {
 	.ts1_mode		= STV090x_TSMODE_DVBCI	/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
 	.ts2_mode		= STV090x_TSMODE_NOTSET,
 	.repeater_level		= STV090x_RPTLEVEL_16,
-#elif defined(UFS912) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK)
+#elif defined(UFS912) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(SPARK)
 	.device			= STX7111,
 	.demod_mode		= STV090x_DUAL,
 	.xtal			= 30000000,
@@ -80,7 +89,16 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 
 	printk (KERN_INFO "[stv090x] %s >\n", __FUNCTION__);
 	
-#if defined(UFS912) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530) || defined(SPARK)
+#if defined(UFS912) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530) \
+ || defined(SPARK)
 	frontend = stv090x_attach(&tt1600_stv090x_config, cfg->i2c_adap, STV090x_DEMODULATOR_0, STV090x_TUNER1);
 #else
 	if (i== 0)
@@ -195,7 +213,15 @@ static struct dvb_frontend *init_stv090x_device (struct dvb_adapter *adapter, st
 	{
 		stpio_set_pin (cfg->tuner_enable_pin, !cfg->tuner_enable_act);
 		stpio_set_pin (cfg->tuner_enable_pin, cfg->tuner_enable_act);
-#if defined(UFS912) || defined(HS7110) || defined(HS7810A) || defined(HS7119) || defined(HS7819) || defined(ATEMIO520) || defined(ATEMIO530)
+#if defined(UFS912) \
+ || defined(HS7110) \
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530)
 /* give the tuner some time to power up. trial fix for tuner
  * not available after boot on some boxes.
  * 
@@ -256,11 +282,13 @@ struct plat_tuner_config tuner_resources[] = {
 		.tuner_enable = {2, 4, 1},
 	},
 #elif defined(HS7110) \
-|| defined(HS7810A) \
-|| defined(HS7119) \
-|| defined(HS7819) \
-|| defined(ATEMIO520) \
-|| defined(ATEMIO530)
+ || defined(HS7810A) \
+ || defined(HS7420) \
+ || defined(HS7429) \
+ || defined(HS7119) \
+ || defined(HS7819) \
+ || defined(ATEMIO520) \
+ || defined(ATEMIO530)
 	[0] = {
 		.adapter = 0,
 		.i2c_bus = 3,

@@ -20,6 +20,8 @@
 #include "avs_core.h"
 #include "fake_avs.h"
 
+static int debug = AVS_DEBUG;
+
 /* hold old values for mute/unmute */
 unsigned char t_mute;
 

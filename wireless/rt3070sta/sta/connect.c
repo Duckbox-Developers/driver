@@ -35,6 +35,8 @@
 	John			2004-08-08			Major modification from RT2560
 */
 #include "rt_config.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 UCHAR	CipherSuiteWpaNoneTkip[] = {
 		0x00, 0x50, 0xf2, 0x01,	// oui
@@ -3076,5 +3078,5 @@ VOID InitChannelRelatedValue(
 
 	RTMPSetAGCInitValue(pAd, pAd->CommonCfg.BBPCurrentBW);
 }
-
+#pragma GCC diagnostic pop
 

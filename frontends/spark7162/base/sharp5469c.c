@@ -8,6 +8,9 @@
 #include "dvb_frontend.h"
 #include "sharp5469c.h"
 
+extern int debug_fe7162;
+#define _DEBUG if (debug_fe7162)
+
 struct sharp5469c_state
 {
 	struct dvb_frontend     *fe;
@@ -50,6 +53,7 @@ static int sharp5469c_write(struct sharp5469c_state *state, u8 *buf, u8 length)
 	const struct sharp5469c_config *config = state->config;
 	int err = 0;
 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = length };
+_DEBUG
 	{
 		int i;
 		for (i = 0; i < length; i++)
@@ -85,6 +89,7 @@ static int sharp5469c_get_status(struct dvb_frontend *fe, u32 *status)
 
 	if (result[0] & 0x40)
 	{
+_DEBUG
 		printk(KERN_DEBUG "%s: Tuner Phase Locked\n", __func__);
 		*status = 1;
 	}
@@ -127,6 +132,7 @@ static  void sharp5469c_calculate_mop_divider(u32 freq, int *byte)
 	i64Freq += 5;
 	i64Freq /= 10;
 	data = (long)i64Freq;
+_DEBUG
 	printk(KERN_ERR "%s: data = %ld\n", __func__, data);
 	//data = (long)((freq + sharp5469c_calculate_mop_if())/sharp5469c_calculate_mop_step(byte) +0.5);
 	*(byte + 1) = (int)((data >> 8) & 0x7F); //byte2
@@ -282,6 +288,7 @@ static int sharp5469c_set_params(struct dvb_frontend* fe, struct dvb_frontend_pa
 			goto exit;
 	}
 	sharp5469c_get_status(fe, &status);
+_DEBUG
 	printk(KERN_ERR "%s: status = %d\n", __func__, status);
 
 	return 0;

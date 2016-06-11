@@ -2498,7 +2498,7 @@ VOID	NICInitAsicFromEEPROM(
 	UCHAR	BBPR3 = 0;
 #ifdef RT30xx
 	UCHAR			bbpreg = 0;
-	UCHAR			RFValue = 0;
+//	UCHAR			RFValue = 0;
 #endif // RT30xx //
 	
 	DBGPRINT(RT_DEBUG_TRACE, ("--> NICInitAsicFromEEPROM\n"));

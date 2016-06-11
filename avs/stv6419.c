@@ -42,6 +42,8 @@
 
 #define STV6419_MAX_REGS 6
 
+static int debug = AVS_DEBUG;
+
 static unsigned char regs[STV6419_MAX_REGS + 1]; /* range 0x01 to 0x05 */
 
 static unsigned char backup_regs[STV6419_MAX_REGS + 1];

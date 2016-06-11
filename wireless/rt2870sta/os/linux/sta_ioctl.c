@@ -58,6 +58,8 @@ extern ULONG    RTDebugLevel;
 #define IWE_STREAM_ADD_POINT(_A, _B, _C, _D, _E)		iwe_stream_add_point(_B, _C, _D, _E)
 #define IWE_STREAM_ADD_VALUE(_A, _B, _C, _D, _E, _F)	iwe_stream_add_value(_B, _C, _D, _E, _F)
 #endif
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 extern UCHAR    CipherWpa2Template[];
 
@@ -6036,6 +6038,6 @@ next:
 
 
 #endif // DBG //
-
+#pragma GCC diagnostic pop
 
 

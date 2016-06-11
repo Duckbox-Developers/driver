@@ -221,6 +221,7 @@ void set_reg(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, UINT bit
 void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, UINT bits)
 {
 	ULONG reg_address = 0x0;
+	ULONG map_base;
 	PDEBUG(" ...\n");
 	switch (base_address)
 	{
@@ -250,7 +251,7 @@ void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg
 		default:
 			return;
 	}
-	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
+	map_base = (ULONG)checked_ioremap(reg_address, 4);
 	if (!map_base)
 		return;
 	PDEBUG("reg_address=%lx, bits=%x\n", map_base, bits);
@@ -268,6 +269,7 @@ void set_reg_writeonly(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg
 void set_reg_writeonly16(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG reg, USHORT bits)
 {
 	ULONG reg_address = 0x0;
+	ULONG map_base;
 	PDEBUG(" ...\n");
 	switch (base_address)
 	{
@@ -297,7 +299,7 @@ void set_reg_writeonly16(SCI_CONTROL_BLOCK *sci, BASE_ADDR base_address, ULONG r
 		default:
 			return;
 	}
-	ULONG map_base = (ULONG)checked_ioremap(reg_address, 4);
+	map_base = (ULONG)checked_ioremap(reg_address, 4);
 	if (!map_base)
 		return;
 	PDEBUG("reg_address=%lx, bits=%x\n", map_base, bits);
@@ -1118,10 +1120,11 @@ void sci_exit(void)
 
 static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 {
-	PDEBUG(" ...\n");
-	/* Configure smart clock coming from smartclock generator */
 	U32 reg_address = 0;
 	U32 val = 0;
+
+	PDEBUG(" ...\n");
+	/* Configure smart clock coming from smartclock generator */
 #if defined(CONFIG_CPU_SUBTYPE_STB7100) \
  || defined(CONFIG_CPU_SUBTYPE_STX7100) \
  || defined(CONFIG_SH_ST_MB442) \
@@ -1232,9 +1235,10 @@ static int SCI_SetClockSource(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_ClockEnable(SCI_CONTROL_BLOCK *sci)
 {
-	PDEBUG(" ...\n");
 	U32 val;
 	U32 reg_address;
+
+	PDEBUG(" ...\n");
 	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4); // SCI_n_CLK_CTRL
 	if (!reg_address)
 		return 0;
@@ -1247,9 +1251,10 @@ static int SCI_ClockEnable(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_ClockDisable(SCI_CONTROL_BLOCK *sci)
 {
-	PDEBUG(" ...\n");
 	U32 val;
 	U32 reg_address;
+
+	PDEBUG(" ...\n");
 	reg_address = (U32)checked_ioremap(sci->base_address_sci + 4, 4); // SCI_n_CLK_CTRL
 	if (!reg_address)
 		return 0;
@@ -1262,16 +1267,18 @@ static int SCI_ClockDisable(SCI_CONTROL_BLOCK *sci)
 
 static int SCI_Set_Clock(SCI_CONTROL_BLOCK *sci)
 {
-	dprintk(1, "Setting clock to: %u.%02uMhz\n", sci->clk / 100, sci->clk % 100);
 	U32 val;
 	U32 reg_address;
 	U32 clkg = (U32)SCI_CLK_GLOBAL;
 	U32 clkdiv = clkg / (2 * 10000 * (sci->clk - 1)); //SCI_CLK_GLOBAL/(2*clk)
+
+	dprintk(1, "Setting clock to: %u.%02uMhz\n", sci->clk / 100, sci->clk % 100);
+
 	if ((clkdiv > 0) && (clkdiv < 0x1F))
 		val = clkdiv;
 	else
 		val = 0x0e;  /* 3.578 Mhz */
-	dprintk(2, "clkdiv = 0x%02X\n", val);
+	dprintk(2, "clkdiv = 0x%02X\n", (unsigned int)val);
 	reg_address = (U32)checked_ioremap(sci->base_address_sci, 4); // SCI_n_CLK_VAL
 	if (!reg_address)
 		return 0;
@@ -1903,9 +1910,11 @@ static ssize_t sci_read(struct file *file, char *buffer, size_t length, loff_t *
 {
 	ULONG sci_id;
 	ULONG real_num_bytes;
+	SCI_CONTROL_BLOCK *sci;
+
 	/* sci_id is the Minor Num of this device */
 	sci_id = MINOR(file->f_dentry->d_inode->i_rdev);
-	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
+	sci = &sci_cb[sci_id];
 	while (((sci->rx_wptr >= sci->rx_rptr) && (sci->card_detect == SCI_CARD_PRESENT)) ||
 			((sci->irq_mode == RX_FULL_TX_EMPTY_IRQ) && (sci->card_detect == SCI_CARD_PRESENT)))
 	{
@@ -1967,9 +1976,11 @@ static ssize_t sci_write(struct file *file, const char *buffer, size_t length, l
 {
 	ULONG sci_id;
 	INT count = 0;
+	SCI_CONTROL_BLOCK *sci;
+
 	/* sci_id is the Minor Num of this device */
 	sci_id = MINOR(file->f_dentry->d_inode->i_rdev);
-	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
+	sci = &sci_cb[sci_id];
 	while ((sci->tx_wptr != sci->tx_rptr) && (sci->card_detect == SCI_CARD_PRESENT))
 	{
 		if ((file->f_flags & O_NONBLOCK) >> 0xB)
@@ -2119,11 +2130,13 @@ int sci_ioctl(struct inode *inode,
 	INT rc = -1;
 	SCI_MODES sci_mode;
 	SCI_PARAMETERS sci_param;
+	SCI_CONTROL_BLOCK *sci;
 	UINT sci_rc;
+
 	sci_id = MINOR(inode->i_rdev);
 	if (sci_id >= SCI_NUMBER_OF_CONTROLLERS)
 		return -1;
-	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
+	sci = &sci_cb[sci_id];
 	switch (ioctl_num)
 	{
 		case IOCTL_SET_ONLY_RESET: // 100
@@ -2327,9 +2340,11 @@ int sci_ioctl(struct inode *inode,
 static unsigned int sci_poll(struct file *file, poll_table *wait)
 {
 	ULONG sci_id;
+	SCI_CONTROL_BLOCK *sci;
+
 	PDEBUG("POLL is called\n");
 	sci_id = MINOR(file->f_dentry->d_inode->i_rdev);
-	SCI_CONTROL_BLOCK *sci = &sci_cb[sci_id];
+	sci = &sci_cb[sci_id];
 	dprintk(7, "POLL is done, ret=%d\n", (sci->rx_rptr != sci->rx_wptr));
 	if (sci->rx_rptr != sci->rx_wptr)
 		return (POLLIN | POLLRDNORM);

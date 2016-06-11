@@ -697,7 +697,7 @@ struct setpwrmode_parm  {
 	u8	flag_dps_en; // 1: dps, 0: 32k
 	u8	bcn_rx_en;
 	u8	bcn_pass_cnt;	  // fw report one beacon information to driver  when it receives bcn_pass_cnt  beacons.
-	u8	bcn_to; 	  // beacon TO (ms). ¡§=0¡¨ no limit.
+	u8	bcn_to; 	  // beacon TO (ms). =0 no limit.
 	
 	u16	bcn_itv;
 	u8	app_itv; // only for VOIP mode.

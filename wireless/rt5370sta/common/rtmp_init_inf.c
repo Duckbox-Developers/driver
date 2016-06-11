@@ -24,10 +24,7 @@
  *                                                                       *
  *************************************************************************/
 
-
 #include	"rt_config.h"
-
-
 
 #ifdef CONFIG_STA_SUPPORT
 #ifdef PROFILE_STORE
@@ -501,7 +498,7 @@ err1:
 err0:
 #endif /* INF_AMAZON_SE */
 #ifdef ST
-err0:
+//err0:
 #endif /* ST */
 
 	DBGPRINT(RT_DEBUG_ERROR, ("!!! rt28xx Initialized fail !!!\n"));

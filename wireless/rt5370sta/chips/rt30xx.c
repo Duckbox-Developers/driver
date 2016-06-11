@@ -606,17 +606,17 @@ VOID RT30xxHaltAction(
 
 
 VOID RT30xx_ChipSwitchChannel(
-	IN PRTMP_ADAPTER 			pAd,
-	IN UCHAR					Channel,
-	IN BOOLEAN					bScan)
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR         Channel,
+	IN BOOLEAN       bScan)
 {
 	CHAR    TxPwer = 0, TxPwer2 = DEFAULT_RF_TX_POWER; /*Bbp94 = BBPR94_DEFAULT, TxPwer2 = DEFAULT_RF_TX_POWER;*/
 	UCHAR	index;
 	UINT32 	Value = 0; /*BbpReg, Value;*/
 	UCHAR 	RFValue;
 	UINT32 i = 0;
-	UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
-	BBP_R109_STRUC BbpR109 = {{0}};
+//	UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
+//	BBP_R109_STRUC BbpR109 = {{0}};
 
 
 	i = i; /* avoid compile warning */

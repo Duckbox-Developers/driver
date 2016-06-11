@@ -94,10 +94,16 @@ endif
 ifdef HS7110
  PART2=1
 endif
+ifdef HS7420
+ PART2=1
+endif
 ifdef HS7810A
  PART2=1
 endif
 ifdef HS7119
+ PART2=1
+endif
+ifdef HS7429
  PART2=1
 endif
 ifdef HS7819

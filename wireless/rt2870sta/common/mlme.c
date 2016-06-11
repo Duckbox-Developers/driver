@@ -39,6 +39,8 @@
 #include "rt_config.h"
 #include <stdarg.h>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 UCHAR	CISCO_OUI[] = {0x00, 0x40, 0x96};
 
@@ -8157,4 +8159,4 @@ BOOLEAN CHAN_PropertyCheck(
 
 	return FALSE;
 }
-
+#pragma GCC diagnostic pop

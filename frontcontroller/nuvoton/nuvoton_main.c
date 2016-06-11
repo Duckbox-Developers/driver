@@ -125,7 +125,9 @@ static unsigned char expectEventId   = 1;
 #define cGetTimeSize         9
 #define cGetWakeupReasonSize 5
 
-#if defined(ATEVIO7500) || defined(FORTIS_HDBOX) || defined(OCTAGON1008)
+#if defined(ATEVIO7500) \
+ || defined(FORTIS_HDBOX) \
+ || defined(OCTAGON1008)
 #define cMinimumSize         4
 #else
 #define cMinimumSize         5

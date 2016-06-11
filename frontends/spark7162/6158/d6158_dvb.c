@@ -501,8 +501,9 @@ struct dvb_frontend* dvb_d6158earda_attach(struct i2c_adapter* i2c, UINT8 system
 	{
 		if (SUCCESS == Tuner_API.nim_Tuner_Init(&priv->tuner_id, &Tuner_API.tuner_config))
 		{
-			printf("[%s]%d\n", __FUNCTION__, __LINE__);
 			DEM_WRITE_READ_TUNER ThroughMode;
+
+			printf("[%s]%d\n", __FUNCTION__, __LINE__);
 			priv->tc.nim_Tuner_Init = Tuner_API.nim_Tuner_Init;
 			priv->tc.nim_Tuner_Control = Tuner_API.nim_Tuner_Control;
 			priv->tc.nim_Tuner_Status   = Tuner_API.nim_Tuner_Status;

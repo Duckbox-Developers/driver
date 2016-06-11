@@ -52,6 +52,8 @@
 #include "avs_pio.h"
 #include "avs_none.h"
 
+static int debug = AVS_DEBUG;
+
 enum
 {
 	AK4705,

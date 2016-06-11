@@ -34,6 +34,9 @@
 
 extern IOARCH_HandleData_t IOARCH_Handle[TUNER_IOARCH_MAX_HANDLES];
 
+extern int debug_fe7162;
+#define _DEBUG if (debug_fe7162)
+
 #define REPEATER_ON    1
 #define REPEATER_OFF   0
 #define WAITFORLOCK    1
@@ -227,6 +230,7 @@ YW_ErrorType_T  ChipSetRegisters_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOA
 	else
 		return YWHAL_ERROR_INVALID_HANDLE;
 
+_DEBUG
 	if (DeviceMap->Error != 0)
 	{
 		printk("d0367ter DeviceMap->Error=%d,FirstRegAddr=%x\n", DeviceMap->Error, FirstRegAddr); //for test
@@ -284,6 +288,7 @@ YW_ErrorType_T ChipSetField_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_H
 	else
 		return YWHAL_ERROR_INVALID_HANDLE;
 
+_DEBUG
 	if (DeviceMap->Error != 0)
 	{
 		printk("d0376ter chip.c DeviceMap->Error=%d,FirstRegAddr=%x\n", DeviceMap->Error, FieldId); //for test

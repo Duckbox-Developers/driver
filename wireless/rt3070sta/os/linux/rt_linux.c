@@ -1646,12 +1646,14 @@ int RtmpOSNetDevAttach(
 	IN RTMP_OS_NETDEV_OP_HOOK *pDevOpHook)
 {	
 	int ret, rtnl_locked = FALSE;
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
+	struct net_device_ops *pNetDevOps;
+
+	pNetDevOps = pNetDev->netdev_ops;
+#endif
 
 	DBGPRINT(RT_DEBUG_TRACE, ("RtmpOSNetDevAttach()--->\n"));
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
-	struct net_device_ops *pNetDevOps = pNetDev->netdev_ops;
-#endif
 	// If we need hook some callback function to the net device structrue, now do it.
 	if (pDevOpHook)
 	{
@@ -1660,15 +1662,15 @@ int RtmpOSNetDevAttach(
 		GET_PAD_FROM_NET_DEV(pAd, pNetDev);	
 		
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,31)
-		pNetDevOps->ndo_open			= pDevOpHook->open;
-		pNetDevOps->ndo_stop			= pDevOpHook->stop;
-		pNetDevOps->ndo_start_xmit	= (HARD_START_XMIT_FUNC)(pDevOpHook->xmit);
-		pNetDevOps->ndo_do_ioctl		= pDevOpHook->ioctl;
+		pNetDevOps->ndo_open       = pDevOpHook->open;
+		pNetDevOps->ndo_stop       = pDevOpHook->stop;
+		pNetDevOps->ndo_start_xmit = (HARD_START_XMIT_FUNC)(pDevOpHook->xmit);
+		pNetDevOps->ndo_do_ioctl   = pDevOpHook->ioctl;
 #else
-		pNetDev->open			= pDevOpHook->open;
-		pNetDev->stop			= pDevOpHook->stop;
-		pNetDev->hard_start_xmit	= (HARD_START_XMIT_FUNC)(pDevOpHook->xmit);
-		pNetDev->do_ioctl		= pDevOpHook->ioctl;
+		pNetDev->open            = pDevOpHook->open;
+		pNetDev->stop            = pDevOpHook->stop;
+		pNetDev->hard_start_xmit = (HARD_START_XMIT_FUNC)(pDevOpHook->xmit);
+		pNetDev->do_ioctl        = pDevOpHook->ioctl;
 #endif
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)

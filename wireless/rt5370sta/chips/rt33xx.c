@@ -157,17 +157,18 @@ VOID RT33xx_Init(
 /*VOID AsicSetRxAnt(*/
 
 VOID RT33xxSetRxAnt(
-	IN PRTMP_ADAPTER	pAd,
-	IN UCHAR			Ant)
+	IN PRTMP_ADAPTER pAd,
+	IN UCHAR         Ant)
 {
 	UINT32	Value;
-	UINT32	x;
+//	UINT32	x;
 
-	if (/*(!pAd->NicConfig2.field.AntDiversity) ||*/
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RESET_IN_PROGRESS))	||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))	||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF)) ||
-		(RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST)))
+	if (/*(!pAd->NicConfig2.field.AntDiversity)
+	||*/
+	   (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RESET_IN_PROGRESS))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_RADIO_OFF))
+	|| (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST)))
 	{
 		return;
 	}
@@ -406,7 +407,7 @@ VOID RT33xx_ChipSwitchChannel(
 
 #ifdef RT30xx
 	UCHAR Tx0FinePowerCtrl = 0, Tx1FinePowerCtrl = 0;
-	BBP_R109_STRUC BbpR109 = {{0}};
+//	BBP_R109_STRUC BbpR109 = {{0}};
 #endif /* RT30xx */
 
 

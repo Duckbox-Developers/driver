@@ -37,6 +37,8 @@
 */
 #include "rt_config.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wframe-larger-than="
 
 #define ADHOC_ENTRY_BEACON_LOST_TIME	(2*OS_HZ)	// 2 sec
 
@@ -2318,4 +2320,4 @@ BOOLEAN ScanRunning(
 {
 	return (pAd->Mlme.SyncMachine.CurrState == SCAN_LISTEN) ? TRUE : FALSE;
 }
-
+#pragma GCC diagnostic pop

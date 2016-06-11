@@ -114,7 +114,7 @@ int MainVirtualIF_close(IN struct net_device *net_dev)
 #ifdef CONFIG_STA_SUPPORT
 	IF_DEV_CONFIG_OPMODE_ON_STA(pAd)
 	{
-		BOOLEAN 		Cancelled;
+//		BOOLEAN 		Cancelled;
 #ifdef QOS_DLS_SUPPORT
 		// send DLS-TEAR_DOWN message, 
 		if (pAd->CommonCfg.bDLSCapable)

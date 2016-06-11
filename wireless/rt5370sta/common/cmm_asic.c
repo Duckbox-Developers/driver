@@ -928,15 +928,15 @@ VOID AsicGetAutoAgcOffset(
 	CHAR		TotalDeltaPower = 0; /* (non-positive number) including the transmit power controlled by the MAC and the BBP R1*/
 #ifdef RTMP_INTERNAL_TX_ALC
 /*	UCHAR desiredTSSI = 0, currentTSSI = 0; */
-	PTX_POWER_TUNING_ENTRY_STRUCT pTxPowerTuningEntry = NULL;
-	UCHAR RFValue = 0;
+//	PTX_POWER_TUNING_ENTRY_STRUCT pTxPowerTuningEntry = NULL;
+//	UCHAR RFValue = 0;
 #endif /* RTMP_INTERNAL_TX_ALC */
 #if defined(RT5370) || defined(RT5372) || defined(RT5390) || defined(RT5392)
-	PTX_POWER_TUNING_ENTRY_STRUCT pTxPowerTuningEntry2 = NULL;
-	UCHAR BbpValue = 0;
-	INT CurrentTemp = 0;
+//	PTX_POWER_TUNING_ENTRY_STRUCT pTxPowerTuningEntry2 = NULL;
+//	UCHAR BbpValue = 0;
+//	INT CurrentTemp = 0;
 	INT LookupTableIndex = pAd->TxPowerCtrl.LookupTableIndex + TEMPERATURE_COMPENSATION_LOOKUP_TABLE_OFFSET;
-	BOOLEAN bTempSuccess = FALSE;	
+//	BOOLEAN bTempSuccess = FALSE;	
 #endif /* defined(RT5370) || defined(RT5372) || defined(RT5390) || defined(RT5392) */
 
 
@@ -1580,9 +1580,9 @@ VOID AsicAdjustTxPower(
 	CHAR 		desiredTssi = 0, currentTssi = 0;
 
 	ULONG TxPwrCfg8Over5392 = 0;
-	BOOLEAN		bAutoTxAgc = FALSE;
+//	BOOLEAN		bAutoTxAgc = FALSE;
 
-	PTX_PWR_CFG_STRUC pFinalTxPwr = NULL;
+//	PTX_PWR_CFG_STRUC pFinalTxPwr = NULL;
 
 
 #ifdef RTMP_INTERNAL_TX_ALC		

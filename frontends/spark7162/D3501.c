@@ -4510,7 +4510,7 @@ static int d3501_read_status(struct dvb_frontend *fe, enum fe_status *status)
 
 {
 	int     iRet;
-	int     iTunerLock;
+//	int     iTunerLock;
 	UINT8   lock;
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 

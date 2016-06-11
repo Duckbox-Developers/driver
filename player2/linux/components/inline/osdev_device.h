@@ -514,11 +514,13 @@ static inline OSDEV_Status_t OSDEV_DeRegisterDevice(OSDEV_Descriptor_t *Descript
 	Descriptor = OSDEV_DeviceDescriptors[Descriptor->MajorNumber];
 	OSDEV_DeviceDescriptors[Descriptor->MajorNumber] = NULL;
 	for (i = 0; i < OSDEV_MAX_OPENS; i++)
+	{
 		if (Descriptor->OpenContexts[i].Open)
 		{
 			OSDEV_Print("OSDEV_DeRegisterDevice - %s - Forcing close\n", Descriptor->Name);
 			Descriptor->CloseFn(&Descriptor->OpenContexts[i]);
 		}
+	}
 	if (Descriptor->Name != NULL)
 		OSDEV_Free(Descriptor->Name);
 	OSDEV_Free(Descriptor);
@@ -535,6 +537,7 @@ static inline OSDEV_Status_t OSDEV_LinkDevice(char *Name,
 //
 	OSDEV_Print("OSDEV_LinkDevice - %s, Major %d, Minor %d\n", Name, MajorNumber, MinorNumber);
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
+	{
 		if (!OSDEV_DeviceList[i].Valid)
 		{
 			OSDEV_DeviceList[i].MajorNumber = MajorNumber;
@@ -549,6 +552,7 @@ static inline OSDEV_Status_t OSDEV_LinkDevice(char *Name,
 			OSDEV_DeviceList[i].Valid = true;
 			return OSDEV_NoError;
 		}
+	}
 	OSDEV_Print("OSDEV_LinkDevice - All device links used.\n");
 	return OSDEV_Error;
 }
@@ -560,12 +564,14 @@ static inline OSDEV_Status_t OSDEV_UnLinkDevice(char *Name)
 	int i;
 //
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
+	{
 		if (OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0))
 		{
 			OSDEV_Free(OSDEV_DeviceList[i].Name);
 			OSDEV_DeviceList[i].Valid = false;
 			return OSDEV_NoError;
 		}
+	}
 	OSDEV_Print("OSDEV_UnLinkDevice - Device not found.\n");
 	return OSDEV_Error;
 }

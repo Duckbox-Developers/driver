@@ -570,7 +570,7 @@ static EMBX_ERROR slave_configureTransport(EMBXSHM_Transport_t *tpshm, EMBXSHM_M
 	tpshm->warpRangeAddr = config->warpRangeAddr;
 	tpshm->warpRangeSize = config->warpRangeSize;
     } else {
-	EMBX_ERROR res = EMBX_OS_VirtToPhys(tpshm->heap, (EMBX_UINT *)&tpshm->warpRangeAddr);
+//	EMBX_ERROR res = EMBX_OS_VirtToPhys(tpshm->heap, (EMBX_UINT *)&tpshm->warpRangeAddr);
 	EMBX_Assert(res != EMBX_INVALID_ARGUMENT);
 	tpshm->warpRangeSize = tpshm->heapSize;
     }
@@ -667,7 +667,6 @@ error_exit:
     EMBX_Info(EMBX_INFO_FACTORY, ("<<<setup_master_environment = %d\n", res));
     return res;
 }
-
 
 /*
  * setup the shared memory environment for the slave. this only

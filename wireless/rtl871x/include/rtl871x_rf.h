@@ -39,8 +39,8 @@
 
 
 #define NUM_CHANNELS	15
-//#define NUM_REGULATORYS	21
-#define NUM_REGULATORYS	1
+#define NUM_REGULATORYS	21
+//#define NUM_REGULATORYS	1
 
 //Country codes
 #define USA							0x555320
@@ -78,6 +78,7 @@ enum _RTL8712_RF_MIMO_CONFIG_{
 
 
 struct setphyinfo_parm;
+
 extern void init_phyinfo(_adapter  *adapter, struct setphyinfo_parm* psetphyinfopara);
 extern u8 writephyinfo_fw(_adapter *padapter, u32 addr);
 extern u32 ch2freq(u32 ch);

@@ -41,6 +41,8 @@
 #include "avs_core.h"
 #include "avs_pio.h"
 
+static int debug = AVS_DEBUG;
+
 /* hold old values for mute/unmute */
 static unsigned char t_mute;
 
@@ -54,7 +56,7 @@ static struct stpio_pin*	avs_mode;
 static struct stpio_pin*	avs_format;
 static struct stpio_pin*	avs_standby;
 static struct stpio_pin*	avs_mute;
-static struct stpio_pin*	avs_src;
+//static struct stpio_pin*	avs_src;
 
 int avs_pio_src_sel(int src)
 {
@@ -364,19 +366,19 @@ int avs_pio_init(void)
 	avs_format	= stpio_request_pin (11, 4, "avs_format", 	STPIO_OUT);
 	avs_standby	= stpio_request_pin (11, 3, "avs_standby", 	STPIO_OUT);
 	avs_mute	= stpio_request_pin (11, 2, "avs_mute", 	STPIO_OUT);
-	avs_src		= NULL;
+//	avs_src		= NULL;
 #elif defined(SPARK)
 	avs_mode	= stpio_request_pin (6, 0, "avs_mode", 		STPIO_OUT);
 	avs_format	= stpio_request_pin (6, 2, "avs_format", 	STPIO_OUT);
 	avs_standby	= stpio_request_pin (6, 1, "avs_standby", 	STPIO_OUT);
 	avs_mute	= stpio_request_pin (2, 4, "avs_mute", 		STPIO_OUT);
-	avs_src		= NULL;
+//	avs_src		= NULL;
 #elif defined(HS7420) || defined(HS7429) || defined(HS7810A) || defined(HS7819)
 	avs_format	= stpio_request_pin (6, 5, "avs0", STPIO_OUT);
 	avs_standby	= stpio_request_pin (6, 6, "avs1", STPIO_OUT);
 	avs_mode	= stpio_request_pin (6, 4, "avs2", STPIO_OUT);
 	avs_mute	= NULL;
-	avs_src		= NULL;
+//	avs_src		= NULL;
 #else
 	return 0;
 #endif

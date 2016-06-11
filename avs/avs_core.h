@@ -69,28 +69,29 @@
 #define AVSIOGSCARTPIN8	(36|AVSIOGET)
 #define AVSIOSTANDBY    (99|AVSIOSET)
  
-#define SAAIOSENC               4 /* set encoder (pal/ntsc)             */
-#define SAAIOSMODE              5 /* set mode (rgb/fbas/svideo/component) */
-#define SAAIOSWSS              10 /* set wide screen signaling data */
-#define SAAIOSSRCSEL           11 /* source selection(enc/scart) */
+#define SAAIOSENC          4 /* set encoder (pal/ntsc)             */
+#define SAAIOSMODE         5 /* set mode (rgb/fbas/svideo/component) */
+#define SAAIOSWSS         10 /* set wide screen signaling data */
+#define SAAIOSSRCSEL      11 /* source selection(enc/scart) */
  
-#define SAA_MODE_RGB    0
-#define SAA_MODE_FBAS   1
-#define SAA_MODE_SVIDEO 2
+#define SAA_MODE_RGB       0
+#define SAA_MODE_FBAS      1
+#define SAA_MODE_SVIDEO    2
 #define SAA_MODE_COMPONENT 3
  
-#define SAA_NTSC                0
-#define SAA_PAL                 1
-#define SAA_PAL_M               2
+#define SAA_NTSC           0
+#define SAA_PAL            1
+#define SAA_PAL_M          2
  
-#define SAA_WSS_43F     0
-#define SAA_WSS_169F    7
-#define SAA_WSS_OFF     8
+#define SAA_WSS_43F        0
+#define SAA_WSS_169F       7
+#define SAA_WSS_OFF        8
 
-#define SAA_SRC_ENC   0
-#define SAA_SRC_SCART 1
+#define SAA_SRC_ENC        0
+#define SAA_SRC_SCART      1
 
-static int debug=0;
+#define AVS_DEBUG          0
+
 
 #define dprintk(fmt...) \
 	do { \

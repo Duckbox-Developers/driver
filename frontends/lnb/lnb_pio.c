@@ -44,7 +44,7 @@ int lnb_pio_command_kernel(unsigned int cmd, void *arg)
 		{
 			dprintk(10, "Switch LNB power off\n");
 
-			if(_12v_isON == 0)
+			if (_12v_isON == 0)
 			{
 				if (lnb_power)
 				{

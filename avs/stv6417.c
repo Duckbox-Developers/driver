@@ -40,6 +40,8 @@
 
 #define STV6417_MAX_REGS 10
 
+static int debug = AVS_DEBUG;
+
 static unsigned char regs[STV6417_MAX_REGS + 1]; /* range 0x01 to 0x10 */
 
 static unsigned char backup_regs[STV6417_MAX_REGS + 1];
@@ -356,9 +358,13 @@ inline int stv6417_set_asw( struct i2c_client *client, int sw, int type )
 			tmp_tv_value  = get_bits(regs, AOS_TV_REG,  AOS_TV_START,  AOS_TV_SIZE);
 			tmp_vcr_value = get_bits(regs, AOS_VCR_REG, AOS_VCR_START, AOS_VCR_SIZE);
 			if ( vcr_value == 0xff )
+			{
 				set_bits(regs, cReg1, type, 3, 2);
+			}
 			else
+			{
 				vcr_value = type;
+			}
 			break;
 		case 1:
 		case 2:

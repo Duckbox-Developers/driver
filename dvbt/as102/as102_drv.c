@@ -159,7 +159,7 @@ static int as10x_pid_filter(struct as102_dev_t *dev,
 static int as102_dvb_dmx_start_feed(struct dvb_demux_feed *dvbdmxfeed)
 {
 	int ret = 0;
-	struct dvb_demux *demux = dvbdmxfeed->demux;
+//	struct dvb_demux *demux = dvbdmxfeed->demux;
 	struct as102_dev_t *as102_dev = as102_dev_;//demux->priv;
 
 	ENTER();
@@ -183,7 +183,7 @@ static int as102_dvb_dmx_start_feed(struct dvb_demux_feed *dvbdmxfeed)
 
 static int as102_dvb_dmx_stop_feed(struct dvb_demux_feed *dvbdmxfeed)
 {
-	struct dvb_demux *demux = dvbdmxfeed->demux;
+//	struct dvb_demux *demux = dvbdmxfeed->demux;
 	struct as102_dev_t *as102_dev = as102_dev_;//demux->priv;
 
 	ENTER();
