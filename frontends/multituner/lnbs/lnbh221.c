@@ -105,7 +105,6 @@ u16 lnbh221_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t 
 	{
 		case SEC_VOLTAGE_OFF:
 		{
-#if defined(IPBOX9900)
 			if(_12v_isON == 0)
 				writereg_lnb_supply(state, state->lnb[3]);
 			break;
