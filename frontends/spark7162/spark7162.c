@@ -549,7 +549,9 @@ int spark_dvb_register_c(struct dvb_adapter *dvb_adap,
 		i2c_put_adapter(pI2c);
 		return -1;
 	}
-
+	
+	pFrontend->id = 3;
+	
 	if (dvb_register_frontend(dvb_adap, pFrontend))
 	{
 		printk("dvb-d0367 c: Frontend registration failed!\n");
@@ -788,11 +790,11 @@ int spark7162_register_frontend(struct dvb_adapter *dvb_adap)
 
 	dvb_adap->priv = (void *)pDvbAddData;
 
-	spark_dvb_register_s1(dvb_adap, &pDvbAddData->pD3501_frontend_2, &pDvbAddData->qpsk_i2c_adap_2);
-	spark_dvb_register_s0(dvb_adap, &pDvbAddData->pD3501_frontend, &pDvbAddData->qpsk_i2c_adap);
-
 	eUnionTunerType = UnionTunerConfig(UnionTunerType);
 	spark_dvb_register_tc_by_type(dvb_adap, eUnionTunerType);
+
+	spark_dvb_register_s1(dvb_adap, &pDvbAddData->pD3501_frontend_2, &pDvbAddData->qpsk_i2c_adap_2);
+	spark_dvb_register_s0(dvb_adap, &pDvbAddData->pD3501_frontend, &pDvbAddData->qpsk_i2c_adap);
 
 	return 0;
 }
