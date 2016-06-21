@@ -92,7 +92,8 @@
 
 #define PART_REV 0x63 // The current driver works only with PART=6 and REV=3 chips
 
-struct mt2060_priv {
+struct mt2060_priv
+{
 	struct mt2060_config *cfg;
 	struct i2c_adapter   *i2c;
 

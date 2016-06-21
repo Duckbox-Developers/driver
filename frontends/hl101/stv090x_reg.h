@@ -2503,7 +2503,7 @@
 #define STV090x_TSTRES0					0xFF11
 #define STV090x_OFFST_FRESFEC_FIELD			7
 #define STV090x_WIDTH_FRESFEC_FIELD			1
-#define STV090x_OFFST_FRESVIT1_FIELD                    5 
+#define STV090x_OFFST_FRESVIT1_FIELD                    5
 #define STV090x_WIDTH_FRESVIT1_FIELD                    1
 
 #define STV090x_Px_TSTDISRX(__x)			(0xFF67 - (__x - 1) * 0x2)

@@ -105,15 +105,15 @@ YW_ErrorType_T ChipSetOneRegister_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IO
 }
 
 void D0367qam_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
-					IOARCH_Handle_t IOHandle,
-					unsigned char *pcData, int nbdata)
+		    IOARCH_Handle_t IOHandle,
+		    unsigned char *pcData, int nbdata)
 {
 	D0367_write(DeviceMap, IOHandle, pcData, nbdata);
 }
 
 void D0367qam_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				   IOARCH_Handle_t IOHandle,
-				   unsigned char *pcData, int NbRegs)
+		   IOARCH_Handle_t IOHandle,
+		   unsigned char *pcData, int NbRegs)
 {
 	D0367_read(DeviceMap, IOHandle, pcData, NbRegs);
 }
@@ -230,7 +230,7 @@ YW_ErrorType_T  ChipSetRegisters_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOA
 	else
 		return YWHAL_ERROR_INVALID_HANDLE;
 
-_DEBUG
+	_DEBUG
 	if (DeviceMap->Error != 0)
 	{
 		printk("d0367ter DeviceMap->Error=%d,FirstRegAddr=%x\n", DeviceMap->Error, FirstRegAddr); //for test
@@ -288,7 +288,7 @@ YW_ErrorType_T ChipSetField_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_H
 	else
 		return YWHAL_ERROR_INVALID_HANDLE;
 
-_DEBUG
+	_DEBUG
 	if (DeviceMap->Error != 0)
 	{
 		printk("d0376ter chip.c DeviceMap->Error=%d,FirstRegAddr=%x\n", DeviceMap->Error, FieldId); //for test
@@ -518,10 +518,10 @@ U8 ChipGetField_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHa
 YW_ErrorType_T ChipSetFieldImage_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t    IOHandle, U32 FieldId, S32 Value)
 {
 	S32 regIndex,
-		mask,
-		sign,
-		bits, regAddress,
-		pos;
+	    mask,
+	    sign,
+	    bits, regAddress,
+	    pos;
 
 	if (DeviceMap != NULL)
 	{
@@ -566,10 +566,10 @@ S32 ChipGetFieldImage_0367qam(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_
 {
 	S32 value = 0xFF;
 	S32 regIndex,
-		mask,
-		sign,
-		bits, regAddress,
-		pos;
+	    mask,
+	    sign,
+	    bits, regAddress,
+	    pos;
 
 	if (DeviceMap != NULL)
 	{

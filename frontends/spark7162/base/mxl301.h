@@ -13,8 +13,8 @@ struct MXL301_config
 	u32 TunerStep;
 };
 extern struct dvb_frontend *mxl301_attach(struct dvb_frontend *fe,
-		const struct MXL301_config *config,
-		struct i2c_adapter *i2c);
+					  const struct MXL301_config *config,
+					  struct i2c_adapter *i2c);
 
 #endif
 

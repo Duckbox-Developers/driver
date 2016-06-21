@@ -29,7 +29,8 @@
 #define msb(x) (((x) >> 8) & 0xff)
 #define lsb(x) ((x) & 0xff)
 
-enum zl10353_reg_addr {
+enum zl10353_reg_addr
+{
 	INTERRUPT_0        = 0x00,
 	INTERRUPT_1        = 0x01,
 	INTERRUPT_2        = 0x02,

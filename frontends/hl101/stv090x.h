@@ -32,34 +32,40 @@
 //#define	TUNER_IX7306
 #define	TUNER_STB6110
 
-enum stv090x_demodulator {
+enum stv090x_demodulator
+{
 	STV090x_DEMODULATOR_0 = 1,
 	STV090x_DEMODULATOR_1
 };
 
-enum stv090x_device {
+enum stv090x_device
+{
 	STV0903	=  0,
 	STV0900,
 };
 
-enum stv090x_mode {
+enum stv090x_mode
+{
 	STV090x_DUAL = 0,
 	STV090x_SINGLE
 };
 
-enum stv090x_tsmode {
+enum stv090x_tsmode
+{
 	STV090x_TSMODE_SERIAL_PUNCTURED	= 1,
 	STV090x_TSMODE_SERIAL_CONTINUOUS,
 	STV090x_TSMODE_PARALLEL_PUNCTURED,
 	STV090x_TSMODE_DVBCI
 };
 
-enum stv090x_clkmode {
+enum stv090x_clkmode
+{
 	STV090x_CLK_INT = 0, /* Clk i/p = CLKI */
 	STV090x_CLK_EXT = 2 /* Clk i/p = XTALI */
 };
 
-enum stv090x_i2crpt {
+enum stv090x_i2crpt
+{
 	STV090x_RPTLEVEL_256	= 0,
 	STV090x_RPTLEVEL_128	= 1,
 	STV090x_RPTLEVEL_64	= 2,
@@ -70,12 +76,14 @@ enum stv090x_i2crpt {
 	STV090x_RPTLEVEL_2	= 7,
 };
 
-enum stv090x_adc_range {
+enum stv090x_adc_range
+{
 	STV090x_ADC_2Vpp	= 0,
 	STV090x_ADC_1Vpp	= 1
 };
 
-struct stv090x_config {
+struct stv090x_config
+{
 	enum stv090x_device	device;
 	enum stv090x_mode	demod_mode;
 	enum stv090x_clkmode	clk_mode;
@@ -99,17 +107,17 @@ struct stv090x_config {
 
 	bool diseqc_envelope_mode;
 
-	int (*tuner_init) (struct dvb_frontend *fe);
-    int (*tuner_sleep) (struct dvb_frontend *fe);
-	int (*tuner_set_mode) (struct dvb_frontend *fe, enum tuner_mode mode);
-	int (*tuner_set_frequency) (struct dvb_frontend *fe, u32 frequency);
-	int (*tuner_get_frequency) (struct dvb_frontend *fe, u32 *frequency);
-	int (*tuner_set_bandwidth) (struct dvb_frontend *fe, u32 bandwidth);
-	int (*tuner_get_bandwidth) (struct dvb_frontend *fe, u32 *bandwidth);
-	int (*tuner_set_bbgain) (struct dvb_frontend *fe, u32 gain);
-	int (*tuner_get_bbgain) (struct dvb_frontend *fe, u32 *gain);
-	int (*tuner_set_refclk)  (struct dvb_frontend *fe, u32 refclk);
-	int (*tuner_get_status) (struct dvb_frontend *fe, u32 *status);
+	int (*tuner_init)(struct dvb_frontend *fe);
+	int (*tuner_sleep)(struct dvb_frontend *fe);
+	int (*tuner_set_mode)(struct dvb_frontend *fe, enum tuner_mode mode);
+	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
+	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
+	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
+	int (*tuner_get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
+	int (*tuner_set_bbgain)(struct dvb_frontend *fe, u32 gain);
+	int (*tuner_get_bbgain)(struct dvb_frontend *fe, u32 *gain);
+	int (*tuner_set_refclk)(struct dvb_frontend *fe, u32 refclk);
+	int (*tuner_get_status)(struct dvb_frontend *fe, u32 *status);
 };
 
 

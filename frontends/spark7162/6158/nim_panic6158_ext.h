@@ -58,7 +58,7 @@ INT32 nim_panic6158_channel_change_earda(struct nim_device *dev, struct NIM_Chan
 INT32 nim_panic6158_ioctl_earda(struct nim_device *dev, INT32 cmd, UINT32 param);
 INT32 nim_panic6158_attach_earda(UINT8 Handle, PCOFDM_TUNER_CONFIG_API pConfig, TUNER_OpenParams_T *OpenParams);
 
-INT32 DMD_TCB_WriteRead(void* nim_dev_priv, UINT8   tuner_address , UINT8* wdata , int wlen , UINT8* rdata , int rlen);
+INT32 DMD_TCB_WriteRead(void *nim_dev_priv, UINT8   tuner_address , UINT8 *wdata , int wlen , UINT8 *rdata , int rlen);
 
 /********************************  º¯Êý¶¨Òå************************************/
 

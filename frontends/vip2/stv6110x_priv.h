@@ -30,30 +30,30 @@
 #define FE_DEBUGREG				4
 
 #define dprintk(__y, __z, format, arg...) do {						\
-	if (__z) {									\
-		if	((verbose > FE_ERROR) && (verbose > __y))			\
-			printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
-		else if	((verbose > FE_NOTICE) && (verbose > __y))			\
-			printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
-		else if ((verbose > FE_INFO) && (verbose > __y))			\
-			printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
-		else if ((verbose > FE_DEBUG) && (verbose > __y))			\
-			printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
-	} else {									\
-		if (verbose > __y)							\
-			printk(format, ##arg);						\
-	}										\
-} while (0)
+		if (__z) {									\
+			if	((verbose > FE_ERROR) && (verbose > __y))			\
+				printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
+			else if	((verbose > FE_NOTICE) && (verbose > __y))			\
+				printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
+			else if ((verbose > FE_INFO) && (verbose > __y))			\
+				printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
+			else if ((verbose > FE_DEBUG) && (verbose > __y))			\
+				printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
+		} else {									\
+			if (verbose > __y)							\
+				printk(format, ##arg);						\
+		}										\
+	} while (0)
 
 
 #define STV6110x_SETFIELD(mask, bitf, val)				\
 	(mask = (mask & (~(((1 << STV6110x_WIDTH_##bitf) - 1) <<	\
-				  STV6110x_OFFST_##bitf))) | 		\
-			  (val << STV6110x_OFFST_##bitf))
+			   STV6110x_OFFST_##bitf))) | 		\
+		(val << STV6110x_OFFST_##bitf))
 
 #define STV6110x_GETFIELD(bitf, val)					\
 	((val >> STV6110x_OFFST_##bitf) & 				\
-	((1 << STV6110x_WIDTH_##bitf) - 1))
+	 ((1 << STV6110x_WIDTH_##bitf) - 1))
 
 #define MAKEWORD16(a, b)			(((a) << 8) | (b))
 
@@ -65,7 +65,8 @@
 #define REFCLOCK_kHz				(stv6110x->config->refclk /    1000)
 #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
 
-struct stv6110x_state {
+struct stv6110x_state
+{
 	struct i2c_adapter		*i2c;
 	const struct stv6110x_config	*config;
 	u8 				regs[8];

@@ -66,11 +66,11 @@ static struct vz7903_config vz7903_i2cConfig =
 };
 
 void frontend_find_TunerDevice(enum tuner_type *ptunerType, struct i2c_adapter *i2c,
-							   struct dvb_frontend *frontend)
+			       struct dvb_frontend *frontend)
 {
 	int identify = 0;
 
-	identify = tuner_Sharp7903_Identify(frontend, &vz7903_i2cConfig, (void*)i2c);
+	identify = tuner_Sharp7903_Identify(frontend, &vz7903_i2cConfig, (void *)i2c);
 	if (identify == 0)
 	{
 		printk("tuner_Sharp7903 is Identified\n");
@@ -89,7 +89,7 @@ void frontend_find_TunerDevice(enum tuner_type *ptunerType, struct i2c_adapter *
 	printk("device unknown\n");
 }
 
-static struct dvb_frontend * frontend_init(struct core_config *cfg, int i)
+static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 {
 	struct stv6110x_devctl *ctl;
 	struct dvb_frontend *frontend = NULL;
@@ -191,7 +191,7 @@ static void frontend_term(struct dvb_frontend *frontend)
 
 static struct dvb_frontend *
 init_stv090x_device(struct dvb_adapter *adapter,
-					struct plat_tuner_config *tuner_cfg, int i)
+		    struct plat_tuner_config *tuner_cfg, int i)
 {
 	struct fe_core_state *state;
 	struct dvb_frontend *frontend;
@@ -228,7 +228,7 @@ init_stv090x_device(struct dvb_adapter *adapter,
 	}
 
 	printk(KERN_INFO "%s: Call dvb_register_frontend (adapter = 0x%x)\n",
-		   __FUNCTION__, (unsigned int) adapter);
+	       __FUNCTION__, (unsigned int) adapter);
 
 	if (dvb_register_frontend(adapter, frontend))
 	{
@@ -287,7 +287,7 @@ int stv090x_register_frontend(struct dvb_adapter *dvb_adap)
 
 	printk(KERN_INFO "%s: stv090x DVB: 0.11 \n", __FUNCTION__);
 
-	core[i] = (struct core*) kmalloc(sizeof(struct core), GFP_KERNEL);
+	core[i] = (struct core *) kmalloc(sizeof(struct core), GFP_KERNEL);
 	if (!core[i])
 		return 0;
 

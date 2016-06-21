@@ -73,10 +73,10 @@ Return:         INT32, operation status code; configuration successful return wi
 //add by bill for tuner standby function
 #define NIM_TUNER_SET_STANDBY_CMD   0xffffffff
 
-typedef INT32(*INTERFACE_DEM_WRITE_READ_TUNER)(void * nim_dev_priv, UINT8 tuner_address, UINT8 *wdata, int wlen, UINT8* rdata, int rlen);
+typedef INT32(*INTERFACE_DEM_WRITE_READ_TUNER)(void *nim_dev_priv, UINT8 tuner_address, UINT8 *wdata, int wlen, UINT8 *rdata, int rlen);
 typedef struct
 {
-	void * nim_dev_priv; //for support dual demodulator.
+	void *nim_dev_priv;  //for support dual demodulator.
 	//The tuner can not be directly accessed through I2C,
 	//tuner driver summit data to dem, dem driver will Write_Read tuner.
 //    INT32  (*Dem_Write_Read_Tuner)(void * nim_dev_priv, UINT8 slv_addr, UINT8 *wdata, int wlen, UINT8* rdata, int rlen);
@@ -194,7 +194,7 @@ struct COFDM_TUNER_CONFIG_EXT
 struct COFDM_TUNER_CONFIG_API
 {
 	struct COFDM_TUNER_CONFIG_DATA config_data;
-	INT32(*nim_Tuner_Init)(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+	INT32(*nim_Tuner_Init)(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 	INT32(*nim_Tuner_Control)(UINT32 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 cmd_type);
 	INT32(*nim_Tuner_Status)(UINT32 tuner_id, UINT8 *lock);
 	union
@@ -232,27 +232,27 @@ typedef enum//For  TSI  select
 	NIM_1_SSI_1
 } NIM_TSI_Setting ;
 
-extern INT32 tun_ed5065_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_ed5065_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_ed5065_status(UINT32 tuner_idx, UINT8 *lock);
 extern INT32 tun_ed5065_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 
-extern INT32 tun_td1611alf_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_td1611alf_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_td1611alf_status(UINT32 tuner_idx, UINT8 *lock);
 extern INT32 tun_td1611alf_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 
-extern INT32 tun_ed6465_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_ed6465_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_ed6465_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_ed6465_status(UINT32 tuner_idx, UINT8 *lock);
 
-extern INT32 tun_ed5265_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_ed5265_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_ed5265_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_ed5265_status(UINT32 tuner_idx, UINT8 *lock);
 
-extern INT32 tun_mxl5007_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_mxl5007_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_mxl5007_control(UINT32 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_mxl5007_status(UINT32 tuner_id, UINT8 *lock);
 
-extern INT32 tun_mxl603_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_mxl603_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_mxl603_control(UINT32 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_mxl603_status(UINT32 tuner_id, UINT8 *lock);
 extern INT32 tun_mxl603_command(UINT32 tuner_id, INT32 cmd, UINT32 param);
@@ -263,89 +263,89 @@ extern INT32 tun_mxl603_rfpower(UINT32 tuner_id, INT16 *rf_power_dbm);
 //extern UINT32 SYS_TUN_TYPE;
 //extern UINT32 SYS_TUN_BASE_ADDR;
 
-extern INT32 nim_mt2060_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_mt2060_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_mt2060_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 nim_mt2060_status(UINT8 *lock);
 
-extern INT32 tun_SCH201A_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_SCH201A_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_SCH201A_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_SCH201A_status(UINT8 *lock);
 
-extern INT32 tun_TD1336_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_TD1336_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_TD1336_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_TD1336_status(UINT8 *lock);
 
-extern INT32 tun_DTT76806_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76806_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76806_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76806_status(UINT8 *lock);
 
-extern INT32 tun_DTT76801_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76801_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76801_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76801_status(UINT8 *lock);
 
-extern INT32 tun_DTT76809_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76809_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76809_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76809_status(UINT8 *lock);
 
-extern INT32 tun_uba00ap_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_uba00ap_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_uba00ap_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_uba00ap_status(UINT8 *lock);
 
-extern INT32 tun_DPH261D_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DPH261D_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DPH261D_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DPH261D_status(UINT8 *lock);
 
-extern INT32 nim_mt2131_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_mt2131_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_mt2131_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 nim_mt2131_status(UINT8 *lock);
 
-extern INT32 tun_dtt75300_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_dtt75300_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_dtt75300_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_dtt75300_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32 nim_DTT7596_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_DTT7596_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  nim_DTT7596_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  nim_DTT7596_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32    nim_DTF8570_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_DTF8570_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_DTF8570_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_DTF8570_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32    nim_DTT75411_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_DTT75411_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_DTT75411_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_DTT75411_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32   tun_edt1022_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32   tun_edt1022_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_edt1022_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_edt1022_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32   tun_td1611alf_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32   tun_td1611alf_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_td1611alf_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_td1611alf_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32 tun_ed5065_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_ed5065_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_ed5065_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_ed5065_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32    nim_TDA18211_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_TDA18211_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_TDA18211_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_TDA18211_status(UINT8 tuner_id, UINT8 *lock);
 
 #if ( SYS_PROJECT_FE == PROJECT_FE_DVBT)
-extern INT32    tun_mxl5005_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5005_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_mxl5005_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_mxl5005_status(UINT8 tuner_id, UINT8 *lock);
 
-extern INT32    tun_mxl5007_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5007_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_mxl5007_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_mxl5007_status(UINT8 tuner_id, UINT8 *lock);
 
 #else
-extern INT32    tun_mxl5005_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5005_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_mxl5005_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_mxl5005_status(UINT8 *lock);
 
-extern INT32  tun_mxl5007_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32  tun_mxl5007_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_mxl5007_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_mxl5007_status(UINT8 *lock);
 
@@ -356,70 +356,70 @@ extern INT32  tun_mxl5005_status(UINT8 *lock);*/
 
 //#else
 #if (SYS_TUN_MODULE==SH201A)
-extern INT32 tun_SCH201A_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_SCH201A_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_SCH201A_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_SCH201A_status(UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==TD1336)
-extern INT32 tun_TD1336_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_TD1336_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_TD1336_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_TD1336_status(UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==DTT76806)
-extern INT32 tun_DTT76806_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76806_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76806_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76806_status(UINT8 *lock);
 
 #elif ((SYS_TUN_MODULE==DTT76801)||(SYS_TUN_MODULE==DTT76852))
-extern INT32 tun_DTT76801_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76801_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76801_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76801_status(UINT8 *lock);
 #elif (SYS_TUN_MODULE==DTT76809)
-extern INT32 tun_DTT76809_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DTT76809_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DTT76809_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DTT76809_status(UINT8 *lock);
 
 #elif( (SYS_TUN_MODULE==UBA00AP)||(SYS_TUN_MODULE==UBD00AL))
-extern INT32 tun_uba00ap_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_uba00ap_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_uba00ap_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_uba00ap_status(UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==SAMSUNG_DPH261D)
-extern INT32 tun_DPH261D_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_DPH261D_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_DPH261D_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_DPH261D_status(UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==MXL5005)
 #if ( SYS_PROJECT_FE == PROJECT_FE_DVBT)
-extern INT32    tun_mxl5005_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5005_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_mxl5005_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_mxl5005_status(UINT8 tuner_id, UINT8 *lock);
 #else
-extern INT32    tun_mxl5005_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5005_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_mxl5005_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_mxl5005_status(UINT8 *lock);
 #endif
 #elif (SYS_TUN_MODULE==MXL5007)
 #if ( SYS_PROJECT_FE == PROJECT_FE_DVBT)
-extern INT32    tun_mxl5007_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_mxl5007_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_mxl5007_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_mxl5007_status(UINT8 tuner_id, UINT8 *lock);
 #else
-extern INT32  tun_mxl5007_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32  tun_mxl5007_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_mxl5007_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_mxl5007_status(UINT8 *lock);
 #endif
 #elif (SYS_TUN_MODULE==MT2060)
-extern INT32 nim_mt2060_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_mt2060_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_mt2060_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 nim_mt2060_status(UINT8 *lock);
 #elif (SYS_TUN_MODULE==MT2131)
-extern INT32 nim_mt2131_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_mt2131_init(struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_mt2131_control(UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 nim_mt2131_status(UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==DTT75300)
-extern INT32 tun_dtt75300_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_dtt75300_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tun_dtt75300_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tun_dtt75300_status(UINT8 tuner_id, UINT8 *lock);
 /*#elif (SYS_TUN_MODULE==MXL5005)
@@ -427,12 +427,12 @@ extern INT32 tun_mxl5005_init(struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
 extern INT32  tun_mxl5005_control(UINT32 freq, UINT8 bandwidth,UINT8 AGC_Time_Const,UINT8 *data,UINT8 _i2c_cmd);
 extern INT32  tun_mxl5005_status(UINT8 *lock);*/
 #elif (SYS_TUN_MODULE==DTT7596)
-extern INT32 nim_DTT7596_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_DTT7596_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  nim_DTT7596_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  nim_DTT7596_status(UINT8 tuner_id, UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==DTF8570)
-extern INT32    nim_Tuner_Init = nim_DTF8570_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_Tuner_Init = nim_DTF8570_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_Tuner_Control = nim_DTF8570_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_Tuner_Status = nim_DTF8570_status(UINT8 tuner_id, UINT8 *lock);
 
@@ -445,28 +445,28 @@ extern INT32    tun_mxl5007_init(UINT32 tuner_id,struct COFDM_TUNER_CONFIG_EXT *
 extern INT32  tun_mxl5007_control(UINT32 tuner_id,UINT32 freq, UINT8 bandwidth,UINT8 AGC_Time_Const,UINT8 *data,UINT8 _i2c_cmd);
 extern INT32  tun_mxl5007_status(UINT32 tuner_id,UINT8 *lock);*/
 #elif (SYS_TUN_MODULE==DTT75411)
-extern INT32    nim_DTT75411_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_DTT75411_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_DTT75411_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_DTT75411_status(UINT8 tuner_id, UINT8 *lock);
 
 #elif (SYS_TUN_MODULE==TDA18211)
-extern INT32    nim_TDA18211_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    nim_TDA18211_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   nim_TDA18211_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   nim_TDA18211_status(UINT8 tuner_id, UINT8 *lock);
 #elif (SYS_TUN_MODULE==EDT1022B)
-extern INT32    tun_edt1022_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32    tun_edt1022_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32   tun_edt1022_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32   tun_edt1022_status(UINT8 tuner_id, UINT8 *lock);
 #elif (SYS_TUN_MODULE==TD1611ALF)
-extern INT32 tun_td1611alf_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_td1611alf_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_td1611alf_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_td1611alf_status(UINT8 tuner_id, UINT8 *lock);
 #elif (SYS_TUN_MODULE==ED5065)
-extern INT32 tun_ed5065_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_ed5065_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_ed5065_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32 tun_ed5065_status(UINT8 tuner_id, UINT8 *lock);
 #elif (SYS_TUN_MODULE==QT3010)
-extern INT32 tuner_3010_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tuner_3010_init(UINT8 tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32  tuner_3010_control(UINT8 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AGC_Time_Const, UINT8 *data, UINT8 _i2c_cmd);
 extern INT32  tuner_3010_status(UINT8 tuner_id, UINT8 *lock);
 #endif
@@ -500,7 +500,7 @@ struct QPSK_TUNER_CONFIG_API
 	struct   QPSK_TUNER_CONFIG_DATA config_data;
 
 	/* Tuner Initialization Function */
-	YW_ErrorType_T(*nim_Tuner_Init)(UINT8* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+	YW_ErrorType_T(*nim_Tuner_Init)(UINT8 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 
 	/* Tuner Parameter Configuration Function */
 	YW_ErrorType_T(*nim_Tuner_Control)(UINT8 tuner_id, UINT32 freq, UINT32 sym);
@@ -518,46 +518,46 @@ struct QPSK_TUNER_CONFIG_API
 };
 
 /*--- Tuner MAX2118 Callback Functions --- */
-extern INT32 nim_max2118_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_max2118_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_max2118_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 extern INT32 nim_max2118_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner IX2410 Callback Functions --- */
-extern INT32 nim_ix2410_init(UINT32* tuner_id,  struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_ix2410_init(UINT32 *tuner_id,  struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_ix2410_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 extern INT32 nim_ix2410_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner SL1935 Callback Functions --- */
-extern INT32 nim_sl1935_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_sl1935_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_sl1935_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
-extern INT32 nim_sl1935_status(UINT32 tuner_id, UINT8 * lock);
+extern INT32 nim_sl1935_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner ZL10036 Callback Functions --- */
-extern INT32 nim_zl10036_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_zl10036_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_zl10036_control(UINT32 tuner_id, UINT32 freq, UINT32 bs);
 extern INT32 nim_zl10036_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner ZL10039 Callback Functions --- */
-extern INT32 nim_zl10039_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_zl10039_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_zl10039_control(UINT32 tuner_id, UINT32 freq , UINT32 sym);
 extern INT32 nim_zl10039_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner STB6000 Callback Functions --- */
-extern INT32 nim_st6000_init(UINT32* tuner_id,  struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_st6000_init(UINT32 *tuner_id,  struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_st6000_control(UINT32 tuner_id, UINT32 freq, UINT16 sym);
 extern INT32 nim_st6000_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner IX2476 Callback Functions --- */
-extern INT32 nim_ix2476_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_ix2476_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_ix2476_control(UINT32 tuner_id, UINT32 freq, UINT16 bs);
 extern INT32 nim_ix2476_status(UINT32 tuner_id, UINT8 *lock);
 
 /*--- Tuner Tda8262 Callback Functions --- */
-extern INT32 tun_tda8262_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_tda8262_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_tda8262_control(UINT32 tuner_id, UINT32 freq , UINT32 sym);
 extern INT32 tun_tda8262_status(UINT32 tuner_id, UINT8 *lock);
 
-extern INT32 nim_hz6306_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_hz6306_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_hz6306_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 extern INT32 nim_hz6306_status(UINT32 tuner_id, UINT8 *lock);
 
@@ -565,15 +565,15 @@ extern INT32 nim_hz6306_status(UINT32 tuner_id, UINT8 *lock);
 //extern INT32 nim_vz7306_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 //extern INT32 nim_vz7306_status(UINT32 tuner_id, UINT8 *lock);
 
-extern INT32 nim_av2011_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 nim_av2011_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 nim_av2011_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 extern INT32 nim_av2011_status(UINT32 tuner_id, UINT8 *lock);
 
-INT32 nim_vz7851_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+INT32 nim_vz7851_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 INT32 nim_vz7851_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 INT32 nim_vz7851_status(UINT32 tuner_id, UINT8 *lock);
 
-INT32 nim_stv6110_init(UINT32* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+INT32 nim_stv6110_init(UINT32 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 INT32 nim_stv6110_control(UINT32 tuner_id, UINT32 freq, UINT32 sym);
 INT32 nim_stv6110_status(UINT32 tuner_id, UINT8 *lock);
 
@@ -607,7 +607,7 @@ struct QAM_TUNER_CONFIG_API
 	struct QAM_TUNER_CONFIG_DATA tuner_config_data;
 
 	/* Tuner Initialization Function */
-	INT32(*nim_Tuner_Init)(UINT32 * ptrTun_id, struct QAM_TUNER_CONFIG_EXT * ptrTuner_Config);
+	INT32(*nim_Tuner_Init)(UINT32 *ptrTun_id, struct QAM_TUNER_CONFIG_EXT *ptrTuner_Config);
 
 	/* Tuner Parameter Configuration Function */
 	INT32(*nim_Tuner_Control)(UINT32 Tun_id, UINT32 freq, UINT32 sym, UINT8 param);
@@ -624,11 +624,11 @@ struct QAM_TUNER_CONFIG_API
 
 /*--- Tuner DCT-2A Callback Functions --- */
 
-extern INT32 tun_g031d_init(UINT32* tuner_id, struct QAM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_g031d_init(UINT32 *tuner_id, struct QAM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_g031d_status(UINT32 tuner_id, UINT8 *lock);
 extern INT32 tun_g031d_control(UINT32 tuner_id, UINT32 freq, UINT32 sym, UINT8 param);
 
-extern INT32 tun_tda18250_init(UINT32 * ptrTun_id, struct QAM_TUNER_CONFIG_EXT * ptrTuner_Config);
+extern INT32 tun_tda18250_init(UINT32 *ptrTun_id, struct QAM_TUNER_CONFIG_EXT *ptrTuner_Config);
 extern INT32 tun_tda18250_control(UINT32 Tun_id, UINT32 freq, UINT32 sym, UINT8 AGC_Time_Const, UINT8 _i2c_cmd);
 extern INT32 tun_tda18250_status(UINT32 Tun_id, UINT8 *lock);
 //#endif

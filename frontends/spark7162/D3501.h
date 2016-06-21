@@ -59,7 +59,7 @@ typedef int BOOL;
 #define NULL 0
 #endif
 
-typedef const char * ST_Revision_t;
+typedef const char *ST_Revision_t;
 #define YWTUNERi_MAX_TUNER_NUM      4
 
 #define YW_NO_ERROR                 0

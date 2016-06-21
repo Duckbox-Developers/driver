@@ -20,12 +20,14 @@
 #ifndef __IX7306_H
 #define __IX7306_H
 
-enum ix7306_step {
+enum ix7306_step
+{
 	IX7306_STEP_1000 = 0,	/* 1000 kHz */
 	IX7306_STEP_500		/*  500 kHz */
 };
 
-enum ix7306_bblpf {
+enum ix7306_bblpf
+{
 	IX7306_LPF_10 = 3,	/*   10 MHz */
 	IX7306_LPF_12,		/*   12 MHz */
 	IX7306_LPF_14,		/*   14 MHz */
@@ -41,13 +43,15 @@ enum ix7306_bblpf {
 	IX7306_LPF_34,		/*   34 MHz */
 };
 
-enum ix7306_bbgain {
+enum ix7306_bbgain
+{
 	IX7306_GAIN_0dB = 1,	/*  0dB Att */
 	IX7306_GAIN_2dB,	/* -2dB Att */
 	IX7306_GAIN_4dB		/* -4dB Att */
 };
 
-struct ix7306_config {
+struct ix7306_config
+{
 	u8 			name[32];
 	u8 			addr;
 	enum ix7306_step 	step_size;

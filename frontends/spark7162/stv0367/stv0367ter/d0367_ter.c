@@ -521,12 +521,12 @@ S32 PowOf2(S32 number)
                 2010.11.11       lwj              ´´½¨
 ************************************************************************/
 YW_ErrorType_T  demod_d0367ter_Repeat(IOARCH_Handle_t   DemodIOHandle,
-									  IOARCH_Handle_t   TunerIOHandle,
-									  TUNER_IOARCH_Operation_t Operation,
-									  unsigned short SubAddr,
-									  U8 *Data,
-									  U32 TransferSize,
-									  U32 Timeout)
+				      IOARCH_Handle_t   TunerIOHandle,
+				      TUNER_IOARCH_Operation_t Operation,
+				      unsigned short SubAddr,
+				      U8 *Data,
+				      U32 TransferSize,
+				      U32 Timeout)
 {
 	return 0;
 }
@@ -534,8 +534,8 @@ YW_ErrorType_T  demod_d0367ter_Repeat(IOARCH_Handle_t   DemodIOHandle,
 #ifdef TUNER_USE_TER_STI7167TER
 
 void D0367ter_Init(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				   IOARCH_Handle_t IOHandle,
-				   TUNER_TunerType_T TunerType)
+		   IOARCH_Handle_t IOHandle,
+		   TUNER_TunerType_T TunerType)
 {
 	U16 i;
 	for (i = 0; i < DeviceMap->Registers; i++)
@@ -1084,7 +1084,7 @@ FE_LLA_Error_t  FE_367ofdm_Algo(YWTUNER_Handle_T Handle, FE_367ofdm_InternalPara
 		ChipGetRegisters_0367ter(DeviceMap, IOHandle, R367ofdm_TRL_NOMRATE2, 1);
 
 		temp = ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_HI) * 512 + ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LO) * 2 +
-			   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LSB);
+		       ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LSB);
 		temp = (int)((PowOf2(17) * pParams->ChannelBW * 1000) / (7 * (InternalFreq)));
 		ChipSetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_HI, temp / 256);
 		ChipSetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_LO, temp % 256);
@@ -1149,11 +1149,11 @@ FE_LLA_Error_t  FE_367ofdm_Algo(YWTUNER_Handle_T Handle, FE_367ofdm_InternalPara
 			}
 			ChipWaitOrAbort_0367ter(FALSE, 66);
 			AgcIF = ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
-					(ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
+				(ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
 			intX = (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X3) << 24)   +
-				   (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X2) << 16) +
-				   (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X1) << 8)    +
-				   ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X0) ;
+			       (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X2) << 16) +
+			       (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X1) << 8)    +
+			       ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_INT_X0) ;
 
 			if ((AgcIF > 0x500)  && (intX > 0x50000) && (AgcIF < 0xc00))
 			{
@@ -1259,9 +1259,9 @@ FE_LLA_Error_t  FE_367ofdm_Algo(YWTUNER_Handle_T Handle, FE_367ofdm_InternalPara
 
 			ChipGetRegisters(pParams->hDemod, R367ofdm_AGC2MAX, 13);
 			pResult->Agc_val = (ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC1_VAL_LO) << 16)   +
-							   (ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC1_VAL_HI) << 24) +
-							   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
-							   (ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
+					   (ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC1_VAL_HI) << 24) +
+					   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
+					   (ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
 
 			/* Carrier offset calculation */
 			ChipSetField_0367ter(DeviceMap, IOHandle, F367ofdm_FREEZE, 1);

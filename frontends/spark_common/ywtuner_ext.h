@@ -420,7 +420,7 @@ typedef struct YWTUNER_TunerDeviceList_e
 	U32                      TunerIndex;
 	YWTUNER_DeliverType_T    TunerType;
 	BOOL                     IsBlindScan;     /*是否支持盲扫*/
-	void *                   PrivateData;
+	void                    *PrivateData;
 } YWTUNER_TunerDeviceList_T;
 
 /*Tuner feature*/
@@ -438,7 +438,7 @@ typedef struct YWTUNER_OpenParams_s
 {
 	YWTUNER_Index_T            TunerIndex;
 	YWTUNER_DeliverType_T      TunerType;
-	void *                     PrivateData;
+	void                      *PrivateData;
 } YWTUNER_OpenParams_T;
 
 /*回调函数的声明
@@ -454,11 +454,11 @@ YW_ErrorType_T YWTUNER_Term(void);
 #if 0
 YW_ErrorType_T YWTUNER_GetFeature(YWTUNER_Feature_T *TunerFeature);
 #endif
-YW_ErrorType_T YWTUNER_Open(YWTUNER_Handle_T  * pTunerHandle,
-							YWTUNER_OpenParams_T *TunerOpenParams);
+YW_ErrorType_T YWTUNER_Open(YWTUNER_Handle_T   *pTunerHandle,
+			    YWTUNER_OpenParams_T *TunerOpenParams);
 YW_ErrorType_T YWTUNER_Close(YWTUNER_Handle_T  TunerHandle);
 YW_ErrorType_T YWTUNER_ConnectTune(YWTUNER_Handle_T  TunerHandle,
-								   const YWTUNER_SourceDeliver_T* DeliverPar);
+				   const YWTUNER_SourceDeliver_T *DeliverPar);
 YW_ErrorType_T  YWTUNER_BreakTune(YWTUNER_Handle_T TunerHandle);
 
 U32            YWTUNER_GetVersion(S8 *pchVer, U32 nSize);
@@ -466,35 +466,35 @@ U32            YWTUNER_GetVersion(S8 *pchVer, U32 nSize);
 YW_ErrorType_T  YWTUNER_Sleep(YWTUNER_Handle_T  TunerHandle);    /*cab sat ter*/
 
 YW_ErrorType_T  YWTUNER_SatSetPol(YWTUNER_Handle_T  TunerHandle,
-								  YWTUNER_LNBPolarisation_T Pol);
+				  YWTUNER_LNBPolarisation_T Pol);
 YW_ErrorType_T  YWTUNER_SatSet22K(YWTUNER_Handle_T  TunerHandle,
-								  YWTUNER_SAT22K_T   e22K);
+				  YWTUNER_SAT22K_T   e22K);
 YW_ErrorType_T  YWTUNER_SatSetPower(YWTUNER_Handle_T  TunerHandle,
-									YWTUNER_LNBVoltage_T  Power);
+				    YWTUNER_LNBVoltage_T  Power);
 YW_ErrorType_T  YWTUNER_SatSet12V(YWTUNER_Handle_T  TunerHandle,
-								  YWTUNER_SAT12V_T  e12V);
+				  YWTUNER_SAT12V_T  e12V);
 YW_ErrorType_T  YWTUNER_SatGetMotorState(YWTUNER_Handle_T  TunerHandle,
-		YWTUNER_MotorState_T MotorState);
+					 YWTUNER_MotorState_T MotorState);
 YW_ErrorType_T  YWTUNER_SatSetDiSEqC1020(YWTUNER_Handle_T  TunerHandle,
-		YWTUNER_DiSEqC1020_T  *DiSEqC);
+					 YWTUNER_DiSEqC1020_T  *DiSEqC);
 YW_ErrorType_T  YWTUNER_SatSetDiSEqC1121(YWTUNER_Handle_T  TunerHandle,
-		YWTUNER_DiSEqC1121_T  *DiSEqC);
+					 YWTUNER_DiSEqC1121_T  *DiSEqC);
 YW_ErrorType_T  YWTUNER_SatSetDiSEqC1222(YWTUNER_Handle_T  TunerHandle,
-		YWTUNER_DiSEqC1222_T  *DiSEqC);
+					 YWTUNER_DiSEqC1222_T  *DiSEqC);
 YW_ErrorType_T  YWTUNER_SatSetDiSEqC1323(YWTUNER_Handle_T  TunerHandle,
-		YWTUNER_DiSEqC1323_T  *DiSEqC);
+					 YWTUNER_DiSEqC1323_T  *DiSEqC);
 YW_ErrorType_T  YWTUNER_Reset(YWTUNER_Handle_T  TunerHandle);
 
 YW_ErrorType_T  YWTUNER_StandBy(YWTUNER_Handle_T  TunerHandle ,
-								YWTUNER_STANDBYMODE_T StandbyMode);
+				YWTUNER_STANDBYMODE_T StandbyMode);
 
 YW_ErrorType_T  YWTUNER_WakeUp(YWTUNER_Handle_T  TunerHandle);
 
 YW_ErrorType_T  YWTUNER_GetStatus(YWTUNER_Handle_T  TunerHandle ,
-								  YWTUNER_STATUS_T *Status);
+				  YWTUNER_STATUS_T *Status);
 
 YW_ErrorType_T  YWTUNER_GetSignalInfo(YWTUNER_Handle_T  TunerHandle ,
-									  YWTUNER_SignalInfo_T *SignalInfo);
+				      YWTUNER_SignalInfo_T *SignalInfo);
 #ifdef __cplusplus
 }
 #endif

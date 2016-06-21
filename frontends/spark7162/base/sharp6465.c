@@ -51,9 +51,9 @@ static int sharp6465_write(struct sharp6465_state *state, u8 *buf, u8 length)
 	int err = 0;
 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = length };
 
-_DEBUG
+	_DEBUG
 	printk(KERN_ERR "%s: state->i2c=<%d>, config->addr = %d\n",
-		   __func__, (int)state->i2c, config->addr);
+	       __func__, (int)state->i2c, config->addr);
 
 	err = i2c_transfer(state->i2c, &msg, 1);
 	if (err != 1)
@@ -79,7 +79,7 @@ static int sharp6465_get_status(struct dvb_frontend *fe, u32 *status)
 
 	if (result[0] & 0x40)
 	{
-_DEBUG
+		_DEBUG
 		printk(KERN_DEBUG "%s: Tuner Phase Locked\n", __func__);
 		*status = 1;
 	}
@@ -146,7 +146,7 @@ static  void calculate_mop_divider(u32 freq, int *byte)
 	i64Freq += 5;
 	i64Freq /= 10;
 	data = (long)i64Freq;
-_DEBUG
+	_DEBUG
 	printk(KERN_ERR "%s: data = %ld\n", __func__, data);
 	//data = (long)((freq + calculate_mop_if())/calculate_mop_step(byte) + 0.5);
 	*(byte + 1) = (int)((data >> 8) & 0x7F); //byte2
@@ -243,7 +243,7 @@ static void  tuner_SHARP6465_CalWrBuffer(u32  Frequency, u32  BandWidth, unsigne
 }
 #endif
 
-static int sharp6465_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters *params)
+static int sharp6465_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
 {
 	struct sharp6465_state *state = fe->tuner_priv;
 	unsigned char           ucIOBuffer[6];
@@ -252,7 +252,7 @@ static int sharp6465_set_params(struct dvb_frontend* fe, struct dvb_frontend_par
 	u32 f = params->frequency;
 	struct dvb_ofdm_parameters *op = &params->u.ofdm;
 
-_DEBUG
+	_DEBUG
 	printk(KERN_ERR "%s: f = %d, bandwidth = %d\n", __func__, f, op->bandwidth);
 
 	tuner_SHARP6465_CalWrBuffer(f / 1000, 8 - op->bandwidth - BANDWIDTH_8_MHZ, ucIOBuffer);
@@ -281,7 +281,7 @@ _DEBUG
 	if (fe->ops.i2c_gate_ctrl(fe, 1) < 0)
 		goto exit;
 	sharp6465_get_status(fe, &status);
-_DEBUG
+	_DEBUG
 	printk(KERN_ERR "%s: status = %d\n", __func__, status);
 
 	return 0;
@@ -292,8 +292,8 @@ exit:
 
 #if 0
 static int sharp6465_set_state(struct dvb_frontend *fe,
-							   enum tuner_param param,
-							   struct tuner_state *tstate)
+			       enum tuner_param param,
+			       struct tuner_state *tstate)
 {
 	struct sharp6465_state *state = fe->tuner_priv;
 	const struct sharp6465_config *config = state->config;
@@ -307,8 +307,8 @@ static int sharp6465_set_state(struct dvb_frontend *fe,
 		unsigned char           ucIOBuffer[6];
 
 		tuner_SHARP6465_CalWrBuffer(tstate->frequency,
-									tstate->bandwidth,
-									ucIOBuffer);
+					    tstate->bandwidth,
+					    ucIOBuffer);
 
 		/* Set params */
 		err = sharp6465_write(state, buf, 4);

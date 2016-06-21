@@ -36,8 +36,8 @@
 #include "avl2108_platform.h"
 
 #define eprintk(args...)  do {      \
-	printk("avl2108: ERROR: " args);   \
-} while (0)
+		printk("avl2108: ERROR: " args);   \
+	} while (0)
 
 #define cTUNER_INT_STV6306       1
 #define cTUNER_EXT_STV6306       2
@@ -58,22 +58,22 @@
  * Data type handling
  *****************************/
 
-static inline u16 extract_16(const u8 * buf)
+static inline u16 extract_16(const u8 *buf)
 {
-    u16 data;
-    data = buf[0];
-    data = (u16)(data << 8) + buf[1];
-    return data;
+	u16 data;
+	data = buf[0];
+	data = (u16)(data << 8) + buf[1];
+	return data;
 }
 
-static inline u32 extract_32(const u8 * buf)
+static inline u32 extract_32(const u8 *buf)
 {
-    unsigned int data;
-    data = buf[0];
-    data = (data << 8) + buf[1];
-    data = (data << 8) + buf[2];
-    data = (data << 8) + buf[3];
-    return data;
+	unsigned int data;
+	data = buf[0];
+	data = (data << 8) + buf[1];
+	data = (data << 8) + buf[2];
+	data = (data << 8) + buf[3];
+	return data;
 }
 
 
@@ -94,86 +94,86 @@ static inline u32 extract_32(const u8 * buf)
 
 struct avl2108_config
 {
-    int tuner_no;
-    struct stpio_pin*	tuner_enable_pin;
+	int tuner_no;
+	struct stpio_pin	*tuner_enable_pin;
 
-    u8 demod_address; /*< the demodulator's i2c address */
-    u8 tuner_address; /*< the tuner's i2c address */
+	u8 demod_address; /*< the demodulator's i2c address */
+	u8 tuner_address; /*< the tuner's i2c address */
 
-    u16 ref_freq;	/*< Reference clock in kHz units */
-    u16 demod_freq;	/*< Demod clock in 10kHz units */
-    u16 fec_freq;	/*< FEC clock in 10kHz units */
-    u16 mpeg_freq;	/*< MPEG clock in 10kHz units */
+	u16 ref_freq;	/*< Reference clock in kHz units */
+	u16 demod_freq;	/*< Demod clock in 10kHz units */
+	u16 fec_freq;	/*< FEC clock in 10kHz units */
+	u16 mpeg_freq;	/*< MPEG clock in 10kHz units */
 
-    u16 i2c_speed_khz;
-    u32 agc_polarization;
-    u16 max_lpf;
+	u16 i2c_speed_khz;
+	u32 agc_polarization;
+	u16 max_lpf;
 
-    u32 mpeg_mode;
-    u16 mpeg_serial;
-    u16 mpeg_clk_mode;
+	u32 mpeg_mode;
+	u16 mpeg_serial;
+	u16 mpeg_clk_mode;
 
-    u32 pll_config;
+	u32 pll_config;
 
-    u32 tuner_active_lh;
+	u32 tuner_active_lh;
 
-    u32 lpf;
-    u8  lock_mode;
-    u8  iq_swap;
-    u8  auto_iq_swap;
+	u32 lpf;
+	u8  lock_mode;
+	u8  iq_swap;
+	u8  auto_iq_swap;
 
-    u16 agc_ref;
+	u16 agc_ref;
 
-    u32 usedTuner;
-    u32 usedLNB;
+	u32 usedTuner;
+	u32 usedLNB;
 
-    u32 lnb[6];
+	u32 lnb[6];
 };
 
 struct avl2108_equipment_s
 {
-    /* must be set by demod */
-    u16 (*demod_i2c_repeater_send)(void* state, u8 * buf, u16 size);
-    u16 (*demod_i2c_repeater_recv)(void* state, u8 * buf, u16 size);
-    u16 (*demod_i2c_write)(void* state, u8 * buf, u16 buf_size);
-    u16 (*demod_i2c_write16)(void* state, u32 addr, u16 data);
-    u16 (*demod_send_op)(u8 ucOpCmd, void* state);
-    u16 (*demod_get_op_status)(void* state);
-    u16 (*demod_i2c_read16)(void* state, u32 addr, u16 *data);
+	/* must be set by demod */
+	u16(*demod_i2c_repeater_send)(void *state, u8 *buf, u16 size);
+	u16(*demod_i2c_repeater_recv)(void *state, u8 *buf, u16 size);
+	u16(*demod_i2c_write)(void *state, u8 *buf, u16 buf_size);
+	u16(*demod_i2c_write16)(void *state, u32 addr, u16 data);
+	u16(*demod_send_op)(u8 ucOpCmd, void *state);
+	u16(*demod_get_op_status)(void *state);
+	u16(*demod_i2c_read16)(void *state, u32 addr, u16 *data);
 
-    /* must be set by tuner */
-    u16 (*tuner_load_fw)(struct dvb_frontend* fe);
-    u16 (*tuner_init)(struct dvb_frontend* fe);
-    u16 (*tuner_lock)(struct dvb_frontend* fe, u32 frequency, u32 srate, u32 _lfp);
-    u16 (*tuner_lock_status)(struct dvb_frontend* fe);
+	/* must be set by tuner */
+	u16(*tuner_load_fw)(struct dvb_frontend *fe);
+	u16(*tuner_init)(struct dvb_frontend *fe);
+	u16(*tuner_lock)(struct dvb_frontend *fe, u32 frequency, u32 srate, u32 _lfp);
+	u16(*tuner_lock_status)(struct dvb_frontend *fe);
 
-    /* must be set by lnb */
-    u16 (*lnb_set_voltage)(void* lnb_priv, struct dvb_frontend* fe, fe_sec_voltage_t voltage);
+	/* must be set by lnb */
+	u16(*lnb_set_voltage)(void *lnb_priv, struct dvb_frontend *fe, fe_sec_voltage_t voltage);
 };
 
 struct avl2108_state
 {
-    struct i2c_adapter*          i2c;
-    const struct avl2108_config* config;
+	struct i2c_adapter          *i2c;
+	const struct avl2108_config *config;
 
-    struct dvb_frontend          frontend;
-    u8                           boot_done;
-    u8                           diseqc_status;
+	struct dvb_frontend          frontend;
+	u8                           boot_done;
+	u8                           diseqc_status;
 
-    void*                        lnb_priv;
+	void                        *lnb_priv;
 
-    struct avl2108_equipment_s   equipment;
+	struct avl2108_equipment_s   equipment;
 };
 
-struct dvb_frontend* avl2108_attach(const struct avl2108_config* config,
-                                    struct i2c_adapter* i2c);
-int avl2108_set_tone(struct dvb_frontend* fe, fe_sec_tone_mode_t tone);
-int avl2108_set_voltage(struct dvb_frontend* fe, fe_sec_voltage_t voltage);
+struct dvb_frontend *avl2108_attach(const struct avl2108_config *config,
+				    struct i2c_adapter *i2c);
+int avl2108_set_tone(struct dvb_frontend *fe, fe_sec_tone_mode_t tone);
+int avl2108_set_voltage(struct dvb_frontend *fe, fe_sec_voltage_t voltage);
 
-extern int stv6306_attach(struct dvb_frontend* fe, void* demod_priv, struct avl2108_equipment_s* equipment, u8 internal, struct i2c_adapter* i2c);
-extern int stv6110a_attach(struct dvb_frontend* fe, void* demod_priv, struct avl2108_equipment_s* equipment, u32 mclk, u32 max_lfp);
+extern int stv6306_attach(struct dvb_frontend *fe, void *demod_priv, struct avl2108_equipment_s *equipment, u8 internal, struct i2c_adapter *i2c);
+extern int stv6110a_attach(struct dvb_frontend *fe, void *demod_priv, struct avl2108_equipment_s *equipment, u32 mclk, u32 max_lfp);
 
-extern void* lnb_pio_attach(u32* lnb, struct avl2108_equipment_s* equipment);
-extern void* lnbh221_attach(u32* lnb, struct avl2108_equipment_s* equipment);
+extern void *lnb_pio_attach(u32 *lnb, struct avl2108_equipment_s *equipment);
+extern void *lnbh221_attach(u32 *lnb, struct avl2108_equipment_s *equipment);
 
 #endif /* _AVL2108_H */

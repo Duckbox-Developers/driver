@@ -59,7 +59,7 @@ struct cx24116_tuning
 #else
 	fe_code_rate_t		 fec;
 	fe_delivery_system_t delsys;
-    fe_modulation_t      modulation;
+	fe_modulation_t      modulation;
 	fe_pilot_t           pilot;
 	fe_rolloff_t 	     rolloff;
 #endif
@@ -83,15 +83,15 @@ struct cx24116_config
 	u8			        i2c_addr; /* i2c address of the tuner */
 	u8			        i2c_bus;
 
-	struct stpio_pin*	tuner_enable_pin;
-    u32                 tuner_active_lh;
+	struct stpio_pin	*tuner_enable_pin;
+	u32                 tuner_active_lh;
 
-    u32                 useUnknown;
-    u32                 usedLNB;
-    char*               fw_name;
-    u32                 fastDelay;
+	u32                 useUnknown;
+	u32                 usedLNB;
+	char               *fw_name;
+	u32                 fastDelay;
 
-    u32                 lnb[6];
+	u32                 lnb[6];
 
 };
 
@@ -123,11 +123,12 @@ struct cx24116_cmd
 	u8        args[0x1e];
 };
 
-struct cx24116_state {
+struct cx24116_state
+{
 	struct dvb_frontend_ops 		ops;
 	struct dvb_frontend 			frontend;
 
-	struct cx24116_config*          config;
+	struct cx24116_config          *config;
 
 	struct cx24116_tuning 			dcur;
 	struct cx24116_tuning 			dnxt;
@@ -138,11 +139,11 @@ struct cx24116_state {
 
 	int				       	        not_responding;
 
-    void*                           lnb_priv;
-    struct equipment_s              equipment;
+	void                           *lnb_priv;
+	struct equipment_s              equipment;
 };
 
-extern void* lnb_pio_attach(u32* lnb, struct equipment_s* equipment);
-extern void* lnbh221_attach(u32* lnb, struct equipment_s* equipment);
+extern void *lnb_pio_attach(u32 *lnb, struct equipment_s *equipment);
+extern void *lnbh221_attach(u32 *lnb, struct equipment_s *equipment);
 
 #endif // _CX24116_H_

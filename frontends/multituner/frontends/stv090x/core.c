@@ -43,11 +43,11 @@
 #include "tuner.h"
 #include "lnb.h"
 
-short paramDebug=0;
+short paramDebug = 0;
 int bbgain = -1;
 
 /* saved platform config */
-static struct platform_frontend_config_s* frontend_cfg = NULL;
+static struct platform_frontend_config_s *frontend_cfg = NULL;
 
 #define cMaxSockets 4
 static u8 numSockets = 0;
@@ -57,216 +57,218 @@ extern int stv090x_read_reg(struct stv090x_state *state, unsigned int reg);
 
 static void stv090x_register_frontend(struct dvb_adapter *dvb_adap, struct socket_s *socket)
 {
-    struct dvb_frontend* frontend;
-    struct stv090x_config* cfg;
-    struct stv090x_private_data_s* priv;
+	struct dvb_frontend *frontend;
+	struct stv090x_config *cfg;
+	struct stv090x_private_data_s *priv;
 
-    printk("%s\n", __func__);
+	printk("%s\n", __func__);
 
-    if (numSockets + 1 == cMaxSockets)
-    {
-        printk("Max number sockets reached ... cannot register\n");
-        return;
-    }
+	if (numSockets + 1 == cMaxSockets)
+	{
+		printk("Max number sockets reached ... cannot register\n");
+		return;
+	}
 
-    socketList[numSockets] = *socket;
-    numSockets++;
+	socketList[numSockets] = *socket;
+	numSockets++;
 
-    priv = (struct stv090x_private_data_s*) frontend_cfg->private;
+	priv = (struct stv090x_private_data_s *) frontend_cfg->private;
 
-    cfg = kmalloc(sizeof(struct stv090x_config), GFP_KERNEL);
+	cfg = kmalloc(sizeof(struct stv090x_config), GFP_KERNEL);
 
-    if (cfg == NULL)
-    {
-        printk("stv090x: error malloc\n");
-        return;
-    }
+	if (cfg == NULL)
+	{
+		printk("stv090x: error malloc\n");
+		return;
+	}
 
-    if (socket->tuner_enable[0] != -1)
-    {
-        cfg->tuner_enable_pin = stpio_request_pin (socket->tuner_enable[0],
-                                                   socket->tuner_enable[1],
-                                                   "tun_enab",
-                                                   STPIO_OUT);
+	if (socket->tuner_enable[0] != -1)
+	{
+		cfg->tuner_enable_pin = stpio_request_pin(socket->tuner_enable[0],
+							  socket->tuner_enable[1],
+							  "tun_enab",
+							  STPIO_OUT);
 
-        printk("tuner_enable_pin %p\n", cfg->tuner_enable_pin);
-        stpio_set_pin(cfg->tuner_enable_pin, !socket->tuner_enable[2]);
-        stpio_set_pin(cfg->tuner_enable_pin, socket->tuner_enable[2]);
- 
-        msleep(250);
-        cfg->tuner_active_lh = socket->tuner_enable[2];
-    } else
-       cfg->tuner_enable_pin = NULL;
-       
-    cfg->address               = frontend_cfg->demod_i2c;
-    cfg->tuner_address         = frontend_cfg->tuner_i2c;
-    cfg->usedTuner             = priv->usedTuner;
-    cfg->usedLNB               = priv->usedLNB;
-    cfg->alternativePath       = priv->alternativePath;
-    cfg->shouldSleep           = priv->shouldSleep;
-    cfg->device                = priv->device;
-    cfg->demod_mode            = priv->demod_mode;
-    cfg->clk_mode              = priv->clk_mode;
+		printk("tuner_enable_pin %p\n", cfg->tuner_enable_pin);
+		stpio_set_pin(cfg->tuner_enable_pin, !socket->tuner_enable[2]);
+		stpio_set_pin(cfg->tuner_enable_pin, socket->tuner_enable[2]);
 
-    cfg->xtal                  = priv->xtal;
-    cfg->ref_clk               = priv->ref_clk;
-    cfg->ts1_mode              = priv->ts1_mode;
-    cfg->ts2_mode              = priv->ts2_mode;
-    cfg->ts1_clk               = priv->ts1_clk;
-    cfg->ts2_clk               = priv->ts2_clk;
-    cfg->repeater_level        = priv->repeater_level;
-    cfg->tuner_bbgain          = priv->tuner_bbgain;
-    cfg->adc1_range            = priv->adc1_range;
+		msleep(250);
+		cfg->tuner_active_lh = socket->tuner_enable[2];
+	}
+	else
+		cfg->tuner_enable_pin = NULL;
 
-    cfg->adc2_range            = priv->adc2_range;
-    cfg->diseqc_envelope_mode  = priv->diseqc_envelope_mode;
-    cfg->tuner_refclk          = priv->tuner_refclk;
+	cfg->address               = frontend_cfg->demod_i2c;
+	cfg->tuner_address         = frontend_cfg->tuner_i2c;
+	cfg->usedTuner             = priv->usedTuner;
+	cfg->usedLNB               = priv->usedLNB;
+	cfg->alternativePath       = priv->alternativePath;
+	cfg->shouldSleep           = priv->shouldSleep;
+	cfg->device                = priv->device;
+	cfg->demod_mode            = priv->demod_mode;
+	cfg->clk_mode              = priv->clk_mode;
 
-    memcpy(cfg->lnb, socket->lnb, sizeof(cfg->lnb));
+	cfg->xtal                  = priv->xtal;
+	cfg->ref_clk               = priv->ref_clk;
+	cfg->ts1_mode              = priv->ts1_mode;
+	cfg->ts2_mode              = priv->ts2_mode;
+	cfg->ts1_clk               = priv->ts1_clk;
+	cfg->ts2_clk               = priv->ts2_clk;
+	cfg->repeater_level        = priv->repeater_level;
+	cfg->tuner_bbgain          = priv->tuner_bbgain;
+	cfg->adc1_range            = priv->adc1_range;
 
-    if (numSockets == 1)
-        frontend =  stv090x_attach(cfg, i2c_get_adapter(socket->i2c_bus),
-                                   priv->demod, STV090x_TUNER1);
-    else
-        frontend =  stv090x_attach(cfg, i2c_get_adapter(socket->i2c_bus),
-                                   priv->demod, STV090x_TUNER2);
+	cfg->adc2_range            = priv->adc2_range;
+	cfg->diseqc_envelope_mode  = priv->diseqc_envelope_mode;
+	cfg->tuner_refclk          = priv->tuner_refclk;
 
-    if (frontend == NULL)
-    {
-        printk("stv090x: stv090x_attach failed\n");
+	memcpy(cfg->lnb, socket->lnb, sizeof(cfg->lnb));
 
-        if (cfg->tuner_enable_pin)
-            stpio_free_pin(cfg->tuner_enable_pin);
+	if (numSockets == 1)
+		frontend =  stv090x_attach(cfg, i2c_get_adapter(socket->i2c_bus),
+					   priv->demod, STV090x_TUNER1);
+	else
+		frontend =  stv090x_attach(cfg, i2c_get_adapter(socket->i2c_bus),
+					   priv->demod, STV090x_TUNER2);
 
-        kfree(cfg);
-        return;
-    }
+	if (frontend == NULL)
+	{
+		printk("stv090x: stv090x_attach failed\n");
 
-    if (dvb_register_frontend (dvb_adap, frontend))
-    {
-        printk ("%s: Frontend registration failed !\n", __FUNCTION__);
-        if (frontend->ops.release)
-            frontend->ops.release (frontend);
-        return;
-    }
+		if (cfg->tuner_enable_pin)
+			stpio_free_pin(cfg->tuner_enable_pin);
 
-    return;
+		kfree(cfg);
+		return;
+	}
+
+	if (dvb_register_frontend(dvb_adap, frontend))
+	{
+		printk("%s: Frontend registration failed !\n", __FUNCTION__);
+		if (frontend->ops.release)
+			frontend->ops.release(frontend);
+		return;
+	}
+
+	return;
 }
 
 static int stv090x_demod_detect(struct socket_s *socket, struct frontend_s *frontend)
 {
-   struct stv090x_state* state = NULL;
-   int ret = 0;
-   struct stpio_pin* pin = NULL;
-   
-   printk("%s >\n", __func__);
+	struct stv090x_state *state = NULL;
+	int ret = 0;
+	struct stpio_pin *pin = NULL;
 
-   if (socket->tuner_enable[0] != -1)
-   {
-       pin = stpio_request_pin(socket->tuner_enable[0],
-                                                 socket->tuner_enable[1],
-                                                 "tun_enab",
-                                                 STPIO_OUT);
-   }
-   
-   printk("%s > %s: i2c-%d addr 0x%x\n", __func__, socket->name, socket->i2c_bus, frontend_cfg->demod_i2c);
+	printk("%s >\n", __func__);
 
-   if (pin != NULL)
-   {
-        stpio_set_pin(pin, !socket->tuner_enable[2]);
-        stpio_set_pin(pin, socket->tuner_enable[2]);
+	if (socket->tuner_enable[0] != -1)
+	{
+		pin = stpio_request_pin(socket->tuner_enable[0],
+					socket->tuner_enable[1],
+					"tun_enab",
+					STPIO_OUT);
+	}
 
-        msleep(250);
-   }
-      
-   state = kmalloc(sizeof(struct stv090x_state), GFP_KERNEL);
+	printk("%s > %s: i2c-%d addr 0x%x\n", __func__, socket->name, socket->i2c_bus, frontend_cfg->demod_i2c);
 
-   state->config = kmalloc(sizeof(struct stv090x_config), GFP_KERNEL);
-      
-   state->i2c     = i2c_get_adapter(socket->i2c_bus);
+	if (pin != NULL)
+	{
+		stpio_set_pin(pin, !socket->tuner_enable[2]);
+		stpio_set_pin(pin, socket->tuner_enable[2]);
 
-   state->config->address = frontend_cfg->demod_i2c;
+		msleep(250);
+	}
 
-   if ((ret = stv090x_read_reg(state, STV090x_MID)) < 0)
-   {
-       printk ("ret = %d\n", ret);
-       printk ("Invalid probe, probably not a stv090x device\n");
-       
-       if (pin != NULL)
-           stpio_free_pin(pin);
-       
-       kfree(state->config);
-       kfree(state);
+	state = kmalloc(sizeof(struct stv090x_state), GFP_KERNEL);
 
-       return -EREMOTEIO;
-   }
+	state->config = kmalloc(sizeof(struct stv090x_config), GFP_KERNEL);
 
-   printk("%s: Detected stv090x\n", __func__);
-   
-   if (pin != NULL)
-      stpio_free_pin(pin);
+	state->i2c     = i2c_get_adapter(socket->i2c_bus);
 
-   kfree(state->config);
-   kfree(state);
+	state->config->address = frontend_cfg->demod_i2c;
 
-   printk("%s <\n", __func__);
+	if ((ret = stv090x_read_reg(state, STV090x_MID)) < 0)
+	{
+		printk("ret = %d\n", ret);
+		printk("Invalid probe, probably not a stv090x device\n");
 
-   return 0;
+		if (pin != NULL)
+			stpio_free_pin(pin);
+
+		kfree(state->config);
+		kfree(state);
+
+		return -EREMOTEIO;
+	}
+
+	printk("%s: Detected stv090x\n", __func__);
+
+	if (pin != NULL)
+		stpio_free_pin(pin);
+
+	kfree(state->config);
+	kfree(state);
+
+	printk("%s <\n", __func__);
+
+	return 0;
 }
 
-static int stv090x_demod_attach(struct dvb_adapter* adapter, struct socket_s *socket, struct frontend_s *frontend)
+static int stv090x_demod_attach(struct dvb_adapter *adapter, struct socket_s *socket, struct frontend_s *frontend)
 {
-    printk("%s >\n", __func__);
+	printk("%s >\n", __func__);
 
-    stv090x_register_frontend(adapter, socket);
+	stv090x_register_frontend(adapter, socket);
 
-    printk("%s <\n", __func__);
-    
-    return 0;
+	printk("%s <\n", __func__);
+
+	return 0;
 }
 
 /* ******************************* */
 /* platform device functions       */
 /* ******************************* */
 
-static int stv090x_probe (struct platform_device *pdev)
+static int stv090x_probe(struct platform_device *pdev)
 {
-    struct platform_frontend_config_s *plat_data = pdev->dev.platform_data;
-    struct frontend_s frontend;
+	struct platform_frontend_config_s *plat_data = pdev->dev.platform_data;
+	struct frontend_s frontend;
 
-    printk("%s >\n", __func__);
+	printk("%s >\n", __func__);
 
-    frontend_cfg = kmalloc(sizeof(struct platform_frontend_config_s), GFP_KERNEL);
-    memcpy(frontend_cfg, plat_data, sizeof(struct platform_frontend_config_s));
+	frontend_cfg = kmalloc(sizeof(struct platform_frontend_config_s), GFP_KERNEL);
+	memcpy(frontend_cfg, plat_data, sizeof(struct platform_frontend_config_s));
 
-    printk("found frontend \"%s\" in platform config\n", frontend_cfg->name);
+	printk("found frontend \"%s\" in platform config\n", frontend_cfg->name);
 
-    frontend.demod_detect = stv090x_demod_detect;
-    frontend.demod_attach = stv090x_demod_attach;
-    frontend.name         = "stv090x";
-    
-    if (socket_register_frontend(&frontend) < 0)
-    {
-        printk("failed to register frontend\n");
-    }
+	frontend.demod_detect = stv090x_demod_detect;
+	frontend.demod_attach = stv090x_demod_attach;
+	frontend.name         = "stv090x";
 
-    printk("%s <\n", __func__);
+	if (socket_register_frontend(&frontend) < 0)
+	{
+		printk("failed to register frontend\n");
+	}
 
-    return 0;
+	printk("%s <\n", __func__);
+
+	return 0;
 }
 
-static int stv090x_remove (struct platform_device *pdev)
+static int stv090x_remove(struct platform_device *pdev)
 {
-    return 0;
+	return 0;
 }
 
-static struct platform_driver stv090x_driver = {
-    .probe = stv090x_probe,
-    .remove = stv090x_remove,
-    .driver	= {
-        .name	= "stv090x",
-        .owner  = THIS_MODULE,
-    },
+static struct platform_driver stv090x_driver =
+{
+	.probe = stv090x_probe,
+	.remove = stv090x_remove,
+	.driver	= {
+		.name	= "stv090x",
+		.owner  = THIS_MODULE,
+	},
 };
 
 
@@ -276,24 +278,24 @@ static struct platform_driver stv090x_driver = {
 
 int __init stv090x_init(void)
 {
-    int ret;
+	int ret;
 
-    printk("%s >\n", __func__);
+	printk("%s >\n", __func__);
 
-    ret = platform_driver_register (&stv090x_driver);
+	ret = platform_driver_register(&stv090x_driver);
 
-    printk("%s < %d\n", __func__, ret);
+	printk("%s < %d\n", __func__, ret);
 
-    return ret;
+	return ret;
 }
 
 static void stv090x_cleanup(void)
 {
-    printk("%s >\n", __func__);
+	printk("%s >\n", __func__);
 }
 
-module_init             (stv090x_init);
-module_exit             (stv090x_cleanup);
+module_init(stv090x_init);
+module_exit(stv090x_cleanup);
 
 module_param(paramDebug, short, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled >0=enabled(debuglevel)");
@@ -301,6 +303,6 @@ MODULE_PARM_DESC(paramDebug, "Debug Output 0=disabled >0=enabled(debuglevel)");
 module_param(bbgain, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 MODULE_PARM_DESC(bbgain, "default=-1 (use default config = 10");
 
-MODULE_DESCRIPTION      ("Tunerdriver");
-MODULE_AUTHOR           ("Manu Abraham; adapted by TDT");
-MODULE_LICENSE          ("GPL");
+MODULE_DESCRIPTION("Tunerdriver");
+MODULE_AUTHOR("Manu Abraham; adapted by TDT");
+MODULE_LICENSE("GPL");

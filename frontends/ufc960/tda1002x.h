@@ -28,20 +28,23 @@
 
 #define CONFIG_DVB_TDA10023
 
-struct tda1002x_config {
+struct tda1002x_config
+{
 	/* the demodulator's i2c address */
 	u8 demod_address;
 	u8 invert;
 };
 
-enum tda10023_output_mode {
+enum tda10023_output_mode
+{
 	TDA10023_OUTPUT_MODE_PARALLEL_A = 0xe0,
 	TDA10023_OUTPUT_MODE_PARALLEL_B = 0xa1,
 	TDA10023_OUTPUT_MODE_PARALLEL_C = 0xa0,
 	TDA10023_OUTPUT_MODE_SERIAL, /* TODO: not implemented */
 };
 
-struct tda10023_config {
+struct tda10023_config
+{
 	/* the demodulator's i2c address */
 	u8 demod_address;
 	u8 invert;
@@ -60,11 +63,11 @@ struct tda10023_config {
 };
 
 #if defined(CONFIG_DVB_TDA10021) || (defined(CONFIG_DVB_TDA10021_MODULE) && defined(MODULE))
-extern struct dvb_frontend* tda10021_attach(const struct tda1002x_config* config,
-					    struct i2c_adapter* i2c, u8 pwm);
+extern struct dvb_frontend *tda10021_attach(const struct tda1002x_config *config,
+					    struct i2c_adapter *i2c, u8 pwm);
 #else
-static inline struct dvb_frontend* tda10021_attach(const struct tda1002x_config* config,
-					    struct i2c_adapter* i2c, u8 pwm)
+static inline struct dvb_frontend *tda10021_attach(const struct tda1002x_config *config,
+						   struct i2c_adapter *i2c, u8 pwm)
 {
 	printk(KERN_WARNING "%s: driver disabled by Kconfig\n", __func__);
 	return NULL;
@@ -86,7 +89,8 @@ static inline struct dvb_frontend *tda10023_attach(
 }
 #endif // CONFIG_DVB_TDA10023
 
-static inline int tda1002x_writereg(struct dvb_frontend *fe, u8 reg, u8 val) {
+static inline int tda1002x_writereg(struct dvb_frontend *fe, u8 reg, u8 val)
+{
 	int r = 0;
 	u8 buf[] = {reg, val};
 	if (fe->ops.write)

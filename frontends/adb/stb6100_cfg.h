@@ -23,15 +23,17 @@ static int stb6100_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 {
 	struct dvb_frontend_ops	*frontend_ops = NULL;
 	struct dvb_tuner_ops	*tuner_ops = NULL;
-	u32 freq =0;
+	u32 freq = 0;
 	int err = 0;
 
 	if (&fe->ops)
 		frontend_ops = &fe->ops;
 	if (&frontend_ops->tuner_ops)
 		tuner_ops = &frontend_ops->tuner_ops;
-	if (tuner_ops->get_frequency) {
-		if ((err = tuner_ops->get_frequency(fe, frequency)) < 0) {
+	if (tuner_ops->get_frequency)
+	{
+		if ((err = tuner_ops->get_frequency(fe, frequency)) < 0)
+		{
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
@@ -52,12 +54,14 @@ static int stb6100_set_frequency(struct dvb_frontend *fe, u32 frequency)
 		frontend_ops = &fe->ops;
 	if (&frontend_ops->tuner_ops)
 		tuner_ops = &frontend_ops->tuner_ops;
-	if (tuner_ops->set_frequency) {
-		if ((err = tuner_ops->set_frequency(fe, frequency)) < 0) {
+	if (tuner_ops->set_frequency)
+	{
+		if ((err = tuner_ops->set_frequency(fe, frequency)) < 0)
+		{
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
-	//printk("%s: Frequency=%d\n", __func__, frequency);
+		//printk("%s: Frequency=%d\n", __func__, frequency);
 	}
 	return 0;
 }
@@ -66,15 +70,17 @@ static int stb6100_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 {
 	struct dvb_frontend_ops	*frontend_ops = NULL;
 	struct dvb_tuner_ops	*tuner_ops = NULL;
-	u32 band =0;
+	u32 band = 0;
 	int err = 0;
 
 	if (&fe->ops)
 		frontend_ops = &fe->ops;
 	if (&frontend_ops->tuner_ops)
 		tuner_ops = &frontend_ops->tuner_ops;
-	if (tuner_ops->get_bandwidth) {
-		if ((err = tuner_ops->get_bandwidth(fe, bandwidth)) < 0) {
+	if (tuner_ops->get_bandwidth)
+	{
+		if ((err = tuner_ops->get_bandwidth(fe, bandwidth)) < 0)
+		{
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
@@ -94,12 +100,14 @@ static int stb6100_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth)
 		frontend_ops = &fe->ops;
 	if (&frontend_ops->tuner_ops)
 		tuner_ops = &frontend_ops->tuner_ops;
-	if (tuner_ops->set_bandwidth) {
-		if ((err = tuner_ops->set_bandwidth(fe, bandwidth)) < 0) {
+	if (tuner_ops->set_bandwidth)
+	{
+		if ((err = tuner_ops->set_bandwidth(fe, bandwidth)) < 0)
+		{
 			printk("%s: Invalid parameter\n", __func__);
 			return err;
 		}
-	//printk("%s: Bandwidth=%d\n", __func__, bandwidth);
+		//printk("%s: Bandwidth=%d\n", __func__, bandwidth);
 	}
 	return 0;
 }

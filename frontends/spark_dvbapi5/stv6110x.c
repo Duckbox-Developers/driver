@@ -51,8 +51,8 @@ extern short paramDebug;
 #define TAGDEBUG "[stv6110a] "
 
 #define dprintk(level, x...) do { \
-if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
+	} while (0)
 
 static int stv6110x_set_refclock(struct dvb_frontend *fe, u32 refclock);
 static int stv6110x_get_frequency(struct dvb_frontend *fe, u32 *frequency);
@@ -183,7 +183,7 @@ static int stv6110x_set_frequency(struct dvb_frontend *fe, u32 frequency)
 
 	dprintk(10, "%s: frequency = %d >\n", __func__, frequency);
 	dprintk(20, "%s, freq=%d kHz, mclk=%d Hz\n", __func__,
-			frequency, stv6110x->config->refclk);
+		frequency, stv6110x->config->refclk);
 
 	/* K = (Reference / 1000000) - 16 */
 	stv6110x_regs[STV6110x_CTRL1] &= ~(0x1f << 3);
@@ -293,7 +293,7 @@ static int stv6110x_set_frequency(struct dvb_frontend *fe, u32 frequency)
 
 	vco_freq = divider * ((stv6110x->config->refclk / 1000) / ((1 << (r_div_opt + 1))));
 	dprintk(20, "%s <, result:lo_freq=%d kHz, vco_frec=%d kHz\n", __func__,
-			result_freq, vco_freq);
+		result_freq, vco_freq);
 
 	dprintk(10, "%s <\n", __FUNCTION__);
 	return 0;
@@ -309,10 +309,10 @@ static int stv6110x_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 	stv6110x_read_reg(stv6110x, STV6110x_TNG0, &stv6110x_regs[STV6110x_TNG0]);
 
 	*frequency = (MAKEWORD16(STV6110x_GETFIELD(TNG1_N_DIV_11_8, stv6110x_regs[STV6110x_TNG1]),
-							 STV6110x_GETFIELD(TNG0_N_DIV_7_0, stv6110x_regs[STV6110x_TNG0]))) * REFCLOCK_kHz;
+				 STV6110x_GETFIELD(TNG0_N_DIV_7_0, stv6110x_regs[STV6110x_TNG0]))) * REFCLOCK_kHz;
 
 	*frequency /= (1 << (STV6110x_GETFIELD(TNG1_R_DIV, stv6110x_regs[STV6110x_TNG1]) +
-						 STV6110x_GETFIELD(TNG1_DIV4SEL, stv6110x_regs[STV6110x_TNG1])));
+			     STV6110x_GETFIELD(TNG1_DIV4SEL, stv6110x_regs[STV6110x_TNG1])));
 
 	*frequency >>= 2;
 
@@ -499,8 +499,8 @@ static int stv6110x_get_status(struct dvb_frontend *fe, u32 *status)
 
 #if 0
 static int stv6110x_get_state(struct dvb_frontend *fe,
-							  enum tuner_param param,
-							  struct tuner_state *state)
+			      enum tuner_param param,
+			      struct tuner_state *state)
 {
 	switch (param)
 	{
@@ -529,8 +529,8 @@ static int stv6110x_get_state(struct dvb_frontend *fe,
 }
 
 static int stv6110x_set_state(struct dvb_frontend *fe,
-							  enum tuner_param param,
-							  struct tuner_state *tstate)
+			      enum tuner_param param,
+			      struct tuner_state *tstate)
 {
 	struct stv6110x_state *stv6110x = fe->tuner_priv;
 
@@ -609,8 +609,8 @@ static struct stv6110x_devctl stv6110x_ctl =
 };
 
 struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
-										const struct stv6110x_config *config,
-										struct i2c_adapter *i2c)
+					const struct stv6110x_config *config,
+					struct i2c_adapter *i2c)
 {
 	struct stv6110x_state *stv6110x;
 

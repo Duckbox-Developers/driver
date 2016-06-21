@@ -60,14 +60,14 @@ static int ix7306_write(struct ix7306_state *state, u8 *buf, u8 len)
 	int i;
 	struct i2c_msg msg = { .addr = config->addr, .flags = 0, .buf = buf, .len = len };
 
-_DEBUG
-{
-	for (i = 0; i < len; i++)
+	_DEBUG
 	{
-		printk("%02x ", buf[i]);
+		for (i = 0; i < len; i++)
+		{
+			printk("%02x ", buf[i]);
+		}
+		printk("\n");
 	}
-	printk("\n");
-}
 
 	err = i2c_transfer(state->i2c, &msg, 1);
 	if (err != 1)
@@ -111,7 +111,7 @@ static int ix7306_read(struct ix7306_state *state, u8 *buf)
 *--------------------------------------------------------------*/
 
 static void tun_setfreq_QM1D1B0004(struct dvb_frontend *fe, long freq,
-								   long baud, int *byte_)
+				   long baud, int *byte_)
 {
 
 	/*set byte5  BA2 BA1 BA0 PSC  DIV/TS1*/
@@ -352,7 +352,7 @@ static int ix7306_set_freq(struct dvb_frontend *fe, u32 freq_KHz, u32 tuner_BW)
 {
 	u32         tuner_bw_K = tuner_BW / 1000;
 
-_DEBUG
+	_DEBUG
 	printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 
 	memset(reg_data, 0, sizeof(reg_data));
@@ -361,7 +361,7 @@ _DEBUG
 	reg_data[3] = 0xe1;
 	reg_data[4] = 0x42;
 
-_DEBUG
+	_DEBUG
 	printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 	tun_setfreq_QM1D1B0004(fe, freq_KHz, tuner_bw_K, &reg_data[0]);
 
@@ -372,14 +372,14 @@ static int ix7306_set_state(struct dvb_frontend *fe, enum tuner_param param, str
 {
 	struct ix7306_state *state = fe->tuner_priv;
 
-_DEBUG
+	_DEBUG
 	printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 
 	if (param & DVBFE_TUNER_FREQUENCY)
 	{
 		state->frequency = tstate->frequency;
 		state->bandwidth = tstate->bandwidth;
-_DEBUG
+		_DEBUG
 		printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 		ix7306_set_freq(fe, state->frequency, state->bandwidth);
 	}
@@ -431,13 +431,13 @@ static int ix7306_get_status(struct dvb_frontend *fe, u32 *status)
 
 	if (result[0] & 0x40)
 	{
-_DEBUG
+		_DEBUG
 		printk("%s: Tuner Phase Locked\n", __func__);
 		*status = 1;
 	}
 	else
 	{
-_DEBUG
+		_DEBUG
 		printk("%s: Tuner Phase Not Locked result - 0x%x, 0x%x,\n", __func__, result[0], result[1]);
 	}
 
@@ -648,13 +648,13 @@ int ix7306_get_frequency(struct dvb_frontend *fe, u32 *frequency)
 	if (&fe->ops)
 		frontend_ops = &fe->ops;
 
-_DEBUG
+	_DEBUG
 	printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 
 	if (&frontend_ops->tuner_ops)
 		tuner_ops = &frontend_ops->tuner_ops;
 
-_DEBUG
+	_DEBUG
 	printk("[%s][%d]\n", __FUNCTION__, __LINE__);
 
 	if (tuner_ops->get_state)
@@ -665,7 +665,7 @@ _DEBUG
 			return err;
 		}
 		*frequency = t_state.frequency;
-_DEBUG
+		_DEBUG
 		printk("%s: Frequency=%d\n", __func__, t_state.frequency);
 	}
 	return 0;
@@ -695,7 +695,7 @@ int ix7306_set_frequency(struct dvb_frontend *fe, u32 frequency)
 			return err;
 		}
 	}
-_DEBUG
+	_DEBUG
 	printk("%s: Frequency=%d\n", __func__, t_state.frequency);
 	return 0;
 }
@@ -731,7 +731,7 @@ int ix7306_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 		}
 		*bandwidth = t_state.bandwidth;
 	}
-_DEBUG
+	_DEBUG
 	printk("%s: Bandwidth=%d\n", __func__, t_state.bandwidth);
 	return 0;
 }

@@ -37,7 +37,7 @@ struct core_config
 	u8          i2c_addr_lnb_supply; /* i2c address of the lnb_supply */
 	u8          vertical; /* i2c value */
 	u8          horizontal; /* i2c value */
-	struct stpio_pin*   tuner_enable_pin;
+	struct stpio_pin   *tuner_enable_pin;
 	u8          tuner_enable_act; /* active state of the pin */
 };
 
@@ -46,7 +46,7 @@ struct fe_core_state
 	struct dvb_frontend_ops         ops;
 	struct dvb_frontend             frontend;
 
-	const struct core_config*       config;
+	const struct core_config       *config;
 
 	int     thread_id;
 	int     not_responding;
@@ -97,13 +97,13 @@ struct core
 
 	spinlock_t debilock;
 
-	struct dvb_adapter *    dvb_adapter;
-	struct dvb_frontend*    frontend[MAX_TUNERS_PER_ADAPTER];
+	struct dvb_adapter     *dvb_adapter;
+	struct dvb_frontend    *frontend[MAX_TUNERS_PER_ADAPTER];
 	int (*read_fe_status)(struct dvb_frontend *fe, fe_status_t *status);
 	int fe_synced;
 
 	void *priv;
-	struct core_config*   pCfgCore;
+	struct core_config   *pCfgCore;
 };
 extern void st90x_register_frontend(struct dvb_adapter *dvb_adap);
 #endif

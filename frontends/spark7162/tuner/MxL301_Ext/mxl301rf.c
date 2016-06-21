@@ -27,21 +27,21 @@ Copyright(C) 2011 SHARP CORPORATION
 #include <types.h>
 #include "mxl301rf.h"
 
-UINT32 MxL301RF_Init(UINT8* pArray,             /* a array pointer that store the addr and data pairs for I2C write */
-					 UINT32* Array_Size,         /* a integer pointer that store the number of element in above array */
-					 UINT8 Mode,
-					 UINT32 Xtal_Freq_Hz,
-					 UINT32 IF_Freq_Hz,
-					 UINT8 Invert_IF,
-					 UINT8 Clk_Out_Enable,
-					 UINT8 Clk_Out_Amp,
-					 UINT8 Xtal_Cap,
-					 UINT8 AGC_sel,
-					 UINT8 IF_Out
+UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store the addr and data pairs for I2C write */
+		     UINT32 *Array_Size,         /* a integer pointer that store the number of element in above array */
+		     UINT8 Mode,
+		     UINT32 Xtal_Freq_Hz,
+		     UINT32 IF_Freq_Hz,
+		     UINT8 Invert_IF,
+		     UINT8 Clk_Out_Enable,
+		     UINT8 Clk_Out_Amp,
+		     UINT8 Xtal_Cap,
+		     UINT8 AGC_sel,
+		     UINT8 IF_Out
 
-					 /* '11/10/06 : OKAMOTO  Select AGC external or internal. */
-					 , BOOL bInternalAgcEnable
-					)
+		     /* '11/10/06 : OKAMOTO  Select AGC external or internal. */
+		     , BOOL bInternalAgcEnable
+		    )
 {
 
 	UINT32 Reg_Index = 0;
@@ -374,7 +374,7 @@ UINT32 MxL301RF_Init(UINT8* pArray,             /* a array pointer that store th
 			SetIRVBit(myIRV, 0x02, 0x10, 0x00);   /*Normal IF*/
 	}
 	else if (Mode == MxL_MODE_ANA_MN || Mode == MxL_MODE_ANA_BG || Mode == MxL_MODE_ANA_I
-			 || Mode == MxL_MODE_ANA_DKL || Mode == MxL_MODE_ANA_SECAM)
+			|| Mode == MxL_MODE_ANA_DKL || Mode == MxL_MODE_ANA_SECAM)
 	{
 		if (Invert_IF)
 			SetIRVBit(myIRV, 0x02, 0x30, 0x20);   /*Invert IF*/
@@ -488,12 +488,12 @@ UINT32 MxL301RF_Init(UINT8* pArray,             /* a array pointer that store th
 	return MxL_OK;
 }
 
-UINT32 MxL301RF_RFTune(UINT8* pArray,
-					   UINT32* Array_Size,
-					   UINT32 RF_Freq,
-					   UINT8 BWMHz,
-					   UINT8 Mode
-					  )
+UINT32 MxL301RF_RFTune(UINT8 *pArray,
+		       UINT32 *Array_Size,
+		       UINT32 RF_Freq,
+		       UINT8 BWMHz,
+		       UINT8 Mode
+		      )
 
 {
 	IRVType IRV_RFTune_Digital[] =
@@ -823,8 +823,8 @@ UINT32 MxL301RF_RFTune(UINT8* pArray,
 			//YWDRIVER_MODI modify by lf for change to int start
 #if defined(MODULE)
 			else if (((llRF_Freq >= (long long)6895 * MHz) && (llRF_Freq <= (long long)6905 * MHz)) ||
-					 ((llRF_Freq >= (long long)7135 * MHz) && (llRF_Freq <= (long long)7145 * MHz)) ||
-					 ((llRF_Freq >= (long long)7375 * MHz) && (llRF_Freq <= (long long)7385 * MHz)))
+					((llRF_Freq >= (long long)7135 * MHz) && (llRF_Freq <= (long long)7145 * MHz)) ||
+					((llRF_Freq >= (long long)7375 * MHz) && (llRF_Freq <= (long long)7385 * MHz)))
 #else
 			else if (((RF_Freq >= 689.5 * MHz) && (RF_Freq <= 690.5 * MHz)) || ((RF_Freq >= 713.5 * MHz) && (RF_Freq <= 714.5 * MHz)) || ((RF_Freq >= 737.5 * MHz) && (RF_Freq <= 738.5 * MHz)))
 #endif
@@ -837,18 +837,18 @@ UINT32 MxL301RF_RFTune(UINT8* pArray,
 			//YWDRIVER_MODI modify by lf for change to int start
 #if defined(MODULE)
 			else if (((llRF_Freq >= (long long)7615 * MHz) && (llRF_Freq <= (long long)7625 * MHz)) ||
-					 ((llRF_Freq >= (long long)7855 * MHz) && (llRF_Freq <= (long long)7865 * MHz)) ||
-					 ((llRF_Freq >= (long long)8095 * MHz) && (llRF_Freq <= (long long)8105 * MHz))
-					 || ((llRF_Freq >= (long long)8335 * MHz) && (llRF_Freq <= (long long)8345 * MHz)) ||
-					 ((llRF_Freq >= (long long)8575 * MHz) && (llRF_Freq <= (long long)8585 * MHz)) ||
-					 ((llRF_Freq >= (long long)8815 * MHz) && (llRF_Freq <= (long long)8825 * MHz)))
+					((llRF_Freq >= (long long)7855 * MHz) && (llRF_Freq <= (long long)7865 * MHz)) ||
+					((llRF_Freq >= (long long)8095 * MHz) && (llRF_Freq <= (long long)8105 * MHz))
+					|| ((llRF_Freq >= (long long)8335 * MHz) && (llRF_Freq <= (long long)8345 * MHz)) ||
+					((llRF_Freq >= (long long)8575 * MHz) && (llRF_Freq <= (long long)8585 * MHz)) ||
+					((llRF_Freq >= (long long)8815 * MHz) && (llRF_Freq <= (long long)8825 * MHz)))
 #else
 			else if (((RF_Freq >= 761.5 * MHz) && (RF_Freq <= 762.5 * MHz)) ||
-					 ((RF_Freq >= 785.5 * MHz) && (RF_Freq <= 786.5 * MHz)) ||
-					 ((RF_Freq >= 809.5 * MHz) && (RF_Freq <= 810.5 * MHz))
-					 || ((RF_Freq >= 833.5 * MHz) && (RF_Freq <= 834.5 * MHz)) ||
-					 ((RF_Freq >= 857.5 * MHz) && (RF_Freq <= 858.5 * MHz)) ||
-					 ((RF_Freq >= 881.5 * MHz) && (RF_Freq <= 882.5 * MHz)))
+					((RF_Freq >= 785.5 * MHz) && (RF_Freq <= 786.5 * MHz)) ||
+					((RF_Freq >= 809.5 * MHz) && (RF_Freq <= 810.5 * MHz))
+					|| ((RF_Freq >= 833.5 * MHz) && (RF_Freq <= 834.5 * MHz)) ||
+					((RF_Freq >= 857.5 * MHz) && (RF_Freq <= 858.5 * MHz)) ||
+					((RF_Freq >= 881.5 * MHz) && (RF_Freq <= 882.5 * MHz)))
 #endif
 				//YWDRIVER_MODI modify by lf end
 			{

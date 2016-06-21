@@ -65,11 +65,11 @@ int ix7306_set_bandwidth(struct dvb_frontend *fe, u32 bandwidth);
 int ix7306_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth);
 
 extern struct dvb_frontend *ix7306_attach(struct dvb_frontend *fe,
-		const struct ix7306_config *config,
-		struct i2c_adapter *i2c);
+					  const struct ix7306_config *config,
+					  struct i2c_adapter *i2c);
 
 int tuner_Sharp7306_Identify(struct dvb_frontend *fe,
-							 const struct ix7306_config *config,
-							 struct i2c_adapter *i2c);
+			     const struct ix7306_config *config,
+			     struct i2c_adapter *i2c);
 
 #endif /* __IX7306_H */

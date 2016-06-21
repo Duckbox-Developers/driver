@@ -423,15 +423,15 @@ typedef struct
 FE_LLA_Error_t  FE_367ofdm_Init(FE_TER_InitParams_t *pInit, FE_367ofdm_Handle_t *Handle);
 
 FE_LLA_Error_t  FE_367ofdm_Search(FE_367ofdm_Handle_t    Handle,
-								  FE_TER_SearchParams_t   *pSearch,
-								  FE_TER_SearchResult_t *pResult);
+				  FE_TER_SearchParams_t   *pSearch,
+				  FE_TER_SearchResult_t *pResult);
 
 FE_LLA_Error_t  FE_367ofdm_LookFor(FE_367ofdm_Handle_t    Handle              ,
-								   FE_TER_SearchParams_t       *pParams,
-								   FE_TER_SearchResult_t       *pResult);
+				   FE_TER_SearchParams_t       *pParams,
+				   FE_TER_SearchResult_t       *pResult);
 FE_LLA_Error_t  GetTunerInfo(FE_367ofdm_Handle_t    Handle              ,
-							 FE_TER_SearchParams_t       *pParams,
-							 FE_TER_SearchResult_t       *pResult);
+			     FE_TER_SearchParams_t       *pParams,
+			     FE_TER_SearchResult_t       *pResult);
 BOOL    FE_367ofdm_Status(FE_367ofdm_Handle_t   Handle);
 FE_LLA_Error_t  FE_367ofdm_GetSignalInfo(FE_367ofdm_Handle_t Handle, FE_TER_SignalInfo_t *pInfo);
 
@@ -451,51 +451,51 @@ FE_LLA_Error_t FE_STV0367ofdm_SetStandby(FE_367ofdm_Handle_t Handle, U8 StandbyO
 FE_LLA_Error_t    FE_367ofdm_SwitchDemodToDVBT(FE_367ofdm_Handle_t Handle);
 BOOL FE_367ofdm_lock(FE_367ofdm_Handle_t    Handle);
 
-void demod_get_pd(void* dummy_handle, unsigned short* level, STCHIP_Handle_t hTuner);
-void demod_get_agc(void* dummy_handle, U16* rf_agc, U16* bb_agc, STCHIP_Handle_t hTuner);
-void demod_set_agclim(void* dummy_handle, U16 dir_up, STCHIP_Handle_t hTuner);
+void demod_get_pd(void *dummy_handle, unsigned short *level, STCHIP_Handle_t hTuner);
+void demod_get_agc(void *dummy_handle, U16 *rf_agc, U16 *bb_agc, STCHIP_Handle_t hTuner);
+void demod_set_agclim(void *dummy_handle, U16 dir_up, STCHIP_Handle_t hTuner);
 
 #endif
 void FE_STV0367TER_SetCLKgen(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							 IOARCH_Handle_t DemodIOHandle,
-							 U32 DemodXtalFreq);
+			     IOARCH_Handle_t DemodIOHandle,
+			     U32 DemodXtalFreq);
 void FE_STV0367ofdm_SetTS_Parallel_Serial(TUNER_IOREG_DeviceMap_t *DeviceMap,
-		IOARCH_Handle_t IOHandle,
-		FE_TS_OutputMode_t PathTS);
+					  IOARCH_Handle_t IOHandle,
+					  FE_TS_OutputMode_t PathTS);
 void FE_STV0367ofdm_SetCLK_Polarity(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-									IOARCH_Handle_t DemodIOHandle,
-									FE_TS_ClockPolarity_t clock);
+				    IOARCH_Handle_t DemodIOHandle,
+				    FE_TS_ClockPolarity_t clock);
 
 int  FE_367TER_IIR_FILTER_INIT(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							   IOARCH_Handle_t IOHandle,
-							   U8 Bandwidth,
-							   U32 DemodXtalValue);
+			       IOARCH_Handle_t IOHandle,
+			       U8 Bandwidth,
+			       U32 DemodXtalValue);
 void FE_367TER_AGC_IIR_RESET(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							 IOARCH_Handle_t IOHandle);
+			     IOARCH_Handle_t IOHandle);
 U32  FE_367ofdm_GetMclkFreq(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							IOARCH_Handle_t DemodIOHandle,
-							U32 ExtClk_Hz);
+			    IOARCH_Handle_t DemodIOHandle,
+			    U32 ExtClk_Hz);
 void FE_367TER_AGC_IIR_LOCK_DETECTOR_SET(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-		IOARCH_Handle_t DemodIOHandle);
-BOOL FE_367ofdm_lock(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
 					 IOARCH_Handle_t DemodIOHandle);
+BOOL FE_367ofdm_lock(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
+		     IOARCH_Handle_t DemodIOHandle);
 FE_TER_SignalStatus_t
 FE_367ofdm_LockAlgo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-					IOARCH_Handle_t DemodIOHandle,
-					FE_367ofdm_InternalParams_t *pParams);
+		    IOARCH_Handle_t DemodIOHandle,
+		    FE_367ofdm_InternalParams_t *pParams);
 U32 FE_367ofdm_GetErrors(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						 IOARCH_Handle_t DemodIOHandle);  /*Fec2*/
+			 IOARCH_Handle_t DemodIOHandle);  /*Fec2*/
 int FE_STV0367TER_GetPower(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						   IOARCH_Handle_t IOHandle);
+			   IOARCH_Handle_t IOHandle);
 int FE_STV0367TER_GetSnr(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle);
+			 IOARCH_Handle_t IOHandle);
 FE_LLA_Error_t
 FE_367ofdm_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-						 IOARCH_Handle_t DemodIOHandle,
-						 FE_367ofdm_InternalParams_t *pParams,
-						 FE_TER_SignalInfo_t *pInfo);
+			 IOARCH_Handle_t DemodIOHandle,
+			 FE_367ofdm_InternalParams_t *pParams,
+			 FE_TER_SignalInfo_t *pInfo);
 int FE_STV0367TER_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-								IOARCH_Handle_t DemodIOHandle,
-								U32 *CN_dBx10, U32 *Power_dBmx10, U32 *Ber);
+				IOARCH_Handle_t DemodIOHandle,
+				U32 *CN_dBx10, U32 *Power_dBmx10, U32 *Ber);
 #endif
 

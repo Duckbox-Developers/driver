@@ -27,53 +27,56 @@
 
 #include "dvb_frontend.h"
 
-struct socket_s {
-     char*  name;
+struct socket_s
+{
+	char  *name;
 
-     /*
-      * tuner enable pin
-      *  - pio port
-      *  - pio pin
-      *  - active low/high
-      */
-     int    tuner_enable[3];
+	/*
+	 * tuner enable pin
+	 *  - pio port
+	 *  - pio pin
+	 *  - active low/high
+	 */
+	int    tuner_enable[3];
 
-     /* the following arrays define
-      *  - i2c-bus
-      *  - i2c address
-      *  - alternative i2c address (hacky: support for LNBH23)
-      *  - voltage off
-      *  - vsel
-      *  - hsel
-      *
-      * or (depending on the lnb supplier)
-      *  - pio port (enable pin)
-      *  - pio pin   (enable pin)
-      *  - active low/high
-      *  - pio port (v/h sel pin)
-      *  - pio pin  (v/h sel pin)
-      *  - vertical
-      */
-     u32 lnb[6];
+	/* the following arrays define
+	 *  - i2c-bus
+	 *  - i2c address
+	 *  - alternative i2c address (hacky: support for LNBH23)
+	 *  - voltage off
+	 *  - vsel
+	 *  - hsel
+	 *
+	 * or (depending on the lnb supplier)
+	 *  - pio port (enable pin)
+	 *  - pio pin   (enable pin)
+	 *  - active low/high
+	 *  - pio port (v/h sel pin)
+	 *  - pio pin  (v/h sel pin)
+	 *  - vertical
+	 */
+	u32 lnb[6];
 
-     /* tuners i2c bus */ 
-     int    i2c_bus;
+	/* tuners i2c bus */
+	int    i2c_bus;
 };
 
-struct tunersocket_s {
-        int numSockets;
-        
-        struct socket_s* socketList;
-};        
+struct tunersocket_s
+{
+	int numSockets;
 
-struct frontend_s {
-        char* name;
-        
-        int (*demod_detect)(struct socket_s *socket, struct frontend_s *frontend);
-        int (*demod_attach)(struct dvb_adapter* adapter, struct socket_s *socket, struct frontend_s *frontend);
-};        
+	struct socket_s *socketList;
+};
 
-extern int socket_register_frontend(struct frontend_s* frontend);
-extern int socket_register_adapter(struct dvb_adapter* _adapter);
+struct frontend_s
+{
+	char *name;
+
+	int (*demod_detect)(struct socket_s *socket, struct frontend_s *frontend);
+	int (*demod_attach)(struct dvb_adapter *adapter, struct socket_s *socket, struct frontend_s *frontend);
+};
+
+extern int socket_register_frontend(struct frontend_s *frontend);
+extern int socket_register_adapter(struct dvb_adapter *_adapter);
 
 #endif

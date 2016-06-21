@@ -167,10 +167,10 @@ S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOH
 }
 
 void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				 IOARCH_Handle_t IOHandle,
-				 unsigned char *pcData, int nbdata)
+		 IOARCH_Handle_t IOHandle,
+		 unsigned char *pcData, int nbdata)
 {
-	struct i2c_adapter* i2c = (struct i2c_adapter*)IOHandle;
+	struct i2c_adapter *i2c = (struct i2c_adapter *)IOHandle;
 
 	int ret;
 
@@ -188,11 +188,11 @@ void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				IOARCH_Handle_t IOHandle,
-				unsigned char *pcData, int NbRegs)
+		IOARCH_Handle_t IOHandle,
+		unsigned char *pcData, int NbRegs)
 {
 	int ret;
-	struct i2c_adapter* i2c = (struct i2c_adapter*)IOHandle;
+	struct i2c_adapter *i2c = (struct i2c_adapter *)IOHandle;
 
 	struct i2c_msg msg[] =
 	{
@@ -217,7 +217,7 @@ void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
                        ---------         ---------         -----
                     2010-11-12      lwj         ´´½¨
 ************************************************************************/
-int  demod_d0367ter_Identify(struct i2c_adapter* i2c, U8  ucID)
+int  demod_d0367ter_Identify(struct i2c_adapter *i2c, U8  ucID)
 {
 	int ret;
 	U8 pucActualID = 0;

@@ -44,23 +44,23 @@
 /********************************  º¯Êý¶¨Òå************************************/
 
 YW_ErrorType_T TUNER_IOARCH_Open(IOARCH_Handle_t *Handle,
-								 TUNER_IOARCH_OpenParams_t *OpenParams)
+				 TUNER_IOARCH_OpenParams_t *OpenParams)
 {
 	//todo
 	return YW_NO_ERROR;
 }
 
 YW_ErrorType_T TUNER_IOARCH_Close(IOARCH_Handle_t Handle,
-								  TUNER_IOARCH_CloseParams_t *CloseParams)
+				  TUNER_IOARCH_CloseParams_t *CloseParams)
 {
 	//todo
 	return YW_NO_ERROR;
 }
 
 YW_ErrorType_T TUNER_IOARCH_ReadWrite(IOARCH_Handle_t Handle,
-									  TUNER_IOARCH_Operation_t Operation,
-									  unsigned short SubAddr,
-									  U8 *Data, U32 TransferSize, U32 Timeout)
+				      TUNER_IOARCH_Operation_t Operation,
+				      unsigned short SubAddr,
+				      U8 *Data, U32 TransferSize, U32 Timeout)
 {
 	//todo
 	return YW_NO_ERROR;
@@ -123,23 +123,23 @@ INT32 I2C_Write(struct i2c_adapter *i2c_adap, UINT8 I2CAddr, UINT8 *pData, UINT8
 	{
 		if (ret != -ERESTARTSYS)
 			printk("[write error]Reg=[0x%04x], Data=[0x%02x ...], Count=%u, Status=%d\n",
-				   pData[0], pData[1], bLen, ret);
+			       pData[0], pData[1], bLen, ret);
 		return ret < 0 ? ret : -EREMOTEIO;
 	}
 	return 0;
 }
 
 int  I2C_ReadWrite(void *I2CHandle,
-				   TUNER_IOARCH_Operation_t Operation,
-				   unsigned short SubAddr,
-				   U8 *Data, U32 TransferSize, U32 Timeout)
+		   TUNER_IOARCH_Operation_t Operation,
+		   unsigned short SubAddr,
+		   U8 *Data, U32 TransferSize, U32 Timeout)
 {
 	int  Ret = 0;
 	U8  SubAddress, SubAddress16bit[2] = {0};
 	U8  nsbuffer[50];
 	BOOL ADR16_FLAG = FALSE;
 
-	struct i2c_adapter *i2c_adap = (struct i2c_adapter  *)I2CHandle;
+	struct i2c_adapter *i2c_adap = (struct i2c_adapter *)I2CHandle;
 
 	if (SubAddr & 0xFF00)
 		ADR16_FLAG = TRUE;

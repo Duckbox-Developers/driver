@@ -77,7 +77,7 @@ int lnb_pio_command_kernel(unsigned int cmd, void *arg)
 	return 0;
 }
 
-int lnb_pio_command(unsigned int cmd, void *arg )
+int lnb_pio_command(unsigned int cmd, void *arg)
 {
 	return lnb_pio_command_kernel(cmd, NULL);
 }
@@ -89,9 +89,9 @@ int lnb_pio_init(void)
 	lnb_14_19 = NULL;
 
 #if defined(SPARK)
-	lnb_power = stpio_request_pin (6, 5, "lnb_power", STPIO_OUT);
-	lnb_13_18 = stpio_request_pin (6, 6, "lnb_13/18", STPIO_OUT);
-	lnb_14_19 = stpio_request_pin (5, 5, "lnb_14/19", STPIO_OUT);
+	lnb_power = stpio_request_pin(6, 5, "lnb_power", STPIO_OUT);
+	lnb_13_18 = stpio_request_pin(6, 6, "lnb_13/18", STPIO_OUT);
+	lnb_14_19 = stpio_request_pin(5, 5, "lnb_14/19", STPIO_OUT);
 
 	if ((lnb_power == NULL) || (lnb_13_18 == NULL) || (lnb_14_19 == NULL))
 	{
@@ -106,7 +106,7 @@ int lnb_pio_init(void)
 
 		if (lnb_13_18 != NULL)
 		{
-			stpio_free_pin (lnb_13_18);
+			stpio_free_pin(lnb_13_18);
 		}
 		else
 		{
@@ -124,8 +124,8 @@ int lnb_pio_init(void)
 		return -EIO;
 	}
 #elif defined(ATEMIO520) || defined(ATEMIO530)
-	lnb_power = stpio_request_pin (6, 2, "lnb_power", STPIO_OUT);
-	lnb_13_18 = stpio_request_pin (6, 3, "lnb_13/18", STPIO_OUT);
+	lnb_power = stpio_request_pin(6, 2, "lnb_power", STPIO_OUT);
+	lnb_13_18 = stpio_request_pin(6, 3, "lnb_13/18", STPIO_OUT);
 
 	if ((lnb_power == NULL) || (lnb_13_18 == NULL))
 	{
@@ -140,7 +140,7 @@ int lnb_pio_init(void)
 
 		if (lnb_13_18 != NULL)
 		{
-			stpio_free_pin (lnb_13_18);
+			stpio_free_pin(lnb_13_18);
 		}
 		else
 		{

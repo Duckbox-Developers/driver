@@ -32,7 +32,7 @@ static MXL_BOOL m_singleSupply_3_3V = MXL_DISABLE;
 static const UINT8 MxLWare603DrvVersion[] = {1, 1, 3, 1, 0};
 
 /* OEM Data pointer array */
-void * MxL603_OEM_DataPtr[MXL603_MAX_NUM_DEVICES];
+void *MxL603_OEM_DataPtr[MXL603_MAX_NUM_DEVICES];
 
 /*------------------------------------------------------------------------------
 --| FUNCTION NAME : MxLWare603_API_CfgDrvInit
@@ -48,7 +48,7 @@ void * MxL603_OEM_DataPtr[MXL603_MAX_NUM_DEVICES];
 --|
 --|---------------------------------------------------------------------------*/
 
-MXL_STATUS MxLWare603_API_CfgDrvInit(UINT32 devId, void* oemDataPtr)
+MXL_STATUS MxLWare603_API_CfgDrvInit(UINT32 devId, void *oemDataPtr)
 {
 	MXL_STATUS status = MXL_SUCCESS;
 
@@ -104,7 +104,7 @@ MXL_STATUS MxLWare603_API_CfgDevSoftReset(UINT32 devId)
 --|---------------------------------------------------------------------------*/
 
 MXL_STATUS MxLWare603_API_CfgDevOverwriteDefaults(UINT32 devId,
-		MXL_BOOL singleSupply_3_3V)
+						  MXL_BOOL singleSupply_3_3V)
 {
 	UINT8 status = MXL_SUCCESS;
 	UINT8 readData = 0;
@@ -283,7 +283,7 @@ MXL_STATUS MxLWare603_API_CfgDevGPO(UINT32 devId, MXL603_GPO_STATE_E gpoState)
 --|---------------------------------------------------------------------------*/
 
 MXL_STATUS MxLWare603_API_ReqDevVersionInfo(UINT32 devId,
-		MXL603_VER_INFO_T* mxlDevVerInfoPtr)
+					    MXL603_VER_INFO_T *mxlDevVerInfoPtr)
 {
 	UINT8 status = MXL_SUCCESS;
 	UINT8 readBack = 0;
@@ -300,7 +300,7 @@ MXL_STATUS MxLWare603_API_ReqDevVersionInfo(UINT32 devId,
 		mxlDevVerInfoPtr->chipVersion = (readBack & 0xFF);
 
 		MxL_DLL_DEBUG0("Chip ID = 0x%d, Version = 0x%d \n", mxlDevVerInfoPtr->chipId,
-					   mxlDevVerInfoPtr->chipVersion);
+			       mxlDevVerInfoPtr->chipVersion);
 
 		// Get MxLWare version infromation
 		for (k = 0; k < MXL603_VERSION_SIZE; k++)
@@ -327,7 +327,7 @@ MXL_STATUS MxLWare603_API_ReqDevVersionInfo(UINT32 devId,
 --|---------------------------------------------------------------------------*/
 
 MXL_STATUS MxLWare603_API_ReqDevGPOStatus(UINT32 devId,
-		MXL603_GPO_STATE_E* gpoStatusPtr)
+					  MXL603_GPO_STATE_E *gpoStatusPtr)
 {
 	UINT8 status = MXL_SUCCESS;
 	UINT8 regData = 0;
@@ -363,18 +363,18 @@ MXL_STATUS MxLWare603_API_ReqDevGPOStatus(UINT32 devId,
 --|---------------------------------------------------------------------------*/
 
 MXL_STATUS MxLWare603_API_CfgTunerMode(UINT32 devId,
-									   MXL603_TUNER_MODE_CFG_T tunerModeCfg)
+				       MXL603_TUNER_MODE_CFG_T tunerModeCfg)
 {
 	UINT8 status = MXL_SUCCESS;
 	UINT8 dfeRegData = 0;
-	MXL603_REG_CTRL_INFO_T* tmpRegTable;
+	MXL603_REG_CTRL_INFO_T *tmpRegTable;
 
 	MxL_DLL_DEBUG0("%s: Signal Mode = %d, IF Freq = %d, xtal = %d, IF Gain = %d",
-				   __FUNCTION__,
-				   tunerModeCfg.signalMode,
-				   tunerModeCfg.ifOutFreqinKHz,
-				   tunerModeCfg.xtalFreqSel,
-				   tunerModeCfg.ifOutGainLevel);
+		       __FUNCTION__,
+		       tunerModeCfg.signalMode,
+		       tunerModeCfg.ifOutFreqinKHz,
+		       tunerModeCfg.xtalFreqSel,
+		       tunerModeCfg.ifOutGainLevel);
 
 	switch (tunerModeCfg.signalMode)
 	{
@@ -541,10 +541,10 @@ MXL_STATUS MxLWare603_API_CfgTunerAGC(UINT32 devId, MXL603_AGC_CFG_T agcCfg)
 	UINT8 regData = 0;
 
 	MxL_DLL_DEBUG0("%s, AGC sel = %d, attack point set = %d, Flip = %d \n",
-				   __FUNCTION__,
-				   agcCfg.agcType,
-				   agcCfg.setPoint,
-				   agcCfg.agcPolarityInverstion);
+		       __FUNCTION__,
+		       agcCfg.agcType,
+		       agcCfg.setPoint,
+		       agcCfg.agcPolarityInverstion);
 
 	if ((agcCfg.agcPolarityInverstion <= MXL_ENABLE) &&
 			(agcCfg.agcType <= MXL603_AGC_EXTERNAL))
@@ -625,7 +625,7 @@ MXL_STATUS MxLWare603_API_CfgTunerLoopThrough(UINT32 devId, MXL_BOOL loopThrough
 --|---------------------------------------------------------------------------*/
 
 MXL_STATUS MxLWare603_API_CfgTunerChanTune(UINT32 devId,
-		MXL603_CHAN_TUNE_CFG_T chanTuneCfg)
+					   MXL603_CHAN_TUNE_CFG_T chanTuneCfg)
 {
 	UINT64 frequency;
 	UINT32 freq = 0;
@@ -636,11 +636,11 @@ MXL_STATUS MxLWare603_API_CfgTunerChanTune(UINT32 devId,
 	UINT8 dfeCdcData = 0;
 
 	MxL_DLL_DEBUG0("%s, signal type = %d, Freq = %d, BW = %d, Xtal = %d \n",
-				   __FUNCTION__,
-				   chanTuneCfg.signalMode,
-				   chanTuneCfg.freqInHz,
-				   chanTuneCfg.bandWidth,
-				   chanTuneCfg.xtalFreqSel);
+		       __FUNCTION__,
+		       chanTuneCfg.signalMode,
+		       chanTuneCfg.freqInHz,
+		       chanTuneCfg.bandWidth,
+		       chanTuneCfg.xtalFreqSel);
 
 	// Abort Tune
 	status |= MxLWare603_OEM_WriteRegister(devId, START_TUNE_REG, 0x00);
@@ -861,7 +861,7 @@ MXL_STATUS MxLWare603_API_CfgTunerIFOutParam(UINT32 devId, MXL603_IF_OUT_CFG_T i
 --|
 --|---------------------------------------------------------------------------*/
 
-MXL_STATUS MxLWare603_API_ReqTunerAGCLock(UINT32 devId, MXL_BOOL* agcLockStatusPtr)
+MXL_STATUS MxLWare603_API_ReqTunerAGCLock(UINT32 devId, MXL_BOOL *agcLockStatusPtr)
 {
 	MXL_STATUS status = MXL_SUCCESS;
 	UINT8 regData = 0;
@@ -897,8 +897,8 @@ MXL_STATUS MxLWare603_API_ReqTunerAGCLock(UINT32 devId, MXL_BOOL* agcLockStatusP
 --|
 --|---------------------------------------------------------------------------*/
 
-MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL* rfLockPtr,
-		MXL_BOOL* refLockPtr)
+MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL *rfLockPtr,
+					     MXL_BOOL *refLockPtr)
 {
 	MXL_STATUS status = MXL_SUCCESS;
 	UINT8 regData = 0;
@@ -915,7 +915,7 @@ MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL* rfLockPtr,
 		if ((regData & 0x01) == 0x01) refLockStatus = MXL_LOCKED;
 
 		MxL_DLL_DEBUG0(" RfSynthStatus = %d, RefSynthStatus = %d\n", (UINT8)rfLockStatus,
-					   (UINT8)refLockStatus);
+			       (UINT8)refLockStatus);
 
 		*rfLockPtr =  rfLockStatus;
 		*refLockPtr = refLockStatus;
@@ -939,7 +939,7 @@ MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL* rfLockPtr,
 --|
 --|---------------------------------------------------------------------------*/
 
-MXL_STATUS MxLWare603_API_ReqTunerRxPower(UINT32 devId, INT16* rxPwrPtr)
+MXL_STATUS MxLWare603_API_ReqTunerRxPower(UINT32 devId, INT16 *rxPwrPtr)
 {
 	UINT8 status = MXL_SUCCESS;
 	UINT8 regData = 0;

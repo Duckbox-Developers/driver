@@ -53,11 +53,12 @@ struct core_config
 
 };
 
-struct fe_core_state {
+struct fe_core_state
+{
 	struct dvb_frontend_ops 		ops;
 	struct dvb_frontend 			frontend;
 
-	const struct core_config* 		config;
+	const struct core_config 		*config;
 
 	int					thread_id;
 
@@ -65,13 +66,15 @@ struct fe_core_state {
 
 };
 
-struct core_info {
+struct core_info
+{
 	char *name;
 	int type;
 };
 
 /* place to store all the necessary device information */
-struct core {
+struct core
+{
 
 	/* devices */
 	struct dvb_device dvb_dev;
@@ -107,8 +110,8 @@ struct core {
 
 	spinlock_t debilock;
 
-	struct dvb_adapter *	dvb_adapter;
-	struct dvb_frontend*	frontend[MAX_TUNERS_PER_ADAPTER];
+	struct dvb_adapter 	*dvb_adapter;
+	struct dvb_frontend	*frontend[MAX_TUNERS_PER_ADAPTER];
 	int (*read_fe_status)(struct dvb_frontend *fe, fe_status_t *status);
 	int fe_synced;
 

@@ -41,7 +41,7 @@ int lnb24_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg)
 	return 0;
 }
 
-int lnb24_command(struct i2c_client *client, unsigned int cmd, void *arg )
+int lnb24_command(struct i2c_client *client, unsigned int cmd, void *arg)
 {
 	return lnb24_command_kernel(client, cmd, NULL);
 }

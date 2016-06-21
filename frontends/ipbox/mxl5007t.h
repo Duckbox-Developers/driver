@@ -25,7 +25,8 @@
 
 /* ------------------------------------------------------------------------- */
 
-enum mxl5007t_if_freq {
+enum mxl5007t_if_freq
+{
 	MxL_IF_4_MHZ,      /*  4000000 */
 	MxL_IF_4_5_MHZ,    /*  4500000 */
 	MxL_IF_4_57_MHZ,   /*  4570000 */
@@ -39,7 +40,8 @@ enum mxl5007t_if_freq {
 	MxL_IF_44_MHZ,     /* 44000000 */
 };
 
-enum mxl5007t_xtal_freq {
+enum mxl5007t_xtal_freq
+{
 	MxL_XTAL_16_MHZ,      /* 16000000 */
 	MxL_XTAL_20_MHZ,      /* 20000000 */
 	MxL_XTAL_20_25_MHZ,   /* 20250000 */
@@ -56,7 +58,8 @@ enum mxl5007t_xtal_freq {
 	MxL_XTAL_49_3811_MHZ, /* 49381100 */
 };
 
-enum mxl5007t_clkout_amp {
+enum mxl5007t_clkout_amp
+{
 	MxL_CLKOUT_AMP_0_94V = 0,
 	MxL_CLKOUT_AMP_0_53V = 1,
 	MxL_CLKOUT_AMP_0_37V = 2,
@@ -67,14 +70,15 @@ enum mxl5007t_clkout_amp {
 	MxL_CLKOUT_AMP_0_15V = 7,
 };
 
-struct mxl5007t_config {
+struct mxl5007t_config
+{
 	s32 if_diff_out_level;
 	enum mxl5007t_clkout_amp clk_out_amp;
 	enum mxl5007t_xtal_freq xtal_freq_hz;
 	enum mxl5007t_if_freq if_freq_hz;
-	unsigned int invert_if:1;
-	unsigned int loop_thru_enable:1;
-	unsigned int clk_out_enable:1;
+	unsigned int invert_if: 1;
+	unsigned int loop_thru_enable: 1;
+	unsigned int clk_out_enable: 1;
 };
 
 //#if defined(CONFIG_MEDIA_TUNER_MXL5007T) || (defined(CONFIG_MEDIA_TUNER_MXL5007T_MODULE) && defined(MODULE))

@@ -375,8 +375,8 @@ static int ix7306_set_freq(struct dvb_frontend *fe, u32 freq_KHz, u32 tuner_BW)
 }
 
 static int ix7306_set_state(struct dvb_frontend *fe,
-							enum tuner_param param,
-							struct tuner_state *tstate)
+			    enum tuner_param param,
+			    struct tuner_state *tstate)
 {
 	struct ix7306_state *state = fe->tuner_priv;
 
@@ -403,8 +403,8 @@ static int ix7306_set_state(struct dvb_frontend *fe,
 }
 
 static int ix7306_get_state(struct dvb_frontend *fe,
-							enum tuner_param param,
-							struct tuner_state *tstate)
+			    enum tuner_param param,
+			    struct tuner_state *tstate)
 {
 	struct ix7306_state *state = fe->tuner_priv;
 	int err = 0;
@@ -467,7 +467,7 @@ static int ix7306_release(struct dvb_frontend *fe)
 
 #define REF_OSC_FREQ    4000 /* 4MHZ */
 static int ix7306_set_params(struct dvb_frontend *fe,
-							 struct dvb_frontend_parameters *p)
+			     struct dvb_frontend_parameters *p)
 {
 	struct ix7306_state *state = fe->tuner_priv;
 	int err = 0;
@@ -758,8 +758,8 @@ int ix7306_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 }
 
 struct dvb_frontend *ix7306_attach(struct dvb_frontend *fe,
-								   const struct ix7306_config *config,
-								   struct i2c_adapter *i2c)
+				   const struct ix7306_config *config,
+				   struct i2c_adapter *i2c)
 {
 	struct ix7306_state *state = NULL;
 
@@ -774,7 +774,7 @@ struct dvb_frontend *ix7306_attach(struct dvb_frontend *fe,
 	fe->ops.tuner_ops   = ix7306_ops;
 
 	printk("%s: Attaching %s IX7306 8PSK/QPSK tuner\n",
-		   __func__, config->name);
+	       __func__, config->name);
 
 	return fe;
 
@@ -784,8 +784,8 @@ exit:
 }
 
 int tuner_Sharp7306_Identify(struct dvb_frontend *fe,
-							 const struct ix7306_config *config,
-							 struct i2c_adapter *i2c)//lwj change
+			     const struct ix7306_config *config,
+			     struct i2c_adapter *i2c)//lwj change
 {
 	int Err = 0;
 	unsigned char  ucIOBuffer[4 + 1];

@@ -51,18 +51,18 @@ typedef enum
 typedef struct
 {
 	U32     FE_367qam_TotalBlocks,
-			FE_367qam_TotalBlocksOld,
-			FE_367qam_TotalBlocksOffset,
-			FE_367qam_TotalCB,
-			FE_367qam_TotalCBOld,
-			FE_367qam_TotalCBOffset,
-			FE_367qam_TotalUCB,
-			FE_367qam_TotalUCBOld,
-			FE_367qam_TotalUCBOffset,
-			FE_367qam_BER_Reg,
-			FE_367qam_BER_U32,
-			FE_367qam_Saturation,
-			FE_367qam_WaitingTime;
+		FE_367qam_TotalBlocksOld,
+		FE_367qam_TotalBlocksOffset,
+		FE_367qam_TotalCB,
+		FE_367qam_TotalCBOld,
+		FE_367qam_TotalCBOffset,
+		FE_367qam_TotalUCB,
+		FE_367qam_TotalUCBOld,
+		FE_367qam_TotalUCBOffset,
+		FE_367qam_BER_Reg,
+		FE_367qam_BER_U32,
+		FE_367qam_Saturation,
+		FE_367qam_WaitingTime;
 } FE_367qam_Monitor;
 
 typedef enum
@@ -120,13 +120,13 @@ typedef struct
 	FE_367qam_SIGNALTYPE_t State;
 
 	S32 Crystal_Hz,             /*  Crystal frequency (Hz) */
-		IF_Freq_kHz,
-		Frequency_kHz,          /*  Current tuner frequency (KHz) */
-		SymbolRate_Bds,     /*  Symbol rate (Bds) */
-		MasterClock_Hz,     /*  Master clock frequency (Hz) */
-		AdcClock_Hz,            /*  ADC clock frequency (Hz) */
-		SearchRange_Hz,     /*  Search range (Hz) */
-		DerotOffset_Hz;     /*  Derotator offset during software zigzag (Hz)*/
+	    IF_Freq_kHz,
+	    Frequency_kHz,          /*  Current tuner frequency (KHz) */
+	    SymbolRate_Bds,     /*  Symbol rate (Bds) */
+	    MasterClock_Hz,     /*  Master clock frequency (Hz) */
+	    AdcClock_Hz,            /*  ADC clock frequency (Hz) */
+	    SearchRange_Hz,     /*  Search range (Hz) */
+	    DerotOffset_Hz;     /*  Derotator offset during software zigzag (Hz)*/
 	U32 FirstTimeBER;
 	FE_CAB_Modulation_t Modulation;         /*  QAM Size */
 	FE_367qam_Monitor Monitor_results;          /*  Monitorting counters */
@@ -144,23 +144,23 @@ U32 FE_367qam_GetDerotFreq(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Hand
 U32 FE_367qam_GetSymbolRate(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle, U32 MasterClk_Hz);
 
 S32 FE_STV0367qam_GetSnr(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						 IOARCH_Handle_t DemodIOHandle);
+			 IOARCH_Handle_t DemodIOHandle);
 S32 FE_STV0367qam_GetPower(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						   IOARCH_Handle_t DemodIOHandle);
+			   IOARCH_Handle_t DemodIOHandle);
 S32 FE_STV0367qam_GetErrors(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							IOARCH_Handle_t DemodIOHandle);
+			    IOARCH_Handle_t DemodIOHandle);
 int FE_STV0367qam_GetSignalInfo(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-								IOARCH_Handle_t DemodIOHandle,
-								U32 *CN_dBx10,
-								U32 *Power_dBmx10,
-								U32 *Ber,
-								U32 *FirstTimeBER);
+				IOARCH_Handle_t DemodIOHandle,
+				U32 *CN_dBx10,
+				U32 *Power_dBmx10,
+				U32 *Ber,
+				U32 *FirstTimeBER);
 FE_CAB_Modulation_t D367qam_SetQamSize(TUNER_TunerType_T TunerType,
-									   TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-									   IOARCH_Handle_t DemodIOHandle,
-									   U32 SearchFreq_kHz,
-									   U32 SymbolRate,
-									   FE_CAB_Modulation_t QAMSize);
+				       TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
+				       IOARCH_Handle_t DemodIOHandle,
+				       U32 SearchFreq_kHz,
+				       U32 SymbolRate,
+				       FE_CAB_Modulation_t QAMSize);
 
 /////////////////////////////////////////////////////////////
 

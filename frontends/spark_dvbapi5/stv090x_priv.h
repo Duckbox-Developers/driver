@@ -31,29 +31,29 @@
 #define FE_DEBUGREG             4
 
 #define STV090x_READ_DEMOD(__state, __reg) ((           \
-    (__state)->demod == STV090x_DEMODULATOR_1)  ?   \
-    stv090x_read_reg(__state, STV090x_P2_##__reg) :     \
-    stv090x_read_reg(__state, STV090x_P1_##__reg))
+							(__state)->demod == STV090x_DEMODULATOR_1)  ?   \
+					    stv090x_read_reg(__state, STV090x_P2_##__reg) :     \
+					    stv090x_read_reg(__state, STV090x_P1_##__reg))
 
 #define STV090x_WRITE_DEMOD(__state, __reg, __data) ((      \
-    (__state)->demod == STV090x_DEMODULATOR_1)  ?   \
-    stv090x_write_reg(__state, STV090x_P2_##__reg, __data) :\
-    stv090x_write_reg(__state, STV090x_P1_##__reg, __data))
+							    (__state)->demod == STV090x_DEMODULATOR_1)  ?   \
+						     stv090x_write_reg(__state, STV090x_P2_##__reg, __data) :\
+						     stv090x_write_reg(__state, STV090x_P1_##__reg, __data))
 
 #define STV090x_ADDR_OFFST(__state, __x) ((         \
-    (__state->demod) == STV090x_DEMODULATOR_1)  ?   \
-        STV090x_P1_##__x :              \
-        STV090x_P2_##__x)
+						    (__state->demod) == STV090x_DEMODULATOR_1)  ?   \
+					  STV090x_P1_##__x :              \
+					  STV090x_P2_##__x)
 
 #define STV090x_SETFIELD(mask, bitf, val)   (mask = (mask & (~(((1 << STV090x_WIDTH_##bitf) - 1) <<\
-                             STV090x_OFFST_##bitf))) | \
-                             (val << STV090x_OFFST_##bitf))
+							       STV090x_OFFST_##bitf))) | \
+						    (val << STV090x_OFFST_##bitf))
 
 #define STV090x_GETFIELD(val, bitf)     ((val >> STV090x_OFFST_##bitf) & ((1 << STV090x_WIDTH_##bitf) - 1))
 
 #define STV090x_SETFIELD_Px(mask, bitf, val)    (mask = (mask & (~(((1 << STV090x_WIDTH_Px_##bitf) - 1) <<\
-                             STV090x_OFFST_Px_##bitf))) | \
-                             (val << STV090x_OFFST_Px_##bitf))
+								   STV090x_OFFST_Px_##bitf))) | \
+							(val << STV090x_OFFST_Px_##bitf))
 
 #define STV090x_GETFIELD_Px(val, bitf)      ((val >> STV090x_OFFST_Px_##bitf) & ((1 << STV090x_WIDTH_Px_##bitf) - 1))
 
@@ -67,9 +67,9 @@
 #define STV090x_SEARCH_AGC2_TH_CUT30    1200
 
 #define STV090x_SEARCH_AGC2_TH(__ver)   \
-    ((__ver <= 0x20) ?      \
-    STV090x_SEARCH_AGC2_TH_CUT20 :  \
-    STV090x_SEARCH_AGC2_TH_CUT30)
+	((__ver <= 0x20) ?      \
+	 STV090x_SEARCH_AGC2_TH_CUT20 :  \
+	 STV090x_SEARCH_AGC2_TH_CUT30)
 
 enum stv090x_signal_state
 {

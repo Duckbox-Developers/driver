@@ -35,25 +35,25 @@ static short paramDebug;
 #define TAGDEBUG "[lnb_pio] "
 
 #define dprintk(level, x...) do { \
-if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
+	} while (0)
 
 extern int _12v_isON; //defined in e2_proc ->I will implement a better mechanism later
 
 struct lnb_state
 {
-	struct stpio_pin* lnb_pin;
-	struct stpio_pin* lnb_enable_pin;
+	struct stpio_pin *lnb_pin;
+	struct stpio_pin *lnb_enable_pin;
 
 	u32 lnb[6];
 };
 
-u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t voltage)
+u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend *fe, fe_sec_voltage_t voltage)
 {
 	struct lnb_state *state = (struct lnb_state *) _state;
 	u16 ret = 0;
 
-	dprintk (10, "%s(%p, %d)\n", __FUNCTION__, fe, voltage);
+	dprintk(10, "%s(%p, %d)\n", __FUNCTION__, fe, voltage);
 
 	switch (voltage)
 	{
@@ -63,7 +63,7 @@ u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t 
 			{
 				if (state->lnb_enable_pin)
 				{
-					stpio_set_pin (state->lnb_enable_pin, !state->lnb[2]);
+					stpio_set_pin(state->lnb_enable_pin, !state->lnb[2]);
 				}
 			}
 			break;
@@ -72,9 +72,9 @@ u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t 
 		{
 			if (state->lnb_enable_pin)
 			{
-				stpio_set_pin (state->lnb_enable_pin, state->lnb[2]);
+				stpio_set_pin(state->lnb_enable_pin, state->lnb[2]);
 			}
-			stpio_set_pin (state->lnb_pin, state->lnb[5]);
+			stpio_set_pin(state->lnb_pin, state->lnb[5]);
 			dprintk(10, "%s: v %p %d\n", __func__, state->lnb_pin, state->lnb[5]);
 			break;
 		}
@@ -82,9 +82,9 @@ u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t 
 		{
 			if (state->lnb_enable_pin)
 			{
-				stpio_set_pin (state->lnb_enable_pin, state->lnb[2]);
+				stpio_set_pin(state->lnb_enable_pin, state->lnb[2]);
 			}
-			stpio_set_pin (state->lnb_pin, !state->lnb[5]);
+			stpio_set_pin(state->lnb_pin, !state->lnb[5]);
 			dprintk(10, "%s: h %p %d\n", __func__, state->lnb_pin, !state->lnb[5]);
 			break;
 		}
@@ -96,20 +96,20 @@ u16 lnb_pio_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t 
 	return ret;
 }
 
-void* lnb_pio_attach(u32* lnb, struct equipment_s* equipment)
+void *lnb_pio_attach(u32 *lnb, struct equipment_s *equipment)
 {
-	struct lnb_state* state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
+	struct lnb_state *state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
 
 	memcpy(state->lnb, lnb, sizeof(state->lnb));
 
 	equipment->lnb_set_voltage = lnb_pio_set_voltage;
 
-	state->lnb_enable_pin = stpio_request_pin (lnb[0], lnb[1], "lnb_enab", STPIO_OUT);
+	state->lnb_enable_pin = stpio_request_pin(lnb[0], lnb[1], "lnb_enab", STPIO_OUT);
 
 	printk("lnb_enable_pin %p\n", state->lnb_enable_pin);
 	stpio_set_pin(state->lnb_enable_pin, lnb[2]);
 
-	state->lnb_pin = stpio_request_pin (lnb[3], lnb[4], "lnb_sel", STPIO_OUT);
+	state->lnb_pin = stpio_request_pin(lnb[3], lnb[4], "lnb_sel", STPIO_OUT);
 
 	return state;
 }

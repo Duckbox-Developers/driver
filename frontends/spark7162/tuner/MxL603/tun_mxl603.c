@@ -88,7 +88,7 @@ static UINT32 tuner_cnt = MAX_TUNER_SUPPORT_NUM;
 #ifdef BOARD_RAINROW_02
 MXL_STATUS MxLWare603_OEM_WriteRegister(UINT32 tuner_id, UINT8 RegAddr, UINT8 RegData)
 {
-	AVLEM61_Chip * pAVL_Chip = NULL;
+	AVLEM61_Chip *pAVL_Chip = NULL;
 
 	UINT32 status = ERR_FAILUE;
 	UINT8 Cmd[2];
@@ -115,7 +115,7 @@ MXL_STATUS MxLWare603_OEM_WriteRegister(UINT32 tuner_id, UINT8 RegAddr, UINT8 Re
 
 MXL_STATUS MxLWare603_OEM_ReadRegister(UINT32 tuner_id, UINT8 RegAddr, UINT8 *DataPtr)
 {
-	AVLEM61_Chip * pAVL_Chip = NULL;
+	AVLEM61_Chip *pAVL_Chip = NULL;
 	UINT32 status = ERR_FAILUE;
 	UINT8 Read_Cmd[2];
 	UINT8   ucAddrSize = 2;
@@ -278,9 +278,9 @@ static MxL_ERR_MSG MxL603_Tuner_RFTune(UINT32 tuner_id, UINT32 RF_Freq_Hz, MXL60
 #else
 
 #if defined(MODULE)
-U32* tun_getExtDeviceHandle(UINT32 tuner_id)
+U32 *tun_getExtDeviceHandle(UINT32 tuner_id)
 {
-	struct COFDM_TUNER_CONFIG_EXT * mxl603_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl603_ptr = NULL;
 	NIM_PRINTF("MxL603_Config[%d].i2c_adap = 0x%08x\n", tuner_id, (int)MxL603_Config[tuner_id].i2c_adap);
 
 	mxl603_ptr = &MxL603_Config[tuner_id];
@@ -288,7 +288,7 @@ U32* tun_getExtDeviceHandle(UINT32 tuner_id)
 	return mxl603_ptr->i2c_adap;
 }
 #else
-U32* tun_getExtDeviceHandle(UINT32 tuner_id)
+U32 *tun_getExtDeviceHandle(UINT32 tuner_id)
 {
 	TUNER_ScanTaskParam_T       *Inst = NULL;
 	IOARCH_Handle_t             IOHandle = 0;
@@ -302,7 +302,7 @@ U32* tun_getExtDeviceHandle(UINT32 tuner_id)
 
 	NIM_PRINTF("IOHandle = %d\n", IOHandle);
 	NIM_PRINTF("IOARCH_Handle[%d].ExtDeviceHandle = %d\n", IOHandle,
-			   IOARCH_Handle[IOHandle].ExtDeviceHandle);
+		   IOARCH_Handle[IOHandle].ExtDeviceHandle);
 
 	if (0 == IOHandle)
 	{
@@ -346,12 +346,12 @@ INT32 tun_mxl603_mask_write(UINT32 tuner_id, UINT8 addr, UINT8 reg, UINT8 mask ,
 	return ret;
 }
 
-INT32 tun_mxl603_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
+INT32 tun_mxl603_i2c_write(UINT32 tuner_id, UINT8 *pArray, UINT32 count)
 {
 	INT32 result = SUCCESS;
 	INT32 i, j, cycle;
 	UINT8 tmp[BURST_SZ + 2];
-	struct COFDM_TUNER_CONFIG_EXT * mxl603_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl603_ptr = NULL;
 
 	U32 *pExtDeviceHandle = tun_getExtDeviceHandle(tuner_id);
 
@@ -413,11 +413,11 @@ INT32 tun_mxl603_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
 	return result;
 }
 
-INT32 tun_mxl603_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8* mData)
+INT32 tun_mxl603_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8 *mData)
 {
 	INT32 ret = 0;
 	UINT8 cmd[4];
-	struct COFDM_TUNER_CONFIG_EXT * mxl603_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl603_ptr = NULL;
 
 	U32 *pExtDeviceHandle = tun_getExtDeviceHandle(tuner_id);
 
@@ -490,7 +490,7 @@ MXL_STATUS MxLWare603_OEM_WriteRegister(UINT32 tuner_id, UINT8 RegAddr, UINT8 Re
 		NIM_PRINTF("I2C_ReadWrite\n");
 		//status = i2c_write(MxL603_Config[tuner_id].i2c_type_id, MxL603_Config[tuner_id].cTuner_Base_Addr, Cmd, 2);
 		status = I2C_ReadWrite(pExtDeviceHandle, TUNER_IO_SA_WRITE, Cmd[0],
-							   &Cmd[1], 1, 100);
+				       &Cmd[1], 1, 100);
 	}
 
 	NIM_PRINTF("MxLWare603_OEM_WriteRegister status = %d\n", status);
@@ -648,7 +648,7 @@ static MxL_ERR_MSG MxL603_Tuner_RFTune(UINT32 tuner_id, UINT32 RF_Freq_Hz, MXL60
 
 INT32 tun_mxl603_set_addr(UINT32 tuner_idx, UINT8 addr, UINT32 i2c_mutex_id)
 {
-	struct COFDM_TUNER_CONFIG_EXT * mxl603_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl603_ptr = NULL;
 
 	if (tuner_idx >= tuner_cnt)
 		return ERR_FAILUE;
@@ -687,7 +687,7 @@ static INT32 set_through_mode(UINT32 tuner_id, DEM_WRITE_READ_TUNER *ThroughMode
 {
 	if (tuner_id >= tuner_cnt)
 		return ERR_FAILUE;
-	MEMCPY((UINT8*)(&m_ThroughMode[tuner_id]), (UINT8*)ThroughMode, sizeof(DEM_WRITE_READ_TUNER));
+	MEMCPY((UINT8 *)(&m_ThroughMode[tuner_id]), (UINT8 *)ThroughMode, sizeof(DEM_WRITE_READ_TUNER));
 	return SUCCESS;
 }
 
@@ -701,7 +701,7 @@ static INT32 set_through_mode(UINT32 tuner_id, DEM_WRITE_READ_TUNER *ThroughMode
 *
 * Return Value: INT32           : Result
 *****************************************************************************/
-INT32 tun_mxl603_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config)
+INT32 tun_mxl603_init(UINT32 *tuner_id, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config)
 {
 	UINT16 Xtal_Freq;
 	/* check Tuner Configuration structure is available or not */

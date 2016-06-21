@@ -39,15 +39,15 @@ struct stv0297_config
 	* First of each pair is the register, second is the value.
 	* List should be terminated with an 0xff, 0xff pair.
 	*/
-	u8* inittab;
+	u8 *inittab;
 
 	/* does the "inversion" need inverted? */
-	u8 invert:1;
+	u8 invert: 1;
 
 	/* set to 1 if the device requires an i2c STOP during reading */
-	u8 stop_during_read:1;
+	u8 stop_during_read: 1;
 };
 
-extern struct dvb_frontend* stv0297_attach(const struct stv0297_config* config,
-					   struct i2c_adapter* i2c);
+extern struct dvb_frontend *stv0297_attach(const struct stv0297_config *config,
+					   struct i2c_adapter *i2c);
 #endif // STV0297_H

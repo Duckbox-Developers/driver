@@ -138,7 +138,7 @@ void  tuner_lg031_CalWrBuffer(struct lg031_state *TunerConfig, u32  Frequency, u
 	TunerConfig->IOBuffer[4] = 0xc3;    //0xc2
 }
 
-static int lg031_set_params(struct dvb_frontend* fe, struct dvb_frontend_parameters *params)
+static int lg031_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
 {
 	struct lg031_state *state = fe->tuner_priv;
 	int err = 0;

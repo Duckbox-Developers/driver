@@ -36,31 +36,31 @@ extern "C"
 //S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t  IOHandle, U16 RegId);
 YW_ErrorType_T
 ChipUpdateDefaultValues_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-								IOARCH_Handle_t IOHandle,
-								U16 RegAddr,
-								unsigned char Data, S32 reg);
+				IOARCH_Handle_t IOHandle,
+				U16 RegAddr,
+				unsigned char Data, S32 reg);
 YW_ErrorType_T
 ChipSetOneRegister_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						   IOARCH_Handle_t IOHandle,
-						   U16 RegAddr, U8 Data);
+			   IOARCH_Handle_t IOHandle,
+			   U16 RegAddr, U8 Data);
 int ChipGetOneRegister_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							   IOARCH_Handle_t IOHandle, U16 RegAddr);
+			       IOARCH_Handle_t IOHandle, U16 RegAddr);
 YW_ErrorType_T
 ChipSetField_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-					 IOARCH_Handle_t IOHandle,
-					 U32 FieldId, int Value);
+		     IOARCH_Handle_t IOHandle,
+		     U32 FieldId, int Value);
 U8  ChipGetField_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle, U32 FieldId);
+			 IOARCH_Handle_t IOHandle, U32 FieldId);
 
 //void ChipWaitOrAbort(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 delay_ms);
 //void ChipWaitOrAbort_0367ter(TUNER_ScanTaskParam_T *Inst, U32 delay_ms);
 
 YW_ErrorType_T
 ChipSetFieldImage_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						  IOARCH_Handle_t IOHandle,
-						  U32 FieldId, S32 Value);
+			  IOARCH_Handle_t IOHandle,
+			  U32 FieldId, S32 Value);
 S32 ChipGetFieldImage_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							  IOARCH_Handle_t IOHandle, U32 FieldId);
+			      IOARCH_Handle_t IOHandle, U32 FieldId);
 
 //U16 ChipGetRegAddress(U32 FieldId);
 //int ChipGetFieldMask(U32 FieldId);
@@ -70,12 +70,12 @@ S32 ChipGetFieldImage_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
 
 YW_ErrorType_T
 ChipSetRegisters_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle,
-						 int FirstRegAddr, int NbRegs);
+			 IOARCH_Handle_t IOHandle,
+			 int FirstRegAddr, int NbRegs);
 YW_ErrorType_T
 ChipGetRegisters_0367ter(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle,
-						 int FirstRegAddr, int NbRegs);//, unsigned char *RegsVal)
+			 IOARCH_Handle_t IOHandle,
+			 int FirstRegAddr, int NbRegs);//, unsigned char *RegsVal)
 
 void ChipWaitOrAbort_0367ter(BOOL bForceSearchTerm, U32 delay_ms);//lwj
 

@@ -13,8 +13,8 @@ struct sharp6465_config
 	u32 TunerStep;
 };
 extern struct dvb_frontend *sharp6465_attach(struct dvb_frontend *fe,
-		const struct sharp6465_config *config,
-		struct i2c_adapter *i2c);
+					     const struct sharp6465_config *config,
+					     struct i2c_adapter *i2c);
 
 #endif /* __SHARP6465_H */
 

@@ -36,17 +36,17 @@ struct dvb_d0367_fe_ofdm_state
 };
 
 YW_ErrorType_T D0367ter_ScanFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
-								 IOARCH_Handle_t IOHandle);
+				 IOARCH_Handle_t IOHandle);
 
 #if 0
-static int dvb_d0367_fe_ofdm_i2c_write(struct dvb_frontend* fe,
-									   U16 uAddr,
-									   unsigned char *pcData,
-									   int nData)
+static int dvb_d0367_fe_ofdm_i2c_write(struct dvb_frontend *fe,
+				       U16 uAddr,
+				       unsigned char *pcData,
+				       int nData)
 {
 	int ret;
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
-	struct i2c_adapter* i2c = state->i2c;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
+	struct i2c_adapter *i2c = state->i2c;
 	int i;
 
 	u8 buf[2 + nData];
@@ -77,14 +77,14 @@ static int dvb_d0367_fe_ofdm_i2c_write(struct dvb_frontend* fe,
 	return ret;
 }
 
-static int dvb_d0367_fe_ofdm_i2c_read(struct dvb_frontend* fe,
-									  U16 uAddr,
-									  unsigned char *pcData,
-									  int nData)
+static int dvb_d0367_fe_ofdm_i2c_read(struct dvb_frontend *fe,
+				      U16 uAddr,
+				      unsigned char *pcData,
+				      int nData)
 {
 	int ret;
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
-	struct i2c_adapter* i2c = state->i2c;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
+	struct i2c_adapter *i2c = state->i2c;
 	u8 b0[2];
 	int i;
 
@@ -114,10 +114,10 @@ static int dvb_d0367_fe_ofdm_i2c_read(struct dvb_frontend* fe,
 }
 #endif  /* 0 */
 
-static int dvb_d0367_fe_ofdm_read_status(struct dvb_frontend* fe,
-		fe_status_t* status)
+static int dvb_d0367_fe_ofdm_read_status(struct dvb_frontend *fe,
+					 fe_status_t *status)
 {
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
 	//int iTunerLock = 0;
 	BOOL bIsLocked;
 
@@ -143,16 +143,16 @@ static int dvb_d0367_fe_ofdm_read_status(struct dvb_frontend* fe,
 #endif  /* 0 */
 	{
 		bIsLocked = FE_367ofdm_lock(&state->DeviceMap, state->IOHandle);
-_DEBUG
+		_DEBUG
 		printk("bIsLocked = %d\n", bIsLocked);
 	}
 	if (bIsLocked)
 	{
 		*status = FE_HAS_SIGNAL
-				  | FE_HAS_CARRIER
-				  | FE_HAS_VITERBI
-				  | FE_HAS_SYNC
-				  | FE_HAS_LOCK;
+			  | FE_HAS_CARRIER
+			  | FE_HAS_VITERBI
+			  | FE_HAS_SYNC
+			  | FE_HAS_LOCK;
 	}
 	else
 	{
@@ -164,10 +164,10 @@ _DEBUG
 		U32 Intensity = 0;
 		U32 Ber = 0;
 		FE_STV0367TER_GetSignalInfo(&state->DeviceMap, state->IOHandle,
-									&Quality, &Intensity, &Ber);
+					    &Quality, &Intensity, &Ber);
 
 		printk("Quality = %d, Intensity = %d, Ber = %d\n",
-			   Quality, Intensity, Ber);
+		       Quality, Intensity, Ber);
 	}
 #endif  /* 0 */
 	//printk("%s<<\n", __FUNCTION__);
@@ -179,7 +179,7 @@ exit:
 #endif  /* 0 */
 }
 
-static int dvb_d0367_fe_ofdm_read_ber(struct dvb_frontend* fe, u32* ber)
+static int dvb_d0367_fe_ofdm_read_ber(struct dvb_frontend *fe, u32 *ber)
 {
 	struct dvb_d0367_fe_ofdm_state  *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
@@ -194,8 +194,8 @@ static int dvb_d0367_fe_ofdm_read_ber(struct dvb_frontend* fe, u32* ber)
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_read_signal_strength(struct dvb_frontend* fe,
-		u16* strength)
+static int dvb_d0367_fe_ofdm_read_signal_strength(struct dvb_frontend *fe,
+						  u16 *strength)
 {
 	struct dvb_d0367_fe_ofdm_state  *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
@@ -209,7 +209,7 @@ static int dvb_d0367_fe_ofdm_read_signal_strength(struct dvb_frontend* fe,
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_read_snr(struct dvb_frontend* fe, u16* snr)
+static int dvb_d0367_fe_ofdm_read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	struct dvb_d0367_fe_ofdm_state  *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
@@ -224,23 +224,23 @@ static int dvb_d0367_fe_ofdm_read_snr(struct dvb_frontend* fe, u16* snr)
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_read_ucblocks(struct dvb_frontend* fe,
-		u32* ucblocks)
+static int dvb_d0367_fe_ofdm_read_ucblocks(struct dvb_frontend *fe,
+					   u32 *ucblocks)
 {
 	*ucblocks = 0;
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_get_frontend(struct dvb_frontend* fe,
-		struct dvb_frontend_parameters *p)
+static int dvb_d0367_fe_ofdm_get_frontend(struct dvb_frontend *fe,
+					  struct dvb_frontend_parameters *p)
 {
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_set_frontend(struct dvb_frontend* fe,
-		struct dvb_frontend_parameters *p)
+static int dvb_d0367_fe_ofdm_set_frontend(struct dvb_frontend *fe,
+					  struct dvb_frontend_parameters *p)
 {
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
 	IOARCH_Handle_t                 IOHandle;
 
@@ -261,7 +261,7 @@ static int dvb_d0367_fe_ofdm_set_frontend(struct dvb_frontend* fe,
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_sleep(struct dvb_frontend* fe)
+static int dvb_d0367_fe_ofdm_sleep(struct dvb_frontend *fe)
 {
 	struct dvb_d0367_fe_ofdm_state  *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
@@ -276,9 +276,9 @@ static int dvb_d0367_fe_ofdm_sleep(struct dvb_frontend* fe)
 	return 0;
 }
 
-static int dvb_d0367_fe_ofdm_init(struct dvb_frontend* fe)
+static int dvb_d0367_fe_ofdm_init(struct dvb_frontend *fe)
 {
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
 	IOARCH_Handle_t                 IOHandle;
 
@@ -294,10 +294,10 @@ static int dvb_d0367_fe_ofdm_init(struct dvb_frontend* fe)
 		U32 Intensity = 0;
 		U32 Ber = 0;
 		FE_STV0367TER_GetSignalInfo(&state->DeviceMap, state->IOHandle,
-									&Quality, &Intensity, &Ber);
+					    &Quality, &Intensity, &Ber);
 
 		printk("Quality = %d, Intensity = %d, Ber = %d\n",
-			   Quality, Intensity, Ber);
+		       Quality, Intensity, Ber);
 	}
 	{
 		BOOL bIsLocked;
@@ -308,9 +308,9 @@ static int dvb_d0367_fe_ofdm_init(struct dvb_frontend* fe)
 	return 0;
 }
 
-static void dvb_d0367_fe_ofdm_release(struct dvb_frontend* fe)
+static void dvb_d0367_fe_ofdm_release(struct dvb_frontend *fe)
 {
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
 	IOARCH_Handle_t                 IOHandle;
 
@@ -328,7 +328,7 @@ static void dvb_d0367_fe_ofdm_release(struct dvb_frontend* fe)
 static int
 dvb_d0367_fe_ofdm_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 {
-	struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
+	struct dvb_d0367_fe_ofdm_state *state = fe->demodulator_priv;
 	TUNER_IOREG_DeviceMap_t         *DeviceMap;
 	IOARCH_Handle_t                 IOHandle;
 
@@ -371,7 +371,7 @@ static int dvb_d0367_fe_ofdm_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 
 #if (DVB_API_VERSION < 5)
 static int dvb_d0367_fe_ofdm_get_info(struct dvb_frontend *fe,
-									  struct dvbfe_info *fe_info)
+				      struct dvbfe_info *fe_info)
 {
 	//struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
 	/* get delivery system info */
@@ -386,7 +386,7 @@ static int dvb_d0367_fe_ofdm_get_info(struct dvb_frontend *fe,
 	return 0;
 }
 #else
-static int dvb_d0367_fe_ofdm_get_property(struct dvb_frontend *fe, struct dtv_property* tvp)
+static int dvb_d0367_fe_ofdm_get_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 {
 	//struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
 
@@ -446,13 +446,13 @@ static struct dvb_frontend_ops dvb_d0367_fe_ofdm_ops =
 };
 
 void D0367ter_TunerSetFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						   IOARCH_Handle_t IOHandle)
+			   IOARCH_Handle_t IOHandle)
 
 {
-	struct dvb_d0367_fe_ofdm_state* state =
-		(struct dvb_d0367_fe_ofdm_state*)DeviceMap->priv;
+	struct dvb_d0367_fe_ofdm_state *state =
+		(struct dvb_d0367_fe_ofdm_state *)DeviceMap->priv;
 	struct dvb_frontend_parameters *p = state->p;
-	struct dvb_frontend* fe = &state->frontend;
+	struct dvb_frontend *fe = &state->frontend;
 
 	if (fe->ops.tuner_ops.set_params)
 	{
@@ -463,9 +463,9 @@ void D0367ter_TunerSetFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 FE_LLA_Error_t D0367ter_Algo(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							 IOARCH_Handle_t IOHandle,
-							 FE_367ofdm_InternalParams_t *pParams,
-							 FE_TER_SearchResult_t *pResult)
+			     IOARCH_Handle_t IOHandle,
+			     FE_367ofdm_InternalParams_t *pParams,
+			     FE_TER_SearchResult_t *pResult)
 {
 	U32 InternalFreq = 0, temp = 0 ;
 	//t AgcIF=0;
@@ -617,8 +617,8 @@ FE_LLA_Error_t D0367ter_Algo(TUNER_IOREG_DeviceMap_t *DeviceMap,
 		ChipGetRegisters_0367ter(DeviceMap, IOHandle, R367ofdm_TRL_NOMRATE2, 1);
 
 		temp = ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_HI) * 512 +
-			   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LO) * 2 +
-			   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LSB);
+		       ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LO) * 2 +
+		       ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_TRL_NOMRATE_LSB);
 		temp = (int)((PowOf2(17) * pParams->ChannelBW * 1000) / (7 * (InternalFreq)));
 		ChipSetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_HI, temp / 256);
 		ChipSetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_LO, temp % 256);
@@ -631,7 +631,7 @@ FE_LLA_Error_t D0367ter_Algo(TUNER_IOREG_DeviceMap_t *DeviceMap,
 		ChipGetRegisters_0367ter(DeviceMap, IOHandle, R367ofdm_GAIN_SRC2, 1);
 
 		temp = ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_HI) * 256 +
-			   ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_LO);
+		       ChipGetFieldImage_0367ter(DeviceMap, IOHandle, F367ofdm_GAIN_SRC_LO);
 		//if ( Inst->DriverParam.Ter.TunerType == TUNER_TUNER_SHARP6465)
 		{
 			temp = (int)((InternalFreq - 36166667 / 1000) * PowOf2(16) / (InternalFreq)); //IF freq
@@ -674,7 +674,7 @@ FE_LLA_Error_t D0367ter_Algo(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 U32 D0367ter_GeFrequency(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle)
+			 IOARCH_Handle_t IOHandle)
 {
 	U32     Frequency = 722000;
 	struct dvb_d0367_fe_ofdm_state *state = NULL;
@@ -682,7 +682,7 @@ U32 D0367ter_GeFrequency(TUNER_IOREG_DeviceMap_t *DeviceMap,
 
 	IOHandle = IOHandle;
 
-	state = (struct dvb_d0367_fe_ofdm_state*)DeviceMap->priv;
+	state = (struct dvb_d0367_fe_ofdm_state *)DeviceMap->priv;
 	if (!state)
 	{
 		return Frequency;
@@ -700,7 +700,7 @@ U32 D0367ter_GeFrequency(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 U32 D0367ter_GeChannelBW(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle)
+			 IOARCH_Handle_t IOHandle)
 {
 	U32  ChannelBW = 8;
 	struct dvb_d0367_fe_ofdm_state *state = NULL;
@@ -708,7 +708,7 @@ U32 D0367ter_GeChannelBW(TUNER_IOREG_DeviceMap_t *DeviceMap,
 
 	IOHandle = IOHandle;
 
-	state = (struct dvb_d0367_fe_ofdm_state*)DeviceMap->priv;
+	state = (struct dvb_d0367_fe_ofdm_state *)DeviceMap->priv;
 	if (!state)
 	{
 		return ChannelBW;
@@ -742,7 +742,7 @@ U32 D0367ter_GeChannelBW(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 YW_ErrorType_T D0367ter_ScanFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
-								 IOARCH_Handle_t IOHandle)
+				 IOARCH_Handle_t IOHandle)
 {
 	YW_ErrorType_T              Error = YW_NO_ERROR;
 	/*U8 trials[2]; */
@@ -774,11 +774,11 @@ YW_ErrorType_T D0367ter_ScanFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
 	// printk("demod_d0367ter_ScanFreq #########Index = %d\n", Index);
 	pParams.Frequency = D0367ter_GeFrequency(DeviceMap, IOHandle);
 	pParams.ChannelBW = D0367ter_GeChannelBW(DeviceMap, IOHandle);
-_DEBUG
-{
-	printk("pParams.Frequency = %d\n", pParams.Frequency);
-	printk("pParams.ChannelBW = %d\n", pParams.ChannelBW);
-}
+	_DEBUG
+	{
+		printk("pParams.Frequency = %d\n", pParams.Frequency);
+		printk("pParams.ChannelBW = %d\n", pParams.ChannelBW);
+	}
 	pParams.Crystal_Hz = DeviceMap->RegExtClk;
 	pParams.IF_IQ_Mode = FE_TER_NORMAL_IF_TUNER;//FE_TER_IQ_TUNER;  //most tuner is IF mode, stv4100 is I/Q mode
 	pParams.Inv        = FE_TER_INVERSION_AUTO; //FE_TER_INVERSION_AUTO
@@ -875,9 +875,9 @@ _DEBUG
 	return (Error);
 }
 
-struct dvb_frontend* dvb_d0367_fe_ofdm_attach(struct i2c_adapter* i2c)
+struct dvb_frontend *dvb_d0367_fe_ofdm_attach(struct i2c_adapter *i2c)
 {
-	struct dvb_d0367_fe_ofdm_state* state = NULL;
+	struct dvb_d0367_fe_ofdm_state *state = NULL;
 
 	/* allocate memory for the internal state */
 	state = kzalloc(sizeof(struct dvb_d0367_fe_ofdm_state), GFP_KERNEL);
@@ -896,8 +896,8 @@ struct dvb_frontend* dvb_d0367_fe_ofdm_attach(struct i2c_adapter* i2c)
 	state->DeviceMap.Mode      = IOREG_MODE_SUBADR_16;
 	state->DeviceMap.RegExtClk = 27000000; //Demod External Crystal_HZ
 	state->DeviceMap.RegMap = (TUNER_IOREG_Register_t *)
-							  kzalloc(state->DeviceMap.Registers * sizeof(TUNER_IOREG_Register_t),
-									  GFP_KERNEL);
+				  kzalloc(state->DeviceMap.Registers * sizeof(TUNER_IOREG_Register_t),
+					  GFP_KERNEL);
 	state->DeviceMap.priv = (void *)state;
 
 	return &state->frontend;

@@ -30,7 +30,7 @@ struct vz7903_state
 	u32 index;
 };
 
-int nim_vz7903_init(u8* ptuner_id);
+int nim_vz7903_init(u8 *ptuner_id);
 //INT32 nim_vz7903_init(UINT8  *ptuner_id);
 
 int nim_vz7903_control(u8 tuner_id, u32 freq, u32 sym);

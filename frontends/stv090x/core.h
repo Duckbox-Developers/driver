@@ -26,7 +26,8 @@
 #include <linux/mutex.h>
 #include "stv090x.h"
 
-enum {
+enum
+{
 	STV6110X = 0,
 	SHARP7306,
 };
@@ -34,7 +35,7 @@ enum {
 struct core_config
 {
 	struct i2c_adapter *i2c_adap; /* i2c bus of the tuner */
-	struct stpio_pin*  tuner_enable_pin;
+	struct stpio_pin  *tuner_enable_pin;
 	u8 i2c_addr; /* i2c address of the tuner */
 	u8 i2c_addr_lnb_supply; /* i2c address of the lnb_supply */
 	u8 vertical; /* i2c value */
@@ -42,13 +43,15 @@ struct core_config
 	u8 tuner_enable_act; /* active state of the pin */
 };
 
-struct core_info {
+struct core_info
+{
 	char *name;
 	int type;
 };
 
 /* place to store all the necessary device information */
-struct core {
+struct core
+{
 
 	/* devices */
 	struct dvb_device dvb_dev;
@@ -84,24 +87,25 @@ struct core {
 
 	struct dvb_adapter *dvb_adapter;
 	struct dvb_frontend *frontend[MAX_TUNERS_PER_ADAPTER];
-	int (*read_fe_status) (struct dvb_frontend *fe, fe_status_t *status);
+	int (*read_fe_status)(struct dvb_frontend *fe, fe_status_t *status);
 	int fe_synced;
 
 	void *priv;
 };
 
-struct tuner_devctl {
-	int (*tuner_init) (struct dvb_frontend *fe);
-	int (*tuner_sleep) (struct dvb_frontend *fe);
-	int (*tuner_set_mode) (struct dvb_frontend *fe, enum tuner_mode mode);
-	int (*tuner_set_frequency) (struct dvb_frontend *fe, u32 frequency);
-	int (*tuner_get_frequency) (struct dvb_frontend *fe, u32 *frequency);
-	int (*tuner_set_bandwidth) (struct dvb_frontend *fe, u32 bandwidth);
-	int (*tuner_get_bandwidth) (struct dvb_frontend *fe, u32 *bandwidth);
-	int (*tuner_set_bbgain) (struct dvb_frontend *fe, u32 gain);
-	int (*tuner_get_bbgain) (struct dvb_frontend *fe, u32 *gain);
-	int (*tuner_set_refclk)  (struct dvb_frontend *fe, u32 refclk);
-	int (*tuner_get_status) (struct dvb_frontend *fe, u32 *status);
+struct tuner_devctl
+{
+	int (*tuner_init)(struct dvb_frontend *fe);
+	int (*tuner_sleep)(struct dvb_frontend *fe);
+	int (*tuner_set_mode)(struct dvb_frontend *fe, enum tuner_mode mode);
+	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
+	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
+	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
+	int (*tuner_get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
+	int (*tuner_set_bbgain)(struct dvb_frontend *fe, u32 gain);
+	int (*tuner_get_bbgain)(struct dvb_frontend *fe, u32 *gain);
+	int (*tuner_set_refclk)(struct dvb_frontend *fe, u32 refclk);
+	int (*tuner_get_status)(struct dvb_frontend *fe, u32 *status);
 };
 
 extern void st90x_register_frontend(struct dvb_adapter *dvb_adap);

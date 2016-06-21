@@ -27,7 +27,7 @@ struct sharp7803_config
 };
 
 extern struct dvb_frontend *sharp7803_attach(struct dvb_frontend *fe,
-		const struct sharp7803_config *config,
-		struct i2c_adapter *i2c);
+					     const struct sharp7803_config *config,
+					     struct i2c_adapter *i2c);
 
 #endif /* __SHARP7803_H */

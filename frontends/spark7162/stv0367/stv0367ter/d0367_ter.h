@@ -27,16 +27,16 @@ extern STCHIP_Register_t Def367Val[STV0367ofdm_NBREGS];
 
 /* functions --------------------------------------------------------------- */
 void D0367ter_Init(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				   IOARCH_Handle_t IOHandle,
-				   TUNER_TunerType_T TunerType);
+		   IOARCH_Handle_t IOHandle,
+		   TUNER_TunerType_T TunerType);
 
 YW_ErrorType_T demod_d0367ter_Repeat(IOARCH_Handle_t     DemodIOHandle,
-									 IOARCH_Handle_t   TunerIOHandle,
-									 TUNER_IOARCH_Operation_t Operation,
-									 unsigned short SubAddr,
-									 U8 *Data,
-									 U32 TransferSize,
-									 U32 Timeout);
+				     IOARCH_Handle_t   TunerIOHandle,
+				     TUNER_IOARCH_Operation_t Operation,
+				     unsigned short SubAddr,
+				     U8 *Data,
+				     U32 TransferSize,
+				     U32 Timeout);
 YW_ErrorType_T demod_d0367ter_Open(U8 Index);
 YW_ErrorType_T demod_d0367ter_GetSignalInfo(U8 Index, U32  *Quality, U32 *Intensity, U32 *Ber);
 YW_ErrorType_T demod_d0367ter_IsLocked(U8 Handle, BOOL *IsLocked);

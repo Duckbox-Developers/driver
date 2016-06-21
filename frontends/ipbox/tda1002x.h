@@ -26,20 +26,23 @@
 
 #include <linux/dvb/frontend.h>
 
-struct tda1002x_config {
+struct tda1002x_config
+{
 	/* the demodulator's i2c address */
 	u8 demod_address;
 	u8 invert;
 };
 
-enum tda10023_output_mode {
+enum tda10023_output_mode
+{
 	TDA10023_OUTPUT_MODE_PARALLEL_A = 0xe0,
 	TDA10023_OUTPUT_MODE_PARALLEL_B = 0xa1,
 	TDA10023_OUTPUT_MODE_PARALLEL_C = 0xa0,
 	TDA10023_OUTPUT_MODE_SERIAL, /* TODO: not implemented */
 };
 
-struct tda10023_config {
+struct tda10023_config
+{
 	/* clock settings */
 	u32 xtal; /* defaults: 28920000 */
 

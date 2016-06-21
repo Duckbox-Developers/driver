@@ -41,34 +41,34 @@
 #define CPQ_LIMIT 23
 
 /* Current LLA revision */
-static const char * Revision367ofdm  = "STV367ofdm-LLA_REL_3.0";
+static const char *Revision367ofdm  = "STV367ofdm-LLA_REL_3.0";
 /*global variables */
 /*U32 PreviousBitErrorRate=0;
 U32 PreviousPacketErrorRate=0;*/
 
 /*local functions definition*/
 int FE_367TER_FilterCoeffInit(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							  IOARCH_Handle_t DemodIOHandle,
-							  U16 CellsCoeffs[2][6][5], U32 DemodXtal);
+			      IOARCH_Handle_t DemodIOHandle,
+			      U16 CellsCoeffs[2][6][5], U32 DemodXtal);
 void FE_367TER_AGC_IIR_LOCK_DETECTOR_SET(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-		IOARCH_Handle_t DemodIOHandle);
+					 IOARCH_Handle_t DemodIOHandle);
 void FE_367TER_AGC_IIR_RESET(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							 IOARCH_Handle_t DemodIOHandle);
+			     IOARCH_Handle_t DemodIOHandle);
 FE_TER_SignalStatus_t
 FE_367TER_CheckSYR(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-				   IOARCH_Handle_t DemodIOHandle);
+		   IOARCH_Handle_t DemodIOHandle);
 FE_TER_SignalStatus_t
 FE_367TER_CheckCPAMP(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-					 IOARCH_Handle_t DemodIOHandle, S32 FFTmode);
+		     IOARCH_Handle_t DemodIOHandle, S32 FFTmode);
 void FE_STV0367ofdm_SetTS_Parallel_Serial(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-		IOARCH_Handle_t DemodIOHandle,
-		FE_TS_OutputMode_t PathTS);
+					  IOARCH_Handle_t DemodIOHandle,
+					  FE_TS_OutputMode_t PathTS);
 void FE_STV0367ofdm_SetCLK_Polarity(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-									IOARCH_Handle_t DemodIOHandle,
-									FE_TS_ClockPolarity_t clock);
+				    IOARCH_Handle_t DemodIOHandle,
+				    FE_TS_ClockPolarity_t clock);
 ////FE_LLA_Error_t  FE_367ofdm_Algo(FE_367ofdm_Handle_t Handle, FE_TER_SearchParams_t   *pSearch, FE_TER_SearchResult_t *pResult);
 U32 FE_367ofdm_GetMclkFreq(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						   IOARCH_Handle_t DemodIOHandle, U32 ExtClk_Hz);
+			   IOARCH_Handle_t DemodIOHandle, U32 ExtClk_Hz);
 
 U16 CellsCoeffs_8MHz_367cofdm[3][6][5] =
 {
@@ -185,8 +185,8 @@ U32 FE_TUNER_IF_LookUp4[IF_LOOKUP_TABLE_SIZE_4] =
 --RETURN    ::  0 error , 1 no error
 --********************************************************/
 int FE_367TER_FilterCoeffInit(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							  IOARCH_Handle_t DemodIOHandle,
-							  U16 CellsCoeffs[2][6][5], U32 DemodXtal)
+			      IOARCH_Handle_t DemodIOHandle,
+			      U16 CellsCoeffs[2][6][5], U32 DemodXtal)
 {
 
 	int i, j, k, InternalFreq;
@@ -254,7 +254,7 @@ int FE_367TER_SpeedInit(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_
 --PARAMS OUT    ::  None
 --***************************************************/
 void FE_367TER_AGC_IIR_LOCK_DETECTOR_SET(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-		IOARCH_Handle_t DemodIOHandle)
+					 IOARCH_Handle_t DemodIOHandle)
 
 {
 	ChipSetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_LOCK_DETECT_LSB, 0x00);
@@ -288,8 +288,8 @@ void FE_367TER_AGC_IIR_LOCK_DETECTOR_SET(TUNER_IOREG_DeviceMap_t *DemodDeviceMap
 --PARAMS OUT    ::  None
 --***************************************************/
 int  FE_367TER_IIR_FILTER_INIT(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							   IOARCH_Handle_t IOHandle, U8 Bandwidth,
-							   U32 DemodXtalValue)
+			       IOARCH_Handle_t IOHandle, U8 Bandwidth,
+			       U32 DemodXtalValue)
 
 {
 
@@ -481,8 +481,8 @@ FE_TER_SignalStatus_t FE_367TER_CheckCPAMP(TUNER_IOREG_DeviceMap_t *DemodDeviceM
 --***************************************************/
 FE_TER_SignalStatus_t
 FE_367ofdm_LockAlgo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-					IOARCH_Handle_t DemodIOHandle,
-					FE_367ofdm_InternalParams_t *pParams)
+		    IOARCH_Handle_t DemodIOHandle,
+		    FE_367ofdm_InternalParams_t *pParams)
 {
 	FE_TER_SignalStatus_t ret_flag;
 	short int wd, tempo;
@@ -832,7 +832,7 @@ FE_LLA_Error_t  FE_367ofdm_Init(FE_TER_InitParams_t *pInit, FE_367ofdm_Handle_t 
 		DemodInit.Chip->Repeater = FALSE;
 		DemodInit.Chip->pData = NULL;
 		DemodInit.Chip->I2cAddr = pInit->DemodI2cAddr;
-		strcpy((char*)DemodInit.Chip->Name, (char*)(pInit->DemodName));
+		strcpy((char *)DemodInit.Chip->Name, (char *)(pInit->DemodName));
 		pParams->Crystal_Hz = pInit->Demod_Crystal_Hz;
 		/*DemodInit.Chip->XtalFreq=  pInit->Demod_Crystal_Hz; */
 		/*DemodInit.Chip->IFmode= pInit->IFmode;*/
@@ -1249,7 +1249,7 @@ FE_LLA_Error_t  FE_367ofdm_Algo(FE_367ofdm_Handle_t Handle, FE_TER_SearchParams_
 			ChipGetRegisters(pIntParams->hDemod, R367ofdm_TRL_CTL, 3);
 
 			temp = ChipGetFieldImage(pIntParams->hDemod, F367ofdm_TRL_NOMRATE_HI) * 512 + ChipGetFieldImage(pIntParams->hDemod, F367ofdm_TRL_NOMRATE_LO) * 2 +
-				   ChipGetFieldImage(pIntParams->hDemod, F367ofdm_TRL_NOMRATE_LSB)  ;
+			       ChipGetFieldImage(pIntParams->hDemod, F367ofdm_TRL_NOMRATE_LSB)  ;
 
 			temp = (int)((PowOf2(17) * pIntParams->ChannelBW * 1000) / (7 * (InternalFreq)));
 			ChipSetFieldImage(pIntParams->hDemod, F367ofdm_GAIN_SRC_HI, temp / 256);
@@ -1292,11 +1292,11 @@ FE_LLA_Error_t  FE_367ofdm_Algo(FE_367ofdm_Handle_t Handle, FE_TER_SearchParams_
 
 				ChipWaitOrAbort(pIntParams->hDemod, 66);
 				AgcIF = ChipGetField(pIntParams->hDemod, F367ofdm_AGC2_VAL_LO) +
-						(ChipGetField(pIntParams->hDemod, F367ofdm_AGC2_VAL_HI) << 8);
+					(ChipGetField(pIntParams->hDemod, F367ofdm_AGC2_VAL_HI) << 8);
 				intX = (ChipGetField(pIntParams->hDemod, F367ofdm_INT_X3) << 24)   +
-					   (ChipGetField(pIntParams->hDemod, F367ofdm_INT_X2) << 16) +
-					   (ChipGetField(pIntParams->hDemod, F367ofdm_INT_X1) << 8)    +
-					   ChipGetField(pIntParams->hDemod, F367ofdm_INT_X0) ;
+				       (ChipGetField(pIntParams->hDemod, F367ofdm_INT_X2) << 16) +
+				       (ChipGetField(pIntParams->hDemod, F367ofdm_INT_X1) << 8)    +
+				       ChipGetField(pIntParams->hDemod, F367ofdm_INT_X0) ;
 
 				if ((AgcIF > 0x500)  && (intX > 0x50000) && (AgcIF < 0xc00))
 				{
@@ -1381,9 +1381,9 @@ FE_LLA_Error_t  FE_367ofdm_Algo(FE_367ofdm_Handle_t Handle, FE_TER_SearchParams_
 
 				ChipGetRegisters(pIntParams->hDemod, R367ofdm_AGC2MAX, 13);
 				pResult->Agc_val = (ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC1_VAL_LO) << 16)    +
-								   (ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC1_VAL_HI) << 24) +
-								   ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC2_VAL_LO) +
-								   (ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC2_VAL_HI) << 8);
+						   (ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC1_VAL_HI) << 24) +
+						   ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC2_VAL_LO) +
+						   (ChipGetFieldImage(pIntParams->hDemod, F367ofdm_AGC2_VAL_HI) << 8);
 
 				/* Carrier offset calculation */
 				ChipSetField(pIntParams->hDemod, F367ofdm_FREEZE, 1);
@@ -1568,7 +1568,7 @@ FE_LLA_Error_t  FE_367ofdm_Search(FE_367ofdm_Handle_t   Handle, FE_TER_SearchPar
 	SenseTrialsAuto[0] = INV;
 	SenseTrialsAuto[1] = NINV;
 
-	if ((void*) Handle != NULL)
+	if ((void *) Handle != NULL)
 	{
 
 		pParams = (FE_367ofdm_InternalParams_t *) Handle;
@@ -1706,7 +1706,7 @@ FE_LLA_Error_t FE_STV0367ofdm_SetStandby(FE_367ofdm_Handle_t Handle, U8 StandbyO
 #endif  //lwj remove
 
 int FE_STV0367TER_GetPower(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						   IOARCH_Handle_t IOHandle)
+			   IOARCH_Handle_t IOHandle)
 {
 	S32 power     = 0;
 	//S32 snr       = 0;
@@ -1715,7 +1715,7 @@ int FE_STV0367TER_GetPower(TUNER_IOREG_DeviceMap_t *DeviceMap,
 	{
 		U8 i = 0;
 		if_agc = ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
-				 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
+			 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
 		rf_agc = ChipGetField_0367ter(DeviceMap, IOHandle, F367_RF_AGC1_LEVEL_HI);
 
 		if (rf_agc < 255)
@@ -1762,7 +1762,7 @@ int FE_STV0367TER_GetPower(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 int FE_STV0367TER_GetSnr(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle)
+			 IOARCH_Handle_t IOHandle)
 {
 	S32 snr       = 0;
 	/*For quality return 1000*snr to application  SS*/
@@ -1783,8 +1783,8 @@ int FE_STV0367TER_GetSnr(TUNER_IOREG_DeviceMap_t *DeviceMap,
 #if 1
 
 int FE_STV0367TER_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-								IOARCH_Handle_t DemodIOHandle,
-								U32 *CN_dBx10, U32 *Power_dBmx10, U32 *Ber)
+				IOARCH_Handle_t DemodIOHandle,
+				U32 *CN_dBx10, U32 *Power_dBmx10, U32 *Ber)
 {
 	//TUNER_ScanTaskParam_T   *Inst;
 	IOARCH_Handle_t         IOHandle;
@@ -1809,7 +1809,7 @@ int FE_STV0367TER_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
 	if (Inst->DriverParam.Ter.TunerType == TUNER_TUNER_STV4100)
 	{
 		if_agc = ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
-				 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
+			 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
 		if (Inst->DriverParam.Ter.TunerDriver.tuner_GetRF_Level != NULL)
 		{
 			power = Inst->DriverParam.Ter.TunerDriver.tuner_GetRF_Level(Handle, ChipGetField_0367ter(DeviceMap, IOHandle, F367_RF_AGC1_LEVEL_HI), if_agc);
@@ -1837,9 +1837,9 @@ typedef enum
 } TUNER_TER_IQ_t;
 
 FE_LLA_Error_t  FE_367ofdm_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceMap,
-		IOARCH_Handle_t DemodIOHandle,
-		FE_367ofdm_InternalParams_t *pParams,
-		FE_TER_SignalInfo_t *pInfo)
+					 IOARCH_Handle_t DemodIOHandle,
+					 FE_367ofdm_InternalParams_t *pParams,
+					 FE_TER_SignalInfo_t *pInfo)
 {
 	FE_LLA_Error_t error = FE_LLA_NO_ERROR;
 	int offset = 0;
@@ -2015,7 +2015,7 @@ FE_LLA_Error_t  FE_367ofdm_GetSignalInfo(TUNER_IOREG_DeviceMap_t *pDemod_DeviceM
 	if (Inst->DriverParam.Ter.TunerType == TUNER_TUNER_STV4100)
 	{
 		if_agc = ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_LO) +
-				 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
+			 (ChipGetField_0367ter(DeviceMap, IOHandle, F367ofdm_AGC2_VAL_HI) << 8);
 		if (Inst->DriverParam.Ter.TunerDriver.tuner_GetRF_Level != NULL)
 		{
 			pInfo->Power_dBmx10 = Inst->DriverParam.Ter.TunerDriver.tuner_GetRF_Level(Handle, ChipGetField_0367ter(DeviceMap, IOHandle, F367_RF_AGC1_LEVEL_HI), if_agc);
@@ -2193,9 +2193,9 @@ BOOL FE_367ofdm_lock(TUNER_IOREG_DeviceMap_t *DemodDeviceMap, IOARCH_Handle_t De
 	BOOL Locked = FALSE;
 
 	Locked = ((ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_TPS_LOCK) |
-			   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_PRF) |
-			   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_LK) |
-			   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_TSFIFO_LINEOK)));
+		   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_PRF) |
+		   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_LK) |
+		   ChipGetField_0367ter(DemodDeviceMap, DemodIOHandle, F367ofdm_TSFIFO_LINEOK)));
 	return Locked;
 }
 #if 0 //question
@@ -2215,12 +2215,12 @@ BOOL FE_367ofdm_Status(FE_367ofdm_Handle_t  Handle)
 	FE_LLA_Error_t error = FE_LLA_SEARCH_FAILED;
 	BOOL Locked = FALSE;
 
-	pParams = (FE_367ofdm_InternalParams_t  *) Handle;
+	pParams = (FE_367ofdm_InternalParams_t *) Handle;
 
 	if (pParams != NULL)
 	{
 		Locked = ((ChipGetField(pParams->hDemod, F367ofdm_TPS_LOCK) &&  ChipGetField(pParams->hDemod, F367ofdm_PRF) &&
-				   ChipGetField(pParams->hDemod, F367ofdm_LK) && ChipGetField(pParams->hDemod, F367ofdm_TSFIFO_LINEOK)));
+			   ChipGetField(pParams->hDemod, F367ofdm_LK) && ChipGetField(pParams->hDemod, F367ofdm_TSFIFO_LINEOK)));
 		if (!Locked)
 		{
 			/*check if AGC is clamped ie antenna disconnected*/
@@ -2297,7 +2297,7 @@ BOOL FE_367ofdm_Status(FE_367ofdm_Handle_t  Handle)
 **RETURN    ::  Revision367
 *****************************************************/
 
-const char * FE_367TER_GetLLARevision(void)
+const char *FE_367TER_GetLLARevision(void)
 {
 	return (Revision367ofdm);
 }
@@ -2593,14 +2593,14 @@ FE_LLA_Error_t FE_367ofdm_SetAbortFlag(FE_367ofdm_Handle_t Handle, BOOL Abort)
 	return (error);
 }
 
-void demod_get_pd(void* dummy_handle, unsigned short* level, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
+void demod_get_pd(void *dummy_handle, unsigned short *level, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
 {
 	*level = ChipGetField(hTuner, F367_RF_AGC1_LEVEL_HI);
 	*level = *level << 2;
 	*level |= (ChipGetField(hTuner, F367_RF_AGC1_LEVEL_LO) & 0x03);
 }
 
-void demod_get_agc(void* dummy_handle, U16* rf_agc, U16* bb_agc, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
+void demod_get_agc(void *dummy_handle, U16 *rf_agc, U16 *bb_agc, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
 {
 	U16 rf_low, rf_high, bb_low, bb_high;
 
@@ -2622,7 +2622,7 @@ void demod_get_agc(void* dummy_handle, U16* rf_agc, U16* bb_agc, TUNER_IOREG_Dev
 
 U16 bbagc_min_start = 0xffff;
 
-void demod_set_agclim(void* dummy_handle, U16 dir_up, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
+void demod_set_agclim(void *dummy_handle, U16 dir_up, TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Handle_t DemodIOHandle)
 {
 	U8 agc_min = 0;
 

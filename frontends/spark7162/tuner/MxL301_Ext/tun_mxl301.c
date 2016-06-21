@@ -36,7 +36,7 @@
 #define BURST_SZ 6
 
 static UINT32 mxl301_tuner_cnt = 0;
-static struct COFDM_TUNER_CONFIG_EXT *  mxl301_cfg[YWTUNERi_MAX_TUNER_NUM] = {NULL};
+static struct COFDM_TUNER_CONFIG_EXT   *mxl301_cfg[YWTUNERi_MAX_TUNER_NUM] = {NULL};
 
 #if 0
 INT32 tun_mxl301_mask_write(UINT32 tuner_id, UINT8 addr, UINT8 reg, UINT8 mask , UINT8 data)
@@ -96,12 +96,12 @@ INT32 tun_mxl301_mask_write(UINT32 tuner_id, UINT8 reg, UINT8 mask , UINT8 data)
 
 #endif
 #if 0
-INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
+INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8 *pArray, UINT32 count)
 {
 	INT32 result = SUCCESS;
 	INT32 i/*, j*/, cycle;
 	UINT8 tmp[BURST_SZ + 2];
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 	TUNER_ScanTaskParam_T       *Inst = NULL;
 	IOARCH_Handle_t             IOHandle;
 
@@ -182,12 +182,12 @@ INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
 	return result;
 }
 #else
-INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
+INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8 *pArray, UINT32 count)
 {
 	INT32 result = SUCCESS;
 	INT32 i/*, j*/, cycle;
 	UINT8 tmp[BURST_SZ + 2];
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 
 	//if(tuner_id >= mxl301_tuner_cnt)
 	//  return ERR_FAILUE;
@@ -273,11 +273,11 @@ INT32 tun_mxl301_i2c_write(UINT32 tuner_id, UINT8* pArray, UINT32 count)
 
 #endif
 #if 0
-INT32 tun_mxl301_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8* mData)
+INT32 tun_mxl301_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8 *mData)
 {
 	INT32 ret = 0;
 	UINT8 cmd[4];
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 	TUNER_ScanTaskParam_T       *Inst = NULL;
 	IOARCH_Handle_t             IOHandle;
 
@@ -336,11 +336,11 @@ INT32 tun_mxl301_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8* mData)
 	return ret;
 }
 #else
-INT32 tun_mxl301_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8* mData)
+INT32 tun_mxl301_i2c_read(UINT32 tuner_id, UINT8 Addr, UINT8 *mData)
 {
 	INT32 ret = 0;
 	UINT8 cmd[4];
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 
 	//if(tuner_id >= mxl301_tuner_cnt)
 	//  return ERR_FAILUE
@@ -442,7 +442,7 @@ INT32 MxL_Stand_By(UINT32 tuner_idx)
 	return ret;
 }
 
-INT32 MxL_Wake_Up(UINT32 tuner_idx, MxLxxxRF_TunerConfigS* myTuner)
+INT32 MxL_Wake_Up(UINT32 tuner_idx, MxLxxxRF_TunerConfigS *myTuner)
 {
 	UINT8 pArray[2];    /* a array pointer that store the addr and data pairs for I2C write */
 
@@ -469,7 +469,7 @@ INT32 MxL_Wake_Up(UINT32 tuner_idx, MxLxxxRF_TunerConfigS* myTuner)
 *
 * Return Value: INT32           : Result
 *****************************************************************************/
-INT32 tun_mxl301_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTuner_Config)
+INT32 tun_mxl301_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT *ptrTuner_Config)
 {
 	INT32 result;
 	UINT8 data = 1;
@@ -488,7 +488,7 @@ INT32 tun_mxl301_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTune
 
 	YWLIB_Memcpy(mxl301_ptr, ptrTuner_Config, sizeof(struct COFDM_TUNER_CONFIG_EXT));
 
-	mxl301_ptr->priv = (MxLxxxRF_TunerConfigS*)YWOS_Malloc(sizeof(MxLxxxRF_TunerConfigS));
+	mxl301_ptr->priv = (MxLxxxRF_TunerConfigS *)YWOS_Malloc(sizeof(MxLxxxRF_TunerConfigS));
 	if (NULL == mxl301_ptr->priv)
 	{
 		YWOS_Free(mxl301_ptr);
@@ -538,8 +538,8 @@ INT32 tun_mxl301_init(UINT32 *tuner_idx, struct COFDM_TUNER_CONFIG_EXT * ptrTune
 
 	/*perform initialization calculation */
 	MxL301RF_Init(pArray, &Array_Size, (UINT8)priv_ptr->Mode, (UINT32)priv_ptr->Xtal_Freq,
-				  (UINT32)priv_ptr->IF_Freq, (UINT8)priv_ptr->IF_Spectrum, (UINT8)priv_ptr->ClkOut_Setting, (UINT8)priv_ptr->ClkOut_Amp,
-				  (UINT8)priv_ptr->Xtal_Cap, (UINT8)priv_ptr->AGC, (UINT8)priv_ptr->IF_Path, priv_ptr->bInternalAgcEnable);
+		      (UINT32)priv_ptr->IF_Freq, (UINT8)priv_ptr->IF_Spectrum, (UINT8)priv_ptr->ClkOut_Setting, (UINT8)priv_ptr->ClkOut_Amp,
+		      (UINT8)priv_ptr->Xtal_Cap, (UINT8)priv_ptr->AGC, (UINT8)priv_ptr->IF_Path, priv_ptr->bInternalAgcEnable);
 
 	/* perform I2C write here */
 	if (SUCCESS != tun_mxl301_i2c_write(*tuner_idx, pArray, Array_Size))
@@ -602,7 +602,7 @@ INT32 tun_mxl301_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 A
 	UINT8 i, Data1, Data2;
 	MxLxxxRF_IF_Freq if_freq;
 	MxLxxxRF_TunerConfigS *myTuner;
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 	UINT8 pArray[MAX_ARRAY_SIZE];   /* a array pointer that store the addr and data pairs for I2C write */
 	UINT32 Array_Size = 0;              /* a integer pointer that store the number of element in above array */
 
@@ -641,8 +641,8 @@ INT32 tun_mxl301_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 A
 
 		/*perform initialization calculation */
 		MxL301RF_Init(pArray, &Array_Size, (UINT8)myTuner->Mode, (UINT32)myTuner->Xtal_Freq,
-					  (UINT32)myTuner->IF_Freq, (UINT8)myTuner->IF_Spectrum, (UINT8)myTuner->ClkOut_Setting, (UINT8)myTuner->ClkOut_Amp,
-					  (UINT8)myTuner->Xtal_Cap, (UINT8)myTuner->AGC, (UINT8)myTuner->IF_Path, myTuner->bInternalAgcEnable);
+			      (UINT32)myTuner->IF_Freq, (UINT8)myTuner->IF_Spectrum, (UINT8)myTuner->ClkOut_Setting, (UINT8)myTuner->ClkOut_Amp,
+			      (UINT8)myTuner->Xtal_Cap, (UINT8)myTuner->AGC, (UINT8)myTuner->IF_Path, myTuner->bInternalAgcEnable);
 
 		/* perform I2C write here */
 		if (SUCCESS != tun_mxl301_i2c_write(tuner_idx, pArray, Array_Size))
@@ -782,7 +782,7 @@ INT32 tun_mxl301_control(UINT32 tuner_idx, UINT32 freq, UINT8 bandwidth, UINT8 A
 
 INT32 tun_mxl301_set_addr(UINT32 tuner_idx, UINT8 addr, UINT32 i2c_mutex_id)
 {
-	struct COFDM_TUNER_CONFIG_EXT * mxl301_ptr = NULL;
+	struct COFDM_TUNER_CONFIG_EXT *mxl301_ptr = NULL;
 
 	//if(tuner_idx >= mxl301_tuner_cnt)
 	//  return ERR_FAILUE;
@@ -794,7 +794,7 @@ INT32 tun_mxl301_set_addr(UINT32 tuner_idx, UINT8 addr, UINT32 i2c_mutex_id)
 	return SUCCESS;
 }
 
-INT32 MxL_Check_RF_Input_Power(UINT32 tuner_idx, U32* RF_Input_Level)
+INT32 MxL_Check_RF_Input_Power(UINT32 tuner_idx, U32 *RF_Input_Level)
 {
 	UINT8 RFin1, RFin2, RFOff1, RFOff2;
 	//float RFin, RFoff;
@@ -841,7 +841,7 @@ INT32 MxL_Check_RF_Input_Power(UINT32 tuner_idx, U32* RF_Input_Level)
 }
 
 #if 0
-MxL_ERR_MSG MxL_RFSynth_Lock_Status(MxLxxxRF_TunerConfigS* myTuner, BOOL* isLock)
+MxL_ERR_MSG MxL_RFSynth_Lock_Status(MxLxxxRF_TunerConfigS *myTuner, BOOL *isLock)
 {
 	UINT8 Data;
 	*isLock = FALSE;
@@ -853,7 +853,7 @@ MxL_ERR_MSG MxL_RFSynth_Lock_Status(MxLxxxRF_TunerConfigS* myTuner, BOOL* isLock
 	return MxL_OK;
 }
 
-MxL_ERR_MSG MxL_REFSynth_Lock_Status(MxLxxxRF_TunerConfigS* myTuner, BOOL* isLock)
+MxL_ERR_MSG MxL_REFSynth_Lock_Status(MxLxxxRF_TunerConfigS *myTuner, BOOL *isLock)
 {
 	UINT8 Data;
 	*isLock = FALSE;
@@ -865,7 +865,7 @@ MxL_ERR_MSG MxL_REFSynth_Lock_Status(MxLxxxRF_TunerConfigS* myTuner, BOOL* isLoc
 	return MxL_OK;
 }
 
-MxL_ERR_MSG MxL_Check_RF_Input_Power(MxLxxxRF_TunerConfigS* myTuner, REAL32* RF_Input_Level)
+MxL_ERR_MSG MxL_Check_RF_Input_Power(MxLxxxRF_TunerConfigS *myTuner, REAL32 *RF_Input_Level)
 {
 	UINT8 RFin1, RFin2, RFOff1, RFOff2;
 	REAL32 RFin, RFoff;

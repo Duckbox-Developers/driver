@@ -31,12 +31,12 @@
 
 #define STV6110x_SETFIELD(mask, bitf, val)				\
 	(mask = (mask & (~(((1 << STV6110x_WIDTH_##bitf) - 1) <<	\
-				  STV6110x_OFFST_##bitf))) | 		\
-			  (val << STV6110x_OFFST_##bitf))
+			   STV6110x_OFFST_##bitf))) | 		\
+		(val << STV6110x_OFFST_##bitf))
 
 #define STV6110x_GETFIELD(bitf, val)					\
 	((val >> STV6110x_OFFST_##bitf) & 				\
-	((1 << STV6110x_WIDTH_##bitf) - 1))
+	 ((1 << STV6110x_WIDTH_##bitf) - 1))
 
 #define MAKEWORD16(a, b)			(((a) << 8) | (b))
 
@@ -48,13 +48,14 @@
 #define REFCLOCK_kHz				(stv6110x->config->refclk /    1000)
 #define REFCLOCK_MHz				(stv6110x->config->refclk / 1000000)
 
-struct stv6110x_state {
+struct stv6110x_state
+{
 	struct i2c_adapter				*i2c;
 	struct stv6110x_devctl			*devctl;
 	struct dvb_frontend 			*fe;
 	const struct stv6110x_config	*config;
-    
-    u32 gain;
+
+	u32 gain;
 	u8 stv6110x_regs[8];
 };
 

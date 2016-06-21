@@ -367,7 +367,7 @@ INT32 Vz7903_Write(struct i2c_adapter *i2c_adap, UINT8 I2CAddr, UINT8 *pData, UI
 	{
 		if (ret != -ERESTARTSYS)
 			printk("[vz7903 write error]Reg=[0x%04x], Data=[0x%02x ...], Count=%u, Status=%d\n",
-				   pData[0], pData[1], bLen, ret);
+			       pData[0], pData[1], bLen, ret);
 		return ret < 0 ? ret : -EREMOTEIO;
 	}
 	return 0;
@@ -382,12 +382,12 @@ YW_ErrorType_T vz7903_open_repeater(UINT32 tuner_id)
 	acWriteData[0] = 0xf1;
 	acWriteData[1] = 0x2a;
 	Err = Vz7903_Write(pVz7903_State[tuner_id]->i2c,
-					   pVz7903_State[tuner_id]->config->DemodI2cAddr,
-					   acWriteData, 2);
+			   pVz7903_State[tuner_id]->config->DemodI2cAddr,
+			   acWriteData, 2);
 
 	Err |= Vz7903_Read(pVz7903_State[tuner_id]->i2c,
-					   pVz7903_State[tuner_id]->config->DemodI2cAddr,
-					   &data, 1);
+			   pVz7903_State[tuner_id]->config->DemodI2cAddr,
+			   &data, 1);
 
 	data |= 0x80;
 
@@ -395,8 +395,8 @@ YW_ErrorType_T vz7903_open_repeater(UINT32 tuner_id)
 	acWriteData[1] = 0x2a;
 	acWriteData[2] = data;
 	Err = Vz7903_Write(pVz7903_State[tuner_id]->i2c,
-					   pVz7903_State[tuner_id]->config->DemodI2cAddr,
-					   acWriteData, 3);
+			   pVz7903_State[tuner_id]->config->DemodI2cAddr,
+			   acWriteData, 3);
 
 	return Err;
 }
@@ -422,8 +422,8 @@ BOOL QM1D1C0045_register_real_write(UINT32 tuner_id, UINT8 RegAddr, UINT8 RegDat
 	acWriteData[0] = RegAddr;
 	acWriteData[1] = RegData;
 	Err = Vz7903_Write(pVz7903_State[tuner_id]->i2c,
-					   pVz7903_State[tuner_id]->config->I2cAddr,
-					   acWriteData, 2);
+			   pVz7903_State[tuner_id]->config->I2cAddr,
+			   acWriteData, 2);
 	//printf("[%s]Err=0x%x,IOHandle=%d\n",__FUNCTION__,Err,IOHandle);
 
 	return TRUE;
@@ -467,8 +467,8 @@ BOOL QM1D1C0045_register_real_read(UINT32 tuner_id, UINT8 RegAddr, UINT8 *apData
 }
 
 int tuner_Sharp7903_Identify(struct dvb_frontend *fe,
-							 struct vz7903_config  *I2cConfig,
-							 struct i2c_adapter *i2c)
+			     struct vz7903_config  *I2cConfig,
+			     struct i2c_adapter *i2c)
 {
 	U8      data = 0;
 	struct vz7903_state Vz7903_State;
@@ -506,7 +506,7 @@ UINT8 QM1D1C0045_pll_getdata_once(UINT32 tuner_id, QM1D1C0045_INIT_REG_DATA RegA
 	return data;
 }
 
-void QM1D1C0045_get_lock_status(UINT32 tuner_id, BOOL* pbLock)
+void QM1D1C0045_get_lock_status(UINT32 tuner_id, BOOL *pbLock)
 {
 	QM1D1C0045_d_reg[QM1D1C0045_REG_0D] = QM1D1C0045_pll_getdata_once(tuner_id, QM1D1C0045_REG_0D);
 	if (QM1D1C0045_d_reg[QM1D1C0045_REG_0D] & 0x40)
@@ -946,7 +946,7 @@ BOOL QM1D1C0045_LocalLpfTuning(UINT32 tuner_id, PQM1D1C0045_CONFIG_STRUCT   apCo
 	return TRUE;
 }
 
-int  nim_vz7903_init(UINT8* ptuner_id)
+int  nim_vz7903_init(UINT8 *ptuner_id)
 {
 	//INT32 result;
 	//UINT8 i;
@@ -1197,16 +1197,16 @@ int vz7903_get_status(struct dvb_frontend *fe, u32 *status)
 }
 
 static int vz7903_set_params(struct dvb_frontend *fe,
-							 struct dvb_frontend_parameters *p)
+			     struct dvb_frontend_parameters *p)
 {
 	struct vz7903_state *state = fe->tuner_priv;
 
 	printk("p->frequency = %d, p->u.qpsk.symbol_rate = %d\n",
-		   p->frequency, p->u.qpsk.symbol_rate);
+	       p->frequency, p->u.qpsk.symbol_rate);
 
 	state->frequency = p->frequency;
 	return nim_vz7903_control(state->index, p->frequency,
-							  p->u.qpsk.symbol_rate);
+				  p->u.qpsk.symbol_rate);
 }
 
 static struct dvb_tuner_ops vz7903_ops =
@@ -1224,8 +1224,8 @@ static struct dvb_tuner_ops vz7903_ops =
 };
 
 struct dvb_frontend *vz7903_attach(struct dvb_frontend *fe,
-								   struct vz7903_config *i2cConfig,
-								   struct i2c_adapter *i2c)
+				   struct vz7903_config *i2cConfig,
+				   struct i2c_adapter *i2c)
 {
 	//UINT8 tunerID = 0;
 	struct vz7903_state *state = NULL;

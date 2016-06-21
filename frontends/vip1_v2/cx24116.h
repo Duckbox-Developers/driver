@@ -29,7 +29,8 @@
 #  include <linux/stm/pio.h>
 #endif
 
-struct cx24116_config {
+struct cx24116_config
+{
 	/* the demodulator's i2c address */
 	u8 demod_address;
 
@@ -40,7 +41,7 @@ struct cx24116_config {
 	int (*reset_device)(struct dvb_frontend *fe);
 
 	/* Need to set MPEG parameters */
-	u8 mpg_clk_pos_pol:0x02;
+	u8 mpg_clk_pos_pol: 0x02;
 
 	struct stpio_pin	*lnb_enable;
 	struct stpio_pin	*lnb_vsel;	// 13/18V select pin

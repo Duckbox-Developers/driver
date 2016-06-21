@@ -32,20 +32,20 @@
 #define FE_DEBUGREG				4
 
 #define dprintk(x, y, z, format, arg...) do {						\
-	if (z) {									\
-		if	((*x > FE_ERROR) && (*x > y))					\
-			printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
-		else if	((*x > FE_NOTICE) && (*x > y))					\
-			printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
-		else if ((*x > FE_INFO) && (*x > y))					\
-			printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
-		else if ((*x > FE_DEBUG) && (*x > y))					\
-			printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
-	} else {									\
-		if (*x > y)								\
-			printk(format, ##arg);						\
-	}										\
-} while(0)
+		if (z) {									\
+			if	((*x > FE_ERROR) && (*x > y))					\
+				printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
+			else if	((*x > FE_NOTICE) && (*x > y))					\
+				printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
+			else if ((*x > FE_INFO) && (*x > y))					\
+				printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
+			else if ((*x > FE_DEBUG) && (*x > y))					\
+				printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
+		} else {									\
+			if (*x > y)								\
+				printk(format, ##arg);						\
+		}										\
+	} while(0)
 
 #define INRANGE(val, x, y)			(((x <= val) && (val <= y)) ||		\
 						 ((y <= val) && (val <= x)) ? 1 : 0)
@@ -67,15 +67,16 @@
 
 
 #define STB0899_SETFIELD(mask, val, width, offset)      (mask & (~(((1 << width) - 1) <<	\
-							 offset))) | ((val &			\
-							 ((1 << width) - 1)) << offset)
+								   offset))) | ((val &			\
+										   ((1 << width) - 1)) << offset)
 
 #define STB0899_SETFIELD_VAL(bitf, mask, val)	(mask = (mask & (~(((1 << STB0899_WIDTH_##bitf) - 1) <<\
-							 STB0899_OFFST_##bitf))) | \
-							 (val << STB0899_OFFST_##bitf))
+								   STB0899_OFFST_##bitf))) | \
+							(val << STB0899_OFFST_##bitf))
 
 
-enum stb0899_status {
+enum stb0899_status
+{
 	NOAGC1	= 0,
 	AGC1OK,
 	NOTIMING,
@@ -96,7 +97,8 @@ enum stb0899_status {
 	DVBS2_FEC_NOLOCK
 };
 
-enum stb0899_modcod {
+enum stb0899_modcod
+{
 	STB0899_DUMMY_PLF,
 	STB0899_QPSK_14,
 	STB0899_QPSK_13,
@@ -128,23 +130,27 @@ enum stb0899_modcod {
 	STB0899_32APSK_910
 };
 
-enum stb0899_frame {
+enum stb0899_frame
+{
 	STB0899_LONG_FRAME,
 	STB0899_SHORT_FRAME
 };
 
-enum stb0899_alpha {
+enum stb0899_alpha
+{
 	RRC_20,
 	RRC_25,
 	RRC_35
 };
 
-struct stb0899_tab {
+struct stb0899_tab
+{
 	s32 real;
 	s32 read;
 };
 
-enum stb0899_fec {
+enum stb0899_fec
+{
 	STB0899_FEC_1_2			= 13,
 	STB0899_FEC_2_3			= 18,
 	STB0899_FEC_3_4			= 21,
@@ -153,13 +159,15 @@ enum stb0899_fec {
 	STB0899_FEC_7_8			= 26
 };
 
-struct stb0899_params {
+struct stb0899_params
+{
 	u32	freq;					/* Frequency	*/
 	u32	srate;					/* Symbol rate	*/
 	enum fe_code_rate fecrate;
 };
 
-struct stb0899_internal {
+struct stb0899_internal
+{
 	u32			master_clk;
 	u32			freq;			/* Demod internal Frequency		*/
 	u32			srate;			/* Demod internal Symbol rate		*/
@@ -206,7 +214,8 @@ struct stb0899_internal {
 	u8			err_ctrl;		/* ERRCTRLn				*/
 };
 
-struct stb0899_state {
+struct stb0899_state
+{
 	struct i2c_adapter		*i2c;
 	struct stb0899_config		*config;
 	struct dvb_frontend		frontend;

@@ -29,7 +29,8 @@
 #include "stv090x_platform.h"
 #include "stv6110x.h"
 
-struct stv090x_config {
+struct stv090x_config
+{
 	enum stv090x_device		 device;
 	enum stv090x_mode		 demod_mode;
 	enum stv090x_clkmode	 clk_mode;
@@ -49,33 +50,33 @@ struct stv090x_config {
 	u8						 tuner_bbgain; /* default: 10db */
 	enum stv090x_adc_range	 adc1_range; /* default: 2Vpp */
 	enum stv090x_adc_range	 adc2_range; /* default: 2Vpp */
-    bool 					 diseqc_envelope_mode;
+	bool 					 diseqc_envelope_mode;
 
-    u32                      usedLNB;
-    u32                      usedTuner;
-    u32                      alternativePath;
-    u32                      shouldSleep;
+	u32                      usedLNB;
+	u32                      usedTuner;
+	u32                      alternativePath;
+	u32                      shouldSleep;
 
-    u8                       tuner_address;
-    u32                      tuner_refclk;
-  
-    struct stpio_pin*        tuner_enable_pin;
-    u32                      tuner_active_lh;
-    u32                      lnb[6];
-    
-    enum stv090x_demodulator demod;
- 
-	int (*tuner_init) (struct dvb_frontend *fe);
-    int (*tuner_sleep) (struct dvb_frontend *fe);
-	int (*tuner_set_mode) (struct dvb_frontend *fe, enum tuner_mode mode);
-	int (*tuner_set_frequency) (struct dvb_frontend *fe, u32 frequency);
-	int (*tuner_get_frequency) (struct dvb_frontend *fe, u32 *frequency);
-	int (*tuner_set_bandwidth) (struct dvb_frontend *fe, u32 bandwidth);
-	int (*tuner_get_bandwidth) (struct dvb_frontend *fe, u32 *bandwidth);
-	int (*tuner_set_bbgain) (struct dvb_frontend *fe, u32 gain);
-	int (*tuner_get_bbgain) (struct dvb_frontend *fe, u32 *gain);
-	int (*tuner_set_refclk)  (struct dvb_frontend *fe, u32 refclk);
-	int (*tuner_get_status) (struct dvb_frontend *fe, u32 *status);
+	u8                       tuner_address;
+	u32                      tuner_refclk;
+
+	struct stpio_pin        *tuner_enable_pin;
+	u32                      tuner_active_lh;
+	u32                      lnb[6];
+
+	enum stv090x_demodulator demod;
+
+	int (*tuner_init)(struct dvb_frontend *fe);
+	int (*tuner_sleep)(struct dvb_frontend *fe);
+	int (*tuner_set_mode)(struct dvb_frontend *fe, enum tuner_mode mode);
+	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
+	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
+	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
+	int (*tuner_get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
+	int (*tuner_set_bbgain)(struct dvb_frontend *fe, u32 gain);
+	int (*tuner_get_bbgain)(struct dvb_frontend *fe, u32 *gain);
+	int (*tuner_set_refclk)(struct dvb_frontend *fe, u32 refclk);
+	int (*tuner_get_status)(struct dvb_frontend *fe, u32 *status);
 };
 
 extern struct dvb_frontend *stv090x_attach(struct stv090x_config *config,

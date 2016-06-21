@@ -23,24 +23,27 @@
 #ifndef __STV6110x_H
 #define __STV6110x_H
 
-struct stv6110x_config {
+struct stv6110x_config
+{
 	u8	addr;
 	u32	refclk;
-    
-    u32 shouldSleep;
+
+	u32 shouldSleep;
 };
 
-enum tuner_mode {
+enum tuner_mode
+{
 	TUNER_SLEEP = 1,
 	TUNER_WAKE,
 };
 
-enum tuner_status {
+enum tuner_status
+{
 	TUNER_PHASELOCKED = 1,
 };
 
 extern struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
-					       const struct stv6110x_config *config,
-					       struct i2c_adapter *i2c);
+					    const struct stv6110x_config *config,
+					    struct i2c_adapter *i2c);
 
 #endif /* __STV6110x_H */

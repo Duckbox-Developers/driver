@@ -118,8 +118,8 @@ struct stv090x_config
 };
 
 extern struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
-		struct i2c_adapter *i2c,
-		enum stv090x_demodulator demod,
-		enum stv090x_tuner tuner);
+					   struct i2c_adapter *i2c,
+					   enum stv090x_demodulator demod,
+					   enum stv090x_tuner tuner);
 
 #endif /* __STV090x_H */

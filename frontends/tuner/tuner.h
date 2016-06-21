@@ -60,7 +60,7 @@ struct cx24116_tuning
 	enum dvbfe_rolloff 	rolloff;
 #else
 	fe_code_rate_t		fec;
-        fe_modulation_t         modulation;
+	fe_modulation_t         modulation;
 	fe_delivery_system_t 	delivery;
 	fe_rolloff_t 	        rolloff;
 #endif
@@ -79,19 +79,20 @@ struct cx24116_config
 {
 	struct i2c_adapter	*i2c_adap; /* i2c bus of the tuner */
 	u8			i2c_addr; /* i2c address of the tuner */
-	struct stpio_pin*	tuner_enable_pin;
-	struct stpio_pin*	lnb_enable_pin;
-	struct stpio_pin*	lnb_vsel_pin;
+	struct stpio_pin	*tuner_enable_pin;
+	struct stpio_pin	*lnb_enable_pin;
+	struct stpio_pin	*lnb_vsel_pin;
 	u8			tuner_enable_act; /* active state of the pin */
 	u8			lnb_enable_act; /* active state of the pin */
 	u8			lnb_vsel_act; /* active state of the pin */
 };
 
 
-struct cx24116_core {
-	struct dvb_adapter*		dvb_adap;
-	
-	struct dvb_frontend*		frontend[MAX_TUNERS_PER_ADAPTER];
+struct cx24116_core
+{
+	struct dvb_adapter		*dvb_adap;
+
+	struct dvb_frontend		*frontend[MAX_TUNERS_PER_ADAPTER];
 };
 
 enum cmds
@@ -122,17 +123,18 @@ struct cx24116_cmd
 	u8 args[0x1e];
 };
 
-struct cx24116_state {
+struct cx24116_state
+{
 	struct dvb_frontend_ops 		ops;
 	struct dvb_frontend 			frontend;
 
-	const struct cx24116_config* 		config;
+	const struct cx24116_config 		*config;
 
 	struct cx24116_tuning 			dcur;
 	struct cx24116_tuning 			dnxt;
 
 	struct semaphore			fw_load_sem;
-/* FIXME: remove thread_id if not using loader thread */
+	/* FIXME: remove thread_id if not using loader thread */
 	int					thread_id;
 
 	struct cx24116_cmd 			dsec_cmd;
@@ -140,7 +142,7 @@ struct cx24116_state {
 	int				       	not_responding;
 
 #if defined(TUNER_PROCFS)
-	struct proc_dir_entry*			proc_tuner;
+	struct proc_dir_entry			*proc_tuner;
 	u8					value[5];
 #endif
 };

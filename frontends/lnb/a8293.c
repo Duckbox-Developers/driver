@@ -52,7 +52,7 @@ int a8293_write(struct i2c_client *client, unsigned char reg)
 	return 0;
 }
 
-int a8293_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg )
+int a8293_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg)
 {
 	unsigned char reg = 0x10;
 
@@ -60,7 +60,7 @@ int a8293_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg 
 
 	if (cmd != LNB_VOLTAGE_OFF)
 	{
-		reg |= (1<<5);
+		reg |= (1 << 5);
 	}
 	switch (cmd)
 	{

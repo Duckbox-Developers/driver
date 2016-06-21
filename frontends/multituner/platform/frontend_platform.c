@@ -63,16 +63,16 @@
 
 int __init frontend_platform_init(void)
 {
-    int ret;
+	int ret;
 
-    ret = platform_add_devices(platform, sizeof(platform)
-                               / sizeof(struct platform_device*));
-    if (ret != 0)
-    {
-        printk("failed to register platform device\n");
-    }
+	ret = platform_add_devices(platform, sizeof(platform)
+				   / sizeof(struct platform_device *));
+	if (ret != 0)
+	{
+		printk("failed to register platform device\n");
+	}
 
-    return ret;
+	return ret;
 }
 
 

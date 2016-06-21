@@ -161,7 +161,7 @@ typedef struct
 /******************************************************************************
     Prototypes
 ******************************************************************************/
-MXL_STATUS MxLWare603_API_CfgDrvInit(UINT32 devId, void* oemDataPtr);
+MXL_STATUS MxLWare603_API_CfgDrvInit(UINT32 devId, void *oemDataPtr);
 
 MXL_STATUS MxLWare603_API_CfgDevSoftReset(UINT32 devId);
 MXL_STATUS MxLWare603_API_CfgDevOverwriteDefaults(UINT32 devId, MXL_BOOL singleSupply_3_3V);
@@ -169,8 +169,8 @@ MXL_STATUS MxLWare603_API_CfgDevXtal(UINT32 devId, MXL603_XTAL_SET_CFG_T xtalCfg
 MXL_STATUS MxLWare603_API_CfgDevPowerMode(UINT32 devId, MXL603_PWR_MODE_E powerMode);
 MXL_STATUS MxLWare603_API_CfgDevGPO(UINT32 devId, MXL603_GPO_STATE_E gpoState);
 
-MXL_STATUS MxLWare603_API_ReqDevVersionInfo(UINT32 devId, MXL603_VER_INFO_T* mxlDevVerInfoPtr);
-MXL_STATUS MxLWare603_API_ReqDevGPOStatus(UINT32 devId, MXL603_GPO_STATE_E* gpoStatusPtr);
+MXL_STATUS MxLWare603_API_ReqDevVersionInfo(UINT32 devId, MXL603_VER_INFO_T *mxlDevVerInfoPtr);
+MXL_STATUS MxLWare603_API_ReqDevGPOStatus(UINT32 devId, MXL603_GPO_STATE_E *gpoStatusPtr);
 
 MXL_STATUS MxLWare603_API_CfgTunerMode(UINT32 devId, MXL603_TUNER_MODE_CFG_T tunerModeCfg);
 MXL_STATUS MxLWare603_API_CfgTunerAGC(UINT32 devId, MXL603_AGC_CFG_T agcCfg);
@@ -178,10 +178,10 @@ MXL_STATUS MxLWare603_API_CfgTunerLoopThrough(UINT32 devId, MXL_BOOL loopThrough
 MXL_STATUS MxLWare603_API_CfgTunerIFOutParam(UINT32 devId, MXL603_IF_OUT_CFG_T ifOutCfg);
 MXL_STATUS MxLWare603_API_CfgTunerChanTune(UINT32 devId, MXL603_CHAN_TUNE_CFG_T chanTuneCfg);
 
-MXL_STATUS MxLWare603_API_ReqTunerAGCLock(UINT32 devId, MXL_BOOL* agcLockStatusPtr);
-MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL* rfLockPtr, MXL_BOOL* refLockPtr);
+MXL_STATUS MxLWare603_API_ReqTunerAGCLock(UINT32 devId, MXL_BOOL *agcLockStatusPtr);
+MXL_STATUS MxLWare603_API_ReqTunerLockStatus(UINT32 devId, MXL_BOOL *rfLockPtr, MXL_BOOL *refLockPtr);
 //MXL_STATUS MxLWare603_API_ReqTunerRxPower(UINT32 devId, REAL32* rxPwrPtr);
-MXL_STATUS MxLWare603_API_ReqTunerRxPower(UINT32 devId, INT16* rxPwrPtr);
+MXL_STATUS MxLWare603_API_ReqTunerRxPower(UINT32 devId, INT16 *rxPwrPtr);
 
 #endif /* __MXL603_TUNER_API_H__*/
 

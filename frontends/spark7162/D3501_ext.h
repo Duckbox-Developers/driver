@@ -50,9 +50,9 @@ struct d3501_config
 
 /********************************  函数声明********************************/
 
-extern struct dvb_frontend*
+extern struct dvb_frontend *
 dvb_d3501_fe_qpsk_attach(const struct d3501_config *config,
-						 struct i2c_adapter* i2c);
+			 struct i2c_adapter *i2c);
 
 /********************************  函数定义********************************/
 

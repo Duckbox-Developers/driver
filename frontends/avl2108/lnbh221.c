@@ -27,13 +27,13 @@ extern short paramDebug;
 #define TAGDEBUG "[lnbh221] "
 
 #define dprintk(level, x...) do { \
-if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
+	} while (0)
 
 struct lnb_state
 {
-    struct i2c_adapter*  i2c;
-    u32                  lnb[6];
+	struct i2c_adapter  *i2c;
+	u32                  lnb[6];
 };
 
 /*
@@ -61,76 +61,76 @@ PCL TTX TEN LLC VSEL EN OTF OLF Function
 
  *
  */
-static int writereg_lnb_supply (struct lnb_state *state, char data)
+static int writereg_lnb_supply(struct lnb_state *state, char data)
 {
-    int ret = -EREMOTEIO;
-    struct i2c_msg msg;
-    u8 buf;
+	int ret = -EREMOTEIO;
+	struct i2c_msg msg;
+	u8 buf;
 
-    buf = data;
+	buf = data;
 
-    msg.addr = state->lnb[1];
-    msg.flags = 0;
-    msg.buf = &buf;
-    msg.len = 1;
+	msg.addr = state->lnb[1];
+	msg.flags = 0;
+	msg.buf = &buf;
+	msg.len = 1;
 
-    dprintk (100, "%s:  write 0x%02x to 0x%02x\n", __FUNCTION__, data, msg.addr);
+	dprintk(100, "%s:  write 0x%02x to 0x%02x\n", __FUNCTION__, data, msg.addr);
 
-    if ((ret = i2c_transfer (state->i2c, &msg, 1)) != 1)
-    {
-        //wohl nicht LNBH23, mal mit LNBH221 versuchen
-        msg.addr = state->lnb[2];
-        msg.flags = 0;
-        msg.buf = &buf;
-        msg.len = 1;
-        if ((ret = i2c_transfer (state->i2c, &msg, 1)) != 1)
-        {
-            printk ("%s: writereg error(err == %i)\n",
-                    __FUNCTION__, ret);
-            ret = -EREMOTEIO;
-        }
-    }
+	if ((ret = i2c_transfer(state->i2c, &msg, 1)) != 1)
+	{
+		//wohl nicht LNBH23, mal mit LNBH221 versuchen
+		msg.addr = state->lnb[2];
+		msg.flags = 0;
+		msg.buf = &buf;
+		msg.len = 1;
+		if ((ret = i2c_transfer(state->i2c, &msg, 1)) != 1)
+		{
+			printk("%s: writereg error(err == %i)\n",
+			       __FUNCTION__, ret);
+			ret = -EREMOTEIO;
+		}
+	}
 
-    return ret;
+	return ret;
 }
 
-u16 lnbh221_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t voltage)
+u16 lnbh221_set_voltage(void *_state, struct dvb_frontend *fe, fe_sec_voltage_t voltage)
 {
-    struct lnb_state *state = (struct lnb_state *) _state;
-    u16 ret = 0;
+	struct lnb_state *state = (struct lnb_state *) _state;
+	u16 ret = 0;
 
-    dprintk (10, "%s(%p, %d)\n", __FUNCTION__, fe, voltage);
+	dprintk(10, "%s(%p, %d)\n", __FUNCTION__, fe, voltage);
 
-    switch (voltage)
-    {
-    case SEC_VOLTAGE_OFF:
-        writereg_lnb_supply(state, state->lnb[3]);
-        break;
-    case SEC_VOLTAGE_13: //vertical
-        writereg_lnb_supply(state, state->lnb[4]);
-        break;
-    case SEC_VOLTAGE_18: //horizontal
-        writereg_lnb_supply(state, state->lnb[5]);
-        break;
-    default:
-        return -EINVAL;
-    }
+	switch (voltage)
+	{
+		case SEC_VOLTAGE_OFF:
+			writereg_lnb_supply(state, state->lnb[3]);
+			break;
+		case SEC_VOLTAGE_13: //vertical
+			writereg_lnb_supply(state, state->lnb[4]);
+			break;
+		case SEC_VOLTAGE_18: //horizontal
+			writereg_lnb_supply(state, state->lnb[5]);
+			break;
+		default:
+			return -EINVAL;
+	}
 
-    return ret;
+	return ret;
 
 }
 
-void* lnbh221_attach(u32* lnb, struct avl2108_equipment_s* equipment)
+void *lnbh221_attach(u32 *lnb, struct avl2108_equipment_s *equipment)
 {
-    struct lnb_state* state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
+	struct lnb_state *state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
 
-    memcpy(state->lnb, lnb, sizeof(state->lnb));
+	memcpy(state->lnb, lnb, sizeof(state->lnb));
 
-    equipment->lnb_set_voltage = lnbh221_set_voltage;
+	equipment->lnb_set_voltage = lnbh221_set_voltage;
 
-    state->i2c = i2c_get_adapter(lnb[0]);
+	state->i2c = i2c_get_adapter(lnb[0]);
 
-    printk("i2c adapter = %p\n", state->i2c);
+	printk("i2c adapter = %p\n", state->i2c);
 
-    return state;
+	return state;
 }

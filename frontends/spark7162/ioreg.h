@@ -140,7 +140,7 @@ YW_ErrorType_T TUNER_IOREG_SetRegister_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMa
 U32 TUNER_IOREG_GetRegister_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 RegIndex);
 /* no I/O performed for the following functions */
 void TUNER_IOREG_FieldSetVal_SizeU32_1(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 FieldIndex, int Value, U8 *DataArr);
-U32 TUNER_IOREG_FieldGetVal_SizeU32_1(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 FieldIndex, U8* DataArr);
+U32 TUNER_IOREG_FieldGetVal_SizeU32_1(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 FieldIndex, U8 *DataArr);
 
 YW_ErrorType_T TUNER_IOREG_SetContigousRegisters_SizeU32_1(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 FirstRegAddress, U8 *RegsVal, U32 Number);
 
@@ -152,7 +152,7 @@ void TUNER_IOREG_FieldSetVal_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 Fie
 YW_ErrorType_T TUNER_IOREG_SetContigousRegisters_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 FirstRegAddress, U32 *RegsVal, int Number);
 
 YW_ErrorType_T TUNER_IOREG_GetContigousRegisters_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 FirstRegAddress, int Number, U32 *RegsVal);
-U32 TUNER_IOREG_FieldGetVal_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 FieldIndex, U8* DataArr);
+U32 TUNER_IOREG_FieldGetVal_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, U32 FieldIndex, U8 *DataArr);
 
 int IOREG_GetFieldBits_SizeU32(int mask, int Position);
 
@@ -164,7 +164,7 @@ int     TUNER_IOREG_GetField_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_
 
 YW_ErrorType_T TUNER_IOREG_SetField_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 FieldMask, U32 FieldInfo, int Value);
 
-YW_ErrorType_T TUNER_IOREG_Reset_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 * DefaultVal, U32 *Addressarray);
+YW_ErrorType_T TUNER_IOREG_Reset_SizeU32(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U32 *DefaultVal, U32 *Addressarray);
 
 YW_ErrorType_T TUNER_IOREG_SetRegister(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, S32 RegIndex, U32 Value);
 

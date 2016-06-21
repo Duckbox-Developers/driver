@@ -19,11 +19,12 @@
 
 static struct core *core[MAX_DVB_ADAPTERS];
 
-static struct stv090x_config stv090x_config_1 = {
+static struct stv090x_config stv090x_config_1 =
+{
 	.device			= STV0900,
 	.demod_mode		= STV090x_DUAL/*STV090x_SINGLE*/,
 	.clk_mode		= STV090x_CLK_EXT,
-	
+
 
 	.xtal			= 27000000,
 	.address		= I2C_ADDR_STV090X,
@@ -50,11 +51,12 @@ static struct stv090x_config stv090x_config_1 = {
 	.tuner_get_status		= NULL,
 };
 
-static struct stv090x_config stv090x_config_2 = {
+static struct stv090x_config stv090x_config_2 =
+{
 	.device			= STV0900,
 	.demod_mode		= STV090x_DUAL,
 	.clk_mode		= STV090x_CLK_EXT,
-	
+
 
 	.xtal			= 27000000,
 	.address		= I2C_ADDR_STV090X,
@@ -81,72 +83,79 @@ static struct stv090x_config stv090x_config_2 = {
 	.tuner_get_status		= NULL,
 };
 
-static struct stb6100_config stb6100_config_1 = {
+static struct stb6100_config stb6100_config_1 =
+{
 	.tuner_address = I2C_ADDR_STB6100_1,
 	.refclock      = 27000000
 };
 
-static struct stb6100_config stb6100_config_2 = {
+static struct stb6100_config stb6100_config_2 =
+{
 	.tuner_address = I2C_ADDR_STB6100_2,
 	.refclock      = 27000000
 };
 
-static struct dvb_frontend * frontend_init(struct core_config *cfg, int i)
+static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 {
 	struct dvb_frontend *frontend = NULL;
 
-	printk (KERN_INFO "%s frontend_init >\n", __FUNCTION__);
+	printk(KERN_INFO "%s frontend_init >\n", __FUNCTION__);
 
-		if (i==0)
-			frontend = dvb_attach(stv090x_attach, &stv090x_config_1,cfg->i2c_adap, STV090x_DEMODULATOR_0);
-		else
-			frontend = dvb_attach(stv090x_attach, &stv090x_config_2,cfg->i2c_adap, STV090x_DEMODULATOR_1);
+	if (i == 0)
+		frontend = dvb_attach(stv090x_attach, &stv090x_config_1, cfg->i2c_adap, STV090x_DEMODULATOR_0);
+	else
+		frontend = dvb_attach(stv090x_attach, &stv090x_config_2, cfg->i2c_adap, STV090x_DEMODULATOR_1);
 
-		if (frontend) {
-			printk("%s: stv090x attached\n", __FUNCTION__);
+	if (frontend)
+	{
+		printk("%s: stv090x attached\n", __FUNCTION__);
 
-			if (i==0)
+		if (i == 0)
+		{
+			if (dvb_attach(stb6100_attach, frontend, &stb6100_config_1, cfg->i2c_adap) == 0)
 			{
-				if (dvb_attach(stb6100_attach, frontend, &stb6100_config_1, cfg->i2c_adap) == 0) {
-					printk (KERN_INFO "error attaching stb6100_1\n");
-					goto error_out;
-				}
-				else
-				{
-					printk("fe_core : stb6100_1 attached\n");
-					
-					stv090x_config_1.tuner_get_frequency	= stb6100_get_frequency;
-					stv090x_config_1.tuner_set_frequency	= stb6100_set_frequency;
-					stv090x_config_1.tuner_set_bandwidth	= stb6100_set_bandwidth;
-					stv090x_config_1.tuner_get_bandwidth	= stb6100_get_bandwidth;
-					stv090x_config_1.tuner_get_status	= frontend->ops.tuner_ops.get_status;
-					
-				}
+				printk(KERN_INFO "error attaching stb6100_1\n");
+				goto error_out;
 			}
 			else
 			{
-				if (dvb_attach(stb6100_attach, frontend, &stb6100_config_2, cfg->i2c_adap) == 0) {
-					printk (KERN_INFO "error attaching stb6100_2\n");
-					goto error_out;
-				}
-				else
-				{
-					printk("fe_core : stb6100_2 attached\n");
-					
-					stv090x_config_2.tuner_get_frequency	= stb6100_get_frequency;
-					stv090x_config_2.tuner_set_frequency	= stb6100_set_frequency;
-					stv090x_config_2.tuner_set_bandwidth	= stb6100_set_bandwidth;
-					stv090x_config_2.tuner_get_bandwidth	= stb6100_get_bandwidth;
-					stv090x_config_2.tuner_get_status	= frontend->ops.tuner_ops.get_status;
-					
-				}
+				printk("fe_core : stb6100_1 attached\n");
+
+				stv090x_config_1.tuner_get_frequency	= stb6100_get_frequency;
+				stv090x_config_1.tuner_set_frequency	= stb6100_set_frequency;
+				stv090x_config_1.tuner_set_bandwidth	= stb6100_set_bandwidth;
+				stv090x_config_1.tuner_get_bandwidth	= stb6100_get_bandwidth;
+				stv090x_config_1.tuner_get_status	= frontend->ops.tuner_ops.get_status;
+
 			}
-
-
-		} else {
-			printk (KERN_INFO "%s: error attaching stv090x\n", __FUNCTION__);
-			goto error_out;
 		}
+		else
+		{
+			if (dvb_attach(stb6100_attach, frontend, &stb6100_config_2, cfg->i2c_adap) == 0)
+			{
+				printk(KERN_INFO "error attaching stb6100_2\n");
+				goto error_out;
+			}
+			else
+			{
+				printk("fe_core : stb6100_2 attached\n");
+
+				stv090x_config_2.tuner_get_frequency	= stb6100_get_frequency;
+				stv090x_config_2.tuner_set_frequency	= stb6100_set_frequency;
+				stv090x_config_2.tuner_set_bandwidth	= stb6100_set_bandwidth;
+				stv090x_config_2.tuner_get_bandwidth	= stb6100_get_bandwidth;
+				stv090x_config_2.tuner_get_status	= frontend->ops.tuner_ops.get_status;
+
+			}
+		}
+
+
+	}
+	else
+	{
+		printk(KERN_INFO "%s: error attaching stv090x\n", __FUNCTION__);
+		goto error_out;
+	}
 
 	return frontend;
 
@@ -158,72 +167,74 @@ error_out:
 }
 
 static struct dvb_frontend *
-init_fe_device (struct dvb_adapter *adapter,
-                     struct plat_tuner_config *tuner_cfg, int i)
+init_fe_device(struct dvb_adapter *adapter,
+	       struct plat_tuner_config *tuner_cfg, int i)
 {
-  struct fe_core_state *state;
-  struct dvb_frontend *frontend;
-  struct core_config *cfg;
+	struct fe_core_state *state;
+	struct dvb_frontend *frontend;
+	struct core_config *cfg;
 
-  printk ("> (bus = %d) %s\n", tuner_cfg->i2c_bus,__FUNCTION__);
+	printk("> (bus = %d) %s\n", tuner_cfg->i2c_bus, __FUNCTION__);
 
-  cfg = kmalloc (sizeof (struct core_config), GFP_KERNEL);
-  if (cfg == NULL)
-  {
-    printk ("fe-core: kmalloc failed\n");
-    return NULL;
-  }
+	cfg = kmalloc(sizeof(struct core_config), GFP_KERNEL);
+	if (cfg == NULL)
+	{
+		printk("fe-core: kmalloc failed\n");
+		return NULL;
+	}
 
-  /* initialize the config data */
-  cfg->i2c_adap = i2c_get_adapter (tuner_cfg->i2c_bus);
+	/* initialize the config data */
+	cfg->i2c_adap = i2c_get_adapter(tuner_cfg->i2c_bus);
 
-  printk("i2c adapter = 0x%0x\n", cfg->i2c_adap);
+	printk("i2c adapter = 0x%0x\n", cfg->i2c_adap);
 
-  cfg->i2c_addr = tuner_cfg->i2c_addr;
+	cfg->i2c_addr = tuner_cfg->i2c_addr;
 
 
-if (cfg->i2c_adap == NULL) {
+	if (cfg->i2c_adap == NULL)
+	{
 
-    printk ("fe-core: failed to allocate resources (%s)\n",
-    		(cfg->i2c_adap == NULL)?"i2c":"STPIO error");
-    kfree (cfg);
-    return NULL;
-  }
+		printk("fe-core: failed to allocate resources (%s)\n",
+		       (cfg->i2c_adap == NULL) ? "i2c" : "STPIO error");
+		kfree(cfg);
+		return NULL;
+	}
 
-  frontend = frontend_init(cfg, i);
+	frontend = frontend_init(cfg, i);
 
-  if (frontend == NULL)
-  {
-	printk("No frontend found !\n");
-    return NULL;
-  }
+	if (frontend == NULL)
+	{
+		printk("No frontend found !\n");
+		return NULL;
+	}
 
-  printk (KERN_INFO "%s: Call dvb_register_frontend (adapter = 0x%x)\n",
-           __FUNCTION__, (unsigned int) adapter);
+	printk(KERN_INFO "%s: Call dvb_register_frontend (adapter = 0x%x)\n",
+	       __FUNCTION__, (unsigned int) adapter);
 
-  if (dvb_register_frontend (adapter, frontend))
-  {
-    printk ("%s: Frontend registration failed !\n", __FUNCTION__);
-    if (frontend->ops.release)
-      frontend->ops.release (frontend);
-    return NULL;
-  }
+	if (dvb_register_frontend(adapter, frontend))
+	{
+		printk("%s: Frontend registration failed !\n", __FUNCTION__);
+		if (frontend->ops.release)
+			frontend->ops.release(frontend);
+		return NULL;
+	}
 
-  state = frontend->demodulator_priv;
+	state = frontend->demodulator_priv;
 
-  return frontend;
+	return frontend;
 }
 
-struct plat_tuner_config tuner_resources[] = {
+struct plat_tuner_config tuner_resources[] =
+{
 
-        [0] = {
-                .adapter 	= 0,
-                .i2c_bus 	= 0,
-        },
-        [1] = {
-                .adapter 	= 0,
-                .i2c_bus 	= 0,
-        },
+	[0] = {
+		.adapter 	= 0,
+		.i2c_bus 	= 0,
+	},
+	[1] = {
+		.adapter 	= 0,
+		.i2c_bus 	= 0,
+	},
 };
 
 void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
@@ -231,9 +242,9 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 	int i = 0;
 	int vLoop = 0;
 
-	printk (KERN_INFO "%s: Adb_Box frontend core\n", __FUNCTION__);
+	printk(KERN_INFO "%s: Adb_Box frontend core\n", __FUNCTION__);
 
-	core[i] = (struct core*) kmalloc(sizeof(struct core),GFP_KERNEL);
+	core[i] = (struct core *) kmalloc(sizeof(struct core), GFP_KERNEL);
 	if (!core[i])
 		return;
 
@@ -246,15 +257,15 @@ void fe_core_register_frontend(struct dvb_adapter *dvb_adap)
 
 	for (vLoop = 0; vLoop < ARRAY_SIZE(tuner_resources); vLoop++)
 	{
-	  if (core[i]->frontend[vLoop] == NULL)
-	  {
-      	     printk("%s: init tuner %d\n", __FUNCTION__, vLoop);
-	     core[i]->frontend[vLoop] =
-				   init_fe_device (core[i]->dvb_adapter, &tuner_resources[vLoop], vLoop);
-	  }
+		if (core[i]->frontend[vLoop] == NULL)
+		{
+			printk("%s: init tuner %d\n", __FUNCTION__, vLoop);
+			core[i]->frontend[vLoop] =
+				init_fe_device(core[i]->dvb_adapter, &tuner_resources[vLoop], vLoop);
+		}
 	}
 
-	printk (KERN_INFO "%s: <\n", __FUNCTION__);
+	printk(KERN_INFO "%s: <\n", __FUNCTION__);
 
 	return;
 }
@@ -264,18 +275,18 @@ EXPORT_SYMBOL(fe_core_register_frontend);
 int __init fe_core_init(void)
 {
 
-    printk("frontend core loaded\n");
-    return 0;
+	printk("frontend core loaded\n");
+	return 0;
 }
 
 static void __exit fe_core_exit(void)
 {
-   printk("frontend core unloaded\n");
+	printk("frontend core unloaded\n");
 }
 
-module_init             (fe_core_init);
-module_exit             (fe_core_exit);
+module_init(fe_core_init);
+module_exit(fe_core_exit);
 
-MODULE_DESCRIPTION      ("Tunerdriver");
-MODULE_AUTHOR           ("Team Ducktales mod B4Team & freebox");
-MODULE_LICENSE          ("GPL");
+MODULE_DESCRIPTION("Tunerdriver");
+MODULE_AUTHOR("Team Ducktales mod B4Team & freebox");
+MODULE_LICENSE("GPL");

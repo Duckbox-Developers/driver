@@ -13,8 +13,8 @@ struct lg031_config
 	u32             TunerStep;
 };
 extern struct dvb_frontend *lg031_attach(struct dvb_frontend *fe,
-		const struct lg031_config *config,
-		struct i2c_adapter *i2c);
+					 const struct lg031_config *config,
+					 struct i2c_adapter *i2c);
 
 #endif /* __LG031_H */
 

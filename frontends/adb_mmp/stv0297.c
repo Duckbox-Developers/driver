@@ -32,7 +32,8 @@
 
 //#define DEBUG
 
-struct stv0297_state {
+struct stv0297_state
+{
 	struct i2c_adapter *i2c;
 	const struct stv0297_config *config;
 	struct dvb_frontend frontend;
@@ -47,24 +48,30 @@ static int stv0297_readreg(struct stv0297_state *state, u8 reg)
 {
 	u8 b0[] = { reg };
 	u8 b1[] = { 0 };
-	struct i2c_msg msg[] = { {.addr = state->config->demod_address,.flags = 0,.buf = b0,.len = 1},
-				 {.addr = state->config->demod_address,.flags = I2C_M_RD,.buf = b1,.len = 1}
-			       };
-	
+	struct i2c_msg msg[] = { {.addr = state->config->demod_address, .flags = 0, .buf = b0, .len = 1},
+		{.addr = state->config->demod_address, .flags = I2C_M_RD, .buf = b1, .len = 1}
+	};
+
 	int ret;
-	
+
 	// this device needs a STOP between the register and data
-	if (state->config->stop_during_read) {
-		if ((ret = i2c_transfer(state->i2c, &msg[0], 1)) != 1) {
+	if (state->config->stop_during_read)
+	{
+		if ((ret = i2c_transfer(state->i2c, &msg[0], 1)) != 1)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg, ret);
 			return -1;
 		}
-		if ((ret = i2c_transfer(state->i2c, &msg[1], 1)) != 1) {
+		if ((ret = i2c_transfer(state->i2c, &msg[1], 1)) != 1)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg, ret);
 			return -1;
 		}
-	} else {
-		if ((ret = i2c_transfer(state->i2c, msg, 2)) != 2) {
+	}
+	else
+	{
+		if ((ret = i2c_transfer(state->i2c, msg, 2)) != 2)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg, ret);
 			return -1;
 		}
@@ -76,7 +83,7 @@ static int stv0297_writereg(struct stv0297_state *state, u8 reg, u8 data)
 {
 	int ret;
 	u8 buf[] = { reg, data };
-	struct i2c_msg msg = {.addr = state->config->demod_address,.flags = 0,.buf = buf,.len = 2 };
+	struct i2c_msg msg = {.addr = state->config->demod_address, .flags = 0, .buf = buf, .len = 2 };
 
 	ret = i2c_transfer(state->i2c, &msg, 1);
 
@@ -99,26 +106,34 @@ static int stv0297_writereg_mask(struct stv0297_state *state, u8 reg, u8 mask, u
 	return 0;
 }
 
-static int stv0297_readregs(struct stv0297_state *state, u8 reg1, u8 * b, u8 len)
+static int stv0297_readregs(struct stv0297_state *state, u8 reg1, u8 *b, u8 len)
 {
 	int ret;
-	struct i2c_msg msg[] = { {.addr = state->config->demod_address,.flags = 0,.buf =
-				  &reg1,.len = 1},
-	{.addr = state->config->demod_address,.flags = I2C_M_RD,.buf = b,.len = len}
+	struct i2c_msg msg[] = { {
+			.addr = state->config->demod_address, .flags = 0, .buf =
+			&reg1, .len = 1
+		},
+		{.addr = state->config->demod_address, .flags = I2C_M_RD, .buf = b, .len = len}
 	};
 
 	// this device needs a STOP between the register and data
-	if (state->config->stop_during_read) {
-		if ((ret = i2c_transfer(state->i2c, &msg[0], 1)) != 1) {
+	if (state->config->stop_during_read)
+	{
+		if ((ret = i2c_transfer(state->i2c, &msg[0], 1)) != 1)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg1, ret);
 			return -1;
 		}
-		if ((ret = i2c_transfer(state->i2c, &msg[1], 1)) != 1) {
+		if ((ret = i2c_transfer(state->i2c, &msg[1], 1)) != 1)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg1, ret);
 			return -1;
 		}
-	} else {
-		if ((ret = i2c_transfer(state->i2c, msg, 2)) != 2) {
+	}
+	else
+	{
+		if ((ret = i2c_transfer(state->i2c, msg, 2)) != 2)
+		{
 			dprintk("%s: readreg error (reg == 0x%02x, ret == %i)\n", __func__, reg1, ret);
 			return -1;
 		}
@@ -150,24 +165,27 @@ static void stv0297_set_symbolrate(struct stv0297_state *state, u32 srate)
 	tmp = tmp / (STV0297_CLOCK_KHZ / 4);	/* 1/4 = 2^-2 */
 	tmp = tmp * 8192L;	/* 8192 = 2^13 */
 
-	stv0297_writereg(state, 0x55, (unsigned char) (tmp & 0xFF));
-	stv0297_writereg(state, 0x56, (unsigned char) (tmp >> 8));
-	stv0297_writereg(state, 0x57, (unsigned char) (tmp >> 16));
-	stv0297_writereg(state, 0x58, (unsigned char) (tmp >> 24));
+	stv0297_writereg(state, 0x55, (unsigned char)(tmp & 0xFF));
+	stv0297_writereg(state, 0x56, (unsigned char)(tmp >> 8));
+	stv0297_writereg(state, 0x57, (unsigned char)(tmp >> 16));
+	stv0297_writereg(state, 0x58, (unsigned char)(tmp >> 24));
 }
 
 static void stv0297_set_sweeprate(struct stv0297_state *state, short fshift, long symrate)
 {
 	long tmp;
 
-	tmp = (long) fshift *262144L;	/* 262144 = 2*18 */
+	tmp = (long) fshift * 262144L;	/* 262144 = 2*18 */
 	tmp /= symrate;
 	tmp *= 1024;		/* 1024 = 2*10   */
 
 	// adjust
-	if (tmp >= 0) {
+	if (tmp >= 0)
+	{
 		tmp += 500000;
-	} else {
+	}
+	else
+	{
 		tmp -= 500000;
 	}
 	tmp /= 1000000;
@@ -186,9 +204,9 @@ static void stv0297_set_carrieroffset(struct stv0297_state *state, long offset)
 		tmp += 0x10000000;
 	tmp &= 0x0FFFFFFF;
 
-	stv0297_writereg(state, 0x66, (unsigned char) (tmp & 0xFF));
-	stv0297_writereg(state, 0x67, (unsigned char) (tmp >> 8));
-	stv0297_writereg(state, 0x68, (unsigned char) (tmp >> 16));
+	stv0297_writereg(state, 0x66, (unsigned char)(tmp & 0xFF));
+	stv0297_writereg(state, 0x67, (unsigned char)(tmp >> 8));
+	stv0297_writereg(state, 0x68, (unsigned char)(tmp >> 16));
 	stv0297_writereg_mask(state, 0x69, 0x0F, (tmp >> 24) & 0x0f);
 }
 
@@ -232,29 +250,30 @@ static int stv0297_set_qam(struct stv0297_state *state, fe_modulation_t modulati
 {
 	int val = 0;
 
-	switch (modulation) {
-	case QAM_16:
-		val = 0;
-		break;
+	switch (modulation)
+	{
+		case QAM_16:
+			val = 0;
+			break;
 
-	case QAM_32:
-		val = 1;
-		break;
+		case QAM_32:
+			val = 1;
+			break;
 
-	case QAM_64:
-		val = 4;
-		break;
+		case QAM_64:
+			val = 4;
+			break;
 
-	case QAM_128:
-		val = 2;
-		break;
+		case QAM_128:
+			val = 2;
+			break;
 
-	case QAM_256:
-		val = 3;
-		break;
+		case QAM_256:
+			val = 3;
+			break;
 
-	default:
-		return -EINVAL;
+		default:
+			return -EINVAL;
 	}
 
 	stv0297_writereg_mask(state, 0x00, 0x70, val << 4);
@@ -266,17 +285,18 @@ static int stv0297_set_inversion(struct stv0297_state *state, fe_spectral_invers
 {
 	int val = 0;
 
-	switch (inversion) {
-	case INVERSION_OFF:
-		val = 0;
-		break;
+	switch (inversion)
+	{
+		case INVERSION_OFF:
+			val = 0;
+			break;
 
-	case INVERSION_ON:
-		val = 1;
-		break;
+		case INVERSION_ON:
+			val = 1;
+			break;
 
-	default:
-		return -EINVAL;
+		default:
+			return -EINVAL;
 	}
 
 	stv0297_writereg_mask(state, 0x83, 0x08, val << 3);
@@ -288,9 +308,10 @@ static int stv0297_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 
-	if (enable) {
-/*		stv0297_writereg(state, 0x87, 0x78);
-		stv0297_writereg(state, 0x86, 0xc8);*/
+	if (enable)
+	{
+		/*		stv0297_writereg(state, 0x87, 0x78);
+				stv0297_writereg(state, 0x86, 0xc8);*/
 		stv0297_writereg(state, 0x87, 0x7A);	//5800c
 		stv0297_writereg(state, 0x86, 0xc0);	//5800c
 	}
@@ -304,8 +325,8 @@ static int stv0297_init(struct dvb_frontend *fe)
 	int i;
 
 	/* load init table */
-	for (i=0; !(state->config->inittab[i] == 0xff && state->config->inittab[i+1] == 0xff); i+=2)
-		stv0297_writereg(state, state->config->inittab[i], state->config->inittab[i+1]);
+	for (i = 0; !(state->config->inittab[i] == 0xff && state->config->inittab[i + 1] == 0xff); i += 2)
+		stv0297_writereg(state, state->config->inittab[i], state->config->inittab[i + 1]);
 
 	msleep(200);
 
@@ -323,7 +344,7 @@ static int stv0297_sleep(struct dvb_frontend *fe)
 	return 0;
 }
 
-static int stv0297_read_status(struct dvb_frontend *fe, fe_status_t * status)
+static int stv0297_read_status(struct dvb_frontend *fe, fe_status_t *status)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 
@@ -336,13 +357,14 @@ static int stv0297_read_status(struct dvb_frontend *fe, fe_status_t * status)
 	return 0;
 }
 
-static int stv0297_read_ber(struct dvb_frontend *fe, u32 * ber)
+static int stv0297_read_ber(struct dvb_frontend *fe, u32 *ber)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 	u8 BER[3];
 
 	stv0297_readregs(state, 0xA0, BER, 3);
-	if (!(BER[0] & 0x80)) {
+	if (!(BER[0] & 0x80))
+	{
 		state->last_ber = BER[2] << 8 | BER[1];
 		stv0297_writereg_mask(state, 0xA0, 0x80, 0x80);
 	}
@@ -353,7 +375,7 @@ static int stv0297_read_ber(struct dvb_frontend *fe, u32 * ber)
 }
 
 
-static int stv0297_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
+static int stv0297_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 	u8 STRENGTH[3];
@@ -361,12 +383,15 @@ static int stv0297_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
 
 	stv0297_readregs(state, 0x41, STRENGTH, 3);
 	tmp = (STRENGTH[1] & 0x03) << 8 | STRENGTH[0];
-	if (STRENGTH[2] & 0x20) {
+	if (STRENGTH[2] & 0x20)
+	{
 		if (tmp < 0x200)
 			tmp = 0;
 		else
 			tmp = tmp - 0x200;
-	} else {
+	}
+	else
+	{
 		if (tmp > 0x1ff)
 			tmp = 0;
 		else
@@ -376,7 +401,7 @@ static int stv0297_read_signal_strength(struct dvb_frontend *fe, u16 * strength)
 	return 0;
 }
 
-static int stv0297_read_snr(struct dvb_frontend *fe, u16 * snr)
+static int stv0297_read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 	u8 SNR[2];
@@ -387,14 +412,14 @@ static int stv0297_read_snr(struct dvb_frontend *fe, u16 * snr)
 	return 0;
 }
 
-static int stv0297_read_ucblocks(struct dvb_frontend *fe, u32 * ucblocks)
+static int stv0297_read_ucblocks(struct dvb_frontend *fe, u32 *ucblocks)
 {
 	struct stv0297_state *state = fe->demodulator_priv;
 
 	stv0297_writereg_mask(state, 0xDF, 0x03, 0x03); /* freeze the counters */
 
 	*ucblocks = (stv0297_readreg(state, 0xD5) << 8)
-		| stv0297_readreg(state, 0xD4);
+		    | stv0297_readreg(state, 0xD4);
 
 	stv0297_writereg_mask(state, 0xDF, 0x03, 0x02); /* clear the counters */
 	stv0297_writereg_mask(state, 0xDF, 0x03, 0x01); /* re-enable the counters */
@@ -414,26 +439,27 @@ static int stv0297_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	int timeout;
 	fe_spectral_inversion_t inversion;
 
-	switch (p->u.qam.modulation) {
-	case QAM_16:
-	case QAM_32:
-	case QAM_64:
-		delay = 100;
-		sweeprate = 1500;
-		break;
+	switch (p->u.qam.modulation)
+	{
+		case QAM_16:
+		case QAM_32:
+		case QAM_64:
+			delay = 100;
+			sweeprate = 1500;
+			break;
 
-	case QAM_128:
-		delay = 150;
-		sweeprate = 1000;
-		break;
+		case QAM_128:
+			delay = 150;
+			sweeprate = 1000;
+			break;
 
-	case QAM_256:
-		delay = 200;
-		sweeprate = 500;
-		break;
+		case QAM_256:
+			delay = 200;
+			sweeprate = 500;
+			break;
 
-	default:
-		return -EINVAL;
+		default:
+			return -EINVAL;
 	}
 
 	// determine inversion dependant parameters
@@ -441,21 +467,23 @@ static int stv0297_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	if (state->config->invert)
 		inversion = (inversion == INVERSION_ON) ? INVERSION_OFF : INVERSION_ON;
 	carrieroffset = -330;
-	switch (inversion) {
-	case INVERSION_OFF:
-		break;
+	switch (inversion)
+	{
+		case INVERSION_OFF:
+			break;
 
-	case INVERSION_ON:
-		sweeprate = -sweeprate;
-		carrieroffset = -carrieroffset;
-		break;
+		case INVERSION_ON:
+			sweeprate = -sweeprate;
+			carrieroffset = -carrieroffset;
+			break;
 
-	default:
-		return -EINVAL;
+		default:
+			return -EINVAL;
 	}
 
 	stv0297_init(fe);
-	if (fe->ops.tuner_ops.set_params) {
+	if (fe->ops.tuner_ops.set_params)
+	{
 		fe->ops.tuner_ops.set_params(fe, p);
 //		if (fe->ops.i2c_gate_ctrl) fe->ops.i2c_gate_ctrl(fe, 0);
 	}
@@ -529,7 +557,7 @@ static int stv0297_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	/* kick off lock */
 	/* Disable corner detection for higher QAMs */
 	if (p->u.qam.modulation == QAM_128 ||
-		p->u.qam.modulation == QAM_256)
+			p->u.qam.modulation == QAM_256)
 		stv0297_writereg_mask(state, 0x88, 0x08, 0x00);
 	else
 		stv0297_writereg_mask(state, 0x88, 0x08, 0x08);
@@ -544,40 +572,48 @@ static int stv0297_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 
 	/* wait for WGAGC lock */
 	timeout = 0;
-	while (timeout < 2000) {
+	while (timeout < 2000)
+	{
 		msleep(10);
 		timeout += 10;
 		if (stv0297_readreg(state, 0x43) & 0x08)
 			break;
 	}
-	if (timeout >= 2000) {
+	if (timeout >= 2000)
+	{
 		goto timeout;
 	}
 	msleep(20);
 
 	/* wait for equaliser partial convergence */
 	timeout = 0;
-	while (timeout < 500) {
+	while (timeout < 500)
+	{
 		msleep(10);
-                timeout += 10;
-		if (stv0297_readreg(state, 0x82) & 0x04) {
+		timeout += 10;
+		if (stv0297_readreg(state, 0x82) & 0x04)
+		{
 			break;
 		}
 	}
-	if (timeout >= 500) {
+	if (timeout >= 500)
+	{
 		goto timeout;
 	}
 
 	/* wait for equaliser full convergence */
 	timeout = 0;
-	while (timeout < delay) {
+	while (timeout < delay)
+	{
 		msleep(10);
 		timeout += 10;
-		if (stv0297_readreg(state, 0x82) & 0x08) {
+		if (stv0297_readreg(state, 0x82) & 0x08)
+		{
 			break;
 		}
 	}
-	if (timeout >= delay) {
+	if (timeout >= delay)
+	{
 		goto timeout;
 	}
 
@@ -587,20 +623,24 @@ static int stv0297_set_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 
 	/* wait for main lock */
 	timeout = 0;
-	while (timeout < 200) {  //20
+	while (timeout < 200)    //20
+	{
 		msleep(10);
 		timeout += 10;
-		if ((stv0297_readreg(state, 0xDF) & 0x80)==0x80) {
+		if ((stv0297_readreg(state, 0xDF) & 0x80) == 0x80)
+		{
 			break;
 		}
 	}
-	if (timeout >= 200) {
+	if (timeout >= 200)
+	{
 		goto timeout;
 	}
 	msleep(100);
 
 	/* is it still locked after that delay? */
-	if (!((stv0297_readreg(state, 0xDF) & 0x80)==0x80)) {
+	if (!((stv0297_readreg(state, 0xDF) & 0x80) == 0x80))
+	{
 		goto timeout;
 	}
 
@@ -629,22 +669,23 @@ static int stv0297_get_frontend(struct dvb_frontend *fe, struct dvb_frontend_par
 	p->u.qam.symbol_rate = stv0297_get_symbolrate(state) * 1000;
 	p->u.qam.fec_inner = FEC_NONE;
 
-	switch ((reg_00 >> 4) & 0x7) {
-	case 0:
-		p->u.qam.modulation = QAM_16;
-		break;
-	case 1:
-		p->u.qam.modulation = QAM_32;
-		break;
-	case 2:
-		p->u.qam.modulation = QAM_128;
-		break;
-	case 3:
-		p->u.qam.modulation = QAM_256;
-		break;
-	case 4:
-		p->u.qam.modulation = QAM_64;
-		break;
+	switch ((reg_00 >> 4) & 0x7)
+	{
+		case 0:
+			p->u.qam.modulation = QAM_16;
+			break;
+		case 1:
+			p->u.qam.modulation = QAM_32;
+			break;
+		case 2:
+			p->u.qam.modulation = QAM_128;
+			break;
+		case 3:
+			p->u.qam.modulation = QAM_256;
+			break;
+		case 4:
+			p->u.qam.modulation = QAM_64;
+			break;
 	}
 
 	return 0;
@@ -689,39 +730,43 @@ error:
 }
 
 static int stv0297_set_property(struct dvb_frontend *fe,
-    struct dtv_property *tvp)
+				struct dtv_property *tvp)
 {
 	return 0;
 }
 
 static int stv0297_get_property(struct dvb_frontend *fe,
-    struct dtv_property *tvp)
+				struct dtv_property *tvp)
 {
 	dprintk("%s(..)\n", __func__);
 	/* get delivery system info */
-	if(tvp->cmd==DTV_DELIVERY_SYSTEM){
-		switch (tvp->u.data) {
-		case SYS_DVBC_ANNEX_AC:
-			break;
-		default:
-			return -EINVAL;
+	if (tvp->cmd == DTV_DELIVERY_SYSTEM)
+	{
+		switch (tvp->u.data)
+		{
+			case SYS_DVBC_ANNEX_AC:
+				break;
+			default:
+				return -EINVAL;
 		}
 	}
 	return 0;
 }
 
-static struct dvb_frontend_ops stv0297_ops = {
+static struct dvb_frontend_ops stv0297_ops =
+{
 
 	.info = {
-		 .name = "ST STV0297 DVB-C",
-		 .type = FE_QAM,
-		 .frequency_min = 47000000,
-		 .frequency_max = 862000000,
-		 .frequency_stepsize = 62500,
-		 .symbol_rate_min = 870000,
-		 .symbol_rate_max = 11700000,
-		 .caps = FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
-		 FE_CAN_QAM_128 | FE_CAN_QAM_256 | FE_CAN_FEC_AUTO},
+		.name = "ST STV0297 DVB-C",
+		.type = FE_QAM,
+		.frequency_min = 47000000,
+		.frequency_max = 862000000,
+		.frequency_stepsize = 62500,
+		.symbol_rate_min = 870000,
+		.symbol_rate_max = 11700000,
+		.caps = FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
+		FE_CAN_QAM_128 | FE_CAN_QAM_256 | FE_CAN_FEC_AUTO
+	},
 
 	.release 		= stv0297_release,
 
@@ -737,7 +782,7 @@ static struct dvb_frontend_ops stv0297_ops = {
 	.read_signal_strength 	= stv0297_read_signal_strength,
 	.read_snr 		= stv0297_read_snr,
 	.read_ucblocks 		= stv0297_read_ucblocks,
-	
+
 	.set_property 		= stv0297_set_property,
 	.get_property 		= stv0297_get_property,
 };

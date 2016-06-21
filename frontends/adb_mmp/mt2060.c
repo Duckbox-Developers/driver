@@ -38,12 +38,14 @@
 // Reads a single register
 static int mt2060_readreg(struct mt2060_priv *priv, u8 reg, u8 *val)
 {
-	struct i2c_msg msg[2] = {
+	struct i2c_msg msg[2] =
+	{
 		{ .addr = priv->cfg->i2c_address, .flags = 0,        .buf = &reg, .len = 1 },
 		{ .addr = priv->cfg->i2c_address, .flags = I2C_M_RD, .buf = val,  .len = 1 },
 	};
 
-	if (i2c_transfer(priv->i2c, msg, 2) != 2) {
+	if (i2c_transfer(priv->i2c, msg, 2) != 2)
+	{
 		printk(KERN_WARNING "mt2060 I2C read failed\n");
 		return -EREMOTEIO;
 	}
@@ -54,11 +56,13 @@ static int mt2060_readreg(struct mt2060_priv *priv, u8 reg, u8 *val)
 static int mt2060_writereg(struct mt2060_priv *priv, u8 reg, u8 val)
 {
 	u8 buf[2] = { reg, val };
-	struct i2c_msg msg = {
+	struct i2c_msg msg =
+	{
 		.addr = priv->cfg->i2c_address, .flags = 0, .buf = buf, .len = 2
 	};
 
-	if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
+	if (i2c_transfer(priv->i2c, &msg, 1) != 1)
+	{
 		printk(KERN_WARNING "mt2060 I2C write failed\n");
 		return -EREMOTEIO;
 	}
@@ -66,13 +70,15 @@ static int mt2060_writereg(struct mt2060_priv *priv, u8 reg, u8 val)
 }
 
 // Writes a set of consecutive registers
-static int mt2060_writeregs(struct mt2060_priv *priv,u8 *buf, u8 len)
+static int mt2060_writeregs(struct mt2060_priv *priv, u8 *buf, u8 len)
 {
-	struct i2c_msg msg = {
+	struct i2c_msg msg =
+	{
 		.addr = priv->cfg->i2c_address, .flags = 0, .buf = buf, .len = len
 	};
-	if (i2c_transfer(priv->i2c, &msg, 1) != 1) {
-		printk(KERN_WARNING "mt2060 I2C write failed (len=%i)\n",(int)len);
+	if (i2c_transfer(priv->i2c, &msg, 1) != 1)
+	{
+		printk(KERN_WARNING "mt2060 I2C write failed (len=%i)\n", (int)len);
 		return -EREMOTEIO;
 	}
 	return 0;
@@ -80,20 +86,23 @@ static int mt2060_writeregs(struct mt2060_priv *priv,u8 *buf, u8 len)
 
 // Initialisation sequences
 // LNABAND=3, NUM1=0x3C, DIV1=0x74, NUM2=0x1080, DIV2=0x49
-static u8 mt2060_config1[] = {
+static u8 mt2060_config1[] =
+{
 	REG_LO1C1,
 	0x3F,	0x74,	0x00,	0x08,	0x93
 };
 
 // FMCG=2, GP2=0, GP1=0
-static u8 mt2060_config2[] = {
+static u8 mt2060_config2[] =
+{
 	REG_MISC_CTRL,
 	0x20,	0x1E,	0x30,	0xff,	0x80,	0xff,	0x00,	0x2c,	0x42
 };
 
 //  VGAG=3, V1CSE=1
 #if 0
-static u8 mt2060_config3[] = {
+static u8 mt2060_config3[] =
+{
 	REG_VGAG,
 	0x33
 };
@@ -102,18 +111,19 @@ static u8 mt2060_config3[] = {
 #ifdef  MT2060_SPURCHECK
 /* The function below calculates the frequency offset between the output frequency if2
  and the closer cross modulation subcarrier between lo1 and lo2 up to the tenth harmonic */
-static int mt2060_spurcalc(u32 lo1,u32 lo2,u32 if2)
+static int mt2060_spurcalc(u32 lo1, u32 lo2, u32 if2)
 {
-	int I,J;
-	int dia,diamin,diff;
-	diamin=1000000;
-	for (I = 1; I < 10; I++) {
-		J = ((2*I*lo1)/lo2+1)/2;
-		diff = I*(int)lo1-J*(int)lo2;
-		if (diff < 0) diff=-diff;
-		dia = (diff-(int)if2);
-		if (dia < 0) dia=-dia;
-		if (diamin > dia) diamin=dia;
+	int I, J;
+	int dia, diamin, diff;
+	diamin = 1000000;
+	for (I = 1; I < 10; I++)
+	{
+		J = ((2 * I * lo1) / lo2 + 1) / 2;
+		diff = I * (int)lo1 - J * (int)lo2;
+		if (diff < 0) diff = -diff;
+		dia = (diff - (int)if2);
+		if (dia < 0) dia = -dia;
+		if (diamin > dia) diamin = dia;
 	}
 	return diamin;
 }
@@ -121,33 +131,39 @@ static int mt2060_spurcalc(u32 lo1,u32 lo2,u32 if2)
 #define BANDWIDTH 4000 // kHz
 
 /* Calculates the frequency offset to add to avoid spurs. Returns 0 if no offset is needed */
-static int mt2060_spurcheck(u32 lo1,u32 lo2,u32 if2)
+static int mt2060_spurcheck(u32 lo1, u32 lo2, u32 if2)
 {
-	u32 Spur,Sp1,Sp2;
-	int I,J;
-	I=0;
-	J=1000;
+	u32 Spur, Sp1, Sp2;
+	int I, J;
+	I = 0;
+	J = 1000;
 
-	Spur=mt2060_spurcalc(lo1,lo2,if2);
-	if (Spur < BANDWIDTH) {
+	Spur = mt2060_spurcalc(lo1, lo2, if2);
+	if (Spur < BANDWIDTH)
+	{
 		/* Potential spurs detected */
 		dprintk("Spurs before : f_lo1: %d  f_lo2: %d  (kHz)\n",
-			(int)lo1,(int)lo2);
-		I=1000;
-		Sp1 = mt2060_spurcalc(lo1+I,lo2+I,if2);
-		Sp2 = mt2060_spurcalc(lo1-I,lo2-I,if2);
+			(int)lo1, (int)lo2);
+		I = 1000;
+		Sp1 = mt2060_spurcalc(lo1 + I, lo2 + I, if2);
+		Sp2 = mt2060_spurcalc(lo1 - I, lo2 - I, if2);
 
-		if (Sp1 < Sp2) {
-			J=-J; I=-I; Spur=Sp2;
-		} else
-			Spur=Sp1;
+		if (Sp1 < Sp2)
+		{
+			J = -J;
+			I = -I;
+			Spur = Sp2;
+		}
+		else
+			Spur = Sp1;
 
-		while (Spur < BANDWIDTH) {
+		while (Spur < BANDWIDTH)
+		{
 			I += J;
-			Spur = mt2060_spurcalc(lo1+I,lo2+I,if2);
+			Spur = mt2060_spurcalc(lo1 + I, lo2 + I, if2);
 		}
 		dprintk("Spurs after  : f_lo1: %d  f_lo2: %d  (kHz)\n",
-			(int)(lo1+I),(int)(lo2+I));
+			(int)(lo1 + I), (int)(lo2 + I));
 	}
 	return I;
 }
@@ -160,12 +176,12 @@ static int mt2060_spurcheck(u32 lo1,u32 lo2,u32 if2)
 static int mt2060_set_params(struct dvb_frontend *fe, struct dvb_frontend_parameters *params)
 {
 	struct mt2060_priv *priv;
-	int ret=0;
-	int i=0;
+	int ret = 0;
+	int i = 0;
 	u32 freq;
 	u8  lnaband;
-	u32 f_lo1,f_lo2;
-	u32 div1,num1,div2,num2;
+	u32 f_lo1, f_lo2;
+	u32 div1, num1, div2, num2;
 	u8  b[8];
 	u32 if1;
 
@@ -178,7 +194,7 @@ static int mt2060_set_params(struct dvb_frontend *fe, struct dvb_frontend_parame
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 
-	mt2060_writeregs(priv,b,2);
+	mt2060_writeregs(priv, b, 2);
 	freq = params->frequency / 1000; // Hz -> kHz
 //	priv->bandwidth = BANDWIDTH_8_MHZ;//(fe->ops.info.type == FE_QAM) ? params->u.qam.bandwidth : 0;
 	f_lo1 = freq + if1 * 1000;
@@ -186,10 +202,10 @@ static int mt2060_set_params(struct dvb_frontend *fe, struct dvb_frontend_parame
 	f_lo2 = f_lo1 - freq - IF2;
 	// From the Comtech datasheet, the step used is 50kHz. The tuner chip could be more precise
 	f_lo2 = ((f_lo2 + 25) / 50) * 50;
-	priv->frequency =  (f_lo1 - f_lo2 - IF2) * 1000,
+	priv->frequency = (f_lo1 - f_lo2 - IF2) * 1000,
 #ifdef MT2060_SPURCHECK
-	// LO-related spurs detection and correction
-	num1   = mt2060_spurcheck(f_lo1,f_lo2,IF2);
+	      // LO-related spurs detection and correction
+	      num1   = mt2060_spurcheck(f_lo1, f_lo2, IF2);
 	f_lo1 += num1;
 	f_lo2 += num1;
 #endif
@@ -203,45 +219,48 @@ static int mt2060_set_params(struct dvb_frontend *fe, struct dvb_frontend_parame
 	div2 = num2 / 8192;
 	num2 &= 0x1fff;
 
-	if (freq <=  95000) lnaband = 0xB0; else
-	if (freq <= 180000) lnaband = 0xA0; else
-	if (freq <= 260000) lnaband = 0x90; else
-	if (freq <= 335000) lnaband = 0x80; else
-	if (freq <= 425000) lnaband = 0x70; else
-	if (freq <= 480000) lnaband = 0x60; else
-	if (freq <= 570000) lnaband = 0x50; else
-	if (freq <= 645000) lnaband = 0x40; else
-	if (freq <= 730000) lnaband = 0x30; else
-	if (freq <= 810000) lnaband = 0x20; else lnaband = 0x10;
+	if (freq <=  95000) lnaband = 0xB0;
+	else if (freq <= 180000) lnaband = 0xA0;
+	else if (freq <= 260000) lnaband = 0x90;
+	else if (freq <= 335000) lnaband = 0x80;
+	else if (freq <= 425000) lnaband = 0x70;
+	else if (freq <= 480000) lnaband = 0x60;
+	else if (freq <= 570000) lnaband = 0x50;
+	else if (freq <= 645000) lnaband = 0x40;
+	else if (freq <= 730000) lnaband = 0x30;
+	else if (freq <= 810000) lnaband = 0x20;
+	else lnaband = 0x10;
 
 	b[0] = REG_LO1C1;
-	b[1] = lnaband | ((num1 >>2) & 0x0F);
+	b[1] = lnaband | ((num1 >> 2) & 0x0F);
 	b[2] = div1;
 	b[3] = (num2 & 0x0F)  | ((num1 & 3) << 4);
 	b[4] = num2 >> 4;
-	b[5] = ((num2 >>12) & 1) | (div2 << 1);
+	b[5] = ((num2 >> 12) & 1) | (div2 << 1);
 
-	dprintk("IF1: %dMHz\n",(int)if1);
-	dprintk("PLL freq=%dkHz  f_lo1=%dkHz  f_lo2=%dkHz\n",(int)freq,(int)f_lo1,(int)f_lo2);
-	dprintk("PLL div1=%d  num1=%d  div2=%d  num2=%d\n",(int)div1,(int)num1,(int)div2,(int)num2);
-	dprintk("PLL [1..5]: %2x %2x %2x %2x %2x\n",(int)b[1],(int)b[2],(int)b[3],(int)b[4],(int)b[5]);
+	dprintk("IF1: %dMHz\n", (int)if1);
+	dprintk("PLL freq=%dkHz  f_lo1=%dkHz  f_lo2=%dkHz\n", (int)freq, (int)f_lo1, (int)f_lo2);
+	dprintk("PLL div1=%d  num1=%d  div2=%d  num2=%d\n", (int)div1, (int)num1, (int)div2, (int)num2);
+	dprintk("PLL [1..5]: %2x %2x %2x %2x %2x\n", (int)b[1], (int)b[2], (int)b[3], (int)b[4], (int)b[5]);
 
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 
-	mt2060_writeregs(priv,b,6);
+	mt2060_writeregs(priv, b, 6);
 
 	//Waits for pll lock or timeout
 	i = 0;
-	do {
+	do
+	{
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
-		mt2060_readreg(priv,REG_LO_STATUS,b);
-		if ((b[0] & 0x88)==0x88)
+		mt2060_readreg(priv, REG_LO_STATUS, b);
+		if ((b[0] & 0x88) == 0x88)
 			break;
 		msleep(4);
 		i++;
-	} while (i<10);
+	}
+	while (i < 10);
 
 //	if (fe->ops.i2c_gate_ctrl)
 //		fe->ops.i2c_gate_ctrl(fe, 0); /* close i2c_gate */
@@ -304,7 +323,8 @@ static int mt2060_release(struct dvb_frontend *fe)
 	return 0;
 }
 
-static const struct dvb_tuner_ops mt2060_tuner_ops = {
+static const struct dvb_tuner_ops mt2060_tuner_ops =
+{
 	.info = {
 		.name           = "Microtune MT2060",
 		.frequency_min  =  48000000,
@@ -323,7 +343,7 @@ static const struct dvb_tuner_ops mt2060_tuner_ops = {
 };
 
 /* This functions tries to identify a MT2060 tuner by reading the PART/REV register. This is hasty. */
-struct dvb_frontend * mt2060_attach(struct dvb_frontend *fe, struct mt2060_config *cfg, struct i2c_adapter *i2c, u16 if1)
+struct dvb_frontend *mt2060_attach(struct dvb_frontend *fe, struct mt2060_config *cfg, struct i2c_adapter *i2c, u16 if1)
 {
 	struct mt2060_priv *priv = NULL;
 	u8 id = 0;
@@ -339,12 +359,14 @@ struct dvb_frontend * mt2060_attach(struct dvb_frontend *fe, struct mt2060_confi
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 
-	if (mt2060_readreg(priv,REG_PART_REV,&id) != 0) {
+	if (mt2060_readreg(priv, REG_PART_REV, &id) != 0)
+	{
 		kfree(priv);
 		return NULL;
 	}
 
-	if (id != PART_REV) {
+	if (id != PART_REV)
+	{
 		kfree(priv);
 		return NULL;
 	}
@@ -360,31 +382,33 @@ struct dvb_frontend * mt2060_attach(struct dvb_frontend *fe, struct mt2060_confi
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 
-	if (mt2060_writeregs(priv,mt2060_config1,sizeof(mt2060_config1)))
+	if (mt2060_writeregs(priv, mt2060_config1, sizeof(mt2060_config1)))
 		return;
 
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 
-	if (mt2060_writeregs(priv,mt2060_config2,sizeof(mt2060_config2)))
+	if (mt2060_writeregs(priv, mt2060_config2, sizeof(mt2060_config2)))
 		return;
 
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 	/* initialize the clock output */
 	mt2060_writereg(priv, REG_VGAG, (priv->cfg->clock_out << 6) | 0x30);
-	do {
+	do
+	{
 		b |= (1 << 6); // FM1SS;
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
-                mt2060_writereg(priv, REG_LO2C1,b);
+		mt2060_writereg(priv, REG_LO2C1, b);
 		msleep(20);
 
-		if (i == 0) {
+		if (i == 0)
+		{
 			b |= (1 << 7); // FM1CA;
 			if (fe->ops.i2c_gate_ctrl)
 				fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
-			mt2060_writereg(priv, REG_LO2C1,b);
+			mt2060_writereg(priv, REG_LO2C1, b);
 			b &= ~(1 << 7); // FM1CA;
 			msleep(20);
 		}
@@ -392,10 +416,11 @@ struct dvb_frontend * mt2060_attach(struct dvb_frontend *fe, struct mt2060_confi
 		b &= ~(1 << 6); // FM1SS
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
-		mt2060_writereg(priv, REG_LO2C1,b);
+		mt2060_writereg(priv, REG_LO2C1, b);
 		msleep(20);
 		i++;
-	} while (i < 9);
+	}
+	while (i < 9);
 
 	i = 0;
 	if (fe->ops.i2c_gate_ctrl)
@@ -403,12 +428,14 @@ struct dvb_frontend * mt2060_attach(struct dvb_frontend *fe, struct mt2060_confi
 	while (i++ < 10 && mt2060_readreg(priv, REG_MISC_STAT, &b) == 0 && (b & (1 << 6)) == 0)
 		msleep(20);
 
-	if (i <= 10) {
+	if (i <= 10)
+	{
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 1); /* open i2c_gate */
 		mt2060_readreg(priv, REG_FM_FREQ, &priv->fmfreq); // now find out, what is fmreq used for :)
 		dprintk("calibration was successful: %d\n", (int)priv->fmfreq);
-	} else
+	}
+	else
 		dprintk("FMCAL timed out");
 //end CALIBRATE
 

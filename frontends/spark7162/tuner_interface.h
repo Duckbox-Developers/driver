@@ -94,7 +94,7 @@ typedef enum TUNER_TunerType_e
 } TUNER_TunerType_T;
 
 #define TUNER_TunerTypeIsMXL(TunerType) ((TunerType == TUNER_TUNER_MXL301) || \
-                                        (TunerType == TUNER_TUNER_MXL603))
+					 (TunerType == TUNER_TUNER_MXL603))
 
 /* lnb device-driver (sat) */
 typedef enum TUNER_LnbType_e
@@ -365,17 +365,17 @@ typedef struct TUNER_DemodIdentifyDbase_s
 	U8                      ucAddr;                /*demod 芯片地址*/
 	/*检测功能函数*/
 	YW_ErrorType_T(*Demod_identify)(IOARCH_Handle_t   IOHandle,              /*demod io 句柄*/
-									U8  ucID,                    /*要检测的芯片ID*/
-									U8  *pucActualID);            /*获取到的芯片ID*/
+					U8  ucID,                    /*要检测的芯片ID*/
+					U8  *pucActualID);            /*获取到的芯片ID*/
 
 	/*转发功能函数*/
 	YW_ErrorType_T(*Demod_repeat)(IOARCH_Handle_t              DemodIOHandle,             /*demod io 句柄*/
-								  IOARCH_Handle_t                TunerIOHandle, /*前端 io 句柄*/
-								  TUNER_IOARCH_Operation_t       Operation,        /*操作类型*/
-								  U16                            SubAddr,        /*二级地址*/
-								  U8                            *Data,            /*转发数据指针*/
-								  U32                            TransferSize,    /*转发数据字节数*/
-								  U32                            Timeout);        /*访问超时时间ms*/
+				      IOARCH_Handle_t                TunerIOHandle, /*前端 io 句柄*/
+				      TUNER_IOARCH_Operation_t       Operation,        /*操作类型*/
+				      U16                            SubAddr,        /*二级地址*/
+				      U8                            *Data,            /*转发数据指针*/
+				      U32                            TransferSize,    /*转发数据字节数*/
+				      U32                            Timeout);        /*访问超时时间ms*/
 } TUNER_DemodIdentifyDbase_T;
 
 /*自动检测前端的结构体*/
@@ -457,12 +457,12 @@ typedef struct TUNER_SatDemodDriver_s
 	YW_ErrorType_T(*Demod_reset)(U8 Index);
 	/*demod 转发功能函数*/
 	YW_ErrorType_T(*Demod_repeat)(IOARCH_Handle_t DemodIOHandle,
-								  IOARCH_Handle_t TunerIOHandle,
-								  TUNER_IOARCH_Operation_t Operation,
-								  U16 SubAddr,
-								  U8 *Data,
-								  U32 TransferSize,
-								  U32 Timeout);
+				      IOARCH_Handle_t TunerIOHandle,
+				      TUNER_IOARCH_Operation_t Operation,
+				      U16 SubAddr,
+				      U8 *Data,
+				      U32 TransferSize,
+				      U32 Timeout);
 	/*demod 获取信号质量与强度*/
 	YW_ErrorType_T(*Demod_GetSignalInfo)(U8 Index, U32  *Quality, U32 *Intensity, U32 *Ber);
 	/*demod 获取信号是否锁定*/
@@ -471,8 +471,8 @@ typedef struct TUNER_SatDemodDriver_s
 	YW_ErrorType_T(*Demod_ScanFreq)(U8 Index);
 	/*demod diseqc指令的发送与接收*/
 	YW_ErrorType_T(*Demod_DiSEqC)(U8 Index,
-								  TUNER_DiSEqCSendPacket_T *pDiSEqCSendPacket,
-								  TUNER_DiSEqCResponsePacket_T *pDiSEqCResponsePacket);
+				      TUNER_DiSEqCSendPacket_T *pDiSEqCSendPacket,
+				      TUNER_DiSEqCResponsePacket_T *pDiSEqCResponsePacket);
 } TUNER_SatDemodDriver_T;
 
 /*sat tuner 的功能函数结构体*/
@@ -480,9 +480,9 @@ typedef struct TUNER_SatTunerDriver_s
 {
 	/*tuner 的设置频率*/
 	YW_ErrorType_T(*tuner_SetFreq)(U8 Index ,
-								   U32  Frequency,
-								   U32  SymbolRate,
-								   U32  *NewFrequency);
+				       U32  Frequency,
+				       U32  SymbolRate,
+				       U32  *NewFrequency);
 	/*tuner 获取锁相环是否锁定*/
 	YW_ErrorType_T(*tuner_IsLocked)(U8 Index , BOOL  *IsLocked);
 	/*tuner 获取锁相环频率*/
@@ -572,12 +572,12 @@ typedef struct TUNER_TerDemodDriver_s
 	YW_ErrorType_T(*Demod_reset)(U8 Index);
 	/*demod 转发功能函数*/
 	YW_ErrorType_T(*Demod_repeat)(IOARCH_Handle_t DemodIOHandle,
-								  IOARCH_Handle_t TunerIOHandle,
-								  TUNER_IOARCH_Operation_t Operation,
-								  U16 SubAddr,
-								  U8 *Data,
-								  U32 TransferSize,
-								  U32 Timeout);
+				      IOARCH_Handle_t TunerIOHandle,
+				      TUNER_IOARCH_Operation_t Operation,
+				      U16 SubAddr,
+				      U8 *Data,
+				      U32 TransferSize,
+				      U32 Timeout);
 	/*demod 获取信号质量与强度*/
 	YW_ErrorType_T(*Demod_GetSignalInfo)(U8 Index, U32 *Quality, U32 *Intensity, U32 *Ber);
 	/*demod 获取信号是否锁定*/
@@ -593,9 +593,9 @@ typedef struct TUNER_TerTunerDriver_s
 {
 	/*tuner 的设置频率函数*/
 	YW_ErrorType_T(*tuner_SetFreq)(U8 Index,
-								   U32  Frequency,
-								   U32  BandWidth,
-								   U32  *NewFrequency);
+				       U32  Frequency,
+				       U32  BandWidth,
+				       U32  *NewFrequency);
 	/*tuner 获取锁相环是否锁定*/
 	YW_ErrorType_T(*tuner_IsLocked)(U8 Index, BOOL  *IsLocked);
 	/*tuner 获取锁相环频率*/
@@ -683,12 +683,12 @@ typedef struct TUNER_CabDemodDriver_s
 	YW_ErrorType_T(*Demod_reset)(U8 Index);
 	/*demod 转发功能函数*/
 	YW_ErrorType_T(*Demod_repeat)(IOARCH_Handle_t DemodIOHandle,
-								  IOARCH_Handle_t TunerIOHandle,
-								  TUNER_IOARCH_Operation_t Operation,
-								  U16 SubAddr,
-								  U8 *Data,
-								  U32 TransferSize,
-								  U32 Timeout);
+				      IOARCH_Handle_t TunerIOHandle,
+				      TUNER_IOARCH_Operation_t Operation,
+				      U16 SubAddr,
+				      U8 *Data,
+				      U32 TransferSize,
+				      U32 Timeout);
 	/*demod 获取信号质量与强度*/
 	YW_ErrorType_T(*Demod_GetSignalInfo)(U8 Index  , U32  *Quality, U32  *Intensity, U32 *Ber);
 	/*demod 获取信号是否锁定*/
@@ -701,8 +701,8 @@ typedef struct TUNER_CabTunerDriver_s
 {
 	/*tuner 的设置频率函数*/
 	YW_ErrorType_T(*tuner_SetFreq)(U8 Index  ,
-								   U32  Frequency,
-								   U32  *NewFrequency);
+				       U32  Frequency,
+				       U32  *NewFrequency);
 	/*tuner 获取锁相环是否锁定*/
 	YW_ErrorType_T(*tuner_IsLocked)(U8 Index  , BOOL  *IsLocked);
 	/*tuner 获取锁相环频率*/
@@ -839,7 +839,7 @@ typedef struct TUNER_ScanTaskParam_s
 	//TUNER_ScanTask_T          ScanTask;            /*搜索进程*/
 	BOOL                      ForceSearchTerm;    /*是否强制停止当前搜索*/
 
-	TUNER_OpenParams_T*       pOpenParams;
+	TUNER_OpenParams_T       *pOpenParams;
 
 	void                      *userdata;
 
@@ -859,11 +859,11 @@ YW_ErrorType_T  TUNER_IDENTIFY_DemodInstall(TUNER_DemodIdentifyDbase_T  *Demod);
 YW_ErrorType_T  TUNER_IDENTIFY_TunerInstall(TUNER_TunerIdentifyDbase_T  *Tuner);
 YW_ErrorType_T  TUNER_IDENTIFY_DemodOpenIOHandle(IOARCH_Handle_t   *IOHandle, U8  ucAddr , U8 I2cIndex);
 YW_ErrorType_T  TUNER_IDENTIFY_TunerOpenIOHandle(IOARCH_ExtHandle_t   *ExtIOHandle,
-		IOARCH_Handle_t   *IOHandle,
-		TUNER_IOARCH_RedirFn_t TargetFunction,
-		U8  ucAddr,
-		U8  I2cIndex
-												);
+						 IOARCH_Handle_t   *IOHandle,
+						 TUNER_IOARCH_RedirFn_t TargetFunction,
+						 U8  ucAddr,
+						 U8  I2cIndex
+						);
 YW_ErrorType_T  TUNER_IDENTIFY_CloseIOHandle(IOARCH_Handle_t   IOHandle);
 
 YW_ErrorType_T  TUNER_ScanInfo_Open(U8  Index);
@@ -880,7 +880,7 @@ YW_ErrorType_T  TUNER_GetSignalInfo(U8 Index, YWTUNER_SignalInfo_T *SignalInfo);
 
 YW_ErrorType_T  TUNER_GetTransponderNum(U8 Index, U32 *Num);
 
-YW_ErrorType_T  TUNER_GetTransponder(U8 Index, YWTUNER_SourceDeliver_T* DeliverPar);
+YW_ErrorType_T  TUNER_GetTransponder(U8 Index, YWTUNER_SourceDeliver_T *DeliverPar);
 #ifdef __cplusplus
 }
 #endif

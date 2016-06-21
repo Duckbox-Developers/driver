@@ -80,14 +80,16 @@
 	typeof(divisor) __divisor = divisor;		\
 	(((x) + ((__divisor) / 2)) / (__divisor));	\
 }							\
-)
+				     )
 
-struct stb6100_config {
+struct stb6100_config
+{
 	u8	tuner_address;
 	u32	refclock;
 };
 
-struct stb6100_state {
+struct stb6100_state
+{
 	struct i2c_adapter *i2c;
 
 	const struct stb6100_config	*config;

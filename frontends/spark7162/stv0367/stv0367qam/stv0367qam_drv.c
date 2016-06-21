@@ -1156,8 +1156,8 @@ static unsigned long long intlog2(U32 value)
 	 * logtable_next is 256
 	 */
 	interpolation = ((significand & 0x7fffff) *
-					 ((logtable[(logentry + 1) & 0xff] -
-					   logtable[logentry]) & 0xffff)) >> 15;
+			 ((logtable[(logentry + 1) & 0xff] -
+			   logtable[logentry]) & 0xffff)) >> 15;
 
 	/* now we return the result */
 	return ((msb << 24) + (logtable[logentry] << 8) + interpolation);
@@ -1397,8 +1397,8 @@ U32 FE_367qam_GetDerotFreq(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Hand
 
 	ChipGetRegisters_0367qam(DemodDeviceMap, DemodIOHandle, R367qam_MIX_NCO_LL, 3);
 	Sampled_IF = ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_MIX_NCO_INC_LL)
-				 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_MIX_NCO_INC_HL) << 8)
-				 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_MIX_NCO_INC_HH) << 16);
+		     + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_MIX_NCO_INC_HL) << 8)
+		     + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_MIX_NCO_INC_HH) << 16);
 
 	Sampled_IF /= 256;
 	Sampled_IF *= (AdcClk_Hz / 1000);
@@ -1526,9 +1526,9 @@ void FE_367qam_SetIirAdjacentcoefficient(TUNER_IOREG_DeviceMap_t *DemodDeviceMap
 	SectionLine = line + 1 - (Section * 128); /* SectionLine goes from 1 to 128 */
 	for (i = 0; i < 6; i++)
 		coeff[i] = ((PolyC[Section + (8 * i)][3]) +
-					((SectionLine * PolyC[Section + (8 * i)][2] * 8192) +
-					 (((XtoPowerY(SectionLine, 2) * PolyC[Section + (8 * i)][1] * 128) +
-					   ((XtoPowerY(SectionLine, 3) * PolyC[Section + (8 * i)][0]))) / 2) / 1048576)) / 8;
+			    ((SectionLine * PolyC[Section + (8 * i)][2] * 8192) +
+			     (((XtoPowerY(SectionLine, 2) * PolyC[Section + (8 * i)][1] * 128) +
+			       ((XtoPowerY(SectionLine, 3) * PolyC[Section + (8 * i)][0]))) / 2) / 1048576)) / 8;
 
 	if (coeff[2] < 0)    coeff[2] += 1024;
 	if (coeff[5] < 0)    coeff[5] += 1024;
@@ -1813,9 +1813,9 @@ U32 FE_367qam_GetSymbolRate(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Han
 
 	ChipGetRegisters_0367qam(DemodDeviceMap, DemodIOHandle, R367qam_SRC_NCO_LL, 4);
 	regsym = ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_LL)
-			 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_LH) << 8)
-			 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_HL) << 16)
-			 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_HH) << 24);
+		 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_LH) << 8)
+		 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_HL) << 16)
+		 + (ChipGetFieldImage_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_SRC_NCO_INC_HH) << 24);
 
 	AdpClk_kHz = (MasterClk_Hz >> 1) / 1000; /* TRL works at half the system clock */
 
@@ -1859,11 +1859,11 @@ U32 FE_367qam_GetSymbolRate(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,  IOARCH_Han
 }
 
 FE_CAB_Modulation_t D367qam_SetQamSize(TUNER_TunerType_T TunerType,
-									   TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-									   IOARCH_Handle_t DemodIOHandle,
-									   U32 SearchFreq_kHz,
-									   U32 SymbolRate,
-									   FE_CAB_Modulation_t QAMSize)
+				       TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
+				       IOARCH_Handle_t DemodIOHandle,
+				       U32 SearchFreq_kHz,
+				       U32 SymbolRate,
+				       FE_CAB_Modulation_t QAMSize)
 {
 	/* Set QAM size */
 	ChipSetField_0367qam(DemodDeviceMap, DemodIOHandle, F367qam_QAM_MODE, QAMSize);
@@ -2058,11 +2058,11 @@ FE_CAB_Modulation_t FE_367qam_SetQamSize(TUNER_ScanTaskParam_T *Inst, TUNER_IORE
 {
 
 	return D367qam_SetQamSize(Inst->DriverParam.Cab.TunerType,
-							  DemodDeviceMap,
-							  DemodIOHandle,
-							  SearchFreq_kHz,
-							  SymbolRate,
-							  QAMSize);
+				  DemodDeviceMap,
+				  DemodIOHandle,
+				  SearchFreq_kHz,
+				  SymbolRate,
+				  QAMSize);
 }
 
 /*****************************************************
@@ -2473,24 +2473,24 @@ U32 FE_367qam_GetQAMFECLockStatus(TUNER_IOREG_DeviceMap_t *DemodDeviceMap, IOARC
 }
 
 S32 FE_STV0367qam_GetSnr(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						 IOARCH_Handle_t DemodIOHandle)
+			 IOARCH_Handle_t DemodIOHandle)
 {
 	FE_CAB_Modulation_t QAMSize;
 	QAMSize = ChipGetField_0367qam(DemodDeviceMap, DemodIOHandle,
-								   F367qam_QAM_MODE);
+				       F367qam_QAM_MODE);
 	return 255 * 255 / 100 * FE_367qam_GetCarrierToNoiseRatio_u32(DemodDeviceMap,
-			DemodIOHandle,
-			QAMSize);
+								      DemodIOHandle,
+								      QAMSize);
 }
 
 S32 FE_STV0367qam_GetPower(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-						   IOARCH_Handle_t DemodIOHandle)
+			   IOARCH_Handle_t DemodIOHandle)
 {
 	return 255 * 255 / 100 * FE_367qam_GetRFLevel(DemodDeviceMap, DemodIOHandle);
 }
 
 S32 FE_STV0367qam_GetErrors(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-							IOARCH_Handle_t DemodIOHandle)
+			    IOARCH_Handle_t DemodIOHandle)
 {
 	//TUNER_ScanTaskParam_T   *Inst;
 	TUNER_IOREG_DeviceMap_t *DeviceMap = DemodDeviceMap;
@@ -2542,11 +2542,11 @@ S32 FE_STV0367qam_GetErrors(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
 --***************************************************/
 //#define TT_TUNER_HW
 int FE_STV0367qam_GetSignalInfo(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
-								IOARCH_Handle_t DemodIOHandle,
-								U32 *CN_dBx10,
-								U32 *Power_dBmx10,
-								U32 *Ber,
-								U32 *FirstTimeBER)
+				IOARCH_Handle_t DemodIOHandle,
+				U32 *CN_dBx10,
+				U32 *Power_dBmx10,
+				U32 *Ber,
+				U32 *FirstTimeBER)
 {
 	//TUNER_ScanTaskParam_T   *Inst;
 	TUNER_IOREG_DeviceMap_t *DeviceMap = DemodDeviceMap;
@@ -2577,8 +2577,8 @@ int FE_STV0367qam_GetSignalInfo(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
 --***************************************************/
 //#define TT_TUNER_HW
 int FE_STV0367QAM_GetSignalInfo(U8 Handle, U32 *CN_dBx10,
-								U32 *Power_dBmx10, U32 *Ber,
-								U32 *FirstTimeBER)
+				U32 *Power_dBmx10, U32 *Ber,
+				U32 *FirstTimeBER)
 {
 	TUNER_ScanTaskParam_T   *Inst;
 	IOARCH_Handle_t         IOHandle;
@@ -2598,7 +2598,7 @@ int FE_STV0367QAM_GetSignalInfo(U8 Handle, U32 *CN_dBx10,
 	DeviceMap = &Inst->DriverParam.Cab.Demod_DeviceMap;
 
 	FE_STV0367qam_GetSignalInfo(DeviceMap, IOHandle,
-								CN_dBx10, Power_dBmx10, Ber, FirstTimeBER);
+				    CN_dBx10, Power_dBmx10, Ber, FirstTimeBER);
 	return 0;
 }
 

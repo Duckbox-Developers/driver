@@ -137,7 +137,7 @@ YW_ErrorType_T demod_d6158_IsLocked(U8 Handle, BOOL *IsLocked)
     函数说明:   检测硬件是否6158
 
 ************************************************************************/
-int   demod_d6158_Identify(struct i2c_adapter* i2c_adap, U8 ucID)
+int   demod_d6158_Identify(struct i2c_adapter *i2c_adap, U8 ucID)
 {
 	int ret;
 	U8 pucActualID = 0;
@@ -173,12 +173,12 @@ int   demod_d6158_Identify(struct i2c_adapter* i2c_adap, U8 ucID)
 	return YWHAL_ERROR_UNKNOWN_DEVICE;
 }
 YW_ErrorType_T  demod_d6158_Repeat(IOARCH_Handle_t      DemodIOHandle, /*demod io ??±ú*/
-								   IOARCH_Handle_t             TunerIOHandle, /*?°?? io ??±ú*/
-								   TUNER_IOARCH_Operation_t Operation,
-								   unsigned short SubAddr,
-								   unsigned char *Data,
-								   unsigned int TransferSize,
-								   unsigned int Timeout)
+				   IOARCH_Handle_t             TunerIOHandle, /*?°?? io ??±ú*/
+				   TUNER_IOARCH_Operation_t Operation,
+				   unsigned short SubAddr,
+				   unsigned char *Data,
+				   unsigned int TransferSize,
+				   unsigned int Timeout)
 {
 	(void)DemodIOHandle;
 	(void)TunerIOHandle;
@@ -191,7 +191,7 @@ YW_ErrorType_T  demod_d6158_Repeat(IOARCH_Handle_t      DemodIOHandle, /*demod i
 }
 
 YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
-									   struct nim_device *dev, UINT8   System)
+				       struct nim_device *dev, UINT8   System)
 {
 	// struct nim_device           *dev;
 	INT32 ret = 0;
@@ -268,7 +268,7 @@ YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
 }
 
 YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
-		struct nim_device *dev, UINT8   System)
+					 struct nim_device *dev, UINT8   System)
 {
 	// struct nim_device           *dev;
 	INT32 ret = 0;
@@ -345,7 +345,7 @@ YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
 }
 
 static YW_ErrorType_T demod_d6158_ScanFreq(U8 Handle,
-		TUNER_TunerType_T TunerType)
+					   TUNER_TunerType_T TunerType)
 {
 	TUNER_ScanTaskParam_T       *Inst = NULL;
 	struct nim_device           *dev;
@@ -353,7 +353,7 @@ static YW_ErrorType_T demod_d6158_ScanFreq(U8 Handle,
 	struct NIM_Channel_Change param;
 	UINT8 *pPlpNum;
 
-	YWLIB_Memset((void*)&param, 0, sizeof(struct NIM_Channel_Change));
+	YWLIB_Memset((void *)&param, 0, sizeof(struct NIM_Channel_Change));
 
 	//printf("Handle = %d\n", Handle);
 
@@ -461,9 +461,9 @@ YW_ErrorType_T demod_d6158_Reset(U8 Index)
 }
 
 YW_ErrorType_T demod_d6158_GetSignalInfo(U8 Handle,
-		unsigned int  *Quality,
-		unsigned int  *Intensity,
-		unsigned int  *Ber)
+					 unsigned int  *Quality,
+					 unsigned int  *Intensity,
+					 unsigned int  *Ber)
 {
 	YW_ErrorType_T              Error = YW_NO_ERROR;
 	TUNER_ScanTaskParam_T       *Inst = NULL;
@@ -479,7 +479,7 @@ YW_ErrorType_T demod_d6158_GetSignalInfo(U8 Handle,
 	/* Read noise estimations for C/N and BER */
 	nim_panic6158_get_BER(dev, Ber);
 
-	nim_panic6158_get_AGC(dev, (UINT8*)Intensity);  //level
+	nim_panic6158_get_AGC(dev, (UINT8 *)Intensity); //level
 	//printf("[%s]Intensity=%d\n",__FUNCTION__,*Intensity);
 	if (*Intensity > 90)
 		*Intensity = 90;
@@ -490,7 +490,7 @@ YW_ErrorType_T demod_d6158_GetSignalInfo(U8 Handle,
 	if (*Intensity > 90)
 		*Intensity = 90;
 
-	nim_panic6158_get_SNR(dev, (UINT8*)Quality); //quality
+	nim_panic6158_get_SNR(dev, (UINT8 *)Quality); //quality
 	//printf("[%s]QualityValue=%d\n",__FUNCTION__,*Quality);
 	if (*Quality < 30)
 		*Quality = *Quality * 7 / 3;
@@ -555,7 +555,7 @@ static void nim_config_d61558(struct COFDM_TUNER_CONFIG_API *Tuner_API_T, UINT32
 }
 
 void demod_d6158_OpenInstallFunc(TUNER_ScanTaskParam_T *Inst,
-								 TUNER_TunerType_T TunerType)
+				 TUNER_TunerType_T TunerType)
 {
 	if (YWTUNER_DELIVER_TER == Inst->Device)
 	{

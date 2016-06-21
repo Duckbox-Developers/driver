@@ -23,22 +23,24 @@
 #ifndef _platform_123
 #define _platform_123
 
-struct platform_frontend_config_s {
-    char*    name;
+struct platform_frontend_config_s
+{
+		char    *name;
 
-    /*
-     *  - i2c address
-     */
-    int demod_i2c;
-    int tuner_i2c;
+		/*
+		 *  - i2c address
+		 */
+		int demod_i2c;
+		int tuner_i2c;
 
-    /* specific stuff can be passed here */
-    void* private;
+		/* specific stuff can be passed here */
+		void *private;
 };
 
-struct platform_frontend_s {
+struct platform_frontend_s
+{
 	int numConfigs;
-	struct platform_frontend_config_s* config;
+	struct platform_frontend_config_s *config;
 };
 
 #endif

@@ -348,7 +348,7 @@ struct nim_device
 	INT32(*open)(struct nim_device *dev);               /* NIM Device Open */
 	INT32(*stop)(struct nim_device *dev);               /* NIM Device Stop */
 	INT32(*do_ioctl)(struct nim_device *dev, INT32 cmd, UINT32 param);          /* NIM Device I/O Control */
-	INT32(*do_ioctl_ext)(struct nim_device *dev, INT32 cmd, void * param_list);         /* NIM Device I/O Control Extension */
+	INT32(*do_ioctl_ext)(struct nim_device *dev, INT32 cmd, void *param_list);          /* NIM Device I/O Control Extension */
 	INT32(*get_lock)(struct nim_device *dev, UINT8 *lock);                      /* Get Current NIM Device Channel Lock Status */
 	INT32(*get_freq)(struct nim_device *dev, UINT32 *freq);                 /* Get Current NIM Device Channel Frequency */
 	INT32(*get_FEC)(struct nim_device *dev, UINT8 *fec);                    /* Get Current NIM Device Channel FEC Rate */
@@ -359,8 +359,8 @@ struct nim_device
 	struct t_diseqc_info diseqc_info;           /* NIM DiSEqC Device Information Structure */
 	INT32(*set_polar)(struct nim_device *dev, UINT8 polar);         /*DVB-S NIM Device set LNB polarization */
 	INT32(*set_12v)(struct nim_device *dev, UINT8 flag);            /*DVB-S NIM Device set LNB votage 12V enable or not */
-	INT32(*DiSEqC_operate)(struct nim_device *dev, UINT32 mode, UINT8* cmd, UINT8 cnt);     /* NIM DiSEqC Device Opearation */
-	INT32(*DiSEqC2X_operate)(struct nim_device *dev, UINT32 mode, UINT8* cmd, UINT8 cnt, UINT8 *rt_value, UINT8 *rt_cnt);       /* NIM DiSEqC2X Device Opearation */
+	INT32(*DiSEqC_operate)(struct nim_device *dev, UINT32 mode, UINT8 *cmd, UINT8 cnt);     /* NIM DiSEqC Device Opearation */
+	INT32(*DiSEqC2X_operate)(struct nim_device *dev, UINT32 mode, UINT8 *cmd, UINT8 cnt, UINT8 *rt_value, UINT8 *rt_cnt);       /* NIM DiSEqC2X Device Opearation */
 	INT32(*get_sym)(struct nim_device *dev, UINT32 *sym);           /* Get Current NIM Device Channel Symbol Rate */
 	INT32(*get_BER)(struct nim_device *dev, UINT32 *ebr);               /* Get Current NIM Device Channel Bit-Error Rate */
 	INT32(*get_PER)(struct nim_device *dev, UINT32 *per);               /* Get Current NIM Device Channel Bit-Error Rate */

@@ -13,14 +13,14 @@ static short paramDebug;
 #define TAGDEBUG "[a8293] "
 
 #define dprintk(level, x...) do { \
-if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (paramDebug > level)) printk(TAGDEBUG x); \
+	} while (0)
 
 extern int _12v_isON; //defined in e2_proc ->I will implement a better mechanism later
 
 struct lnb_state
 {
-	struct i2c_adapter* i2c;
+	struct i2c_adapter *i2c;
 	u32                 lnb[6];
 };
 
@@ -34,15 +34,15 @@ unsigned char a8293_read(struct lnb_state *state)
 	msg.buf   = buf;
 	msg.len   = 1;
 
-	if (i2c_transfer (state->i2c, &msg, 1) != 1)
+	if (i2c_transfer(state->i2c, &msg, 1) != 1)
 	{
-		printk ("%s: a8293_read error\n", __FUNCTION__);
+		printk("%s: a8293_read error\n", __FUNCTION__);
 		buf[0] = 0x00;
 	}
 	return buf[0];
 }
 
-static int a8293_write (struct lnb_state *state, unsigned char data)
+static int a8293_write(struct lnb_state *state, unsigned char data)
 {
 	int ret = -EREMOTEIO;
 	struct i2c_msg msg;
@@ -55,26 +55,26 @@ static int a8293_write (struct lnb_state *state, unsigned char data)
 	msg.buf   = &buf;
 	msg.len   = 1;
 
-	dprintk (100, "%s:  write 0x%02x to 0x%02x\n", __FUNCTION__, data, msg.addr);
+	dprintk(100, "%s:  write 0x%02x to 0x%02x\n", __FUNCTION__, data, msg.addr);
 
-	if ((ret = i2c_transfer (state->i2c, &msg, 1)) != 1)
+	if ((ret = i2c_transfer(state->i2c, &msg, 1)) != 1)
 	{
-		printk ("%s: writereg error(err == %i)\n", __FUNCTION__, ret);
+		printk("%s: writereg error(err == %i)\n", __FUNCTION__, ret);
 		ret = -EREMOTEIO;
 	}
 	return ret;
 }
 
-u16 a8293_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t voltage)
+u16 a8293_set_voltage(void *_state, struct dvb_frontend *fe, fe_sec_voltage_t voltage)
 {
-        struct lnb_state *state = (struct lnb_state *) _state;
+	struct lnb_state *state = (struct lnb_state *) _state;
 	unsigned char reg = state->lnb[5];
-    
+
 	dprintk(1, "%s (%x)\n", __func__, voltage);
 
 	if (voltage != SEC_VOLTAGE_OFF)
 	{
-		reg |= (1<<5);              /* lnb enable/disable */
+		reg |= (1 << 5);            /* lnb enable/disable */
 	}
 
 	switch (voltage)
@@ -100,7 +100,7 @@ u16 a8293_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t vo
 		case SEC_VOLTAGE_18:
 		{
 			dprintk(1, "set voltage horizontal\n");
-		
+
 			reg |= state->lnb[4];
 			a8293_write(state, reg);
 			break;
@@ -113,13 +113,13 @@ u16 a8293_set_voltage(void *_state, struct dvb_frontend* fe, fe_sec_voltage_t vo
 	}
 	return 0;
 }
- 
-void* lnb_a8293_attach(u32* lnb, struct equipment_s* equipment)
-{    
+
+void *lnb_a8293_attach(u32 *lnb, struct equipment_s *equipment)
+{
 	unsigned char reg;
 	int res;
 
-	struct lnb_state* state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
+	struct lnb_state *state = kmalloc(sizeof(struct lnb_state), GFP_KERNEL);
 
 	memcpy(state->lnb, lnb, sizeof(state->lnb));
 
@@ -134,7 +134,7 @@ void* lnb_a8293_attach(u32* lnb, struct equipment_s* equipment)
 //#ifndef UFS913
 	/* this read is necessarily needed, otherwise
 	 * lnb power is not supplied!
-	 */	
+	 */
 	reg = a8293_read(state);
 //#endif
 

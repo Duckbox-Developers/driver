@@ -37,24 +37,25 @@ int main(int argc, char *argv[])
 	int val = LNB_VOLTAGE_OFF;
 	char *devname = "/dev/lnb";
 
-    if((fd=open(devname,O_RDWR))<0){
-    	fprintf(stderr,"Could not open %s\n",devname);
-    	perror(devname);
-    	exit(1);
-    }
+	if ((fd = open(devname, O_RDWR)) < 0)
+	{
+		fprintf(stderr, "Could not open %s\n", devname);
+		perror(devname);
+		exit(1);
+	}
 
-    printf("voltage: %d\n", voltage);
+	printf("voltage: %d\n", voltage);
 
-    switch (voltage)
-    {
-    case 13:
-    	val = LNB_VOLTAGE_VER;
-    	break;
-    case 18:
-    	val = LNB_VOLTAGE_HOR;
-    	break;
-    }
-    ret = ioctl(fd, val, 0);
-    close(fd);
-    exit(ret);
+	switch (voltage)
+	{
+		case 13:
+			val = LNB_VOLTAGE_VER;
+			break;
+		case 18:
+			val = LNB_VOLTAGE_HOR;
+			break;
+	}
+	ret = ioctl(fd, val, 0);
+	close(fd);
+	exit(ret);
 }

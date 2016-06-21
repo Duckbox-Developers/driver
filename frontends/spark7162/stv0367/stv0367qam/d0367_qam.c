@@ -253,13 +253,13 @@ YW_ErrorType_T  demod_d0367qam_Identify(IOARCH_Handle_t   IOHandle, U8  ucID, U8
 	//if (TUNER_IOARCH_ReadWrite(IOHandle, TUNER_IO_SA_READ, R367qam_ID, pucActualID, 1, 50) == YW_NO_ERROR)
 	if (YW_NO_ERROR == YW_NO_ERROR)
 	{
-_DEBUG
+		_DEBUG
 		printk("demod_d0367qam_Identify pucActualID = 0x%x\n", *pucActualID);//question
 		return YW_NO_ERROR;
 	}
 	else
 	{
-_DEBUG
+		_DEBUG
 		printk("demod_d0367qam_Identify YWHAL_ERROR_UNKNOWN_DEVICE \n");//question
 		return YWHAL_ERROR_UNKNOWN_DEVICE;
 	}
@@ -280,12 +280,12 @@ _DEBUG
                 2010.12.28       lwj              ´´½¨
 ************************************************************************/
 YW_ErrorType_T  demod_d0367qam_Repeat(IOARCH_Handle_t   DemodIOHandle,
-									  IOARCH_Handle_t   TunerIOHandle,
-									  TUNER_IOARCH_Operation_t Operation,
-									  unsigned short SubAddr,
-									  U8 *Data,
-									  U32 TransferSize,
-									  U32 Timeout)
+				      IOARCH_Handle_t   TunerIOHandle,
+				      TUNER_IOARCH_Operation_t Operation,
+				      unsigned short SubAddr,
+				      U8 *Data,
+				      U32 TransferSize,
+				      U32 Timeout)
 {
 	return 0;
 }
@@ -293,8 +293,8 @@ YW_ErrorType_T  demod_d0367qam_Repeat(IOARCH_Handle_t   DemodIOHandle,
 #ifdef TUNER_USE_CAB_STI7167CAB
 
 YW_ErrorType_T D0367qam_Init(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							 IOARCH_Handle_t IOHandle,
-							 TUNER_TunerType_T TunerType)
+			     IOARCH_Handle_t IOHandle,
+			     TUNER_TunerType_T TunerType)
 {
 	U16 i, j = 1;
 	for (i = 1; i <= DeviceMap->Registers; i++)
@@ -370,7 +370,7 @@ YW_ErrorType_T D0367qam_Init(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 YW_ErrorType_T D0367qam_Sleep(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							  IOARCH_Handle_t IOHandle)
+			      IOARCH_Handle_t IOHandle)
 {
 	ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_BYPASS_PLLXN, 0x03);
 	ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_STDBY_PLLXN, 0x01);
@@ -385,7 +385,7 @@ YW_ErrorType_T D0367qam_Sleep(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 YW_ErrorType_T D0367qam_Wake(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							 IOARCH_Handle_t IOHandle)
+			     IOARCH_Handle_t IOHandle)
 {
 	ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_STDBY_PLLXN, 0x00);
 	ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_BYPASS_PLLXN, 0x00);
@@ -400,13 +400,13 @@ YW_ErrorType_T D0367qam_Wake(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 YW_ErrorType_T D0367qam_I2ctOn(TUNER_IOREG_DeviceMap_t *DeviceMap,
-							   IOARCH_Handle_t IOHandle)
+			       IOARCH_Handle_t IOHandle)
 {
 	return ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_I2CT_ON, 1);
 }
 
 YW_ErrorType_T D0367qam_I2ctOff(TUNER_IOREG_DeviceMap_t *DeviceMap,
-								IOARCH_Handle_t IOHandle)
+				IOARCH_Handle_t IOHandle)
 {
 	return ChipSetField_0367qam(DeviceMap, IOHandle, F367qam_I2CT_ON, 0);
 }
@@ -727,8 +727,8 @@ FE_367qam_SIGNALTYPE_t FE_367qam_Algo(YWTUNER_Handle_T Handle, FE_367qam_Interna
 			LockTime = DemodTimeOut;
 			ChipGetRegisters_0367qam(DeviceMap, IOHandle, R367qam_AGC_PWR_RD_L, 3);
 			u32_tmp =   ChipGetFieldImage_0367qam(DeviceMap, IOHandle, F367qam_AGC_PWR_WORD_LO)
-						+ (ChipGetFieldImage_0367qam(DeviceMap, IOHandle, F367qam_AGC_PWR_WORD_ME) << 8)
-						+ (ChipGetFieldImage_0367qam(DeviceMap, IOHandle, F367qam_AGC_PWR_WORD_HI) << 16);
+				    + (ChipGetFieldImage_0367qam(DeviceMap, IOHandle, F367qam_AGC_PWR_WORD_ME) << 8)
+				    + (ChipGetFieldImage_0367qam(DeviceMap, IOHandle, F367qam_AGC_PWR_WORD_HI) << 16);
 			if (u32_tmp >= 131072)
 				u32_tmp = 262144 - u32_tmp;
 			u32_tmp = u32_tmp / (PowOf2(11 - ChipGetField_0367qam(DeviceMap, IOHandle, F367qam_AGC_IF_BWSEL)));

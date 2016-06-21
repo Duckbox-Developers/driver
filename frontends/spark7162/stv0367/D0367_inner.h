@@ -49,14 +49,14 @@ int ChipGetFieldSign(U32 FieldId);
 int ChipGetFieldPosition(U8 Mask);
 int ChipGetFieldBits(int mask, int Position);
 S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap,
-						 IOARCH_Handle_t IOHandle, U16 RegId);
+			 IOARCH_Handle_t IOHandle, U16 RegId);
 
 void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				 IOARCH_Handle_t IOHandle,
-				 unsigned char *pcData, int nbdata);
+		 IOARCH_Handle_t IOHandle,
+		 unsigned char *pcData, int nbdata);
 void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
-				IOARCH_Handle_t IOHandle,
-				unsigned char *pcData, int NbRegs);
+		IOARCH_Handle_t IOHandle,
+		unsigned char *pcData, int NbRegs);
 
 /********************************  º¯Êý¶¨Òå************************************/
 

@@ -39,18 +39,21 @@
 #define STB0899_SYNC_FORCED		4
 #define STB0899_FECMODE_DSS		5
 
-struct stb0899_s1_reg {
+struct stb0899_s1_reg
+{
 	u16	address;
 	u8	data;
 };
 
-struct stb0899_s2_reg {
+struct stb0899_s2_reg
+{
 	u16	offset;
 	u32	base_address;
 	u32	data;
 };
 
-enum stb0899_inversion {
+enum stb0899_inversion
+{
 	IQ_SWAP_OFF	= 0,
 	IQ_SWAP_ON,
 	IQ_SWAP_AUTO
@@ -92,12 +95,14 @@ enum stb0899_inversion {
  * @gpio 	= one of the above listed GPIO's (set to 0 to ignore this entry)
  * @level	= output state: pulled up or low
  */
-struct stb0899_postproc {
+struct stb0899_postproc
+{
 	u16	gpio;
 	u8	level;
 };
 
-struct stb0899_config {
+struct stb0899_config
+{
 	const struct stb0899_s1_reg	*init_dev;
 	const struct stb0899_s2_reg	*init_s2_demod;
 	const struct stb0899_s1_reg	*init_s1_demod;

@@ -177,8 +177,8 @@ struct dvb_d3501_fe_state
 {
 	struct dvb_frontend frontend;
 	struct nim_device   spark_nimdev;
-	struct stpio_pin*   fe_lnb_13_18;
-	struct stpio_pin*   fe_lnb_on_off;
+	struct stpio_pin   *fe_lnb_13_18;
+	struct stpio_pin   *fe_lnb_on_off;
 };
 
 #define I2C_ERROR_BASE      -200
@@ -351,7 +351,7 @@ static INT32 nim_s3501_reg_get_roll_off(struct nim_device *dev, UINT8 *roll_off)
 
 static  UINT8 nim_s3501_get_SNR_index(struct nim_device *dev);
 static INT32 nim_s3501_set_ts_mode(struct nim_device *dev, UINT8 work_mode, UINT8 map_type, UINT8 code_rate, UINT32 Rs,
-								   UINT8 channel_change_flag);
+				   UINT8 channel_change_flag);
 static INT32 nim_s3501_get_bit_rate(struct nim_device *dev, UINT8 work_mode, UINT8 map_type, UINT8 code_rate, UINT32 Rs, UINT8 *bit_rate);
 static INT32 nim_s3501_set_ssi_clk(struct nim_device *dev, UINT8 bit_rate);
 ////static INT32 nim_s3501_set_dmy_format(struct nim_device *dev);     //bentao add for M3501B in 20100113.
@@ -393,7 +393,7 @@ static INT32 nim_s3501_get_new_PER(struct nim_device *dev, UINT32 *per);
 //static INT32 nim_change_ts_gap(struct nim_device *dev, UINT8 gap);//lwj don't know this
 
 INT32 nim_vz7306_status(U8 tuner_id, BOOL *lock);
-INT32 nim_vz7306_init(U8* tuner_id, struct QPSK_TUNER_CONFIG_EXT * ptrTuner_Config);
+INT32 nim_vz7306_init(U8 *tuner_id, struct QPSK_TUNER_CONFIG_EXT *ptrTuner_Config);
 INT32 nim_vz7306_control(U8 tuner_id, UINT32 freq, UINT32 sym);
 
 static int d3501_initition(struct nim_device *dev, struct i2c_adapter   *i2c);
@@ -428,7 +428,7 @@ INT32 nim_reg_read(struct nim_device *dev, UINT8 bMemAdr, UINT8 *pData, UINT8 bL
 		}
 		nim_s3501_set_err(dev);
 		printk("s3501 i2c read error = %d,chip_adr=0x%x,bMemAdr=0x%x,I2C_FOR_S3501 = %d,TaskID=%d\n", -err, chip_adr, pData[0],
-			   i2c_type_id, osal_task_get_current_id());
+		       i2c_type_id, osal_task_get_current_id());
 	}
 	else
 	{
@@ -506,7 +506,7 @@ INT32 nim_reg_write(struct nim_device *dev, UINT8 bMemAdr, UINT8 *pData, UINT8 b
 		}
 		nim_s3501_set_err(dev);
 		printk("s3501 i2c write error = %d,chip_adr=0x%x,bMemAdr=0x%x,I2C_FOR_S3501 = %d,TaskID=%d\n", -err, chip_adr, bMemAdr,
-			   i2c_type_id, osal_task_get_current_id());
+		       i2c_type_id, osal_task_get_current_id());
 	}
 	else
 	{
@@ -548,7 +548,7 @@ INT32 nim_reg_write(struct nim_device *dev, UINT8 bMemAdr, UINT8 *pData, UINT8 b
 	{
 		if (ret != -ERESTARTSYS)
 			printk("Reg=[0x%04x], Data=[0x%02x ...], Count=%u, Status=%d\n",
-				   bMemAdr, pData[0], bLen, ret);
+			       bMemAdr, pData[0], bLen, ret);
 		return ret < 0 ? ret : -EREMOTEIO;
 	}
 	return ret;
@@ -1530,7 +1530,7 @@ static INT32 nim_s3501_open_ci_plus(struct nim_device *dev, UINT8 *ci_plus_flag)
 }
 
 static INT32 nim_s3501_set_ts_mode(struct nim_device *dev, UINT8 work_mode, UINT8 map_type, UINT8 code_rate, UINT32 Rs,
-								   UINT8 channel_change_flag)
+				   UINT8 channel_change_flag)
 {
 	UINT8 data;
 	UINT8 bit_rate;
@@ -3620,7 +3620,7 @@ static INT32 nim_s3501_get_type(struct nim_device *dev)
 	m_Value = (m_Value << 8) | temp[3];
 	m_Value = (m_Value << 8) | temp[2];
 	printk("############nim_s3501_get_type    temp = 0x%x, m_Value = 0x%x\n",
-		   (int)temp, (int)m_Value);
+	       (int)temp, (int)m_Value);
 	//priv->ul_status.m_s3501_type = m_Value; //lwj remove
 	nim_reg_read(dev, RC0_BIST_LDPC_REG, temp, 1);
 	priv->ul_status.m_s3501_sub_type = temp[0];
@@ -4366,7 +4366,7 @@ static void nim_s3501_task(UINT32 param1, UINT32 param2)
 					else
 					{
 						nim_s3501_set_ts_mode(dev, priv->tsk_status.m_work_mode, priv->tsk_status.m_map_type, priv->tsk_status.m_code_rate,
-											  priv->tsk_status.m_sym_rate, 0x1);
+								      priv->tsk_status.m_sym_rate, 0x1);
 						// open TS
 						nim_reg_read(dev, R9C_DEMAP_BETA + 0x02, &(priv->tsk_status.m_info_data), 1);
 						priv->tsk_status.m_info_data = priv->tsk_status.m_info_data | 0x80;    // ts open  //question
@@ -4453,19 +4453,19 @@ static void d3501_release(struct dvb_frontend *fe)
 	kfree(state);
 }
 
-static int d3501_read_ber(struct dvb_frontend* fe, u32* ber)
+static int d3501_read_ber(struct dvb_frontend *fe, u32 *ber)
 {
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 
 	return nim_s3501_get_BER(&state->spark_nimdev, ber);
 }
 
-static int d3501_read_snr(struct dvb_frontend* fe, u16* snr)
+static int d3501_read_snr(struct dvb_frontend *fe, u16 *snr)
 {
 	int     iRet;
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 
-	iRet = nim_s3501_get_SNR(&state->spark_nimdev, (UINT16*)snr); //quality
+	iRet = nim_s3501_get_SNR(&state->spark_nimdev, (UINT16 *)snr); //quality
 	if (*snr < 30)
 		*snr = *snr * 7 / 3;
 	else
@@ -4477,14 +4477,14 @@ static int d3501_read_snr(struct dvb_frontend* fe, u16* snr)
 	return iRet;
 }
 
-static int d3501_read_signal_strength(struct dvb_frontend* fe,
-									  u16 *strength)
+static int d3501_read_signal_strength(struct dvb_frontend *fe,
+				      u16 *strength)
 {
 	int     iRet;
-	UINT16  *Intensity = (UINT16*)strength;
+	UINT16  *Intensity = (UINT16 *)strength;
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 
-	iRet = nim_s3501_get_AGC(&state->spark_nimdev, (UINT16*)Intensity);  //level
+	iRet = nim_s3501_get_AGC(&state->spark_nimdev, (UINT16 *)Intensity); //level
 #if 0
 	//lwj add begin
 	if (*Intensity > 90)
@@ -4523,10 +4523,10 @@ static int d3501_read_status(struct dvb_frontend *fe, enum fe_status *status)
 	if (lock)
 	{
 		*status = FE_HAS_SIGNAL |
-				  FE_HAS_CARRIER |
-				  FE_HAS_VITERBI |
-				  FE_HAS_SYNC |
-				  FE_HAS_LOCK;
+			  FE_HAS_CARRIER |
+			  FE_HAS_VITERBI |
+			  FE_HAS_SYNC |
+			  FE_HAS_LOCK;
 	}
 	else
 	{
@@ -4568,8 +4568,8 @@ static enum dvbfe_algo d3501_frontend_algo(struct dvb_frontend *fe)
 }
 
 static int d3501_set_tuner_params(struct dvb_frontend *fe,
-								  UINT32  freq,
-								  UINT32  sym)
+				  UINT32  freq,
+				  UINT32  sym)
 {
 	int err = 0;
 
@@ -4613,7 +4613,7 @@ static int d3501_set_tuner_params(struct dvb_frontend *fe,
 #if 1
 #if (DVB_API_VERSION < 5)
 static enum dvbfe_search d3501_Search(struct dvb_frontend *fe,
-									  struct dvbfe_params *p)
+				      struct dvbfe_params *p)
 {
 	//IOARCH_Handle_t               IOHandle;
 	struct nim_device           *dev;
@@ -4926,7 +4926,7 @@ static enum dvbfe_search d3501_Search(struct dvb_frontend *fe,
 }
 #else
 static enum dvbfe_search d3501_Search(struct dvb_frontend *fe,
-									  struct dvb_frontend_parameters *p)
+				      struct dvb_frontend_parameters *p)
 {
 	//IOARCH_Handle_t               IOHandle;
 	struct nim_device           *dev;
@@ -5259,7 +5259,7 @@ static int d3501_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 
 #if (DVB_API_VERSION < 5)
 static int d3501_get_info(struct dvb_frontend *fe,
-						  struct dvbfe_info *fe_info)
+			  struct dvbfe_info *fe_info)
 {
 	//struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
 	/* get delivery system info */
@@ -5274,7 +5274,7 @@ static int d3501_get_info(struct dvb_frontend *fe,
 	return 0;
 }
 #else
-static int d3501_get_property(struct dvb_frontend *fe, struct dtv_property* tvp)
+static int d3501_get_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 {
 	//struct dvb_d0367_fe_ofdm_state* state = fe->demodulator_priv;
 
@@ -5295,7 +5295,7 @@ static int d3501_get_property(struct dvb_frontend *fe, struct dtv_property* tvp)
 }
 #endif
 
-static int d3501_set_tone(struct dvb_frontend* fe, fe_sec_tone_mode_t tone)
+static int d3501_set_tone(struct dvb_frontend *fe, fe_sec_tone_mode_t tone)
 {
 	UINT8 data;
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
@@ -5329,7 +5329,7 @@ static int d3501_set_tone(struct dvb_frontend* fe, fe_sec_tone_mode_t tone)
 	return 0;
 }
 
-static int d3501_set_voltage(struct dvb_frontend* fe, fe_sec_voltage_t voltage)
+static int d3501_set_voltage(struct dvb_frontend *fe, fe_sec_voltage_t voltage)
 {
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 
@@ -5364,8 +5364,8 @@ static int d3501_set_voltage(struct dvb_frontend* fe, fe_sec_voltage_t voltage)
 	return 0;
 }
 
-int d3501_send_diseqc_msg(struct dvb_frontend* fe,
-						  struct dvb_diseqc_master_cmd* cmd)
+int d3501_send_diseqc_msg(struct dvb_frontend *fe,
+			  struct dvb_diseqc_master_cmd *cmd)
 {
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 
@@ -5581,11 +5581,11 @@ static int d3501_term(struct nim_device *dev)
 	return 0;
 }
 
-struct dvb_frontend* dvb_d3501_fe_qpsk_attach(
+struct dvb_frontend *dvb_d3501_fe_qpsk_attach(
 	const struct d3501_config *config,
-	struct i2c_adapter* i2c)
+	struct i2c_adapter *i2c)
 {
-	struct dvb_d3501_fe_state* state = NULL;
+	struct dvb_d3501_fe_state *state = NULL;
 
 	/* allocate memory for the internal state */
 	state = kmalloc(sizeof(struct dvb_d3501_fe_state), GFP_KERNEL);

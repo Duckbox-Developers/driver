@@ -48,19 +48,20 @@ extern short paramDebug;
 #define TAGDEBUG "[stv090x] "
 
 #define dprintk(level, x...) do { \
-	if ((paramDebug) && (level <= paramDebug)) printk(TAGDEBUG x); \
-} while (0)
+		if ((paramDebug) && (level <= paramDebug)) printk(TAGDEBUG x); \
+	} while (0)
 
 static unsigned int verbose = FE_DEBUGREG;
 
 #if defined(UFS912)
-int writereg_lnb_supply (struct stv090x_state *state, char data);
+int writereg_lnb_supply(struct stv090x_state *state, char data);
 #endif
 
 struct mutex demod_lock;
 
 /* DVBS1 and DSS C/N Lookup table */
-static const struct stv090x_tab stv090x_s1cn_tab[] = {
+static const struct stv090x_tab stv090x_s1cn_tab[] =
+{
 	{   0, 8917 }, /*  0.0dB */
 	{   5, 8801 }, /*  0.5dB */
 	{  10, 8667 }, /*  1.0dB */
@@ -116,7 +117,8 @@ static const struct stv090x_tab stv090x_s1cn_tab[] = {
 };
 
 /* DVBS2 C/N Lookup table */
-static const struct stv090x_tab stv090x_s2cn_tab[] = {
+static const struct stv090x_tab stv090x_s2cn_tab[] =
+{
 	{ -30, 13348 }, /* -3.0dB */
 	{ -20, 12640 }, /* -2d.0B */
 	{ -10, 11883 }, /* -1.0dB */
@@ -175,7 +177,8 @@ static const struct stv090x_tab stv090x_s2cn_tab[] = {
 };
 
 /* RF level C/N lookup table */
-static const struct stv090x_tab stv090x_rf_tab[] = {
+static const struct stv090x_tab stv090x_rf_tab[] =
+{
 	{  -5, 0xcaa1 }, /*  -5dBm */
 	{ -10, 0xc229 }, /* -10dBm */
 	{ -15, 0xbb08 }, /* -15dBm */
@@ -193,7 +196,8 @@ static const struct stv090x_tab stv090x_rf_tab[] = {
 };
 
 #if 0
-static struct stv090x_reg stv090x_defval[] = {
+static struct stv090x_reg stv090x_defval[] =
+{
 
 	{ STV090x_MID,			0x20 }, /* MID */
 	{ STV090x_DACR1,		0x00 }, /* DACR1 */
@@ -901,7 +905,8 @@ static struct stv090x_reg stv090x_defval[] = {
 };
 #endif
 
-static struct stv090x_reg stv0900_initval[] = {
+static struct stv090x_reg stv0900_initval[] =
+{
 
 	{ STV090x_OUTCFG,		0x00 },
 	{ STV090x_MODECFG,		0xff },
@@ -1092,427 +1097,430 @@ static struct stv090x_reg stv0900_initval[] = {
 
 /* #define JUST_PLAYING */
 #ifdef JUST_PLAYING
-static struct stv090x_reg stx7111_initval[] = {
-/* demod2 */
-      { STV090x_OUTCFG,        0x00 },
-      { STV090x_AGCRF1CFG,     0x11 },
-      { STV090x_AGCRF2CFG,     0x13 },
-      { STV090x_TSGENERAL,     0x00 },
-      { STV090x_P2_DISTXCTL,   0x22 },
-      { STV090x_P2_F22TX,      0xc0 },
-      { STV090x_P2_F22RX,      0xc0 },
-      { STV090x_P2_DISRXCTL,   0x00 },
-      { STV090x_P2_TNRSTEPS,   0x87 },
-      { STV090x_P2_TNRGAIN,    0x09 },
-      { STV090x_P2_DMDCFGMD,   0xf9 },
-      { STV090x_P2_DEMOD,      0x0E },
-      { STV090x_P2_DMDCFG3,    0x48 },
-      { STV090x_P2_DMDTOM,     0x20 },
-      
-      { STV090x_P2_CARFREQ,    0x88 },
-      { STV090x_P2_TNRCFG2,    0x02 },
-      { STV090x_P2_TNRCFG3,    0x02 },
-      
-      { STV090x_P2_LDT,        0xd0 },
-      { STV090x_P2_LDT2,       0xb0 },
-    
-      { STV090x_P2_TMGCFG,     0xd3 },
-      { STV090x_P2_TMGTHRISE,  0x20 },
-      { STV090x_P2_TMGTHFALL,  0x00 },
-      
-      { STV090x_P2_SFRUPRATIO, 0xf0 },
-      { STV090x_P2_SFRLOWRATIO,0x70 },
+static struct stv090x_reg stx7111_initval[] =
+{
+	/* demod2 */
+	{ STV090x_OUTCFG,        0x00 },
+	{ STV090x_AGCRF1CFG,     0x11 },
+	{ STV090x_AGCRF2CFG,     0x13 },
+	{ STV090x_TSGENERAL,     0x00 },
+	{ STV090x_P2_DISTXCTL,   0x22 },
+	{ STV090x_P2_F22TX,      0xc0 },
+	{ STV090x_P2_F22RX,      0xc0 },
+	{ STV090x_P2_DISRXCTL,   0x00 },
+	{ STV090x_P2_TNRSTEPS,   0x87 },
+	{ STV090x_P2_TNRGAIN,    0x09 },
+	{ STV090x_P2_DMDCFGMD,   0xf9 },
+	{ STV090x_P2_DEMOD,      0x0E },
+	{ STV090x_P2_DMDCFG3,    0x48 },
+	{ STV090x_P2_DMDTOM,     0x20 },
 
-      { STV090x_P2_FECSPY,     0x88 },
-      { STV090x_P2_FSPYDATA,   0x3a },
-      { STV090x_P2_FBERCPT4,   0x00 },
-      { STV090x_P2_FSPYBER,    0x10 },
-      { STV090x_P2_TSCFGH,     0x40 },
-      { STV090x_P2_ERRCTRL1,   0x35 },
-      { STV090x_P2_ERRCTRL2,   0xc1 },
-      { STV090x_P2_CFRICFG,    0xf8 },
-      { STV090x_P2_NOSCFG,     0x0c },
-      { STV090x_P2_AGC2O,      0x5b },
-      { STV090x_P2_AGC2REF,    0x38 },
-      { STV090x_P2_CARCFG,     0xe4 },
-      { STV090x_P2_ACLC,       0x1A },
-      { STV090x_P2_BCLC,       0x09 },
-      { 0xf43b           ,     0x00 },
-      { 0xf43c           ,     0xc0 },
-      { STV090x_P2_CARHDR,     0x20 },
-      { STV090x_P2_TMGTHRISE,  0x20 }, /* new */
-      { STV090x_P2_KREFTMG,    0x87 },
-      { STV090x_P2_TMGTHFALL,  0x00 }, /* new */
+	{ STV090x_P2_CARFREQ,    0x88 },
+	{ STV090x_P2_TNRCFG2,    0x02 },
+	{ STV090x_P2_TNRCFG3,    0x02 },
 
-      { STV090x_P2_LDT,        0xd0 },
-      { STV090x_P2_LDT2,       0xb0 },
+	{ STV090x_P2_LDT,        0xd0 },
+	{ STV090x_P2_LDT2,       0xb0 },
 
-      { STV090x_P2_SFRSTEP,    0x58 },
-      { STV090x_P2_CAR2CFG,    0x26 },
-#if 1 /* new */      
-      { STV090x_P2_BCLC2S2Q,   0x86 },
-      { STV090x_P2_BCLC2S28,   0x86 },
+	{ STV090x_P2_TMGCFG,     0xd3 },
+	{ STV090x_P2_TMGTHRISE,  0x20 },
+	{ STV090x_P2_TMGTHFALL,  0x00 },
+
+	{ STV090x_P2_SFRUPRATIO, 0xf0 },
+	{ STV090x_P2_SFRLOWRATIO, 0x70 },
+
+	{ STV090x_P2_FECSPY,     0x88 },
+	{ STV090x_P2_FSPYDATA,   0x3a },
+	{ STV090x_P2_FBERCPT4,   0x00 },
+	{ STV090x_P2_FSPYBER,    0x10 },
+	{ STV090x_P2_TSCFGH,     0x40 },
+	{ STV090x_P2_ERRCTRL1,   0x35 },
+	{ STV090x_P2_ERRCTRL2,   0xc1 },
+	{ STV090x_P2_CFRICFG,    0xf8 },
+	{ STV090x_P2_NOSCFG,     0x0c },
+	{ STV090x_P2_AGC2O,      0x5b },
+	{ STV090x_P2_AGC2REF,    0x38 },
+	{ STV090x_P2_CARCFG,     0xe4 },
+	{ STV090x_P2_ACLC,       0x1A },
+	{ STV090x_P2_BCLC,       0x09 },
+	{ 0xf43b           ,     0x00 },
+	{ 0xf43c           ,     0xc0 },
+	{ STV090x_P2_CARHDR,     0x20 },
+	{ STV090x_P2_TMGTHRISE,  0x20 }, /* new */
+	{ STV090x_P2_KREFTMG,    0x87 },
+	{ STV090x_P2_TMGTHFALL,  0x00 }, /* new */
+
+	{ STV090x_P2_LDT,        0xd0 },
+	{ STV090x_P2_LDT2,       0xb0 },
+
+	{ STV090x_P2_SFRSTEP,    0x58 },
+	{ STV090x_P2_CAR2CFG,    0x26 },
+#if 1 /* new */
+	{ STV090x_P2_BCLC2S2Q,   0x86 },
+	{ STV090x_P2_BCLC2S28,   0x86 },
 #else
-      { STV090x_P2_BCLC2S2Q,   0xa5 },
-      { STV090x_P2_BCLC2S28,   0xa5 },
+	{ STV090x_P2_BCLC2S2Q,   0xa5 },
+	{ STV090x_P2_BCLC2S28,   0xa5 },
 #endif
-      { STV090x_P2_DMDRESCFG,  0xa9 },
-      { STV090x_P2_SMAPCOEF7,  0xfe },
-      { STV090x_P2_SMAPCOEF6,  0x00 },
-      { STV090x_P2_SMAPCOEF5,  0xff },
-      { STV090x_P2_DMDCFG2,    0x3b },
-      { STV090x_P2_MODCODLST0, 0xff },
-      { STV090x_P2_MODCODLST1, 0xff },
-      { STV090x_P2_MODCODLST2, 0xff },
-      { STV090x_P2_MODCODLST3, 0xff },
-      { STV090x_P2_MODCODLST4, 0xff },
-      { STV090x_P2_MODCODLST5, 0xff },
-      { STV090x_P2_MODCODLST6, 0xff },
-      { STV090x_P2_MODCODLST7, 0xcc },
-      { STV090x_P2_MODCODLST8, 0xcc },
-      { STV090x_P2_MODCODLST9, 0xcc },
-      { STV090x_P2_MODCODLSTA, 0xcc },
-      { STV090x_P2_MODCODLSTB, 0xcc },
-      { STV090x_P2_MODCODLSTC, 0xcc },
-      { STV090x_P2_MODCODLSTD, 0xcc },
-      { STV090x_P2_MODCODLSTE, 0xff },
-      { STV090x_P2_MODCODLSTF, 0xff },
-/* demod1 
-new
-      { STV090x_P1_DISTXCTL,   0x22 },
-      { STV090x_P1_F22TX,      0xc0 },
-      { STV090x_P1_F22RX,      0xc0 },
-      { STV090x_P1_DISRXCTL,   0x00 },
-      
-      { STV090x_P1_TNRSTEPS,   0x87 },
-      { STV090x_P1_TNRGAIN,    0x09 },
-      { STV090x_P1_DMDCFGMD,   0xf9 },
-      { STV090x_P1_DEMOD,      0x0E },
-      { STV090x_P1_DMDCFG3,    0x48 },
-      { STV090x_P1_DMDTOM,     0x20 },
-      { STV090x_P1_CARFREQ,    0x88 },
-      { STV090x_P1_TNRCFG2,    0x02 },
-      { STV090x_P1_TNRCFG3,    0x02 },
-      
-      { STV090x_P1_LDT,        0xd0 },
-      { STV090x_P1_LDT2,       0xb0 },
-      { STV090x_P1_TMGCFG,     0xd3 },
-      { STV090x_P1_TMGTHRISE,  0x20 },
-      { STV090x_P1_TMGTHFALL,  0x00 },
-      { STV090x_P2_SFRUPRATIO, 0xf0 },
-      { STV090x_P2_SFRLOWRATIO,0x70 },
-      
-      { STV090x_P1_FECSPY,     0x88 },
-      { STV090x_P1_FSPYDATA,   0x3a },
-      { STV090x_P1_FBERCPT4,   0x00 },
-      { STV090x_P1_FSPYBER,    0x10 },
-      
-#if 0
-      { STV090x_P1_TSCFGH,     0x40 },
-#else
-      { STV090x_P1_TSCFGH,     0x90 },
-#endif
-      { STV090x_P1_ERRCTRL1,   0x35 },
-      { STV090x_P1_ERRCTRL2,   0xc1 },
-      { STV090x_P1_CFRICFG,    0xf8 },
-      { STV090x_P1_NOSCFG,     0x0c },
-      { STV090x_P1_DMDTOM,     0x20 },
-      { STV090x_P1_AGC2O,      0x5b },
-      { STV090x_P1_AGC2REF,    0x38 },
-      { STV090x_P1_CARCFG,     0xe4 },
-      { STV090x_P1_ACLC,       0x1A },
-      { STV090x_P1_BCLC,       0x09 },
-      { 0xf43b           ,     0x00 },
-      { 0xf43c           ,     0xc0 },
-      { STV090x_P1_CARHDR,     0x20 },
-      { STV090x_P1_TMGTHRISE,  0x20 },
-      { STV090x_P1_KREFTMG,    0x87 },
-      { STV090x_P1_TMGTHFALL,  0x00 },
-      { STV090x_P1_SFRSTEP,    0x58 },
-      { STV090x_P1_CAR2CFG,    0x26 },
-      { STV090x_P1_BCLC2S2Q,   0x86 },
-      { STV090x_P1_BCLC2S28,   0x86 },
+	{ STV090x_P2_DMDRESCFG,  0xa9 },
+	{ STV090x_P2_SMAPCOEF7,  0xfe },
+	{ STV090x_P2_SMAPCOEF6,  0x00 },
+	{ STV090x_P2_SMAPCOEF5,  0xff },
+	{ STV090x_P2_DMDCFG2,    0x3b },
+	{ STV090x_P2_MODCODLST0, 0xff },
+	{ STV090x_P2_MODCODLST1, 0xff },
+	{ STV090x_P2_MODCODLST2, 0xff },
+	{ STV090x_P2_MODCODLST3, 0xff },
+	{ STV090x_P2_MODCODLST4, 0xff },
+	{ STV090x_P2_MODCODLST5, 0xff },
+	{ STV090x_P2_MODCODLST6, 0xff },
+	{ STV090x_P2_MODCODLST7, 0xcc },
+	{ STV090x_P2_MODCODLST8, 0xcc },
+	{ STV090x_P2_MODCODLST9, 0xcc },
+	{ STV090x_P2_MODCODLSTA, 0xcc },
+	{ STV090x_P2_MODCODLSTB, 0xcc },
+	{ STV090x_P2_MODCODLSTC, 0xcc },
+	{ STV090x_P2_MODCODLSTD, 0xcc },
+	{ STV090x_P2_MODCODLSTE, 0xff },
+	{ STV090x_P2_MODCODLSTF, 0xff },
+	/* demod1
+	new
+	      { STV090x_P1_DISTXCTL,   0x22 },
+	      { STV090x_P1_F22TX,      0xc0 },
+	      { STV090x_P1_F22RX,      0xc0 },
+	      { STV090x_P1_DISRXCTL,   0x00 },
 
-      { STV090x_P1_DMDRESCFG,  0xa9 },
-      { STV090x_P1_SMAPCOEF7,  0xfe },
-      { STV090x_P1_SMAPCOEF6,  0x00 },
-      { STV090x_P1_SMAPCOEF5,  0xff },
-      { STV090x_P1_DMDCFG2,    0x3b },
-      { STV090x_P1_MODCODLST0, 0xff },
-      { STV090x_P1_MODCODLST1, 0xff },
-      { STV090x_P1_MODCODLST2, 0xff },
-      { STV090x_P1_MODCODLST3, 0xff },
-      { STV090x_P1_MODCODLST4, 0xff },
-      { STV090x_P1_MODCODLST5, 0xff },
-      { STV090x_P1_MODCODLST6, 0xff },
-      { STV090x_P1_MODCODLST7, 0xcc },
-      { STV090x_P1_MODCODLST8, 0xcc },
-      { STV090x_P1_MODCODLST9, 0xcc },
-      { STV090x_P1_MODCODLSTA, 0xcc },
-      { STV090x_P1_MODCODLSTB, 0xcc },
-      { STV090x_P1_MODCODLSTC, 0xcc },
-      { STV090x_P1_MODCODLSTD, 0xcc },
-      { STV090x_P1_MODCODLSTE, 0xff },
-      { STV090x_P1_MODCODLSTF, 0xff },
-*/
-      
-      { STV090x_NBITERNOERR,   0x04 },
-      { STV090x_GAINLLR_NF4,   0x0f },
-      { STV090x_GAINLLR_NF5,   0x13 },
-      { STV090x_GAINLLR_NF6,   0x15 },
-      { STV090x_GAINLLR_NF7,   0x1a },
-      { STV090x_GAINLLR_NF8,   0x1F },
-      { STV090x_GAINLLR_NF9,   0x20 },
-      { STV090x_GAINLLR_NF10,  0x26 },
-      { STV090x_GAINLLR_NF11,  0x28 },
-      { STV090x_GAINLLR_NF12,  0x0D },
-      { STV090x_GAINLLR_NF13,  0x0F },
-      { STV090x_GAINLLR_NF14,  0x13 },
-      { STV090x_GAINLLR_NF15,  0x19 },
-      { STV090x_GAINLLR_NF16,  0x20 },
-      { STV090x_GAINLLR_NF17,  0x20 },
-      { STV090x_NBITER_NF4,    0x38 },
-      { STV090x_NBITER_NF5,    0x2C },
-      { STV090x_NBITER_NF6,    0x3b },
-      { STV090x_NBITER_NF7,    0x38 },
-      
-      { STV090x_NBITER_NF8,    0x36 },
-      { STV090x_NBITER_NF9,    0x35 },
-      
-      { STV090x_NBITER_NF10,   0x41 },
-      { STV090x_NBITER_NF11,   0x41 },
-      { STV090x_NBITER_NF12,   0x1d },
-      { STV090x_NBITER_NF13,   0x27 },
-      { STV090x_NBITER_NF14,   0x25 },
-      { STV090x_NBITER_NF15,   0x23 },
-      { STV090x_NBITER_NF16,   0x2b },
-      { STV090x_NBITER_NF17,   0x2b },
+	      { STV090x_P1_TNRSTEPS,   0x87 },
+	      { STV090x_P1_TNRGAIN,    0x09 },
+	      { STV090x_P1_DMDCFGMD,   0xf9 },
+	      { STV090x_P1_DEMOD,      0x0E },
+	      { STV090x_P1_DMDCFG3,    0x48 },
+	      { STV090x_P1_DMDTOM,     0x20 },
+	      { STV090x_P1_CARFREQ,    0x88 },
+	      { STV090x_P1_TNRCFG2,    0x02 },
+	      { STV090x_P1_TNRCFG3,    0x02 },
 
-/* new      
-      { STV090x_P2_GAUSSR0,    0xac },
-      { STV090x_P2_CCIR0,      0x2c },
-      { STV090x_P2_CCIQUANT,   0xac },
-      { 0xf2c3             ,   0x00 },
-*/
-      { STV090x_P1_GAUSSR0,    0xac },
-      { STV090x_P1_CCIR0,      0x2c },
-      { STV090x_P1_CCIQUANT,   0xac },
-      { 0xf4c3             ,   0x00 },
+	      { STV090x_P1_LDT,        0xd0 },
+	      { STV090x_P1_LDT2,       0xb0 },
+	      { STV090x_P1_TMGCFG,     0xd3 },
+	      { STV090x_P1_TMGTHRISE,  0x20 },
+	      { STV090x_P1_TMGTHFALL,  0x00 },
+	      { STV090x_P2_SFRUPRATIO, 0xf0 },
+	      { STV090x_P2_SFRLOWRATIO,0x70 },
 
-/* new      { STV090x_P2_TSCFGL,     0x30 },*/
-      { STV090x_P1_TSCFGL,     0x30 },
+	      { STV090x_P1_FECSPY,     0x88 },
+	      { STV090x_P1_FSPYDATA,   0x3a },
+	      { STV090x_P1_FBERCPT4,   0x00 },
+	      { STV090x_P1_FSPYBER,    0x10 },
+
+	#if 0
+	      { STV090x_P1_TSCFGH,     0x40 },
+	#else
+	      { STV090x_P1_TSCFGH,     0x90 },
+	#endif
+	      { STV090x_P1_ERRCTRL1,   0x35 },
+	      { STV090x_P1_ERRCTRL2,   0xc1 },
+	      { STV090x_P1_CFRICFG,    0xf8 },
+	      { STV090x_P1_NOSCFG,     0x0c },
+	      { STV090x_P1_DMDTOM,     0x20 },
+	      { STV090x_P1_AGC2O,      0x5b },
+	      { STV090x_P1_AGC2REF,    0x38 },
+	      { STV090x_P1_CARCFG,     0xe4 },
+	      { STV090x_P1_ACLC,       0x1A },
+	      { STV090x_P1_BCLC,       0x09 },
+	      { 0xf43b           ,     0x00 },
+	      { 0xf43c           ,     0xc0 },
+	      { STV090x_P1_CARHDR,     0x20 },
+	      { STV090x_P1_TMGTHRISE,  0x20 },
+	      { STV090x_P1_KREFTMG,    0x87 },
+	      { STV090x_P1_TMGTHFALL,  0x00 },
+	      { STV090x_P1_SFRSTEP,    0x58 },
+	      { STV090x_P1_CAR2CFG,    0x26 },
+	      { STV090x_P1_BCLC2S2Q,   0x86 },
+	      { STV090x_P1_BCLC2S28,   0x86 },
+
+	      { STV090x_P1_DMDRESCFG,  0xa9 },
+	      { STV090x_P1_SMAPCOEF7,  0xfe },
+	      { STV090x_P1_SMAPCOEF6,  0x00 },
+	      { STV090x_P1_SMAPCOEF5,  0xff },
+	      { STV090x_P1_DMDCFG2,    0x3b },
+	      { STV090x_P1_MODCODLST0, 0xff },
+	      { STV090x_P1_MODCODLST1, 0xff },
+	      { STV090x_P1_MODCODLST2, 0xff },
+	      { STV090x_P1_MODCODLST3, 0xff },
+	      { STV090x_P1_MODCODLST4, 0xff },
+	      { STV090x_P1_MODCODLST5, 0xff },
+	      { STV090x_P1_MODCODLST6, 0xff },
+	      { STV090x_P1_MODCODLST7, 0xcc },
+	      { STV090x_P1_MODCODLST8, 0xcc },
+	      { STV090x_P1_MODCODLST9, 0xcc },
+	      { STV090x_P1_MODCODLSTA, 0xcc },
+	      { STV090x_P1_MODCODLSTB, 0xcc },
+	      { STV090x_P1_MODCODLSTC, 0xcc },
+	      { STV090x_P1_MODCODLSTD, 0xcc },
+	      { STV090x_P1_MODCODLSTE, 0xff },
+	      { STV090x_P1_MODCODLSTF, 0xff },
+	*/
+
+	{ STV090x_NBITERNOERR,   0x04 },
+	{ STV090x_GAINLLR_NF4,   0x0f },
+	{ STV090x_GAINLLR_NF5,   0x13 },
+	{ STV090x_GAINLLR_NF6,   0x15 },
+	{ STV090x_GAINLLR_NF7,   0x1a },
+	{ STV090x_GAINLLR_NF8,   0x1F },
+	{ STV090x_GAINLLR_NF9,   0x20 },
+	{ STV090x_GAINLLR_NF10,  0x26 },
+	{ STV090x_GAINLLR_NF11,  0x28 },
+	{ STV090x_GAINLLR_NF12,  0x0D },
+	{ STV090x_GAINLLR_NF13,  0x0F },
+	{ STV090x_GAINLLR_NF14,  0x13 },
+	{ STV090x_GAINLLR_NF15,  0x19 },
+	{ STV090x_GAINLLR_NF16,  0x20 },
+	{ STV090x_GAINLLR_NF17,  0x20 },
+	{ STV090x_NBITER_NF4,    0x38 },
+	{ STV090x_NBITER_NF5,    0x2C },
+	{ STV090x_NBITER_NF6,    0x3b },
+	{ STV090x_NBITER_NF7,    0x38 },
+
+	{ STV090x_NBITER_NF8,    0x36 },
+	{ STV090x_NBITER_NF9,    0x35 },
+
+	{ STV090x_NBITER_NF10,   0x41 },
+	{ STV090x_NBITER_NF11,   0x41 },
+	{ STV090x_NBITER_NF12,   0x1d },
+	{ STV090x_NBITER_NF13,   0x27 },
+	{ STV090x_NBITER_NF14,   0x25 },
+	{ STV090x_NBITER_NF15,   0x23 },
+	{ STV090x_NBITER_NF16,   0x2b },
+	{ STV090x_NBITER_NF17,   0x2b },
+
+	/* new
+	      { STV090x_P2_GAUSSR0,    0xac },
+	      { STV090x_P2_CCIR0,      0x2c },
+	      { STV090x_P2_CCIQUANT,   0xac },
+	      { 0xf2c3             ,   0x00 },
+	*/
+	{ STV090x_P1_GAUSSR0,    0xac },
+	{ STV090x_P1_CCIR0,      0x2c },
+	{ STV090x_P1_CCIQUANT,   0xac },
+	{ 0xf4c3             ,   0x00 },
+
+	/* new      { STV090x_P2_TSCFGL,     0x30 },*/
+	{ STV090x_P1_TSCFGL,     0x30 },
 };
 #else
 
-static struct stv090x_reg stx7111_initval[] = {
-/* demod2 */
-      { STV090x_OUTCFG,        0x00 },
-      { STV090x_AGCRF1CFG,     0x11 },
-      { STV090x_AGCRF2CFG,     0x13 },
-      { STV090x_TSGENERAL,     0x00 },
-      { STV090x_P2_DISTXCTL,   0x22 },
-      { STV090x_P2_F22TX,      0xc0 },
-      { STV090x_P2_F22RX,      0xc0 },
-      { STV090x_P2_DISRXCTL,   0x00 },
-      { STV090x_P2_TNRSTEPS,   0x87 },
-      { STV090x_P2_TNRGAIN,    0x09 },
-      { STV090x_P2_DMDCFGMD,   0xf9 },
-      { STV090x_P2_DEMOD,      0x0E },
-      { STV090x_P2_DMDCFG3,    0x48 },
-      { STV090x_P2_CARFREQ,    0x88 },
-      { STV090x_P2_TNRCFG2,    0x02 },
-      { STV090x_P2_TNRCFG3,    0x02 },
-      
-      { STV090x_P2_LDT,        0xd0 },
-      { STV090x_P2_LDT2,       0xb0 },
-      { STV090x_P2_TMGCFG,     0xd3 },
-      { STV090x_P2_TMGTHRISE,  0x20 },
-      { STV090x_P2_TMGTHFALL,  0x00 },
-      
-      { STV090x_P2_FECSPY,     0x88 },
-      { STV090x_P2_FSPYDATA,   0x3a },
-      { STV090x_P2_FBERCPT4,   0x00 },
-      { STV090x_P2_FSPYBER,    0x10 },
-      { STV090x_P2_TSCFGH,     0x40 },
-      { STV090x_P2_ERRCTRL1,   0x35 },
-      { STV090x_P2_ERRCTRL2,   0xc1 },
-      { STV090x_P2_CFRICFG,    0xf8 },
-      { STV090x_P2_NOSCFG,     0x0c },
-      { STV090x_P2_DMDTOM,     0x20 },
-      { STV090x_P2_AGC2O,      0x5b },
-      { STV090x_P2_AGC2REF,    0x38 },
-      { STV090x_P2_CARCFG,     0xe4 },
-      { STV090x_P2_ACLC,       0x1A },
-      { STV090x_P2_BCLC,       0x09 },
-      { 0xf43b           ,     0x00 },
-      { 0xf43c           ,     0xc0 },
-      { STV090x_P2_CARHDR,     0x20 },
+static struct stv090x_reg stx7111_initval[] =
+{
+	/* demod2 */
+	{ STV090x_OUTCFG,        0x00 },
+	{ STV090x_AGCRF1CFG,     0x11 },
+	{ STV090x_AGCRF2CFG,     0x13 },
+	{ STV090x_TSGENERAL,     0x00 },
+	{ STV090x_P2_DISTXCTL,   0x22 },
+	{ STV090x_P2_F22TX,      0xc0 },
+	{ STV090x_P2_F22RX,      0xc0 },
+	{ STV090x_P2_DISRXCTL,   0x00 },
+	{ STV090x_P2_TNRSTEPS,   0x87 },
+	{ STV090x_P2_TNRGAIN,    0x09 },
+	{ STV090x_P2_DMDCFGMD,   0xf9 },
+	{ STV090x_P2_DEMOD,      0x0E },
+	{ STV090x_P2_DMDCFG3,    0x48 },
+	{ STV090x_P2_CARFREQ,    0x88 },
+	{ STV090x_P2_TNRCFG2,    0x02 },
+	{ STV090x_P2_TNRCFG3,    0x02 },
+
+	{ STV090x_P2_LDT,        0xd0 },
+	{ STV090x_P2_LDT2,       0xb0 },
+	{ STV090x_P2_TMGCFG,     0xd3 },
+	{ STV090x_P2_TMGTHRISE,  0x20 },
+	{ STV090x_P2_TMGTHFALL,  0x00 },
+
+	{ STV090x_P2_FECSPY,     0x88 },
+	{ STV090x_P2_FSPYDATA,   0x3a },
+	{ STV090x_P2_FBERCPT4,   0x00 },
+	{ STV090x_P2_FSPYBER,    0x10 },
+	{ STV090x_P2_TSCFGH,     0x40 },
+	{ STV090x_P2_ERRCTRL1,   0x35 },
+	{ STV090x_P2_ERRCTRL2,   0xc1 },
+	{ STV090x_P2_CFRICFG,    0xf8 },
+	{ STV090x_P2_NOSCFG,     0x0c },
+	{ STV090x_P2_DMDTOM,     0x20 },
+	{ STV090x_P2_AGC2O,      0x5b },
+	{ STV090x_P2_AGC2REF,    0x38 },
+	{ STV090x_P2_CARCFG,     0xe4 },
+	{ STV090x_P2_ACLC,       0x1A },
+	{ STV090x_P2_BCLC,       0x09 },
+	{ 0xf43b           ,     0x00 },
+	{ 0xf43c           ,     0xc0 },
+	{ STV090x_P2_CARHDR,     0x20 },
 #if 0
-      { STV090x_P2_TMGTHRISE,  0x20 },
+	{ STV090x_P2_TMGTHRISE,  0x20 },
 #endif
-      { STV090x_P2_KREFTMG,    0x87 },
-      { STV090x_P2_SFRUPRATIO, 0xf0 },
-      { STV090x_P2_SFRLOWRATIO,0x70 },
-      
+	{ STV090x_P2_KREFTMG,    0x87 },
+	{ STV090x_P2_SFRUPRATIO, 0xf0 },
+	{ STV090x_P2_SFRLOWRATIO, 0x70 },
+
 #if 0
-      { STV090x_P2_TMGTHFALL,  0x00 },
+	{ STV090x_P2_TMGTHFALL,  0x00 },
 #endif
 
-      { STV090x_P2_SFRSTEP,    0x58 },
-      { STV090x_P2_CAR2CFG,    0x26 },
-#if 0      
-      { STV090x_P2_BCLC2S2Q,   0x86 },
-      { STV090x_P2_BCLC2S28,   0x86 },
+	{ STV090x_P2_SFRSTEP,    0x58 },
+	{ STV090x_P2_CAR2CFG,    0x26 },
+#if 0
+	{ STV090x_P2_BCLC2S2Q,   0x86 },
+	{ STV090x_P2_BCLC2S28,   0x86 },
 #else
-      { STV090x_P2_BCLC2S2Q,   0xa5 },
-      { STV090x_P2_BCLC2S28,   0xa5 },
+	{ STV090x_P2_BCLC2S2Q,   0xa5 },
+	{ STV090x_P2_BCLC2S28,   0xa5 },
 #endif
-      { STV090x_P2_DMDRESCFG,  0xa9 },
-      { STV090x_P2_SMAPCOEF7,  0xfe },
-      { STV090x_P2_SMAPCOEF6,  0x00 },
-      { STV090x_P2_SMAPCOEF5,  0xff },
-      { STV090x_P2_DMDCFG2,    0x3b },
-      { STV090x_P2_MODCODLST0, 0xff },
-      { STV090x_P2_MODCODLST1, 0xff },
-      { STV090x_P2_MODCODLST2, 0xff },
-      { STV090x_P2_MODCODLST3, 0xff },
-      { STV090x_P2_MODCODLST4, 0xff },
-      { STV090x_P2_MODCODLST5, 0xff },
-      { STV090x_P2_MODCODLST6, 0xff },
-      { STV090x_P2_MODCODLST7, 0xcc },
-      { STV090x_P2_MODCODLST8, 0xcc },
-      { STV090x_P2_MODCODLST9, 0xcc },
-      { STV090x_P2_MODCODLSTA, 0xcc },
-      { STV090x_P2_MODCODLSTB, 0xcc },
-      { STV090x_P2_MODCODLSTC, 0xcc },
-      { STV090x_P2_MODCODLSTD, 0xcc },
-      { STV090x_P2_MODCODLSTE, 0xff },
-      { STV090x_P2_MODCODLSTF, 0xff },
-/* demod1 */
-      { STV090x_P1_DISTXCTL,   0x22 },
-      { STV090x_P1_F22TX,      0xc0 },
-      { STV090x_P1_F22RX,      0xc0 },
-      { STV090x_P1_DISRXCTL,   0x00 },
-      
-      { STV090x_P1_TNRSTEPS,   0x87 },
-      { STV090x_P1_TNRGAIN,    0x09 },
-      { STV090x_P1_DMDCFGMD,   0xf9 },
-      { STV090x_P1_DEMOD,      0x0E },
-      { STV090x_P1_DMDCFG3,    0x48 },
-      { STV090x_P1_DMDTOM,     0x20 },
-      { STV090x_P1_CARFREQ,    0x88 },
-      { STV090x_P1_TNRCFG2,    0x02 },
-      { STV090x_P1_TNRCFG3,    0x02 },
-      
-      { STV090x_P1_LDT,        0xd0 },
-      { STV090x_P1_LDT2,       0xb0 },
-      { STV090x_P1_TMGCFG,     0xd3 },
-      { STV090x_P1_TMGTHRISE,  0x20 },
-      { STV090x_P1_TMGTHFALL,  0x00 },
-      { STV090x_P2_SFRUPRATIO, 0xf0 },
-      { STV090x_P2_SFRLOWRATIO,0x70 },
-      
-      { STV090x_P1_FECSPY,     0x88 },
-      { STV090x_P1_FSPYDATA,   0x3a },
-      { STV090x_P1_FBERCPT4,   0x00 },
-      { STV090x_P1_FSPYBER,    0x10 },
-      
+	{ STV090x_P2_DMDRESCFG,  0xa9 },
+	{ STV090x_P2_SMAPCOEF7,  0xfe },
+	{ STV090x_P2_SMAPCOEF6,  0x00 },
+	{ STV090x_P2_SMAPCOEF5,  0xff },
+	{ STV090x_P2_DMDCFG2,    0x3b },
+	{ STV090x_P2_MODCODLST0, 0xff },
+	{ STV090x_P2_MODCODLST1, 0xff },
+	{ STV090x_P2_MODCODLST2, 0xff },
+	{ STV090x_P2_MODCODLST3, 0xff },
+	{ STV090x_P2_MODCODLST4, 0xff },
+	{ STV090x_P2_MODCODLST5, 0xff },
+	{ STV090x_P2_MODCODLST6, 0xff },
+	{ STV090x_P2_MODCODLST7, 0xcc },
+	{ STV090x_P2_MODCODLST8, 0xcc },
+	{ STV090x_P2_MODCODLST9, 0xcc },
+	{ STV090x_P2_MODCODLSTA, 0xcc },
+	{ STV090x_P2_MODCODLSTB, 0xcc },
+	{ STV090x_P2_MODCODLSTC, 0xcc },
+	{ STV090x_P2_MODCODLSTD, 0xcc },
+	{ STV090x_P2_MODCODLSTE, 0xff },
+	{ STV090x_P2_MODCODLSTF, 0xff },
+	/* demod1 */
+	{ STV090x_P1_DISTXCTL,   0x22 },
+	{ STV090x_P1_F22TX,      0xc0 },
+	{ STV090x_P1_F22RX,      0xc0 },
+	{ STV090x_P1_DISRXCTL,   0x00 },
+
+	{ STV090x_P1_TNRSTEPS,   0x87 },
+	{ STV090x_P1_TNRGAIN,    0x09 },
+	{ STV090x_P1_DMDCFGMD,   0xf9 },
+	{ STV090x_P1_DEMOD,      0x0E },
+	{ STV090x_P1_DMDCFG3,    0x48 },
+	{ STV090x_P1_DMDTOM,     0x20 },
+	{ STV090x_P1_CARFREQ,    0x88 },
+	{ STV090x_P1_TNRCFG2,    0x02 },
+	{ STV090x_P1_TNRCFG3,    0x02 },
+
+	{ STV090x_P1_LDT,        0xd0 },
+	{ STV090x_P1_LDT2,       0xb0 },
+	{ STV090x_P1_TMGCFG,     0xd3 },
+	{ STV090x_P1_TMGTHRISE,  0x20 },
+	{ STV090x_P1_TMGTHFALL,  0x00 },
+	{ STV090x_P2_SFRUPRATIO, 0xf0 },
+	{ STV090x_P2_SFRLOWRATIO, 0x70 },
+
+	{ STV090x_P1_FECSPY,     0x88 },
+	{ STV090x_P1_FSPYDATA,   0x3a },
+	{ STV090x_P1_FBERCPT4,   0x00 },
+	{ STV090x_P1_FSPYBER,    0x10 },
+
 #if 0
-      { STV090x_P1_TSCFGH,     0x40 },
+	{ STV090x_P1_TSCFGH,     0x40 },
 #else
-      { STV090x_P1_TSCFGH,     0x90 },
+	{ STV090x_P1_TSCFGH,     0x90 },
 #endif
-      { STV090x_P1_ERRCTRL1,   0x35 },
-      { STV090x_P1_ERRCTRL2,   0xc1 },
-      { STV090x_P1_CFRICFG,    0xf8 },
-      { STV090x_P1_NOSCFG,     0x0c },
-      { STV090x_P1_DMDTOM,     0x20 },
-      { STV090x_P1_AGC2O,      0x5b },
-      { STV090x_P1_AGC2REF,    0x38 },
-      { STV090x_P1_CARCFG,     0xe4 },
-      { STV090x_P1_ACLC,       0x1A },
-      { STV090x_P1_BCLC,       0x09 },
-      { 0xf43b           ,     0x00 },
-      { 0xf43c           ,     0xc0 },
-      { STV090x_P1_CARHDR,     0x20 },
-      { STV090x_P1_TMGTHRISE,  0x20 },
-      { STV090x_P1_KREFTMG,    0x87 },
-      { STV090x_P1_TMGTHFALL,  0x00 },
-      { STV090x_P1_SFRSTEP,    0x58 },
-      { STV090x_P1_CAR2CFG,    0x26 },
-      { STV090x_P1_BCLC2S2Q,   0x86 },
-      { STV090x_P1_BCLC2S28,   0x86 },
+	{ STV090x_P1_ERRCTRL1,   0x35 },
+	{ STV090x_P1_ERRCTRL2,   0xc1 },
+	{ STV090x_P1_CFRICFG,    0xf8 },
+	{ STV090x_P1_NOSCFG,     0x0c },
+	{ STV090x_P1_DMDTOM,     0x20 },
+	{ STV090x_P1_AGC2O,      0x5b },
+	{ STV090x_P1_AGC2REF,    0x38 },
+	{ STV090x_P1_CARCFG,     0xe4 },
+	{ STV090x_P1_ACLC,       0x1A },
+	{ STV090x_P1_BCLC,       0x09 },
+	{ 0xf43b           ,     0x00 },
+	{ 0xf43c           ,     0xc0 },
+	{ STV090x_P1_CARHDR,     0x20 },
+	{ STV090x_P1_TMGTHRISE,  0x20 },
+	{ STV090x_P1_KREFTMG,    0x87 },
+	{ STV090x_P1_TMGTHFALL,  0x00 },
+	{ STV090x_P1_SFRSTEP,    0x58 },
+	{ STV090x_P1_CAR2CFG,    0x26 },
+	{ STV090x_P1_BCLC2S2Q,   0x86 },
+	{ STV090x_P1_BCLC2S28,   0x86 },
 
-      { STV090x_P1_DMDRESCFG,  0xa9 },
-      { STV090x_P1_SMAPCOEF7,  0xfe },
-      { STV090x_P1_SMAPCOEF6,  0x00 },
-      { STV090x_P1_SMAPCOEF5,  0xff },
-      { STV090x_P1_DMDCFG2,    0x3b },
-      { STV090x_P1_MODCODLST0, 0xff },
-      { STV090x_P1_MODCODLST1, 0xff },
-      { STV090x_P1_MODCODLST2, 0xff },
-      { STV090x_P1_MODCODLST3, 0xff },
-      { STV090x_P1_MODCODLST4, 0xff },
-      { STV090x_P1_MODCODLST5, 0xff },
-      { STV090x_P1_MODCODLST6, 0xff },
-      { STV090x_P1_MODCODLST7, 0xcc },
-      { STV090x_P1_MODCODLST8, 0xcc },
-      { STV090x_P1_MODCODLST9, 0xcc },
-      { STV090x_P1_MODCODLSTA, 0xcc },
-      { STV090x_P1_MODCODLSTB, 0xcc },
-      { STV090x_P1_MODCODLSTC, 0xcc },
-      { STV090x_P1_MODCODLSTD, 0xcc },
-      { STV090x_P1_MODCODLSTE, 0xff },
-      { STV090x_P1_MODCODLSTF, 0xff },
-      
-      { STV090x_NBITERNOERR,   0x04 },
-      { STV090x_GAINLLR_NF4,   0x0f },
-      { STV090x_GAINLLR_NF5,   0x13 },
-      { STV090x_GAINLLR_NF6,   0x15 },
-      { STV090x_GAINLLR_NF7,   0x1a },
-      { STV090x_GAINLLR_NF8,   0x1F },
-      { STV090x_GAINLLR_NF9,   0x20 },
-      { STV090x_GAINLLR_NF10,  0x26 },
-      { STV090x_GAINLLR_NF11,  0x28 },
-      { STV090x_GAINLLR_NF12,  0x0D },
-      { STV090x_GAINLLR_NF13,  0x0F },
-      { STV090x_GAINLLR_NF14,  0x13 },
-      { STV090x_GAINLLR_NF15,  0x19 },
-      { STV090x_GAINLLR_NF16,  0x20 },
-      { STV090x_GAINLLR_NF17,  0x20 },
-      { STV090x_NBITER_NF4,    0x38 },
-      { STV090x_NBITER_NF5,    0x2C },
-      { STV090x_NBITER_NF6,    0x3b },
-      { STV090x_NBITER_NF7,    0x38 },
-      { STV090x_NBITER_NF8,    0x36 },
-      { STV090x_NBITER_NF9,    0x35 },
-      
-      { STV090x_NBITER_NF10,   0x41 },
-      { STV090x_NBITER_NF11,   0x41 },
-      { STV090x_NBITER_NF12,   0x1d },
-      { STV090x_NBITER_NF13,   0x27 },
-      { STV090x_NBITER_NF14,   0x25 },
-      { STV090x_NBITER_NF15,   0x23 },
-      { STV090x_NBITER_NF16,   0x2b },
-      { STV090x_NBITER_NF17,   0x2b },
-      
-      { STV090x_P2_GAUSSR0,    0xac },
-      { STV090x_P2_CCIR0,      0x2c },
-      { STV090x_P2_CCIQUANT,   0xac },
-      { 0xf2c3             ,   0x00 },
+	{ STV090x_P1_DMDRESCFG,  0xa9 },
+	{ STV090x_P1_SMAPCOEF7,  0xfe },
+	{ STV090x_P1_SMAPCOEF6,  0x00 },
+	{ STV090x_P1_SMAPCOEF5,  0xff },
+	{ STV090x_P1_DMDCFG2,    0x3b },
+	{ STV090x_P1_MODCODLST0, 0xff },
+	{ STV090x_P1_MODCODLST1, 0xff },
+	{ STV090x_P1_MODCODLST2, 0xff },
+	{ STV090x_P1_MODCODLST3, 0xff },
+	{ STV090x_P1_MODCODLST4, 0xff },
+	{ STV090x_P1_MODCODLST5, 0xff },
+	{ STV090x_P1_MODCODLST6, 0xff },
+	{ STV090x_P1_MODCODLST7, 0xcc },
+	{ STV090x_P1_MODCODLST8, 0xcc },
+	{ STV090x_P1_MODCODLST9, 0xcc },
+	{ STV090x_P1_MODCODLSTA, 0xcc },
+	{ STV090x_P1_MODCODLSTB, 0xcc },
+	{ STV090x_P1_MODCODLSTC, 0xcc },
+	{ STV090x_P1_MODCODLSTD, 0xcc },
+	{ STV090x_P1_MODCODLSTE, 0xff },
+	{ STV090x_P1_MODCODLSTF, 0xff },
 
-      { STV090x_P1_GAUSSR0,    0xac },
-      { STV090x_P1_CCIR0,      0x2c },
-      { STV090x_P1_CCIQUANT,   0xac },
-      { 0xf4c3             ,   0x00 },
+	{ STV090x_NBITERNOERR,   0x04 },
+	{ STV090x_GAINLLR_NF4,   0x0f },
+	{ STV090x_GAINLLR_NF5,   0x13 },
+	{ STV090x_GAINLLR_NF6,   0x15 },
+	{ STV090x_GAINLLR_NF7,   0x1a },
+	{ STV090x_GAINLLR_NF8,   0x1F },
+	{ STV090x_GAINLLR_NF9,   0x20 },
+	{ STV090x_GAINLLR_NF10,  0x26 },
+	{ STV090x_GAINLLR_NF11,  0x28 },
+	{ STV090x_GAINLLR_NF12,  0x0D },
+	{ STV090x_GAINLLR_NF13,  0x0F },
+	{ STV090x_GAINLLR_NF14,  0x13 },
+	{ STV090x_GAINLLR_NF15,  0x19 },
+	{ STV090x_GAINLLR_NF16,  0x20 },
+	{ STV090x_GAINLLR_NF17,  0x20 },
+	{ STV090x_NBITER_NF4,    0x38 },
+	{ STV090x_NBITER_NF5,    0x2C },
+	{ STV090x_NBITER_NF6,    0x3b },
+	{ STV090x_NBITER_NF7,    0x38 },
+	{ STV090x_NBITER_NF8,    0x36 },
+	{ STV090x_NBITER_NF9,    0x35 },
 
-      { STV090x_P2_TSCFGL,     0x30 },
-      { STV090x_P1_TSCFGL,     0x30 },
+	{ STV090x_NBITER_NF10,   0x41 },
+	{ STV090x_NBITER_NF11,   0x41 },
+	{ STV090x_NBITER_NF12,   0x1d },
+	{ STV090x_NBITER_NF13,   0x27 },
+	{ STV090x_NBITER_NF14,   0x25 },
+	{ STV090x_NBITER_NF15,   0x23 },
+	{ STV090x_NBITER_NF16,   0x2b },
+	{ STV090x_NBITER_NF17,   0x2b },
+
+	{ STV090x_P2_GAUSSR0,    0xac },
+	{ STV090x_P2_CCIR0,      0x2c },
+	{ STV090x_P2_CCIQUANT,   0xac },
+	{ 0xf2c3             ,   0x00 },
+
+	{ STV090x_P1_GAUSSR0,    0xac },
+	{ STV090x_P1_CCIR0,      0x2c },
+	{ STV090x_P1_CCIQUANT,   0xac },
+	{ 0xf4c3             ,   0x00 },
+
+	{ STV090x_P2_TSCFGL,     0x30 },
+	{ STV090x_P1_TSCFGL,     0x30 },
 };
 #endif
 
 
-static struct stv090x_reg stv0903_initval[] = {
+static struct stv090x_reg stv0903_initval[] =
+{
 	{ STV090x_OUTCFG,		0x00 },
 	{ STV090x_AGCRF1CFG,		0x11 },
 	{ STV090x_STOPCLK1,		0x48 },
@@ -1523,17 +1531,17 @@ static struct stv090x_reg stv0903_initval[] = {
 	{ STV090x_P1_F22TX,		0xc0 },
 	{ STV090x_P1_F22RX,		0xc0 },
 	{ STV090x_P1_DISRXCTL,		0x00 },
-/* __TDT__*/
+	/* __TDT__*/
 	{ STV090x_P1_TNRSTEPS,		0x87 },
 	{ STV090x_P1_TNRGAIN,		0x09 },
 
-/* TDT	{ STV090x_P1_DMDCFGMD,		0xF9 },*/
+	/* TDT	{ STV090x_P1_DMDCFGMD,		0xF9 },*/
 	{ STV090x_P1_DMDCFGMD,		0xc9 },
 	{ STV090x_P1_DEMOD,		0x08 },
 	{ STV090x_P1_DMDCFG3,		0xc4 },
 	{ STV090x_P1_CARFREQ,		0xed },
 	{ STV090x_P1_TNRCFG2,		0x82 },
-/* __TDT__ */
+	/* __TDT__ */
 	{ STV090x_P1_TNRCFG3,		0x03 },
 
 	{ STV090x_P1_LDT,		0xd0 },
@@ -1622,7 +1630,8 @@ static struct stv090x_reg stv0903_initval[] = {
 	{ STV090x_P1_PRVIT,		0x2f }  /*disable puncture rate 6/7*/
 };
 
-static struct stv090x_reg stv0900_cut20_val[] = {
+static struct stv090x_reg stv0900_cut20_val[] =
+{
 
 	{ STV090x_P2_DMDCFG3,		0xe8 },
 	{ STV090x_P2_DMDCFG4,		0x10 },
@@ -1658,7 +1667,8 @@ static struct stv090x_reg stv0900_cut20_val[] = {
 	{ STV090x_GAINLLR_NF17,		0x21 },
 };
 
-static struct stv090x_reg stv0903_cut20_val[] = {
+static struct stv090x_reg stv0903_cut20_val[] =
+{
 	{ STV090x_P1_DMDCFG3,		0xe8 },
 	{ STV090x_P1_DMDCFG4,		0x10 },
 	{ STV090x_P1_CARFREQ,		0x38 },
@@ -1685,7 +1695,8 @@ static struct stv090x_reg stv0903_cut20_val[] = {
 };
 
 /* Cut 2.0 Long Frame Tracking CR loop */
-static struct stv090x_long_frame_crloop stv090x_s2_crl_cut20[] = {
+static struct stv090x_long_frame_crloop stv090x_s2_crl_cut20[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_QPSK_12,  0x1f, 0x3f, 0x1e, 0x3f, 0x3d, 0x1f, 0x3d, 0x3e, 0x3d, 0x1e },
 	{ STV090x_QPSK_35,  0x2f, 0x3f, 0x2e, 0x2f, 0x3d, 0x0f, 0x0e, 0x2e, 0x3d, 0x0e },
@@ -1704,7 +1715,8 @@ static struct stv090x_long_frame_crloop stv090x_s2_crl_cut20[] = {
 };
 
 /* Cut 2.0 Long Frame Tracking CR loop */
-static struct stv090x_long_frame_crloop stx7111_s2_crl_cut20[] = {
+static struct stv090x_long_frame_crloop stx7111_s2_crl_cut20[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{STV090x_QPSK_12,  0x1c, 0x3c, 0x1b, 0x3c, 0x3a, 0x1c, 0x0b, 0x1c, 0x0b, 0x3b},
 	{STV090x_QPSK_35,  0x2c, 0x3c, 0x2b, 0x2c, 0x3a, 0x0c, 0x0b, 0x1c, 0x0b, 0x3b},
@@ -1723,7 +1735,8 @@ static struct stv090x_long_frame_crloop stx7111_s2_crl_cut20[] = {
 };
 
 /* Cut 3.0 Long Frame Tracking CR loop */
-static	struct stv090x_long_frame_crloop stv090x_s2_crl_cut30[] = {
+static	struct stv090x_long_frame_crloop stv090x_s2_crl_cut30[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_QPSK_12,  0x3c, 0x2c, 0x0c, 0x2c, 0x1b, 0x2c, 0x1b, 0x1c, 0x0b, 0x3b },
 	{ STV090x_QPSK_35,  0x0d, 0x0d, 0x0c, 0x0d, 0x1b, 0x3c, 0x1b, 0x1c, 0x0b, 0x3b },
@@ -1742,7 +1755,8 @@ static	struct stv090x_long_frame_crloop stv090x_s2_crl_cut30[] = {
 };
 
 /* Cut 2.0 Long Frame Tracking CR Loop */
-static struct stv090x_long_frame_crloop stv090x_s2_apsk_crl_cut20[] = {
+static struct stv090x_long_frame_crloop stv090x_s2_apsk_crl_cut20[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_16APSK_23,  0x0c, 0x0c, 0x0c, 0x0c, 0x1d, 0x0c, 0x3c, 0x0c, 0x2c, 0x0c },
 	{ STV090x_16APSK_34,  0x0c, 0x0c, 0x0c, 0x0c, 0x0e, 0x0c, 0x2d, 0x0c, 0x1d, 0x0c },
@@ -1758,7 +1772,8 @@ static struct stv090x_long_frame_crloop stv090x_s2_apsk_crl_cut20[] = {
 };
 
 /* Cut 3.0 Long Frame Tracking CR Loop */
-static struct stv090x_long_frame_crloop	stv090x_s2_apsk_crl_cut30[] = {
+static struct stv090x_long_frame_crloop	stv090x_s2_apsk_crl_cut30[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_16APSK_23,  0x0a, 0x0a, 0x0a, 0x0a, 0x1a, 0x0a, 0x3a, 0x0a, 0x2a, 0x0a },
 	{ STV090x_16APSK_34,  0x0a, 0x0a, 0x0a, 0x0a, 0x0b, 0x0a, 0x3b, 0x0a, 0x1b, 0x0a },
@@ -1773,14 +1788,16 @@ static struct stv090x_long_frame_crloop	stv090x_s2_apsk_crl_cut30[] = {
 	{ STV090x_32APSK_910, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a, 0x0a }
 };
 
-static struct stv090x_long_frame_crloop stv090x_s2_lowqpsk_crl_cut20[] = {
+static struct stv090x_long_frame_crloop stv090x_s2_lowqpsk_crl_cut20[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_QPSK_14,  0x0f, 0x3f, 0x0e, 0x3f, 0x2d, 0x2f, 0x2d, 0x1f, 0x3d, 0x3e },
 	{ STV090x_QPSK_13,  0x0f, 0x3f, 0x0e, 0x3f, 0x2d, 0x2f, 0x3d, 0x0f, 0x3d, 0x2e },
 	{ STV090x_QPSK_25,  0x1f, 0x3f, 0x1e, 0x3f, 0x3d, 0x1f, 0x3d, 0x3e, 0x3d, 0x2e }
 };
 
-static struct stv090x_long_frame_crloop	stv090x_s2_lowqpsk_crl_cut30[] = {
+static struct stv090x_long_frame_crloop	stv090x_s2_lowqpsk_crl_cut30[] =
+{
 	/* MODCOD  2MPon 2MPoff 5MPon 5MPoff 10MPon 10MPoff 20MPon 20MPoff 30MPon 30MPoff */
 	{ STV090x_QPSK_14,  0x0c, 0x3c, 0x0b, 0x3c, 0x2a, 0x2c, 0x2a, 0x1c, 0x3a, 0x3b },
 	{ STV090x_QPSK_13,  0x0c, 0x3c, 0x0b, 0x3c, 0x2a, 0x2c, 0x3a, 0x0c, 0x3a, 0x2b },
@@ -1788,7 +1805,8 @@ static struct stv090x_long_frame_crloop	stv090x_s2_lowqpsk_crl_cut30[] = {
 };
 
 /* Cut 2.0 Short Frame Tracking CR Loop */
-static struct stv090x_short_frame_crloop stv090x_s2_short_crl_cut20[] = {
+static struct stv090x_short_frame_crloop stv090x_s2_short_crl_cut20[] =
+{
 	/* MODCOD	  2M    5M    10M   20M   30M */
 	{ STV090x_QPSK,   0x2f, 0x2e, 0x0e, 0x0e, 0x3d },
 	{ STV090x_8PSK,   0x3e, 0x0e, 0x2d, 0x0d, 0x3c },
@@ -1797,7 +1815,8 @@ static struct stv090x_short_frame_crloop stv090x_s2_short_crl_cut20[] = {
 };
 
 /* Cut 3.0 Short Frame Tracking CR Loop */
-static struct stv090x_short_frame_crloop stv090x_s2_short_crl_cut30[] = {
+static struct stv090x_short_frame_crloop stv090x_s2_short_crl_cut30[] =
+{
 	/* MODCOD  	  2M    5M    10M   20M   30M */
 	{ STV090x_QPSK,   0x2C, 0x2B, 0x0B, 0x0B, 0x3A },
 	{ STV090x_8PSK,   0x3B, 0x0B, 0x2A, 0x0A, 0x39 },
@@ -1820,23 +1839,24 @@ static int stv090x_read_reg(struct stv090x_state *state, unsigned int reg)
 
 	u8 b0[] = { reg >> 8, reg & 0xff };
 	u8 buf;
-	struct i2c_msg msg[] = {
+	struct i2c_msg msg[] =
+	{
 		{ .addr	= config->address, .flags = 0,        .buf = b0,   .len = 2 },
 		{ .addr	= config->address, .flags = I2C_M_RD, .buf = &buf, .len = 1 }
 	};
 
-	dprintk(150, "stv090x_read_reg config->address=0x%x \n",config->address);
+	dprintk(150, "stv090x_read_reg config->address=0x%x \n", config->address);
 
 	ret = i2c_transfer(state->i2c, msg, 2);
 	if (ret != 2)
 	{
 		if (ret != -ERESTARTSYS)
-			printk(	"Read error, Reg=[0x%02x], Status=%d\n",reg, ret);
+			printk("Read error, Reg=[0x%02x], Status=%d\n", reg, ret);
 
 		return ret < 0 ? ret : -EREMOTEIO;
 	}
 
-	dprintk(200, "%s: reg=0x%02x , result=0x%02x\n",__func__, reg, buf);
+	dprintk(200, "%s: reg=0x%02x , result=0x%02x\n", __func__, reg, buf);
 	return (unsigned int) buf;
 }
 
@@ -1855,7 +1875,7 @@ static int stv090x_write_regs(struct stv090x_state *state, unsigned int reg, u8 
 		int i;
 
 		dprintk(150, "%s [reg = 0x%04x, count = %d]:", __func__, reg, count);
-		dprintk(150, "%s 0x%02x, 0x%02x", __func__, (reg >> 8) & 0xff, reg & 0xff );
+		dprintk(150, "%s 0x%02x, 0x%02x", __func__, (reg >> 8) & 0xff, reg & 0xff);
 		for (i = 0; i < count; i++)
 		{
 			dprintk(150, " 0x%02x", data[i]);
@@ -1966,15 +1986,15 @@ static void stv090x_get_lock_tmg(struct stv090x_state *state)
 			}
 			else if (state->srate <= 10000000)
 			{
-			/*5Msps < SR <= 10Msps */
-			state->DemodTimeout = 700;
-			state->FecTimeout = 250;
+				/*5Msps < SR <= 10Msps */
+				state->DemodTimeout = 700;
+				state->FecTimeout = 250;
 			}
 			else if (state->srate <= 20000000)
 			{
-			/*10Msps < SR <= 20Msps */
-			state->DemodTimeout = 400;
-			state->FecTimeout = 130;
+				/*10Msps < SR <= 20Msps */
+				state->DemodTimeout = 400;
+				state->FecTimeout = 130;
 			}
 			else
 			{
@@ -2035,11 +2055,12 @@ static int stv090x_set_max_srate(struct stv090x_state *state, u32 clk, u32 srate
 	srate = 105 * (srate / 100);
 	if (srate > 60000000)
 	{
-			sym  = (srate << 4); /* SR * 2^16 / master_clk */
+		sym  = (srate << 4); /* SR * 2^16 / master_clk */
 		sym /= (state->mclk >> 12);
-	} else if (srate > 6000000)
+	}
+	else if (srate > 6000000)
 	{
-			sym  = (srate << 6);
+		sym  = (srate << 6);
 		sym /= (state->mclk >> 10);
 	}
 	else
@@ -2084,7 +2105,7 @@ static int stv090x_set_min_srate(struct stv090x_state *state, u32 clk, u32 srate
 	}
 	else if (srate > 6000000)
 	{
-			sym  = (srate << 6);
+		sym  = (srate << 6);
 		sym /= (state->mclk >> 10);
 	}
 	else
@@ -2194,9 +2215,9 @@ static int stv090x_set_viterbi(struct stv090x_state *state)
 			else
 			{
 				if (STV090x_WRITE_DEMOD(state, FECM, 0x10) < 0) /* DVB-S and DVB-S2 */
-				goto err;
+					goto err;
 				if (STV090x_WRITE_DEMOD(state, PRVIT, 0x3f) < 0) /* all puncture rate */
-				goto err;
+					goto err;
 			}
 			break;
 		}
@@ -2262,13 +2283,13 @@ static int stv090x_set_viterbi(struct stv090x_state *state)
 					if (STV090x_WRITE_DEMOD(state, PRVIT, 0x02) < 0)
 						goto err;
 					break;
-				}	
+				}
 				case STV090x_PR67:
 				{
 					if (STV090x_WRITE_DEMOD(state, PRVIT, 0x10) < 0)
 						goto err;
 					break;
-				}	
+				}
 				default:
 				{
 					if (STV090x_WRITE_DEMOD(state, PRVIT, 0x13) < 0) /* 1/2, 2/3, 6/7 */
@@ -2865,8 +2886,8 @@ static int stv090x_start_search(struct stv090x_state *state)
 			goto err;
 
 		if ((state->search_mode == STV090x_SEARCH_DVBS1)
-		|| (state->search_mode == STV090x_SEARCH_DSS)
-		|| (state->search_mode == STV090x_SEARCH_AUTO))
+				|| (state->search_mode == STV090x_SEARCH_DSS)
+				|| (state->search_mode == STV090x_SEARCH_AUTO))
 		{
 			if (STV090x_WRITE_DEMOD(state, VITSCALE, 0x82) < 0)
 				goto err;
@@ -2904,9 +2925,9 @@ static int stv090x_start_search(struct stv090x_state *state)
 		/*Frequency offset detector setting*/
 		if (state->srate < 2000000)
 		{
-/* konfetti comment: hmmmmmmmmmm the above if clause checks for
- * >= 0x20 and here we check against <= ... interesting ;)
- */
+			/* konfetti comment: hmmmmmmmmmm the above if clause checks for
+			 * >= 0x20 and here we check against <= ... interesting ;)
+			 */
 			if (state->dev_ver <= 0x20) //only true if exactly 20...
 			{
 				/* Cut 2 */
@@ -3216,7 +3237,7 @@ static u32 stv090x_srate_srch_coarse(struct stv090x_state *state)
 		cur_step++;
 		dir *= -1;
 		if ((tmg_cpt >= 5) && (agc2 < agc2th)
-		&& (srate_coarse < 50000000) && (srate_coarse > 850000))
+				&& (srate_coarse < 50000000) && (srate_coarse > 850000))
 		{
 			tmg_lock = 1;
 		}
@@ -3487,7 +3508,7 @@ static int stv090x_blind_search(struct stv090x_state *state)
 				{
 					stv090x_get_lock_tmg(state);
 					lock = stv090x_get_dmdlock(state,
-							state->DemodTimeout);
+								   state->DemodTimeout);
 				}
 				else
 				{
@@ -3507,7 +3528,7 @@ static int stv090x_blind_search(struct stv090x_state *state)
 					}
 					reg = STV090x_READ_DEMOD(state, DSTATUS2);
 					if ((STV090x_GETFIELD_Px(reg, CFR_OVERFLOW_FIELD) == 0x01)
-					&& (STV090x_GETFIELD_Px(reg, DEMOD_DELOCK_FIELD) == 0x01))
+							&& (STV090x_GETFIELD_Px(reg, DEMOD_DELOCK_FIELD) == 0x01))
 					{
 						cpt_fail++;
 					}
@@ -3716,7 +3737,7 @@ static int stv090x_get_coldlock(struct stv090x_state *state, s32 timeout_dmd)
 					}
 					STV090x_WRITE_DEMOD(state, DMDISTATE, 0x1c);
 
-/* FIXME: not sure here! is it also for dvbs1? */
+					/* FIXME: not sure here! is it also for dvbs1? */
 					if (state->search_mode != STV090x_SEARCH_DSS)
 					{
 						reg = STV090x_READ_DEMOD(state, DMDCFGMD);
@@ -3935,7 +3956,7 @@ static int stv090x_search_car_loop(struct stv090x_state *state, s32 inc, s32 tim
 	reg = STV090x_READ_DEMOD(state, PDELCTRL1);
 	STV090x_SETFIELD_Px(reg, ALGOSWRST_FIELD, 0);
 	if (STV090x_WRITE_DEMOD(state, PDELCTRL1, reg) < 0)
-			goto err;
+		goto err;
 
 	dprintk(10, "%s <\n", __func__);
 	return lock;
@@ -4313,16 +4334,16 @@ static u8 stv090x_optimize_carloop(struct stv090x_state *state, enum stv090x_mod
 
 	dprintk(10, "%s >\n", __func__);
 
-/* FIXME: we should warn in other cut cases if device is stx7111 because values
- * are unknown
- */
+	/* FIXME: we should warn in other cut cases if device is stx7111 because values
+	 * are unknown
+	 */
 	if ((state->dev_ver == 0x20) && (state->device == STX7111))
 	{
 		printk("%s STX7111 cut 0x20 handling (modcod %d, pilots %d)\n", __func__, modcod, pilots);
 		car_loop          = stx7111_s2_crl_cut20;
 #warning stv090x: fixme fixme do not know lowqpsk crl
 		car_loop_qpsk_low = stv090x_s2_lowqpsk_crl_cut20;
-/* FIXME: do not know apsk values */
+		/* FIXME: do not know apsk values */
 		car_loop_apsk_low = stv090x_s2_apsk_crl_cut20;
 	}
 	else if (state->dev_ver == 0x20)
@@ -4775,8 +4796,8 @@ static int stv090x_optimize_track(struct stv090x_state *state)
 	if (state->dev_ver >= 0x20)
 	{
 		if ((state->search_mode == STV090x_SEARCH_DVBS1)
-		|| (state->search_mode == STV090x_SEARCH_DSS)
-		|| (state->search_mode == STV090x_SEARCH_AUTO))
+				|| (state->search_mode == STV090x_SEARCH_DSS)
+				|| (state->search_mode == STV090x_SEARCH_AUTO))
 		{
 			if (STV090x_WRITE_DEMOD(state, VAVSRVIT, 0x0a) < 0)
 				goto err;
@@ -4857,8 +4878,8 @@ static int stv090x_optimize_track(struct stv090x_state *state)
 			goto err;
 	}
 	if ((state->delsys == STV090x_DVBS1)
-	|| (state->delsys == STV090x_DSS)
-	|| state->device == STX7111)
+			|| (state->delsys == STV090x_DSS)
+			|| state->device == STX7111)
 	{
 		stv090x_set_vit_thtracq(state);
 	}
@@ -4884,24 +4905,24 @@ static int stv090x_get_feclock(struct stv090x_state *state, s32 timeout)
 
 		switch (stat)
 		{
-		case 0: /* searching */
-		case 1: /* first PLH detected */
-		default:
-			lock = 0;
-			dprintk(20, "%s searching, plh detected or default\n", __func__);
-			break;
+			case 0: /* searching */
+			case 1: /* first PLH detected */
+			default:
+				lock = 0;
+				dprintk(20, "%s searching, plh detected or default\n", __func__);
+				break;
 
-		case 2: /* DVB-S2 mode */
-			reg = STV090x_READ_DEMOD(state, PDELSTATUS1);
-			lock = STV090x_GETFIELD_Px(reg, PKTDELIN_LOCK_FIELD);
-			dprintk(20, "%s dvb-s2 mode: reg = 0x%x, lock = %d\n", __func__, reg, lock);
-			break;
+			case 2: /* DVB-S2 mode */
+				reg = STV090x_READ_DEMOD(state, PDELSTATUS1);
+				lock = STV090x_GETFIELD_Px(reg, PKTDELIN_LOCK_FIELD);
+				dprintk(20, "%s dvb-s2 mode: reg = 0x%x, lock = %d\n", __func__, reg, lock);
+				break;
 
-		case 3: /* DVB-S1/legacy mode */
-			reg = STV090x_READ_DEMOD(state, VSTATUSVIT);
-			lock = STV090x_GETFIELD_Px(reg, LOCKEDVIT_FIELD);
-			dprintk(20, "%s dvb-s1 mode: reg = 0x%x, lock = %d\n", __func__, reg, lock);
-			break;
+			case 3: /* DVB-S1/legacy mode */
+				reg = STV090x_READ_DEMOD(state, VSTATUSVIT);
+				lock = STV090x_GETFIELD_Px(reg, LOCKEDVIT_FIELD);
+				dprintk(20, "%s dvb-s1 mode: reg = 0x%x, lock = %d\n", __func__, reg, lock);
+				break;
 		}
 		if (!lock)
 		{
@@ -5441,13 +5462,13 @@ static enum dvbfe_search stv090x_search(struct dvb_frontend *fe, struct dvbfe_pa
 	enum stv090x_signal_state algo_state;
 
 	dprintk(10, "%s: freq %d, symbol %d, inversion %d, rolloff %d, modulation %d, fec %d, delsys %d\n", __func__,
-	        p->frequency, p->delsys.dvbs.symbol_rate, p->inversion, p->delsys.dvbs.rolloff,
-	        p->delsys.dvbs.modulation, p->delsys.dvbs.fec,
-	        p->delivery);
+		p->frequency, p->delsys.dvbs.symbol_rate, p->inversion, p->delsys.dvbs.rolloff,
+		p->delsys.dvbs.modulation, p->delsys.dvbs.fec,
+		p->delivery);
 
 	if ((p->frequency == 0) && (p->delsys.dvbs.symbol_rate == 0) && (p->inversion == 0)
-	&& (p->delsys.dvbs.rolloff == 0) && (p->delsys.dvbs.modulation == 0)
-	&& (p->delsys.dvbs.fec == 0) && (p->delivery == 0))
+			&& (p->delsys.dvbs.rolloff == 0) && (p->delsys.dvbs.modulation == 0)
+			&& (p->delsys.dvbs.fec == 0) && (p->delivery == 0))
 	{
 		printk("[stv090x] %s exit: -EINVAL\n", __func__);
 		return DVBFE_ALGO_SEARCH_FAILED;
@@ -5558,7 +5579,7 @@ static int stv090x_read_status(struct dvb_frontend *fe, enum fe_status *status)
 		case 1: /* first PLH detected */
 		default:
 		{
-		dprintk(50, "Status: Unlocked (Searching...)\n");
+			dprintk(50, "Status: Unlocked (Searching...)\n");
 			*status = 0;
 			break;
 		}
@@ -5575,10 +5596,10 @@ static int stv090x_read_status(struct dvb_frontend *fe, enum fe_status *status)
 					if (STV090x_GETFIELD_Px(reg, TSFIFO_LINEOK_FIELD))
 					{
 						*status = FE_HAS_SIGNAL
-						        | FE_HAS_CARRIER
-						        | FE_HAS_VITERBI
-						        | FE_HAS_SYNC
-						        | FE_HAS_LOCK;
+							  | FE_HAS_CARRIER
+							  | FE_HAS_VITERBI
+							  | FE_HAS_SYNC
+							  | FE_HAS_LOCK;
 					}
 				}
 			}
@@ -5597,9 +5618,9 @@ static int stv090x_read_status(struct dvb_frontend *fe, enum fe_status *status)
 					if (STV090x_GETFIELD_Px(reg, TSFIFO_LINEOK_FIELD))
 					{
 						*status = FE_HAS_SIGNAL
-						        | FE_HAS_CARRIER						        | FE_HAS_VITERBI
-						        | FE_HAS_SYNC
-						        | FE_HAS_LOCK;
+							  | FE_HAS_CARRIER						        | FE_HAS_VITERBI
+							  | FE_HAS_SYNC
+							  | FE_HAS_LOCK;
 					}
 				}
 			}
@@ -5679,13 +5700,13 @@ static int stv090x_table_lookup(const struct stv090x_tab *tab, int max, int val)
 	int min = 0, med;
 
 	if ((val >= tab[min].read && val < tab[max].read)
-	|| (val >= tab[max].read && val < tab[min].read))
+			|| (val >= tab[max].read && val < tab[min].read))
 	{
 		while ((max - min) > 1)
 		{
 			med = (max + min) / 2;
 			if ((val >= tab[min].read && val < tab[med].read)
-			|| (val >= tab[med].read && val < tab[min].read))
+					|| (val >= tab[med].read && val < tab[min].read))
 			{
 				max = med;
 			}
@@ -5739,7 +5760,7 @@ static int stv090x_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
 	dprintk(50, "agc = 0x%04x\n", agc);
 
 	str = stv090x_table_lookup(stv090x_rf_tab,
-		ARRAY_SIZE(stv090x_rf_tab) - 1, agc);
+				   ARRAY_SIZE(stv090x_rf_tab) - 1, agc);
 	if (agc > stv090x_rf_tab[0].read)
 		str = 0;
 	else if (agc < stv090x_rf_tab[ARRAY_SIZE(stv090x_rf_tab) - 1].read)
@@ -6154,7 +6175,7 @@ static int stv090x_ldpc_mode(struct stv090x_state *state, enum stv090x_mode ldpc
 			STV090x_SETFIELD(reg, FRESFEC_FIELD, 0x0);
 			if (stv090x_write_reg(state, STV090x_TSTRES0, reg) < 0)
 				goto err;
-	
+
 			reg = STV090x_READ_DEMOD(state, PDELCTRL1);
 			STV090x_SETFIELD_Px(reg, ALGOSWRST_FIELD, 0x01);
 			if (STV090x_WRITE_DEMOD(state, PDELCTRL1, reg) < 0)
@@ -6273,7 +6294,7 @@ static int stv090x_set_mclk(struct stv090x_state *state, u32 mclk, u32 clk)
 			goto err;
 		if (STV090x_WRITE_DEMOD(state, F22RX, div) < 0)
 			goto err;
-			}
+	}
 	dprintk(10, "%s <\n", __func__);
 	return 0;
 err:
@@ -6666,9 +6687,9 @@ static int stv090x_init(struct dvb_frontend *fe)
 	}
 
 #if defined(UFS912)
-	writereg_lnb_supply (state, 0xc8);
+	writereg_lnb_supply(state, 0xc8);
 	msleep(1);
-	writereg_lnb_supply (state, 0xe8);
+	writereg_lnb_supply(state, 0xe8);
 #endif
 
 	if (stv090x_set_tspath(state) < 0)
@@ -6830,15 +6851,16 @@ err:
 
 #if DVB_API_VERSION < 5
 
-static struct dvbfe_info dvbs_info = {
+static struct dvbfe_info dvbs_info =
+{
 	.name = "STV090x Multistandard",
 	.delivery = DVBFE_DELSYS_DVBS,
 	.delsys = {
 		.dvbs.modulation = DVBFE_MOD_QPSK,
 		.dvbs.fec = DVBFE_FEC_1_2 | DVBFE_FEC_2_3
-		          | DVBFE_FEC_3_4 | DVBFE_FEC_4_5
-		          | DVBFE_FEC_5_6 | DVBFE_FEC_6_7
-		          | DVBFE_FEC_7_8 | DVBFE_FEC_AUTO
+		| DVBFE_FEC_3_4 | DVBFE_FEC_4_5
+		| DVBFE_FEC_5_6 | DVBFE_FEC_6_7
+		| DVBFE_FEC_7_8 | DVBFE_FEC_AUTO
 	},
 	.frequency_min = 950000,
 	.frequency_max = 2150000,
@@ -6848,18 +6870,19 @@ static struct dvbfe_info dvbs_info = {
 	.symbol_rate_max = 45000000
 };
 
-static const struct dvbfe_info dvbs2_info = {
+static const struct dvbfe_info dvbs2_info =
+{
 	.name = "STV090x Multistandard",
 	.delivery = DVBFE_DELSYS_DVBS2,
 	.delsys = {
 		.dvbs2.modulation = DVBFE_MOD_QPSK | DVBFE_MOD_8PSK,
 		/* TODO: Review these */
 		.dvbs2.fec = DVBFE_FEC_1_4 | DVBFE_FEC_1_3
-		           | DVBFE_FEC_2_5 | DVBFE_FEC_1_2
-		           | DVBFE_FEC_3_5 | DVBFE_FEC_2_3
-		           | DVBFE_FEC_3_4 | DVBFE_FEC_4_5
-		           | DVBFE_FEC_5_6 | DVBFE_FEC_8_9
-		           | DVBFE_FEC_9_10,
+		| DVBFE_FEC_2_5 | DVBFE_FEC_1_2
+		| DVBFE_FEC_3_5 | DVBFE_FEC_2_3
+		| DVBFE_FEC_3_4 | DVBFE_FEC_4_5
+		| DVBFE_FEC_5_6 | DVBFE_FEC_8_9
+		| DVBFE_FEC_9_10,
 	},
 	.frequency_min = 950000,
 	.frequency_max = 2150000,
@@ -6869,33 +6892,33 @@ static const struct dvbfe_info dvbs2_info = {
 	.symbol_rate_tolerance = 0
 };
 
-static int stv090x_get_info (struct dvb_frontend *fe, struct dvbfe_info *fe_info)
+static int stv090x_get_info(struct dvb_frontend *fe, struct dvbfe_info *fe_info)
 {
 	switch (fe_info->delivery)
 	{
 		case DVBFE_DELSYS_DVBS:
 		{
-			memcpy (fe_info, &dvbs_info, sizeof (dvbs_info));
+			memcpy(fe_info, &dvbs_info, sizeof(dvbs_info));
 			break;
 		}
 		case DVBFE_DELSYS_DVBS2:
 		{
-			memcpy (fe_info, &dvbs2_info, sizeof (dvbs2_info));
+			memcpy(fe_info, &dvbs2_info, sizeof(dvbs2_info));
 			break;
 		}
 		default:
 		{
-			printk ("%s() invalid arg\n", __FUNCTION__);
+			printk("%s() invalid arg\n", __FUNCTION__);
 			return -EINVAL;
 		}
 	}
 	return 0;
 }
 #else
-static int stv090x_get_property(struct dvb_frontend *fe, struct dtv_property* tvp)
+static int stv090x_get_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 {
 	/* get delivery system info */
-	if (tvp->cmd==DTV_DELIVERY_SYSTEM)
+	if (tvp->cmd == DTV_DELIVERY_SYSTEM)
 	{
 		switch (tvp->u.data)
 		{
@@ -6923,59 +6946,59 @@ static int hdbox_set_voltage(struct dvb_frontend *fe, enum fe_sec_voltage voltag
 
 	u8 res = ctrl_inb(0xa2800000);
 
-	dprintk(10, "%s >Tuner:%d in:0x%x\n", __func__,state->tuner ,res);
+	dprintk(10, "%s >Tuner:%d in:0x%x\n", __func__, state->tuner , res);
 
 	switch (voltage)
 	{
-	case SEC_VOLTAGE_OFF:
-		dprintk(20, "Switch LNB voltage off\n");
-		if (_12v_isON == 0)
+		case SEC_VOLTAGE_OFF:
+			dprintk(20, "Switch LNB voltage off\n");
+			if (_12v_isON == 0)
+				if (state->tuner == STV090x_TUNER1)
+					res |= 0x10;
+				else
+					res |= 0x20;
+			break;
+
+		case SEC_VOLTAGE_13: /* vertical */
+			dprintk(20, "Set LNB voltage vertical\n");
 			if (state->tuner == STV090x_TUNER1)
-				res |= 0x10;
+			{
+				/* lnb power on */
+				res &= ~0x10;
+				/* 13 V */
+				res |= 0x1;
+			}
 			else
-				res |= 0x20;
-		break;
+			{
+				/* lnb power on */
+				res &= ~0x20;
+				/* 13 V */
+				res |= 0x2;
+			}
+			break;
 
-	case SEC_VOLTAGE_13: /* vertical */
-		dprintk(20, "Set LNB voltage vertical\n");
-		if (state->tuner == STV090x_TUNER1)
-		{
-			/* lnb power on */
-			res &=~0x10;
-			/* 13 V */
-			res |=0x1;
-		}
-		else
-		{
-			/* lnb power on */
-			res &=~0x20;
-			/* 13 V */
-			res |=0x2;
-		}
-		break;
-
-	case SEC_VOLTAGE_18: /* horizontal */
-		dprintk(20, "Set LNB voltage horizontal\n");
-		if (state->tuner == STV090x_TUNER1)
-		{
-			/* lnb power on */
-			res &=~0x10;
-			/* 18 V */
-			res &=~0x1;
-		}
-		else
-		{
-			/* lnb power on */
-			res &=~0x20;
-			/* 18 V */
-			res &=~0x2;
-		}
-		break;
-	default:
-		break;
+		case SEC_VOLTAGE_18: /* horizontal */
+			dprintk(20, "Set LNB voltage horizontal\n");
+			if (state->tuner == STV090x_TUNER1)
+			{
+				/* lnb power on */
+				res &= ~0x10;
+				/* 18 V */
+				res &= ~0x1;
+			}
+			else
+			{
+				/* lnb power on */
+				res &= ~0x20;
+				/* 18 V */
+				res &= ~0x2;
+			}
+			break;
+		default:
+			break;
 	}
 	ctrl_outb(res, 0xa2800000);
-	dprintk(10, "%s <out:0x%x\n", __func__,res);
+	dprintk(10, "%s <out:0x%x\n", __func__, res);
 	return 0;
 }
 #elif defined(HS7110) \
@@ -7029,18 +7052,18 @@ static int lnb_set_voltage(struct dvb_frontend *fe, enum fe_sec_voltage voltage)
  * we have three different ones until now ... and lnbh23
  * is also used for newer ufs922
  */
-int writereg_lnb_supply (struct stv090x_state *state, char data)
+int writereg_lnb_supply(struct stv090x_state *state, char data)
 {
 	int ret = -EREMOTEIO;
 	struct i2c_msg msg;
 	u8 buf;
-	static struct i2c_adapter* adapter = NULL;
+	static struct i2c_adapter *adapter = NULL;
 
 	buf = data;
 #warning fixme: make this adjustable in configuration
 	if (adapter == NULL)
 	{
-		adapter = i2c_get_adapter (1);
+		adapter = i2c_get_adapter(1);
 	}
 
 	msg.addr = 0x0a;
@@ -7048,11 +7071,11 @@ int writereg_lnb_supply (struct stv090x_state *state, char data)
 	msg.buf = &buf;
 	msg.len = 1;
 
-	dprintk (100, "write LNB: %s:  write 0x%02x to 0x0a\n", __FUNCTION__, data);
+	dprintk(100, "write LNB: %s:  write 0x%02x to 0x0a\n", __FUNCTION__, data);
 
 	if ((ret = i2c_transfer(adapter, &msg, 1)) != 1)
 	{
-		printk ("%s: writereg error(err == %i)\n", __FUNCTION__, ret);
+		printk("%s: writereg error(err == %i)\n", __FUNCTION__, ret);
 		ret = -EREMOTEIO;
 	}
 	return ret;
@@ -7101,7 +7124,8 @@ static int lnbh23_set_voltage(struct dvb_frontend *fe, enum fe_sec_voltage volta
 }
 #endif
 
-static struct dvb_frontend_ops stv090x_ops = {
+static struct dvb_frontend_ops stv090x_ops =
+{
 	.info = {
 		.name                = "STV090x Multistandard",
 		.type                = FE_QPSK,
@@ -7159,13 +7183,13 @@ static struct dvb_frontend_ops stv090x_ops = {
 };
 
 struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
-                                    struct i2c_adapter *i2c,
-                                    enum stv090x_demodulator demod,
-                                    enum stv090x_tuner tuner)
+				    struct i2c_adapter *i2c,
+				    enum stv090x_demodulator demod,
+				    enum stv090x_tuner tuner)
 {
 	struct stv090x_state *state = NULL;
 
-	state = kzalloc(sizeof (struct stv090x_state), GFP_KERNEL);
+	state = kzalloc(sizeof(struct stv090x_state), GFP_KERNEL);
 	if (state == NULL)
 	{
 		goto error;
@@ -7219,8 +7243,8 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 	}
 
 	dprintk(10, "Attaching %s demodulator(%d) Cut=0x%02x\n",
-	        state->device == STV0900 ? "STV0900" : "STV0903",
-	        demod, state->dev_ver);
+		state->device == STV0900 ? "STV0900" : "STV0903",
+		demod, state->dev_ver);
 
 	return &state->frontend;
 error:
