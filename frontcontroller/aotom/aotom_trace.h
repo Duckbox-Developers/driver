@@ -13,8 +13,8 @@ enum ywtrace_level_e
 	TRACE_MASK	= 0x0F
 };
 
-int YWTRACE_Init ( void );
-int YWTRACE_Print (const unsigned int level, const char * format, ...);
+int YWTRACE_Init(void);
+int YWTRACE_Print(const unsigned int level, const char *format, ...);
 
 #ifdef __TRACE__
 #define	ywtrace_init		YWTRACE_Init

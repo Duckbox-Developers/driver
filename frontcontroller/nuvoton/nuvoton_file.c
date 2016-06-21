@@ -408,30 +408,30 @@ struct iconToInternal
 
 #if defined(HS7119) || defined(HS7810A) || defined(HS7819)
 static int _7seg_fonts[] =
-/* character layout:
+	/* character layout:
 
-    aaaaaaaaa
-   f         b
-   f         b
-   f         b  i
-   f         b
-    ggggggggg
-   e         c
-   e         c  i
-   e         c
-   e         c
-    ddddddddd  h
+	    aaaaaaaaa
+	   f         b
+	   f         b
+	   f         b  i
+	   f         b
+	    ggggggggg
+	   e         c
+	   e         c  i
+	   e         c
+	   e         c
+	    ddddddddd  h
 
-segment a is bit 0 (  1)
-segment b is bit 1 (  2)
-segment c is bit 2 (  4)
-segment d is bit 3 (  8)
-segment e is bit 4 ( 16, 0x10)
-segment f is bit 5 ( 32, 0x20)
-segment g is bit 6 ( 64, 0x40)
-segment h is bit 7 (128, 0x80, positions 2, 3 & 4, cmd byte 2, 3 & 5, not on HS7119)
-segment i is bit 7 (128, 0x80, position 3 only, cmd byte 4)
-NOTE: period on 1st position cannot be controlled */
+	segment a is bit 0 (  1)
+	segment b is bit 1 (  2)
+	segment c is bit 2 (  4)
+	segment d is bit 3 (  8)
+	segment e is bit 4 ( 16, 0x10)
+	segment f is bit 5 ( 32, 0x20)
+	segment g is bit 6 ( 64, 0x40)
+	segment h is bit 7 (128, 0x80, positions 2, 3 & 4, cmd byte 2, 3 & 5, not on HS7119)
+	segment i is bit 7 (128, 0x80, position 3 only, cmd byte 4)
+	NOTE: period on 1st position cannot be controlled */
 
 {
 //	' '   '!'    '"'   '#'   '$'   '%'   '&'  '
@@ -577,7 +577,7 @@ struct iconToInternal
 #define cCommandSetWakeupMJD     0x74 // 05 1:MJDh 2:MJDl 3:hrs 4:mins        nothing
 
 #define cCommandGetPowerOnSrc    0x80 // 01                                   1 byte: wake up reason (2= from deep sleep)
-                                                                              //TODO: returns error on HS742X
+//TODO: returns error on HS742X
 
 #define cCommandSetLed           0x93 // 04 1:LED# 2:level 3:08               nothing
 
@@ -822,33 +822,33 @@ int nuvotonSetLED(int which, int level)
 #define MAX_BRIGHT 7
 #elif defined(FORTIS_HDBOX) || defined(ATEVIO7500) // New Nuvoton                    
 #define MAX_LED 256  // LED number is a bit mask: bit 0 (  1) = red power
-                     //                           bit 1 (  2) = blue power
-                     //                           bit 2 (  4) = -
-                     //                           bit 3 (  8) = -
-                     //                           bit 4 ( 16) = cross left
-                     //                           bit 5 ( 32) = cross bottom
-                     //                           bit 6 ( 64) = cross top
-                     //                           bit 7 (128) = cross right
-                     //                           (0xf2 = full cross plus blue)
-                     // TODO: Buggy on ATEVIO7500, fp seems to have a life of its own
+	//                           bit 1 (  2) = blue power
+	//                           bit 2 (  4) = -
+	//                           bit 3 (  8) = -
+	//                           bit 4 ( 16) = cross left
+	//                           bit 5 ( 32) = cross bottom
+	//                           bit 6 ( 64) = cross top
+	//                           bit 7 (128) = cross right
+	//                           (0xf2 = full cross plus blue)
+	// TODO: Buggy on ATEVIO7500, fp seems to have a life of its own
 #define MAX_BRIGHT 31
 #elif defined(HS7420) || defined(HS7429)
-                     // LED number is a bit mask:
-                     // bit 0 = standby (red),
-                     // bit 1 = logo (not on all models),
+	// LED number is a bit mask:
+	// bit 0 = standby (red),
+	// bit 1 = logo (not on all models),
 #define MAX_LED 2 // must be power of 2
 #define MAX_BRIGHT 7
 #elif defined(HS7810A) || defined(HS7819)
-                     // LED number is a bit mask:
-                     // bit 0 = standby (red),
-                     // bit 1 = logo,
-                     // bit 2(?) = RC feedback (green) seems to be not controllable (off when red is on)
+	// LED number is a bit mask:
+	// bit 0 = standby (red),
+	// bit 1 = logo,
+	// bit 2(?) = RC feedback (green) seems to be not controllable (off when red is on)
 #define MAX_LED 4 // must be power of 2
 #define MAX_BRIGHT 7
 #elif defined(HS7110) || defined(HS7119)
-                     // LED number is a bit mask:
-                     // bit 0 = standby (red),
-                     // bit 1(?) = RC feedback (green) seems to be not controllable (off when red is on)
+	// LED number is a bit mask:
+	// bit 0 = standby (red),
+	// bit 1(?) = RC feedback (green) seems to be not controllable (off when red is on)
 #define MAX_LED 2 // must be power of 2
 #define MAX_BRIGHT 7
 #endif
@@ -998,7 +998,7 @@ int nuvotonGetTime(void)
 		/* time received ->noop here */
 		dprintk(1, "time received\n");
 		dprintk(20, "myTime= 0x%02x - 0x%02x - 0x%02x - 0x%02x - 0x%02x\n", ioctl_data[0], ioctl_data[1],
-				ioctl_data[2], ioctl_data[3], ioctl_data[4]);
+			ioctl_data[2], ioctl_data[3], ioctl_data[4]);
 	}
 
 	dprintk(100, "%s <\n", __func__);
@@ -1441,7 +1441,7 @@ int nuvotonWriteString(unsigned char *aBuf, int len)
 	return res;
 }
 #else // not HS7119, HS7420, HS7429, HS7810A, HS7819, OCTAGON1008, FORTIS_HDBOX or ATEVIO7500 -> HS7110
-int nuvotonWriteString(unsigned char* aBuf, int len)
+int nuvotonWriteString(unsigned char *aBuf, int len)
 {
 	dprintk(100, "%s >\n", __func__);
 	dprintk(100, "%s <\n", __func__);
@@ -1842,7 +1842,7 @@ static int NUVOTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int
 	struct nuvoton_ioctl_data *nuvoton = (struct nuvoton_ioctl_data *) arg;
 	struct vfd_ioctl_data *data = (struct vfd_ioctl_data *) arg;
 	int res = 0;
-	
+
 	dprintk(100, "%s > 0x%.8x\n", __func__, cmd);
 
 	if (down_interruptible(&write_sem))
@@ -1865,10 +1865,10 @@ static int NUVOTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int
 		case VFDBRIGHTNESS:
 		{
 #if defined(FORTIS_HDBOX) \
- || defined(OCTAGON1008) \
- || defined(ATEVIO7500) \
- || defined(HS7420) \
- || defined(HS7429)
+|| defined(OCTAGON1008) \
+|| defined(ATEVIO7500) \
+|| defined(HS7420) \
+|| defined(HS7429)
 			if (mode == 0)
 			{
 				res = nuvotonSetBrightness(data->start_address);

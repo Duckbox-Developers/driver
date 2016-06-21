@@ -14,7 +14,8 @@ int main(int argc, char **argv)
 	int i, rv, fd;
 	struct vfd_ioctl_data iodata;
 
-	if((fd = open(DEV_CTL_NAME, O_RDWR )) < 0) {
+	if ((fd = open(DEV_CTL_NAME, O_RDWR)) < 0)
+	{
 		printf("ERR: can't open controling device '%s'\n", DEV_CTL_NAME);
 		return 1;
 	}
@@ -35,15 +36,16 @@ int main(int argc, char **argv)
 	//ioctl(fd, VFDREBOOT);
 
 	//ioctl(fd, VFDSTANDBY);
-	
+
 	printf("Table show starts:\n");
 
 	memset(iodata.data, 0, sizeof(iodata.data));
-	for(i = 8; i < 256; i +=8) {
+	for (i = 8; i < 256; i += 8)
+	{
 		int j;
 		printf("   %02x -> ...\n", i);
 		sprintf(iodata.data, "%02x: ", i);
-		for(j = i; j < (i+8); j++)
+		for (j = i; j < (i + 8); j++)
 			sprintf(iodata.data + strlen(iodata.data), "%c", j);
 		iodata.length = strlen(iodata.data);
 #if 0

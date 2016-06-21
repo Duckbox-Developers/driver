@@ -264,6 +264,6 @@ typedef U64 S64;
 #endif /*#ifdef ARCHITECTURE_ST40*/
 
 #define YW_HandleValid(Table, Max, Handle) ((Handle) >= (U32)&(Table)[0] \
-					     
+
 #endif /* __AOTOM_YWDEFS_H__ */
 

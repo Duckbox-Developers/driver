@@ -12,14 +12,14 @@ extern short paramDebug;
 #define dprintk(level, x...)
 #else
 #define dprintk(level, x...) do { \
-        if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
-    } while (0)
-#endif    
+		if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
+	} while (0)
+#endif
 #endif
 
 extern int micom_init_func(void);
-extern void copyData(unsigned char* data, int len);
-extern void getRCData(unsigned char* data, int* len);
+extern void copyData(unsigned char *data, int len);
+extern void getRCData(unsigned char *data, int *len);
 void dumpValues(void);
 
 extern int                  errorOccured;
@@ -28,9 +28,9 @@ extern struct file_operations vfd_fops;
 
 typedef struct
 {
-    struct file*      fp;
-    int               read;
-    struct semaphore  sem;
+	struct file      *fp;
+	int               read;
+	struct semaphore  sem;
 
 } tFrontPanelOpen;
 
@@ -63,20 +63,23 @@ extern tFrontPanelOpen FrontPanelOpen[LASTMINOR];
 #define VFDSETGREENLED		0xc0425af5
 #define VFDDEEPSTANDBY		0xc0425a81
 
-#define	NO_ICON	0x0000 
+#define	NO_ICON	0x0000
 
-struct set_brightness_s {
-    int level;
+struct set_brightness_s
+{
+	int level;
 };
 
-struct set_icon_s {
-    int icon_nr;
-    int on;
+struct set_icon_s
+{
+	int icon_nr;
+	int on;
 };
 
-struct set_led_s {
-    //int led_nr;
-    int on;
+struct set_led_s
+{
+	//int led_nr;
+	int on;
 };
 
 /* time must be given as follows:
@@ -85,47 +88,52 @@ struct set_led_s {
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
-    char time[5];
+struct set_standby_s
+{
+	char time[5];
 };
 
-struct set_time_s {
-    char time[5];
+struct set_time_s
+{
+	char time[5];
 };
 
 /* this setups the mode temporarily (for one ioctl)
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
  */
-struct set_mode_s {
-    int compat; /* 0 = compatibility mode to vfd driver; 1 = micom mode */
+struct set_mode_s
+{
+	int compat; /* 0 = compatibility mode to vfd driver; 1 = micom mode */
 };
 
-struct micom_ioctl_data {
-    union
-    {
-        struct set_icon_s icon;
-        struct set_led_s led;
-        struct set_brightness_s brightness;
-        struct set_mode_s mode;
-        struct set_standby_s standby;
-        struct set_time_s time;
-    } u;
+struct micom_ioctl_data
+{
+	union
+	{
+		struct set_icon_s icon;
+		struct set_led_s led;
+		struct set_brightness_s brightness;
+		struct set_mode_s mode;
+		struct set_standby_s standby;
+		struct set_time_s time;
+	} u;
 };
 
-struct vfd_ioctl_data {
-    unsigned char start_address;
-    unsigned char data[64];
-    unsigned char length;
+struct vfd_ioctl_data
+{
+	unsigned char start_address;
+	unsigned char data[64];
+	unsigned char length;
 };
 
 
 
 /* Vitamin stuff */
 
-#define MC_MSG_KEYIN	0x01	
+#define MC_MSG_KEYIN	0x01
 #define VFD_MAX_LEN		11
-	
+
 #define IR_CUSTOM_HI	0x01
 #define IR_CUSTOM_LO	0xFE
 #define IR_POWER		0x5F
@@ -180,27 +188,28 @@ enum
 	RESET_POWER_ON,
 };
 
-	
 
 
 
-enum {
-	ICON_TV = 0x0, 
-	ICON_RADIO, 
-	ICON_REPEAT, 
-	ICON_CIRCLE, 
-	ICON_RECORD, 
-	ICON_POWER, 
-	ICON_DOLBY, 
-	ICON_MUTE, 
-	ICON_DOLLAR, 
-	ICON_LOCK, 
-	ICON_CLOCK, 
-	ICON_HD, 
-	ICON_DVD, 
-	ICON_MP3, 
-	ICON_NET, 
-	ICON_USB, 
+
+enum
+{
+	ICON_TV = 0x0,
+	ICON_RADIO,
+	ICON_REPEAT,
+	ICON_CIRCLE,
+	ICON_RECORD,
+	ICON_POWER,
+	ICON_DOLBY,
+	ICON_MUTE,
+	ICON_DOLLAR,
+	ICON_LOCK,
+	ICON_CLOCK,
+	ICON_HD,
+	ICON_DVD,
+	ICON_MP3,
+	ICON_NET,
+	ICON_USB,
 	ICON_MC,
 };
 

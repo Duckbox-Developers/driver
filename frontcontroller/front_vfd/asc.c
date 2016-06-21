@@ -52,10 +52,10 @@ unsigned int ASCXBaseAddress = ASC1BaseAddress;
 
 //-------------------------------------
 
-void serial_init (void)
+void serial_init(void)
 {
 //#ifndef UFS912 // UFS922
-    // Configure the PIO pins
+	// Configure the PIO pins
 //    stpio_request_pin(5, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
 //    stpio_request_pin(5, 1,  "ASC_RX", STPIO_IN);      /* Rx */
 
@@ -65,38 +65,38 @@ void serial_init (void)
 //    *(unsigned int*)(PIO5BaseAddress + PIO_SET_PnC2) = 0x07;
 //#endif
 
-    // Configure the asc input/output settings
-    *(unsigned int*)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
-    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00001589;
-    *(unsigned int*)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
-    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000000c9;
-    *(unsigned int*)(ASCXBaseAddress + ASC_TX_RST)   = 0;
-    *(unsigned int*)(ASCXBaseAddress + ASC_RX_RST)   = 0;
+	// Configure the asc input/output settings
+	*(unsigned int *)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
+	*(unsigned int *)(ASCXBaseAddress + ASC_CTRL)     = 0x00001589;
+	*(unsigned int *)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
+	*(unsigned int *)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000000c9;
+	*(unsigned int *)(ASCXBaseAddress + ASC_TX_RST)   = 0;
+	*(unsigned int *)(ASCXBaseAddress + ASC_RX_RST)   = 0;
 }
 
-int serial_putc (char Data)
+int serial_putc(char Data)
 {
 //#ifdef UFS912
-    char                  *ASC_3_TX_BUFF = (char*)(ASC1BaseAddress + ASC_TX_BUFF);
-    unsigned int          *ASC_3_INT_STA = (unsigned int*)(ASC1BaseAddress + ASC_INT_STA);
+	char                  *ASC_3_TX_BUFF = (char *)(ASC1BaseAddress + ASC_TX_BUFF);
+	unsigned int          *ASC_3_INT_STA = (unsigned int *)(ASC1BaseAddress + ASC_INT_STA);
 //#else
 //    char                  *ASC_3_TX_BUFF = (char*)(ASC3BaseAddress + ASC_TX_BUFF);
 //    unsigned int          *ASC_3_INT_STA = (unsigned int*)(ASC3BaseAddress + ASC_INT_STA);
 //#endif
-    unsigned long         Counter = 200000;
+	unsigned long         Counter = 200000;
 
-    while (((*ASC_3_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
-    {
-        // We are to fast, lets make a break
-        udelay(0);
-    }
+	while (((*ASC_3_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
+	{
+		// We are to fast, lets make a break
+		udelay(0);
+	}
 
-    if (Counter == 0)
-    {
-        printk("Error writing char (%c) \n", Data);
-    }
+	if (Counter == 0)
+	{
+		printk("Error writing char (%c) \n", Data);
+	}
 
-    *ASC_3_TX_BUFF = Data;
-    return 1;
+	*ASC_3_TX_BUFF = Data;
+	return 1;
 }
 

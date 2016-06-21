@@ -48,36 +48,36 @@ unsigned int ASCXBaseAddress = ASC1BaseAddress;
 
 //-------------------------------------
 
-void serial_init (void)
+void serial_init(void)
 {
-    /* Configure the PIO pins */
-    stpio_request_pin(1, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
-    stpio_request_pin(1, 1,  "ASC_RX", STPIO_IN);      /* Rx */
+	/* Configure the PIO pins */
+	stpio_request_pin(1, 0,  "ASC_TX", STPIO_ALT_OUT); /* Tx */
+	stpio_request_pin(1, 1,  "ASC_RX", STPIO_IN);      /* Rx */
 
-    // Configure the asc input/output settings
-    *(unsigned int*)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
-    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00000589;		// mode 0
-    *(unsigned int*)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
-    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x0000028b;		// 9600
-    *(unsigned int*)(ASCXBaseAddress + ASC_TX_RST)   = 0;
-    *(unsigned int*)(ASCXBaseAddress + ASC_RX_RST)   = 0;
+	// Configure the asc input/output settings
+	*(unsigned int *)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
+	*(unsigned int *)(ASCXBaseAddress + ASC_CTRL)     = 0x00000589;		// mode 0
+	*(unsigned int *)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000010;
+	*(unsigned int *)(ASCXBaseAddress + ASC_BAUDRATE) = 0x0000028b;		// 9600
+	*(unsigned int *)(ASCXBaseAddress + ASC_TX_RST)   = 0;
+	*(unsigned int *)(ASCXBaseAddress + ASC_RX_RST)   = 0;
 }
 
-int serial_putc (char Data)
+int serial_putc(char Data)
 {
-    char                  *ASCn_TX_BUFF = (char*)(ASCXBaseAddress + ASC_TX_BUFF);
-    unsigned int          *ASCn_INT_STA = (unsigned int*)(ASCXBaseAddress + ASC_INT_STA);
-    unsigned long         Counter = 200000;
+	char                  *ASCn_TX_BUFF = (char *)(ASCXBaseAddress + ASC_TX_BUFF);
+	unsigned int          *ASCn_INT_STA = (unsigned int *)(ASCXBaseAddress + ASC_INT_STA);
+	unsigned long         Counter = 200000;
 
-    while (((*ASCn_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
-         mdelay(1);
+	while (((*ASCn_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
+		mdelay(1);
 
-    if (Counter == 0)
-    {
-        dprintk(1, "Error writing char\n");
-    }
+	if (Counter == 0)
+	{
+		dprintk(1, "Error writing char\n");
+	}
 
-    *ASCn_TX_BUFF = Data;
-    return 1;
+	*ASCn_TX_BUFF = Data;
+	return 1;
 }
 

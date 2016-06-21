@@ -44,39 +44,39 @@ unsigned int ASCXBaseAddress = ASC2BaseAddress;
 
 //-------------------------------------
 
-void serial_init (void)
+void serial_init(void)
 {
 	/* Configure the PIO pins */
-    stpio_request_pin(4, 3, "MICOM_TX", STPIO_ALT_OUT); /* Tx */
-    stpio_request_pin(4, 2, "MICOM_RX", STPIO_IN);      /* Rx */
-    
-    // Configure the asc input/output settings
-    *(unsigned int*)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
-    *(unsigned int*)(ASCXBaseAddress + ASC_CTRL)     = 0x00001599; /* 8,N,1 */
-    *(unsigned int*)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000014;
-    *(unsigned int*)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000004B8; /* 115200 bps */
-    *(unsigned int*)(ASCXBaseAddress + ASC_TX_RST)   = 0;
-    *(unsigned int*)(ASCXBaseAddress + ASC_RX_RST)   = 0;
+	stpio_request_pin(4, 3, "MICOM_TX", STPIO_ALT_OUT); /* Tx */
+	stpio_request_pin(4, 2, "MICOM_RX", STPIO_IN);      /* Rx */
+
+	// Configure the asc input/output settings
+	*(unsigned int *)(ASCXBaseAddress + ASC_INT_EN)   = 0x00000000; // TODO: Why do we set here the INT_EN again ???
+	*(unsigned int *)(ASCXBaseAddress + ASC_CTRL)     = 0x00001599; /* 8,N,1 */
+	*(unsigned int *)(ASCXBaseAddress + ASC_TIMEOUT)  = 0x00000014;
+	*(unsigned int *)(ASCXBaseAddress + ASC_BAUDRATE) = 0x000004B8; /* 115200 bps */
+	*(unsigned int *)(ASCXBaseAddress + ASC_TX_RST)   = 0;
+	*(unsigned int *)(ASCXBaseAddress + ASC_RX_RST)   = 0;
 }
 
-int serial_putc (char Data)
+int serial_putc(char Data)
 {
-    char                  *ASC_X_TX_BUFF = (char*)(ASCXBaseAddress + ASC_TX_BUFF);
-    unsigned int          *ASC_X_INT_STA = (unsigned int*)(ASCXBaseAddress + ASC_INT_STA);
-    unsigned long         Counter = 200000;
+	char                  *ASC_X_TX_BUFF = (char *)(ASCXBaseAddress + ASC_TX_BUFF);
+	unsigned int          *ASC_X_INT_STA = (unsigned int *)(ASCXBaseAddress + ASC_INT_STA);
+	unsigned long         Counter = 200000;
 
-    while (((*ASC_X_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
-    {
-        // We are to fast, lets make a break
-        udelay(0);
-    }
+	while (((*ASC_X_INT_STA & ASC_INT_STA_THE) == 0) && --Counter)
+	{
+		// We are to fast, lets make a break
+		udelay(0);
+	}
 
-    if (Counter == 0)
-    {
-        dprintk(1, "Error writing char (%c) \n", Data);
-    }
+	if (Counter == 0)
+	{
+		dprintk(1, "Error writing char (%c) \n", Data);
+	}
 
-    *ASC_X_TX_BUFF = Data;
-    return 1;
+	*ASC_X_TX_BUFF = Data;
+	return 1;
 }
 

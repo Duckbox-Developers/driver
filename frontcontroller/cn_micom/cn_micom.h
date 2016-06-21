@@ -9,13 +9,13 @@ extern short paramDebug;
 
 #ifndef dprintk
 #define dprintk(level, x...) do { \
-        if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
-    } while (0)
+		if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
+	} while (0)
 #endif
 
 extern int mcom_init_func(void);
-extern void copyData(unsigned char* data, int len);
-extern void getRCData(unsigned char* data, int* len);
+extern void copyData(unsigned char *data, int len);
+extern void getRCData(unsigned char *data, int *len);
 void dumpValues(void);
 
 extern int                  errorOccured;
@@ -24,9 +24,9 @@ extern struct file_operations vfd_fops;
 
 typedef struct
 {
-    struct file*      fp;
-    int               read;
-    struct semaphore  sem;
+	struct file      *fp;
+	int               read;
+	struct semaphore  sem;
 
 } tFrontPanelOpen;
 
@@ -53,26 +53,30 @@ extern tFrontPanelOpen FrontPanelOpen[LASTMINOR];
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
-    char time[5];
+struct set_standby_s
+{
+	char time[5];
 };
 
-struct set_time_s {
-    time_t localTime;
+struct set_time_s
+{
+	time_t localTime;
 };
 
-struct cn_micom_ioctl_data {
-    union
-    {
-        struct set_standby_s standby;
-        struct set_time_s time;
-    } u;
+struct cn_micom_ioctl_data
+{
+	union
+	{
+		struct set_standby_s standby;
+		struct set_time_s time;
+	} u;
 };
 
-struct vfd_ioctl_data {
-    unsigned char start_address;
-    unsigned char data[64];
-    unsigned char length;
+struct vfd_ioctl_data
+{
+	unsigned char start_address;
+	unsigned char data[64];
+	unsigned char length;
 };
 
 #endif

@@ -110,64 +110,64 @@
 
 typedef struct
 {
-  word    year;
-  word    month;
-  word    day;
-  word    dow;
-  char    sdow[4];
-  word    hour;
-  word    min;
-  word    sec;
-  dword   now;
+	word    year;
+	word    month;
+	word    day;
+	word    dow;
+	char    sdow[4];
+	word    hour;
+	word    min;
+	word    sec;
+	dword   now;
 } frontpanel_ioctl_time;
 
 typedef struct
 {
-  byte    bright;
+	byte    bright;
 } frontpanel_ioctl_brightness;
 
 typedef struct
 {
-  byte    reason;
+	byte    reason;
 } frontpanel_ioctl_bootreason;
 
 typedef struct
 {
-  byte    onoff;
+	byte    onoff;
 } frontpanel_ioctl_irfilter;
 
 typedef struct
 {
-  dword   Icons1;
-  dword   Icons2;
-  byte    BlinkMode;
+	dword   Icons1;
+	dword   Icons2;
+	byte    BlinkMode;
 } frontpanel_ioctl_icons;
 
 typedef struct
 {
-  byte    TypematicDelay;
+	byte    TypematicDelay;
 } frontpanel_ioctl_typematicdelay;
 
 typedef struct
 {
-  byte    TypematicRate;
+	byte    TypematicRate;
 } frontpanel_ioctl_typematicrate;
 
 typedef struct
 {
-  byte    KeyEmulation;
+	byte    KeyEmulation;
 } frontpanel_ioctl_keyemulation;
 
 typedef struct
 {
-  byte    AllCaps;
+	byte    AllCaps;
 } frontpanel_ioctl_allcaps;
 
 typedef struct
 {
-  byte    ScrollMode;
-  byte    ScrollPause;
-  byte    ScrollDelay;
+	byte    ScrollMode;
+	byte    ScrollPause;
+	byte    ScrollDelay;
 } frontpanel_ioctl_scrollmode;
 
 

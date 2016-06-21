@@ -63,16 +63,19 @@ typedef unsigned int     YWOS_ClockMsec;
 #define LOG_ON      1
 #define YWPANEL_KEYBOARD
 
-struct set_brightness_s {
+struct set_brightness_s
+{
 	int level;
 };
 
-struct set_icon_s {
+struct set_icon_s
+{
 	int icon_nr;
 	int on;
 };
 
-struct set_led_s {
+struct set_led_s
+{
 	int led_nr;
 	int on;
 };
@@ -83,11 +86,13 @@ struct set_led_s {
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
+struct set_standby_s
+{
 	char time[5];
 };
 
-struct set_time_s {
+struct set_time_s
+{
 	char time[5];
 };
 
@@ -95,11 +100,13 @@ struct set_time_s {
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
  */
-struct set_mode_s {
+struct set_mode_s
+{
 	int compat; /* 0 = compatibility mode to vfd driver; 1 = nuvoton mode */
 };
 
-struct aotom_ioctl_data {
+struct aotom_ioctl_data
+{
 	union
 	{
 		struct set_icon_s icon;
@@ -111,7 +118,8 @@ struct aotom_ioctl_data {
 	} u;
 };
 
-struct vfd_ioctl_data {
+struct vfd_ioctl_data
+{
 	unsigned char start_address;
 	unsigned char data[64];
 	unsigned char length;
@@ -186,8 +194,8 @@ enum
 
 typedef enum LogNum_e
 {
-/*----------------------------------11G-------------------------------------*/
-	PLAY_FASTBACKWARD = 11*16+1,
+	/*----------------------------------11G-------------------------------------*/
+	PLAY_FASTBACKWARD = 11 * 16 + 1,
 	PLAY_HEAD,
 	PLAY_LOG,
 	PLAY_TAIL,
@@ -202,8 +210,8 @@ typedef enum LogNum_e
 	USB,
 	DOUBLESCREEN,
 	REC2,
-/*----------------------------------12G-------------------------------------*/
-	HDD_A8 = 12*16+1,
+	/*----------------------------------12G-------------------------------------*/
+	HDD_A8 = 12 * 16 + 1,
 	HDD_A7,
 	HDD_A6,
 	HDD_A5,
@@ -218,8 +226,8 @@ typedef enum LogNum_e
 	AUDIO,
 	ALERT,
 	HDD_A9,
-/*----------------------------------13G-------------------------------------*/
-	CLOCK_PM = 13*16+1,
+	/*----------------------------------13G-------------------------------------*/
+	CLOCK_PM = 13 * 16 + 1,
 	CLOCK_AM,
 	CLOCK,
 	TIME_SECOND,
@@ -234,7 +242,7 @@ typedef enum LogNum_e
 	TIMESHIFT,
 	DOT1,
 	CAB,
-/*----------------------------------end-------------------------------------*/
+	/*----------------------------------end-------------------------------------*/
 	LogNum_Max
 } LogNum_T;
 
@@ -405,7 +413,7 @@ typedef enum YWPANEL_DVFDDataType_e
 	YWPANEL_DVFD_DISPLAYSYNC,
 	YWPANEL_DVFD_SETTIMEMODE,
 	YWPANEL_DVFD_GETTIMEMODE,
-}YWPANEL_DVFDDataType_t;
+} YWPANEL_DVFDDataType_t;
 
 typedef struct YWPANEL_DVFDData_s
 {
@@ -416,7 +424,7 @@ typedef struct YWPANEL_DVFDData_s
 	U8						ulen;
 	U8						address[16];
 	U8						DisplayValue[16][5];
-}YWPANEL_DVFDData_t;
+} YWPANEL_DVFDData_t;
 
 typedef struct YWPANEL_IRKEY_s
 {
@@ -450,7 +458,7 @@ typedef struct YWPANEL_IRCode_s
 
 typedef enum YWPANEL_ENCRYPEMODE_e
 {
-	YWPANEL_ENCRYPEMODE_NONE =0x00,
+	YWPANEL_ENCRYPEMODE_NONE = 0x00,
 	YWPANEL_ENCRYPEMODE_ODDBIT,
 	YWPANEL_ENCRYPEMODE_EVENBIT,
 	YWPANEL_ENCRYPEMODE_RAMDONBIT
@@ -468,7 +476,7 @@ typedef struct YWPANEL_EncryptKey_s
 
 typedef enum YWPANEL_VERIFYSTATE_e
 {
-	YWPANEL_VERIFYSTATE_NONE =0x00,
+	YWPANEL_VERIFYSTATE_NONE = 0x00,
 	YWPANEL_VERIFYSTATE_CRC16 ,
 	YWPANEL_VERIFYSTATE_CRC32 ,
 	YWPANEL_VERIFYSTATE_CHECKSUM
@@ -542,7 +550,7 @@ typedef enum YWPANEL_LBDStatus_e
 typedef enum YWPANEL_STARTUPSTATE_e
 {
 	YWPANEL_STARTUPSTATE_UNKNOWN,
-	YWPANEL_STARTUPSTATE_ELECTRIFY =0x01,
+	YWPANEL_STARTUPSTATE_ELECTRIFY = 0x01,
 	YWPANEL_STARTUPSTATE_STANDBY,
 	YWPANEL_STARTUPSTATE_TIMER
 } YWPANEL_STARTUPSTATE_t;
@@ -550,7 +558,7 @@ typedef enum YWPANEL_STARTUPSTATE_e
 typedef enum YWPANEL_LOOPSTATE_e
 {
 	YWPANEL_LOOPSTATE_UNKNOWN,
-	YWPANEL_LOOPSTATE_LOOPOFF =0x01,
+	YWPANEL_LOOPSTATE_LOOPOFF = 0x01,
 	YWPANEL_LOOPSTATE_LOOPON
 } YWPANEL_LOOPSTATE_t;
 
@@ -594,10 +602,10 @@ typedef struct YWPANEL_LoopState_s
 
 typedef enum YWPANEL_LBDType_e
 {
-	YWPANEL_LBD_TYPE_POWER  = ( 1 << 0 ),
-	YWPANEL_LBD_TYPE_SIGNAL = ( 1 << 1 ),
-	YWPANEL_LBD_TYPE_MAIL   = ( 1 << 2 ),
-	YWPANEL_LBD_TYPE_AUDIO  = ( 1 << 3 )
+	YWPANEL_LBD_TYPE_POWER  = (1 << 0),
+	YWPANEL_LBD_TYPE_SIGNAL = (1 << 1),
+	YWPANEL_LBD_TYPE_MAIL   = (1 << 2),
+	YWPANEL_LBD_TYPE_AUDIO  = (1 << 3)
 } YWPANEL_LBDType_T;
 
 typedef enum YWPAN_FP_MCUTYPE_E
@@ -687,10 +695,10 @@ int YWPANEL_VFD_Init(void);
 extern int (*YWPANEL_VFD_Term)(void);
 extern int (*YWPANEL_VFD_Initialize)(void);
 extern int (*YWPANEL_VFD_ShowIco)(LogNum_T, int);
-extern int (*YWPANEL_VFD_ShowTime)(u8 hh,u8 mm);
+extern int (*YWPANEL_VFD_ShowTime)(u8 hh, u8 mm);
 extern int (*YWPANEL_VFD_ShowTimeOff)(void);
 extern int (*YWPANEL_VFD_SetBrightness)(int);
-extern u8 (*YWPANEL_VFD_ScanKeyboard)(void);
+extern u8(*YWPANEL_VFD_ScanKeyboard)(void);
 extern int (*YWPANEL_VFD_ShowString)(char *);
 
 extern int YWPANEL_width;
@@ -706,10 +714,10 @@ int YWPANEL_FP_SetPowerOnStatus(YWPANEL_POWERONSTATE_t state);
 u32 YWPANEL_FP_GetTime(void);
 int YWPANEL_FP_SetTime(u32 value);
 u32 YWPANEL_FP_GetStandByKey(u8 index);
-int YWPANEL_FP_SetStandByKey(u8 index,u8 key);
+int YWPANEL_FP_SetStandByKey(u8 index, u8 key);
 u32 YWPANEL_FP_GetBlueKey(u8 index);
-int YWPANEL_FP_SetBlueKey(u8 index,u8 key);
-int YWPANEL_LBD_SetStatus(YWPANEL_LBDStatus_T  LBDStatus );
+int YWPANEL_FP_SetBlueKey(u8 index, u8 key);
+int YWPANEL_LBD_SetStatus(YWPANEL_LBDStatus_T  LBDStatus);
 int YWPANEL_FP_GetStartUpState(YWPANEL_STARTUPSTATE_t *State);
 int YWPANEL_FP_GetVersion(YWPANEL_Version_t *version);
 

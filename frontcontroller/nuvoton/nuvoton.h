@@ -39,8 +39,8 @@ extern short paramDebug;
 
 #ifndef dprintk
 #define dprintk(level, x...) do { \
-        if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
-    } while (0)
+		if ((paramDebug) && (paramDebug >= level)) printk(TAGDEBUG x); \
+	} while (0)
 #endif
 
 extern int nuvoton_init_func(void);

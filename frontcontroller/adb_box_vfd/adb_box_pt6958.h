@@ -28,13 +28,13 @@ static struct stpio_pin        *button_ds = NULL;
 static struct stpio_pin        *button_reset = NULL;
 
 static int                      button_polling = 1;
-unsigned char 			key_group1=0, key_group2=0;
-static unsigned int  		key_button=0;
+unsigned char 			key_group1 = 0, key_group2 = 0;
+static unsigned int  		key_button = 0;
 
 /*
-void ReadKey(void); 
-void WriteData(unsigned char Value); 
-unsigned char ReadData(void); 
+void ReadKey(void);
+void WriteData(unsigned char Value);
+unsigned char ReadData(void);
 */
 
 /*
@@ -55,7 +55,7 @@ unsigned char ReadData(void);
 #define FP_CLK_BIT(x)			STPIO_SET_PIN(PIO_PORT(4),0, x)
 #define FP_DATA_BIT(x)			STPIO_SET_PIN(PIO_PORT(4),1, x)
 #define FP_STB_BIT(x)			STPIO_SET_PIN(PIO_PORT(1),6, x)
-#define FP_CSB_BIT(x)			STPIO_SET_PIN(PIO_PORT(1),2, x) 
+#define FP_CSB_BIT(x)			STPIO_SET_PIN(PIO_PORT(1),2, x)
 //------------------------------------------------------------------------------
 #define FP_GETKEY			STPIO_GET_PIN(PIO_PORT(2),2) //4 ?
 #define FP_DATA				STPIO_GET_PIN(PIO_PORT(4),1)
@@ -94,7 +94,7 @@ typedef struct
 /**********************************************************************
  * CMD 40: Data Setting Command
  * bits:   0100 dcba
- * 
+ *
  * ba - Data Write & Read Mode Settings:
  * 00: Write Data to Display Mode
  * 10: Read Key Data
@@ -115,11 +115,11 @@ typedef struct
 /**********************************************************************
  * CMD C0: Address Setting Command
  * bits:   1100 dcba
- * 
+ *
  * 0,2,4,6 = segment 1,2,3,4
  * 1,3,5,7 = power, clock, mail, warning LED
  * 8,9     = not connected
- * 
+ *
  * dcba - Address 0x00 to 0x09
  **********************************************************************/
 #define PT6958_CMD_ADDR_SET	0xC0 // 0xC0 to 0xC9
@@ -139,7 +139,7 @@ typedef struct
 #define LED_OFF			0
 #define LED_ON			1
 #define LED_RED 		1
-#define LED_GREEN 		2	
+#define LED_GREEN 		2
 #define LED_ORANGE		3
 //------------------------------------------------------------------------------
 #define FP_DISP1		PT6958_CMD_ADDR_DISP1
@@ -154,7 +154,7 @@ typedef struct
 /**********************************************************************
  * CMD 80: Display Control Command
  * bits:   1000 dcba
- * 
+ *
  * cba - Dimming Quantity Settings:
  * 000: Pulse width = 1/16
  * 001: Pulse width = 2/16
@@ -164,12 +164,12 @@ typedef struct
  * 101: Pulse width = 12/16
  * 110: Pulse width = 13/16
  * 111: Pulse width = 14/16
- * 
+ *
  *   d - Display Settings
  *   0: Display Off (Key Scan Continues)
  *   1: Display On
  **********************************************************************/
-#define PT6958_CMD_DISPLAY_OFF		0x80 
+#define PT6958_CMD_DISPLAY_OFF		0x80
 #define PT6958_CMD_DISPLAY_OFF_DIM(x)	(0x80+x) //0x80-0x87
 #define PT6958_CMD_DISPLAY_ON		0x8E //0x8E org adb_box
 #define PT6958_CMD_DISPLAY_ON_DIM(x)	(0x88+x) //0x88-0x8F
@@ -177,14 +177,14 @@ typedef struct
  * Definition of LED segment
  *
  *      MSB  LSB
- *  bit 76543210  
+ *  bit 76543210
  *
  *      -- 0
  *  5  |  |  1
- *    6 --   
+ *    6 --
  *  4  |  |  2
  *      -- 3
- *  
+ *
  **********************************************************************/
 #define PT6958_LED_A		(0x77|0x00)	//A
 #define PT6958_LED_B		(0x7C|0x00)	//b
@@ -213,8 +213,8 @@ typedef struct
 #define PT6958_LED_Y		(0x66|0x00)	//Y
 #define PT6958_LED_Z		(0x5B|0x00)	//Z
 
-/* 
- * 0 1 2 3 4 5 6 6 7 8 9 
+/*
+ * 0 1 2 3 4 5 6 6 7 8 9
  */
 
 
@@ -251,7 +251,7 @@ typedef struct
 #define PT6958_LED_LARGE_C		(0x39|0x80)
 #define PT6958_LED_LARGE_E		(0x79|0x80)
 #define PT6958_LED_LARGE_F		(0x71|0x80)
-#define PT6958_LED_LARGE_H		(0x76|0x80) 
+#define PT6958_LED_LARGE_H		(0x76|0x80)
 #define PT6958_LED_LARGE_I		(0x30|0x80)
 #define PT6958_LED_LARGE_L		(0x38|0x80)
 #define PT6958_LED_LARGE_O		PT6958_LED_0
@@ -273,7 +273,7 @@ typedef struct
 #define PT6958_LED_SMALL_R		(0x50|0x80)
 #define PT6958_LED_SMALL_T		(0x78|0x80)
 /*
- * - _ ~ * 
+ * - _ ~ *
  */
 #define PT6958_LED_DASH			(0x40|0x00)
 #define PT6958_LED_UNDERSCORE		(0x08|0x00)

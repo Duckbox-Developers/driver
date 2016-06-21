@@ -27,16 +27,19 @@
 
 #define VFDSETMODE		0xc0425aff
 
-struct set_brightness_s {
+struct set_brightness_s
+{
 	int level;
 };
 
-struct set_icon_s {
+struct set_icon_s
+{
 	int icon_nr;
 	int on;
 };
 
-struct set_led_s {
+struct set_led_s
+{
 	int led_nr;
 	int on;
 };
@@ -47,15 +50,18 @@ struct set_led_s {
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
+struct set_standby_s
+{
 	char time[5];
 };
 
-struct set_time_s {
+struct set_time_s
+{
 	char time[5];
 };
 
-struct set_wakeup_s {
+struct set_wakeup_s
+{
 	char timer[5];
 };
 
@@ -63,11 +69,13 @@ struct set_wakeup_s {
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
  */
-struct set_mode_s {
+struct set_mode_s
+{
 	int compat; /* 0 = compatibility mode to vfd driver; 1 = micom mode */
 };
 
-struct micom_ioctl_data {
+struct micom_ioctl_data
+{
 	union
 	{
 		struct set_icon_s icon;
@@ -80,7 +88,8 @@ struct micom_ioctl_data {
 	} u;
 };
 
-struct vfd_ioctl_data {
+struct vfd_ioctl_data
+{
 	unsigned char start_address;
 	unsigned char data[64];
 	unsigned char length;

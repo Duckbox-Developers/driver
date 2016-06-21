@@ -60,8 +60,8 @@
 #define PIO_SET_PnMASK    0x64
 #define PIO_SET_PnOUT     0x04
 
-int serial_putc (char Data);
-void serial_init (void);
+int serial_putc(char Data);
+void serial_init(void);
 
 extern unsigned int InterruptLine;
 extern unsigned int ASCXBaseAddress;

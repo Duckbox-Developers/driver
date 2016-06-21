@@ -88,45 +88,45 @@
 
 
 #ifndef TRUE
-    #define TRUE (1 == 1)
+#define TRUE (1 == 1)
 #endif
 #ifndef FALSE
-    #define FALSE (!TRUE)
+#define FALSE (!TRUE)
 #endif
 
 #ifndef NULL
-	#define NULL 0
+#define NULL 0
 #endif
 
 /*mid public error*/
 enum
 {
-    YWMID_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWMID_MODULE_PUBLIC_ID ),   /* Bad parameter passed       */
-    YWMID_ERROR_NO_MEMORY,                 		/* Memory allocation failed   */
-    YWMID_ERROR_ALREADY_INITIALIZED,       		/* Device already initialized */
-    YWMID_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
-    YWMID_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
-    YWMID_ERROR_OPEN_HANDLE,               		/* At least one open handle   */
-    YWMID_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
-    YWMID_ERROR_FEATURE_NOT_SUPPORTED   		/* Feature unavailable        */
+	YWMID_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWMID_MODULE_PUBLIC_ID),    /* Bad parameter passed       */
+	YWMID_ERROR_NO_MEMORY,                 		/* Memory allocation failed   */
+	YWMID_ERROR_ALREADY_INITIALIZED,       		/* Device already initialized */
+	YWMID_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
+	YWMID_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
+	YWMID_ERROR_OPEN_HANDLE,               		/* At least one open handle   */
+	YWMID_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
+	YWMID_ERROR_FEATURE_NOT_SUPPORTED   		/* Feature unavailable        */
 };
 
 /*Hal public error*/
 enum
 {
-    YWHAL_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWHAL_MODULE_PUBLIC_ID ),   /* Bad parameter passed  */
-    YWHAL_ERROR_NO_MEMORY,                 			/* Memory allocation failed   */
-    YWHAL_ERROR_UNKNOWN_DEVICE,            		/* Unknown device */
-    YWHAL_ERROR_ALREADY_INITIALIZED,      		/* Device already initialized */
-    YWHAL_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
-    YWHAL_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
-    YWHAL_ERROR_OPEN_HANDLE,              		/* At least one open handle   */
-    YWHAL_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
-    YWHAL_ERROR_FEATURE_NOT_SUPPORTED,   		/* Feature unavailable        */
-    YWHAL_ERROR_TIMEOUT,                  		/* Timeout occured            */
-    YWHAL_ERROR_DEVICE_BUSY,              		/* Device is currently busy   */
-    YWHAL_ERROR_NOT_OPEN,						/*Device is not open*/
-    YWHAL_ERROR_NOT_ENOUGH_DEVICE				/*Device is all opened*/
+	YWHAL_ERROR_BAD_PARAMETER  = YW_MODULE_SET_ID(YWHAL_MODULE_PUBLIC_ID),    /* Bad parameter passed  */
+	YWHAL_ERROR_NO_MEMORY,                 			/* Memory allocation failed   */
+	YWHAL_ERROR_UNKNOWN_DEVICE,            		/* Unknown device */
+	YWHAL_ERROR_ALREADY_INITIALIZED,      		/* Device already initialized */
+	YWHAL_ERROR_NO_INITIALIZED,					/* Device has not been initialized*/
+	YWHAL_ERROR_NO_FREE_HANDLES,          		/* Cannot open device again   */
+	YWHAL_ERROR_OPEN_HANDLE,              		/* At least one open handle   */
+	YWHAL_ERROR_INVALID_HANDLE,            		/* Handle is not valid        */
+	YWHAL_ERROR_FEATURE_NOT_SUPPORTED,   		/* Feature unavailable        */
+	YWHAL_ERROR_TIMEOUT,                  		/* Timeout occured            */
+	YWHAL_ERROR_DEVICE_BUSY,              		/* Device is currently busy   */
+	YWHAL_ERROR_NOT_OPEN,						/*Device is not open*/
+	YWHAL_ERROR_NOT_ENOUGH_DEVICE				/*Device is all opened*/
 };
 
 
@@ -146,29 +146,29 @@ typedef U32       			YW_EventType_T;
 #ifdef ARCHITECTURE_ST40
 typedef struct U64_s
 {
-    unsigned int LSW;
-    unsigned int MSW;
-}U64;
+	unsigned int LSW;
+	unsigned int MSW;
+} U64;
 
 typedef U64 S64;
 
 
 /*Value=A+B, where A & B is U64 type*/
 #define YWI64_Add(A,B,Value)      { register long long T1,T2,Val; \
-                                T1  = (long long)(A).MSW << 32 | (A).LSW; \
-                                T2  = (long long)(B).MSW << 32 | (B).LSW; \
-                                Val = T1 + T2; \
-                                (Value).MSW = Val >> 32; \
-                                (Value).LSW = (U32)Val; \
-                                }
+		T1  = (long long)(A).MSW << 32 | (A).LSW; \
+		T2  = (long long)(B).MSW << 32 | (B).LSW; \
+		Val = T1 + T2; \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 
 /*Value=A+B, where A is U64 type & B is 32-bit atmost*/
 #define YWI64_AddLit(A,B,Value)   { register long long T1,Val; \
-                                T1 = (long long)(A).MSW << 32 | (A).LSW; \
-                                Val=T1+(B); \
-                                (Value).MSW = Val >> 32; \
-                                (Value).LSW = (U32)Val; \
-                                }
+		T1 = (long long)(A).MSW << 32 | (A).LSW; \
+		Val=T1+(B); \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 
 /*A==B, A & B are U64 type*/
 #define YWI64_IsEqual(A,B)                (((A).LSW == (B).LSW) && ((A).MSW == (B).MSW))
@@ -177,19 +177,19 @@ typedef U64 S64;
 
 /*A>=B, A & B are U64 type*/
 #define YWI64_IsGreaterOrEqual(A,B)       ( ((A).MSW >  (B).MSW) || \
-                                         (((A).MSW == (B).MSW) && ((A).LSW >= (B).LSW)))
+					    (((A).MSW == (B).MSW) && ((A).LSW >= (B).LSW)))
 
 /*A>B, A & B are U64 type*/
 #define YWI64_IsGreaterThan(A,B)          ( ((A).MSW >  (B).MSW) || \
-                                         (((A).MSW == (B).MSW) && ((A).LSW > (B).LSW)))
+					    (((A).MSW == (B).MSW) && ((A).LSW > (B).LSW)))
 
 /*A<B, A & B are U64 type*/
 #define YWI64_IsLessThan(A,B)             ( ((A).MSW <  (B).MSW) || \
-                                         (((A).MSW == (B).MSW) && ((A).LSW < (B).LSW)))
+					    (((A).MSW == (B).MSW) && ((A).LSW < (B).LSW)))
 
 /*A<=B, A & B are U64 type*/
 #define YWI64_IsLessOrEqual(A,B)          ( ((A).MSW <  (B).MSW) || \
-                                         (((A).MSW == (B).MSW) && ((A).LSW <= (B).LSW)))
+					    (((A).MSW == (B).MSW) && ((A).LSW <= (B).LSW)))
 
 #define YWI64_IsNegative(A)               ((A).MSW & 0X80000000)
 
@@ -203,68 +203,68 @@ typedef U64 S64;
 
 /*Value=A-B, where A & B are U64 type*/
 #define YWI64_Sub(A,B,Value)              ((Value).MSW  = (A).MSW - (B).MSW - (((A).LSW < (B).LSW)?1:0), \
-                                         (Value).LSW  = (A).LSW - (B).LSW)
+					   (Value).LSW  = (A).LSW - (B).LSW)
 
 /*Value=A-B, where A is U64 type & B is 32-bit atmost*/
 #define YWI64_SubLit(A,B,Value)           ((Value).MSW  = (A).MSW - (((A).LSW < (B))?1:0), \
-                                         (Value).LSW  = (A).LSW - (B))
+					   (Value).LSW  = (A).LSW - (B))
 /*Value=A/B, where A ,B is U64 type */
 #define YWI64_Div(A,B,Value)           { register long long T1,T2, Val;\
-                                        T1 = (long long)(A).MSW << 32 | (A).LSW;\
-                                        T2 = (long long)(B).MSW << 32 | (B).LSW;\
-                                        Val = T1/T2;\
-                                        (Value).MSW = Val >> 32;\
-                                        (Value).LSW = (U32)Val;\
-                                        }
+		T1 = (long long)(A).MSW << 32 | (A).LSW;\
+		T2 = (long long)(B).MSW << 32 | (B).LSW;\
+		Val = T1/T2;\
+		(Value).MSW = Val >> 32;\
+		(Value).LSW = (U32)Val;\
+	}
 
 /*Value=A/B, where A is U64 type & B is 32-bit atmost*/
 #define YWI64_DivLit(A,B,Value)           { register long long T1, Val;\
-                                        T1 = (long long)(A).MSW << 32 | (A).LSW;\
-                                        Val = T1/(B);\
-                                        (Value).MSW = Val >> 32;\
-                                        (Value).LSW = (U32)Val;\
-                                        }
+		T1 = (long long)(A).MSW << 32 | (A).LSW;\
+		Val = T1/(B);\
+		(Value).MSW = Val >> 32;\
+		(Value).LSW = (U32)Val;\
+	}
 
 /*Value=A%B, where A is U64 type & B is 32-bit atmost*/
 #define YWI64_ModLit(A,B,Value)           { register long long T1, Val;\
-                                        T1 = (long long)(A).MSW << 32 | (A).LSW;\
-                                        Val=T1%(B);\
-                                        (Value).MSW = Val >> 32;\
-                                        (Value).LSW = (U32)Val;\
-                                        }
+		T1 = (long long)(A).MSW << 32 | (A).LSW;\
+		Val=T1%(B);\
+		(Value).MSW = Val >> 32;\
+		(Value).LSW = (U32)Val;\
+	}
 
 /*Value=A*B, where A & B are U64 type*/
 #define YWI64_Mul(A,B,Value)              { register long long T1, T2, Val; \
-                                        T1 = (long long)(A).MSW << 32 | (A).LSW; \
-                                        T2 = (long long)(B).MSW << 32 | (B).LSW; \
-                                        Val=T1*T2; \
-                                        (Value).MSW = Val >> 32; \
-                                        (Value).LSW = (U32)Val; \
-                                        }
+		T1 = (long long)(A).MSW << 32 | (A).LSW; \
+		T2 = (long long)(B).MSW << 32 | (B).LSW; \
+		Val=T1*T2; \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 
 /*Value=A*B, where A is U64 type & B is 32-bit atmost*/
 #define I64_MulLit(A,B,Value)           { register long long T1,Val; \
-                                        T1 = (long long)(A).MSW << 32 | (A).LSW; \
-                                        Val=T1*(B); \
-                                        (Value).MSW = Val >> 32; \
-                                        (Value).LSW = (U32)Val; \
-                                        }
+		T1 = (long long)(A).MSW << 32 | (A).LSW; \
+		Val=T1*(B); \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 
 /*Value=Value<<Shift, where Value is U64 type*/
 #define YWI64_ShiftLeft(Shift,Value)      { register long long T1, T2, Val; \
-                                        T1 = (long long)(Value).MSW << 32 | (Value).LSW; \
-                                        Val=T1 << Shift; \
-                                        (Value).MSW = Val >> 32; \
-                                        (Value).LSW = (U32)Val; \
-                                        }
+		T1 = (long long)(Value).MSW << 32 | (Value).LSW; \
+		Val=T1 << Shift; \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 
 /*Value=Value>>Shift, where Value is U64 type*/
 #define YWI64_ShiftRight(Shift,Value)     { register long long T1, T2, Val; \
-                                        T1 = (long long)(Value).MSW << 32 | (Value).LSW; \
-                                        Val=T1 >> Shift; \
-                                        (Value).MSW = Val >> 32; \
-                                        (Value).LSW = (U32)Val; \
-                                        }
+		T1 = (long long)(Value).MSW << 32 | (Value).LSW; \
+		Val=T1 >> Shift; \
+		(Value).MSW = Val >> 32; \
+		(Value).LSW = (U32)Val; \
+	}
 #endif /*#ifdef ARCHITECTURE_ST40*/
 
 #define YW_HandleValid(Table, Max, Handle) ((Handle) >= (U32)&(Table)[0] \

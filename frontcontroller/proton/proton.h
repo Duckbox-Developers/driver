@@ -16,16 +16,19 @@
 #define VFDSETMODE            0xc0425aff
 #define VFDDISPLAYCLR		  0xc0425b00
 
-struct set_brightness_s {
+struct set_brightness_s
+{
 	int level;
 };
 
-struct set_icon_s {
+struct set_icon_s
+{
 	int icon_nr;
 	int on;
 };
 
-struct set_led_s {
+struct set_led_s
+{
 	int led_nr;
 	int on;
 };
@@ -36,11 +39,13 @@ struct set_led_s {
  * time[3] = min
  * time[4] = sec
  */
-struct set_standby_s {
+struct set_standby_s
+{
 	char time[5];
 };
 
-struct set_time_s {
+struct set_time_s
+{
 	char time[5];
 };
 
@@ -48,11 +53,13 @@ struct set_time_s {
  * to the desired mode. currently the "normal" mode
  * is the compatible vfd mode
  */
-struct set_mode_s {
+struct set_mode_s
+{
 	int compat; /* 0 = compatibility mode to vfd driver; 1 = nuvoton mode */
 };
 
-struct proton_ioctl_data {
+struct proton_ioctl_data
+{
 	union
 	{
 		struct set_icon_s icon;
@@ -64,7 +71,8 @@ struct proton_ioctl_data {
 	} u;
 };
 
-struct vfd_ioctl_data {
+struct vfd_ioctl_data
+{
 	unsigned char start_address;
 	unsigned char data[64];
 	unsigned char length;
@@ -84,7 +92,7 @@ typedef struct VFD_Time_s
 
 typedef enum
 {
-	REMOTE_OLD= 0,
+	REMOTE_OLD = 0,
 	REMOTE_NEW,
 	REMOTE_TOPFIELD,
 	REMOTE_UNKNOWN
@@ -94,22 +102,22 @@ enum
 {
 	POWER_KEY 		= 88,
 
-    TIME_SET_KEY 	= 87,
+	TIME_SET_KEY 	= 87,
 	UHF_KEY 		= 68,
 	VFormat_KEY 	= 67,
-    MUTE_KEY 		= 66,
+	MUTE_KEY 		= 66,
 
-    TVSAT_KEY 		= 65,
-    MUSIC_KEY 		= 64,
-    FIND_KEY 		= 63,
-    FAV_KEY 		= 62,
+	TVSAT_KEY 		= 65,
+	MUSIC_KEY 		= 64,
+	FIND_KEY 		= 63,
+	FAV_KEY 		= 62,
 
-    MENU_KEY 		= 102,	//HOME
-    i_KEY 			= 61,
-    EPG_KEY 		= 18,
-    EXIT_KEY 		= 48,	//B
-    RECALL_KEY 		= 30,
-    RECORD_KEY 		= 19,
+	MENU_KEY 		= 102,	//HOME
+	i_KEY 			= 61,
+	EPG_KEY 		= 18,
+	EXIT_KEY 		= 48,	//B
+	RECALL_KEY 		= 30,
+	RECORD_KEY 		= 19,
 
 	UP_KEY 			= 103,	//UP
 	DOWN_KEY		= 108,	//DOWN
@@ -117,24 +125,24 @@ enum
 	RIGHT_KEY		= 106,	//RIGTHT
 	SELECT_KEY 		= 0x160,	//ENTER
 
-    PLAY_KEY 		= 25,
-    PAGE_UP_KEY 	= 104,	//P_UP
-    PAUSE_KEY 		= 22,
-    PAGE_DOWN_KEY 	= 109,	//P_DOWN
+	PLAY_KEY 		= 25,
+	PAGE_UP_KEY 	= 104,	//P_UP
+	PAUSE_KEY 		= 22,
+	PAGE_DOWN_KEY 	= 109,	//P_DOWN
 
-    STOP_KEY 		= 20,
+	STOP_KEY 		= 20,
 	SLOW_MOTION_KEY = 50,
 	FASTREWIND_KEY  = 33,
 	FASTFORWARD_KEY = 49,
 
-    DOCMENT_KEY 	= 32,
-    SWITCH_PIC_KEY 	= 17,
-    PALY_MODE_KEY 	= 24,
-    USB_KEY 		= 111,
+	DOCMENT_KEY 	= 32,
+	SWITCH_PIC_KEY 	= 17,
+	PALY_MODE_KEY 	= 24,
+	USB_KEY 		= 111,
 
-    RADIO_KEY 		= 110,
-    SAT_KEY 		= 15,
-    F1_KEY 			= 59,
+	RADIO_KEY 		= 110,
+	SAT_KEY 		= 15,
+	F1_KEY 			= 59,
 	F2_KEY 			= 60,
 
 	RED_KEY 		= 44,	//Z
@@ -160,57 +168,57 @@ enum
 
 typedef enum LogNum_e
 {
-/*----------------------------------11G-------------------------------------*/
-	PLAY_FASTBACKWARD = 11*16+1,
+	/*----------------------------------11G-------------------------------------*/
+	PLAY_FASTBACKWARD = 11 * 16 + 1,
 	PLAY_HEAD,
 	PLAY_LOG,
 	PLAY_TAIL,
 	PLAY_FASTFORWARD,
 	PLAY_PAUSE,
-    REC1,
-    MUTE,
-    CYCLE,
-    DUBI,
-    CA,
-    CI,
-    USB,
-    DOUBLESCREEN,
-    REC2,
-/*----------------------------------12G-------------------------------------*/
-    HDD_A8 = 12*16+1,
-    HDD_A7,
-    HDD_A6,
-    HDD_A5,
-    HDD_A4,
-    HDD_A3,
-    HDD_FULL,
-    HDD_A2,
-    HDD_A1,
-    MP3,
-    AC3,
-    TVMODE_LOG,
-    AUDIO,
-    ALERT,
-    HDD_A9,
-/*----------------------------------13G-------------------------------------*/
-    CLOCK_PM = 13*16+1,
-    CLOCK_AM,
-    CLOCK,
-    TIME_SECOND,
-    DOT2,
-    STANDBY,
-    TER,
-    DISK_S3,
-    DISK_S2,
-    DISK_S1,
-    DISK_S0,
-    SAT,
-    TIMESHIFT,
-    DOT1,
-    CAB,
-  /*----------------------------------end-------------------------------------*/
-    LogNum_Max
-}LogNum_T;
+	REC1,
+	MUTE,
+	CYCLE,
+	DUBI,
+	CA,
+	CI,
+	USB,
+	DOUBLESCREEN,
+	REC2,
+	/*----------------------------------12G-------------------------------------*/
+	HDD_A8 = 12 * 16 + 1,
+	HDD_A7,
+	HDD_A6,
+	HDD_A5,
+	HDD_A4,
+	HDD_A3,
+	HDD_FULL,
+	HDD_A2,
+	HDD_A1,
+	MP3,
+	AC3,
+	TVMODE_LOG,
+	AUDIO,
+	ALERT,
+	HDD_A9,
+	/*----------------------------------13G-------------------------------------*/
+	CLOCK_PM = 13 * 16 + 1,
+	CLOCK_AM,
+	CLOCK,
+	TIME_SECOND,
+	DOT2,
+	STANDBY,
+	TER,
+	DISK_S3,
+	DISK_S2,
+	DISK_S1,
+	DISK_S0,
+	SAT,
+	TIMESHIFT,
+	DOT1,
+	CAB,
+	/*----------------------------------end-------------------------------------*/
+	LogNum_Max
+} LogNum_T;
 
 #define BASE_VFD_PRIVATE 0x00
 

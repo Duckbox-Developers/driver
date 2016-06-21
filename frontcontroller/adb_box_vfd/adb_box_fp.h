@@ -9,9 +9,9 @@
 #define SCP_CS				5
 
 #define PIO_PORT_SIZE			0x1000
-#define PIO_BASE			0xb8020000  
+#define PIO_BASE			0xb8020000
 #define STPIO_SET_OFFSET		0x4
-#define STPIO_CLEAR_OFFSET		0x8   
+#define STPIO_CLEAR_OFFSET		0x8
 #define STPIO_POUT_OFFSET		0x00
 #define STPIO_SET_PIN(PIO_ADDR, PIN, V) writel(1<<PIN, PIO_ADDR + STPIO_POUT_OFFSET + ((V)? STPIO_SET_OFFSET : STPIO_CLEAR_OFFSET))
 #define PIO_PORT(n) (((n)*PIO_PORT_SIZE) + PIO_BASE)
@@ -39,7 +39,7 @@
 
 /*
 PIO 1.6 [fp_nload  ] [OUT (push-pull)    ] []	- STB
-//PIO 2.2 [fp_key    ] [IN  (Hi-Z)         ] []	- DOUT 
+//PIO 2.2 [fp_key    ] [IN  (Hi-Z)         ] []	- DOUT
 //PIO 3.3 [fp_ir_in  ] [IN  (Hi-Z)         ] [] - IRDA
 PIO 4.0 [fp_clk    ] [Alt-BI (open-drain)] [] 	- CLK
 PIO 4.1 [fp_data   ] [Alt-BI (open-drain)] [] 	- DIN
@@ -57,33 +57,36 @@ static int rec  	= 1;
 
 static int led_POW  	= 0x02;
 
-struct scp_driver {
-  struct stpio_pin *scs;
-  struct stpio_pin *scl;
-  struct stpio_pin *sda;
+struct scp_driver
+{
+	struct stpio_pin *scs;
+	struct stpio_pin *scl;
+	struct stpio_pin *sda;
 //  struct stpio_pin *ske;
 //  struct stpio_pin *snl;
 };
 
 //------------------------------------------------
 
-struct vfd_ioctl_data {
-  unsigned char address;
-  unsigned char data[64];
-  unsigned char length;
+struct vfd_ioctl_data
+{
+	unsigned char address;
+	unsigned char data[64];
+	unsigned char length;
 };
 
-struct __vfd_scp {
-    __u8 tr_rp_ctrl;
-    __u8 rp_data;
-    __u8 tr_data;
-    __u8 start_tr;
-    __u8 status;
-    __u8 reserved;	
-    __u8 clk_div;
+struct __vfd_scp
+{
+	__u8 tr_rp_ctrl;
+	__u8 rp_data;
+	__u8 tr_data;
+	__u8 start_tr;
+	__u8 status;
+	__u8 reserved;
+	__u8 clk_div;
 };
 
-struct __vfd_scp* vfd_scp_ctrl=NULL;
+struct __vfd_scp *vfd_scp_ctrl = NULL;
 
 #define SCP_TXD_CTRL        (vfd_scp_ctrl->tr_rp_ctrl)
 #define SCP_TXD_DATA        (vfd_scp_ctrl->tr_data)

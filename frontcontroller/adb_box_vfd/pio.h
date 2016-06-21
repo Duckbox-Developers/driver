@@ -4,9 +4,9 @@
 #include <asm/io.h>
 
 #define PIO_PORT_SIZE		0x1000
-#define PIO_BASE			0xb8020000  
+#define PIO_BASE			0xb8020000
 #define STPIO_SET_OFFSET		0x4
-#define STPIO_CLEAR_OFFSET		0x8   
+#define STPIO_CLEAR_OFFSET		0x8
 #define STPIO_POUT_OFFSET		0x00
 #define STPIO_PIN_OFFSET		0x10
 

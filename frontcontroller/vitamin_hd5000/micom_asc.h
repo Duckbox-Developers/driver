@@ -38,8 +38,8 @@
 #define ASC_CTRL_FIFO_EN  0x400
 
 
-int serial_putc (char Data);
-void serial_init (void);
+int serial_putc(char Data);
+void serial_init(void);
 
 extern unsigned int InterruptLine;
 extern unsigned int ASCXBaseAddress;
