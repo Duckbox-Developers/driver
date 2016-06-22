@@ -155,7 +155,6 @@ obj-y := avs/
 obj-y += multicom/
 obj-y += stgfb/
 obj-y += player2/
-
 ifndef SAGEMCOM88 #Sagemcom88 has own boxtype
 obj-y += boxtype/
 endif
@@ -166,6 +165,7 @@ obj-y += frontcontroller/
 ifdef WLANDRIVER
 obj-y += wireless/
 endif
+obj-y += cpu_frequ/
 
 ifeq (,$(wildcard $(DRIVER_TOPDIR)/pti_np ))
 obj-y += pti/
