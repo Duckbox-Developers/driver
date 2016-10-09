@@ -655,6 +655,9 @@ int YWPANEL_VFD_SetLed(int which, int on);
 int utf8strlen(char *s, int len);
 int utf8charlen(unsigned char c);
 
+int vfdlen_show(struct seq_file *m, void *v);
+int vfdlen_open(struct inode *inode, struct  file *file);
+
 #endif /* __KERNEL__ */
 #endif /* __AOTOM_MAIN_H__ */
 
