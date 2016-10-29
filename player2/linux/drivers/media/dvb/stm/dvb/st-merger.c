@@ -221,7 +221,7 @@ static const char *fdma_cap_hb[] = { STM_DMA_CAP_HIGH_BW, NULL };
  Step2-Driver injects data to SWTS here
  When properly registered, driver should be visible in list of frontends,
  if you get error just after start of manual scan, you have neighter correct frontendX defined nor incorrect tsm definitions in this file */
-#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(SPARK7162)
+#if defined(ADB_BOX) || defined(SAGEMCOM88) || defined(ARIVALINK200) || defined(SPARK7162)  || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(HL101)
 //injecting stream from DVB-T USB driver to SWTS
 void extern_inject_data(u32 *data, off_t size)
 {
@@ -1495,7 +1495,7 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl((ret | (1 << 27)), reg_sys_config + 0x114); // sys_cfg5/
 		// route
 		ctrl_outl(0x8, reg_sys_config + SYS_CFG0); //tsin2>2 and tsin3>3
-#elif defined(ADB_BOX) || defined(ARIVALINK200)
+#elif defined(ADB_BOX) || defined(ARIVALINK200) || defined(IPBOX9900) || defined(IPBOX99) || defined(IPBOX55) || defined(HL101)
 		printk(">>Init DVBT-USB\n");
 		tsm_handle.tsm_io = ioremap(TSMergerBaseAddress, 0x0900);
 		tsm_handle.swts_channel = 3;

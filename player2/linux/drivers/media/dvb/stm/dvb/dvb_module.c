@@ -93,12 +93,22 @@ int hasdvbt = 1;
 module_param(hasdvbt, int, 0444);
 MODULE_PARM_DESC(hasdvbt, "Internal DVB-T available\n");
 #endif
+#if defined(IPBOX9900) || defined(IPBOX99)
+int twinhead = 2;
+module_param(twinhead, int, 0444);
+MODULE_PARM_DESC(twinhead, "TwinHead is available\n");
+#endif
+
 #endif
 
 #if defined(UFS910) \
  || defined(ADB_BOX) \
  || defined(SAGEMCOM88) \
- || defined(ARIVALINK200)
+ || defined(ARIVALINK200) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 int reset_tsm = 0;
 module_param(reset_tsm, int, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(reset_tsm, "Reset the tsm when pti is idle? (default=0)\n");

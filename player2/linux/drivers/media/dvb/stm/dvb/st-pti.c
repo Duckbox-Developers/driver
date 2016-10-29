@@ -129,6 +129,10 @@ extern int swts;
 extern int hasdvbt;
 #endif
 
+#if defined(IPBOX9900) || defined(IPBOX99)
+extern int twinhead;
+#endif
+
 int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 		     struct DeviceContext_s *DeviceContext)
 {
@@ -426,8 +430,17 @@ static int convert_source(const dmx_source_t source)
 			tag = 3;//TSIN2; //TSIN3
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
-#elif defined(ARIVALINK200)
+#elif defined(ARIVALINK200) || defined(IPBOX55)|| defined(HL101)
 			tag = SWTS0;
+#elif defined(IPBOX9900) || defined(IPBOX99) 
+			if (twinhead == 1)
+			{
+				tag = SWTS0;
+			}
+			else
+			{
+				tag = TSIN1;
+			}
 #else
 			tag = TSIN1;
 #endif
@@ -467,9 +480,19 @@ static int convert_source(const dmx_source_t source)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
 			break;
-#elif defined(ARIVALINK200)
+#elif defined(ARIVALINK200) || defined(IPBOX55)|| defined(HL101)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
+			break;
+#elif defined(IPBOX9900) || defined(IPBOX99)
+		case DMX_SOURCE_FRONT2:
+			if (twinhead == 2)
+			{
+				tag = SWTS0;
+			}
+			break;
+		case DMX_SOURCE_DVR0:
+			tag = TSIN2;
 			break;
 #else
 		case DMX_SOURCE_DVR0:
@@ -673,7 +696,11 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
 #if defined(SAGEMCOM88) \
  || defined(ADB_BOX) \
  || defined(ARIVALINK200) \
- || defined(SPARK7162)
+ || defined(SPARK7162) \
+ || defined(IPBOX9900) \
+ || defined(IPBOX99) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 	if (*src == DMX_SOURCE_FRONT0)
 	{
 		printk("DMX_SOURCE_FRONT0\n");
