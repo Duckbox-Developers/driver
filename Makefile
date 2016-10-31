@@ -178,6 +178,7 @@ obj-y += bpamem/
 
 ifdef HL101
 obj-y += smartcard/
+obj-y += dvbt/as102/
 endif
 
 ifdef ADB_BOX
@@ -290,17 +291,20 @@ obj-y += siinfo/
 obj-y += rmu/
 obj-y += ipbox99xx_fan/
 obj-y += smartcard/
+obj-y += dvbt/as102/
 endif
 
 ifdef IPBOX99
 obj-y += siinfo/
 obj-y += ipbox99xx_fan/
 obj-y += smartcard/
+obj-y += dvbt/as102/
 endif
 
 ifdef IPBOX55
 obj-y += siinfo/
 obj-y += smartcard/
+obj-y += dvbt/as102/
 endif
 
 ifdef CUBEREVO
