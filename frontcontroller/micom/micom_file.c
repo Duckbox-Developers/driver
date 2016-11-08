@@ -666,6 +666,28 @@ int micomWriteCommand(char command, char *buffer, int len, int needAck)
 	return 0;
 }
 
+int micomSetRCcode(int code)
+{
+	char buffer[8];
+	int  res = 0;
+
+	dprintk(5, "%s >\n", __func__);
+
+	memset(buffer, 0, 8);
+	buffer[0] = 0x02;
+	buffer[1] = 0xff;
+	buffer[2] = 0x80;
+	buffer[3] = 0x48;
+	buffer[4] = code & 0x07;	// RC code 1 to 4
+	res = micomWriteCommand(0x55, buffer, 7, 0);
+
+	memset(buffer, 0, 8);
+	buffer[0] = 0x2;
+	res = micomWriteCommand(0x3, buffer, 7, 0);
+	msleep(10);
+	return res;
+}
+
 int micomSetIcon(int which, int on)
 {
 	char buffer[8];
@@ -820,11 +842,6 @@ int micomInitialize(void)
 	dprintk(5, "%s >\n", __func__);
 
 	memset(buffer, 0, 8);
-	buffer[0] = 0x1;
-
-	res = micomWriteCommand(0x3, buffer, 7, 0);
-
-	memset(buffer, 0, 8);
 
 	/* unknown command:
 	 * modifications of most of the values leads to a
@@ -835,10 +852,15 @@ int micomInitialize(void)
 	buffer[0] = 0x02;
 	buffer[1] = 0xff;
 	buffer[2] = 0x80;
-	buffer[3] = 0x46;
-	buffer[4] = 0x01;
+	buffer[3] = 0x48;
+	buffer[4] = 0x01;	// RC code 1 to 4
 
 	res = micomWriteCommand(0x55, buffer, 7, 0);
+
+	memset(buffer, 0, 8);
+	buffer[0] = 0x2;
+
+	res = micomWriteCommand(0x3, buffer, 7, 0);
 
 	dprintk(10, "%s <\n", __func__);
 
@@ -1505,6 +1527,20 @@ static int MICOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 
 			mode = 0;
 
+			break;
+		case VFDSETRCCODE:
+			if (mode == 0)
+			{
+				struct vfd_ioctl_data *data = (struct vfd_ioctl_data *) arg;
+				int rc_code = data->data[0];
+				if (rc_code > 0 && rc_code < 5)
+					res = micomSetRCcode(rc_code);
+			}
+			else
+			{
+				//not supported
+			}
+			mode = 0;
 			break;
 		case VFDDISPLAYWRITEONOFF:
 			/* ->alles abschalten ? VFD_Display_Write_On_Off */

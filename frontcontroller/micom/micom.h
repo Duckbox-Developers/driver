@@ -55,6 +55,8 @@ extern tFrontPanelOpen FrontPanelOpen[LASTMINOR];
 #define VFDSETLED            0xc0425afe
 #define VFDSETMODE           0xc0425aff
 
+#define VFDSETRCCODE         0xc0425af6
+
 struct set_brightness_s
 {
 	int level;
