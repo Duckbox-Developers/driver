@@ -129,7 +129,8 @@ extern int swts;
 extern int hasdvbt;
 #endif
 
-#if defined(IPBOX9900) || defined(IPBOX99)
+#if defined(IPBOX9900) \
+ || defined(IPBOX99)
 extern int twinhead;
 #endif
 
@@ -430,9 +431,12 @@ static int convert_source(const dmx_source_t source)
 			tag = 3;//TSIN2; //TSIN3
 #elif defined(SAGEMCOM88)
 			tag = TSIN3;
-#elif defined(ARIVALINK200) || defined(IPBOX55)|| defined(HL101)
+#elif defined(ARIVALINK200) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 			tag = SWTS0;
-#elif defined(IPBOX9900) || defined(IPBOX99) 
+#elif defined(IPBOX9900) \
+ || defined(IPBOX99) 
 			if (twinhead == 1)
 			{
 				tag = SWTS0;
@@ -480,11 +484,14 @@ static int convert_source(const dmx_source_t source)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
 			break;
-#elif defined(ARIVALINK200) || defined(IPBOX55)|| defined(HL101)
+#elif defined(ARIVALINK200) \
+ || defined(IPBOX55) \
+ || defined(HL101)
 		case DMX_SOURCE_DVR0:
 			tag = TSIN1; //fake tsin for DVR (DVBT-USB at swts0)
 			break;
-#elif defined(IPBOX9900) || defined(IPBOX99)
+#elif defined(IPBOX9900) \
+ || defined(IPBOX99)
 		case DMX_SOURCE_FRONT2:
 			if (twinhead == 2)
 			{

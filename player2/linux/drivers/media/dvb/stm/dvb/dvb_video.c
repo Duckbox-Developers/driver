@@ -703,8 +703,7 @@ int VideoIoctlSetSpeed(struct DeviceContext_s *Context, int Speed)
 	if (DirectionChange)
 		mutex_unlock(Context->ActiveVideoWriteLock);
 #ifdef __TDT__
-	/* Phantomias: quick hack to improve resynchronization after
-	 fast forward */
+	/* Phantomias: quick hack to improve resynchronization after fast forward */
 	if ((prevSpeed != Speed) && (prevSpeed != DVB_SPEED_STOPPED) &&
 			(Context->PlaySpeed == DVB_SPEED_NORMAL_PLAY))
 	{
@@ -1257,8 +1256,7 @@ static int VideoIoctl(struct inode *Inode,
 			case VIDEO_GET_SIZE:
 			case VIDEO_GET_FRAME_RATE:
 #ifdef __TDT__
-			/* hack to allow notifications from another process/thread
-			 in read-only mode */
+			/* hack to allow notifications from another process/thread in read-only mode */
 			case VIDEO_DISCONTINUITY:
 #endif
 				/* Not allowed as they require an active player
@@ -1547,7 +1545,8 @@ static void VideoSetEvent(struct DeviceContext_s *Context,
 #ifdef __TDT__
 			/* For Enigma2, the driver handles all the aspect changes,
 			 the only thing E2 is going to do with this event is displaying
-			 the 16/9 icon or not */
+			 the 16/9 icon or not
+			*/
 			Context->VideoState.display_format = (video_displayformat_t) proc_video_policy_get();
 			Context->VideoState.video_format = (video_format_t) proc_video_aspect_get();
 			VideoIoctlSetDisplayFormat(Context, (unsigned int)Context->VideoState.display_format);

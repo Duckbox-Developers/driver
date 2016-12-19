@@ -13,67 +13,66 @@
 	#define NUMBER_OF_DESCRAMBLERS 6
 #endif
 
-struct PtiSession 
+struct PtiSession
 {
-  short int 		pidtable[32];
-  short int 		descramblerForPid[8192];
-  short int 		references[32];
+	short int	pidtable[32];
+	short int	descramblerForPid[8192];
+	short int	references[32];
 
-  short int 		type[32];
-  short int 		pes_type[32];
-  short int 		num_pids;
-  
-  int 			slots[32];
+	short int	type[32];
+	short int	pes_type[32];
+	short int	num_pids;
 
-  int 			session;
-  int 			descrambler;
-  int 			descramblers[NUMBER_OF_DESCRAMBLERS];
-  int			descramblerindex[32];
-  int 			source;
+	int		slots[32];
 
+	int		session;
+	int		descrambler;
+	int		descramblers[NUMBER_OF_DESCRAMBLERS];
+	int		descramblerindex[32];
+	int		source;
 };
 
-typedef enum 
+typedef enum
 {
-  VID_BUFFER = 222,
-  AUD_BUFFER,
-  MISC_BUFFER
+	VID_BUFFER = 222,
+	AUD_BUFFER,
+	MISC_BUFFER
 } BUFFER_TYPE;
 
 /* source */
-typedef enum 
+typedef enum
 {
-  TSIN0 = 0,
-  TSIN1,
-  TSIN2,
+	TSIN0 = 0,
+	TSIN1,
+	TSIN2,
 #if defined(SAGEMCOM88) || defined(SPARK7162)
 // 4-TS and 3-SWTS in STi7105
-  TSIN3,
-  SWTS0,
-  SWTS1,
-  SWTS2,
+	TSIN3,
+	SWTS0,
+	SWTS1,
+	SWTS2,
 #else
-  SWTS0,
-#endif  
-  TS_NOTAGS = 0x80
+	SWTS0,
+#endif
+	TS_NOTAGS = 0x80
 } tInputSource;
 
-struct stpti 
+struct stpti
 {
-  size_t 		InterruptDMABufferSize;
-  dma_addr_t    	InterruptDMABufferInfo;
-  void          	*InterruptBufferStart_p;
+	size_t		InterruptDMABufferSize;
+	dma_addr_t	InterruptDMABufferInfo;
+	void		*InterruptBufferStart_p;
 
-  /* spinlock for the interrupt handler */  
-  spinlock_t 		irq_lock;
+	/* spinlock for the interrupt handler */
+	spinlock_t	irq_lock;
 
-  /* gemappter speicherbereich; TCDevice_t* */
-  unsigned int 		pti_io;
-  
-  struct dvb_device*    ca_device;
+	/* gemappter speicherbereich; TCDevice_t* */
+	unsigned int	pti_io;
 
-  /* work queue for polling the DMA (if configured) */
-  wait_queue_head_t queue;
+	struct dvb_device* ca_device;
+
+	/* work queue for polling the DMA (if configured) */
+	wait_queue_head_t queue;
 };
 
 

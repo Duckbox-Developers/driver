@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,83 +58,83 @@ unsigned char deviceType = DEVICE_TYPE_DVD;
 
 int __init cec_init(void)
 {
-    dprintk(0, "init - starting\n");
+	dprintk(0, "init - starting\n");
 
-    cec_internal_init();
+	cec_internal_init();
 
-    udelay(10000);
+	udelay(10000);
 
-    startTask();
+	startTask();
 
-    /* ********* */
-    /* irq setup */
+	/* ********* */
+	/* irq setup */
 
-    dprintk(2, "init - starting interrupt (%d)\n", CEC_IRQ);
+	dprintk(2, "init - starting interrupt (%d)\n", CEC_IRQ);
 
 #if defined (CONFIG_KERNELVERSION) || LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
-    if (!request_irq(CEC_IRQ, (void*)cec_interrupt, IRQF_DISABLED, "cec", NULL))
+	if (!request_irq(CEC_IRQ, (void *)cec_interrupt, IRQF_DISABLED, "cec", NULL))
 #else
-    if (!request_irq(CEC_IRQ, (void*)cec_interrupt, SA_INTERRUPT, "cec", NULL))
+	if (!request_irq(CEC_IRQ, (void *)cec_interrupt, SA_INTERRUPT, "cec", NULL))
 #endif
-    {
+	{
 
-    }
-    else 
-    {
-        dprintk(0, "Can't get irq\n");
-    }
+	}
+	else
+	{
+		dprintk(0, "Can't get irq\n");
+	}
 
-    if (activemode)
-    {
-        init_e2_proc();
+	if (activemode)
+	{
+		init_e2_proc();
 
-        input_init();
-    }
-    else
-    {
-        init_dev();
-    }
+		input_init();
+	}
+	else
+	{
+		init_dev();
+	}
 
-    // TODO: how can we implement hotplug support?
-    //while(!cancelStart && getPhysicalAddress() == 0) // HDMI is not plugged in
-    //  msleep(200);
+	// TODO: how can we implement hotplug support?
+	//while(!cancelStart && getPhysicalAddress() == 0) // HDMI is not plugged in
+	//  msleep(200);
 
-    cec_worker_init();
+	cec_worker_init();
 
-    return 0;
+	return 0;
 }
 
 static void __exit cec_exit(void)
-{  
-    dprintk(0, "unloaded\n");
+{
+	dprintk(0, "unloaded\n");
 
-    cancelStart = 1;
-    udelay(20000);
+	cancelStart = 1;
+	udelay(20000);
 
-    endTask();
+	endTask();
 
-    if (activemode)
-    {
-        cleanup_e2_proc();
+	if (activemode)
+	{
+		cleanup_e2_proc();
 
-        input_cleanup();
-    }
-    else
-    {
-        cleanup_dev();
-    }
+		input_cleanup();
+	}
+	else
+	{
+		cleanup_dev();
+	}
 
-    free_irq(CEC_IRQ, NULL);
+	free_irq(CEC_IRQ, NULL);
 
-    cec_internal_exit();
+	cec_internal_exit();
 }
 
-module_init             (cec_init);
-module_exit             (cec_exit);
+module_init(cec_init);
+module_exit(cec_exit);
 
-MODULE_DESCRIPTION      ("CEC Driver");
-MODULE_AUTHOR           ("konfetti & schischu");
-MODULE_LICENSE          ("GPL");
+MODULE_DESCRIPTION("CEC Driver");
+MODULE_AUTHOR("konfetti & schischu");
+MODULE_LICENSE("GPL");
 
 module_param(debug, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 module_param(activemode, int, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);

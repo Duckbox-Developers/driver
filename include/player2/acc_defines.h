@@ -423,7 +423,7 @@ enum eAcMode
 	MODE42_LFE,               /* 8C */
 	MODE44_LFE,               /* 8D */
 	MODE52_LFE,               /* 8E */
-	MODE53_LFE,               /* 8F : WARNING :: 9 ch is not possible in 7.1 configuration */ 
+	MODE53_LFE,               /* 8F : WARNING :: 9 ch is not possible in 7.1 configuration */
 
 	MODE30_LFE_T100 = 0x94,   /* 94 :: CLR Lfe Ch */
 	MODE30_LFE_T200,          /* 95 :: CLR Lfe LhRh */

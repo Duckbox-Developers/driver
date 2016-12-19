@@ -122,7 +122,7 @@ Player_Generic_c::Player_Generic_c(void)
 #if 0
 	SetPolicy(PlayerAllPlaybacks, PlayerAllStreams, PolicyAVDSynchronization, PolicyValueDisapply);
 	SetPolicy(PlayerAllPlaybacks, PlayerAllStreams, PolicyDiscardLateFrames, PolicyValueDiscardLateFramesNever);
-// SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyMasterClock, PolicyValueSystemClockMaster );
+//	SetPolicy( PlayerAllPlaybacks, PlayerAllStreams, PolicyMasterClock, PolicyValueSystemClockMaster );
 	SetPolicy(PlayerAllPlaybacks, PlayerAllStreams, PolicyAllowFrameDiscardAtNormalSpeed, PolicyValueApply);
 	SetPolicy(PlayerAllPlaybacks, PlayerAllStreams, PolicyRebaseOnFailureToDecodeInTime, PolicyValueDisapply);
 #endif

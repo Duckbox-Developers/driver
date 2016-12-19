@@ -577,9 +577,7 @@ static int snd_card_pseudo_hw_params(struct snd_pcm_substream *substream,
 	descriptor.channels = params_channels(hw_params);
 	descriptor.sampling_freq = params_rate(hw_params);
 	descriptor.bytes_per_sample = snd_pcm_format_width(params_format(hw_params)) / 8;
-	err = pseudo->backend_ops->mixer_setup_substream(
-		      pseudo->backend_mixer, ppcm->substream_identifier,
-		      &descriptor);
+	err = pseudo->backend_ops->mixer_setup_substream(pseudo->backend_mixer, ppcm->substream_identifier, &descriptor);
 	if (err < 0)
 	{
 		snd_card_pseudo_free_pages(substream);
@@ -598,8 +596,7 @@ static int snd_card_pseudo_hw_free(struct snd_pcm_substream *substream)
 	if (ppcm->backend_is_setup)
 	{
 		/* must bring the backend to a halt before releasing the h/ware buffer */
-		err = pseudo->backend_ops->mixer_prepare_substream(
-			      pseudo->backend_mixer, ppcm->substream_identifier);
+		err = pseudo->backend_ops->mixer_prepare_substream(pseudo->backend_mixer, ppcm->substream_identifier);
 		if (err < 0)
 			return err;
 	}
@@ -756,8 +753,7 @@ static int snd_card_pseudo_playback_close(struct snd_pcm_substream *substream)
 	struct snd_pseudo *pseudo = substream->private_data;
 	int err;
 	BUG_ON(-1 == ppcm->substream_identifier);
-	err = pseudo->backend_ops->mixer_free_substream(
-		      pseudo->backend_mixer, ppcm->substream_identifier);
+	err = pseudo->backend_ops->mixer_free_substream(pseudo->backend_mixer, ppcm->substream_identifier);
 	if (err < 0)
 		return err;
 	ppcm->backend_is_setup = 0;
@@ -781,8 +777,7 @@ static int __init snd_card_pseudo_pcm(struct snd_pseudo *pseudo, int device, int
 {
 	struct snd_pcm *pcm;
 	int err;
-	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device,
-			       substreams, 0, &pcm)) < 0)
+	if ((err = snd_pcm_new(pseudo->card, "Pseudo PCM", device, substreams, 0, &pcm)) < 0)
 		return err;
 	pseudo->pcm = pcm;
 	snd_pcm_set_ops(pcm, SNDRV_PCM_STREAM_PLAYBACK, &snd_card_pseudo_playback_ops);
@@ -795,8 +790,7 @@ static int __init snd_card_pseudo_pcm(struct snd_pseudo *pseudo, int device, int
 static void snd_pseudo_mixer_update(struct snd_pseudo *pseudo)
 {
 	int err;
-	err = pseudo->backend_ops->mixer_set_module_parameters(
-		      pseudo->backend_mixer, &pseudo->mixer, sizeof(pseudo->mixer));
+	err = pseudo->backend_ops->mixer_set_module_parameters(pseudo->backend_mixer, &pseudo->mixer, sizeof(pseudo->mixer));
 	if (0 != err)
 		printk(KERN_ERR "%s: Could not update mixer parameters\n", pseudo->card->shortname);
 	/* lock prevents the observer from being deregistered whilst we update the observer */

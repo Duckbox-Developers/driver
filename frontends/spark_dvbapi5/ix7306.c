@@ -450,7 +450,9 @@ static int ix7306_get_status(struct dvb_frontend *fe, u32 *status)
 	}
 	else
 	{
+#if defined(IX7306_DEBUG)
 		printk("%s: Tuner Phase Not Locked result - 0x%x, 0x%x,\n", __func__, result[0], result[1]);
+#endif
 	}
 
 	return err;

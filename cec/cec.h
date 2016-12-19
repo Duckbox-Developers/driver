@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify

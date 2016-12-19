@@ -20,7 +20,7 @@ typedef struct
 	unsigned char data[256];
 } tCECMessage;
 
-void AddMessageToBuffer (unsigned char *rawmsg, unsigned int len);
+void AddMessageToBuffer(unsigned char *rawmsg, unsigned int len);
 
 int init_dev(void);
 int cleanup_dev(void);

@@ -119,8 +119,8 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor(class HavanaPlayer_c *HavanaPlayer
 				return HavanaNoMemory;
 			}
 		}
-		//}}}
 	}
+	//}}}
 	else if (strcmp(Media, BACKEND_VIDEO_ID) == 0)
 	{
 		class Manifestor_Video_c *VideoManifestor;

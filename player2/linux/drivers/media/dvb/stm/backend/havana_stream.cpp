@@ -218,7 +218,9 @@ HavanaStatus_t HavanaStream_c::Init(class HavanaPlayer_c *HavanaPlayer,
 	{
 		Status = HavanaPlayer->GetManifestor(Media, Encoding, SurfaceId, &Manifestor);
 		if (Status != HavanaNoError)
+		{
 			return Status;
+		}
 	}
 	//
 	// Addition by nick to avoid allocation of 8 or 16mb coded data
@@ -383,8 +385,7 @@ HavanaStatus_t HavanaStream_c::Discontinuity(bool ContinuousReverse,
 //}}}
 //{{{ Drain
 #ifdef __TDT__
-HavanaStatus_t HavanaStream_c::Drain(bool Discard,
-				     bool NonBlock)
+HavanaStatus_t HavanaStream_c::Drain(bool Discard, bool NonBlock)
 #else
 HavanaStatus_t HavanaStream_c::Drain(bool Discard)
 #endif
@@ -1281,7 +1282,7 @@ HavanaStatus_t HavanaStream_c::GetDecodeBufferPoolStatus(unsigned int *BuffersIn
 // returning buffers in pool obtained from get pool usage, we now return the
 // manifestor obtained value of how many buffers we can reasonably expect to allocate
 //
-// STREAM_DEBUG("\n");
+	//STREAM_DEBUG("\n");
 	Status = DecodeBufferPool->GetPoolUsage(NULL,
 						BuffersWithNonZeroReferenceCount,
 						&MemoryInPool,

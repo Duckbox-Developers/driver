@@ -48,7 +48,7 @@ int a8293_write(struct i2c_client *client, unsigned char reg)
 		dprintk(1, "Error writing 0x%02x to address 0x%02x\n", reg, client->addr);
 		return -EFAULT;
 	}
-	dprintk(10, "OK <\n", __func__);
+	dprintk(10, "OK <\n");
 	return 0;
 }
 

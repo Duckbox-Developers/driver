@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@ extern int debug;
 #define TAGDEBUG "[CEC] "
 
 #define dprintk(level, x...) do { \
-if (debug >= level) printk(TAGDEBUG x); \
-} while (0)
+		if (debug >= level) printk(TAGDEBUG x); \
+	} while (0)
 
 #endif

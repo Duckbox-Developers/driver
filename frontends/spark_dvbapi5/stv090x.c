@@ -3182,8 +3182,10 @@ static int stv090x_get_dmdlock(struct stv090x_state *state, s32 timeout)
 
 		if (!lock)
 			msleep(1);
+#ifdef VERY_VERBOSE
 		else
 			printk("Demodulator acquired LOCK\n");
+#endif
 
 		timer += 10;
 	}
@@ -4071,7 +4073,9 @@ static u8 stv090x_optimize_carloop(struct stv090x_state *state, enum stv090x_mod
 	 */
 	if ((state->dev_ver == 0x20) && (state->device == STX7111))
 	{
+#ifdef VERY_VERBOSE
 		printk("%s STX7111 cut 0x20 handling (modcod %d, pilots %d)\n", __func__, modcod, pilots);
+#endif
 		car_loop        = stx7111_s2_crl_cut20;
 #warning stv090x: fixme fixme dont know lowqpsk crl
 		car_loop_qpsk_low   = stv090x_s2_lowqpsk_crl_cut20;

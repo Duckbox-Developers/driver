@@ -952,7 +952,7 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t *Context,
 		Context->CapNextBufferToFill++;
 		if (Context->CapNextBufferToFill >= Context->CapNextBufferToGet)
 		{
-//	 printk( "CAP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->CapNextBufferToFill, Context->CapNextBufferToGet, Context->CapPreInjectBufferSem.count );
+//			printk( "CAP Video - No buffer to move onto - We dropped a frame (%d, %d) %d\n", Context->CapNextBufferToFill, Context->CapNextBufferToGet, Context->CapPreInjectBufferSem.count );
 			printk("CAP DF\n"); // Drasticaly shortened message we still need to see this, but the long message forces the condition to continue rather than fixing it
 			DroppedAFrame = true;
 			if (Context->StandardFrameRate)
@@ -1570,7 +1570,7 @@ void CapInterrupt(void *data, stm_field_t vsync)
 	{
 		case CapInactive:
 //			printk( "CapInterrupt - Cap inactive - possible implementation error.\n" );
-// Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevent here
+//			Nick removed next line, primary use in DVP was to ensure interrupts turned off, not relevent here
 //			CapHaltCapture( Context ); // Try and halt it
 			break;
 		case CapStarting:
@@ -1584,7 +1584,7 @@ void CapInterrupt(void *data, stm_field_t vsync)
 			if (!inrange(Context->CapBaseTime, (EstimatedBaseTime - EstimatedBaseTimeRange), (EstimatedBaseTime + EstimatedBaseTimeRange)) &&
 					(Context->CapwarmUpSynchronizationAttempts < CAP_WARM_UP_TRIES))
 			{
-//			 printk( "CapInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->CapBaseTime, CapTimeForNFrames(1), EstimatedBaseTime, Context->CapInterruptFrameCount, Context->CapBaseTime );
+//				printk( "CapInterrupt - Base adjustment %4lld(%5lld) (%016llx[%d] - %016llx)\n", EstimatedBaseTime - Context->CapBaseTime, CapTimeForNFrames(1), EstimatedBaseTime, Context->CapInterruptFrameCount, Context->CapBaseTime );
 				Context->CapBaseTime = Now;
 				Context->CapInterruptFrameCount = 0;
 				Context->CapTimeAtZeroInterruptFrameCount = Context->CapBaseTime;
@@ -1594,7 +1594,7 @@ void CapInterrupt(void *data, stm_field_t vsync)
 			}
 			if (Context->CapInterruptFrameCount < Context->CapWarmUpVideoFrames)
 				break;
-//printk( "Warm up tries was %d\n", Context->CapwarmUpSynchronizationAttempts );
+			//printk( "Warm up tries was %d\n", Context->CapwarmUpSynchronizationAttempts );
 			if (Context->CapwarmUpSynchronizationAttempts >= CAP_WARM_UP_TRIES)
 				CapWarmUpFailure(Context, (Now - Context->CapBaseTime));
 			up(&Context->CapVideoInterruptSem);
@@ -1604,7 +1604,7 @@ void CapInterrupt(void *data, stm_field_t vsync)
 			MonitorSignalEvent(MONITOR_EVENT_VIDEO_FIRST_FIELD_ACQUIRED, NULL, "CapInterrupt: First field acquired");
 			break;
 		case CapMovingToRun:
-//printk( "Moving %12lld %12lld - %016llx %016llx\n", (Now - Context->CapRunFromTime), (Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now), Context->CapRunFromTime, Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime );
+			//printk( "Moving %12lld %12lld - %016llx %016llx\n", (Now - Context->CapRunFromTime), (Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime - Now), Context->CapRunFromTime, Context->CapBufferStack[Context->CapNextBufferToFill % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime );
 			if (Now < Context->CapRunFromTime)
 				break;
 			Context->CapState = CapRunning;
@@ -2219,7 +2219,7 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t *Context,
 {
 #if 0
 	printk("VIDIOC_S_CROP:\n");
-	printk("	%s %3dx%3d\n",
+	printk(" %s %3dx%3d\n",
 	       ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
 	       Crop->c.width, Crop->c.height);
 #endif

@@ -44,7 +44,7 @@ Date Modification Name
 #include <linux/dvb/video.h>
 #include <linux/dvb/version.h>
 
-#include "dvb_demux.h" /* provides kernel demux types */
+#include <dvb_demux.h> /* provides kernel demux types */
 
 #define USE_KERNEL_DEMUX
 
@@ -93,7 +93,8 @@ int hasdvbt = 1;
 module_param(hasdvbt, int, 0444);
 MODULE_PARM_DESC(hasdvbt, "Internal DVB-T available\n");
 #endif
-#if defined(IPBOX9900) || defined(IPBOX99)
+#if defined(IPBOX9900) \
+ || defined(IPBOX99)
 int twinhead = 2;
 module_param(twinhead, int, 0444);
 MODULE_PARM_DESC(twinhead, "TwinHead is available\n");

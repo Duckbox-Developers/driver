@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 
 #include <linux/interrupt.h>
 
-int cec_task(void* dummy);
+int cec_task(void *dummy);
 irqreturn_t cec_interrupt(int irq, void *dev_id);
 void sendMessage(unsigned int len, unsigned char buf[]);
 //void sendMessageWithRetry(unsigned int len, unsigned char buf[], unsigned int retry);

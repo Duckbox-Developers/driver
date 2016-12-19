@@ -30,7 +30,7 @@ enum relay_source_ids
 	ST_RELAY_SOURCE_MME_LOG,
 	ST_RELAY_SOURCE_LOW_LATENCY,
 
-//don't do anything below here
+	// don't do anything below here
 	RELAY_NUMBER_OF_SOURCES
 };
 
@@ -62,7 +62,7 @@ enum relay_type_ids
 	ST_RELAY_TYPE_LOW_LATENCY_INPUT0,
 	ST_RELAY_TYPE_LOW_LATENCY_INPUT1,
 
-//don't do anything below here
+	// don't do anything below here
 	RELAY_NUMBER_OF_TYPES
 };
 
@@ -73,7 +73,7 @@ enum relay_type_ids
 
 struct relay_entry_s
 {
-//these first items will be writen as a buffer header
+	// these first items will be writen as a buffer header
 	unsigned char name[ST_RELAY_TYPE_NAME_LEN]; //set from st_relay_types.h
 
 	unsigned int x; //slots for any metadata required by 'st_relayfs_parse'
@@ -84,7 +84,7 @@ struct relay_entry_s
 	unsigned int source;
 	unsigned int count;
 	unsigned int len;
-//below here for internal use only
+	// below here for internal use only
 	unsigned int active; //controlled via debugfs
 	struct dentry *dentry;
 };

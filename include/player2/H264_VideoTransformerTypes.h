@@ -356,14 +356,14 @@ typedef struct
  corresponding to the first
  element in "ReferenceFrameAddress_p"
  */
+	/* Array of addresses of the reference frame
+	 used for the current decode.
+	 These addresses corresponds to the addresses
+	 that are transmitted to the hardware IP for
+	 setting its the reference frames.
+	 Array with a fixed size (16 elements).
+	*/
 	H264_ReferenceFrameAddress_t ReferenceFrameAddress[H264_MAX_NUMBER_OF_REFERENCES_FRAME];
-/* Array of addresses
- of the reference frame used for the current decode.
- These addresses corresponds to the addresses
- that are transmitted to the hardware IP for
- setting its the reference frames.
- Array with a fixed size (16 elements).
- */
 
 	H264_RefPictList_t InitialPList0; /* Initial reference idx list0 used for
  decoding a P slice

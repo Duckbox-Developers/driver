@@ -254,10 +254,8 @@ static inline int DvbPlaybackRemoveDemux(struct PlaybackContext_s *Playback,
 stream_event_signal_callback DvbStreamRegisterEventSignalCallback(struct StreamContext_s *Stream,
 								  struct DeviceContext_s *Context,
 								  stream_event_signal_callback CallBack);
-int DvbDisplayDelete(char *Media,
-		     unsigned int SurfaceId);
+int DvbDisplayDelete(char *Media, unsigned int SurfaceId);
 
-int DvbDisplaySynchronize(char *Media,
-			  unsigned int SurfaceId);
+int DvbDisplaySynchronize(char *Media, unsigned int SurfaceId);
 
 #endif

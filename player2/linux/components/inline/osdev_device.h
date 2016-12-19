@@ -1100,7 +1100,7 @@ static inline unsigned int OSDEV_IOReMap(unsigned int BaseAddress, unsigned int 
 
 static inline void OSDEV_IOUnMap(unsigned int MapAddress)
 {
-// OSDEV_Print("Unmapping %x\n",MapAddress);
+//	OSDEV_Print("Unmapping %x\n",MapAddress);
 	iounmap((void *)MapAddress);
 }
 

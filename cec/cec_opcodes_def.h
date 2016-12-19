@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,6 +199,7 @@
 #define LG_REQUEST_REMOTE_CONTROL_LEVEL  0x0B
 #define LG_REQUEST_VENDOR_COMMAND1       0x04
 #define LG_REQUEST_VENDOR_COMMAND2       0xA0
+#define LG_REQUEST_VENDOR_COMMAND3       0x03
 
 // end LG Vendor Specific
 
@@ -213,122 +214,146 @@ typedef unsigned char  tPowerStatus;
 typedef unsigned char  tUiCommand;
 
 #define FEATURE_ABORT           0x00
-struct sFEATURE_ABORT  {
-  unsigned char FeatureOpcode;
-  tAbortReason AbortReason;
+struct sFEATURE_ABORT
+{
+	unsigned char FeatureOpcode;
+	tAbortReason AbortReason;
 };
 
 #define ABORT_MESSAGE           0xFF
-struct sABORT_MESSAGE  {
+struct sABORT_MESSAGE
+{
 };
 
 #define IMAGE_VIEW_ON           0x04
-struct sIMAGE_VIEW_ON {
+struct sIMAGE_VIEW_ON
+{
 };
 
 #define RECORD_ON               0x09
-struct sRECORD_ON {
-  unsigned char RecordSource; //todo
+struct sRECORD_ON
+{
+	unsigned char RecordSource; //todo
 };
 
 #define RECORD_STATUS           0x0A
-struct sRECORD_STATUS {
-  unsigned char RecordStatusInfo; //todo
+struct sRECORD_STATUS
+{
+	unsigned char RecordStatusInfo; //todo
 };
 
 #define RECORD_OFF              0x0B
-struct sRECORD_OFF {
+struct sRECORD_OFF
+{
 };
 
 #define TEXT_VIEW_ON            0x0D
-struct sTEXT_VIEW_ON {
+struct sTEXT_VIEW_ON
+{
 };
 
 #define RECORD_TV_SCREEN        0x0F
-struct sRECORD_TV_SCREEN {
+struct sRECORD_TV_SCREEN
+{
 };
 
 #define GIVE_DECK_STATUS        0x1A
-struct sGIVE_DECK_STATUS {
-  unsigned char StatusRequest; //todo
+struct sGIVE_DECK_STATUS
+{
+	unsigned char StatusRequest; //todo
 };
 
 #define DECK_STATUS             0x1B
-struct sDECK_STATUS {
-  unsigned char DeckInfo; //todo
+struct sDECK_STATUS
+{
+	unsigned char DeckInfo; //todo
 };
 
 #define SET_MENU_LANGUAGE       0x32
-struct sSET_MENU_LANGUAGE {
-  char Language[3];
+struct sSET_MENU_LANGUAGE
+{
+	char Language[3];
 };
 
 #define STANDBY                 0x36
-struct sSTANDBY {
+struct sSTANDBY
+{
 };
 
 #define USER_CONTROL_PRESSED    0x44
 // Directly
-struct sUSER_CONTROL_PRESSED {
-  tUiCommand UiCommand;
+struct sUSER_CONTROL_PRESSED
+{
+	tUiCommand UiCommand;
 };
 
 #define USER_CONTROL_RELEASED   0x45
 // Directly
-struct sUSER_CONTROL_RELEASED {
+struct sUSER_CONTROL_RELEASED
+{
 };
 
 #define GIVE_OSD_NAME           0x46
-struct sGIVE_OSD_NAME {
+struct sGIVE_OSD_NAME
+{
 };
 
 #define SET_OSD_NAME            0x47
-struct sSET_OSD_NAME {
-  char OsdName[8];
+struct sSET_OSD_NAME
+{
+	char OsdName[8];
 };
 
 #define SET_OSD_STRING          0x64
-struct sSET_OSD_STRING {
-  tDisplayControl DisplayControl;
-  char OsdString[13];
+struct sSET_OSD_STRING
+{
+	tDisplayControl DisplayControl;
+	char OsdString[13];
 };
 
 #define ROUTING_CHANGE          0x80
-struct sROUTING_CHANGE {
-  tPhysicalAddress  OriginalAddress;
-  tPhysicalAddress  NewAddress;
+struct sROUTING_CHANGE
+{
+	tPhysicalAddress  OriginalAddress;
+	tPhysicalAddress  NewAddress;
 };
 
 #define ROUTING_INFORMATION     0x81
-struct sROUTING_INFORMATION {
-  tPhysicalAddress  PhysicalAddress;
+struct sROUTING_INFORMATION
+{
+	tPhysicalAddress  PhysicalAddress;
 };
 
 #define ACTIVE_SOURCE           0x82
 // Broadcast
-struct sACTIVE_SOURCE {
-  tPhysicalAddress  PhysicalAddress;
+struct sACTIVE_SOURCE
+{
+	tPhysicalAddress  PhysicalAddress;
 };
 
 #define GIVE_PHYSICAL_ADDRESS   0x83
-struct sGIVE_PHYSICAL_ADDRESS {
+struct sGIVE_PHYSICAL_ADDRESS
+{
 };
 
 #define REPORT_PHYSICAL_ADDRESS 0x84
-struct sREPORT_PHYSICAL_ADDRESS { // 2f 84 20 00 03
-  tPhysicalAddress  PhysicalAddress;
-  tDeviceType       DeviceType;
+struct sREPORT_PHYSICAL_ADDRESS   // 2f 84 20 00 03
+{
+	tPhysicalAddress  PhysicalAddress;
+	tDeviceType       DeviceType;
 };
 
 #define REQUEST_ACTIVE_SOURCE   0x85
-struct sREQUEST_ACTIVE_SOURCE {
+struct sREQUEST_ACTIVE_SOURCE
+{
 };
 
 #define SET_STREAM_PATH         0x86
 // Broadcast
 // -> ACTIVE_SOURCE
-struct sSET_STREAM_PATH {
-  tPhysicalAddress  PhysicalAddress;
+struct sSET_STREAM_PATH
+{
+	tPhysicalAddress  PhysicalAddress;
 };
 
 #define DEVICE_VENDOR_ID        0x87
@@ -339,70 +364,83 @@ struct sSET_STREAM_PATH {
 //SAMSUNG:     00 00 F0
 //SONY BRAVIA: 08 00 46
 
-struct sDEVICE_VENDOR_ID {
-  unsigned char  VendorId[3];
+struct sDEVICE_VENDOR_ID
+{
+	unsigned char  VendorId[3];
 };
 
 #define VENDOR_COMMAND          0x89
-struct sVENDOR_COMMAND {
-  unsigned char  VendorSpecificData[14];
+struct sVENDOR_COMMAND
+{
+	unsigned char  VendorSpecificData[14];
 };
 
 #define VENDOR_REMOTE_BUTTON_DOWN   0x8A
-struct sVENDOR_REMOTE_BUTTON_DOWN  {
+struct sVENDOR_REMOTE_BUTTON_DOWN
+{
 	unsigned char VendorSpecificRCCode;
 };
 
 #define GIVE_DEVICE_VENDOR_ID   0x8C
-struct sGIVE_DEVICE_VENDOR_ID {
-  unsigned char VendorId[3];
-  unsigned char VendorSpecificData[14];
+struct sGIVE_DEVICE_VENDOR_ID
+{
+	unsigned char VendorId[3];
+	unsigned char VendorSpecificData[14];
 };
 
 #define MENU_REQUEST   0x8D
 // Directly
-struct sMENU_REQUEST {
-  tMenuRequestType MenuRequestType;
+struct sMENU_REQUEST
+{
+	tMenuRequestType MenuRequestType;
 };
 
 #define MENU_STATUS   0x8E
 // Directly
-struct sMENU_STATUS {
-  tMenuState MenuState;
+struct sMENU_STATUS
+{
+	tMenuState MenuState;
 };
 
 #define GIVE_DEVICE_POWER_STATUS    0x8F
 // Directly
 // -> REPORT_POWER_STATUS
-struct sGIVE_DEVICE_POWER_STATUS {
+struct sGIVE_DEVICE_POWER_STATUS
+{
 };
 
 #define REPORT_POWER_STATUS     0x90
 // Directly
-struct sREPORT_POWER_STATUS {
-  tPowerStatus PowerStatus;
+struct sREPORT_POWER_STATUS
+{
+	tPowerStatus PowerStatus;
 };
 
 #define GIVE_MENU_LANGUAGE      0x91
-struct sGIVE_MENU_LANGUAGE {
+struct sGIVE_MENU_LANGUAGE
+{
 };
 
 #define SET_AUDIO_RATE      0x9a
-struct sSET_AUDIO_RATE {
-  tAudioRate AudioRate;
+struct sSET_AUDIO_RATE
+{
+	tAudioRate AudioRate;
 };
 
 #define CEC_VERSION      0x9e
-struct sCEC_VERSION {
+struct sCEC_VERSION
+{
 };
 
 #define GET_CEC_VERSION      0x9f
-struct sGET_CEC_VERSION {
+struct sGET_CEC_VERSION
+{
 };
 
 #define VENDOR_COMMAND_WITH_ID          0xa0
-struct sVENDOR_COMMAND_WITH_ID {
-  //unsigned char  VendorSpecificData[14];
+struct sVENDOR_COMMAND_WITH_ID
+{
+	//unsigned char  VendorSpecificData[14];
 };
 
 #endif

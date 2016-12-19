@@ -39,9 +39,9 @@ Date Modification Name
 #include <pti_public.h>
 #endif
 
-#include "dvbdev.h"
-#include "dmxdev.h"
-#include "dvb_demux.h"
+#include <dvbdev.h>
+#include <dmxdev.h>
+#include <dvb_demux.h>
 
 #ifdef __TDT__
 /* forward declaration (because used in the header files below) */

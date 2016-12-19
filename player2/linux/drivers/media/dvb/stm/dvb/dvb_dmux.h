@@ -31,7 +31,7 @@ Date Modification Name
 #ifndef H_DVB_DEMUX
 #define H_DVB_DEMUX
 
-#include "dvbdev.h"
+#include <dvbdev.h>
 #include <dvb_demux.h>
 
 #if 0

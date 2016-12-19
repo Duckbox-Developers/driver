@@ -1,5 +1,5 @@
 /*
- * 
+ *
  * (c) 2010 konfetti, schischu
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@
 #include <linux/semaphore.h>
 #endif
 
-//#include <linux/i2c.h> 
+//#include <linux/i2c.h>
 
 #include "cec_internal.h"
 #include "cec_opcodes.h"
@@ -69,131 +69,131 @@ static unsigned char sendCommandWithDelay = 0;
 
 int sendMessageWithRetry(unsigned int len, unsigned char buf[], unsigned int retry)
 {
-  unsigned long Counter = 100;
-  unsigned char value = 0;
-  unsigned char src;
-  unsigned char dst;
+	unsigned long Counter = 100;
+	unsigned char value = 0;
+	unsigned char src;
+	unsigned char dst;
 
-  while(isSending && --Counter)
-  {
-    // We are to fast, lets make a break
-    udelay(10000);
-  }
+	while (isSending && --Counter)
+	{
+		// We are to fast, lets make a break
+		udelay(10000);
+	}
 
-  if (Counter == 0)
-  {
-    dprintk(0, "%s - failed (Timeout!!!)\n", __func__);
-    return -1;
-  }
+	if (Counter == 0)
+	{
+		dprintk(0, "%s - failed (Timeout!!!)\n", __func__);
+		return -1;
+	}
 
-  sizeOfSendBuf = len;
-  indexOfSendBuf = 0;
+	sizeOfSendBuf = len;
+	indexOfSendBuf = 0;
 
-  isSending = 1;
+	isSending = 1;
 
-  retries = retry;
+	retries = retry;
 
-  // The first byte contains src and dst
-  src = getLogicalDeviceType(); //buf[0] >> 4;
-  dst = buf[0] & 0x0F;
+	// The first byte contains src and dst
+	src = getLogicalDeviceType(); //buf[0] >> 4;
+	dst = buf[0] & 0x0F;
 
-  // Correct address of the message
-  buf[0] = (src << 4) + (dst & 0xF);
+	// Correct address of the message
+	buf[0] = (src << 4) + (dst & 0xF);
 
-  memcpy(sendBuf, buf, len);
+	memcpy(sendBuf, buf, len);
 
-  cec_set_own_address(src);
+	cec_set_own_address(src);
 
-  value = sendBuf[indexOfSendBuf];
-  cec_write_data((unsigned int)value);
+	value = sendBuf[indexOfSendBuf];
+	cec_write_data((unsigned int)value);
 
-  indexOfSendBuf++;
+	indexOfSendBuf++;
 
-  dprintk(4, "sendCommand - up ->\n");
-  up(&sendCommand);
-  dprintk(4, "sendCommand - up <-\n");
+	dprintk(4, "sendCommand - up ->\n");
+	up(&sendCommand);
+	dprintk(4, "sendCommand - up <-\n");
 
-  return 0;
+	return 0;
 }
 
 void sendMessage(unsigned int len, unsigned char buf[])
 {
-  sendMessageWithRetry(len, buf, DEFAULT_RETRY_COUNT);
+	sendMessageWithRetry(len, buf, DEFAULT_RETRY_COUNT);
 }
 
 void cec_worker_init(void)
 {
-  cec_set_own_address(/*DEVICE_TYPE_UNREG*/ 0x0F);
+	cec_set_own_address(/*DEVICE_TYPE_UNREG*/ 0x0F);
 
-  dprintk(1, "*** CEC INIT ***\n");
-  str_status(cec_get_status());
-  str_error(cec_get_error());
-  dprintk(1, "~~~ CEC INIT ~~~\n");
+	dprintk(1, "*** CEC INIT ***\n");
+	str_status(cec_get_status());
+	str_error(cec_get_error());
+	dprintk(1, "~~~ CEC INIT ~~~\n");
 
-  sendPingWithAutoIncrement();
+	sendPingWithAutoIncrement();
 }
 
 /* *************************** */
 /* worker task                 */
 /* *************************** */
 
-int cec_task(void* dummy);
+int cec_task(void *dummy);
 
 static unsigned char notEndTask = 1;
 
 void startTask(void)
 {
-  notEndTask = 0;
-  kernel_thread(cec_task, NULL, 0);
-  while(notEndTask == 0)
-    udelay(5000);
+	notEndTask = 0;
+	kernel_thread(cec_task, NULL, 0);
+	while (notEndTask == 0)
+		udelay(5000);
 }
 
 void endTask(void)
 {
-  notEndTask = 0;
-  up(&sendCommand);
-  while(notEndTask == 0)
-    udelay(10000);
+	notEndTask = 0;
+	up(&sendCommand);
+	while (notEndTask == 0)
+		udelay(10000);
 }
 
-int cec_task(void* dummy)
+int cec_task(void *dummy)
 {
-  dprintk(2, "cec_task started\n");
+	dprintk(2, "cec_task started\n");
 
-  daemonize("cec_repeater");
+	daemonize("cec_repeater");
 
-  allow_signal(SIGTERM);
+	allow_signal(SIGTERM);
 
-  sema_init(&sendCommand, 0);
-  notEndTask = 1;
+	sema_init(&sendCommand, 0);
+	notEndTask = 1;
 
-  while (notEndTask)
-  {
-    dprintk(4, "sendCommand - down ->\n");
-    down(&sendCommand);
-    dprintk(4, "sendCommand - down <-\n");
+	while (notEndTask)
+	{
+		dprintk(4, "sendCommand - down ->\n");
+		down(&sendCommand);
+		dprintk(4, "sendCommand - down <-\n");
 
-    if(!notEndTask)
-      break;
+		if (!notEndTask)
+			break;
 
-    if(sendCommandWithDelay--)
-      udelay(10000);
+		if (sendCommandWithDelay--)
+			udelay(10000);
 
-    if(sizeOfSendBuf == 1) // PING
-    {
-      cec_start_sending(1);
-    }
-    else
-    {
-      cec_start_sending(0);
-    }
-    //udelay(10000);
-  }
+		if (sizeOfSendBuf == 1) // PING
+		{
+			cec_start_sending(1);
+		}
+		else
+		{
+			cec_start_sending(0);
+		}
+		//udelay(10000);
+	}
 
-  notEndTask = 1;
-  dprintk(2, "task died\n");
-  return 0;
+	notEndTask = 1;
+	dprintk(2, "task died\n");
+	return 0;
 }
 
 /* *************************** */
@@ -202,101 +202,101 @@ int cec_task(void* dummy)
 
 irqreturn_t cec_interrupt(int irq, void *dev_id)
 {
-  u8 status, error;
-  
-  dprintk(4, "#### CEC INTERUPT  START####\n");
+	u8 status, error;
 
-  status = cec_get_status();
-  error  = cec_get_error();
-  
-  if (status & CEC_STATUS_RECV_ERR) // Error while receiving
-  {
-    dprintk(2, "++++ CEC ERROR (RECV) ++++\n");
-    str_error(error);
-    str_status(status);
-    cec_acknowledge();
-  }
-  else if (status & CEC_STATUS_SEND_ERR) // Error while sending
-  {
-    dprintk(2, "++++ CEC ERROR (SEND) ++++\n");
-    str_error(error);
-    str_status(status);
-    if (status & CEC_STATUS_SEND_EOMSG) // End of Message
-      cec_acknowledge_eom();
-    else
-      cec_acknowledge();
+	dprintk(4, "#### CEC INTERUPT  START####\n");
 
-    isSending = 0;
+	status = cec_get_status();
+	error  = cec_get_error();
 
-    dprintk(4, "Retries: %d\n", retries);
-    dprintk(3, "---- CEC ERROR ----\n");
+	if (status & CEC_STATUS_RECV_ERR) // Error while receiving
+	{
+		dprintk(2, "++++ CEC ERROR (RECV) ++++\n");
+		str_error(error);
+		str_status(status);
+		cec_acknowledge();
+	}
+	else if (status & CEC_STATUS_SEND_ERR) // Error while sending
+	{
+		dprintk(2, "++++ CEC ERROR (SEND) ++++\n");
+		str_error(error);
+		str_status(status);
+		if (status & CEC_STATUS_SEND_EOMSG) // End of Message
+			cec_acknowledge_eom();
+		else
+			cec_acknowledge();
 
-    if(getIsFirstKiss() == 1)
-    {
-        if (error & CEC_ERROR_ACK)
-        {
-          dprintk(0, "The above error is a wanted behaviour as this was a ping!\n");
-          setIsFirstKiss(0);
-        }
-        else if(retries > 0)
-        {
-          sendMessageWithRetry(sizeOfSendBuf, sendBuf, retries - 1);
-        }
-    }
-    else if(retries > 0)
-    {
-      sendMessageWithRetry(sizeOfSendBuf, sendBuf, retries - 1);
-    }
-  }
-  else if (status & CEC_STATUS_RECV_BTF) // Receiving
-  {
-    if (status & CEC_STATUS_RECV_SOMSG) // Start of Message
-    {
-      isReceiving = 1;
-      indexOfRecvBuf = 0; 
-      memset(recvBuf, 0, RECV_BUF_SIZE);
-    }
+		isSending = 0;
 
-    recvBuf[indexOfRecvBuf] = cec_read_data();
-    dprintk(3, "RECV 0x%0x\n", recvBuf[indexOfRecvBuf]);
-    cec_acknowledge();
-    indexOfRecvBuf++;
+		dprintk(4, "Retries: %d\n", retries);
+		dprintk(3, "---- CEC ERROR ----\n");
 
-    if (status & CEC_STATUS_RECV_EOMSG) // End of Message
-    {
-      isReceiving = 0;
-      dprintk(3, "++++ CEC MESSAGE RECEIVED ++++\n");
-      parseRawMessage(indexOfRecvBuf, recvBuf);
-      dprintk(3, "---- CEC MESSAGE RECEIVED ----\n");
-    }
-  }
-  else if (status & CEC_STATUS_SEND_BTF) // Transmitting
-  {
-    if (status & CEC_STATUS_SEND_EOMSG) // End of Message
-    {
-      isSending = 0;
-      cec_acknowledge();
+		if (getIsFirstKiss() == 1)
+		{
+			if (error & CEC_ERROR_ACK)
+			{
+				dprintk(0, "The above error is a wanted behaviour as this was a ping!\n");
+				setIsFirstKiss(0);
+			}
+			else if (retries > 0)
+			{
+				sendMessageWithRetry(sizeOfSendBuf, sendBuf, retries - 1);
+			}
+		}
+		else if (retries > 0)
+		{
+			sendMessageWithRetry(sizeOfSendBuf, sendBuf, retries - 1);
+		}
+	}
+	else if (status & CEC_STATUS_RECV_BTF) // Receiving
+	{
+		if (status & CEC_STATUS_RECV_SOMSG) // Start of Message
+		{
+			isReceiving = 1;
+			indexOfRecvBuf = 0;
+			memset(recvBuf, 0, RECV_BUF_SIZE);
+		}
 
-      dprintk(3, "++++ CEC MESSAGE SENT ++++\n");
-      parseRawMessage(indexOfSendBuf, sendBuf);
-      dprintk(3, "---- CEC MESSAGE SENT ----\n");
-    }
-    else
-    {
-      cec_write_data(sendBuf[indexOfSendBuf]);
-      indexOfSendBuf++;
+		recvBuf[indexOfRecvBuf] = cec_read_data();
+		dprintk(3, "RECV 0x%0x\n", recvBuf[indexOfRecvBuf]);
+		cec_acknowledge();
+		indexOfRecvBuf++;
 
-      if(indexOfSendBuf == sizeOfSendBuf)
-      {
-        cec_acknowledge_eom();
-      }
-      else
-      {
-        cec_acknowledge();
-      }
-    }
-  }
+		if (status & CEC_STATUS_RECV_EOMSG) // End of Message
+		{
+			isReceiving = 0;
+			dprintk(3, "++++ CEC MESSAGE RECEIVED ++++\n");
+			parseRawMessage(indexOfRecvBuf, recvBuf);
+			dprintk(3, "---- CEC MESSAGE RECEIVED ----\n");
+		}
+	}
+	else if (status & CEC_STATUS_SEND_BTF) // Transmitting
+	{
+		if (status & CEC_STATUS_SEND_EOMSG) // End of Message
+		{
+			isSending = 0;
+			cec_acknowledge();
 
-  dprintk(4, "#### CEC INTERUPT  END####\n");
-  return IRQ_HANDLED;
+			dprintk(3, "++++ CEC MESSAGE SENT ++++\n");
+			parseRawMessage(indexOfSendBuf, sendBuf);
+			dprintk(3, "---- CEC MESSAGE SENT ----\n");
+		}
+		else
+		{
+			cec_write_data(sendBuf[indexOfSendBuf]);
+			indexOfSendBuf++;
+
+			if (indexOfSendBuf == sizeOfSendBuf)
+			{
+				cec_acknowledge_eom();
+			}
+			else
+			{
+				cec_acknowledge();
+			}
+		}
+	}
+
+	dprintk(4, "#### CEC INTERUPT  END####\n");
+	return IRQ_HANDLED;
 }

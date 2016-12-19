@@ -53,14 +53,11 @@ Date Modification Name
 #include <stm_ioctls.h>
 
 #include "e2_proc/e2_proc.h"
-
 #include "../../../../sound/pseudocard/pseudo_mixer.h"
 
 extern struct snd_kcontrol **pseudoGetControls(int *numbers);
-extern int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol,
-				 struct snd_ctl_elem_value *ucontrol);
-extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_switch_put(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol);
+extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol, struct snd_ctl_elem_value *ucontrol);
 
 #define PSEUDO_ADDR(x) (offsetof(struct snd_pseudo_mixer_settings, x))
 extern struct DeviceContext_s *DeviceContext;
@@ -87,7 +84,6 @@ int AudioIoctlSetAvSync(struct DeviceContext_s *Context, unsigned int State);
 static int AudioIoctlSetAvSync(struct DeviceContext_s *Context,
 			       unsigned int State);
 #endif
-
 static int AudioIoctlChannelSelect(struct DeviceContext_s *Context,
 				   audio_channel_select_t Channel);
 static int AudioIoctlSetSpeed(struct DeviceContext_s *Context,
@@ -567,9 +563,7 @@ int AudioIoctlSetId(struct DeviceContext_s *Context, int Id)
 static int AudioIoctlSetMixer(struct DeviceContext_s *Context, audio_mixer_t *Mix)
 {
 #ifdef __TDT__
-	/* HACK
-	 * set volume over avs.
-	 */
+	/* HACK set volume over avs. */
 	char buf[3];
 	snprintf(buf, 3, "%d", Mix->volume_left);
 	proc_avs_0_volume_write(NULL, buf, strlen(buf), NULL);
@@ -834,8 +828,7 @@ int AudioIoctlSetTimeMapping(struct DeviceContext_s *Context, audio_time_mapping
 /*}}}*/
 /*}}}*/
 /*{{{ AudioOpen*/
-static int AudioOpen(struct inode *Inode,
-		     struct file *File)
+static int AudioOpen(struct inode *Inode, struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
@@ -853,8 +846,7 @@ static int AudioOpen(struct inode *Inode,
 }
 /*}}}*/
 /*{{{ AudioRelease*/
-static int AudioRelease(struct inode *Inode,
-			struct file *File)
+static int AudioRelease(struct inode *Inode, struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
@@ -901,10 +893,7 @@ static int AudioRelease(struct inode *Inode,
 }
 /*}}}*/
 /*{{{ AudioIoctl*/
-static int AudioIoctl(struct inode *Inode,
-		      struct file *File,
-		      unsigned int IoctlCode,
-		      void *Parameter)
+static int AudioIoctl(struct inode *Inode, struct file *File, unsigned int IoctlCode, void *Parameter)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;

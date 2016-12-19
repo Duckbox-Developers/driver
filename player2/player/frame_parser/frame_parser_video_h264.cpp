@@ -1229,9 +1229,9 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer = SPSBuffer;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].Header = Header;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].ExtensionHeader = &HeaderPair->SequenceParameterSetExtensionHeader;
-//
-// Dump this header
-//
+	//
+	// Dump this header
+	//
 	if (CpbDpbDelaysPresentFlag != LastCpbDpbDelaysPresentFlag)
 	{
 		if (CpbDpbDelaysPresentFlag)
@@ -4091,9 +4091,9 @@ FrameParserStatus_t FrameParser_VideoH264_c::ForPlayPurgeQueuedPostDecodeParamet
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// Stream specific function to process deferred post decode parameter
-// settings, these consist of the display frame index, and presentation
-// time, if we have an IDR or a B frame, we can process any frames with a
+//	Stream specific function to process deferred post decode parameter
+//	settings, these consist of the display frame index, and presentation
+//	time, if we have an IDR or a B frame, we can process any frames with a
 //	lower pic order count, we also allow the processing of all frames up to
 //	a pic order cnt when a reference frame falls out of the sliding window
 //	in reference framme marking.
@@ -4114,11 +4114,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::ForPlayProcessQueuedPostDecodeParam
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// Stream specific function to generate the post decode parameter
-// settings, these consist of the display frame index, and presentation
-// time, both of which may be deferred if the information is unavailable.
+//	Stream specific function to generate the post decode parameter
+//	settings, these consist of the display frame index, and presentation
+//	time, both of which may be deferred if the information is unavailable.
 //
-// For h264, we allow the processing of all frames that are IDRs or
+//	For h264, we allow the processing of all frames that are IDRs or
 //	non-reference frames, all others are deferred
 //
 
@@ -4896,7 +4896,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareNewStreamParameters(void)
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// Function to insert an entry into the deferred DFI/PTS list
+//	Function to insert an entry into the deferred DFI/PTS list
 //	in an ordered position
 //
 
@@ -5005,7 +5005,7 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// Function to process entries in the deferred DFI/PTS list
+//	Function to process entries in the deferred DFI/PTS list
 //
 
 void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long ExtendedPicOrderCnt)
@@ -5050,7 +5050,7 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long Ex
 
 // /////////////////////////////////////////////////////////////////////////
 //
-// Function to process entries in the deferred DFI/PTS list
+//	Function to process entries in the deferred DFI/PTS list
 //
 
 void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long ExtendedPicOrderCnt)

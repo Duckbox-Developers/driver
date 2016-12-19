@@ -223,8 +223,7 @@ OS_Status_t OS_UnLockMutex(OS_Mutex_t *Mutex);
 // The Event functions - not implemented
 
 OS_Status_t OS_InitializeEvent(OS_Event_t *Event);
-OS_Status_t OS_WaitForEvent(OS_Event_t *Event,
-			    OS_Timeout_t Timeout);
+OS_Status_t OS_WaitForEvent(OS_Event_t *Event, OS_Timeout_t Timeout);
 OS_Status_t OS_WaitForEventInterruptible(OS_Event_t *Event);
 bool OS_TestEventSet(OS_Event_t *Event);
 OS_Status_t OS_SetEvent(OS_Event_t *Event);
