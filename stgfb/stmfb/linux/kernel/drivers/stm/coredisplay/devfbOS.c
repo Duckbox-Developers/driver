@@ -111,6 +111,7 @@ static void determine_dma_req_lines(void)
       dma_req_lines[SDTP_DENC1_TELETEXT] = 42;
       dma_req_lines[SDTP_DENC2_TELETEXT] = -1;
       break;
+#if 0
     case CPU_STX7106:
       dma_req_lines[SDTP_HDMI1_IFRAME]   = -1;
       dma_req_lines[SDTP_DENC1_TELETEXT] = 42;
@@ -121,6 +122,7 @@ static void determine_dma_req_lines(void)
       dma_req_lines[SDTP_DENC1_TELETEXT] = 32;
       dma_req_lines[SDTP_DENC2_TELETEXT] = -1;
       break;
+#endif
     case CPU_STX7109:
       dma_req_lines[SDTP_HDMI1_IFRAME]   = 1;
       dma_req_lines[SDTP_DENC1_TELETEXT] = -1;
@@ -141,11 +143,13 @@ static void determine_dma_req_lines(void)
       dma_req_lines[SDTP_DENC1_TELETEXT] = 41;
       dma_req_lines[SDTP_DENC2_TELETEXT] = 42;
       break;
+#if 0
     case CPU_STX5206:
       dma_req_lines[SDTP_HDMI1_IFRAME]   = -1;
       dma_req_lines[SDTP_DENC1_TELETEXT] = 17;
       dma_req_lines[SDTP_DENC2_TELETEXT] = -1;
       break;
+#endif
     case CPU_STX7100:
 #endif /* CONFIG_STM_DMA */
     default:
