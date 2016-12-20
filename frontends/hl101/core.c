@@ -25,7 +25,7 @@ static int tunerType;
 static char *tuner = "stb6100";
 
 module_param(demod, charp, 0);
-MODULE_PARM_DESC(demod, "demodelator type: stb0899, stv090x, cx24116 (default stb0899");
+MODULE_PARM_DESC(demod, "demodulator type: stb0899, stv090x, cx24116 (default stb0899");
 
 module_param(tuner, charp, 0);
 MODULE_PARM_DESC(tuner, "tuner type: stb6100, stv6110x, sharp7306 (default stb6100");
@@ -889,17 +889,17 @@ int __init fe_core_init(void)
 {
 	if ((demod[0] == 0) || (strcmp("stb0899", demod) == 0))
 	{
-		printk("demodelator: stb0899 dvb-s2    ");
+		printk("demodulator: stb0899 dvb-s2    ");
 		demodType = STB0899;
 	}
 	else if (strcmp("stv090x", demod) == 0)
 	{
-		printk("demodelator: stv090x dvb-s2    ");
+		printk("demodulator: stv090x dvb-s2    ");
 		demodType = STV090X;
 	}
 	else if (strcmp("cx24116", demod) == 0)
 	{
-		printk("demodelator: cx24116 dvb-s2    ");
+		printk("demodulator: cx24116 dvb-s2    ");
 		demodType = CX24116;
 	}
 
