@@ -63,8 +63,8 @@ static short paramDebug = 0;
 #define VFD_CS_CLR() {udelay(10); stpio_set_pin(cfg.cs, 0);}
 #define VFD_CS_SET() {udelay(10); stpio_set_pin(cfg.cs, 1);}
 
-#define VFD_CLK_CLR() {stpio_set_pin(cfg.clk, 0);udelay(1);}
-#define VFD_CLK_SET() {stpio_set_pin(cfg.clk, 1);udelay(1);}
+#define VFD_CLK_CLR() {stpio_set_pin(cfg.clk, 0);udelay(4);}
+#define VFD_CLK_SET() {stpio_set_pin(cfg.clk, 1);udelay(4);}
 
 #define VFD_DATA_CLR() {stpio_set_pin(cfg.data, 0);}
 #define VFD_DATA_SET() {stpio_set_pin(cfg.data, 1);}
@@ -99,6 +99,7 @@ typedef struct
 #define FRONTPANEL_MINOR_RC             1
 #define LASTMINOR                 	    2
 //#define ENABLE_SCROLL
+//#define ENABLE_CLOCK_SECTION
 
 static tFrontPanelOpen FrontPanelOpen [LASTMINOR];
 
@@ -409,7 +410,7 @@ static int VFD_Seg_Dig_Seg(unsigned char dignum, SegNum_T segnum, unsigned char 
 		VfdSegAddr[dignum].CurrValue2 = val ;
 	}
 	VFD_WR(addr);
-	udelay(5);
+	udelay(10);
 	VFD_WR(val);
 	VFD_CS_SET();
 	return  0;
@@ -793,14 +794,15 @@ void draw_thread(void *arg)
 
 int run_draw_thread(struct vfd_ioctl_data *draw_data)
 {
-	if (!thread_stop)
+	if (!thread_stop && thread)
 		kthread_stop(thread);
 
 	//wait thread stop
 	while (!thread_stop)
 	{
-		msleep(1);
+		msleep(5);
 	}
+	msleep(10);
 
 
 	thread_stop = 2;
@@ -809,7 +811,7 @@ int run_draw_thread(struct vfd_ioctl_data *draw_data)
 	//wait thread run
 	while (thread_stop == 2)
 	{
-		msleep(1);
+		msleep(5);
 	}
 
 	return 0;
@@ -1226,7 +1228,9 @@ static int PROTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int 
 			break;
 		case VFDSETTIME:
 			//struct set_time_s *data2 = (struct set_time_s *) arg;
+#ifdef ENABLE_CLOCK_SECTION
 			res = protonSetTime((char *)arg);
+#endif
 			break;
 		case VFDGETTIME:
 			break;
@@ -1265,7 +1269,7 @@ static int PROTONdev_ioctl(struct inode *Inode, struct file *File, unsigned int 
 			//wait thread stop
 			while (!thread_stop)
 			{
-				msleep(1);
+				msleep(5);
 			}
 			VFD_CLR();
 			break;
