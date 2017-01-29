@@ -987,7 +987,9 @@ pthread_t* LinuxUser_ThreadCreate(void (*thread)(void *), void *param, int prior
 	pthread_t *tid = (pthread_t *) EMBX_OS_MemAlloc(sizeof(pthread_t));
 	
         pthread_attr_t      attr;
+#ifdef ROUND_ROBIN_THREADS
         struct sched_param  schedParam;
+#endif
 
         pthread_attr_init( &attr );
 

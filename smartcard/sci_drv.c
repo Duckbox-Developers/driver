@@ -1385,7 +1385,7 @@ SCI_ERROR sci_init(void)
 			sci_exit();
 			return SCI_ERROR_DRIVER_NOT_INITIALIZED;
 		}
-		sci->thread = kthread_run(sci_detect_handler, (void *)sci, "SMART/%d", i);
+		sci->thread = kthread_run((int (*)(void *))sci_detect_handler, (void *)sci, "SMART/%d", i);
 		if (sci->thread)
 		{
 			PDEBUG("create sci%d task successful...\n", i);
@@ -2373,7 +2373,7 @@ int sci_read_proc(char *buffer, char **start, off_t offset,  int size,  int *eof
 	{
 		sci = &sci_cb[ix];
 		blen = strlen(outbuf);
-		if (sci_is_card_present(sci) == SCI_CARD_NOT_PRESENT)
+		if (sci_is_card_present(sci) == (SCI_ERROR)SCI_CARD_NOT_PRESENT)
 			sprintf(outbuf + blen, "sci%d: no card\n", ix);
 		else
 			sprintf(outbuf + blen, "sci%d: card detected\n", ix);

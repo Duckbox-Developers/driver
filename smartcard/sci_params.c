@@ -160,7 +160,7 @@ SCI_ERROR sci_set_parameters(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_param
 	{
 		if ((p_sci_parameters != 0) && (sci->id < SCI_NUMBER_OF_CONTROLLERS))
 		{
-			if (sci_is_card_activated(sci) == SCI_CARD_PRESENT)
+			if (sci_is_card_activated(sci) == (SCI_ERROR)SCI_CARD_PRESENT)
 			{
 				PDEBUG("Before sci_set_para()\n");
 				rc = sci_set_para(sci, p_sci_parameters);
@@ -756,7 +756,7 @@ SCI_ERROR sci_set_para_class(SCI_CONTROL_BLOCK *sci, SCI_PARAMETERS *p_sci_param
 			PDEBUG("WARNING: Set 3 V\n");
 		}
 		else
-			PDEBUG("Card %d is set 5 V\n", sci);
+			PDEBUG("Card %d is set 5 V\n", (int)sci);
 	}
 	else if (p_sci_parameters->U == SCI_CLASS_B)
 	{

@@ -1470,7 +1470,7 @@ static int AllocDataBuffer(struct file* filp, unsigned long arg)
 		/* A remote transformer */
 		EMBX_ERROR embxStatus = EMBX_Alloc(transformer->info->handle, allocSize, 
 						   (EMBX_VOID **) &allocAddress);
-		if (MME_SUCCESS != embxStatus) {
+		if (MME_SUCCESS != (enum MME_ERROR)embxStatus) {
 			MME_Info( MME_INFO_LINUX_USER, (DEBUG_ERROR_STR "Cannot EMBX_Alloc(%d)\n", 
 							allocSize));
 			result =  -ENOMEM;
@@ -1538,7 +1538,7 @@ static int AllocDataBuffer(struct file* filp, unsigned long arg)
 		/* Local transformer: Convert offset to physical for later mmap() call */
 		mmeStatus = EMBX_OS_VirtToPhys(alignedBuffer, &offset);
 		
-		if (mmeStatus != EMBX_SUCCESS && mmeStatus != EMBX_INCOHERENT_MEMORY) {
+		if (mmeStatus != (enum MME_ERROR)EMBX_SUCCESS && mmeStatus != (enum MME_ERROR)EMBX_INCOHERENT_MEMORY) {
 			MME_Info(MME_INFO_LINUX_MODULE, 
 				 (DEBUG_NOTIFY_STR "Failed to convert addr 0x%08x to physical\n", (int)alignedBuffer));
 			result = -EINVAL;

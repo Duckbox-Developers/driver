@@ -1139,7 +1139,7 @@ static MME_ERROR RemoteTransformer_TermOrKill(Transformer_t* transformer, int do
 	 * If terminate request timed out, return an error and get out.
 	 * User will have to tidy up later with KillTransformer
 	 */
-	if (res == EMBX_SYSTEM_TIMEOUT)
+	if (res == (MME_ERROR)EMBX_SYSTEM_TIMEOUT)
 	{
 		MME_Assert(doKill == 0);
 		/* Bugzilla 4962: Release directly back to the transport in case the handle has been changed */
@@ -1337,7 +1337,7 @@ static MME_ERROR RemoteTransformer_SendCommand(Transformer_t* transformer, MME_C
 	for (i = 0; 
 	     i < remoteTransformer->maxCommandSlots && 
 	         remoteTransformer->commandSlots[remoteTransformer->commandIndex].status 
-				!= MME_COMMAND_COMPLETED_EVT; 
+				!= (CommandStatus_t)MME_COMMAND_COMPLETED_EVT; 
 	     i++) {
 
 		MME_Info(MME_INFO_TRANSFORMER, (DEBUG_NOTIFY_STR "RemoteTransformer: SendCommand: CommandIndex %d is already used\n", remoteTransformer->commandIndex));
