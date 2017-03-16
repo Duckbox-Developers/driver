@@ -78,7 +78,7 @@ typedef struct H264ppState_s
 
 	boolean ForceWorkAroundGNBvd42331;
 	unsigned int last_mb_adaptive_frame_field_flag; // Copy of h264 variable
-
+	unsigned int last_entropy_coding_mode_flag;
 	unsigned int Accumulated_ITS;
 	unsigned int Resets; // Statistics - Number of times we have soft-reset
 } H264ppState_t;
@@ -531,6 +531,7 @@ static void H264ppInitializeDevice(void)
 		//
 		DeviceContext.PPState[N].ForceWorkAroundGNBvd42331 = true;
 		DeviceContext.PPState[N].last_mb_adaptive_frame_field_flag = 0; // Doesn't matter, will be initialized on first frame
+		DeviceContext.PPState[N].last_entropy_coding_mode_flag = 0; // Doesn't matter, will be initialized on first frame
 		//
 		// Perform soft reset
 		//
@@ -703,9 +704,11 @@ static void H264ppWorkAroundGNBvd42331(H264ppState_t *State,
 			    State->last_mb_adaptive_frame_field_flag &&
 			    entropy_coding_mode_flag;
 	State->last_mb_adaptive_frame_field_flag = mb_adaptive_frame_field_flag;
-	if (!PerformWorkaround && !State->ForceWorkAroundGNBvd42331)
+	if (!PerformWorkaround && !State->ForceWorkAroundGNBvd42331 && entropy_coding_mode_flag == State->last_entropy_coding_mode_flag)
 		return;
 //OSDEV_Print( "H264ppWorkAroundGNBvd42331 - Deploying GNBvd42331 workaround block to PP %d - %08x.\n", N, State->BufferState->Parameters.Cfg );
+	//last entropy coding mode is the new one
+	State->last_entropy_coding_mode_flag = entropy_coding_mode_flag;
 	State->ForceWorkAroundGNBvd42331 = 0;
 	//
 	// we transfer the workaround stream to the output buffer (offset by 64k to not interfere with the output).
