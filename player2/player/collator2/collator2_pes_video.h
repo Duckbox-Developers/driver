@@ -60,12 +60,12 @@ class Collator2_PesVideo_c : public Collator2_Pes_c
 		//
 
 		CollatorStatus_t ProcessInputForward(unsigned int DataLength,
-						     void *Data,
-						     unsigned int *DataLengthRemaining);
+											 void *Data,
+											 unsigned int *DataLengthRemaining);
 
 		CollatorStatus_t ProcessInputBackward(unsigned int DataLength,
-						      void *Data,
-						      unsigned int *DataLengthRemaining);
+											  void *Data,
+											  unsigned int *DataLengthRemaining);
 
 		//
 		// accumulate one partition oveload allows us to use pes pts on new partition

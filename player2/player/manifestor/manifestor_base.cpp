@@ -314,7 +314,7 @@ ManifestorStatus_t Manifestor_Base_c::GetPostProcessControlBufferPool(BufferPool
 		// Create the pool
 		//
 		Type = (Configuration.StreamType == StreamTypeVideo) ? Player->BufferVideoPostProcessingControlType :
-		       Player->BufferAudioPostProcessingControlType;
+			   Player->BufferAudioPostProcessingControlType;
 		Status = BufferManager->CreatePool(&PostProcessControlBufferPool, Type, Configuration.PostProcessControlBufferCount);
 		if (Status != BufferNoError)
 		{
@@ -550,7 +550,7 @@ ManifestorStatus_t Manifestor_Base_c::GetDecodeBuffer(
 	// Copy the request structure into the attached meta data
 	//
 	Status = (*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
-						    (void **)(&AttachedRequestStructure));
+												(void **)(&AttachedRequestStructure));
 	if (Status != ManifestorNoError)
 	{
 		report(severity_error, "Manifestor_Base_c::GetDecodeBuffer(%s) - Failed to obtain a reference to the structure meta data.\n", Configuration.ManifestorName);
@@ -618,7 +618,7 @@ ManifestorStatus_t Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
 	if (OutputRateMovingTo && (OutputRateSmoothingLastValue != OutputRateSmoothingBaseValue))
 	{
 		OutputRateSmoothingLastValue = OutputRateSmoothingLastValue +
-					       ((OutputRateSmoothingLastValue > OutputRateSmoothingBaseValue) ? -1 : 1);
+									   ((OutputRateSmoothingLastValue > OutputRateSmoothingBaseValue) ? -1 : 1);
 		*PPMValue = OutputRateSmoothingLastValue;
 		return ManifestorNoError;
 	}
@@ -639,8 +639,8 @@ ManifestorStatus_t Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
 	SubPartValue1 = SubPartValue0 + OutputRateSmoothingSubPPMPart;
 	OutputRateSmoothingIndex++;
 	OutputRateSmoothingLastValue = (SubPartValue0.IntegerPart() == SubPartValue1.IntegerPart()) ?
-				       OutputRateSmoothingBaseValue :
-				       OutputRateSmoothingBaseValue + 1;
+								   OutputRateSmoothingBaseValue :
+								   OutputRateSmoothingBaseValue + 1;
 //
 	OutputRateSmoothingFramesSinceLastCalculation = 0;
 	*PPMValue = OutputRateSmoothingLastValue;
@@ -654,12 +654,12 @@ ManifestorStatus_t Manifestor_Base_c::DerivePPMValueFromOutputRateAdjustment(
 ManifestorStatus_t Manifestor_Base_c::ValidatePhysicalDecodeBufferAddress(unsigned int Address)
 {
 	if (!inrange((unsigned int)Address, (unsigned int)DecodeBufferMemory[PhysicalAddress],
-			((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1)))
+				 ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1)))
 	{
 		report(severity_fatal, "Manifestor_Base_c::ValidateDecodeBufferAddress - Invalid address (%08x not in %08x %08x)\n",
-		       (unsigned int)Address,
-		       (unsigned int)DecodeBufferMemory[PhysicalAddress],
-		       ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1));
+			   (unsigned int)Address,
+			   (unsigned int)DecodeBufferMemory[PhysicalAddress],
+			   ((unsigned int)DecodeBufferMemory[PhysicalAddress] + BufferConfiguration.TotalBufferMemory - 1));
 	}
 	return ManifestorNoError;
 }

@@ -95,20 +95,20 @@ class OutputCoordinator_c : public BaseComponentClass_c
 	public:
 
 		virtual OutputCoordinatorStatus_t RegisterStream(PlayerStream_t Stream,
-								 PlayerStreamType_t StreamType,
-								 OutputCoordinatorContext_t *Context) = 0;
+														 PlayerStreamType_t StreamType,
+														 OutputCoordinatorContext_t *Context) = 0;
 
 		virtual OutputCoordinatorStatus_t DeRegisterStream(OutputCoordinatorContext_t Context) = 0;
 
 		virtual OutputCoordinatorStatus_t SetPlaybackSpeed(OutputCoordinatorContext_t Context,
-								   Rational_t Speed,
-								   PlayDirection_t Direction) = 0;
+														   Rational_t Speed,
+														   PlayDirection_t Direction) = 0;
 
 		virtual OutputCoordinatorStatus_t ResetTimeMapping(OutputCoordinatorContext_t Context) = 0;
 
 		virtual OutputCoordinatorStatus_t EstablishTimeMapping(OutputCoordinatorContext_t Context,
-								       unsigned long long NormalizedPlaybackTime,
-								       unsigned long long SystemTime = INVALID_TIME) = 0;
+															   unsigned long long NormalizedPlaybackTime,
+															   unsigned long long SystemTime = INVALID_TIME) = 0;
 
 		virtual OutputCoordinatorStatus_t TranslatePlaybackTimeToSystem(
 			OutputCoordinatorContext_t Context,
@@ -121,9 +121,9 @@ class OutputCoordinator_c : public BaseComponentClass_c
 			unsigned long long *NormalizedPlaybackTime) = 0;
 
 		virtual OutputCoordinatorStatus_t SynchronizeStreams(OutputCoordinatorContext_t Context,
-								     unsigned long long NormalizedPlaybackTime,
-								     unsigned long long NormalizedDecodeTime,
-								     unsigned long long *SystemTime) = 0;
+															 unsigned long long NormalizedPlaybackTime,
+															 unsigned long long NormalizedDecodeTime,
+															 unsigned long long *SystemTime) = 0;
 
 		virtual OutputCoordinatorStatus_t PerformEntryIntoDecodeWindowWait(
 			OutputCoordinatorContext_t Context,
@@ -149,25 +149,25 @@ class OutputCoordinator_c : public BaseComponentClass_c
 			OutputCoordinatorContext_t Context) = 0;
 
 		virtual OutputCoordinatorStatus_t AdjustMappingBase(OutputCoordinatorContext_t Context,
-								    long long Adjustment) = 0;
+															long long Adjustment) = 0;
 
 		virtual OutputCoordinatorStatus_t MappingBaseAdjustmentApplied(
 			OutputCoordinatorContext_t Context) = 0;
 
 		virtual OutputCoordinatorStatus_t GetStreamStartDelay(OutputCoordinatorContext_t Context,
-								      unsigned long long *Delay) = 0;
+															  unsigned long long *Delay) = 0;
 
 		virtual OutputCoordinatorStatus_t MonitorVsyncOffset(OutputCoordinatorContext_t Context,
-								     unsigned long long RequestedOutputTime,
-								     unsigned long long ActualOutputTime) = 0;
+															 unsigned long long RequestedOutputTime,
+															 unsigned long long ActualOutputTime) = 0;
 
 		virtual OutputCoordinatorStatus_t ClockRecoveryInitialize(PlayerTimeFormat_t SourceTimeFormat) = 0;
 
 		virtual OutputCoordinatorStatus_t ClockRecoveryDataPoint(unsigned long long SourceTime,
-									 unsigned long long LocalTime) = 0;
+																 unsigned long long LocalTime) = 0;
 
 		virtual OutputCoordinatorStatus_t ClockRecoveryEstimate(unsigned long long *SourceTime,
-									unsigned long long *LocalTime) = 0;
+																unsigned long long *LocalTime) = 0;
 
 };
 

@@ -68,10 +68,10 @@ static DEFINE_SPINLOCK(st_chan_lock);
  * file_create() callback. Creates relay file in debugfs.
  */
 static struct dentry *st_create_buf_file_handler(const char *filename,
-						 struct dentry *parent,
-						 int mode,
-						 struct rchan_buf *buf,
-						 int *is_global)
+												 struct dentry *parent,
+												 int mode,
+												 struct rchan_buf *buf,
+												 int *is_global)
 {
 	struct dentry *buf_file;
 	buf_file = debugfs_create_file(filename, mode, parent, buf, &relay_file_operations);
@@ -101,8 +101,8 @@ static struct rchan_callbacks st_relayfs_callbacks =
 //cloned this from kernels include/linux/relay.h to add length written return value
 //and avoid changing it in the kernel tree itself
 static inline int st_relay_write(struct rchan *chan,
-				 const void *data,
-				 size_t length)
+								 const void *data,
+								 size_t length)
 {
 	unsigned long flags;
 	struct rchan_buf *buf;
@@ -154,11 +154,11 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 				if (wrote1 != 0)
 				{
 					wrote2 = st_relay_write(st_relay_chan, buf + (vid_info->luma_offset),
-								(relay_entries[id].x * relay_entries[id].y));
+											(relay_entries[id].x * relay_entries[id].y));
 					if (wrote2 != 0)
 					{
 						wrote3 = st_relay_write(st_relay_chan, buf + (vid_info->chroma_offset),
-									((relay_entries[id].x * relay_entries[id].y) / 2));
+												((relay_entries[id].x * relay_entries[id].y) / 2));
 						if (wrote3 != 0)
 						{
 							relay_source_item_counts[source][id]++;
@@ -198,7 +198,7 @@ void st_relayfs_write(unsigned int id, unsigned int source, unsigned char *buf, 
 			if (wrote1 < 0)
 			{
 				printk("st_relayfs_write: DISABLING %s - client not reading data quick enough! (%d lost) \n",
-				       relay_entries[id].name, (0 - wrote1));
+					   relay_entries[id].name, (0 - wrote1));
 				relay_entries[id].active = 0;
 			}
 		}
@@ -273,7 +273,7 @@ int st_relayfs_open(void)
 	else
 	{
 		st_relay_chan = relay_open("data", strelay_dir, SUBBUF_SIZE,
-					   N_SUBBUFS, &st_relayfs_callbacks, 0);
+								   N_SUBBUFS, &st_relayfs_callbacks, 0);
 		if (st_relay_chan)
 		{
 			for (n = 0; n < RELAY_NUMBER_OF_TYPES; n++)

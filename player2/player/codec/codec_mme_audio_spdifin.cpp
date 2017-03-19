@@ -579,7 +579,7 @@ CodecStatus_t Codec_MmeAudioSpdifin_c::ValidateDecodeContext(CodecBaseDecodeCont
 	NewState = (enum eMulticomSpdifinState) FrameStatus->CurrentState;
 	NewPC = (enum eMulticomSpdifinPC) FrameStatus->PC;
 	bool StatusChange = (AudioDecoderStatus.SamplingFreq != Status.SamplingFreq) ||
-			    (AudioDecoderStatus.DecAudioMode != Status.DecAudioMode);
+						(AudioDecoderStatus.DecAudioMode != Status.DecAudioMode);
 	// HACK: This should bloody well be in the super-class
 	AudioDecoderStatus = Status;
 	if ((OldState != NewState) || (OldPC != NewPC) || StatusChange)
@@ -649,7 +649,7 @@ CodecStatus_t Codec_MmeAudioSpdifin_c::ValidateDecodeContext(CodecBaseDecodeCont
 		Codec_MmeAudioEAc3_c::FillStreamMetadata(AudioParameters, (MME_LxAudioDecoderFrameStatus_t *)&Status);
 	}
 	else if (((SpdifStatus.StreamType >= SPDIFIN_DTS1) && ((SpdifStatus.StreamType <= SPDIFIN_DTS3))) ||
-			(SpdifStatus.StreamType == SPDIFIN_IEC60958_DTS14) || (SpdifStatus.StreamType == SPDIFIN_IEC60958_DTS16))
+			 (SpdifStatus.StreamType == SPDIFIN_IEC60958_DTS14) || (SpdifStatus.StreamType == SPDIFIN_IEC60958_DTS16))
 	{
 		Codec_MmeAudioDtshd_c::FillStreamMetadata(AudioParameters, (MME_LxAudioDecoderFrameStatus_t *)&Status);
 	}

@@ -73,8 +73,8 @@ static BufferDataDescriptor_t Flv1CodecDecodeContextDescriptor = BUFFER_FLV1_COD
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t *CallbackData, void *UserData);
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -269,7 +269,7 @@ CodecStatus_t Codec_MmeVideoFlv1_c::SendMMEStreamParameters(void)
 		MMEInitializationParameters.CallbackUserData = this;
 		FillOutTransformerInitializationParameters();
 		MMEStatus = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-						&MMEInitializationParameters, &MMEHandle);
+										&MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus == MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", DecodingWidth, DecodingHeight);
@@ -336,7 +336,7 @@ CodecStatus_t Codec_MmeVideoFlv1_c::FillOutDecodeCommand(void)
 	Picture->StructSize = sizeof(FLV1_ParamPicture_t);
 	Picture->EnableDeblocking = Frame->PictureHeader.dflag;
 	Picture->PicType = (Frame->PictureHeader.ptype == H263_PICTURE_CODING_TYPE_I) ? FLV1_DECODE_PICTURE_TYPE_I :
-			   FLV1_DECODE_PICTURE_TYPE_P;
+					   FLV1_DECODE_PICTURE_TYPE_P;
 	Picture->H263Flv = Frame->PictureHeader.version + 1; // Flv1 -> 2
 	Picture->ChromaQscale = Frame->PictureHeader.pquant;
 	Picture->Qscale = Frame->PictureHeader.pquant;

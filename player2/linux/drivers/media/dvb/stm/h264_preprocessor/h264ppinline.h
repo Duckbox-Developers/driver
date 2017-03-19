@@ -105,13 +105,13 @@ static inline void H264ppClose(h264pp_device_t Device)
 // Function to prepare a buffer, and the associated parameters
 
 static inline h264pp_status_t H264ppProcessBuffer(h264pp_device_t Device,
-						  H264SliceHeader_t *Slice,
-						  unsigned int QueueIdentifier,
-						  unsigned int InputBufferSize,
-						  void *InputBufferCachedAddress,
-						  void *InputBufferPhysicalAddress,
-						  void *OutputBufferCachedAddress,
-						  void *OutputBufferPhysicalAddress)
+												  H264SliceHeader_t *Slice,
+												  unsigned int QueueIdentifier,
+												  unsigned int InputBufferSize,
+												  void *InputBufferCachedAddress,
+												  void *InputBufferPhysicalAddress,
+												  void *OutputBufferCachedAddress,
+												  void *OutputBufferPhysicalAddress)
 {
 	int Status;
 	h264pp_ioctl_queue_t Parameters;
@@ -164,14 +164,14 @@ static inline h264pp_status_t H264ppProcessBuffer(h264pp_device_t Device,
 	log2_max_pic_order_cnt_lsb = Slice->SequenceParameterSet->log2_max_pic_order_cnt_lsb_minus4 + 4;
 	log2_max_frame_num = Slice->SequenceParameterSet->log2_max_frame_num_minus4 + 4;
 	Parameters.CodeLength = (log2_max_pic_order_cnt_lsb << PP_CODELENGTH__MPOC_SHIFT) |
-				(log2_max_frame_num << PP_CODELENGTH__MFN_SHIFT);
+							(log2_max_frame_num << PP_CODELENGTH__MFN_SHIFT);
 //
 	picture_width = Slice->SequenceParameterSet->pic_width_in_mbs_minus1 + 1;
 	nb_MB_in_picture_minus1 = ((Slice->SequenceParameterSet->pic_height_in_map_units_minus1 + 1) * picture_width) - 1;
 	if (!Slice->SequenceParameterSet->frame_mbs_only_flag && !Slice->field_pic_flag)
 		nb_MB_in_picture_minus1 = (2 * (nb_MB_in_picture_minus1 + 1)) - 1;
 	Parameters.PicWidth = (nb_MB_in_picture_minus1 << PP_PICWIDTH__MBINPIC_SHIFT) |
-			      (picture_width << PP_PICWIDTH__PICWIDTH_SHIFT);
+						  (picture_width << PP_PICWIDTH__PICWIDTH_SHIFT);
 //
 	pic_init_qp = Slice->PictureParameterSet->pic_init_qp_minus26 + 26;
 	num_ref_idx_l1_active_minus1 = Slice->PictureParameterSet->num_ref_idx_l1_active_minus1;
@@ -189,25 +189,25 @@ static inline h264pp_status_t H264ppProcessBuffer(h264pp_device_t Device,
 	direct_8x8_inference_flag = Slice->SequenceParameterSet->direct_8x8_inference_flag;
 	monochrome = (Slice->SequenceParameterSet->chroma_format_idc == 0) ? 1 : 0;
 	Parameters.Cfg = (monochrome << PP_CFG__MONOCHROME) |
-			 (direct_8x8_inference_flag << PP_CFG__DIRECT8X8FLAG_SHIFT) |
-			 (transform_8x8_mode_flag << PP_CFG__TRANSFORM8X8MODE_SHIFT) |
-			 (pic_init_qp << PP_CFG__QPINIT_SHIFT) |
-			 (num_ref_idx_l1_active_minus1 << PP_CFG__IDXL1_SHIFT) |
-			 (num_ref_idx_l0_active_minus1 << PP_CFG__IDXL0_SHIFT) |
-			 (deblocking_filter_control_present_flag << PP_CFG__DEBLOCKING_SHIFT) |
-			 (weighted_bipred_idc_flag << PP_CFG__BIPREDFLAG_SHIFT) |
-			 (weighted_pred_flag << PP_CFG__PREDFLAG_SHIFT) |
-			 (delta_pic_order_always_zero_flag << PP_CFG__DPOFLAG_SHIFT) |
-			 (pic_order_present_flag << PP_CFG__POPFLAG_SHIFT) |
-			 (pic_order_cnt_type << PP_CFG__POCTYPE_SHIFT) |
-			 (frame_mbs_only_flag << PP_CFG__FRAMEFLAG_SHIFT) |
-			 (entropy_coding_mode_flag << PP_CFG__ENTROPYFLAG_SHIFT) |
-			 (mb_adaptive_frame_field_flag << PP_CFG__MBADAPTIVEFLAG_SHIFT);
+					 (direct_8x8_inference_flag << PP_CFG__DIRECT8X8FLAG_SHIFT) |
+					 (transform_8x8_mode_flag << PP_CFG__TRANSFORM8X8MODE_SHIFT) |
+					 (pic_init_qp << PP_CFG__QPINIT_SHIFT) |
+					 (num_ref_idx_l1_active_minus1 << PP_CFG__IDXL1_SHIFT) |
+					 (num_ref_idx_l0_active_minus1 << PP_CFG__IDXL0_SHIFT) |
+					 (deblocking_filter_control_present_flag << PP_CFG__DEBLOCKING_SHIFT) |
+					 (weighted_bipred_idc_flag << PP_CFG__BIPREDFLAG_SHIFT) |
+					 (weighted_pred_flag << PP_CFG__PREDFLAG_SHIFT) |
+					 (delta_pic_order_always_zero_flag << PP_CFG__DPOFLAG_SHIFT) |
+					 (pic_order_present_flag << PP_CFG__POPFLAG_SHIFT) |
+					 (pic_order_cnt_type << PP_CFG__POCTYPE_SHIFT) |
+					 (frame_mbs_only_flag << PP_CFG__FRAMEFLAG_SHIFT) |
+					 (entropy_coding_mode_flag << PP_CFG__ENTROPYFLAG_SHIFT) |
+					 (mb_adaptive_frame_field_flag << PP_CFG__MBADAPTIVEFLAG_SHIFT);
 	//
 	// Now queue the request to the underlying driver
 	//
 	Status = OSDEV_Ioctl(Device->UnderlyingDevice, H264_PP_IOCTL_QUEUE_BUFFER,
-			     &Parameters, sizeof(h264pp_ioctl_queue_t));
+						 &Parameters, sizeof(h264pp_ioctl_queue_t));
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "H264ppProcessBuffer : Failed to queue a buffer for processing.\n");
@@ -221,9 +221,9 @@ static inline h264pp_status_t H264ppProcessBuffer(h264pp_device_t Device,
 // The User address function
 
 static inline h264pp_status_t H264ppGetPreProcessedBuffer(h264pp_device_t Device,
-							  unsigned int *QueueIdentifier,
-							  unsigned int *OutputSize,
-							  unsigned int *ErrorMask)
+														  unsigned int *QueueIdentifier,
+														  unsigned int *OutputSize,
+														  unsigned int *ErrorMask)
 {
 	h264pp_ioctl_dequeue_t Parameters;
 	int Status;
@@ -237,7 +237,7 @@ static inline h264pp_status_t H264ppGetPreProcessedBuffer(h264pp_device_t Device
 	}
 //
 	Status = OSDEV_Ioctl(Device->UnderlyingDevice, H264_PP_IOCTL_GET_PREPROCESSED_BUFFER,
-			     &Parameters, sizeof(h264pp_ioctl_dequeue_t));
+						 &Parameters, sizeof(h264pp_ioctl_dequeue_t));
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "H264ppGetPreProcessedBuffer : Failed to get a pre-processed buffer.\n");

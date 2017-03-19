@@ -171,7 +171,7 @@ CollatorStatus_t Collator_PesAudioMlp_c::DecideCollatorNextStateAndGetLength(uns
 		return CollatorNoError;
 	}
 	FPStatus = FrameParser_AudioMlp_c::ParseSingleFrameHeader(StoredFrameHeader,
-								  &ParsedFrameHeader);
+															  &ParsedFrameHeader);
 	if (FPStatus == FrameParserNoError)
 	{
 		// normally we have sync on a major sync frame, so we should for the

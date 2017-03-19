@@ -190,15 +190,15 @@ PlayerStatus_t Player_Generic_c::TerminatePlayback(
 //
 
 PlayerStatus_t Player_Generic_c::AddStream(PlayerPlayback_t Playback,
-					   PlayerStream_t *Stream,
-					   PlayerStreamType_t StreamType,
-					   Collator_t Collator,
-					   FrameParser_t FrameParser,
-					   Codec_t Codec,
-					   OutputTimer_t OutputTimer,
-					   Manifestor_t Manifestor,
-					   bool SignalEvent,
-					   void *EventUserData)
+										   PlayerStream_t *Stream,
+										   PlayerStreamType_t StreamType,
+										   Collator_t Collator,
+										   FrameParser_t FrameParser,
+										   Codec_t Codec,
+										   OutputTimer_t OutputTimer,
+										   Manifestor_t Manifestor,
+										   bool SignalEvent,
+										   void *EventUserData)
 {
 	PlayerStream_t NewStream;
 	PlayerStatus_t Status;
@@ -509,8 +509,8 @@ PlayerStatus_t Player_Generic_c::AddStream(PlayerPlayback_t Playback,
 //
 
 PlayerStatus_t Player_Generic_c::RemoveStream(PlayerStream_t Stream,
-					      bool SignalEvent,
-					      void *EventUserData)
+											  bool SignalEvent,
+											  void *EventUserData)
 {
 	PlayerStatus_t Status;
 	PlayerPlayback_t Playback;
@@ -567,9 +567,9 @@ PlayerStatus_t Player_Generic_c::RemoveStream(PlayerStream_t Stream,
 //
 
 PlayerStatus_t Player_Generic_c::DrainStream(PlayerStream_t Stream,
-					     bool NonBlocking,
-					     bool SignalEvent,
-					     void *EventUserData)
+											 bool NonBlocking,
+											 bool SignalEvent,
+											 void *EventUserData)
 {
 	return InternalDrainStream(Stream, NonBlocking, SignalEvent, EventUserData, PolicyPlayoutOnDrain, false);
 }
@@ -759,8 +759,8 @@ PlayerStatus_t Player_Generic_c::InternalDrainPlayback(
 		if (Status != PlayerNoError)
 		{
 			report(severity_error, "Player_Generic_c::InternalDrainPlayback - Failed to drain within allowed time (%d %d %d %d) - Implementation error.\n",
-			       Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
-			       Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
+				   Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
+				   Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
 			break;
 		}
 	}
@@ -903,8 +903,8 @@ PlayerStatus_t Player_Generic_c::InternalDrainStream(
 		if (Status != PlayerNoError)
 		{
 			report(severity_error, "Player_Generic_c::InternalDrainStream - Failed to drain within allowed time (%d %d %d %d).\n",
-			       Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
-			       Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
+				   Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
+				   Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
 			return PlayerTimedOut;
 		}
 		//
@@ -935,7 +935,7 @@ PlayerStatus_t Player_Generic_c::InternalDrainStream(
 //
 
 unsigned int Player_Generic_c::WaitForDrainCompletion(PlayerStream_t Stream,
-						      bool Discard)
+													  bool Discard)
 {
 	OS_Status_t OSStatus;
 	unsigned int IndividualWaitTime;
@@ -958,7 +958,7 @@ unsigned int Player_Generic_c::WaitForDrainCompletion(PlayerStream_t Stream,
 }
 
 unsigned int Player_Generic_c::CheckStreamDrained(PlayerStream_t Stream,
-						  void *EventUserData)
+												  void *EventUserData)
 {
 	OS_Status_t OSStatus;
 	unsigned int IndividualWaitTime = 10;

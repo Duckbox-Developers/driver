@@ -39,13 +39,13 @@ Date Modification Name
 //
 
 PlayerStatus_t Player_Generic_c::SwitchStream(PlayerStream_t Stream,
-					      Collator_t Collator,
-					      FrameParser_t FrameParser,
-					      Codec_t Codec,
-					      OutputTimer_t OutputTimer,
-					      bool NonBlocking,
-					      bool SignalEvent,
-					      void *EventUserData)
+											  Collator_t Collator,
+											  FrameParser_t FrameParser,
+											  Codec_t Codec,
+											  OutputTimer_t OutputTimer,
+											  bool NonBlocking,
+											  bool SignalEvent,
+											  void *EventUserData)
 {
 	PlayerStatus_t Status;
 	OS_Status_t OSStatus;
@@ -109,8 +109,8 @@ PlayerStatus_t Player_Generic_c::SwitchStream(PlayerStream_t Stream,
 		if (OSStatus != OS_NO_ERROR)
 		{
 			report(severity_error, "Player_Generic_c::SwitchStream - Failed to drain old stream within allowed time (%d %d %d %d).\n",
-			       Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
-			       Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
+				   Stream->DiscardingUntilMarkerFrameCtoP, Stream->DiscardingUntilMarkerFramePtoD,
+				   Stream->DiscardingUntilMarkerFrameDtoM, Stream->DiscardingUntilMarkerFramePostM);
 			return PlayerTimedOut;
 		}
 	}
@@ -141,11 +141,11 @@ void Player_Generic_c::SwitchCollator(PlayerStream_t Stream)
 	// Initialize the collator
 	//
 	Stream->Collator->RegisterPlayer(this, Stream->Playback, Stream,
-					 Stream->SwitchingToCollator,
-					 Stream->SwitchingToFrameParser,
-					 Stream->SwitchingToCodec,
-					 Stream->SwitchingToOutputTimer,
-					 Stream->Manifestor);
+									 Stream->SwitchingToCollator,
+									 Stream->SwitchingToFrameParser,
+									 Stream->SwitchingToCodec,
+									 Stream->SwitchingToOutputTimer,
+									 Stream->Manifestor);
 	Status = Stream->Collator->RegisterOutputBufferRing(Stream->CollatedFrameRing);
 	if (Status != PlayerNoError)
 		report(severity_error, "Player_Generic_c::SwitchCollator - Failed to register stream parameters with Collator.\n");
@@ -184,11 +184,11 @@ void Player_Generic_c::SwitchFrameParser(PlayerStream_t Stream)
 	// Initialize the FrameParser
 	//
 	Stream->FrameParser->RegisterPlayer(this, Stream->Playback, Stream,
-					    Stream->SwitchingToCollator,
-					    Stream->SwitchingToFrameParser,
-					    Stream->SwitchingToCodec,
-					    Stream->SwitchingToOutputTimer,
-					    Stream->Manifestor);
+										Stream->SwitchingToCollator,
+										Stream->SwitchingToFrameParser,
+										Stream->SwitchingToCodec,
+										Stream->SwitchingToOutputTimer,
+										Stream->Manifestor);
 	Status = Stream->FrameParser->RegisterOutputBufferRing(Stream->ParsedFrameRing);
 	if (Status != PlayerNoError)
 		report(severity_error, "Player_Generic_c::SwitchFrameParser - Failed to register stream parameters with FrameParser.\n");
@@ -226,11 +226,11 @@ void Player_Generic_c::SwitchCodec(PlayerStream_t Stream)
 	// Initialize the Codec
 	//
 	Stream->Codec->RegisterPlayer(this, Stream->Playback, Stream,
-				      Stream->SwitchingToCollator,
-				      Stream->SwitchingToFrameParser,
-				      Stream->SwitchingToCodec,
-				      Stream->SwitchingToOutputTimer,
-				      Stream->Manifestor);
+								  Stream->SwitchingToCollator,
+								  Stream->SwitchingToFrameParser,
+								  Stream->SwitchingToCodec,
+								  Stream->SwitchingToOutputTimer,
+								  Stream->Manifestor);
 	Status = Stream->Codec->RegisterOutputBufferRing(Stream->DecodedFrameRing);
 	if (Status != PlayerNoError)
 		report(severity_error, "Player_Generic_c::SwitchFrameCodec - Failed to register stream parameters with Codec.\n");
@@ -263,11 +263,11 @@ void Player_Generic_c::SwitchOutputTimer(PlayerStream_t Stream)
 		Stream->OutputTimer->Reset();
 		Stream->OutputTimer = Stream->SwitchingToOutputTimer;
 		Stream->OutputTimer->RegisterPlayer(this, Stream->Playback, Stream,
-						    Stream->SwitchingToCollator,
-						    Stream->SwitchingToFrameParser,
-						    Stream->SwitchingToCodec,
-						    Stream->SwitchingToOutputTimer,
-						    Stream->Manifestor);
+											Stream->SwitchingToCollator,
+											Stream->SwitchingToFrameParser,
+											Stream->SwitchingToCodec,
+											Stream->SwitchingToOutputTimer,
+											Stream->Manifestor);
 		Status = Stream->OutputTimer->RegisterOutputCoordinator(Stream->Playback->OutputCoordinator);
 		if (Status != PlayerNoError)
 			report(severity_error, "Player_Generic_c::SwitchOutputTimer - Failed to register Output Coordinator with Output Timer.\n");
@@ -279,11 +279,11 @@ void Player_Generic_c::SwitchOutputTimer(PlayerStream_t Stream)
 		// where we simply update the class pointers that have changed.
 		//
 		Stream->OutputTimer->RegisterPlayer(this, Stream->Playback, Stream,
-						    Stream->SwitchingToCollator,
-						    Stream->SwitchingToFrameParser,
-						    Stream->SwitchingToCodec,
-						    Stream->SwitchingToOutputTimer,
-						    Stream->Manifestor);
+											Stream->SwitchingToCollator,
+											Stream->SwitchingToFrameParser,
+											Stream->SwitchingToCodec,
+											Stream->SwitchingToOutputTimer,
+											Stream->Manifestor);
 	}
 }
 

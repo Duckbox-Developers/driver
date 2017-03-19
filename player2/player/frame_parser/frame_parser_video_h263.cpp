@@ -394,8 +394,8 @@ FrameParserStatus_t FrameParser_VideoH263_c::CommitFrameForDecode(void)
 	ParsedVideoParameters->Content.FrameRate = Rational_t (30000, 1001);
 	// Picture header cycles 0-255 with gaps - see 5.1.2
 	ParsedVideoParameters->DisplayCount[0] = (TemporalReference == H263_TEMPORAL_REFERENCE_INVALID) ? 1 :
-						 (TemporalReference > PictureHeader->tref) ? PictureHeader->tref + 256 - TemporalReference :
-						 PictureHeader->tref - TemporalReference;
+											 (TemporalReference > PictureHeader->tref) ? PictureHeader->tref + 256 - TemporalReference :
+											 PictureHeader->tref - TemporalReference;
 	ParsedVideoParameters->DisplayCount[1] = 0;
 	TemporalReference = PictureHeader->tref;
 	ParsedVideoParameters->Content.PixelAspectRatio = 1;

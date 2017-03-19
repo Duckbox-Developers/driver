@@ -202,8 +202,8 @@ CollatorStatus_t Collator_PesVideo_c::Input(
 						else
 						{
 							BlockTerminate = (((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode) && !Configuration.DeferredTerminateFlag) ||
-									 (Configuration.StreamTerminateFlushesFrame && (Code == Configuration.StreamTerminationCode)) ||
-									 (Configuration.DeferredTerminateFlag && TerminationFlagIsSet);
+											 (Configuration.StreamTerminateFlushesFrame && (Code == Configuration.StreamTerminationCode)) ||
+											 (Configuration.DeferredTerminateFlag && TerminationFlagIsSet);
 							TerminationFlagIsSet = false;
 						}
 						GotPartialHeader = false;

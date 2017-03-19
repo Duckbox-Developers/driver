@@ -189,10 +189,10 @@ HavanaStatus_t HavanaPlayer_c::Init(void)
 
 //{{{ CallFactory
 HavanaStatus_t HavanaPlayer_c::CallFactory(const char *Id,
-					   const char *SubId,
-					   PlayerStreamType_t StreamType,
-					   PlayerComponent_t Component,
-					   void **Class)
+										   const char *SubId,
+										   PlayerStreamType_t StreamType,
+										   PlayerComponent_t Component,
+										   void **Class)
 {
 	class HavanaFactory_c *Factory;
 	const char *Name;
@@ -234,12 +234,12 @@ HavanaStatus_t HavanaPlayer_c::CallFactory(const char *Id,
 //}}}
 //{{{ RegisterFactory
 HavanaStatus_t HavanaPlayer_c::RegisterFactory(const char *Id,
-					       const char *SubId,
-					       PlayerStreamType_t StreamType,
-					       PlayerComponent_t Component,
-					       unsigned int Version,
-					       bool Force,
-					       void *(*NewFactory)(void))
+											   const char *SubId,
+											   PlayerStreamType_t StreamType,
+											   PlayerComponent_t Component,
+											   unsigned int Version,
+											   bool Force,
+											   void *(*NewFactory)(void))
 {
 	HavanaStatus_t HavanaStatus;
 	class HavanaFactory_c *Factory;
@@ -251,13 +251,13 @@ HavanaStatus_t HavanaPlayer_c::RegisterFactory(const char *Id,
 			if ((Version > Factory->Version()) || Force)
 			{
 				HAVANA_TRACE("New factory version %d supercedes previously registered for %s %x version %d. \n",
-					     Version, Id, Component, Factory->Version());
+							 Version, Id, Component, Factory->Version());
 				break;
 			}
 			else
 			{
 				HAVANA_TRACE("New factory version %d does not supercede previously registered for %s %s %x version %d. \n",
-					     Version, Id, SubId, Component, Factory->Version());
+							 Version, Id, SubId, Component, Factory->Version());
 				return HavanaError;
 			}
 		}
@@ -282,10 +282,10 @@ HavanaStatus_t HavanaPlayer_c::RegisterFactory(const char *Id,
 //}}}
 //{{{ DeRegisterFactory
 HavanaStatus_t HavanaPlayer_c::DeRegisterFactory(const char *Id,
-						 const char *SubId,
-						 PlayerStreamType_t StreamType,
-						 PlayerComponent_t Component,
-						 unsigned int Version)
+												 const char *SubId,
+												 PlayerStreamType_t StreamType,
+												 PlayerComponent_t Component,
+												 unsigned int Version)
 {
 	class HavanaFactory_c *Factory;
 	class HavanaFactory_c *Previous;
@@ -303,7 +303,7 @@ HavanaStatus_t HavanaPlayer_c::DeRegisterFactory(const char *Id,
 	if (Factory == NULL)
 	{
 		HAVANA_ERROR("Unable to find factory version %d for %s %s %x.\n",
-			     Version, Id, SubId, Component);
+					 Version, Id, SubId, Component);
 		return HavanaError;
 	}
 	if (Factory == FactoryList)
@@ -322,9 +322,9 @@ HavanaStatus_t HavanaPlayer_c::DeRegisterFactory(const char *Id,
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayer_c::GetManifestor(char *Media,
-					     char *Encoding,
-					     unsigned int SurfaceId,
-					     class Manifestor_c **Manifestor)
+											 char *Encoding,
+											 unsigned int SurfaceId,
+											 class Manifestor_c **Manifestor)
 {
 	HavanaStatus_t Status = HavanaNoError;
 	HavanaDisplay_c *Display = NULL;
@@ -333,10 +333,10 @@ HavanaStatus_t HavanaPlayer_c::GetManifestor(char *Media,
 	if (Status != HavanaNoError)
 		return Status;
 	Status = Display->GetManifestor(this,
-					Media,
-					Encoding,
-					SurfaceId,
-					Manifestor);
+									Media,
+									Encoding,
+									SurfaceId,
+									Manifestor);
 	if (Status != HavanaNoError)
 		DeleteDisplay(Media, SurfaceId);
 	return Status;
@@ -348,8 +348,8 @@ HavanaStatus_t HavanaPlayer_c::GetManifestor(char *Media,
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayer_c::GetDemuxContext(unsigned int DemuxId,
-					       class Demultiplexor_c **Demultiplexor,
-					       DemultiplexorContext_t *DemultiplexorContext)
+											   class Demultiplexor_c **Demultiplexor,
+											   DemultiplexorContext_t *DemultiplexorContext)
 {
 	// The string Multiplex will be of the form tsn where the number n indicates which demux
 	// context is required
@@ -441,8 +441,8 @@ HavanaStatus_t HavanaPlayer_c::DeletePlayback(HavanaPlayback_c *HavanaPlayback)
 //}}}
 //{{{ CreateDisplay
 HavanaStatus_t HavanaPlayer_c::CreateDisplay(char *Media,
-					     unsigned int SurfaceId,
-					     HavanaDisplay_c **HavanaDisplay)
+											 unsigned int SurfaceId,
+											 HavanaDisplay_c **HavanaDisplay)
 {
 	HavanaStatus_t Status = HavanaNoError;
 	HavanaDisplay_c **Display = NULL;
@@ -471,7 +471,7 @@ HavanaStatus_t HavanaPlayer_c::CreateDisplay(char *Media,
 #ifdef __TDT__
 //{{{ isDisplayCreated
 int HavanaPlayer_c::isDisplayCreated(char *Media,
-				     unsigned int SurfaceId)
+									 unsigned int SurfaceId)
 {
 	HavanaDisplay_c **Display = NULL;
 	if (SurfaceId > MAX_DISPLAYS)
@@ -493,7 +493,7 @@ int HavanaPlayer_c::isDisplayCreated(char *Media,
 
 //{{{ DeleteDisplay
 HavanaStatus_t HavanaPlayer_c::DeleteDisplay(char *Media,
-					     unsigned int SurfaceId)
+											 unsigned int SurfaceId)
 {
 	HavanaDisplay_c **Display = NULL;
 	HAVANA_DEBUG("%s: %d\n", Media, SurfaceId);
@@ -515,7 +515,7 @@ HavanaStatus_t HavanaPlayer_c::DeleteDisplay(char *Media,
 
 //{{{ SynchronizeDisplay
 HavanaStatus_t HavanaPlayer_c::SynchronizeDisplay(char *Media,
-						  unsigned int SurfaceId)
+												  unsigned int SurfaceId)
 {
 	HAVANA_DEBUG("%s: %d\n", Media, SurfaceId);
 	PlayerStatus_t Status;

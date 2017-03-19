@@ -44,7 +44,7 @@ Date Modification Name
 #endif
 
 #define DEMUX_DEBUG(fmt, args...) ((void) (ENABLE_DEMUX_DEBUG && \
-					   (report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+										   (report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define DEMUX_TRACE(fmt, args...) (report(severity_note, "HavanaDemux_c::%s: " fmt, __FUNCTION__, ##args))
@@ -68,10 +68,10 @@ class HavanaDemux_c
 		~HavanaDemux_c(void);
 
 		HavanaStatus_t Init(class Player_c *Player,
-				    PlayerPlayback_t PlayerPlayback,
-				    DemultiplexorContext_t DemultiplexorContext);
+							PlayerPlayback_t PlayerPlayback,
+							DemultiplexorContext_t DemultiplexorContext);
 		HavanaStatus_t InjectData(const unsigned char *Data,
-					  unsigned int DataLength);
+								  unsigned int DataLength);
 };
 
 #endif

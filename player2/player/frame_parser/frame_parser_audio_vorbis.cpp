@@ -266,8 +266,8 @@ FrameParserStatus_t FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSettin
 	if (ParsedFrameParameters->NormalizedDecodeTime > ParsedFrameParameters->NormalizedPlaybackTime)
 	{
 		FRAME_ERROR("DTS(%lldus) > PTS(%lldus)!!!\n",
-			    ParsedFrameParameters->NormalizedDecodeTime,
-			    ParsedFrameParameters->NormalizedPlaybackTime);
+					ParsedFrameParameters->NormalizedDecodeTime,
+					ParsedFrameParameters->NormalizedPlaybackTime);
 		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
 	}
 	if (ParsedFrameParameters->NormalizedDecodeTime != INVALID_TIME)
@@ -408,8 +408,8 @@ FrameParserStatus_t FrameParser_AudioVorbis_c::ReadStreamHeaders(void)
 		if ((StreamParameters->ChannelCount == 0) || (StreamParameters->SampleRate == 0))
 		{
 			FRAME_ERROR("Invalid Vorbis channel count %d or Sample Rate %d\n",
-				    StreamParameters->ChannelCount,
-				    StreamParameters->SampleRate);
+						StreamParameters->ChannelCount,
+						StreamParameters->SampleRate);
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
 		}

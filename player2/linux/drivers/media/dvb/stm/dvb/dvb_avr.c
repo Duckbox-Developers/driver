@@ -157,7 +157,7 @@ static struct stain_description g_ainDevice[] =
  * NOTE1: SystemTime, NativeTime and the Pts values must be max 33 bits long -> &= 0x1ffffffffULL
  * NOTE2: all the timings values are expressed in usecs in these functions */
 int avr_set_external_time_mapping(avr_v4l2_shared_handle_t *shared_context, struct StreamContext_s *stream,
-				  unsigned long long nativetime, unsigned long long systemtime)
+								  unsigned long long nativetime, unsigned long long systemtime)
 {
 	int result = 0;
 	struct PlaybackContext_s *playback = shared_context->avr_device_context.Playback;
@@ -201,7 +201,7 @@ int avr_set_external_time_mapping(avr_v4l2_shared_handle_t *shared_context, stru
 	{
 #if 0
 		DVB_DEBUG("Munging nativetime (%lld -> %lld)\n",
-			  nativetime, nativetime + audio_video_latency_offset);
+				  nativetime, nativetime + audio_video_latency_offset);
 #endif
 		nativetime += shared_context->audio_video_latency_offset;
 	}
@@ -245,7 +245,7 @@ static void avr_update_mixer_settings(void *ctx, const struct snd_pseudo_mixer_s
 		// store new mixer settings
 		down_write(&shared_context->mixer_settings_semaphore);
 		memcpy((void *)&shared_context->mixer_settings,
-		       (void *) mixer_settings, sizeof(shared_context->mixer_settings));
+			   (void *) mixer_settings, sizeof(shared_context->mixer_settings));
 		up_write(&shared_context->mixer_settings_semaphore);
 		// notify the audio system so it can reconfigure the PCM chains
 		AvrAudioMixerSettingsChanged(shared_context->audio_context);
@@ -266,7 +266,7 @@ void avr_set_vsync_offset(avr_v4l2_shared_handle_t *shared_context, long long vs
  ******************************/
 
 static int avr_ioctl_overlay_start(avr_v4l2_shared_handle_t *shared_context,
-				   struct stm_v4l2_handles *handle)
+								   struct stm_v4l2_handles *handle)
 {
 	int ret = 0;
 	playback_handle_t playerplayback;
@@ -293,7 +293,7 @@ static int avr_ioctl_overlay_start(avr_v4l2_shared_handle_t *shared_context,
 	 * drift appart.
 	 */
 	ret = DvbPlaybackSetOption(shared_context->avr_device_context.Playback,
-				   PLAY_OPTION_MASTER_CLOCK, PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER);
+							   PLAY_OPTION_MASTER_CLOCK, PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER);
 	if (ret < 0)
 	{
 		DVB_ERROR("PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER coult not be set\n");
@@ -301,7 +301,7 @@ static int avr_ioctl_overlay_start(avr_v4l2_shared_handle_t *shared_context,
 	}
 	// Wait for the playback's creational event to be acted upon
 	ret = DvbPlaybackGetPlayerEnvironment(shared_context->avr_device_context.Playback,
-					      &playerplayback);
+										  &playerplayback);
 	if (ret < 0)
 	{
 		DVB_ERROR("Cannot get internal player handle\n");
@@ -345,7 +345,7 @@ static int avr_ioctl_overlay_start(avr_v4l2_shared_handle_t *shared_context,
 }
 
 static int avr_ioctl_overlay_stop(avr_v4l2_shared_handle_t *shared_context,
-				  struct stm_v4l2_handles *handle)
+								  struct stm_v4l2_handles *handle)
 {
 	int ret = 0;
 	if (shared_context->avr_device_context.Playback == NULL)
@@ -382,8 +382,8 @@ static int avr_ioctl_overlay_stop(avr_v4l2_shared_handle_t *shared_context,
  * \todo Most of this initialization ought to migrate into the video driver.
  */
 static int avr_ioctl_video_set_input(avr_v4l2_shared_handle_t *shared_context,
-				     struct stm_v4l2_handles *handle,
-				     int id)
+									 struct stm_v4l2_handles *handle,
+									 int id)
 {
 	int ret = 0;
 #ifdef NICK_TEST_HACK
@@ -456,8 +456,8 @@ static int avr_ioctl_video_set_input(avr_v4l2_shared_handle_t *shared_context,
  * \todo Honour id! We are going to be supporting two inputs soon...
  */
 static int avr_ioctl_audio_set_input(avr_v4l2_shared_handle_t *shared_context,
-				     struct stm_v4l2_handles *handle,
-				     int id)
+									 struct stm_v4l2_handles *handle,
+									 int id)
 {
 	int ret = 0;
 	if (handle->v4l2type[STM_V4L2_AUDIO_INPUT].handle == NULL)
@@ -509,7 +509,7 @@ static int avr_ioctl_audio_set_input(avr_v4l2_shared_handle_t *shared_context,
 }
 
 static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driver,
-		     int device, enum _stm_v4l2_driver_type type, struct file *file, unsigned int cmd, void *arg)
+					 int device, enum _stm_v4l2_driver_type type, struct file *file, unsigned int cmd, void *arg)
 {
 	avr_v4l2_shared_handle_t *shared_context = driver->priv;
 	int res;
@@ -523,7 +523,7 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 			{
 				struct v4l2_framebuffer *argp = arg;
 				DvpVideoIoctlSetFramebuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-							    argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
+											argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
 				break;
 			}
 			CASE(VIDIOC_S_STD)
@@ -604,7 +604,7 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				AncillaryAssert((request->type == V4L2_BUF_TYPE_VBI_CAPTURE), "VIDIOC_REQBUFS: Type not V4L2_BUF_TYPE_VBI_CAPTURE");
 				AncillaryAssert((request->memory == V4L2_MEMORY_MMAP), "VIDIOC_REQBUFS: Memory not V4L2_MEMORY_MMAP");
 				res = DvpVideoIoctlAncillaryRequestBuffers(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-									   request->count, request->reserved[0], &request->count, &request->reserved[0]);
+														   request->count, request->reserved[0], &request->count, &request->reserved[0]);
 				if (res != 0)
 					return res;
 				for (i = 0; i < request->count; i++)
@@ -624,13 +624,13 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				unsigned int Size;
 				AncillaryAssert((buffer->type == V4L2_BUF_TYPE_VBI_CAPTURE), "VIDIOC_QUERYBUF: Type not V4L2_BUF_TYPE_VBI_CAPTURE");
 				res = DvpVideoIoctlAncillaryQueryBuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-									buffer->index, &Queued, &Done, &PhysicalAddress, &UnCachedAddress, &CaptureTime, &Bytes, &Size);
+														buffer->index, &Queued, &Done, &PhysicalAddress, &UnCachedAddress, &CaptureTime, &Bytes, &Size);
 				if (res != 0)
 					return res;
 				buffer->bytesused = Bytes;
 				buffer->flags = (Queued ? V4L2_BUF_FLAG_QUEUED : 0) |
-						(Done ? V4L2_BUF_FLAG_DONE : 0) |
-						(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
+								(Done ? V4L2_BUF_FLAG_DONE : 0) |
+								(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
 				buffer->field = V4L2_FIELD_NONE;
 				buffer->timestamp.tv_sec = (unsigned int)(CaptureTime / 1000000);
 				buffer->timestamp.tv_usec = (unsigned int)(CaptureTime - (1000000 * buffer->timestamp.tv_sec));
@@ -651,7 +651,7 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				if (res != 0)
 					return res;
 				buffer->flags = V4L2_BUF_FLAG_QUEUED |
-						(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
+								(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
 				break;
 			}
 			CASE(VIDIOC_DQBUF)
@@ -673,14 +673,14 @@ static int avr_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 				if (res != 0)
 					return res;
 				res = DvpVideoIoctlAncillaryQueryBuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-									buffer->index, &Queued, &Done, &PhysicalAddress, &UnCachedAddress, &CaptureTime, &Bytes, &Size);
+														buffer->index, &Queued, &Done, &PhysicalAddress, &UnCachedAddress, &CaptureTime, &Bytes, &Size);
 				if (res != 0)
 					return res;
 				buffer->bytesused = Bytes;
 				buffer->flags = V4L2_BUF_FLAG_TIMECODE |
-						(Queued ? V4L2_BUF_FLAG_QUEUED : 0) |
-						(Done ? V4L2_BUF_FLAG_DONE : 0) |
-						(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
+								(Queued ? V4L2_BUF_FLAG_QUEUED : 0) |
+								(Done ? V4L2_BUF_FLAG_DONE : 0) |
+								(VideoContext->AncillaryBufferState[buffer->index].Mapped ? V4L2_BUF_FLAG_MAPPED : 0);
 				buffer->field = V4L2_FIELD_NONE;
 				buffer->timestamp.tv_sec = (unsigned int)(CaptureTime / 1000000);
 				buffer->timestamp.tv_usec = (unsigned int)(CaptureTime - (1000000 * buffer->timestamp.tv_sec));
@@ -962,7 +962,7 @@ static struct page *avr_vm_nopage(struct vm_area_struct *vma, unsigned long vadd
 	 * when the 32bit SH4 address space becomes available.
 	 */
 	page_addr = (void *)((vaddr - vma->vm_start) + (vma->vm_pgoff << PAGE_SHIFT) +
-			     ((dvp_v4l2_video_handle_t *)(vma->vm_private_data))->AncillaryBufferPhysicalAddress);
+						 ((dvp_v4l2_video_handle_t *)(vma->vm_private_data))->AncillaryBufferPhysicalAddress);
 	page_frame = ((unsigned long)page_addr >> PAGE_SHIFT);
 	if (!pfn_valid(page_frame))
 		return NOPAGE_SIGBUS;

@@ -60,10 +60,10 @@ class Collator_PacketDvp_c : public Collator_Packet_c
 		//
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false,
-				       unsigned int *DataLengthRemaining = NULL);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false,
+							   unsigned int *DataLengthRemaining = NULL);
 };
 
 #endif

@@ -6,7 +6,7 @@
 #include <asm/uaccess.h> /* copy_from_user */
 
 int proc_info_model_read(char *page, char **start, off_t off, int count,
-			 int *eof, void *data_unused)
+						 int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);

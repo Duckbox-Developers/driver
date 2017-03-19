@@ -180,17 +180,17 @@ class Manifestor_Video_c : public Manifestor_Base_c
 		bool FatalHardwareErrorSignalled;
 
 		virtual ManifestorStatus_t QueueBuffer(unsigned int BufferIndex,
-						       struct ParsedFrameParameters_s *FrameParameters,
-						       struct ParsedVideoParameters_s *VideoParameters,
-						       struct VideoOutputTiming_s *VideoOutputTiming,
-						       struct BufferStructure_s *BufferStructure) = 0;
+											   struct ParsedFrameParameters_s *FrameParameters,
+											   struct ParsedVideoParameters_s *VideoParameters,
+											   struct VideoOutputTiming_s *VideoOutputTiming,
+											   struct BufferStructure_s *BufferStructure) = 0;
 
 		virtual ManifestorStatus_t QueueInitialFrame(unsigned int BufferIndex,
-							     struct ParsedVideoParameters_s *VideoParameters,
-							     struct BufferStructure_s *BufferStructure) = 0;
+													 struct ParsedVideoParameters_s *VideoParameters,
+													 struct BufferStructure_s *BufferStructure) = 0;
 
 		virtual ManifestorStatus_t CheckInputDimensions(unsigned int Width,
-								unsigned int Height) = 0;
+														unsigned int Height) = 0;
 
 		virtual ManifestorStatus_t UpdateOutputSurfaceDescriptor(void) = 0;
 
@@ -218,22 +218,22 @@ class Manifestor_Video_c : public Manifestor_Base_c
 
 		unsigned int GetBufferId(void);
 		ManifestorStatus_t SetOutputWindow(unsigned int X,
-						   unsigned int Y,
-						   unsigned int Width,
-						   unsigned int Height);
+										   unsigned int Y,
+										   unsigned int Width,
+										   unsigned int Height);
 		ManifestorStatus_t GetOutputWindow(unsigned int *X,
-						   unsigned int *Y,
-						   unsigned int *Width,
-						   unsigned int *Height);
+										   unsigned int *Y,
+										   unsigned int *Width,
+										   unsigned int *Height);
 		ManifestorStatus_t SetInputWindow(unsigned int X,
-						  unsigned int Y,
-						  unsigned int Width,
-						  unsigned int Height);
+										  unsigned int Y,
+										  unsigned int Width,
+										  unsigned int Height);
 
 		/* these virtual functions are implemented by the device specific part of the video manifestor */
 		virtual ManifestorStatus_t OpenOutputSurface(DeviceHandle_t DisplayDevice,
-							     unsigned int SurfaceId,
-							     unsigned int OutputId) = 0;
+													 unsigned int SurfaceId,
+													 unsigned int OutputId) = 0;
 		virtual ManifestorStatus_t CloseOutputSurface(void) = 0;
 		virtual ManifestorStatus_t Enable(void) = 0;
 		virtual ManifestorStatus_t Disable(void) = 0;

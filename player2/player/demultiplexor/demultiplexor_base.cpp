@@ -101,7 +101,7 @@ DemultiplexorStatus_t Demultiplexor_Base_c::DestroyContext(DemultiplexorContext_
 	DemultiplexorBaseContext_t BaseContext = (DemultiplexorBaseContext_t)Context;
 	OS_LockMutex(&BaseContext->Lock);
 	OS_TerminateMutex(&BaseContext->Lock);
-	delete(unsigned char *)Context;
+	delete (unsigned char *)Context;
 	return DemultiplexorNoError;
 }
 

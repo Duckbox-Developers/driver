@@ -65,7 +65,7 @@ class Rational_c
 //
 
 		Rational_c(long long N,
-			   long long D)
+				   long long D)
 		{
 			Negative = ((N < 0) ^ (D < 0));
 			Numerator = Abs(N);
@@ -75,9 +75,9 @@ class Rational_c
 //
 
 		Rational_c(unsigned long long N,
-			   unsigned long long D,
-			   unsigned long long R,
-			   bool Neg)
+				   unsigned long long D,
+				   unsigned long long R,
+				   bool Neg)
 		{
 			Negative = Neg;
 			Numerator = N;
@@ -158,7 +158,7 @@ class Rational_c
 					Numerator = Numerator / Numerator;
 				}
 				else while (((10 * (Numerator / 10)) == Numerator) &&
-							((10 * (Denominator / 10)) == Denominator))
+								((10 * (Denominator / 10)) == Denominator))
 					{
 						Numerator = Numerator / 10;
 						Denominator = Denominator / 10;
@@ -236,12 +236,12 @@ class Rational_c
 		bool operator>= (Rational_c F)
 		{
 			return Negative ?
-			       (F.Negative ?
-				((Numerator * F.Denominator) <= (F.Numerator * Denominator)) :
-				((Numerator == 0) && (F.Numerator == 0))) :
-			       (F.Negative ?
-				(true) :
-				(Numerator * F.Denominator) >= (F.Numerator * Denominator));
+				   (F.Negative ?
+					((Numerator * F.Denominator) <= (F.Numerator * Denominator)) :
+					((Numerator == 0) && (F.Numerator == 0))) :
+				   (F.Negative ?
+					(true) :
+					(Numerator * F.Denominator) >= (F.Numerator * Denominator));
 		}
 
 //
@@ -257,12 +257,12 @@ class Rational_c
 		bool operator> (Rational_c F)
 		{
 			return Negative ?
-			       (F.Negative ?
-				((Numerator * F.Denominator) < (F.Numerator * Denominator)) :
-				(false)) :
-			       (F.Negative ?
-				((Numerator == 0) && (F.Numerator == 0)) :
-				(Numerator * F.Denominator) > (F.Numerator * Denominator));
+				   (F.Negative ?
+					((Numerator * F.Denominator) < (F.Numerator * Denominator)) :
+					(false)) :
+				   (F.Negative ?
+					((Numerator == 0) && (F.Numerator == 0)) :
+					(Numerator * F.Denominator) > (F.Numerator * Denominator));
 		}
 
 //
@@ -314,24 +314,24 @@ class Rational_c
 				if (This_GT_F)
 				{
 					return Rational_c((Numerator * F.Denominator) - (F.Numerator * Denominator),
-							  Denominator * F.Denominator,
-							  Denominator,
-							  Negative);
+									  Denominator * F.Denominator,
+									  Denominator,
+									  Negative);
 				}
 				else
 				{
 					return Rational_c((F.Numerator * Denominator) - (Numerator * F.Denominator),
-							  Denominator * F.Denominator,
-							  Denominator,
-							  !Negative);
+									  Denominator * F.Denominator,
+									  Denominator,
+									  !Negative);
 				}
 			}
 			else
 			{
 				return Rational_c((Numerator * F.Denominator) + (F.Numerator * Denominator),
-						  Denominator * F.Denominator,
-						  Denominator,
-						  Negative);
+								  Denominator * F.Denominator,
+								  Denominator,
+								  Negative);
 			}
 		}
 
@@ -374,9 +374,9 @@ class Rational_c
 			if (Negative ^ F.Negative)
 			{
 				return Rational_c((Numerator * F.Denominator) + (F.Numerator * Denominator),
-						  Denominator * F.Denominator,
-						  Denominator,
-						  Negative);
+								  Denominator * F.Denominator,
+								  Denominator,
+								  Negative);
 			}
 			else
 			{
@@ -384,16 +384,16 @@ class Rational_c
 				if (This_GT_F)
 				{
 					return Rational_c((Numerator * F.Denominator) - (F.Numerator * Denominator),
-							  Denominator * F.Denominator,
-							  Denominator,
-							  Negative);
+									  Denominator * F.Denominator,
+									  Denominator,
+									  Negative);
 				}
 				else
 				{
 					return Rational_c((F.Numerator * Denominator) - (Numerator * F.Denominator),
-							  Denominator * F.Denominator,
-							  Denominator,
-							  !Negative);
+									  Denominator * F.Denominator,
+									  Denominator,
+									  !Negative);
 				}
 			}
 		}
@@ -531,8 +531,8 @@ class Rational_c
 		long long RoundedLongLongIntegerPart(void)
 		{
 			return (Negative > 0) ?
-			       -((Numerator + (Denominator / 2)) / Denominator) :
-			       ((Numerator + (Denominator / 2)) / Denominator);
+				   -((Numerator + (Denominator / 2)) / Denominator) :
+				   ((Numerator + (Denominator / 2)) / Denominator);
 		}
 
 //
@@ -540,8 +540,8 @@ class Rational_c
 		int RoundedIntegerPart(void)
 		{
 			return (Negative > 0) ?
-			       -(int)((Numerator + (Denominator / 2)) / Denominator) :
-			       (int)((Numerator + (Denominator / 2)) / Denominator);
+				   -(int)((Numerator + (Denominator / 2)) / Denominator) :
+				   (int)((Numerator + (Denominator / 2)) / Denominator);
 		}
 
 //
@@ -549,8 +549,8 @@ class Rational_c
 		long long RoundedUpLongLongIntegerPart(void)
 		{
 			return (Negative > 0) ?
-			       -((Numerator + (Denominator - 1)) / Denominator) :
-			       ((Numerator + (Denominator - 1)) / Denominator);
+				   -((Numerator + (Denominator - 1)) / Denominator) :
+				   ((Numerator + (Denominator - 1)) / Denominator);
 		}
 
 //
@@ -558,8 +558,8 @@ class Rational_c
 		int RoundedUpIntegerPart(void)
 		{
 			return (Negative > 0) ?
-			       -(int)((Numerator + (Denominator - 1)) / Denominator) :
-			       (int)((Numerator + (Denominator - 1)) / Denominator);
+				   -(int)((Numerator + (Denominator - 1)) / Denominator) :
+				   (int)((Numerator + (Denominator - 1)) / Denominator);
 		}
 
 //
@@ -614,7 +614,7 @@ typedef Rational_c Rational_t;
 //
 
 static inline Rational_c operator+ (int I,
-				    Rational_c F)
+									Rational_c F)
 {
 	return F + I;
 }
@@ -622,7 +622,7 @@ static inline Rational_c operator+ (int I,
 //
 
 static inline Rational_c operator- (int I,
-				    Rational_c F)
+									Rational_c F)
 {
 	Rational_c Temp = I;
 	return Temp - F;
@@ -631,7 +631,7 @@ static inline Rational_c operator- (int I,
 //
 
 static inline Rational_c operator* (int V,
-				    Rational_c F)
+									Rational_c F)
 {
 	return F * V;
 }
@@ -639,7 +639,7 @@ static inline Rational_c operator* (int V,
 //
 
 static inline Rational_c operator/ (int V,
-				    Rational_c F)
+									Rational_c F)
 {
 	Rational_c Temp = V;
 	return Temp / F;
@@ -693,7 +693,7 @@ static inline int RemainderDecimal(Rational_c R)
 //
 
 static inline Rational_c TruncateDenominator(Rational_c R,
-					     unsigned int N)
+											 unsigned int N)
 {
 	return R.TruncateDenominator(N);
 }

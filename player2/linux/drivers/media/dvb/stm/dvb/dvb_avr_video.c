@@ -358,8 +358,8 @@ static dvp_v4l2_video_handle_t *DvpVideoSysfsLookupContext(struct class_device *
 {
 	int streamid = player_sysfs_get_stream_id(class_dev);
 	BUG_ON(streamid < 0 ||
-	       streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
-	       NULL == VideoContextLookupTable[streamid]);
+		   streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
+		   NULL == VideoContextLookupTable[streamid]);
 	return VideoContextLookupTable[streamid];
 }
 
@@ -394,7 +394,7 @@ static dvp_v4l2_video_handle_t *DvpVideoSysfsLookupContext(struct class_device *
 		int Result; \
 		\
 		Result = class_device_create_file(VideoContext->DvpSysfsClassDevice, \
-						  &class_device_attr_##LinuxName); \
+										  &class_device_attr_##LinuxName); \
 		if (Result) { \
 			DVB_ERROR("class_device_create_file failed (%d)\n", Result); \
 			return -1; \
@@ -586,7 +586,7 @@ int DvpVideoClose(dvp_v4l2_video_handle_t *Context)
 //
 
 static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t *Context,
-						  unsigned int ScalingFactorStep)
+												  unsigned int ScalingFactorStep)
 {
 	volatile int *DvpRegs = Context->DvpRegs;
 	unsigned int i;
@@ -613,7 +613,7 @@ static int DvpConfigureVerticalResizeCoefficients(dvp_v4l2_video_handle_t *Conte
 //
 
 static int DvpConfigureHorizontalResizeCoefficients(dvp_v4l2_video_handle_t *Context,
-						    unsigned int ScalingFactorStep)
+													unsigned int ScalingFactorStep)
 {
 	volatile int *DvpRegs = Context->DvpRegs;
 	unsigned int i;
@@ -764,12 +764,12 @@ static int DvpGetVideoBuffer(dvp_v4l2_video_handle_t *Context)
 	up(&Context->DvpScalingStateLock);
 //
 	Result = DvbStreamGetDecodeBuffer(Context->DeviceContext->VideoStream,
-					  &Record->Buffer,
-					  &Record->Data,
-					  SurfaceFormat,
-					  2, Dimensions,
-					  &BufferIndex,
-					  &Context->BytesPerLine);
+									  &Record->Buffer,
+									  &Record->Data,
+									  SurfaceFormat,
+									  2, Dimensions,
+									  &BufferIndex,
+									  &Context->BytesPerLine);
 	if (Result != 0)
 	{
 		printk("Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__);
@@ -906,7 +906,7 @@ static int DvpInjectVideoBuffer(dvp_v4l2_video_handle_t *Context)
 //
 unsigned long capture_address;
 static int DvpConfigureNextCaptureBuffer(dvp_v4l2_video_handle_t *Context,
-					 unsigned long long Now)
+										 unsigned long long Now)
 {
 	int i;
 	volatile int *DvpRegs = Context->DvpRegs;
@@ -1128,7 +1128,7 @@ static int DvpParseModeValues(dvp_v4l2_video_handle_t *Context)
 	Context->SynchronizeEnabled = ControlValue(VsyncLockEnable);
 	Context->AppliedLatency = ControlValue(VideoLatency) - Context->DvpLatency;
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_EXTERNAL_TIME_MAPPING_VSYNC_LOCKED,
-			   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
+					   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
 	//
 	// Based on the mode<dimension> values, recalculate the scaling values.
 	// clearing the input crop as a matter of course (since the crop may well
@@ -1168,19 +1168,19 @@ static int DvpParseModeValues(dvp_v4l2_video_handle_t *Context)
 	// Setup the control register values (No constants, so I commented each field)
 	//
 	Context->RegisterCTL = (ControlValue(16Bit) << 30) | // HD_EN - 16 bit capture
-			       (ControlValue(BigEndian) << 23) | // BIG_NOT_LITTLE - Big endian format
-			       (ControlValue(FullRange) << 16) | // EXTENDED_1_254 - Clip input to 1..254 rather than 16..235 luma and 16..240 chroma
-			       (ControlValue(ExternalSynchroOutOfPhase) << 15) | // SYNCHRO_PHASE_NOTOK - External H and V signals not in phase
-			       (ControlValue(ExternalVRefOddEven) << 9) | // ODDEVEN_NOT_VSYNC - External vertical reference is an odd/even signal
-			       (ControlValue(OddPixelCount) << 8) | // PHASE[1] - Number of pixels to capture is odd
-			       (ControlValue(IncompleteFirstPixel) << 7) | // PHASE[0] - First pixel is incomplete (Y1 not CB0_Y0_CR0)
-			       (ControlValue(ExternalVRefPolarityPositive) << 6) | // V_REF_POL - External Vertical counter reset on +ve edge of VREF
-			       (ControlValue(HRefPolarityPositive) << 5) | // H_REF_POL - Horizontal counter reset on +ve edge of HREF
-			       (ControlValue(ExternalSync) << 4) | // EXT_SYNC - Use external HSI/VSI
-			       (ControlValue(VsyncBottomHalfLineEnable) << 3) | // VSYNC_BOT_HALF_LINE_EN - VSOUT starts at the middle of the last top field line
-			       (ControlValue(ExternalSyncPolarity) << 2) | // EXT_SYNC_POL - external sync polarity
-			       (0 << 1) | // ANCILLARY_DATA_EN - ANC/VBI data collection enable managed throughout
-			       (1 << 0); // VID_EN - Enable capture
+						   (ControlValue(BigEndian) << 23) | // BIG_NOT_LITTLE - Big endian format
+						   (ControlValue(FullRange) << 16) | // EXTENDED_1_254 - Clip input to 1..254 rather than 16..235 luma and 16..240 chroma
+						   (ControlValue(ExternalSynchroOutOfPhase) << 15) | // SYNCHRO_PHASE_NOTOK - External H and V signals not in phase
+						   (ControlValue(ExternalVRefOddEven) << 9) | // ODDEVEN_NOT_VSYNC - External vertical reference is an odd/even signal
+						   (ControlValue(OddPixelCount) << 8) | // PHASE[1] - Number of pixels to capture is odd
+						   (ControlValue(IncompleteFirstPixel) << 7) | // PHASE[0] - First pixel is incomplete (Y1 not CB0_Y0_CR0)
+						   (ControlValue(ExternalVRefPolarityPositive) << 6) | // V_REF_POL - External Vertical counter reset on +ve edge of VREF
+						   (ControlValue(HRefPolarityPositive) << 5) | // H_REF_POL - Horizontal counter reset on +ve edge of HREF
+						   (ControlValue(ExternalSync) << 4) | // EXT_SYNC - Use external HSI/VSI
+						   (ControlValue(VsyncBottomHalfLineEnable) << 3) | // VSYNC_BOT_HALF_LINE_EN - VSOUT starts at the middle of the last top field line
+						   (ControlValue(ExternalSyncPolarity) << 2) | // EXT_SYNC_POL - external sync polarity
+						   (0 << 1) | // ANCILLARY_DATA_EN - ANC/VBI data collection enable managed throughout
+						   (1 << 0); // VID_EN - Enable capture
 	if (Context->StreamInfo.interlaced)
 		Context->RegisterCTL |= (1 << 29); // Reserved - I am guessing this is an interlaced flag
 //
@@ -1254,10 +1254,10 @@ static int DvpConfigureCapture(dvp_v4l2_video_handle_t *Context)
 //
 #if 0
 	printk("%08x %08x %08x %08x - %08x %08x %08x %08x - %08x %08x %08x %08x - %08x %08x\n",
-	       DvpRegs[GAM_DVP_TFO], DvpRegs[GAM_DVP_TFS], DvpRegs[GAM_DVP_BFO], DvpRegs[GAM_DVP_BFS],
-	       DvpRegs[GAM_DVP_VTP], DvpRegs[GAM_DVP_VBP], DvpRegs[GAM_DVP_VMP], DvpRegs[GAM_DVP_CVS],
-	       DvpRegs[GAM_DVP_VSD], DvpRegs[GAM_DVP_HSD], DvpRegs[GAM_DVP_HLL], DvpRegs[GAM_DVP_HSRC],
-	       DvpRegs[GAM_DVP_VSRC], DvpRegs[GAM_DVP_CTL]);
+		   DvpRegs[GAM_DVP_TFO], DvpRegs[GAM_DVP_TFS], DvpRegs[GAM_DVP_BFO], DvpRegs[GAM_DVP_BFS],
+		   DvpRegs[GAM_DVP_VTP], DvpRegs[GAM_DVP_VBP], DvpRegs[GAM_DVP_VMP], DvpRegs[GAM_DVP_CVS],
+		   DvpRegs[GAM_DVP_VSD], DvpRegs[GAM_DVP_HSD], DvpRegs[GAM_DVP_HLL], DvpRegs[GAM_DVP_HSRC],
+		   DvpRegs[GAM_DVP_VSRC], DvpRegs[GAM_DVP_CTL]);
 #endif
 //
 	return 0;
@@ -1351,8 +1351,8 @@ static int DvpStop(dvp_v4l2_video_handle_t *Context)
 //
 
 static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
-			unsigned long long MicroSeconds,
-			unsigned int Frames)
+						unsigned long long MicroSeconds,
+						unsigned int Frames)
 {
 	unsigned int i;
 	unsigned long long MicroSecondsPerFrame;
@@ -1419,7 +1419,7 @@ static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
 //
 	if (Context->StandardFrameRate)
 		printk("DvpFrameRate - Framerate = %lld/%lld (%s)\n", Context->StreamInfo.FrameRateNumerator, Context->StreamInfo.FrameRateDenominator,
-		       (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
+			   (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
 	//
 	// Recalculate how many buffers we will need to pre-inject.
 	// If this has increased, then allow more injections by performing up
@@ -1445,7 +1445,7 @@ static int DvpFrameRate(dvp_v4l2_video_handle_t *Context,
 //
 
 static int DvpWarmUpFailure(dvp_v4l2_video_handle_t *Context,
-			    unsigned long long MicroSeconds)
+							unsigned long long MicroSeconds)
 {
 // printk( "$$$ DvpWarmUpFailure %5d => %5lld %5lld $$$\n", DvpTimeForNFrames(1), DvpTimeForNFrames(Context->DvpInterruptFrameCount), MicroSeconds );
 	//
@@ -1569,8 +1569,8 @@ static int DvpAncillaryCaptureInterrupt(dvp_v4l2_video_handle_t *Context)
 	if (Context->AncillaryCaptureInProgress != AncillaryCaptureWasInProgress)
 	{
 		Context->RegisterCTL = Context->RegisterCTL |
-				       (Context->AncillaryPageSizeSpecified << 13) | // VALID_ANC_PAGE_SIZE_EXT - During ANC (VBI) collection size will be specified in APS register
-				       (Context->AncillaryCaptureInProgress ? (1 << 1) : 0); // ANCILLARY_DATA_EN - Capture enable
+							   (Context->AncillaryPageSizeSpecified << 13) | // VALID_ANC_PAGE_SIZE_EXT - During ANC (VBI) collection size will be specified in APS register
+							   (Context->AncillaryCaptureInProgress ? (1 << 1) : 0); // ANCILLARY_DATA_EN - Capture enable
 		DvpRegs[GAM_DVP_CTL] = Context->RegisterCTL;
 	}
 //
@@ -1721,8 +1721,8 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 					HistoricDifference0 = ((Now - Context->DvpTimeAtZeroInterruptFrameCount) << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(Context->DvpInterruptFrameCount);
 					HistoricDifference0Sign = HistoricDifference0 < Context->DvpFrameDurationCorrection;
 					HistoricDifference0 = HistoricDifference0Sign ?
-							      (Context->DvpFrameDurationCorrection - HistoricDifference0) :
-							      (HistoricDifference0 - Context->DvpFrameDurationCorrection);
+										  (Context->DvpFrameDurationCorrection - HistoricDifference0) :
+										  (HistoricDifference0 - Context->DvpFrameDurationCorrection);
 					if (HistoricDifference0 > (8 * DVP_ONE_PPM))
 					{
 						Context->DvpTotalElapsedCaptureTime = 0;
@@ -1736,8 +1736,8 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 					HistoricDifference1 = (Context->DvpElapsedCaptureTimeRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS] << DVP_CORRECTION_FIXED_POINT_BITS) / DvpTimeForNFrames(Context->DvpCapturedFrameCountRecord[(Context->DvpNextIntegrationRecord - 1) % DVP_MAX_RECORDED_INTEGRATIONS]);
 					HistoricDifference1Sign = HistoricDifference1 < Context->DvpFrameDurationCorrection;
 					HistoricDifference1 = HistoricDifference1Sign ?
-							      (Context->DvpFrameDurationCorrection - HistoricDifference1) :
-							      (HistoricDifference1 - Context->DvpFrameDurationCorrection);
+										  (Context->DvpFrameDurationCorrection - HistoricDifference1) :
+										  (HistoricDifference1 - Context->DvpFrameDurationCorrection);
 					if ((HistoricDifference0 > DVP_ONE_PPM) &&
 							(HistoricDifference1 > DVP_ONE_PPM) &&
 							(HistoricDifference0Sign == HistoricDifference1Sign))
@@ -1755,9 +1755,9 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 					NewTotalElapsedTime = Context->DvpTotalElapsedCaptureTime + (Now - Context->DvpTimeAtZeroInterruptFrameCount);
 					NewTotalFrameCount = Context->DvpTotalCapturedFrameCount + Context->DvpInterruptFrameCount;
 					ArithmeticOverflowLikely = (NewTotalElapsedTime != ((NewTotalElapsedTime << DVP_CORRECTION_FIXED_POINT_BITS) >> DVP_CORRECTION_FIXED_POINT_BITS)) ||
-								   ((DvpTimeForNFrames(NewTotalFrameCount) & 0xffffffff00000000ull) != 0);
+											   ((DvpTimeForNFrames(NewTotalFrameCount) & 0xffffffff00000000ull) != 0);
 					ThrowAnIntegration = ArithmeticOverflowLikely ||
-							     ((Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord) >= (DVP_MAX_RECORDED_INTEGRATIONS - 1));
+										 ((Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord) >= (DVP_MAX_RECORDED_INTEGRATIONS - 1));
 					if (ThrowAnIntegration)
 					{
 						Context->DvpTotalElapsedCaptureTime -= Context->DvpElapsedCaptureTimeRecord[Context->DvpFirstIntegrationRecord % DVP_MAX_RECORDED_INTEGRATIONS];
@@ -1784,11 +1784,11 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 			// Detect an out of range correction factor, and mark our frame rate as invalid
 			//
 			if (!inrange(Context->DvpFrameDurationCorrection, (DVP_CORRECTION_FACTOR_ONE - (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM)),
-					(DVP_CORRECTION_FACTOR_ONE + (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM))))
+						 (DVP_CORRECTION_FACTOR_ONE + (DVP_MAX_SUPPORTED_PPM_CLOCK_ERROR * DVP_ONE_PPM))))
 			{
 				printk("DvpInterrupt - Correction factor %lld.%09lld outside reasonable rate, marking frame rate as invalid.\n",
-				       (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
-				       (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
+					   (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
+					   (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
 				Context->StandardFrameRate = false;
 			}
 			//
@@ -1835,18 +1835,18 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 			// Print out the new state
 			//
 			printk("New Correction factor %lld.%09lld(%d - %3d) [%3lld] - (%5d %6d) %5lld (%lld,%lld)(%s%lld.%09lld %s%lld.%09lld) \n",
-			       (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
-			       (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
-			       UpdateCorrectionFactor, (Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord),
-			       AffectOfChangeOnPreviousFrameTimes,
-			       Context->DvpInterruptFrameCount, Context->DvpTotalCapturedFrameCount,
-			       Context->DvpCurrentDriftError, DriftError, Context->DvpLastFrameDriftError,
-			       (HistoricDifference0Sign ? "-" : " "),
-			       (HistoricDifference0 >> DVP_CORRECTION_FIXED_POINT_BITS),
-			       (((HistoricDifference0 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
-			       (HistoricDifference1Sign ? "-" : " "),
-			       (HistoricDifference1 >> DVP_CORRECTION_FIXED_POINT_BITS),
-			       (((HistoricDifference1 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
+				   (Context->DvpFrameDurationCorrection >> DVP_CORRECTION_FIXED_POINT_BITS),
+				   (((Context->DvpFrameDurationCorrection & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
+				   UpdateCorrectionFactor, (Context->DvpNextIntegrationRecord - Context->DvpFirstIntegrationRecord),
+				   AffectOfChangeOnPreviousFrameTimes,
+				   Context->DvpInterruptFrameCount, Context->DvpTotalCapturedFrameCount,
+				   Context->DvpCurrentDriftError, DriftError, Context->DvpLastFrameDriftError,
+				   (HistoricDifference0Sign ? "-" : " "),
+				   (HistoricDifference0 >> DVP_CORRECTION_FIXED_POINT_BITS),
+				   (((HistoricDifference0 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS),
+				   (HistoricDifference1Sign ? "-" : " "),
+				   (HistoricDifference1 >> DVP_CORRECTION_FIXED_POINT_BITS),
+				   (((HistoricDifference1 & 0x3fffffff) * 1000000000) >> DVP_CORRECTION_FIXED_POINT_BITS));
 			//
 			// Initialize for next integration
 			//
@@ -1886,7 +1886,7 @@ int DvpInterrupt(int irq, void *data, struct pt_regs *pRegs)
 //
 
 static void DvpEventHandler(context_handle_t EventContext,
-			    struct stream_event_s *Event)
+							struct stream_event_s *Event)
 {
 	dvp_v4l2_video_handle_t *Context;
 	//
@@ -1984,12 +1984,12 @@ static int DvpVideoThread(void *data)
 	// Initialize then player with a stream
 	//
 	Result = DvbPlaybackAddStream(Context->DeviceContext->Playback,
-				      BACKEND_VIDEO_ID,
-				      BACKEND_PES_ID,
-				      BACKEND_DVP_ID,
-				      DEMUX_INVALID_ID,
-				      Context->DeviceContext->Id, // SurfaceId .....
-				      &Context->DeviceContext->VideoStream);
+								  BACKEND_VIDEO_ID,
+								  BACKEND_PES_ID,
+								  BACKEND_DVP_ID,
+								  DEMUX_INVALID_ID,
+								  Context->DeviceContext->Id, // SurfaceId .....
+								  &Context->DeviceContext->VideoStream);
 	if (Result < 0)
 	{
 		printk("DvpVideoThread - PlaybackAddStream failed with %d\n", Result);
@@ -2006,7 +2006,7 @@ static int DvpVideoThread(void *data)
 	// Interject our event handler
 	//
 	DvbStreamRegisterEventSignalCallback(Context->DeviceContext->VideoStream, (context_handle_t)Context,
-					     (stream_event_signal_callback)DvpEventHandler);
+										 (stream_event_signal_callback)DvpEventHandler);
 	//
 	// Set the appropriate policies
 	//
@@ -2187,10 +2187,10 @@ static int DvpSynchronizerThread(void *data)
 //
 
 int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
-				unsigned int Width,
-				unsigned int Height,
-				unsigned int BytesPerLine,
-				unsigned int Control)
+								unsigned int Width,
+								unsigned int Height,
+								unsigned int BytesPerLine,
+								unsigned int Control)
 {
 	printk("VIDIOC_S_FBUF: DOING NOTHING !!!! - W = %4d, H = %4d, BPL = %4d, Crtl = %08x\n", Width, Height, BytesPerLine, Control);
 	return 0;
@@ -2199,7 +2199,7 @@ int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
 // -----------------------------
 
 int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t *Context,
-			     v4l2_std_id Id)
+							 v4l2_std_id Id)
 {
 	int i;
 	const dvp_v4l2_video_mode_line_t *NewCaptureMode = NULL;
@@ -2366,13 +2366,13 @@ int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t *Context)
 // -----------------------------
 
 int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t *Context,
-		      struct v4l2_crop *Crop)
+					  struct v4l2_crop *Crop)
 {
 #if 0
 	printk("VIDIOC_S_CROP:\n");
 	printk("	%s %3dx%3d\n",
-	       ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
-	       Crop->c.width, Crop->c.height);
+		   ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
+		   Crop->c.width, Crop->c.height);
 #endif
 	if ((Context == NULL) || (Context->DeviceContext->VideoStream == NULL))
 		return -EINVAL;
@@ -2424,8 +2424,8 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t *Context,
 				((Crop->c.top + Crop->c.height) > Context->ModeHeight))
 		{
 			printk("DvpVideoIoctlCrop: Input crop invalid for current mode, (%d + %d > %d) Or (%d + %d > %d).\n",
-			       Crop->c.left, Crop->c.width, Context->ModeWidth,
-			       Crop->c.top, Crop->c.height, Context->ModeHeight);
+				   Crop->c.left, Crop->c.width, Context->ModeWidth,
+				   Crop->c.top, Crop->c.height, Context->ModeHeight);
 			return -EINVAL;
 		}
 		Context->InputCrop.X = Crop->c.left;
@@ -2447,8 +2447,8 @@ int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t *Context,
 // -----------------------------
 
 int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int Value)
+							unsigned int Control,
+							unsigned int Value)
 {
 	int ret;
 	printk("VIDIOC_S_CTRL->V4L2_CID_STM_DVPIF_");
@@ -2619,16 +2619,16 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 			break;
 		case V4L2_CID_STM_DVPIF_PIXEL_ASPECT_RATIO_CORRECTION:
 			CheckAndSet("PIXEL_ASPECT_RATIO_CORRECTION", DVP_PIXEL_ASPECT_RATIO_CORRECTION_MIN_VALUE,
-				    DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->DvpControlPixelAspectRatioCorrection);
+						DVP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->DvpControlPixelAspectRatioCorrection);
 			// Set appropriate policy to manage non progressive zoom format
 			DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION,
-					   Context->DvpControlPixelAspectRatioCorrection);
+							   Context->DvpControlPixelAspectRatioCorrection);
 			break;
 		case V4L2_CID_STM_DVPIF_PICTURE_ASPECT_RATIO:
 		{
 			dvp_v4l2_video_mode_t Mode;
 			CheckAndSet("PICTURE_ASPECT_RATIO", DVP_PICTURE_ASPECT_RATIO_4_3,
-				    DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
+						DVP_PICTURE_ASPECT_RATIO_16_9, Context->DvpControlPictureAspectRatio);
 			// Calculate the pixel aspect ratio coefficients corresponding to the picture aspect ratio.
 			// They are used to set the non progressive zoom format. Only for NTSC and PAL.
 			Mode = Context->DvpCaptureMode->Mode;
@@ -2688,8 +2688,8 @@ int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
 // --------------------------------
 
 int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int *Value)
+							unsigned int Control,
+							unsigned int *Value)
 {
 	printk("VIDIOC_G_CTRL->V4L2_CID_STM_DVPIF_");
 	switch (Control)
@@ -2803,10 +2803,10 @@ int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
 //
 
 int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t *Context,
-					 unsigned int DesiredCount,
-					 unsigned int DesiredSize,
-					 unsigned int *ActualCount,
-					 unsigned int *ActualSize)
+										 unsigned int DesiredCount,
+										 unsigned int DesiredSize,
+										 unsigned int *ActualCount,
+										 unsigned int *ActualSize)
 {
 	unsigned int i;
 	//
@@ -2887,14 +2887,14 @@ int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t *Context,
 //
 
 int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t *Context,
-				      unsigned int Index,
-				      bool *Queued,
-				      bool *Done,
-				      unsigned char **PhysicalAddress,
-				      unsigned char **UnCachedAddress,
-				      unsigned long long *CaptureTime,
-				      unsigned int *Bytes,
-				      unsigned int *Size)
+									  unsigned int Index,
+									  bool *Queued,
+									  bool *Done,
+									  unsigned char **PhysicalAddress,
+									  unsigned char **UnCachedAddress,
+									  unsigned long long *CaptureTime,
+									  unsigned int *Bytes,
+									  unsigned int *Size)
 {
 	if (Index >= Context->AncillaryBufferCount)
 	{
@@ -2919,7 +2919,7 @@ int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t *Context,
 //
 
 int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t *Context,
-				      unsigned int Index)
+									  unsigned int Index)
 {
 	if (Index >= Context->AncillaryBufferCount)
 	{
@@ -2948,8 +2948,8 @@ int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t *Context,
 //
 
 int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
-					unsigned int *Index,
-					bool Blocking)
+										unsigned int *Index,
+										bool Blocking)
 {
 	do
 	{

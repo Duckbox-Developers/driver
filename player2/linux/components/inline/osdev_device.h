@@ -287,10 +287,10 @@ typedef struct PlatformData_s
 	} \
 	static struct platform_driver plat_driver = { \
 		.driver = { .owner = THIS_MODULE, \
-			    .name = name2 \
-			  }, \
-			  .probe = plat_probe, \
-				   .remove = plat_remove \
+					.name = name2 \
+				  }, \
+				  .probe = plat_probe, \
+						   .remove = plat_remove \
 	}; \
 	static int plat_init(void) { \
 		return platform_driver_register(&plat_driver); \
@@ -347,7 +347,7 @@ STATIC_INLINE OSDEV_Status_t OSDEV_Free(void *Address)
 //
 
 STATIC_INLINE void *OSDEV_MallocPartitioned(char *Partition,
-					    unsigned int Size)
+											unsigned int Size)
 {
 	struct bpa2_part *partition;
 	unsigned int numpages;
@@ -371,7 +371,7 @@ STATIC_INLINE void *OSDEV_MallocPartitioned(char *Partition,
 // -----------------------------------------------------------------------------------------------
 
 STATIC_INLINE OSDEV_Status_t OSDEV_FreePartitioned(char *Partition,
-						   void *Address)
+												   void *Address)
 {
 	struct bpa2_part *partition;
 	partition = bpa2_find_part(Partition);
@@ -530,8 +530,8 @@ static inline OSDEV_Status_t OSDEV_DeRegisterDevice(OSDEV_Descriptor_t *Descript
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t OSDEV_LinkDevice(char *Name,
-					      unsigned int MajorNumber,
-					      unsigned int MinorNumber)
+											  unsigned int MajorNumber,
+											  unsigned int MinorNumber)
 {
 	int i;
 //
@@ -632,7 +632,7 @@ static inline unsigned int __getlw(unsigned long long a)
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t OSDEV_InitializeSemaphore(OSDEV_Semaphore_t *Semaphore,
-						       unsigned int InitialCount)
+													   unsigned int InitialCount)
 {
 	*Semaphore = (OSDEV_Semaphore_t)OSDEV_Malloc(sizeof(struct semaphore));
 	if (*Semaphore != NULL)
@@ -647,7 +647,7 @@ static inline OSDEV_Status_t OSDEV_InitializeSemaphore(OSDEV_Semaphore_t *Semaph
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t OSDEV_ReInitializeSemaphore(OSDEV_Semaphore_t *Semaphore,
-							 unsigned int InitialCount)
+														 unsigned int InitialCount)
 {
 	sema_init(*Semaphore, InitialCount);
 	return OSDEV_NoError;
@@ -729,8 +729,8 @@ static inline OSDEV_Status_t OSDEV_DeInitializeWaitQueue(OSDEV_WaitQueue_t WaitQ
 }
 
 static inline OSDEV_Status_t OSDEV_WaitForQueue(OSDEV_WaitQueue_t WaitQueue,
-						bool *Condition,
-						unsigned int Timeout)
+												bool *Condition,
+												unsigned int Timeout)
 {
 	if (Timeout == OSDEV_INFINITE)
 		wait_event(*WaitQueue, *Condition);
@@ -748,7 +748,7 @@ static inline OSDEV_Status_t OSDEV_WakeUpQueue(OSDEV_WaitQueue_t WaitQueue)
 // -----------------------------------------------------------------------------------------------
 
 static inline void *OSDEV_AllignedMalloc(unsigned int Allignment,
-					 unsigned int Size)
+										 unsigned int Size)
 {
 	void *Base;
 	void *Result;
@@ -766,7 +766,7 @@ static inline void *OSDEV_AllignedMalloc(unsigned int Allignment,
 // -----------------------------------------------------------------------------------------------
 
 static inline void *OSDEV_Calloc(unsigned int Quantity,
-				 unsigned int Size)
+								 unsigned int Size)
 {
 	void *Memory = OSDEV_Malloc(Quantity * Size);
 	if (Memory != NULL)
@@ -834,8 +834,8 @@ static inline void OSDEV_SleepMilliSeconds(unsigned int Value)
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t OSDEV_CopyToDeviceSpace(void *DeviceAddress,
-						     unsigned int UserAddress,
-						     unsigned int Size)
+													 unsigned int UserAddress,
+													 unsigned int Size)
 {
 	memcpy(DeviceAddress, (void *)UserAddress, Size);
 	return OSDEV_NoError;
@@ -844,8 +844,8 @@ static inline OSDEV_Status_t OSDEV_CopyToDeviceSpace(void *DeviceAddress,
 // -----------------------------------------------------------------------------------------------
 
 static inline OSDEV_Status_t OSDEV_CopyToUserSpace(unsigned int UserAddress,
-						   void *DeviceAddress,
-						   unsigned int Size)
+												   void *DeviceAddress,
+												   unsigned int Size)
 {
 	memcpy((void *)UserAddress, DeviceAddress, Size);
 	return OSDEV_NoError;
@@ -929,10 +929,10 @@ static int OSDEV_CreateThreadHelper(void *p)
 }
 
 static inline OSDEV_Status_t OSDEV_CreateThread(OSDEV_Thread_t *Thread,
-						OSDEV_ThreadFn_t Entrypoint,
-						OSDEV_ThreadParam_t Parameter,
-						const char *Name,
-						OSDEV_ThreadPriority_t Priority)
+												OSDEV_ThreadFn_t Entrypoint,
+												OSDEV_ThreadParam_t Parameter,
+												const char *Name,
+												OSDEV_ThreadPriority_t Priority)
 {
 	struct ThreadInfo_s *t = (struct ThreadInfo_s *)kmalloc(sizeof(struct ThreadInfo_s), GFP_KERNEL);
 	struct sched_param Param;
@@ -977,7 +977,7 @@ static inline OSDEV_Status_t OSDEV_SetPriority(OSDEV_ThreadPriority_t Priority)
 	if (0 != Result)
 	{
 		printk(KERN_ERR "FAILED to set scheduling parameters to priority %d (%s)\n",
-		       Priority, (Priority ? "SCHED_RR" : "SCHED_NORMAL"));
+			   Priority, (Priority ? "SCHED_RR" : "SCHED_NORMAL"));
 		return OSDEV_Error;
 	}
 	return OSDEV_NoError;

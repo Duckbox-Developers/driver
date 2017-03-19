@@ -53,9 +53,9 @@ extern int AudioIoctlSetAvSync(struct DeviceContext_s *Context, unsigned int Sta
 extern int AudioIoctlStop(struct DeviceContext_s *Context);
 
 extern int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
-			    struct DeviceContext_s *DeviceContext);
+							struct DeviceContext_s *DeviceContext);
 extern int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
-			   struct DeviceContext_s *pContext);
+						   struct DeviceContext_s *pContext);
 #endif
 
 /********************************************************************************
@@ -609,7 +609,6 @@ void demultiplexDvbPackets(struct dvb_demux *demux, const u8 *buf, int count)
 {
 	dvb_dmx_swfilter_packets(demux, buf, count);
 }
-
 #else
 
 /*{{{ WriteToDecoder*/

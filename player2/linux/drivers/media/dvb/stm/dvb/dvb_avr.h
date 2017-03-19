@@ -43,7 +43,7 @@ typedef struct avr_v4l_shared_handle_s
 } avr_v4l2_shared_handle_t;
 
 int avr_set_external_time_mapping(avr_v4l2_shared_handle_t *shared_context, struct StreamContext_s *stream,
-				  unsigned long long nativetime, unsigned long long systemtime);
+								  unsigned long long nativetime, unsigned long long systemtime);
 void avr_invalidate_external_time_mapping(avr_v4l2_shared_handle_t *shared_context);
 
 void avr_set_vsync_offset(avr_v4l2_shared_handle_t *shared_context, long long vsync_offset);

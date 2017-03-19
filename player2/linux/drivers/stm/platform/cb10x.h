@@ -27,9 +27,9 @@ struct platform_device dvp_device_7200 =
 			.flags = IORESOURCE_MEM,
 		},
 		[1] = { .start = ILC_IRQ(46),
-			.end = ILC_IRQ(46),
-			.flags = IORESOURCE_IRQ
-		      },
+				.end = ILC_IRQ(46),
+				.flags = IORESOURCE_IRQ
+			  },
 	},
 };
 

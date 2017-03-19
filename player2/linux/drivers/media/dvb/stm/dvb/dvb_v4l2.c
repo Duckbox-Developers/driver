@@ -226,7 +226,7 @@ unsigned long GetPhysicalContiguous(unsigned long ptr, size_t size)
 	pgd = pgd_offset(mm, virt_base);
 	if (pgd_none(*pgd) || pgd_bad(*pgd))
 		goto out;
-	pmd = pmd_offset((pud_t *) pgd, virt_base);
+	pmd = pmd_offset((pud_t *)pgd, virt_base);
 	if (pmd_none(*pmd) || pmd_bad(*pmd))
 		goto out;
 	ptep = pte_offset_map(pmd, virt_base);
@@ -281,8 +281,8 @@ static DECLARE_WAIT_QUEUE_HEAD(buffer_blitted);
 		long __retval = timeout; \
 		do { \
 			__retval = wait_event_interruptible_timeout(wq, \
-								    (condition) || freezing(current), \
-								    __retval); \
+														(condition) || freezing(current), \
+														__retval); \
 		} while (try_to_freeze()); \
 		__retval; \
 	})
@@ -308,22 +308,22 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 		int ret;
 		stm_display_buffer_t *ptr;
 		ret = wait_event_freezable_timeout(g_ManifestorLastWaitQueue,
-						   /* condition is:
-						   a new buffer is
-						   available... */
-						   (last != ManifestorLastDisplayedBuffer
-						    /* ...and the previous
-						    buffer has been
-						    dequeued by
-						    userspace... */
-						    && ldvb->capture->complete == 0
-						    /* ...and we know where
-						    to capture to... */
-						    && ldvb->capture->physical_address)
-						   /* ...or we should
-						   terminate */
-						   || kthread_should_stop(),
-						   HZ);
+										   /* condition is:
+										   a new buffer is
+										   available... */
+										   (last != ManifestorLastDisplayedBuffer
+											/* ...and the previous
+											 buffer has been
+											 dequeued by
+											 userspace... */
+											&& ldvb->capture->complete == 0
+											/* ...and we know where
+											 to capture to... */
+											&& ldvb->capture->physical_address)
+										   /* ...or we should
+										   terminate */
+										   || kthread_should_stop(),
+										   HZ);
 		if (kthread_should_stop())
 			break;
 		if (ret <= 0)
@@ -337,10 +337,10 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 			memcpy(&buffer, ptr, sizeof(stm_display_buffer_t));
 #if 0
 			printk("%s:%d %d %d %d %d\n", __FUNCTION__, __LINE__,
-			       ldvb->capture->width,
-			       ldvb->capture->height,
-			       ldvb->capture->stride,
-			       ldvb->capture->size);
+				   ldvb->capture->width,
+				   ldvb->capture->height,
+				   ldvb->capture->stride,
+				   ldvb->capture->size);
 #endif
 			dstrect.right = ldvb->capture->width;
 			dstrect.bottom = ldvb->capture->height;
@@ -348,7 +348,8 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 			 the blitter. The incoming coordinates can be in
 			 either whole integer or multiples of a 16th or a
 			 32nd of a pixel/scanline. */
-			switch (buffer.src.ulFlags & (STM_PLANE_SRC_XY_IN_32NDS | STM_PLANE_SRC_XY_IN_16THS))
+			switch (buffer.src.ulFlags & (STM_PLANE_SRC_XY_IN_32NDS
+										  | STM_PLANE_SRC_XY_IN_16THS))
 			{
 				case STM_PLANE_SRC_XY_IN_32NDS:
 					srcrect.left = (buffer.src.Rect.x << (1 * 10)) / 32;
@@ -369,8 +370,8 @@ static int linuxdvb_v4l2_capture_thread(void *data)
 			srcrect.right = srcrect.left + buffer.src.Rect.width;
 			srcrect.bottom = srcrect.top + buffer.src.Rect.height;
 			op.ulFlags = ((buffer.src.ulFlags & STM_PLANE_SRC_COLORSPACE_709)
-				      ? STM_BLITTER_FLAGS_SRC_COLOURSPACE_709
-				      : 0);
+						  ? STM_BLITTER_FLAGS_SRC_COLOURSPACE_709
+						  : 0);
 			op.ulFlags |= ldvb->capture->flags;
 			//op.ulFlags |= STM_BLITTER_FLAGS_SRC_XY_IN_FIXED_POINT;
 			op.srcSurface.ulMemory = buffer.src.ulVideoBufferAddr;
@@ -447,7 +448,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 				return -ENODEV;
 			}
 			*((int *) arg) = (ldvb->input.index
-					  + driver->index_offset[device]);
+							  + driver->index_offset[device]);
 			break;
 		}
 		case VIDIOC_S_CROP:
@@ -468,10 +469,10 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			ldvb->crop.c = crop->c;
 			if (crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY)
 				VideoSetOutputWindow(&DvbContext->DeviceContext[ldvb->input.index],
-						     crop->c.left, crop->c.top, crop->c.width, crop->c.height);
+									 crop->c.left, crop->c.top, crop->c.width, crop->c.height);
 			else if (crop->type == V4L2_BUF_TYPE_PRIVATE + 1)
 				VideoSetInputWindow(&DvbContext->DeviceContext[ldvb->input.index],
-						    crop->c.left, crop->c.top, crop->c.width, crop->c.height);
+									crop->c.left, crop->c.top, crop->c.width, crop->c.height);
 			break;
 		}
 		case VIDIOC_CROPCAP:
@@ -490,7 +491,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			cropcap->bounds.width = video_size.w;
 			cropcap->bounds.height = video_size.h;
 			VideoGetPixelAspectRatio(&DvbContext->DeviceContext[ldvb->input.index],
-						 &cropcap->pixelaspect.numerator, &cropcap->pixelaspect.denominator);
+									 &cropcap->pixelaspect.numerator, &cropcap->pixelaspect.denominator);
 			//printk("%s VIDIOC_CROPCAP, type = %d\n", __FUNCTION__, cropcap->type);
 			//}
 			break;
@@ -522,7 +523,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			if (ldvb->capture->thread)
 				goto err_inval;
 			ldvb->capture->thread = kthread_run(linuxdvb_v4l2_capture_thread,
-							    ldvb, "%s", task_name);
+												ldvb, "%s", task_name);
 			break;
 		}
 		case VIDIOC_STREAMOFF:
@@ -592,8 +593,8 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 			ldvb->capture->size = buf->length;
 #if 0
 			ldvb->capture->flags = ((buf->flags & V4L2_BUF_FLAG_FULLRANGE)
-						? STM_BLITTER_FLAGS_DST_FULLRANGE
-						: 0);
+									? STM_BLITTER_FLAGS_DST_FULLRANGE
+									: 0);
 #endif
 			break;
 		}
@@ -614,7 +615,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 					return -EAGAIN;
 			// Otherwise loop until the blit has been completed
 			if (wait_event_interruptible(buffer_blitted,
-						     ldvb->capture->complete != 0))
+										 ldvb->capture->complete != 0))
 				return -ERESTARTSYS;
 			if (ldvb->capture->complete != 1)
 				/* capture thread aborted */

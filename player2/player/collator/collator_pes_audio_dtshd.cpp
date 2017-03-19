@@ -241,13 +241,13 @@ CollatorStatus_t Collator_PesAudioDtshd_c::DecideCollatorNextStateAndGetLength(u
 		 And the frame parser require DataSpecificFlags to see the core frame size. See the bz24622 */
 		CodedFrameParameters->DataSpecificFlags = CoreFrameSize;
 		FPStatus = FrameParser_AudioDtshd_c::ParseSingleFrameHeader(StoredFrameHeader,
-									    &ParsedFrameHeader,
-									    &Bits,
-									    FrameHeaderLength,
-									    RemainingElementaryData,
-									    RemainingElementaryLength,
-									    ParseModel,
-									    0);
+																	&ParsedFrameHeader,
+																	&Bits,
+																	FrameHeaderLength,
+																	RemainingElementaryData,
+																	RemainingElementaryLength,
+																	ParseModel,
+																	0);
 		if (FPStatus == FrameParserNoError)
 		{
 			if (CollatorState == GotSynchronized)

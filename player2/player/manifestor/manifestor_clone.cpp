@@ -108,7 +108,7 @@ PlayerStatus_t Manifestor_Clone_c::Reset(void)
 //
 
 PlayerStatus_t Manifestor_Clone_c::SetModuleParameters(unsigned int ParameterBlockSize,
-						       void *ParameterBlock)
+													   void *ParameterBlock)
 {
 	if (CloneTo != NULL)
 		CloneTo->SetModuleParameters(ParameterBlockSize, ParameterBlock);
@@ -118,13 +118,13 @@ PlayerStatus_t Manifestor_Clone_c::SetModuleParameters(unsigned int ParameterBlo
 //
 
 PlayerStatus_t Manifestor_Clone_c::RegisterPlayer(Player_t Player,
-						  PlayerPlayback_t Playback,
-						  PlayerStream_t Stream,
-						  Collator_t Collator,
-						  FrameParser_t FrameParser,
-						  Codec_t Codec,
-						  OutputTimer_t OutputTimer,
-						  Manifestor_t Manifestor)
+												  PlayerPlayback_t Playback,
+												  PlayerStream_t Stream,
+												  Collator_t Collator,
+												  FrameParser_t FrameParser,
+												  Codec_t Codec,
+												  OutputTimer_t OutputTimer,
+												  Manifestor_t Manifestor)
 {
 	BaseComponentClass_c::RegisterPlayer(Player, Playback, Stream, Collator, FrameParser, Codec, OutputTimer, Manifestor);
 	if (CloneTo != NULL)
@@ -376,7 +376,7 @@ ManifestorStatus_t Manifestor_Clone_c::SetCloneTo(Manifestor_t CloneTo)
 //
 
 ManifestorStatus_t Manifestor_Clone_c::GetManifestors(Manifestor_t *Original,
-						      Manifestor_t *CloneTo)
+													  Manifestor_t *CloneTo)
 {
 	if (Original != NULL)
 		*Original = this->Original;

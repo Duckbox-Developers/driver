@@ -121,7 +121,7 @@ static inline allocator_status_t AllocatorOpenEx(
 	Parameters.RequiredSize = Size;
 	strcpy(Parameters.PartitionName, PartitionName);
 	Status = OSDEV_Ioctl((*Device)->UnderlyingDevice, ALLOCATOR_IOCTL_ALLOCATE_DATA,
-			     &Parameters, sizeof(allocator_ioctl_allocate_t));
+						 &Parameters, sizeof(allocator_ioctl_allocate_t));
 	if (Status != OSDEV_NoError)
 	{
 		report(severity_error, "AllocatorOpenEx : Failed to allocate memory (0x%08x from '%s')\n", Size, PartitionName);
@@ -142,8 +142,8 @@ static inline allocator_status_t AllocatorOpenEx(
 // The open function
 
 static inline allocator_status_t AllocatorOpen(allocator_device_t *Device,
-					       unsigned int Size,
-					       bool UseCachedMemory)
+											   unsigned int Size,
+											   bool UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, SYS_LMI_PARTITION);
 }
@@ -152,8 +152,8 @@ static inline allocator_status_t AllocatorOpen(allocator_device_t *Device,
 // The open function
 
 static inline allocator_status_t LmiAllocatorOpen(allocator_device_t *Device,
-						  unsigned int Size,
-						  bool UseCachedMemory)
+												  unsigned int Size,
+												  bool UseCachedMemory)
 {
 	return AllocatorOpenEx(Device, Size, UseCachedMemory, VID_LMI_PARTITION);
 }

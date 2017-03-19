@@ -53,35 +53,35 @@ Date Modification Name
 
 /*{{{ prototypes*/
 static int VideoOpen(struct inode *Inode,
-		     struct file *File);
+					 struct file *File);
 static int VideoRelease(struct inode *Inode,
-			struct file *File);
+						struct file *File);
 static int VideoIoctl(struct inode *Inode,
-		      struct file *File,
-		      unsigned int IoctlCode,
-		      void *ParamAddress);
+					  struct file *File,
+					  unsigned int IoctlCode,
+					  void *ParamAddress);
 static ssize_t VideoWrite(struct file *File,
-			  const char __user *Buffer,
-			  size_t Count,
-			  loff_t *ppos);
+						  const char __user *Buffer,
+						  size_t Count,
+						  loff_t *ppos);
 static unsigned int VideoPoll(struct file *File,
-			      poll_table *Wait);
+							  poll_table *Wait);
 
 static int VideoIoctlSetDisplayFormat(struct DeviceContext_s *Context,
-				      unsigned int Format);
+									  unsigned int Format);
 static int VideoIoctlSetFormat(struct DeviceContext_s *Context,
-			       unsigned int Format);
+							   unsigned int Format);
 static int VideoIoctlCommand(struct DeviceContext_s *Context,
-			     struct video_command *VideoCommand);
+							 struct video_command *VideoCommand);
 int VideoIoctlSetPlayInterval(struct DeviceContext_s *Context,
-			      video_play_interval_t *PlayInterval);
+							  video_play_interval_t *PlayInterval);
 
 static void VideoSetEvent(struct DeviceContext_s *Context,
-			  struct stream_event_s *Event);
+						  struct stream_event_s *Event);
 #ifdef __TDT__
 int VideoIoctlClearBuffer(struct DeviceContext_s *Context);
 static int VideoIoctlDiscontinuity(struct DeviceContext_s *Context,
-				   video_discontinuity_t Discontinuity);
+								   video_discontinuity_t Discontinuity);
 #endif
 /*}}}*/
 
@@ -236,10 +236,10 @@ int PlaybackInit(struct DeviceContext_s *Context)
 /*}}}*/
 /*{{{ VideoSetOutputWindow*/
 int VideoSetOutputWindow(struct DeviceContext_s *Context,
-			 unsigned int Left,
-			 unsigned int Top,
-			 unsigned int Width,
-			 unsigned int Height)
+						 unsigned int Left,
+						 unsigned int Top,
+						 unsigned int Width,
+						 unsigned int Height)
 {
 	struct DvbContext_s *DvbContext = Context->DvbContext;
 	int Result = 0;
@@ -259,10 +259,10 @@ int VideoSetOutputWindow(struct DeviceContext_s *Context,
 /*}}}*/
 /*{{{ VideoSetInputWindow*/
 int VideoSetInputWindow(struct DeviceContext_s *Context,
-			unsigned int Left,
-			unsigned int Top,
-			unsigned int Width,
-			unsigned int Height)
+						unsigned int Left,
+						unsigned int Top,
+						unsigned int Width,
+						unsigned int Height)
 {
 	struct DvbContext_s *DvbContext = Context->DvbContext;
 	int Result = 0;
@@ -283,8 +283,8 @@ int VideoSetInputWindow(struct DeviceContext_s *Context,
 /*}}}*/
 /*{{{ VideoGetPixelAspectRatio*/
 int VideoGetPixelAspectRatio(struct DeviceContext_s *Context,
-			     unsigned int *Numerator,
-			     unsigned int *Denominator)
+							 unsigned int *Numerator,
+							 unsigned int *Denominator)
 {
 	/*DVB_DEBUG("\n");*/
 	*Numerator = Context->PixelAspectRatio.Numerator;
@@ -376,12 +376,12 @@ int VideoIoctlPlay(struct DeviceContext_s *Context)
 			sigfillset(&newsigs);
 			sigprocmask(SIG_BLOCK, &newsigs, &oldsigs);
 			Result = DvbPlaybackAddStream(Context->Playback,
-						      BACKEND_VIDEO_ID,
-						      BACKEND_PES_ID,
-						      VideoContent[Context->VideoEncoding],
-						      DemuxId,
-						      Context->Id,
-						      &Context->VideoStream);
+										  BACKEND_VIDEO_ID,
+										  BACKEND_PES_ID,
+										  VideoContent[Context->VideoEncoding],
+										  DemuxId,
+										  Context->Id,
+										  &Context->VideoStream);
 			sigprocmask(SIG_SETMASK, &oldsigs, NULL);
 			if (Result == STREAM_INCOMPLETE)
 			{
@@ -417,13 +417,13 @@ int VideoIoctlPlay(struct DeviceContext_s *Context)
 				}
 			}
 			if ((Result == 0) && ((Context->VideoOutputWindow.X != 0) || (Context->VideoOutputWindow.Y != 0) ||
-					      (Context->VideoOutputWindow.Width != 0) || (Context->VideoOutputWindow.Height != 0)))
+								  (Context->VideoOutputWindow.Width != 0) || (Context->VideoOutputWindow.Height != 0)))
 				DvbStreamSetOutputWindow(Context->VideoStream, Context->VideoOutputWindow.X, Context->VideoOutputWindow.Y,
-							 Context->VideoOutputWindow.Width, Context->VideoOutputWindow.Height);
+										 Context->VideoOutputWindow.Width, Context->VideoOutputWindow.Height);
 			if ((Result == 0) && ((Context->VideoInputWindow.X != 0) || (Context->VideoInputWindow.Y != 0) ||
-					      (Context->VideoInputWindow.Width != 0) || (Context->VideoInputWindow.Height != 0)))
+								  (Context->VideoInputWindow.Width != 0) || (Context->VideoInputWindow.Height != 0)))
 				DvbStreamSetInputWindow(Context->VideoStream, Context->VideoInputWindow.X, Context->VideoInputWindow.Y,
-							Context->VideoInputWindow.Width, Context->VideoInputWindow.Height);
+										Context->VideoInputWindow.Width, Context->VideoInputWindow.Height);
 			/*
 			If we are connected to a demux we will want to use the video write lock of the demux device
 			(which could be us).
@@ -982,8 +982,8 @@ static int VideoIoctlSetEncoding(struct DeviceContext_s *Context, unsigned int E
 			sigfillset(&Newsigs);
 			sigprocmask(SIG_BLOCK, &Newsigs, &Oldsigs);
 			Result = DvbStreamSwitch(Context->VideoStream,
-						 BACKEND_PES_ID,
-						 VideoContent[Context->VideoEncoding]);
+									 BACKEND_PES_ID,
+									 VideoContent[Context->VideoEncoding]);
 			sigprocmask(SIG_SETMASK, &Oldsigs, NULL);
 			/*
 			if (Result == 0)
@@ -1157,7 +1157,7 @@ int VideoIoctlSetTimeMapping(struct DeviceContext_s *Context, video_time_mapping
 /*}}}*/
 /*{{{ VideoOpen*/
 static int VideoOpen(struct inode *Inode,
-		     struct file *File)
+					 struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
@@ -1185,7 +1185,7 @@ static int VideoOpen(struct inode *Inode,
 /*}}}*/
 /*{{{ VideoRelease*/
 static int VideoRelease(struct inode *Inode,
-			struct file *File)
+						struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
@@ -1233,9 +1233,9 @@ static int VideoRelease(struct inode *Inode,
 /*}}}*/
 /*{{{ VideoIoctl*/
 static int VideoIoctl(struct inode *Inode,
-		      struct file *File,
-		      unsigned int IoctlCode,
-		      void *Parameter)
+					  struct file *File,
+					  unsigned int IoctlCode,
+					  void *Parameter)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
@@ -1515,7 +1515,7 @@ static unsigned int VideoPoll(struct file *File, poll_table *Wait)
 /*}}}*/
 /*{{{ VideoSetEvent*/
 static void VideoSetEvent(struct DeviceContext_s *Context,
-			  struct stream_event_s *Event)
+						  struct stream_event_s *Event)
 {
 	struct VideoEvent_s *EventList = &Context->VideoEvents;
 	unsigned int Next;

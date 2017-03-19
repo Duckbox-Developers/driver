@@ -33,8 +33,8 @@ Date Modification Name
 // Constructor function
 
 AllocatorSimple_c::AllocatorSimple_c(unsigned int BufferSize,
-				     unsigned int SegmentSize,
-				     unsigned char *PhysicalAddress)
+									 unsigned int SegmentSize,
+									 unsigned char *PhysicalAddress)
 {
 	InitializationStatus = AllocatorError;
 	OS_InitializeMutex(&Lock);
@@ -254,7 +254,7 @@ AllocatorStatus_t AllocatorSimple_c::Free(void)
 // Free range of entries
 
 AllocatorStatus_t AllocatorSimple_c::Free(unsigned int Size,
-					  unsigned char *Block)
+										  unsigned char *Block)
 {
 	unsigned int i;
 	unsigned int LowestFreeBlock;
@@ -280,7 +280,7 @@ AllocatorStatus_t AllocatorSimple_c::Free(unsigned int Size,
 				Blocks[i].InUse = false;
 			}
 			else if ((Block == (Blocks[i].Base + Blocks[i].Size)) &&
-					!On64MBBoundary(Block))
+					 !On64MBBoundary(Block))
 			{
 				Size += Blocks[i].Size;
 				Block = Blocks[i].Base;

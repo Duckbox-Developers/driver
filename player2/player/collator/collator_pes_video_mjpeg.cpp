@@ -138,10 +138,10 @@ CollatorStatus_t Collator_PesVideoMjpeg_c::FindNextStartCode(unsigned int *CodeO
 /// \return Collator status code, CollatorNoError indicates success.
 ///
 CollatorStatus_t Collator_PesVideoMjpeg_c::Input(PlayerInputDescriptor_t *Input,
-						 unsigned int DataLength,
-						 void *Data,
-						 bool NonBlocking,
-						 unsigned int *DataLengthRemaining)
+												 unsigned int DataLength,
+												 void *Data,
+												 bool NonBlocking,
+												 unsigned int *DataLengthRemaining)
 {
 	CollatorStatus_t Status = CollatorNoError;
 	unsigned char *DataBlock = (unsigned char *)Data;

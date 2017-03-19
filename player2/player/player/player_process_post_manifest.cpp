@@ -121,11 +121,11 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 				VideoOutputTiming_t *OutputTiming;
 				Buffer->ObtainMetaDataReference(MetaDataVideoOutputTimingType, (void **)&OutputTiming);
 				report(severity_info, "Post Dn = %d %d, I = %d, TFF = %d, DS= %6lld, DAS = %6lld, S = %016llx, AS = %016llx\n",
-				       OutputTiming->DisplayCount[0], OutputTiming->DisplayCount[1],
-				       OutputTiming->Interlaced, OutputTiming->TopFieldFirst,
-				       OutputTiming->SystemPlaybackTime - LastTime,
-				       OutputTiming->ActualSystemPlaybackTime - LastActualTime,
-				       OutputTiming->SystemPlaybackTime, OutputTiming->ActualSystemPlaybackTime);
+					   OutputTiming->DisplayCount[0], OutputTiming->DisplayCount[1],
+					   OutputTiming->Interlaced, OutputTiming->TopFieldFirst,
+					   OutputTiming->SystemPlaybackTime - LastTime,
+					   OutputTiming->ActualSystemPlaybackTime - LastActualTime,
+					   OutputTiming->SystemPlaybackTime, OutputTiming->ActualSystemPlaybackTime);
 				LastTime = OutputTiming->SystemPlaybackTime;
 				LastActualTime = OutputTiming->ActualSystemPlaybackTime;
 			}
@@ -160,11 +160,11 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 			if (Stream->ReTimeQueuedFrames && !SequenceNumberStructure->MarkerFrame)
 			{
 				Status = Buffer->ObtainMetaDataReference((Stream->StreamType == StreamTypeVideo ? MetaDataVideoOutputTimingType : MetaDataAudioOutputTimingType),
-									 (void **)&OutputTiming);
+														 (void **)&OutputTiming);
 				if (Status != PlayerNoError)
 				{
 					report(severity_error, "Player_Generic_c::ProcessPostManifest - Unable to obtain the meta data \"%s\" - Implementation error\n",
-					       (Stream->StreamType == StreamTypeVideo ? "VideoOutputTiming" : "AudioOutputTiming"));
+						   (Stream->StreamType == StreamTypeVideo ? "VideoOutputTiming" : "AudioOutputTiming"));
 					Buffer->DecrementReferenceCount(IdentifierProcessPostManifest);
 					continue;
 				}
@@ -204,10 +204,10 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied before this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedBeforeControlMessagesCount,
-							  PLAYER_MAX_POSTM_MESSAGES,
-							  Stream->AccumulatedBeforePostMControlMessages,
-							  SequenceNumber, Time);
+											  &AccumulatedBeforeControlMessagesCount,
+											  PLAYER_MAX_POSTM_MESSAGES,
+											  Stream->AccumulatedBeforePostMControlMessages,
+											  SequenceNumber, Time);
 			//
 			// Pass buffer back into output timer
 			// and release the buffer.
@@ -222,10 +222,10 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied after this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedAfterControlMessagesCount,
-							  PLAYER_MAX_POSTM_MESSAGES,
-							  Stream->AccumulatedAfterPostMControlMessages,
-							  SequenceNumber, Time);
+											  &AccumulatedAfterControlMessagesCount,
+											  PLAYER_MAX_POSTM_MESSAGES,
+											  Stream->AccumulatedAfterPostMControlMessages,
+											  SequenceNumber, Time);
 		}
 		//
 		// Deal with a player control structure
@@ -234,7 +234,7 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
 			ProcessNow = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
-				     ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
+						 ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
 			else

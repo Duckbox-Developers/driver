@@ -146,7 +146,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForSyncWord(void)
 			COLLATOR_DEBUG("Synchronization sequence spans multiple PES packets\n");
 			// accumulate any data from the old block
 			Status = AccumulateData(-1 * CodeOffset,
-						PotentialFrameHeader + PotentialFrameHeaderLength + CodeOffset);
+									PotentialFrameHeader + PotentialFrameHeaderLength + CodeOffset);
 			if (Status != CollatorNoError)
 				COLLATOR_DEBUG("Cannot accumulate data #1 (%d)\n", Status);
 			GotPartialFrameHeaderBytes += (-1 * CodeOffset);
@@ -168,19 +168,19 @@ CollatorStatus_t Collator_PesAudio_c::SearchForSyncWord(void)
 				PotentialFrameHeaderLength = BytesToKeep;
 			}
 			memcpy(PotentialFrameHeader + PotentialFrameHeaderLength,
-			       RemainingElementaryData,
-			       RemainingElementaryLength);
+				   RemainingElementaryData,
+				   RemainingElementaryLength);
 			PotentialFrameHeaderLength += RemainingElementaryLength;
 		}
 		else
 		{
 			memcpy(PotentialFrameHeader,
-			       RemainingElementaryData + RemainingElementaryLength - FrameHeaderLength,
-			       FrameHeaderLength);
+				   RemainingElementaryData + RemainingElementaryLength - FrameHeaderLength,
+				   FrameHeaderLength);
 			PotentialFrameHeaderLength = FrameHeaderLength;
 		}
 		COLLATOR_DEBUG("Discarded %d bytes while searching for synchronization sequence\n",
-			       RemainingElementaryLength);
+					   RemainingElementaryLength);
 		RemainingElementaryLength = 0;
 		// we have contained the 'error' and don't want to propagate it
 		Status = CollatorNoError;
@@ -411,7 +411,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 		{
 			COLLATOR_ASSERT(CodeOffset >= 0);
 			COLLATOR_DEBUG("Found start code during error recovery (byte %d of %d)\n",
-				       CodeOffset, ReprocessingDataLength);
+						   CodeOffset, ReprocessingDataLength);
 			// We found a start code, snip off all preceding data
 			ReprocessingData += CodeOffset;
 			ReprocessingDataLength -= CodeOffset;
@@ -423,7 +423,7 @@ CollatorStatus_t Collator_PesAudio_c::HandleMissingNextFrameHeader(void)
 			// elementary stream handler again.
 			unsigned FinalBytes = min(ReprocessingDataLength, FrameHeaderLength - 1);
 			COLLATOR_DEBUG("Found no start code during error recovery (processing final %d bytes of %d)\n",
-				       ReprocessingDataLength, FinalBytes);
+						   ReprocessingDataLength, FinalBytes);
 			ReprocessingData += ReprocessingDataLength;
 			ReprocessingDataLength = FinalBytes;
 			ReprocessingData -= ReprocessingDataLength;
@@ -628,7 +628,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForPesHeader(void)
 			// We've got the 0, 0, 1 so if the code is *not* in the ignore range then we've got one
 			unsigned char SpecificCode = RemainingData[0];
 			if (!inrange(SpecificCode, Configuration.IgnoreCodesRangeStart,
-					Configuration.IgnoreCodesRangeEnd))
+						 Configuration.IgnoreCodesRangeEnd))
 			{
 				COLLATOR_DEBUG("Found a trailing startcode 00, 00, 01, %x\n", SpecificCode);
 				// Consume the specific start code
@@ -741,7 +741,7 @@ CollatorStatus_t Collator_PesAudio_c::SearchForPesHeader(void)
 			}
 		}
 		COLLATOR_DEBUG("Discarded %d bytes while searching for PES header (%d might be start code)\n",
-			       RemainingLength, TrailingStartCodeBytes);
+					   RemainingLength, TrailingStartCodeBytes);
 		RemainingLength = 0;
 	}
 //
@@ -814,8 +814,8 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialPesHeader(void)
 					CollatorNoError != (Status = ReadPesHeader()))
 			{
 				COLLATOR_DEBUG("%s; seeking new PES header",
-					       (Status == CollatorNoError ? "Start code not where expected" :
-						"Badly formed PES header"));
+							   (Status == CollatorNoError ? "Start code not where expected" :
+								"Badly formed PES header"));
 				SeekingPesHeader = true;
 				DiscardAccumulatedData();
 				// we have contained the error by changing states...
@@ -852,7 +852,7 @@ CollatorStatus_t Collator_PesAudio_c::ReadPartialPesHeader(void)
 			PesPayloadRemaining = PesPayloadLength;
 			// switch states and absorb the packet
 			COLLATOR_DEBUG("Discovered PES packet (header %d bytes, payload %d bytes)\n",
-				       PesPacketLength - PesPayloadLength + 6, PesPayloadLength);
+						   PesPacketLength - PesPayloadLength + 6, PesPayloadLength);
 			GotPartialPesHeader = false;
 			if (PassPesPrivateDataToElementaryStreamHandler && Configuration.ExtendedHeaderLength)
 			{
@@ -931,10 +931,10 @@ void Collator_PesAudio_c::ResetCollatorStateAfterForcedFrameFlush()
 /// \return Collator status code, CollatorNoError indicates success.
 ///
 CollatorStatus_t Collator_PesAudio_c::Input(PlayerInputDescriptor_t *Input,
-					    unsigned int DataLength,
-					    void *Data,
-					    bool NonBlocking,
-					    unsigned int *DataLengthRemaining)
+											unsigned int DataLength,
+											void *Data,
+											bool NonBlocking,
+											unsigned int *DataLengthRemaining)
 {
 	CollatorStatus_t Status;
 //

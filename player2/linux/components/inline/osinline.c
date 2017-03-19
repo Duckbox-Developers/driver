@@ -109,7 +109,7 @@ void OS_PurgeCacheRange(void *CPUAddress, unsigned int size)
 // The Semaphore functions
 
 OS_Status_t OS_SemaphoreInitialize(OS_Semaphore_t *Semaphore,
-				   unsigned int InitialCount)
+								   unsigned int InitialCount)
 {
 	return OSDEV_InitializeSemaphore((OSDEV_Semaphore_t *)Semaphore, InitialCount);
 }
@@ -256,10 +256,10 @@ OS_Status_t OS_ReInitializeEvent(OS_Event_t *Event)
 // The Thread functions
 
 OS_Status_t OS_CreateThread(OS_Thread_t *Thread,
-			    OS_TaskEntry_t TaskEntry,
-			    OS_TaskParam_t Parameter,
-			    const char *Name,
-			    OS_TaskPriority_t Priority)
+							OS_TaskEntry_t TaskEntry,
+							OS_TaskParam_t Parameter,
+							const char *Name,
+							OS_TaskPriority_t Priority)
 {
 	unsigned int FreeEntry;
 	OSDEV_Status_t Status;
@@ -271,10 +271,10 @@ OS_Status_t OS_CreateThread(OS_Thread_t *Thread,
 	OS_TaskNameTable[FreeEntry].Name[OS_MAX_NAME_SIZE - 1] = '\0';
 //
 	Status = OSDEV_CreateThread(&(OS_TaskNameTable[FreeEntry].Thread),
-				    (OSDEV_ThreadFn_t)TaskEntry,
-				    (OSDEV_ThreadParam_t)Parameter,
-				    Name,
-				    (OSDEV_ThreadPriority_t)Priority);
+								(OSDEV_ThreadFn_t)TaskEntry,
+								(OSDEV_ThreadParam_t)Parameter,
+								Name,
+								(OSDEV_ThreadPriority_t)Priority);
 	if (Status != OSDEV_NoError)
 	{
 		OS_TaskNameTable[FreeEntry].Name[0] = '\0';
@@ -337,7 +337,7 @@ OS_Status_t OS_InitializeMessageQueue(OS_MessageQueue_t *Queue)
 //
 
 OS_Status_t OS_SendMessageCode(OS_MessageQueue_t Queue,
-			       unsigned int Code)
+							   unsigned int Code)
 {
 	OSDEV_Print("%s not implemented\n", __FUNCTION__);
 	return OS_ERROR;
@@ -346,8 +346,8 @@ OS_Status_t OS_SendMessageCode(OS_MessageQueue_t Queue,
 //
 
 OS_Status_t OS_GetMessageCode(OS_MessageQueue_t Queue,
-			      unsigned int *Code,
-			      bool Blocking)
+							  unsigned int *Code,
+							  bool Blocking)
 {
 	OSDEV_Print("%s not implemented\n", __FUNCTION__);
 	return OS_ERROR;
@@ -356,9 +356,9 @@ OS_Status_t OS_GetMessageCode(OS_MessageQueue_t Queue,
 //
 
 OS_Status_t OS_GetMessage(OS_MessageQueue_t Queue,
-			  void *Message,
-			  unsigned int MaxSizeOfMessage,
-			  bool Blocking)
+						  void *Message,
+						  unsigned int MaxSizeOfMessage,
+						  bool Blocking)
 {
 	OSDEV_Print("%s not implemented\n", __FUNCTION__);
 	return OS_ERROR;

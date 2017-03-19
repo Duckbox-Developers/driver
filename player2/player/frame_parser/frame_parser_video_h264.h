@@ -267,11 +267,11 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 
 		void PrepareScannedScalingLists(void);
 		FrameParserStatus_t ReadScalingList(bool ScalingListPresent,
-						    unsigned int *ScalingList,
-						    unsigned int *Default,
-						    unsigned int *Fallback,
-						    unsigned int SizeOfScalingList,
-						    unsigned int *UseDefaultScalingMatrixFlag);
+											unsigned int *ScalingList,
+											unsigned int *Default,
+											unsigned int *Fallback,
+											unsigned int SizeOfScalingList,
+											unsigned int *UseDefaultScalingMatrixFlag);
 		FrameParserStatus_t ReadHrdParameters(H264HrdParameters_t *Header);
 		FrameParserStatus_t ReadVUISequenceParameters(H264VUISequenceParameters_t *Header);
 		FrameParserStatus_t ReadNalSequenceParameterSet(void);
@@ -284,7 +284,7 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 		FrameParserStatus_t ReadSeiPictureTimingMessage(void);
 		FrameParserStatus_t ReadSeiPanScanMessage(void);
 		FrameParserStatus_t ReadSeiPayload(unsigned int PayloadType,
-						   unsigned int PayloadSize);
+										   unsigned int PayloadSize);
 		FrameParserStatus_t ReadNalSupplementalEnhancementInformation(unsigned int UnitLength);
 		FrameParserStatus_t ReadPlayer2ContainerParameters(void);
 
@@ -297,25 +297,25 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 		FrameParserStatus_t InitializeBSliceReferencePictureListsFrame(void);
 		FrameParserStatus_t InitializeBSliceReferencePictureListsField(void);
 		FrameParserStatus_t InitializeReferencePictureListField(ReferenceFrameList_t *ShortTermList,
-									ReferenceFrameList_t *LongTermList,
-									unsigned int MaxListEntries,
-									ReferenceFrameList_t *List);
+																ReferenceFrameList_t *LongTermList,
+																unsigned int MaxListEntries,
+																ReferenceFrameList_t *List);
 
 		FrameParserStatus_t ReleaseReference(bool ActuallyRelease,
-						     unsigned int Entry,
-						     unsigned int ReleaseUsage);
+											 unsigned int Entry,
+											 unsigned int ReleaseUsage);
 
 		FrameParserStatus_t MarkReferencePictures(bool ActuallyReleaseReferenceFrames);
 
 		void ProcessDeferredDFIandPTSUpto(unsigned long long ExtendedPicOrderCnt);
 		void ProcessDeferredDFIandPTSDownto(unsigned long long ExtendedPicOrderCnt);
 		void DeferDFIandPTSGeneration(Buffer_t Buffer,
-					      ParsedFrameParameters_t *ParsedFrameParameters,
-					      ParsedVideoParameters_t *ParsedVideoParameters,
-					      unsigned long long ExtendedPicOrderCnt);
+									  ParsedFrameParameters_t *ParsedFrameParameters,
+									  ParsedVideoParameters_t *ParsedVideoParameters,
+									  unsigned long long ExtendedPicOrderCnt);
 
 		void SetupPanScanValues(ParsedFrameParameters_t *ParsedFrameParameters,
-					ParsedVideoParameters_t *ParsedVideoParameters);
+								ParsedVideoParameters_t *ParsedVideoParameters);
 		void CalculateCropUnits(void);
 	public:
 
@@ -341,8 +341,8 @@ class FrameParser_VideoH264_c : public FrameParser_Video_c
 		FrameParserStatus_t ResetCollatedHeaderState(void);
 		unsigned int RequiredPresentationLength(unsigned char StartCode);
 		FrameParserStatus_t PresentCollatedHeader(unsigned char StartCode,
-							  unsigned char *HeaderBytes,
-							  FrameParserHeaderFlag_t *Flags);
+												  unsigned char *HeaderBytes,
+												  FrameParserHeaderFlag_t *Flags);
 
 		//
 		// Stream specific functions

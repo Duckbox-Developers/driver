@@ -141,10 +141,10 @@ void Player_Generic_c::ProcessParseToDecode(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied before this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedBeforeControlMessagesCount,
-							  PLAYER_MAX_PTOD_MESSAGES,
-							  Stream->AccumulatedBeforePtoDControlMessages,
-							  SequenceNumber, INVALID_TIME);
+											  &AccumulatedBeforeControlMessagesCount,
+											  PLAYER_MAX_PTOD_MESSAGES,
+											  Stream->AccumulatedBeforePtoDControlMessages,
+											  SequenceNumber, INVALID_TIME);
 			//
 			// If we are not discarding everything, then proceed to process the buffer
 			//
@@ -212,10 +212,10 @@ void Player_Generic_c::ProcessParseToDecode(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied after this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedAfterControlMessagesCount,
-							  PLAYER_MAX_PTOD_MESSAGES,
-							  Stream->AccumulatedAfterPtoDControlMessages,
-							  SequenceNumber, INVALID_TIME);
+											  &AccumulatedAfterControlMessagesCount,
+											  PLAYER_MAX_PTOD_MESSAGES,
+											  Stream->AccumulatedAfterPtoDControlMessages,
+											  SequenceNumber, INVALID_TIME);
 		}
 		//
 		// Deal with a player control structure
@@ -224,7 +224,7 @@ void Player_Generic_c::ProcessParseToDecode(PlayerStream_t Stream)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
 			ProcessNow = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
-				     ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
+						 ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
 			else
@@ -268,8 +268,8 @@ void Player_Generic_c::ProcessParseToDecode(PlayerStream_t Stream)
 //
 
 void Player_Generic_c::RecordNonDecodedFrame(PlayerStream_t Stream,
-					     Buffer_t Buffer,
-					     ParsedFrameParameters_t *ParsedFrameParameters)
+											 Buffer_t Buffer,
+											 ParsedFrameParameters_t *ParsedFrameParameters)
 {
 	unsigned int i;
 	PlayerStatus_t Status;

@@ -153,7 +153,7 @@ class Collator2_Base_c : public Collator_c
 		// Functions
 
 		CollatorStatus_t AccumulateData(unsigned int Length,
-						unsigned char *Data);
+										unsigned char *Data);
 
 		CollatorStatus_t AccumulateStartCode(PackedStartCode_t Code);
 
@@ -168,16 +168,16 @@ class Collator2_Base_c : public Collator_c
 		CollatorStatus_t OutputOnePartition(PartitionPoint_t *Descriptor);
 
 		CollatorStatus_t PerformOnePartition(PartitionPoint_t *Descriptor,
-						     Buffer_t *NewPartition,
-						     Buffer_t *OutputPartition,
-						     unsigned int SizeOfFirstPartition);
+											 Buffer_t *NewPartition,
+											 Buffer_t *OutputPartition,
+											 unsigned int SizeOfFirstPartition);
 
 		CollatorStatus_t PartitionOutput(void);
 
 		CollatorStatus_t InputEntry(PlayerInputDescriptor_t *Input,
-					    unsigned int DataLength,
-					    void *Data,
-					    bool NonBlocking);
+									unsigned int DataLength,
+									void *Data,
+									bool NonBlocking);
 
 		CollatorStatus_t InputExit(void);
 
@@ -209,15 +209,15 @@ class Collator2_Base_c : public Collator_c
 		CollatorStatus_t DiscardAccumulatedData(void);
 
 		CollatorStatus_t InputJump(bool SurplusDataInjected,
-					   bool ContinuousReverseJump);
+								   bool ContinuousReverseJump);
 
 		CollatorStatus_t InputGlitch(void);
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false,
-				       unsigned int *DataLengthRemaining = NULL);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false,
+							   unsigned int *DataLengthRemaining = NULL);
 
 		CollatorStatus_t NonBlockingWriteSpace(unsigned int *Size);
 

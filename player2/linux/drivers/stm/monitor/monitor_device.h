@@ -84,9 +84,9 @@ struct DeviceContext_s
 struct file_operations *MonitorInit(struct DeviceContext_s *Context);
 
 void MonitorRecordEvent(struct DeviceContext_s *Context,
-			unsigned int SourceId,
-			monitor_event_code_t EventCode,
-			unsigned long long TimeCode,
-			unsigned int Parameters[MONITOR_PARAMETER_COUNT],
-			const char *Description);
+						unsigned int SourceId,
+						monitor_event_code_t EventCode,
+						unsigned long long TimeCode,
+						unsigned int Parameters[MONITOR_PARAMETER_COUNT],
+						const char *Description);
 #endif

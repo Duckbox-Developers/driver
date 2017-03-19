@@ -230,7 +230,7 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ForPlayUpdateReferenceFrameList(void
 	if (ParsedFrameParameters->ReferenceFrame)
 	{
 		LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-			    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+					!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (LastField)
 		{
 			if (ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FOR_FORWARD_DECODE)
@@ -345,8 +345,8 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ReadStreamFormatInfo(void)
 	if ((SequenceHeader->Width > RMV_MAX_SUPPORTED_DECODE_WIDTH) || (SequenceHeader->Height > RMV_MAX_SUPPORTED_DECODE_HEIGHT))
 	{
 		FRAME_ERROR("Content dimensions (%dx%d) greater than max supported (%dx%d)\n",
-			    SequenceHeader->Width, SequenceHeader->Height,
-			    RMV_MAX_SUPPORTED_DECODE_WIDTH, RMV_MAX_SUPPORTED_DECODE_HEIGHT);
+					SequenceHeader->Width, SequenceHeader->Height,
+					RMV_MAX_SUPPORTED_DECODE_WIDTH, RMV_MAX_SUPPORTED_DECODE_HEIGHT);
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
@@ -360,21 +360,21 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ReadStreamFormatInfo(void)
 		SequenceHeader->SPOFlags = Bits.Get(32);
 		BitstreamVersionData = Bits.Get(32);
 		SequenceHeader->BitstreamVersion = (BitstreamVersionData & RV89_BITSTREAM_VERSION_BITS) >>
-						   RV89_BITSTREAM_VERSION_SHIFT;
+										   RV89_BITSTREAM_VERSION_SHIFT;
 		SequenceHeader->BitstreamMinorVersion = (BitstreamVersionData & RV89_BITSTREAM_MINOR_BITS) >>
-							RV89_BITSTREAM_MINOR_SHIFT;
+												RV89_BITSTREAM_MINOR_SHIFT;
 		if ((SequenceHeader->BitstreamVersion == RV9_BITSTREAM_VERSION) &&
 				((SequenceHeader->BitstreamMinorVersion == RV9_BITSTREAM_MINOR_VERSION) ||
 				 (SequenceHeader->BitstreamMinorVersion == RV89_RAW_BITSTREAM_MINOR_VERSION)))
 		{}
 		else if ((SequenceHeader->BitstreamVersion == RV8_BITSTREAM_VERSION) &&
-				((SequenceHeader->BitstreamMinorVersion == RV8_BITSTREAM_MINOR_VERSION) ||
-				 (SequenceHeader->BitstreamMinorVersion == RV89_RAW_BITSTREAM_MINOR_VERSION)))
+				 ((SequenceHeader->BitstreamMinorVersion == RV8_BITSTREAM_MINOR_VERSION) ||
+				  (SequenceHeader->BitstreamMinorVersion == RV89_RAW_BITSTREAM_MINOR_VERSION)))
 		{}
 		else
 		{
 			FRAME_ERROR("Unsupported bitstream versions (%d, %d)\n",
-				    SequenceHeader->BitstreamVersion, SequenceHeader->BitstreamMinorVersion);
+						SequenceHeader->BitstreamVersion, SequenceHeader->BitstreamMinorVersion);
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
 		}
@@ -384,7 +384,7 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ReadStreamFormatInfo(void)
 					(SequenceHeader->BitstreamVersion == RV30_BITSTREAM_VERSION))
 			{
 				SequenceHeader->NumRPRSizes = (SequenceHeader->SPOFlags & RV20_SPO_NUMRESAMPLE_IMAGES_BITS) >>
-							      RV20_SPO_NUMRESAMPLE_IMAGES_SHIFT;
+											  RV20_SPO_NUMRESAMPLE_IMAGES_SHIFT;
 				for (i = 2; i <= (SequenceHeader->NumRPRSizes * 2); i += 2)
 				{
 					SequenceHeader->RPRSize[i] = Bits.Get(8) << 2;
@@ -502,10 +502,10 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ReadPictureHeader(void)
 			for (i = 0; i < StartCodeList->NumberOfStartCodes; i++)
 			{
 				report(severity_info, " %02x %02x %02x %02x %02x %02x %02x %02x\n",
-				       SegmentList->Segment[i].Valid & 0xff, (SegmentList->Segment[i].Valid >> 8) & 0xff,
-				       (SegmentList->Segment[i].Valid >> 16) & 0xff, (SegmentList->Segment[i].Valid >> 24) & 0xff,
-				       SegmentList->Segment[i].Offset & 0xff, (SegmentList->Segment[i].Offset >> 8) & 0xff,
-				       (SegmentList->Segment[i].Offset >> 16) & 0xff, (SegmentList->Segment[i].Offset >> 24) & 0xff);
+					   SegmentList->Segment[i].Valid & 0xff, (SegmentList->Segment[i].Valid >> 8) & 0xff,
+					   (SegmentList->Segment[i].Valid >> 16) & 0xff, (SegmentList->Segment[i].Valid >> 24) & 0xff,
+					   SegmentList->Segment[i].Offset & 0xff, (SegmentList->Segment[i].Offset >> 8) & 0xff,
+					   (SegmentList->Segment[i].Offset >> 16) & 0xff, (SegmentList->Segment[i].Offset >> 24) & 0xff);
 			}
 		}
 	}
@@ -524,18 +524,18 @@ FrameParserStatus_t FrameParser_VideoRmv_c::ReadPictureHeader(void)
 			Header->PctSize = Bits.Get(PCT_SIZES[SequenceHeader->NumRPRSizes]);
 			NumMacroBlocks = (((SequenceHeader->Width + 15) >> 4) * ((SequenceHeader->Height + 15) >> 4)) - 1;
 			MbaBits = (NumMacroBlocks & 0x2000) ? 14 :
-				  (NumMacroBlocks & 0x1000) ? 13 :
-				  (NumMacroBlocks & 0x800) ? 12 :
-				  (NumMacroBlocks & 0x400) ? 11 :
-				  (NumMacroBlocks & 0x200) ? 10 :
-				  (NumMacroBlocks & 0x100) ? 9 :
-				  (NumMacroBlocks & 0x80) ? 8 :
-				  (NumMacroBlocks & 0x40) ? 7 :
-				  (NumMacroBlocks & 0x20) ? 6 :
-				  (NumMacroBlocks & 0x10) ? 5 :
-				  (NumMacroBlocks & 0x08) ? 4 :
-				  (NumMacroBlocks & 0x04) ? 3 :
-				  (NumMacroBlocks & 0x02) ? 2 : 1;
+					  (NumMacroBlocks & 0x1000) ? 13 :
+					  (NumMacroBlocks & 0x800) ? 12 :
+					  (NumMacroBlocks & 0x400) ? 11 :
+					  (NumMacroBlocks & 0x200) ? 10 :
+					  (NumMacroBlocks & 0x100) ? 9 :
+					  (NumMacroBlocks & 0x80) ? 8 :
+					  (NumMacroBlocks & 0x40) ? 7 :
+					  (NumMacroBlocks & 0x20) ? 6 :
+					  (NumMacroBlocks & 0x10) ? 5 :
+					  (NumMacroBlocks & 0x08) ? 4 :
+					  (NumMacroBlocks & 0x04) ? 3 :
+					  (NumMacroBlocks & 0x02) ? 2 : 1;
 			Header->Mba = Bits.Get(MbaBits);
 			Header->RType = Bits.Get(1);
 			break;
@@ -639,8 +639,8 @@ FrameParserStatus_t FrameParser_VideoRmv_c::CommitFrameForDecode(void)
 	LastTemporalReference = PictureHeader->RvTr;
 	FramePTS = (LastTemporalReference + TemporalReferenceBase) * 90;
 	FRAME_DEBUG("Frame %d, Pic type %d, TRef %d(%d), PTS from TRef %llu, PTS from PES %llu(%d)\n",
-		    FrameNumber, PictureHeader->PictureCodingType, LastTemporalReference, TemporalReferenceBase, FramePTS,
-		    CodedFrameParameters->PlaybackTime, CodedFrameParameters->PlaybackTimeValid);
+				FrameNumber, PictureHeader->PictureCodingType, LastTemporalReference, TemporalReferenceBase, FramePTS,
+				CodedFrameParameters->PlaybackTime, CodedFrameParameters->PlaybackTimeValid);
 #endif
 #if defined (RECALCULATE_FRAMERATE)
 	if (FrameNumber == 0)

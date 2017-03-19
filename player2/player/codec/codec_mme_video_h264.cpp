@@ -327,7 +327,7 @@ CodecStatus_t Codec_MmeVideoH264_c::RegisterOutputBufferRing(Ring_t Ring)
 	}
 //
 	Status = BufferManager->CreatePool(&PreProcessorBufferPool, PreProcessorBufferType, Configuration.DecodeContextCount, UNSPECIFIED_SIZE,
-					   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+									   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "Codec_MmeVideoH264_c::RegisterOutputBufferRing - Failed to create pre-processor buffer pool (%08x).\n", Status);
@@ -621,13 +621,13 @@ CodecStatus_t Codec_MmeVideoH264_c::Input(Buffer_t CodedBuffer)
 	// Process the buffer
 	//
 	PPStatus = H264ppProcessBuffer(PreProcessorDevice,
-				       &FrameParameters->SliceHeader,
-				       i,
-				       CodedDataLength,
-				       FramesInPreprocessorChain[i].InputBufferCachedAddress,
-				       FramesInPreprocessorChain[i].InputBufferPhysicalAddress,
-				       FramesInPreprocessorChain[i].OutputBufferCachedAddress,
-				       FramesInPreprocessorChain[i].OutputBufferPhysicalAddress);
+								   &FrameParameters->SliceHeader,
+								   i,
+								   CodedDataLength,
+								   FramesInPreprocessorChain[i].InputBufferCachedAddress,
+								   FramesInPreprocessorChain[i].InputBufferPhysicalAddress,
+								   FramesInPreprocessorChain[i].OutputBufferCachedAddress,
+								   FramesInPreprocessorChain[i].OutputBufferPhysicalAddress);
 	if (PPStatus != h264pp_ok)
 	{
 		report(severity_error, "Codec_MmeVideoH264_c::Input - Failed to process a buffer, Junking frame.\n");
@@ -825,14 +825,14 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 		if (SPS->num_ref_frames > (MaxAllocatableDecodeBuffers - 3))
 		{
 			report(severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Insufficient memory allocated to decode buffers to cope with reference frame count and size (%d %d).\n",
-			       SPS->num_ref_frames, MaxAllocatableDecodeBuffers);
+				   SPS->num_ref_frames, MaxAllocatableDecodeBuffers);
 			Player->MarkStreamUnPlayable(Stream);
 			return CodecError;
 		}
 		if (SPS->num_ref_frames > ((H264_MACROBLOCK_STRUCTURE_MEMORY / MacroBlockStructureSize) - 3))
 		{
 			report(severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Insufficient memory allocated to macro block structures to cope with reference frame count and size (%08x - %d %08x).\n",
-			       H264_MACROBLOCK_STRUCTURE_MEMORY, SPS->num_ref_frames, MacroBlockStructureSize);
+				   H264_MACROBLOCK_STRUCTURE_MEMORY, SPS->num_ref_frames, MacroBlockStructureSize);
 			Player->MarkStreamUnPlayable(Stream);
 			return CodecError;
 		}
@@ -908,7 +908,7 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 		}
 	}
 	DowngradeDecode = ParsedFrameParameters->ApplySubstandardDecode &&
-			  SLICE_TYPE_IS(((H264FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure)->SliceHeader.slice_type, H264_SLICE_TYPE_B);
+					  SLICE_TYPE_IS(((H264FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure)->SliceHeader.slice_type, H264_SLICE_TYPE_B);
 	Param->DecodingMode = DowngradeDecode ? H264_DOWNGRADED_DECODE_LEVEL1 : H264_NORMAL_DECODE;
 	Param->AdditionalFlags = H264_ADDITIONAL_FLAG_NONE; // No future use yet identified
 	Param->DecodedBufferAddress.Luma_p = (H264_LumaAddress_t)BufferState[CurrentDecodeBufferIndex].BufferLumaPointer;
@@ -962,10 +962,10 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommandHostData(void)
 		HostData->DescriptorType = SliceHeader->bottom_field_flag ? H264_PIC_DESCRIPTOR_FIELD_BOTTOM : H264_PIC_DESCRIPTOR_FIELD_TOP;
 	}
 	HostData->ReferenceType = (SliceHeader->nal_ref_idc != 0) ? // Its a reference frame
-				  (SliceHeader->dec_ref_pic_marking.long_term_reference_flag ?
-				   H264_LONG_TERM_REFERENCE :
-				   H264_SHORT_TERM_REFERENCE) :
-				  H264_UNUSED_FOR_REFERENCE;
+							  (SliceHeader->dec_ref_pic_marking.long_term_reference_flag ?
+							   H264_LONG_TERM_REFERENCE :
+							   H264_SHORT_TERM_REFERENCE) :
+							  H264_UNUSED_FOR_REFERENCE;
 	HostData->IdrFlag = SliceHeader->nal_unit_type == NALU_TYPE_IDR;
 	HostData->NonExistingFlag = 0;
 //
@@ -1153,9 +1153,9 @@ CodecStatus_t Codec_MmeVideoH264_c::ValidateDecodeContext(CodecBaseDecodeContext
 		for (unsigned int i = 0; i < H264_STATUS_PARTITION; i++)
 			for (i = 0; i < H264_STATUS_PARTITION; i++)
 				report(severity_info, "\t\t %02x %02x %02x %02x %02x %02x\n",
-				       H264Context->DecodeStatus.Status[i][0], H264Context->DecodeStatus.Status[i][1],
-				       H264Context->DecodeStatus.Status[i][2], H264Context->DecodeStatus.Status[i][3],
-				       H264Context->DecodeStatus.Status[i][4], H264Context->DecodeStatus.Status[i][5]);
+					   H264Context->DecodeStatus.Status[i][0], H264Context->DecodeStatus.Status[i][1],
+					   H264Context->DecodeStatus.Status[i][2], H264Context->DecodeStatus.Status[i][3],
+					   H264Context->DecodeStatus.Status[i][4], H264Context->DecodeStatus.Status[i][5]);
 		DumpMMECommand(&Context->MMECommand);
 #endif
 	}
@@ -1205,16 +1205,16 @@ CodecStatus_t Codec_MmeVideoH264_c::DumpSetStreamParameters(void *Parameters)
 	report(severity_info, "AZA - ScalingListUpdated = %d\n", StreamParams->H264SetGlobalParamPPS.ScalingList.ScalingListUpdated);
 	for (i = 0; i < 6; i++)
 		report(severity_info, "AZA - ScalingList4x4[%d] = %02x %02x %02x %02x %02x %02x %02x %02x\n", i,
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][0], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][1],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][2], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][3],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][4], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][5],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][6], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][7]);
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][0], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][1],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][2], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][3],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][4], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][5],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][6], StreamParams->H264SetGlobalParamPPS.ScalingList.FirstSixScalingList[i][7]);
 	for (i = 0; i < 2; i++)
 		report(severity_info, "AZA - ScalingList8x8[%d] = %02x %02x %02x %02x %02x %02x %02x %02x\n", i,
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][0], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][1],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][2], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][3],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][4], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][5],
-		       StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][6], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][7]);
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][0], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][1],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][2], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][3],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][4], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][5],
+			   StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][6], StreamParams->H264SetGlobalParamPPS.ScalingList.NextTwoScalingList[i][7]);
 	return CodecNoError;
 }
 
@@ -1261,9 +1261,9 @@ CodecStatus_t Codec_MmeVideoH264_c::DumpDecodeParameters(void *Parameters)
 	report(severity_info, "AZA - Luma Chroma MBStruct\n");
 	for (i = 0; i < DecodeBufferCount; i++)
 		report(severity_info, "AZA - %08x %08x %08x\n",
-		       RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.Luma_p,
-		       RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.Chroma_p,
-		       RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.MBStruct_p);
+			   RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.Luma_p,
+			   RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.Chroma_p,
+			   RefPicLists->ReferenceFrameAddress[i].DecodedBufferAddress.MBStruct_p);
 	MaxDescriptor = 0;
 	report(severity_info, "AZA - InitialPList0 Descriptor Indices\n");
 	report(severity_info, "AZA - ");
@@ -1292,15 +1292,15 @@ CodecStatus_t Codec_MmeVideoH264_c::DumpDecodeParameters(void *Parameters)
 	report(severity_info, "AZA - Picture descriptors (ReferenceDescriptorsBitsField = %08x)\n", RefPicLists->ReferenceDescriptorsBitsField);
 	for (i = 0; i < MaxDescriptor; i++)
 		report(severity_info, "AZA - Desc %d - Buff %2d, PN = %2d, Cnt T %2d B %2d X %2d, DT = %d, RT = %d, IDR = %d, NEF = %d\n",
-		       i, RefPicLists->PictureDescriptor[i].FrameIndex,
-		       RefPicLists->PictureDescriptor[i].HostData.PictureNumber,
-		       RefPicLists->PictureDescriptor[i].HostData.PicOrderCntTop,
-		       RefPicLists->PictureDescriptor[i].HostData.PicOrderCntBot,
-		       RefPicLists->PictureDescriptor[i].HostData.PicOrderCnt,
-		       RefPicLists->PictureDescriptor[i].HostData.DescriptorType,
-		       RefPicLists->PictureDescriptor[i].HostData.ReferenceType,
-		       RefPicLists->PictureDescriptor[i].HostData.IdrFlag,
-		       RefPicLists->PictureDescriptor[i].HostData.NonExistingFlag);
+			   i, RefPicLists->PictureDescriptor[i].FrameIndex,
+			   RefPicLists->PictureDescriptor[i].HostData.PictureNumber,
+			   RefPicLists->PictureDescriptor[i].HostData.PicOrderCntTop,
+			   RefPicLists->PictureDescriptor[i].HostData.PicOrderCntBot,
+			   RefPicLists->PictureDescriptor[i].HostData.PicOrderCnt,
+			   RefPicLists->PictureDescriptor[i].HostData.DescriptorType,
+			   RefPicLists->PictureDescriptor[i].HostData.ReferenceType,
+			   RefPicLists->PictureDescriptor[i].HostData.IdrFlag,
+			   RefPicLists->PictureDescriptor[i].HostData.NonExistingFlag);
 //
 	return CodecNoError;
 }

@@ -63,26 +63,26 @@ class BufferManager_Generic_c : public BufferManager_c
 		//
 
 		BufferStatus_t CreateBufferDataType(BufferDataDescriptor_t *Descriptor,
-						    BufferType_t *Type);
+											BufferType_t *Type);
 
 		BufferStatus_t FindBufferDataType(const char *TypeName,
-						  BufferType_t *Type);
+										  BufferType_t *Type);
 
 		BufferStatus_t GetDescriptor(BufferType_t Type,
-					     BufferPredefinedType_t RequiredKind,
-					     BufferDataDescriptor_t **Descriptor);
+									 BufferPredefinedType_t RequiredKind,
+									 BufferDataDescriptor_t **Descriptor);
 
 		//
 		// Create/destroy a pool of buffers overloaded creation function
 		//
 
 		BufferStatus_t CreatePool(BufferPool_t *Pool,
-					  BufferType_t Type,
-					  unsigned int NumberOfBuffers = UNRESTRICTED_NUMBER_OF_BUFFERS,
-					  unsigned int Size = UNSPECIFIED_SIZE,
-					  void *MemoryPool[3] = NULL,
-					  void *ArrayOfMemoryBlocks[][3] = NULL,
-					  char *DeviceMemoryPartitionName = NULL);
+								  BufferType_t Type,
+								  unsigned int NumberOfBuffers = UNRESTRICTED_NUMBER_OF_BUFFERS,
+								  unsigned int Size = UNSPECIFIED_SIZE,
+								  void *MemoryPool[3] = NULL,
+								  void *ArrayOfMemoryBlocks[][3] = NULL,
+								  char *DeviceMemoryPartitionName = NULL);
 
 		BufferStatus_t DestroyPool(BufferPool_t Pool);
 

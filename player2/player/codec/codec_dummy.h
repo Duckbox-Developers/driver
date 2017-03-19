@@ -86,7 +86,7 @@ class Codec_Dummy_c : public Codec_c
 //
 
 		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						  void *ParameterBlock)
+										  void *ParameterBlock)
 		{
 			report(severity_info, "Codec_Dummy_c::SetModuleParameters - Called\n");
 			return CodecNoError;
@@ -99,7 +99,7 @@ class Codec_Dummy_c : public Codec_c
 		}
 
 		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
-						      ReferenceFrameList_t ReferenceFrameList[])
+											  ReferenceFrameList_t ReferenceFrameList[])
 		{
 			report(severity_info, "Codec_Dummy_c::CheckReferenceFrameList - Called\n");
 			return CodecNoError;

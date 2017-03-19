@@ -74,8 +74,8 @@ static BufferDataDescriptor_t TheoraCodecDecodeContextDescriptor = BUFFER_THEORA
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t *CallbackData, void *UserData);
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	CODEC_DEBUG("%s\n", __FUNCTION__);
@@ -259,7 +259,7 @@ CodecStatus_t Codec_MmeVideoTheora_c::SendMMEStreamParameters(void)
 		FillOutTransformerInitializationParameters();
 		CODEC_TRACE("%s: Initilising Theora transformer %s\n", __FUNCTION__, Configuration.TransformName[SelectedTransformer]);
 		MMEStatus = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-						&MMEInitializationParameters, &MMEHandle);
+										&MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus == MME_SUCCESS)
 		{
 			CodecStatus = CodecNoError;
@@ -386,7 +386,7 @@ CodecStatus_t Codec_MmeVideoTheora_c::FillOutSetStreamParametersCommand(void)
 			}
 		}
 		report(severity_info, "\nHuffman table hti %d, hbits %d, entries %d, huffman_code_size %d\n", TheoraInitializationParameters.hti,
-		       TheoraInitializationParameters.hbits, TheoraInitializationParameters.entries, TheoraInitializationParameters.huff_code_size);
+			   TheoraInitializationParameters.hbits, TheoraInitializationParameters.entries, TheoraInitializationParameters.huff_code_size);
 		for (qti = 0; qti < 80; qti++)
 		{
 			report(severity_info, "%d:\n", qti);

@@ -91,9 +91,9 @@ CollatorStatus_t Collator_Packet_c::Reset(void)
 //
 
 CollatorStatus_t Collator_Packet_c::Input(PlayerInputDescriptor_t *Input,
-					  unsigned int DataLength,
-					  void *Data,
-					  bool NonBlocking)
+										  unsigned int DataLength,
+										  void *Data,
+										  bool NonBlocking)
 {
 	CollatorStatus_t Status;
 //

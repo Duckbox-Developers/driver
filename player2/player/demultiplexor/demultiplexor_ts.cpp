@@ -233,9 +233,9 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 #endif
 //
 		Header = Context->Base.BufferData[NewPacketStart] |
-			 (Context->Base.BufferData[NewPacketStart + 1] << 8) |
-			 (Context->Base.BufferData[NewPacketStart + 2] << 16) |
-			 (Context->Base.BufferData[NewPacketStart + 3] << 24);
+				 (Context->Base.BufferData[NewPacketStart + 1] << 8) |
+				 (Context->Base.BufferData[NewPacketStart + 2] << 16) |
+				 (Context->Base.BufferData[NewPacketStart + 3] << 24);
 		//
 		// Extract the pid, is it interesting
 		//
@@ -251,7 +251,7 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 		if (!DVB_VALID_PACKET(Header))
 		{
 			report(severity_error, "Demultiplexor_Ts_c::Demux - Invalid packet (%02x %02x %02x %02x)\n",
-			       Context->Base.BufferData[NewPacketStart], Context->Base.BufferData[NewPacketStart + 1], Context->Base.BufferData[NewPacketStart + 2], Context->Base.BufferData[NewPacketStart + 3]);
+				   Context->Base.BufferData[NewPacketStart], Context->Base.BufferData[NewPacketStart + 1], Context->Base.BufferData[NewPacketStart + 2], Context->Base.BufferData[NewPacketStart + 3]);
 			continue;
 		}
 		//
@@ -300,8 +300,8 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 			if ((Stream->AccumulationBufferPointer + (DVB_PACKET_SIZE - DataOffset)) > ACCUMULATION_BUFFER_SIZE)
 			{
 				BaseStream->Collator->Input(Context->Base.Descriptor,
-							    Stream->AccumulationBufferPointer,
-							    Stream->AccumulationBuffer);
+											Stream->AccumulationBufferPointer,
+											Stream->AccumulationBuffer);
 				Stream->AccumulationBufferPointer = 0;
 				// This is really really bad is it ever safe to do this????
 				OS_UnLockMutex(&Context->Base.Lock);
@@ -312,8 +312,8 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 #else
 #ifdef __TDT__
 			CollatorStatus_t Status = BaseStream->Collator->Input(Context->Base.Descriptor,
-									      DVB_PACKET_SIZE - DataOffset,
-									      &Context->Base.BufferData[NewPacketStart + DataOffset]);
+																  DVB_PACKET_SIZE - DataOffset,
+																  &Context->Base.BufferData[NewPacketStart + DataOffset]);
 			if (Status == CollatorBufferOverflow)
 			{
 				OS_UnLockMutex(&Context->Base.Lock);
@@ -321,8 +321,8 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 			}
 #else
 			BaseStream->Collator->Input(Context->Base.Descriptor,
-						    DVB_PACKET_SIZE - DataOffset,
-						    &Context->Base.BufferData[NewPacketStart + DataOffset]);
+										DVB_PACKET_SIZE - DataOffset,
+										&Context->Base.BufferData[NewPacketStart + DataOffset]);
 #endif
 #endif
 		}
@@ -335,8 +335,8 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 		if (BaseStream->Stream && Stream->AccumulationBufferPointer)
 		{
 			BaseStream->Collator->Input(Context->Base.Descriptor,
-						    Stream->AccumulationBufferPointer,
-						    Stream->AccumulationBuffer);
+										Stream->AccumulationBufferPointer,
+										Stream->AccumulationBuffer);
 			Stream->AccumulationBufferPointer = 0;
 		}
 	}

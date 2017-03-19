@@ -53,7 +53,7 @@ Date Modification Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define COLLATOR_DEBUG(fmt, args...) ((void)(ENABLE_COLLATOR_DEBUG && \
-					     (report(severity_note, "%s: " fmt, COLLATOR_FUNCTION, ##args), 0)))
+											 (report(severity_note, "%s: " fmt, COLLATOR_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define COLLATOR_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, COLLATOR_FUNCTION, ##args))
@@ -61,7 +61,7 @@ Date Modification Name
 #define COLLATOR_ERROR(fmt, args...) (report(severity_error, "%s: " fmt, COLLATOR_FUNCTION, ##args))
 
 #define COLLATOR_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-							      COLLATOR_FUNCTION, #x, __FILE__, __LINE__); while(0)
+													  COLLATOR_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -159,7 +159,7 @@ class Collator_Base_c : public Collator_c
 		CollatorStatus_t GetNewBuffer(void);
 
 		CollatorStatus_t AccumulateData(unsigned int Length,
-						unsigned char *Data);
+										unsigned char *Data);
 
 		CollatorStatus_t AccumulateStartCode(PackedStartCode_t Code);
 
@@ -170,9 +170,9 @@ class Collator_Base_c : public Collator_c
 		void CheckForGlitchPromotion(void);
 
 		CollatorStatus_t InputEntry(PlayerInputDescriptor_t *Input,
-					    unsigned int DataLength,
-					    void *Data,
-					    bool NonBlocking);
+									unsigned int DataLength,
+									void *Data,
+									bool NonBlocking);
 		CollatorStatus_t InputExit(void);
 
 	public:
@@ -193,7 +193,7 @@ class Collator_Base_c : public Collator_c
 		CollatorStatus_t Reset(void);
 
 		CollatorStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						     void *ParameterBlock);
+											 void *ParameterBlock);
 
 		//
 		// Collator class functions
@@ -206,7 +206,7 @@ class Collator_Base_c : public Collator_c
 		CollatorStatus_t DiscardAccumulatedData(void);
 
 		CollatorStatus_t InputJump(bool SurplusDataInjected,
-					   bool ContinuousReverseJump);
+								   bool ContinuousReverseJump);
 
 		CollatorStatus_t InputGlitch(void);
 

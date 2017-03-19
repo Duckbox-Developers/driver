@@ -229,15 +229,15 @@ PlayerStatus_t Player_Generic_c::PerformInSequenceCall(
 			break;
 		case FrameParserFnSetModuleParameters:
 			Status = Stream->FrameParser->SetModuleParameters(ControlStructure->InSequence.UnsignedInt,
-									  ControlStructure->InSequence.Block);
+															  ControlStructure->InSequence.Block);
 			break;
 		case CodecFnSetModuleParameters:
 			Status = Stream->Codec->SetModuleParameters(ControlStructure->InSequence.UnsignedInt,
-								    ControlStructure->InSequence.Block);
+														ControlStructure->InSequence.Block);
 			break;
 		case ManifestorFnSetModuleParameters:
 			Status = Stream->Manifestor->SetModuleParameters(ControlStructure->InSequence.UnsignedInt,
-									 ControlStructure->InSequence.Block);
+															 ControlStructure->InSequence.Block);
 			break;
 		case ManifestorFnQueueEventSignal:
 			Status = Stream->Manifestor->QueueEventSignal(&ControlStructure->InSequence.Event);
@@ -259,7 +259,7 @@ PlayerStatus_t Player_Generic_c::PerformInSequenceCall(
 			break;
 		case OutputTimerFnSetModuleParameters:
 			Status = Stream->OutputTimer->SetModuleParameters(ControlStructure->InSequence.UnsignedInt,
-									  ControlStructure->InSequence.Block);
+															  ControlStructure->InSequence.Block);
 			break;
 		case OSFnSetEventOnManifestation:
 		case OSFnSetEventOnPostManifestation:
@@ -370,9 +370,9 @@ PlayerStatus_t Player_Generic_c::ProcessAccumulatedControlMessages(
 		if (MessageTable[i].Buffer != NULL)
 		{
 			SequenceCheck = (MessageTable[i].ControlStructure->SequenceType == SequenceTypeBeforeSequenceNumber) ||
-					(MessageTable[i].ControlStructure->SequenceType == SequenceTypeAfterSequenceNumber);
+							(MessageTable[i].ControlStructure->SequenceType == SequenceTypeAfterSequenceNumber);
 			ProcessNow = SequenceCheck ? ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (MessageTable[i].ControlStructure->SequenceValue <= SequenceNumber)) :
-				     ((Time != INVALID_SEQUENCE_VALUE) && (MessageTable[i].ControlStructure->SequenceValue <= Time));
+						 ((Time != INVALID_SEQUENCE_VALUE) && (MessageTable[i].ControlStructure->SequenceValue <= Time));
 			if (ProcessNow)
 			{
 				ProcessControlMessage(Stream, MessageTable[i].Buffer, MessageTable[i].ControlStructure);

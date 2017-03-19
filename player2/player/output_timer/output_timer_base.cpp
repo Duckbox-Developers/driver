@@ -379,8 +379,8 @@ OutputTimerStatus_t OutputTimer_Base_c::AwaitEntryIntoDecodeWindow(Buffer_t Buff
 	if (ValidTime(LastSeenDecodeTime) && ValidTime(ParsedFrameParameters->NormalizedDecodeTime))
 	{
 		DeltaDecodeTime = (Direction == PlayBackward) ?
-				  (LastSeenDecodeTime - ParsedFrameParameters->NormalizedDecodeTime) :
-				  (ParsedFrameParameters->NormalizedDecodeTime - LastSeenDecodeTime);
+						  (LastSeenDecodeTime - ParsedFrameParameters->NormalizedDecodeTime) :
+						  (ParsedFrameParameters->NormalizedDecodeTime - LastSeenDecodeTime);
 		LowerLimit = min(-100, -(long long)Configuration.EarlyDecodePorch);
 		if (!inrange(DeltaDecodeTime, LowerLimit, DecodeTimeJumpThreshold))
 		{
@@ -412,7 +412,7 @@ OutputTimerStatus_t OutputTimer_Base_c::AwaitEntryIntoDecodeWindow(Buffer_t Buff
 //
 
 OutputTimerStatus_t OutputTimer_Base_c::TestForFrameDrop(Buffer_t Buffer,
-							 OutputTimerTestPoint_t TestPoint)
+														 OutputTimerTestPoint_t TestPoint)
 {
 	OutputTimerStatus_t Status;
 	unsigned char SynchronizationPolicy;
@@ -641,7 +641,7 @@ OutputTimerStatus_t OutputTimer_Base_c::DropTestBeforeDecode(Buffer_t Buffer)
 			(Status == OutputTimerNoError))
 	{
 		Status = Codec->CheckReferenceFrameList(ParsedFrameParameters->NumberOfReferenceFrameLists,
-							ParsedFrameParameters->ReferenceFrameList);
+												ParsedFrameParameters->ReferenceFrameList);
 		if (Status != OutputTimerNoError)
 		{
 			Status = OutputTimerTrickModeDropFrame;
@@ -766,9 +766,8 @@ OutputTimerStatus_t OutputTimer_Base_c::DropTestBeforeManifestation(Buffer_t Buf
 #ifdef __TDT__
 				// H.264 deadlock workaround
 				// determine the pool usage
-				DecodeBufferPool->GetPoolUsage(NULL,
-							       &DecodeBuffersInUse,
-							       NULL, NULL, NULL);
+				DecodeBufferPool->GetPoolUsage(NULL, &DecodeBuffersInUse,
+											   NULL, NULL, NULL);
 				Manifestor->GetDecodeBufferCount(&DecodeBufferCount);
 				// if the buffer pool is almost empty discard the frame to
 				// prevent the decoder from running out of buffers
@@ -912,8 +911,8 @@ OutputTimerStatus_t OutputTimer_Base_c::GenerateFrameTiming(
 		if (Status == OutputCoordinatorMappingNotEstablished)
 		{
 			NormalizedDecodeTime = ValidTime(ParsedFrameParameters->NormalizedDecodeTime) ?
-					       (ParsedFrameParameters->NormalizedDecodeTime + (unsigned long long)NormalizedTimeOffset) :
-					       NormalizedPlaybackTime - Configuration.FrameDecodeTime;
+								   (ParsedFrameParameters->NormalizedDecodeTime + (unsigned long long)NormalizedTimeOffset) :
+								   NormalizedPlaybackTime - Configuration.FrameDecodeTime;
 //
 			Status = OutputCoordinator->SynchronizeStreams(OutputCoordinatorContext, NormalizedPlaybackTime, NormalizedDecodeTime, &SystemTime);
 			TimeMappingValidForDecodeTiming = true;
@@ -966,8 +965,8 @@ OutputTimerStatus_t OutputTimer_Base_c::GenerateFrameTiming(
 	if (ValidTime(NextExpectedPlaybackTime))
 	{
 		NextExpectedPlaybackTime = (Direction == PlayBackward) ?
-					   (NextExpectedPlaybackTime - PlaybackTimeIncrement) :
-					   (NextExpectedPlaybackTime + PlaybackTimeIncrement);
+								   (NextExpectedPlaybackTime - PlaybackTimeIncrement) :
+								   (NextExpectedPlaybackTime + PlaybackTimeIncrement);
 	}
 //
 #if 0
@@ -979,10 +978,10 @@ OutputTimerStatus_t OutputTimer_Base_c::GenerateFrameTiming(
 		unsigned long long NativeTime = ParsedFrameParameters->NativePlaybackTime;
 		unsigned long long Now = OS_GetTimeInMicroSeconds();
 		report(severity_info, "Frame - %6lld %6lld %6lld - %6lld %d %d - %6lld - %6lld\n",
-		       SystemTime - LastSystemTime, NormalizedPlaybackTime - LastPlaybackTime, NativeTime - LastNativeTime,
-		       SystemTime - OutputTiming->SystemPlaybackTime, OutputTiming->DisplayCount[0], OutputTiming->DisplayCount[1],
-		       OutputTiming->SystemPlaybackTime - LastTiming,
-		       OutputTiming->SystemPlaybackTime - Now);
+			   SystemTime - LastSystemTime, NormalizedPlaybackTime - LastPlaybackTime, NativeTime - LastNativeTime,
+			   SystemTime - OutputTiming->SystemPlaybackTime, OutputTiming->DisplayCount[0], OutputTiming->DisplayCount[1],
+			   OutputTiming->SystemPlaybackTime - LastTiming,
+			   OutputTiming->SystemPlaybackTime - Now);
 		LastSystemTime = SystemTime;
 		LastPlaybackTime = NormalizedPlaybackTime;
 		LastNativeTime = NativeTime;
@@ -1048,11 +1047,11 @@ OutputTimerStatus_t OutputTimer_Base_c::RecordActualFrameTiming(
 		PreviousActualDuration = ActualTime - LastActualFrameTime;
 //report( severity_info, "Durations - %6lld, %6lld - %4lld\n", PreviousExpectedDuration, PreviousActualDuration, PreviousActualDuration - PreviousExpectedDuration );
 		Status = OutputCoordinator->CalculateOutputRateAdjustment(OutputCoordinatorContext,
-									  PreviousExpectedDuration,
-									  PreviousActualDuration,
-									  (long long)(ExpectedTime - ActualTime),
-									  &OutputRateAdjustment,
-									  &SystemClockAdjustment);
+																  PreviousExpectedDuration,
+																  PreviousActualDuration,
+																  (long long)(ExpectedTime - ActualTime),
+																  &OutputRateAdjustment,
+																  &SystemClockAdjustment);
 		if (Status != PlayerNoError)
 			report(severity_error, "OutputTimer_Base_c::RecordActualFrameTiming(%s) - Failed to calculate output rate adjusment.\n", Configuration.OutputTimerName);
 	}
@@ -1212,21 +1211,21 @@ OutputTimerStatus_t OutputTimer_Base_c::PerformAVDSync(
 		case SyncStateConfirmedSyncError:
 			SynchronizationError = SynchronizationAccumulatedError / SynchronizationErrorIntegrationCount;
 			report(severity_info, "AVDsync %s %s - %6lld us\n", ((ExternalMappingPolicy == PolicyValueApply) ? "Error" : "Correction"),
-			       LookupStreamType(Configuration.StreamType), SynchronizationError);
+				   LookupStreamType(Configuration.StreamType), SynchronizationError);
 #ifdef DUMP_HISTORY
 			if (!SynchronizationAtStartup && (Configuration.StreamType == HISTORY_STREAMTYPE))
 			{
 				unsigned int i;
 				for (i = 0; i < 256; i += 8)
 					report(severity_info, "\t%3d - %6lld %6lld %6lld %6lld %6lld %6lld %6lld %6lld\n", i,
-					       DifferenceHistory[(HistoryIndex + i + 0) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 1) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 2) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 3) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 4) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 5) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 6) & 0xff],
-					       DifferenceHistory[(HistoryIndex + i + 7) & 0xff]);
+						   DifferenceHistory[(HistoryIndex + i + 0) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 1) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 2) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 3) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 4) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 5) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 6) & 0xff],
+						   DifferenceHistory[(HistoryIndex + i + 7) & 0xff]);
 				report(severity_fatal, "That's all folks.\n");
 			}
 #endif
@@ -1287,8 +1286,8 @@ void OutputTimer_Base_c::SetTrickModeDomainBoundaries(void)
 	EmpiricalCodedFrameRateLimit = EmpiricalCodedFrameRateLimit.TruncateDenominator(1) - 2;
 	MaxNormalRate = EmpiricalCodedFrameRateLimit / CodedFrameRate;
 	MaxSubstandardRate = TrickModeParameters.SubstandardDecodeSupported ?
-			     (MaxNormalRate * TrickModeParameters.SubstandardDecodeRateIncrease) :
-			     MaxNormalRate;
+						 (MaxNormalRate * TrickModeParameters.SubstandardDecodeRateIncrease) :
+						 MaxNormalRate;
 	PolicyValue = Player->PolicyValue(Playback, Stream, PolicyAllowFrameDiscardAtNormalSpeed);
 	LowerClamp = (PolicyValue == PolicyValueApply) ? Rational_t(1, 4) : 1;
 	Clamp(MaxNormalRate, LowerClamp, 16);
@@ -1315,10 +1314,10 @@ void OutputTimer_Base_c::SetTrickModeDomainBoundaries(void)
 #endif
 #if 0
 	report(severity_info, "OutputTimer_Base_c::SetTrickModeDomainBoundaries - %4d.%06d, %4d.%06d, %4d.%06d, %4d.%06d\n",
-	       TrickModeDomainTransitToDegradeNonReference.IntegerPart(), TrickModeDomainTransitToDegradeNonReference.RemainderDecimal(),
-	       TrickModeDomainTransitToStartDiscard.IntegerPart(), TrickModeDomainTransitToStartDiscard.RemainderDecimal(),
-	       TrickModeDomainTransitToDecodeReference.IntegerPart(), TrickModeDomainTransitToDecodeReference.RemainderDecimal(),
-	       TrickModeDomainTransitToDecodeKey.IntegerPart(), TrickModeDomainTransitToDecodeKey.RemainderDecimal());
+		   TrickModeDomainTransitToDegradeNonReference.IntegerPart(), TrickModeDomainTransitToDegradeNonReference.RemainderDecimal(),
+		   TrickModeDomainTransitToStartDiscard.IntegerPart(), TrickModeDomainTransitToStartDiscard.RemainderDecimal(),
+		   TrickModeDomainTransitToDecodeReference.IntegerPart(), TrickModeDomainTransitToDecodeReference.RemainderDecimal(),
+		   TrickModeDomainTransitToDecodeKey.IntegerPart(), TrickModeDomainTransitToDecodeKey.RemainderDecimal());
 #endif
 }
 
@@ -1348,7 +1347,7 @@ OutputTimerStatus_t OutputTimer_Base_c::TrickModeControl(void)
 	TrickModeParametersChanged = !inrange(NewEmpiricalCodedFrameRateLimit, EmpiricalCodedFrameRateLimit, (EmpiricalCodedFrameRateLimit + 8));
 	CodedFrameRateChanged = LastCodedFrameRate != CodedFrameRate;
 	GroupStructureChanged = (TrickModeGroupStructureIndependentFrames != LastTrickModeGroupStructureIndependentFrames) ||
-				(TrickModeGroupStructureReferenceFrames != LastTrickModeGroupStructureReferenceFrames);
+							(TrickModeGroupStructureReferenceFrames != LastTrickModeGroupStructureReferenceFrames);
 	//
 	// If we are paused, then we do not adjust the trick mode control
 	//
@@ -1397,7 +1396,7 @@ OutputTimerStatus_t OutputTimer_Base_c::TrickModeControl(void)
 				break;
 			case TrickModeStartDiscardingNonReferenceFrames:
 				PortionOfPreDecodeFramesToLose = (1 - (TrickModeDomainTransitToDegradeNonReference / Speed)) /
-								 TrickModeGroupStructureNonReferenceFrames;
+												 TrickModeGroupStructureNonReferenceFrames;
 				if (PortionOfPreDecodeFramesToLose > 1)
 					PortionOfPreDecodeFramesToLose = 1;
 				AdjustedSpeedAfterFrameDrop = Speed * (1 - (PortionOfPreDecodeFramesToLose * TrickModeGroupStructureNonReferenceFrames));
@@ -1449,10 +1448,10 @@ OutputTimerStatus_t OutputTimer_Base_c::TrickModeControl(void)
 				(PortionOfPreDecodeFramesToLose != LastPortionOfPreDecodeFramesToLose))
 		{
 			report(severity_info, "OutputTimer_Base_c::TrickModeControl - Domain = %d, PortionToLose = %4d.%06d, Adjusted speed = %4d.%06d, max decode rate = %4d.%06d\n",
-			       TrickModeDomain,
-			       PortionOfPreDecodeFramesToLose.IntegerPart(), PortionOfPreDecodeFramesToLose.RemainderDecimal(),
-			       AdjustedSpeedAfterFrameDrop.IntegerPart(), AdjustedSpeedAfterFrameDrop.RemainderDecimal(),
-			       EmpiricalCodedFrameRateLimit.IntegerPart(), EmpiricalCodedFrameRateLimit.RemainderDecimal());
+				   TrickModeDomain,
+				   PortionOfPreDecodeFramesToLose.IntegerPart(), PortionOfPreDecodeFramesToLose.RemainderDecimal(),
+				   AdjustedSpeedAfterFrameDrop.IntegerPart(), AdjustedSpeedAfterFrameDrop.RemainderDecimal(),
+				   EmpiricalCodedFrameRateLimit.IntegerPart(), EmpiricalCodedFrameRateLimit.RemainderDecimal());
 		}
 #endif
 		LastTrickModePolicy = TrickModePolicy;
@@ -1516,9 +1515,9 @@ void OutputTimer_Base_c::MonitorGroupStructure(ParsedFrameParameters_t *ParsedFr
 //
 #if 0
 		report(severity_info, "Group Structure %d %d - %d.%06d - %d.%06d - %d.%06d\n", GroupStructureReferenceCount, GroupStructureSizeCount,
-		       IntegerPart(TrickModeGroupStructureIndependentFrames), RemainderDecimal(TrickModeGroupStructureIndependentFrames),
-		       IntegerPart(TrickModeGroupStructureReferenceFrames), RemainderDecimal(TrickModeGroupStructureReferenceFrames),
-		       IntegerPart(TrickModeGroupStructureNonReferenceFrames), RemainderDecimal(TrickModeGroupStructureNonReferenceFrames));
+			   IntegerPart(TrickModeGroupStructureIndependentFrames), RemainderDecimal(TrickModeGroupStructureIndependentFrames),
+			   IntegerPart(TrickModeGroupStructureReferenceFrames), RemainderDecimal(TrickModeGroupStructureReferenceFrames),
+			   IntegerPart(TrickModeGroupStructureNonReferenceFrames), RemainderDecimal(TrickModeGroupStructureNonReferenceFrames));
 #endif
 		GroupStructureSizeCount = 0;
 		GroupStructureReferenceCount = 0;
@@ -1566,14 +1565,14 @@ void OutputTimer_Base_c::DecodeInTimeFailure(unsigned long long FailedBy)
 	// I am sure we are going to be interested in the coded frame buffer pool usage
 	//
 	CodedFrameBufferPool->GetPoolUsage(&CodedFrameBufferCount,
-					   &CodedFrameBuffersInUse,
-					   &CodedFrameBufferMemoryInPool,
-					   &CodedFrameBufferMemoryAllocated,
-					   NULL,
-					   &CodedFrameBufferLargestFreeMemoryBlock);
+									   &CodedFrameBuffersInUse,
+									   &CodedFrameBufferMemoryInPool,
+									   &CodedFrameBufferMemoryAllocated,
+									   NULL,
+									   &CodedFrameBufferLargestFreeMemoryBlock);
 	DecodeBufferPool->GetPoolUsage(NULL,
-				       &DecodeBuffersInUse,
-				       NULL, NULL, NULL);
+								   &DecodeBuffersInUse,
+								   NULL, NULL, NULL);
 	Manifestor->GetDecodeBufferCount(&DecodeBufferCount);
 	//
 	// Switch on the state
@@ -1602,24 +1601,24 @@ void OutputTimer_Base_c::DecodeInTimeFailure(unsigned long long FailedBy)
 				// the output timer, or the manifestor.
 				//
 				report(severity_error, "OutputTimer_Base_c::DecodeInTimeFailure(%s) - Failed to decode in time but decode buffers full (%2d %2d/%2d %2d/%2d) (%6lld %6lld)- probable Implementation Error.\n",
-				       Configuration.OutputTimerName,
-				       DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
-				       DecodeBuffersInUse, DecodeBufferCount,
-				       DecodeInTimeBehind, FailedBy);
+					   Configuration.OutputTimerName,
+					   DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
+					   DecodeBuffersInUse, DecodeBufferCount,
+					   DecodeInTimeBehind, FailedBy);
 				Rebase = true; // Try to mitigate the effect of this state.
 			}
 			else if ((CodedFrameBuffersInUse < (CodedFrameBufferCount / 3)) &&
-					(CodedFrameBufferLargestFreeMemoryBlock > CodedFrameBufferMaximumSize) &&
-					(CodedFrameBufferMemoryAllocated < (CodedFrameBufferMemoryInPool / 2)))
+					 (CodedFrameBufferLargestFreeMemoryBlock > CodedFrameBufferMaximumSize) &&
+					 (CodedFrameBufferMemoryAllocated < (CodedFrameBufferMemoryInPool / 2)))
 			{
 				//
 				// Failure to deliver data on time
 				//
 				report(severity_info, "OutputTimer_Base_c::DecodeInTimeFailure(%s) - Failed to deliver data to decoder in time (%2d %2d/%2d %2d/%2d) (%6lld %6lld).\n",
-				       Configuration.OutputTimerName,
-				       DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
-				       DecodeBuffersInUse, DecodeBufferCount,
-				       DecodeInTimeBehind, FailedBy);
+					   Configuration.OutputTimerName,
+					   DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
+					   DecodeBuffersInUse, DecodeBufferCount,
+					   DecodeInTimeBehind, FailedBy);
 				Player->CheckForDemuxBufferMismatch(Playback, Stream);
 				Policy = Player->PolicyValue(Playback, Stream, PolicyRebaseOnFailureToDeliverDataInTime);
 				Rebase = Policy == PolicyValueApply;
@@ -1631,10 +1630,10 @@ void OutputTimer_Base_c::DecodeInTimeFailure(unsigned long long FailedBy)
 				// Failure to decode in time
 				//
 				report(severity_info, "OutputTimer_Base_c::DecodeInTimeFailure(%s) - Failed to decode frames in time (%2d %2d/%2d %2d/%2d) (%6lld %6lld).\n",
-				       Configuration.OutputTimerName,
-				       DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
-				       DecodeBuffersInUse, DecodeBufferCount,
-				       DecodeInTimeBehind, FailedBy);
+					   Configuration.OutputTimerName,
+					   DecodeInTimeCodedDataLevel, CodedFrameBuffersInUse, CodedFrameBufferCount,
+					   DecodeBuffersInUse, DecodeBufferCount,
+					   DecodeInTimeBehind, FailedBy);
 				Policy = Player->PolicyValue(Playback, Stream, PolicyRebaseOnFailureToDecodeInTime);
 				Rebase = Policy == PolicyValueApply;
 				Policy = Player->PolicyValue(Playback, Stream, PolicyAllowFrameDiscardAtNormalSpeed);

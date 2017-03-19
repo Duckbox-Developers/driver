@@ -544,7 +544,7 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::ForPlayUpdateReferenceFrameList(vo
 	if (ParsedFrameParameters->ReferenceFrame)
 	{
 		LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-			    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+					!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (LastField)
 		{
 			if (ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FORWARD_PLAY)
@@ -575,7 +575,7 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::RevPlayAppendToReferenceFrameList(
 	bool LastField;
 //
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (ParsedFrameParameters->ReferenceFrame && LastField)
 	{
 		if (ReferenceFrameList.EntryCount >= MAX_ENTRIES_IN_REFERENCE_FRAME_LIST)
@@ -603,7 +603,7 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::RevPlayRemoveReferenceFrameFromLis
 	bool LastField;
 //
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if ((ReferenceFrameList.EntryCount != 0) && LastField)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
@@ -1035,9 +1035,9 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::ReadPictureCodingExtensionHeader(v
 #ifdef DUMP_HEADERS
 	report(severity_info, "Picture Coding Extension header :- \n");
 	report(severity_info, " f_code : %6d %6d %6d %6d\n", Header->f_code[0][0],
-	       Header->f_code[0][1],
-	       Header->f_code[1][0],
-	       Header->f_code[1][1]);
+		   Header->f_code[0][1],
+		   Header->f_code[1][0],
+		   Header->f_code[1][1]);
 	report(severity_info, " intra_dc_precision : %6d\n", Header->intra_dc_precision);
 	report(severity_info, " picture_structure : %6d\n", Header->picture_structure);
 	report(severity_info, " top_field_first : %6d\n", Header->top_field_first);
@@ -1194,21 +1194,21 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeader(
 	memset(Header, 0x00, sizeof(Mpeg2VideoPictureDisplayExtension_t));
 //
 	ProgressiveSequence = !StreamParameters->SequenceExtensionHeaderPresent ||
-			      StreamParameters->SequenceExtensionHeader.progressive_sequence;
+						  StreamParameters->SequenceExtensionHeader.progressive_sequence;
 	Frame = !FrameParameters->PictureCodingExtensionHeaderPresent ||
-		(FrameParameters->PictureCodingExtensionHeader.picture_structure == MPEG2_PICTURE_STRUCTURE_FRAME);
+			(FrameParameters->PictureCodingExtensionHeader.picture_structure == MPEG2_PICTURE_STRUCTURE_FRAME);
 	RepeatFirstField = FrameParameters->PictureCodingExtensionHeaderPresent &&
-			   FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
+					   FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
 	TopFieldFirst = FrameParameters->PictureCodingExtensionHeaderPresent &&
-			FrameParameters->PictureCodingExtensionHeader.top_field_first;
+					FrameParameters->PictureCodingExtensionHeader.top_field_first;
 //
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::ReadPictureDisplayExtensionHeader - Illegal combination of progressive_sequence, progressive_frame, top_field_first and repeat_first_field(%c %c %c %c).\n",
-		       (ProgressiveSequence ? 'T' : 'F'),
-		       (Frame ? 'T' : 'F'),
-		       (TopFieldFirst ? 'T' : 'F'),
-		       (RepeatFirstField ? 'T' : 'F'));
+			   (ProgressiveSequence ? 'T' : 'F'),
+			   (Frame ? 'T' : 'F'),
+			   (TopFieldFirst ? 'T' : 'F'),
+			   (RepeatFirstField ? 'T' : 'F'));
 		return FrameParserHeaderSyntaxError;
 	}
 	NumberOfOffsets = PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField);
@@ -1343,9 +1343,9 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Frame parameters unavailable for decode.\n");
 		report(severity_info, " %d %d %d\n",
-		       (FrameParameters == NULL),
-		       !FrameParameters->PictureHeaderPresent,
-		       ((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !FrameParameters->PictureCodingExtensionHeaderPresent));
+			   (FrameParameters == NULL),
+			   !FrameParameters->PictureHeaderPresent,
+			   ((StreamParameters->StreamType == MpegStreamTypeMpeg2) && !FrameParameters->PictureCodingExtensionHeaderPresent));
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserPartialFrameParameters;
 	}
@@ -1372,27 +1372,27 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	// Obtain and check the progressive etc values.
 	//
 	ProgressiveSequence = !StreamParameters->SequenceExtensionHeaderPresent ||
-			      StreamParameters->SequenceExtensionHeader.progressive_sequence;
+						  StreamParameters->SequenceExtensionHeader.progressive_sequence;
 	PictureStructure = FrameParameters->PictureCodingExtensionHeaderPresent ?
-			   PictureStructures[FrameParameters->PictureCodingExtensionHeader.picture_structure] :
-			   StructureFrame;
+					   PictureStructures[FrameParameters->PictureCodingExtensionHeader.picture_structure] :
+					   StructureFrame;
 	SliceType = SliceTypeTranslation[FrameParameters->PictureHeader.picture_coding_type];
 	Frame = PictureStructure == StructureFrame;
 	RepeatFirstField = FrameParameters->PictureCodingExtensionHeaderPresent &&
-			   FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
+					   FrameParameters->PictureCodingExtensionHeader.repeat_first_field;
 	TopFieldFirst = FrameParameters->PictureCodingExtensionHeaderPresent &&
-			FrameParameters->PictureCodingExtensionHeader.top_field_first;
+					FrameParameters->PictureCodingExtensionHeader.top_field_first;
 	PanAndScanCount = FrameParameters->PictureDisplayExtensionHeaderPresent ?
-			  PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField) :
-			  0;
+					  PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField) :
+					  0;
 //
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		report(severity_error, "FrameParser_VideoMpeg2_c::CommitFrameForDecode - Illegal combination of progressive_sequence, progressive_frame, repeat_first_field and top_field_first (%c %c %c %c).\n",
-		       (ProgressiveSequence ? 'T' : 'F'),
-		       (Frame ? 'T' : 'F'),
-		       (RepeatFirstField ? 'T' : 'F'),
-		       (TopFieldFirst ? 'T' : 'F'));
+			   (ProgressiveSequence ? 'T' : 'F'),
+			   (Frame ? 'T' : 'F'),
+			   (RepeatFirstField ? 'T' : 'F'),
+			   (TopFieldFirst ? 'T' : 'F'));
 		return FrameParserHeaderSyntaxError;
 	}
 	//
@@ -1424,7 +1424,7 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 		MatrixCoefficients = MatrixCoefficients_ITU_R_BT601;
 	}
 	else if (StreamParameters->SequenceDisplayExtensionHeaderPresent &&
-			StreamParameters->SequenceDisplayExtensionHeader.color_description)
+			 StreamParameters->SequenceDisplayExtensionHeader.color_description)
 	{
 		switch (StreamParameters->SequenceDisplayExtensionHeader.matrix_coefficients)
 		{
@@ -1502,8 +1502,8 @@ FrameParserStatus_t FrameParser_VideoMpeg2_c::CommitFrameForDecode(void)
 	ParsedVideoParameters->Content.Progressive = ProgressiveSequence;
 	ParsedVideoParameters->Content.OverscanAppropriate = false;
 	ParsedVideoParameters->Content.PixelAspectRatio = (StreamParameters->StreamType == MpegStreamTypeMpeg2) ?
-							  Mpeg2AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information) :
-							  Mpeg1AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information);
+													  Mpeg2AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information) :
+													  Mpeg1AspectRatios(StreamParameters->SequenceHeader.aspect_ratio_information);
 	ParsedVideoParameters->Content.FrameRate = FrameRates(StreamParameters->SequenceHeader.frame_rate_code);
 	ParsedVideoParameters->Content.VideoFullRange = false;
 	ParsedVideoParameters->Content.ColourMatrixCoefficients = MatrixCoefficients;

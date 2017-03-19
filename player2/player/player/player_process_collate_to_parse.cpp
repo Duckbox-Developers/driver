@@ -148,10 +148,10 @@ void Player_Generic_c::ProcessCollateToParse(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied before this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedBeforeControlMessagesCount,
-							  PLAYER_MAX_CTOP_MESSAGES,
-							  Stream->AccumulatedBeforeCtoPControlMessages,
-							  SequenceNumber, INVALID_TIME);
+											  &AccumulatedBeforeControlMessagesCount,
+											  PLAYER_MAX_CTOP_MESSAGES,
+											  Stream->AccumulatedBeforeCtoPControlMessages,
+											  SequenceNumber, INVALID_TIME);
 			//
 			// Pass the buffer to the frame parser for processing
 			// then release our hold on this buffer. When discarding we
@@ -160,8 +160,8 @@ void Player_Generic_c::ProcessCollateToParse(PlayerStream_t Stream)
 			//
 			Buffer->ObtainDataReference(NULL, &BufferLength, NULL);
 			DiscardBuffer = !SequenceNumberStructure->MarkerFrame &&
-					(BufferLength != 0) &&
-					(Stream->UnPlayable || Stream->DiscardingUntilMarkerFrameCtoP);
+							(BufferLength != 0) &&
+							(Stream->UnPlayable || Stream->DiscardingUntilMarkerFrameCtoP);
 //report( severity_error, "FP++\n" );
 			if (!DiscardBuffer)
 				Stream->FrameParser->Input(Buffer);
@@ -171,10 +171,10 @@ void Player_Generic_c::ProcessCollateToParse(PlayerStream_t Stream)
 			// Process any outstanding control messages to be applied after this buffer
 			//
 			ProcessAccumulatedControlMessages(Stream,
-							  &AccumulatedAfterControlMessagesCount,
-							  PLAYER_MAX_CTOP_MESSAGES,
-							  Stream->AccumulatedAfterCtoPControlMessages,
-							  SequenceNumber, INVALID_TIME);
+											  &AccumulatedAfterControlMessagesCount,
+											  PLAYER_MAX_CTOP_MESSAGES,
+											  Stream->AccumulatedAfterCtoPControlMessages,
+											  SequenceNumber, INVALID_TIME);
 		}
 		//
 		// Deal with a player control structure
@@ -183,7 +183,7 @@ void Player_Generic_c::ProcessCollateToParse(PlayerStream_t Stream)
 		{
 			Buffer->ObtainDataReference(NULL, NULL, (void **)(&ControlStructure));
 			ProcessNow = (ControlStructure->SequenceType == SequenceTypeImmediate) ||
-				     ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
+						 ((SequenceNumber != INVALID_SEQUENCE_VALUE) && (ControlStructure->SequenceValue <= MaximumActualSequenceNumberSeen));
 			if (ProcessNow)
 				ProcessControlMessage(Stream, Buffer, ControlStructure);
 			else

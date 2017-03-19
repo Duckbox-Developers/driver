@@ -130,7 +130,7 @@ CollatorStatus_t Collator_PesAudioWma_c::DecideCollatorNextStateAndGetLength(uns
 	// check if the block we are *about* to accumulate is a stream properties object
 	if ((RemainingElementaryLength > sizeof(asf_guid_t)) &&
 			(0 == memcmp(RemainingElementaryData,
-				     asf_guid_lookup[ASF_GUID_STREAM_PROPERTIES_OBJECT], sizeof(asf_guid_t))))
+						 asf_guid_lookup[ASF_GUID_STREAM_PROPERTIES_OBJECT], sizeof(asf_guid_t))))
 	{
 		COLLATOR_TRACE("Anticipating a Stream Properties Object - Clearing WMADataBlockSize\n");
 		WMADataBlockSize = 0;
@@ -147,7 +147,7 @@ CollatorStatus_t Collator_PesAudioWma_c::DecideCollatorNextStateAndGetLength(uns
 	else
 		*FrameLength = RemainingElementaryLength;
 	COLLATOR_DEBUG("WMADataBlockSize %4d RemainingElementaryLength %4d FrameLength %4d\n",
-		       WMADataBlockSize, RemainingElementaryLength, *FrameLength);
+				   WMADataBlockSize, RemainingElementaryLength, *FrameLength);
 	CollatorState = GotCompleteFrame;
 	return CollatorNoError;
 }

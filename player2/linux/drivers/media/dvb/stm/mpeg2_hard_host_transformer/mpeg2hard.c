@@ -68,8 +68,8 @@ static OSDEV_InterruptHandlerEntrypoint(Mpeg2InterruptHandler);
 // The Initialize function
 
 Mpeg2HardStatus_t Mpeg2HardInit(char *Name,
-				Mpeg2HardInitParams_t *InitParams,
-				Mpeg2HardHandle_t *Handle)
+								Mpeg2HardInitParams_t *InitParams,
+								Mpeg2HardHandle_t *Handle)
 {
 	Mpeg2HardCodecContext_t *Context;
 	unsigned int Value;
@@ -148,53 +148,53 @@ Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(
 	OSDEV_Print("Vertical Size: %d\n", SequenceParams->verticalSize);
 	OSDEV_Print("Chroma Format: %d\n", SequenceParams->chromaFormat);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[0], SequenceParams->intraQuantizerMatrix[1],
-		    SequenceParams->intraQuantizerMatrix[2], SequenceParams->intraQuantizerMatrix[3], SequenceParams->intraQuantizerMatrix[4],
-		    SequenceParams->intraQuantizerMatrix[5], SequenceParams->intraQuantizerMatrix[6], SequenceParams->intraQuantizerMatrix[7]);
+				SequenceParams->intraQuantizerMatrix[2], SequenceParams->intraQuantizerMatrix[3], SequenceParams->intraQuantizerMatrix[4],
+				SequenceParams->intraQuantizerMatrix[5], SequenceParams->intraQuantizerMatrix[6], SequenceParams->intraQuantizerMatrix[7]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[8], SequenceParams->intraQuantizerMatrix[9],
-		    SequenceParams->intraQuantizerMatrix[10], SequenceParams->intraQuantizerMatrix[11], SequenceParams->intraQuantizerMatrix[12],
-		    SequenceParams->intraQuantizerMatrix[13], SequenceParams->intraQuantizerMatrix[14], SequenceParams->intraQuantizerMatrix[15]);
+				SequenceParams->intraQuantizerMatrix[10], SequenceParams->intraQuantizerMatrix[11], SequenceParams->intraQuantizerMatrix[12],
+				SequenceParams->intraQuantizerMatrix[13], SequenceParams->intraQuantizerMatrix[14], SequenceParams->intraQuantizerMatrix[15]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[16], SequenceParams->intraQuantizerMatrix[17],
-		    SequenceParams->intraQuantizerMatrix[18], SequenceParams->intraQuantizerMatrix[19], SequenceParams->intraQuantizerMatrix[20],
-		    SequenceParams->intraQuantizerMatrix[21], SequenceParams->intraQuantizerMatrix[22], SequenceParams->intraQuantizerMatrix[23]);
+				SequenceParams->intraQuantizerMatrix[18], SequenceParams->intraQuantizerMatrix[19], SequenceParams->intraQuantizerMatrix[20],
+				SequenceParams->intraQuantizerMatrix[21], SequenceParams->intraQuantizerMatrix[22], SequenceParams->intraQuantizerMatrix[23]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[24], SequenceParams->intraQuantizerMatrix[25],
-		    SequenceParams->intraQuantizerMatrix[26], SequenceParams->intraQuantizerMatrix[27], SequenceParams->intraQuantizerMatrix[28],
-		    SequenceParams->intraQuantizerMatrix[29], SequenceParams->intraQuantizerMatrix[30], SequenceParams->intraQuantizerMatrix[31]);
+				SequenceParams->intraQuantizerMatrix[26], SequenceParams->intraQuantizerMatrix[27], SequenceParams->intraQuantizerMatrix[28],
+				SequenceParams->intraQuantizerMatrix[29], SequenceParams->intraQuantizerMatrix[30], SequenceParams->intraQuantizerMatrix[31]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[32], SequenceParams->intraQuantizerMatrix[33],
-		    SequenceParams->intraQuantizerMatrix[34], SequenceParams->intraQuantizerMatrix[35], SequenceParams->intraQuantizerMatrix[36],
-		    SequenceParams->intraQuantizerMatrix[37], SequenceParams->intraQuantizerMatrix[38], SequenceParams->intraQuantizerMatrix[39]);
+				SequenceParams->intraQuantizerMatrix[34], SequenceParams->intraQuantizerMatrix[35], SequenceParams->intraQuantizerMatrix[36],
+				SequenceParams->intraQuantizerMatrix[37], SequenceParams->intraQuantizerMatrix[38], SequenceParams->intraQuantizerMatrix[39]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[40], SequenceParams->intraQuantizerMatrix[41],
-		    SequenceParams->intraQuantizerMatrix[42], SequenceParams->intraQuantizerMatrix[43], SequenceParams->intraQuantizerMatrix[44],
-		    SequenceParams->intraQuantizerMatrix[45], SequenceParams->intraQuantizerMatrix[46], SequenceParams->intraQuantizerMatrix[47]);
+				SequenceParams->intraQuantizerMatrix[42], SequenceParams->intraQuantizerMatrix[43], SequenceParams->intraQuantizerMatrix[44],
+				SequenceParams->intraQuantizerMatrix[45], SequenceParams->intraQuantizerMatrix[46], SequenceParams->intraQuantizerMatrix[47]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[48], SequenceParams->intraQuantizerMatrix[49],
-		    SequenceParams->intraQuantizerMatrix[50], SequenceParams->intraQuantizerMatrix[51], SequenceParams->intraQuantizerMatrix[52],
-		    SequenceParams->intraQuantizerMatrix[53], SequenceParams->intraQuantizerMatrix[54], SequenceParams->intraQuantizerMatrix[55]);
+				SequenceParams->intraQuantizerMatrix[50], SequenceParams->intraQuantizerMatrix[51], SequenceParams->intraQuantizerMatrix[52],
+				SequenceParams->intraQuantizerMatrix[53], SequenceParams->intraQuantizerMatrix[54], SequenceParams->intraQuantizerMatrix[55]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->intraQuantizerMatrix[56], SequenceParams->intraQuantizerMatrix[57],
-		    SequenceParams->intraQuantizerMatrix[58], SequenceParams->intraQuantizerMatrix[59], SequenceParams->intraQuantizerMatrix[60],
-		    SequenceParams->intraQuantizerMatrix[61], SequenceParams->intraQuantizerMatrix[62], SequenceParams->intraQuantizerMatrix[63]);
+				SequenceParams->intraQuantizerMatrix[58], SequenceParams->intraQuantizerMatrix[59], SequenceParams->intraQuantizerMatrix[60],
+				SequenceParams->intraQuantizerMatrix[61], SequenceParams->intraQuantizerMatrix[62], SequenceParams->intraQuantizerMatrix[63]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[0], SequenceParams->nonIntraQuantizerMatrix[1],
-		    SequenceParams->nonIntraQuantizerMatrix[2], SequenceParams->nonIntraQuantizerMatrix[3], SequenceParams->nonIntraQuantizerMatrix[4],
-		    SequenceParams->nonIntraQuantizerMatrix[5], SequenceParams->nonIntraQuantizerMatrix[6], SequenceParams->nonIntraQuantizerMatrix[7]);
+				SequenceParams->nonIntraQuantizerMatrix[2], SequenceParams->nonIntraQuantizerMatrix[3], SequenceParams->nonIntraQuantizerMatrix[4],
+				SequenceParams->nonIntraQuantizerMatrix[5], SequenceParams->nonIntraQuantizerMatrix[6], SequenceParams->nonIntraQuantizerMatrix[7]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[8], SequenceParams->nonIntraQuantizerMatrix[9],
-		    SequenceParams->nonIntraQuantizerMatrix[10], SequenceParams->nonIntraQuantizerMatrix[11], SequenceParams->nonIntraQuantizerMatrix[12],
-		    SequenceParams->nonIntraQuantizerMatrix[13], SequenceParams->nonIntraQuantizerMatrix[14], SequenceParams->nonIntraQuantizerMatrix[15]);
+				SequenceParams->nonIntraQuantizerMatrix[10], SequenceParams->nonIntraQuantizerMatrix[11], SequenceParams->nonIntraQuantizerMatrix[12],
+				SequenceParams->nonIntraQuantizerMatrix[13], SequenceParams->nonIntraQuantizerMatrix[14], SequenceParams->nonIntraQuantizerMatrix[15]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[16], SequenceParams->nonIntraQuantizerMatrix[17],
-		    SequenceParams->nonIntraQuantizerMatrix[18], SequenceParams->nonIntraQuantizerMatrix[19], SequenceParams->nonIntraQuantizerMatrix[20],
-		    SequenceParams->nonIntraQuantizerMatrix[21], SequenceParams->nonIntraQuantizerMatrix[22], SequenceParams->nonIntraQuantizerMatrix[23]);
+				SequenceParams->nonIntraQuantizerMatrix[18], SequenceParams->nonIntraQuantizerMatrix[19], SequenceParams->nonIntraQuantizerMatrix[20],
+				SequenceParams->nonIntraQuantizerMatrix[21], SequenceParams->nonIntraQuantizerMatrix[22], SequenceParams->nonIntraQuantizerMatrix[23]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[24], SequenceParams->nonIntraQuantizerMatrix[25],
-		    SequenceParams->nonIntraQuantizerMatrix[26], SequenceParams->nonIntraQuantizerMatrix[27], SequenceParams->nonIntraQuantizerMatrix[28],
-		    SequenceParams->nonIntraQuantizerMatrix[29], SequenceParams->nonIntraQuantizerMatrix[30], SequenceParams->nonIntraQuantizerMatrix[31]);
+				SequenceParams->nonIntraQuantizerMatrix[26], SequenceParams->nonIntraQuantizerMatrix[27], SequenceParams->nonIntraQuantizerMatrix[28],
+				SequenceParams->nonIntraQuantizerMatrix[29], SequenceParams->nonIntraQuantizerMatrix[30], SequenceParams->nonIntraQuantizerMatrix[31]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[32], SequenceParams->nonIntraQuantizerMatrix[33],
-		    SequenceParams->nonIntraQuantizerMatrix[34], SequenceParams->nonIntraQuantizerMatrix[35], SequenceParams->nonIntraQuantizerMatrix[36],
-		    SequenceParams->nonIntraQuantizerMatrix[37], SequenceParams->nonIntraQuantizerMatrix[38], SequenceParams->nonIntraQuantizerMatrix[39]);
+				SequenceParams->nonIntraQuantizerMatrix[34], SequenceParams->nonIntraQuantizerMatrix[35], SequenceParams->nonIntraQuantizerMatrix[36],
+				SequenceParams->nonIntraQuantizerMatrix[37], SequenceParams->nonIntraQuantizerMatrix[38], SequenceParams->nonIntraQuantizerMatrix[39]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[40], SequenceParams->nonIntraQuantizerMatrix[41],
-		    SequenceParams->nonIntraQuantizerMatrix[42], SequenceParams->nonIntraQuantizerMatrix[43], SequenceParams->nonIntraQuantizerMatrix[44],
-		    SequenceParams->nonIntraQuantizerMatrix[45], SequenceParams->nonIntraQuantizerMatrix[46], SequenceParams->nonIntraQuantizerMatrix[47]);
+				SequenceParams->nonIntraQuantizerMatrix[42], SequenceParams->nonIntraQuantizerMatrix[43], SequenceParams->nonIntraQuantizerMatrix[44],
+				SequenceParams->nonIntraQuantizerMatrix[45], SequenceParams->nonIntraQuantizerMatrix[46], SequenceParams->nonIntraQuantizerMatrix[47]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[48], SequenceParams->nonIntraQuantizerMatrix[49],
-		    SequenceParams->nonIntraQuantizerMatrix[50], SequenceParams->nonIntraQuantizerMatrix[51], SequenceParams->nonIntraQuantizerMatrix[52],
-		    SequenceParams->nonIntraQuantizerMatrix[53], SequenceParams->nonIntraQuantizerMatrix[54], SequenceParams->nonIntraQuantizerMatrix[55]);
+				SequenceParams->nonIntraQuantizerMatrix[50], SequenceParams->nonIntraQuantizerMatrix[51], SequenceParams->nonIntraQuantizerMatrix[52],
+				SequenceParams->nonIntraQuantizerMatrix[53], SequenceParams->nonIntraQuantizerMatrix[54], SequenceParams->nonIntraQuantizerMatrix[55]);
 	OSDEV_Print("%d %d %d %d %d %d %d %d\n", SequenceParams->nonIntraQuantizerMatrix[56], SequenceParams->nonIntraQuantizerMatrix[57],
-		    SequenceParams->nonIntraQuantizerMatrix[58], SequenceParams->nonIntraQuantizerMatrix[59], SequenceParams->nonIntraQuantizerMatrix[60],
-		    SequenceParams->nonIntraQuantizerMatrix[61], SequenceParams->nonIntraQuantizerMatrix[62], SequenceParams->nonIntraQuantizerMatrix[63]);
+				SequenceParams->nonIntraQuantizerMatrix[58], SequenceParams->nonIntraQuantizerMatrix[59], SequenceParams->nonIntraQuantizerMatrix[60],
+				SequenceParams->nonIntraQuantizerMatrix[61], SequenceParams->nonIntraQuantizerMatrix[62], SequenceParams->nonIntraQuantizerMatrix[63]);
 #endif
 	return MPEG2HARD_NO_ERROR;
 }
@@ -223,7 +223,7 @@ static void Mpeg2HardLoadStreamContext(Mpeg2HardCodecContext_t *Context)
 // The Decode one frame function
 
 Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t Handle,
-				       Mpeg2HardFrameParams_t *FrameParams)
+									   Mpeg2HardFrameParams_t *FrameParams)
 {
 	Mpeg2HardCodecContext_t *Context = (Mpeg2HardCodecContext_t *)Handle;
 	unsigned int PictureParameters;
@@ -242,23 +242,23 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t Handle,
 		memset((void *)(((unsigned int)FrameParams->lumaDecodeFramebuffer) | 0xa0000000), 0xff, 1920 * 1088);
 		memset((void *)(((unsigned int)FrameParams->chromaDecodeFramebuffer) | 0xa0000000), Colour++ & 0xff, 1920 * 544);
 		OSDEV_Print("{0x%08x, 0x%06x, 0x%06x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x, 0x%02x},\n",
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->compressedDataFrame),
-			    Total,
-			    FrameParams->compressedDataSize,
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaDecodeFramebuffer),
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaDecodeFramebuffer),
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaBackwardReferenceFrame),
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaBackwardReferenceFrame),
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaForwardReferenceFrame),
-			    OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaForwardReferenceFrame),
-			    FrameParams->pictureCodingType,
-			    FrameParams->forwardHorizontalMotionVector,
-			    FrameParams->forwardVerticalMotionVector,
-			    FrameParams->backwardHorizontalMotionVector,
-			    FrameParams->backwardVerticalMotionVector,
-			    FrameParams->intraDCPrecision,
-			    FrameParams->pictureStructure,
-			    FrameParams->decodingFlags);
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->compressedDataFrame),
+					Total,
+					FrameParams->compressedDataSize,
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaDecodeFramebuffer),
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaDecodeFramebuffer),
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaBackwardReferenceFrame),
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaBackwardReferenceFrame),
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->lumaForwardReferenceFrame),
+					OSDEV_PeripheralAddress((unsigned int)FrameParams->chromaForwardReferenceFrame),
+					FrameParams->pictureCodingType,
+					FrameParams->forwardHorizontalMotionVector,
+					FrameParams->forwardVerticalMotionVector,
+					FrameParams->backwardHorizontalMotionVector,
+					FrameParams->backwardVerticalMotionVector,
+					FrameParams->intraDCPrecision,
+					FrameParams->pictureStructure,
+					FrameParams->decodingFlags);
 		Total += FrameParams->compressedDataSize;
 		OSDEV_ReleaseSemaphore(&DecoderLock);
 		return MPEG2HARD_NO_ERROR;
@@ -365,11 +365,11 @@ Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t Handle,
 	ReadRegister(VID_ITS(0)); // Clear interrupt status bits
 	WriteRegister(VID_TIS(0), VID_TIS__RMM | VID_TIS__MVC);
 	WriteRegister(VID_ITM(0), VID_STA__DID |
-		      VID_STA__VLDRL |
-		      VID_STA__DSE |
-		      VID_STA__MSE |
-		      VID_STA__DUE |
-		      VID_STA__DOE); // Set interrupt mask for decoder idle
+				  VID_STA__VLDRL |
+				  VID_STA__DSE |
+				  VID_STA__MSE |
+				  VID_STA__DUE |
+				  VID_STA__DOE); // Set interrupt mask for decoder idle
 	WriteRegister(VID0_EXE, VID_EXE__EXE); // Go
 	// Now wait for the decode to complete
 #if USE_SEMAPHORE
@@ -480,7 +480,7 @@ OSDEV_InterruptHandlerEntrypoint(Mpeg2InterruptHandler)
 		{
 			WriteRegister(VID_SRS(0), VID_SRS__SRC);
 			OSDEV_Print("%s: MPEG Soft Reset Interrupt Status = 0x%08x Row = 0x%08x Column = 0x%08x\n",
-				    __FUNCTION__, Status, Row, Column);
+						__FUNCTION__, Status, Row, Column);
 		}
 		return IRQ_HANDLED;
 	}

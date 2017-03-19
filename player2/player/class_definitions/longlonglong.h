@@ -212,7 +212,7 @@ class LongLongLong_c
 		//
 
 		void Get(long long *Value,
-			 unsigned int *Shifted)
+				 unsigned int *Shifted)
 		{
 			unsigned int UpperBits = 0;
 			long long Val = 0;
@@ -242,7 +242,7 @@ typedef LongLongLong_c LongLongLong_t;
 //
 
 static inline LongLongLong_c operator+ (long long I,
-					LongLongLong_c F)
+										LongLongLong_c F)
 {
 	LongLongLong_c Temp = I;
 	return Temp + F;
@@ -251,7 +251,7 @@ static inline LongLongLong_c operator+ (long long I,
 //
 
 static inline LongLongLong_c operator- (long long I,
-					LongLongLong_c F)
+										LongLongLong_c F)
 {
 	LongLongLong_c Temp = I;
 	return Temp - F;
@@ -260,7 +260,7 @@ static inline LongLongLong_c operator- (long long I,
 //
 
 static inline LongLongLong_c operator* (long long V,
-					LongLongLong_c F)
+										LongLongLong_c F)
 {
 	LongLongLong_c Temp = V;
 	return Temp * F;

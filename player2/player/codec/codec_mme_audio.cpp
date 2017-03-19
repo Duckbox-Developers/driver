@@ -208,7 +208,7 @@ CodecStatus_t Codec_MmeAudio_c::SetModuleParameters(
 		if (Len >= (sizeof(TransformName[Transformer]) - 2))
 		{
 			CODEC_ERROR("Transform name is too long to accept postfix (%d of %d)\n",
-				    Len, sizeof(TransformName[Transformer]) - 2);
+						Len, sizeof(TransformName[Transformer]) - 2);
 			return CodecError;
 		}
 		TransformName[Transformer][Len] = PostFix;
@@ -505,19 +505,19 @@ CodecStatus_t Codec_MmeAudio_c::HandleCapabilities(void)
 	if (Capability.StructSize != sizeof(MME_LxAudioDecoderInfo_t))
 	{
 		CODEC_ERROR("%s reports different sizeof MME_LxAudioDecoderInfo_t (version skew?)\n",
-			    Configuration.TransformName[SelectedTransformer]);
+					Configuration.TransformName[SelectedTransformer]);
 		return CodecError;
 	}
 	// Dump the transformer capability structure
 	CODEC_DEBUG("Transformer Capability: %s\n", Configuration.TransformName[SelectedTransformer]);
 	CODEC_DEBUG("\tDecoderCapabilityFlags = %x (requires %x)\n",
-		    Capability.DecoderCapabilityFlags, Mask.DecoderCapabilityFlags);
+				Capability.DecoderCapabilityFlags, Mask.DecoderCapabilityFlags);
 	CODEC_DEBUG("\tDecoderCapabilityExtFlags[0..1] = %x %x\n",
-		    Capability.DecoderCapabilityExtFlags[0],
-		    Capability.DecoderCapabilityExtFlags[1]);
+				Capability.DecoderCapabilityExtFlags[0],
+				Capability.DecoderCapabilityExtFlags[1]);
 	CODEC_DEBUG("\tPcmProcessorCapabilityFlags[0..1] = %x %x\n",
-		    Capability.PcmProcessorCapabilityFlags[0],
-		    Capability.PcmProcessorCapabilityFlags[1]);
+				Capability.PcmProcessorCapabilityFlags[0],
+				Capability.PcmProcessorCapabilityFlags[1]);
 	// Confirm that the transformer is sufficiently capable to support the required decoder
 	if ((Mask.DecoderCapabilityFlags !=
 			(Mask.DecoderCapabilityFlags & Capability.DecoderCapabilityFlags)) ||
@@ -531,7 +531,7 @@ CodecStatus_t Codec_MmeAudio_c::HandleCapabilities(void)
 			 (Mask.PcmProcessorCapabilityFlags[1] & Capability.PcmProcessorCapabilityFlags[1])))
 	{
 		CODEC_ERROR("%s is not capable of decoding %s\n",
-			    Configuration.TransformName[SelectedTransformer], Configuration.CodecName);
+					Configuration.TransformName[SelectedTransformer], Configuration.CodecName);
 #ifdef __TDT__
 		if (useoldaudiofw == 1)
 			return CodecNoError;
@@ -562,8 +562,8 @@ CodecStatus_t Codec_MmeAudio_c::FillOutTransformerGlobalParameters(MME_LxAudioDe
 	cmc.Config[CMC_OUTMODE_MAIN] = OutmodeMain;
 	cmc.Config[CMC_OUTMODE_AUX] = ACC_MODE_ID; // no stereo downmix
 	cmc.Config[CMC_DUAL_MODE] = (SelectedChannel == ChannelSelectLeft) ? ACC_DUAL_LEFT_MONO :
-				    (SelectedChannel == ChannelSelectRight) ? ACC_DUAL_RIGHT_MONO :
-				    ACC_DUAL_LR;
+								(SelectedChannel == ChannelSelectRight) ? ACC_DUAL_RIGHT_MONO :
+								ACC_DUAL_LR;
 	cmc.Config[CMC_PCM_DOWN_SCALED] = ACC_MME_TRUE;
 	cmc.CenterMixCoeff = ACC_M3DB;
 	cmc.SurroundMixCoeff = ACC_M3DB;
@@ -666,8 +666,8 @@ CodecStatus_t Codec_MmeAudio_c::ValidatePcmProcessingExtendedStatus(
 				SpecificStatus->StructSize > (unsigned) BytesLeft)
 		{
 			CODEC_ERROR("PCM extended status is too %s - Id %x StructSize %d",
-				    (SpecificStatus->StructSize < 8 ? "small" : "large"),
-				    SpecificStatus->Id, SpecificStatus->StructSize);
+						(SpecificStatus->StructSize < 8 ? "small" : "large"),
+						SpecificStatus->Id, SpecificStatus->StructSize);
 			return CodecError;
 		}
 		// handle the status report
@@ -679,18 +679,18 @@ CodecStatus_t Codec_MmeAudio_c::ValidatePcmProcessingExtendedStatus(
 				break;
 			case ACC_MIX_METADATA_ID:
 				CODEC_DEBUG("Found ACC_MIX_METADATA_ID - Id %x StructSize %d\n",
-					    SpecificStatus->Id, SpecificStatus->StructSize);
+							SpecificStatus->Id, SpecificStatus->StructSize);
 				HandleMixingMetadata(Context, SpecificStatus);
 				break;
 			default:
 				CODEC_TRACE("Ignoring unexpected PCM extended status - Id %x StructSize %d\n",
-					    SpecificStatus->Id, SpecificStatus->StructSize);
+							SpecificStatus->Id, SpecificStatus->StructSize);
 				// just ignore it... don't propagate the error
 		}
 		// move to the next status field. we checked for sanity above so we shouldn't need any bounds checks.
 		BytesLeft -= SpecificStatus->StructSize;
 		SpecificStatus = (MME_PcmProcessingStatusTemplate_t *)
-				 (((char *) SpecificStatus) + SpecificStatus->StructSize);
+						 (((char *) SpecificStatus) + SpecificStatus->StructSize);
 	}
 	return CodecNoError;
 }
@@ -703,7 +703,7 @@ CodecStatus_t Codec_MmeAudio_c::ValidatePcmProcessingExtendedStatus(
 /// required to override it.
 ///
 void Codec_MmeAudio_c::HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-					    MME_PcmProcessingStatusTemplate_t *PcmStatus)
+											MME_PcmProcessingStatusTemplate_t *PcmStatus)
 {
 	CODEC_ERROR("Found mixing metadata but sub-class didn't provide a mixing metadata handler\n");
 }
@@ -746,7 +746,7 @@ CodecStatus_t Codec_MmeAudio_c::FillOutDecodeBufferRequest(BufferStructure_t *Re
 			(Request->Dimension[1] != 8) ||
 			(Request->Dimension[2] == 0))
 		report(severity_info, "Codec_MmeAudio_c::FillOutDecodeBufferRequest - Non-standard parameters (%2d %d %d).\n",
-		       Request->Dimension[0], Request->Dimension[1], Request->Dimension[2]);
+			   Request->Dimension[0], Request->Dimension[1], Request->Dimension[2]);
 	return CodecNoError;
 }
 

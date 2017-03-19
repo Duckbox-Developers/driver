@@ -173,8 +173,8 @@ BufferStatus_t BufferManager_Generic_c::FindBufferDataType(
 //
 
 BufferStatus_t BufferManager_Generic_c::GetDescriptor(BufferType_t Type,
-						      BufferPredefinedType_t RequiredKind,
-						      BufferDataDescriptor_t **Descriptor)
+													  BufferPredefinedType_t RequiredKind,
+													  BufferDataDescriptor_t **Descriptor)
 {
 	if ((Type & TYPE_TYPE_MASK) != (unsigned int)RequiredKind)
 	{
@@ -324,14 +324,14 @@ void BufferManager_Generic_c::Dump(unsigned int Flags)
 			if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == BufferDataTypeBase)
 			{
 				report(severity_info, " Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
-				       (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
+					   (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
 				report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
-				       AllocationSources[TypeDescriptors[i].AllocationSource] :
-				       "Invalid");
+					   AllocationSources[TypeDescriptors[i].AllocationSource] :
+					   "Invalid");
 				report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
-				       TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
+					   TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
 				report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
-				       TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
+					   TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
 			}
 		report(severity_info, "\n");
 	}
@@ -343,14 +343,14 @@ void BufferManager_Generic_c::Dump(unsigned int Flags)
 			if ((TypeDescriptors[i].Type & TYPE_TYPE_MASK) == MetaDataTypeBase)
 			{
 				report(severity_info, " Buffer Type $%04x - '%s'\n", TypeDescriptors[i].Type,
-				       (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
+					   (TypeDescriptors[i].TypeName == NULL) ? "Unnamed" : TypeDescriptors[i].TypeName);
 				report(severity_info, "\tAllocationSource = %s\n", (TypeDescriptors[i].AllocationSource <= AllocateIndividualSuppliedBlocks) ?
-				       AllocationSources[TypeDescriptors[i].AllocationSource] :
-				       "Invalid");
+					   AllocationSources[TypeDescriptors[i].AllocationSource] :
+					   "Invalid");
 				report(severity_info, "\tRequiredAllignment = %08x, AllocationUnitSize = %08x, AllocateOnPoolCreation = %d\n",
-				       TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
+					   TypeDescriptors[i].RequiredAllignment, TypeDescriptors[i].AllocationUnitSize, TypeDescriptors[i].AllocateOnPoolCreation);
 				report(severity_info, "\tHasFixedSize = %d, FixedSize = %08x\n",
-				       TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
+					   TypeDescriptors[i].HasFixedSize, TypeDescriptors[i].FixedSize);
 			}
 		report(severity_info, "\n");
 	}

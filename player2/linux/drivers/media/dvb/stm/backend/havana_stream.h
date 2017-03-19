@@ -47,7 +47,7 @@ Date Modification Name
 #endif
 
 #define STREAM_DEBUG(fmt, args...) ((void) (ENABLE_STREAM_DEBUG && \
-					    (report(severity_note, "HavanaStream_c::%s: " fmt, __FUNCTION__, ##args), 0)))
+											(report(severity_note, "HavanaStream_c::%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define STREAM_TRACE(fmt, args...) (report(severity_note, "HavanaStream_c::%s: " fmt, __FUNCTION__, ##args))
@@ -55,10 +55,10 @@ Date Modification Name
 #define STREAM_ERROR(fmt, args...) (report(severity_error, "HavanaStream_c::%s: " fmt, __FUNCTION__, ##args))
 
 #define STREAM_SPECIFIC_EVENTS (EventSourceFrameRateChangeManifest | EventSourceSizeChangeManifest | \
-				EventFailedToDecodeInTime | EventFailedToDeliverDataInTime | \
-				EventTrickModeDomainChange | EventVsyncOffsetMeasured | \
-				EventFirstFrameManifested | EventStreamUnPlayable | \
-				EventOutputSizeChangeManifest | EventFatalHardwareFailure)
+								EventFailedToDecodeInTime | EventFailedToDeliverDataInTime | \
+								EventTrickModeDomainChange | EventVsyncOffsetMeasured | \
+								EventFirstFrameManifested | EventStreamUnPlayable | \
+								EventOutputSizeChangeManifest | EventFatalHardwareFailure)
 
 #define MAX_SOURCE_WIDTH 1920
 #define MAX_SOURCE_HEIGHT 1088
@@ -145,69 +145,69 @@ class HavanaStream_c
 		~HavanaStream_c(void);
 
 		HavanaStatus_t Init(class HavanaPlayer_c *HavanaPlayer,
-				    class Player_c *Player,
-				    PlayerPlayback_t PlayerPlayback,
-				    char *Media,
-				    char *Format,
-				    char *Encoding,
-				    unsigned int SurfaceId);
+							class Player_c *Player,
+							PlayerPlayback_t PlayerPlayback,
+							char *Media,
+							char *Format,
+							char *Encoding,
+							unsigned int SurfaceId);
 		HavanaStatus_t InjectData(const void *Data,
-					  unsigned int DataLength);
+								  unsigned int DataLength);
 		HavanaStatus_t InjectDataPacket(const unsigned char *Data,
-						unsigned int DataLength,
-						bool PlaybackTimeValid,
-						unsigned long long PlaybackTime);
+										unsigned int DataLength,
+										bool PlaybackTimeValid,
+										unsigned long long PlaybackTime);
 		HavanaStatus_t Discontinuity(bool ContinuousReverse,
-					     bool SurplusData);
+									 bool SurplusData);
 #ifdef __TDT__
 		HavanaStatus_t Drain(bool Discard,
-				     bool NonBlock);
+							 bool NonBlock);
 		HavanaStatus_t CheckDrained();
 #else
 		HavanaStatus_t Drain(bool Discard);
 #endif
 		HavanaStatus_t Enable(bool Manifest);
 		HavanaStatus_t SetId(unsigned int DemuxId,
-				     unsigned int Id);
+							 unsigned int Id);
 		HavanaStatus_t ChannelSelect(channel_select_t Channel);
 		HavanaStatus_t SetOption(play_option_t Option,
-					 unsigned int Value);
+								 unsigned int Value);
 		HavanaStatus_t GetOption(play_option_t Option,
-					 unsigned int *Value);
+								 unsigned int *Value);
 		HavanaStatus_t MapOption(play_option_t Option,
-					 PlayerPolicy_t *PlayerPolicy);
+								 PlayerPolicy_t *PlayerPolicy);
 		HavanaStatus_t Step(void);
 		HavanaStatus_t SetOutputWindow(unsigned int X,
-					       unsigned int Y,
-					       unsigned int Width,
-					       unsigned int Height);
+									   unsigned int Y,
+									   unsigned int Width,
+									   unsigned int Height);
 		HavanaStatus_t SetInputWindow(unsigned int X,
-					      unsigned int Y,
-					      unsigned int Width,
-					      unsigned int Height);
+									  unsigned int Y,
+									  unsigned int Width,
+									  unsigned int Height);
 		HavanaStatus_t SetPlayInterval(play_interval_t *PlayInterval);
 		HavanaStatus_t CheckEvent(struct PlayerEventRecord_s *PlayerEvent);
 		HavanaStatus_t GetPlayInfo(struct play_info_s *PlayInfo);
 		HavanaStatus_t Switch(char *Format,
-				      char *Encoding);
+							  char *Encoding);
 		HavanaStatus_t GetDecodeBuffer(buffer_handle_t *DecodeBuffer,
-					       unsigned char **Data,
-					       unsigned int Format,
-					       unsigned int DimensionCount,
-					       unsigned int Dimensions[],
-					       unsigned int *Index,
-					       unsigned int *Stride);
+									   unsigned char **Data,
+									   unsigned int Format,
+									   unsigned int DimensionCount,
+									   unsigned int Dimensions[],
+									   unsigned int *Index,
+									   unsigned int *Stride);
 		HavanaStatus_t ReturnDecodeBuffer(buffer_handle_t DecodeBuffer);
 		HavanaStatus_t GetDecodeBufferPoolStatus(unsigned int *BuffersInPool,
-							 unsigned int *BuffersWithNonZeroReferenceCount);
+												 unsigned int *BuffersWithNonZeroReferenceCount);
 		HavanaStatus_t GetOutputWindow(unsigned int *X,
-					       unsigned int *Y,
-					       unsigned int *Width,
-					       unsigned int *Height);
+									   unsigned int *Y,
+									   unsigned int *Width,
+									   unsigned int *Height);
 		HavanaStatus_t GetPlayerEnvironment(PlayerPlayback_t *PlayerPlayback,
-						    PlayerStream_t *PlayerStream);
+											PlayerStream_t *PlayerStream);
 		stream_event_signal_callback RegisterEventSignalCallback(context_handle_t Context,
-									 stream_event_signal_callback EventSignalCallback);
+																 stream_event_signal_callback EventSignalCallback);
 };
 
 #endif

@@ -175,12 +175,12 @@ OutputTimerStatus_t OutputTimer_Audio_c::InitializeConfiguration(void)
 /// true value due to rounding.
 ///
 OutputTimerStatus_t OutputTimer_Audio_c::FrameDuration(void *ParsedAudioVideoDataParameters,
-						       unsigned long long *Duration)
+													   unsigned long long *Duration)
 {
 	ParsedAudioParameters_t *ParsedAudioParameters = (ParsedAudioParameters_t *)ParsedAudioVideoDataParameters;
 //
 	*Duration = ((unsigned long long) ParsedAudioParameters->SampleCount * 1000000ull) /
-		    (unsigned long long) ParsedAudioParameters->Source.SampleRateHz;
+				(unsigned long long) ParsedAudioParameters->Source.SampleRateHz;
 //
 	return OutputTimerNoError;
 }
@@ -242,9 +242,9 @@ OutputTimerStatus_t OutputTimer_Audio_c::FillOutFrameTimingRecord(
 		Configuration.MinimumManifestorLatency = LookupMinimumManifestorLatency(LastSampleRate);
 #if 0
 		report(severity_info, "OutputTimer_Audio_c::FillOutFrameTimingRecord - SampleRate = %d, CountMultiplier %d.%06d, CodedFrameRate %d.%06d\n",
-		       LastSampleRate,
-		       CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal(),
-		       CodedFrameRate.IntegerPart(), CodedFrameRate.RemainderDecimal());
+			   LastSampleRate,
+			   CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal(),
+			   CodedFrameRate.IntegerPart(), CodedFrameRate.RemainderDecimal());
 #endif
 	}
 	//
@@ -268,8 +268,8 @@ OutputTimerStatus_t OutputTimer_Audio_c::FillOutFrameTimingRecord(
 	if (SynchronizationCorrectionUnits != 0)
 	{
 		MaxAdjust = SynchronizationAtStartup ?
-			    SamplesInLastFrame :
-			    min((SamplesInLastFrame / 10), SynchronizationOneTenthCorrectionUnits);
+					SamplesInLastFrame :
+					min((SamplesInLastFrame / 10), SynchronizationOneTenthCorrectionUnits);
 		Adjust = min(MaxAdjust, SynchronizationCorrectionUnits);
 		AudioOutputTiming->DisplayCount += ExtendSamplesForSynchronization ? Adjust : -Adjust;
 		SynchronizationCorrectionUnits -= Adjust;
@@ -278,8 +278,8 @@ OutputTimerStatus_t OutputTimer_Audio_c::FillOutFrameTimingRecord(
 #if 0
 	if (SamplesInLastFrame != AudioOutputTiming->DisplayCount)
 		report(severity_info, "Timing - ORA = %d.%06d - Samples = %4d - DisplayCount = %4d\n",
-		       AudioOutputTiming->OutputRateAdjustment.IntegerPart(), AudioOutputTiming->OutputRateAdjustment.RemainderDecimal(),
-		       SamplesInLastFrame, AudioOutputTiming->DisplayCount);
+			   AudioOutputTiming->OutputRateAdjustment.IntegerPart(), AudioOutputTiming->OutputRateAdjustment.RemainderDecimal(),
+			   SamplesInLastFrame, AudioOutputTiming->DisplayCount);
 #endif
 	//
 	// Update derived timings, adjusting the decode time (for decode window porch control).
@@ -306,8 +306,8 @@ OutputTimerStatus_t OutputTimer_Audio_c::FillOutFrameTimingRecord(
 	//
 	Duration = Rational_t(1000000, ParsedAudioParameters->Source.SampleRateHz) * ParsedAudioParameters->SampleCount;
 	BlockDecodeTime = (DisplayFrameCount > DecodeFrameCount) ?
-			  RoundedLongLongIntegerPart(Duration * Rational_t(DisplayFrameCount, DecodeFrameCount)) :
-			  RoundedLongLongIntegerPart(Duration);
+					  RoundedLongLongIntegerPart(Duration * Rational_t(DisplayFrameCount, DecodeFrameCount)) :
+					  RoundedLongLongIntegerPart(Duration);
 	Configuration.FrameDecodeTime = max(BlockDecodeTime, Configuration.FrameDecodeTime);
 	//
 	// Apply an update to the next expected playback time, used to spot PTS jumps

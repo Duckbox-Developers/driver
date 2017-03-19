@@ -54,8 +54,8 @@ Date Modification Name
 //
 
 Buffer_Generic_c::Buffer_Generic_c(BufferManager_Generic_t Manager,
-				   BufferPool_Generic_t Pool,
-				   BufferDataDescriptor_t *Descriptor)
+								   BufferPool_Generic_t Pool,
+								   BufferDataDescriptor_t *Descriptor)
 {
 //
 	InitializationStatus = BufferError;
@@ -138,7 +138,7 @@ BufferStatus_t Buffer_Generic_c::AttachMetaData(
 	if (Descriptor->AllocationSource != NoAllocation)
 	{
 		Status = Pool->CheckMemoryParameters(Descriptor, false, Size, MemoryBlock, NULL, DeviceMemoryPartitionName,
-						     "Buffer_Generic_c::AttachMetaData", &ItemSize);
+											 "Buffer_Generic_c::AttachMetaData", &ItemSize);
 		if (Status != BufferNoError)
 			return Status;
 	}
@@ -169,7 +169,7 @@ BufferStatus_t Buffer_Generic_c::AttachMetaData(
 	if (Descriptor->AllocationSource != NoAllocation)
 	{
 		Status = Pool->AllocateMemoryBlock(Block, false, 0, NULL, MemoryBlock, NULL, DeviceMemoryPartitionName,
-						   "Buffer_Generic_c::AttachMetaData");
+										   "Buffer_Generic_c::AttachMetaData");
 		if (Status != BufferNoError)
 			return Status;
 	}
@@ -305,7 +305,7 @@ BufferStatus_t Buffer_Generic_c::ShrinkBuffer(unsigned int NewSize)
 //
 
 BufferStatus_t Buffer_Generic_c::ExtendBuffer(unsigned int *NewSize,
-					      bool ExtendUpwards)
+											  bool ExtendUpwards)
 {
 	AssertNonZeroReferenceCount("Buffer_Generic_c::ExtendBuffer");
 	return Pool->ExtendMemoryBlock(BufferBlock, NewSize, ExtendUpwards);
@@ -742,7 +742,7 @@ BufferStatus_t Buffer_Generic_c::GetMetaDataCount(unsigned int *Count)
 //
 
 BufferStatus_t Buffer_Generic_c::GetMetaDataList(unsigned int ArraySize,
-						 unsigned int *ArrayOfMetaDataTypes)
+												 unsigned int *ArrayOfMetaDataTypes)
 {
 	unsigned int i;
 	BlockDescriptor_t Block;
@@ -781,7 +781,7 @@ BufferStatus_t Buffer_Generic_c::GetOwnerCount(unsigned int *Count)
 //
 
 BufferStatus_t Buffer_Generic_c::GetOwnerList(unsigned int ArraySize,
-					      unsigned int *ArrayOfOwnerIdentifiers)
+											  unsigned int *ArrayOfOwnerIdentifiers)
 {
 	unsigned int i, j;
 //
@@ -836,10 +836,10 @@ void Buffer_Generic_c::Dump(unsigned int Flags)
 	if ((Flags & DumpBufferStates) != 0)
 	{
 		report(severity_info, "\tBuffer (index %2d) of type %04x - '%s'\n", Index, BufferBlock->Descriptor->Type,
-		       (BufferBlock->Descriptor->TypeName == NULL) ? "Unnamed" : BufferBlock->Descriptor->TypeName);
+			   (BufferBlock->Descriptor->TypeName == NULL) ? "Unnamed" : BufferBlock->Descriptor->TypeName);
 //
 		report(severity_info, "\t Current values Size %06x, Occupied %06x, References %d\n",
-		       BufferBlock->Size, DataSize, ReferenceCount);
+			   BufferBlock->Size, DataSize, ReferenceCount);
 		if (ReferenceCount != 0)
 		{
 			report(severity_info, "\t Current owners ");
@@ -856,19 +856,19 @@ void Buffer_Generic_c::Dump(unsigned int Flags)
 			if (!MetaData->AttachedToPool)
 				LocalMetaCount++;
 		report(severity_info, "\t %s specifically attached to this buffer.\n",
-		       (LocalMetaCount == 0) ? "There are no Meta data items" : "The following meta data items are");
+			   (LocalMetaCount == 0) ? "There are no Meta data items" : "The following meta data items are");
 		for (MetaData = ListOfMetaData;
 				MetaData != NULL;
 				MetaData = MetaData->Next)
 			if (!MetaData->AttachedToPool)
 				report(severity_info, "\t\t%04x - %s\n", MetaData->Descriptor->Type,
-				       (MetaData->Descriptor->TypeName == NULL) ? "Unnamed" : MetaData->Descriptor->TypeName);
+					   (MetaData->Descriptor->TypeName == NULL) ? "Unnamed" : MetaData->Descriptor->TypeName);
 		for (i = 0; i < MAX_ATTACHED_BUFFERS; i++)
 			if (AttachedBuffers[i] != NULL)
 			{
 				Descriptor = ((Buffer_Generic_c *)AttachedBuffers[i])->Pool->BufferDescriptor;
 				report(severity_info, "\t Buffer of type %04x - %s attached\n", Descriptor->Type,
-				       (Descriptor->TypeName == NULL) ? "Unnamed" : Descriptor->TypeName);
+					   (Descriptor->TypeName == NULL) ? "Unnamed" : Descriptor->TypeName);
 			}
 	}
 }
@@ -890,11 +890,11 @@ void Buffer_Generic_c::DumpToRelayFS(unsigned int id, unsigned int source, void 
 				{
 					if (TheAudioParameters->SampleCount > 0)
 						st_relayfs_write(id, source, (unsigned char *)BufferBlock->Address[UnCachedAddress],
-								 (unsigned int)(TheAudioParameters->SampleCount *
-										TheAudioParameters->Source.ChannelCount *
-										(TheAudioParameters->Source.BitsPerSample / 8)),
-								 0
-								);
+										 (unsigned int)(TheAudioParameters->SampleCount *
+														TheAudioParameters->Source.ChannelCount *
+														(TheAudioParameters->Source.BitsPerSample / 8)),
+										 0
+										);
 				}
 			}
 			break;
@@ -911,11 +911,11 @@ void Buffer_Generic_c::DumpToRelayFS(unsigned int id, unsigned int source, void 
 				if (BufferBlock->Address[CachedAddress])
 				{
 					st_relayfs_write(id, source, (unsigned char *)BufferBlock->Address[CachedAddress],
-							 (unsigned int)((TheVideoParameters->Content.Width *
-									 TheVideoParameters->Content.Height *
-									 4) / 3), //TODO: just ASSUMING SURF_YCBCR420MB for now
-							 &info
-							);
+									 (unsigned int)((TheVideoParameters->Content.Width *
+													 TheVideoParameters->Content.Height *
+													 4) / 3), //TODO: just ASSUMING SURF_YCBCR420MB for now
+									 &info
+									);
 				}
 			}
 			break;

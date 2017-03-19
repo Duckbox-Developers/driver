@@ -91,7 +91,7 @@ class Codec_MmeAudioVorbis_c : public Codec_MmeAudioStream_c
 		CodecStatus_t DumpSetStreamParameters(void *Parameters);
 		CodecStatus_t DumpDecodeParameters(void *Parameters);
 		void CallbackFromMME(MME_Event_t Event,
-				     MME_Command_t *CallbackData);
+							 MME_Command_t *CallbackData);
 #endif
 
 };

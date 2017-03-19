@@ -132,8 +132,8 @@ const char *DTSCoreSubStreamExtTypeName[7] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 
 FrameParserStatus_t FrameParser_AudioDtshd_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-							       DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-							       int GivenFrameSize)
+															   DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+															   int GivenFrameSize)
 {
 	int StreamIndex = 0, FrameSize = 0;
 	DtshdAudioParsedFrameHeader_t NextParsedFrameHeader;
@@ -155,13 +155,13 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseFrameHeader(unsigned char *Fr
 		}
 		// parse a single frame
 		Status = FrameParser_AudioDtshd_c::ParseSingleFrameHeader(NextFrameHeader,
-									  &NextParsedFrameHeader,
-									  &Bits,
-									  10,
-									  NextFrameHeader + 10,
-									  GivenFrameSize - 10 - StreamIndex,
-									  ParsingModel,
-									  SelectedAudioPresentation);
+																  &NextParsedFrameHeader,
+																  &Bits,
+																  10,
+																  NextFrameHeader + 10,
+																  GivenFrameSize - 10 - StreamIndex,
+																  ParsingModel,
+																  SelectedAudioPresentation);
 		if (Status != FrameParserNoError)
 		{
 			return (Status);
@@ -198,8 +198,8 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseFrameHeader(unsigned char *Fr
 			{
 				// copy the properties of the extension to the main properties structure
 				memcpy(&ParsedFrameHeader->NumberOfAssets,
-				       &NextParsedFrameHeader.NumberOfAssets,
-				       sizeof(DtshdAudioParsedFrameHeader_t) - offsetof(DtshdAudioParsedFrameHeader_t, NumberOfAssets));
+					   &NextParsedFrameHeader.NumberOfAssets,
+					   sizeof(DtshdAudioParsedFrameHeader_t) - offsetof(DtshdAudioParsedFrameHeader_t, NumberOfAssets));
 				// modify the core extension properties only if the core is present
 				if ((ParsedFrameHeader->NumberOfCoreSubStreams > 0) && (NextParsedFrameHeader.HasCoreExtensions))
 				{
@@ -270,21 +270,21 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseFrameHeader(unsigned char *Fr
 		if (FirstTime)
 		{
 			FRAME_TRACE("DTS stream properties: SamplingFreq: %d Hz, FrameSize %d, Nb Samples: %d\n",
-				    ParsedFrameHeader->SamplingFrequency,
-				    ParsedFrameHeader->Length,
-				    ParsedFrameHeader->NumberOfSamples);
+						ParsedFrameHeader->SamplingFrequency,
+						ParsedFrameHeader->Length,
+						ParsedFrameHeader->NumberOfSamples);
 			FRAME_TRACE("Core substreams: %d, Extension substreams: %d\n", nbCore, nbSub);
 			if (nbCore && nbSub)
 			{
 				FRAME_TRACE("DTS core substream properties: SamplingFreq: %d Hz, FrameSize %d, Nb Samples: %d\n",
-					    ParsedFrameHeader->CoreSamplingFrequency,
-					    ParsedFrameHeader->CoreSize,
-					    ParsedFrameHeader->CoreNumberOfSamples);
+							ParsedFrameHeader->CoreSamplingFrequency,
+							ParsedFrameHeader->CoreSize,
+							ParsedFrameHeader->CoreNumberOfSamples);
 			}
 			if (nbSub)
 			{
 				FRAME_TRACE("Number of assets in the extension %d: %d\n",
-					    DecodeExtensionId, ParsedFrameHeader->NumberOfAssets);
+							DecodeExtensionId, ParsedFrameHeader->NumberOfAssets);
 				for (int astIdx = 0; astIdx < ParsedFrameHeader->NumberOfAssets; astIdx++)
 				{
 					FRAME_TRACE("Type of Coding Component present in asset %d:\n", astIdx);
@@ -375,13 +375,13 @@ unsigned short FrameParser_AudioDtshd_c::CrcUpdate4BitsFast(unsigned char val, u
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioDtshd_c::ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-								     DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-								     BitStreamClass_c *Bits,
-								     unsigned int FrameHeaderLength,
-								     unsigned char *OtherFrameHeaderBytes,
-								     unsigned int RemainingFrameHeaderBytes,
-								     DtshdParseModel_t ParseModel,
-								     unsigned char SelectedAudioPresentation)
+																	 DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+																	 BitStreamClass_c *Bits,
+																	 unsigned int FrameHeaderLength,
+																	 unsigned char *OtherFrameHeaderBytes,
+																	 unsigned int RemainingFrameHeaderBytes,
+																	 DtshdParseModel_t ParseModel,
+																	 unsigned char SelectedAudioPresentation)
 {
 	Bits->SetPointer(FrameHeaderBytes);
 	unsigned int SyncWord = Bits->Get(32);
@@ -391,8 +391,8 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseSingleFrameHeader(unsigned ch
 	{
 		FrameParserStatus_t status;
 		status = FrameParser_AudioDtshd_c::ParseCoreHeader(Bits,
-								   ParsedFrameHeader,
-								   SyncWord);
+														   ParsedFrameHeader,
+														   SyncWord);
 		if (status != FrameParserNoError)
 			return status;
 		ParsedFrameHeader->Type = TypeDtshdCore;
@@ -452,7 +452,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseSingleFrameHeader(unsigned ch
 			}
 		}
 		else if ((ParseModel.ParseType == ParseExtended) ||
-				((ParseModel.ParseType == ParseSmart) && (ParseModel.ParseExtendedIndex == nuExtSSIndex)))
+				 ((ParseModel.ParseType == ParseSmart) && (ParseModel.ParseExtendedIndex == nuExtSSIndex)))
 		{
 			ParsedFrameHeader->ExtensionHeaderSize = nuExtSSHeaderSize;
 			FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader(Bits, &SamplingFrequency, ParsedFrameHeader, nuBits4ExSSFsize, SelectedAudioPresentation);
@@ -480,8 +480,8 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseSingleFrameHeader(unsigned ch
 /// \return a frame status
 
 FrameParserStatus_t FrameParser_AudioDtshd_c::ParseCoreHeader(BitStreamClass_c *Bits,
-							      DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-							      unsigned int SyncWord)
+															  DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+															  unsigned int SyncWord)
 {
 	unsigned int NumberOfPcmSampleBlocks, PrimaryFrameByteSize, CoreAudioSamplingFrequency;
 	int SkipBitsCount = (SyncWord == DTSHD_START_CODE_CORE_14_1) ? 2 : 0;
@@ -504,7 +504,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseCoreHeader(BitStreamClass_c *
 			 (NumberOfPcmSampleBlocks != 31) && (NumberOfPcmSampleBlocks != 63) && (NumberOfPcmSampleBlocks != 127)))
 	{
 		FRAME_ERROR("NumberOfPcmSampleBlocks out of range (%d)\n",
-			    NumberOfPcmSampleBlocks);
+					NumberOfPcmSampleBlocks);
 		return FrameParserError;
 	}
 	if (PrimaryFrameByteSize < 95 || PrimaryFrameByteSize > 16383)
@@ -527,10 +527,10 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseCoreHeader(BitStreamClass_c *
 /// \return void
 
 void FrameParser_AudioDtshd_c::ParseExtensionSubstreamAssetHeader(BitStreamClass_c *Bits,
-								  unsigned int *SamplingFrequency,
-								  DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-								  unsigned int nuBits4ExSSFsize,
-								  unsigned char SelectedAudioPresentation)
+																  unsigned int *SamplingFrequency,
+																  DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+																  unsigned int nuBits4ExSSFsize,
+																  unsigned char SelectedAudioPresentation)
 {
 	bool bStaticFieldsPresent = Bits->Get(1);
 	unsigned int nuNumAudioPresent, nuNumAssets;
@@ -1022,8 +1022,8 @@ unsigned int FrameParser_AudioDtshd_c::CountBitsSet_to_1(unsigned int ChannelMas
 /// \returns void
 
 void FrameParser_AudioDtshd_c::GetSubstreamOnlyNumberOfSamples(BitStreamClass_c *Bits,
-							       DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
-							       unsigned char *FrameHeaderBytes)
+															   DtshdAudioParsedFrameHeader_t *ParsedFrameHeader,
+															   unsigned char *FrameHeaderBytes)
 {
 	// set the pointer to the extension data (skip the header)
 	unsigned char *BasePtr = FrameHeaderBytes + ParsedFrameHeader->ExtensionHeaderSize;
@@ -1089,8 +1089,8 @@ void FrameParser_AudioDtshd_c::GetSubstreamOnlyNumberOfSamples(BitStreamClass_c 
 		case DTSHD_START_CODE_SUBSTREAM_CORE:
 		{
 			FrameParser_AudioDtshd_c::ParseCoreHeader(Bits,
-								  ParsedFrameHeader,
-								  DTSHD_START_CODE_CORE);
+													  ParsedFrameHeader,
+													  DTSHD_START_CODE_CORE);
 			ParsedFrameHeader->NumberOfSamples = ParsedFrameHeader->CoreNumberOfSamples;
 		}
 		break;
@@ -1177,7 +1177,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ReadHeaders(void)
 	if (ParsedFrameHeader.Length != BufferLength)
 	{
 		FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
-			    BufferLength, ParsedFrameHeader.Length);
+					BufferLength, ParsedFrameHeader.Length);
 		return FrameParserError;
 	}
 	FrameToDecode = true;
@@ -1361,7 +1361,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::GeneratePostDecodeParameterSetting
 	// no call to HandleUpdateStreamParameters() because UpdateStreamParameters is always false
 	FRAME_ASSERT(false == UpdateStreamParameters && NULL == StreamParametersBuffer);
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						ParsedFrameHeader.SamplingFrequency);
+											ParsedFrameHeader.SamplingFrequency);
 	//
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

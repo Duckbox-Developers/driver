@@ -70,20 +70,20 @@ class Demultiplexor_c : public BaseComponentClass_c
 		virtual DemultiplexorStatus_t DestroyContext(DemultiplexorContext_t Context) = 0;
 
 		virtual DemultiplexorStatus_t AddStream(DemultiplexorContext_t Context,
-							PlayerStream_t Stream,
-							unsigned int StreamIdentifier) = 0;
+												PlayerStream_t Stream,
+												unsigned int StreamIdentifier) = 0;
 
 		virtual DemultiplexorStatus_t RemoveStream(DemultiplexorContext_t Context,
-							   unsigned int StreamIdentifier) = 0;
+												   unsigned int StreamIdentifier) = 0;
 
 		virtual DemultiplexorStatus_t SwitchStream(DemultiplexorContext_t Context,
-							   PlayerStream_t Stream) = 0;
+												   PlayerStream_t Stream) = 0;
 
 		virtual DemultiplexorStatus_t InputJump(DemultiplexorContext_t Context) = 0;
 
 		virtual DemultiplexorStatus_t Demux(PlayerPlayback_t Playback,
-						    DemultiplexorContext_t Context,
-						    Buffer_t Buffer) = 0;
+											DemultiplexorContext_t Context,
+											Buffer_t Buffer) = 0;
 };
 
 // ---------------------------------------------------------------------

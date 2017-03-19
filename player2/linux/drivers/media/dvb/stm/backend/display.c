@@ -69,10 +69,10 @@ int DisplayInit(void)
 /*}}} */
 /*{{{ GetDisplayInfo*/
 int GetDisplayInfo(unsigned int Id,
-		   DeviceHandle_t *Device,
-		   unsigned int *DisplayPlaneId,
-		   unsigned int *OutputId,
-		   BufferLocation_t *BufferLocation)
+				   DeviceHandle_t *Device,
+				   unsigned int *DisplayPlaneId,
+				   unsigned int *OutputId,
+				   BufferLocation_t *BufferLocation)
 {
 	int i;
 	struct stmcore_display_pipeline_data *Pipeline;

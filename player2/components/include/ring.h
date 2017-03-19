@@ -60,7 +60,7 @@ class Ring_c
 
 		virtual RingStatus_t Insert(unsigned int Value) = 0;
 		virtual RingStatus_t Extract(unsigned int *Value,
-					     unsigned int BlockingPeriod = RING_NONE_BLOCKING) = 0;
+									 unsigned int BlockingPeriod = RING_NONE_BLOCKING) = 0;
 		virtual RingStatus_t Flush(void) = 0;
 		virtual bool NonEmpty(void) = 0;
 };

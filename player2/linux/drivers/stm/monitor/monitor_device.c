@@ -77,23 +77,23 @@ static const char *EventName(monitor_event_code_t Event)
 /*}}}*/
 /*{{{ prototypes*/
 static int MonitorOpen(struct inode *Inode,
-		       struct file *File);
+					   struct file *File);
 static int MonitorRelease(struct inode *Inode,
-			  struct file *File);
+						  struct file *File);
 static ssize_t MonitorRead(struct file *File,
-			   char __user *Buffer,
-			   size_t Count,
-			   loff_t *ppos);
+						   char __user *Buffer,
+						   size_t Count,
+						   loff_t *ppos);
 static ssize_t MonitorWrite(struct file *File,
-			    const char __user *Buffer,
-			    size_t Count,
-			    loff_t *ppos);
+							const char __user *Buffer,
+							size_t Count,
+							loff_t *ppos);
 static int MonitorIoctl(struct inode *Inode,
-			struct file *File,
-			unsigned int IoctlCode,
-			unsigned long Parameter);
+						struct file *File,
+						unsigned int IoctlCode,
+						unsigned long Parameter);
 static unsigned int MonitorPoll(struct file *File,
-				poll_table *Wait);
+								poll_table *Wait);
 
 /*}}}*/
 /*{{{ static data*/
@@ -210,7 +210,7 @@ static int MonitorIoctlRequestEvent(struct DeviceContext_s *Context, struct moni
 
 /*{{{ MonitorOpen*/
 static int MonitorOpen(struct inode *Inode,
-		       struct file *File)
+					   struct file *File)
 {
 	struct DeviceContext_s *Context = container_of(Inode->i_cdev, struct DeviceContext_s, CDev);
 	struct ModuleContext_s *ModuleContext = Context->ModuleContext;
@@ -234,7 +234,7 @@ static int MonitorOpen(struct inode *Inode,
 /*}}}*/
 /*{{{ MonitorRelease*/
 static int MonitorRelease(struct inode *Inode,
-			  struct file *File)
+						  struct file *File)
 {
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)File->private_data;
 	struct ModuleContext_s *ModuleContext = Context->ModuleContext;
@@ -347,9 +347,9 @@ static ssize_t MonitorWrite(struct file *File, const char __user *Buffer, size_t
 /*}}}*/
 /*{{{ MonitorIoctl*/
 static int MonitorIoctl(struct inode *Inode,
-			struct file *File,
-			unsigned int IoctlCode,
-			unsigned long Parameter)
+						struct file *File,
+						unsigned int IoctlCode,
+						unsigned long Parameter)
 {
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)File->private_data;
 	struct ModuleContext_s *ModuleContext = Context->ModuleContext;
@@ -399,11 +399,11 @@ static unsigned int MonitorPoll(struct file *File, poll_table *Wait)
 
 /*{{{ MonitorRecordEvent*/
 void MonitorRecordEvent(struct DeviceContext_s *Context,
-			unsigned int SourceId,
-			monitor_event_code_t EventCode,
-			unsigned long long TimeStamp,
-			unsigned int Parameters[MONITOR_PARAMETER_COUNT],
-			const char *Description)
+						unsigned int SourceId,
+						monitor_event_code_t EventCode,
+						unsigned long long TimeStamp,
+						unsigned int Parameters[MONITOR_PARAMETER_COUNT],
+						const char *Description)
 {
 	struct EventQueue_s *EventList;
 	unsigned int Next;
@@ -430,13 +430,13 @@ void MonitorRecordEvent(struct DeviceContext_s *Context,
 	EventRecord = &(EventList->Event[EventList->Write]);
 	if (Parameters)
 		EventRecord->RecordLength = snprintf((char *) & (EventRecord->EventString), MONITOR_EVENT_RECORD_SIZE,
-						     "%s at %lluus source %d (0x%x, 0x%x, 0x%x, 0x%x) \"%s\"\n",
-						     EventName(EventCode), TimeStamp, SourceId,
-						     Parameters[0], Parameters[1], Parameters[2], Parameters[3], Description);
+											 "%s at %lluus source %d (0x%x, 0x%x, 0x%x, 0x%x) \"%s\"\n",
+											 EventName(EventCode), TimeStamp, SourceId,
+											 Parameters[0], Parameters[1], Parameters[2], Parameters[3], Description);
 	else
 		EventRecord->RecordLength = snprintf((char *) & (EventRecord->EventString), MONITOR_EVENT_RECORD_SIZE,
-						     "%s at %lluus source %d \"%s\"\n",
-						     EventName(EventCode), TimeStamp, SourceId, Description);
+											 "%s at %lluus source %d \"%s\"\n",
+											 EventName(EventCode), TimeStamp, SourceId, Description);
 	EventRecord->EventString[MONITOR_EVENT_RECORD_SIZE - 1] = '\n';
 	if (EventRecord->RecordLength > MONITOR_EVENT_RECORD_SIZE)
 		EventRecord->RecordLength = MONITOR_EVENT_RECORD_SIZE;
@@ -453,8 +453,8 @@ void MonitorRecordEvent(struct DeviceContext_s *Context,
 #if defined (CONFIG_MONITOR)
 
 void MonitorSignalEvent(monitor_event_code_t EventCode,
-			unsigned int Parameters[MONITOR_PARAMETER_COUNT],
-			const char *Description)
+						unsigned int Parameters[MONITOR_PARAMETER_COUNT],
+						const char *Description)
 {
 	unsigned int DeviceId = 0;
 	struct DeviceContext_s *Context = GetDeviceContext(DeviceId);
@@ -465,11 +465,11 @@ void MonitorSignalEvent(monitor_event_code_t EventCode,
 		return;
 	}
 	MonitorRecordEvent(Context,
-			   0,
-			   EventCode,
-			   (unsigned long long)ktime_to_us(ktime_get()),
-			   Parameters,
-			   Description);
+					   0,
+					   EventCode,
+					   (unsigned long long)ktime_to_us(ktime_get()),
+					   Parameters,
+					   Description);
 }
 
 EXPORT_SYMBOL(MonitorSignalEvent);

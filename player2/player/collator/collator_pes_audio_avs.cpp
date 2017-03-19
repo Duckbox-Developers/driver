@@ -139,7 +139,7 @@ CollatorStatus_t Collator_PesAudioAvs_c::DecideCollatorNextStateAndGetLength(uns
 	// Having handled extension headers we can handle headers.
 	//
 	FPStatus = FrameParser_AudioAvs_c::ParseFrameHeader(StoredFrameHeader,
-							    &ParsedFrameHeader);
+														&ParsedFrameHeader);
 	if (FPStatus == FrameParserNoError)
 	{
 		*FrameLength = ParsedFrameHeader.Length;

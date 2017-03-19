@@ -108,8 +108,8 @@ CollatorStatus_t Collator_PesAudioEAc3_c::FindNextSyncWord(int *CodeOffset)
 			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
 		}
 		FrameParserStatus_t FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader(ElementaryPtr,
-											       &ParsedFrameHeader,
-											       true);
+																					   &ParsedFrameHeader,
+																					   true);
 		if (FPStatus == FrameParserNoError)
 		{
 			// the condition for synchronization is the following:
@@ -149,8 +149,8 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength(un
 	EAc3AudioParsedFrameHeader_t ParsedFrameHeader;
 	//
 	FPStatus = FrameParser_AudioEAc3_c::ParseSingleFrameHeader(StoredFrameHeader,
-								   &ParsedFrameHeader,
-								   false);
+															   &ParsedFrameHeader,
+															   false);
 	if (FPStatus == FrameParserNoError)
 	{
 		*FrameLength = ParsedFrameHeader.Length;
@@ -187,7 +187,7 @@ CollatorStatus_t Collator_PesAudioEAc3_c::DecideCollatorNextStateAndGetLength(un
 			else
 			{
 				COLLATOR_ERROR("Accumulated too many samples (%d of %d)\n",
-					       NbAccumulatedSamples, EAC3_NBSAMPLES_NEEDED);
+							   NbAccumulatedSamples, EAC3_NBSAMPLES_NEEDED);
 				Status = CollatorError;
 			}
 		}

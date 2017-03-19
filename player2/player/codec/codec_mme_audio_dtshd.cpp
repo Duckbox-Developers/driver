@@ -389,7 +389,7 @@ CodecStatus_t Codec_MmeAudioDtshd_c::ValidateDecodeContext(CodecBaseDecodeContex
 		if (Status.SamplingFreq > ACC_FS_reserved)
 		{
 			CODEC_ERROR("DTSHD audio decode wrong sampling freq returned: %d\n",
-				    firmware_freq);
+						firmware_freq);
 		}
 		if (firmware_freq != expected_freq)
 		{
@@ -400,7 +400,7 @@ CodecStatus_t Codec_MmeAudioDtshd_c::ValidateDecodeContext(CodecBaseDecodeContex
 		if ((ratio_freq != ratio_spl) && (Status.DecStatus == MME_SUCCESS))
 		{
 			CODEC_ERROR("DTSHD: Wrong ratio between expected and parsed frame porperties: nb samples: %d (expected %d), freq %d (expected %d)\n",
-				    firmware_spl, expected_spl, firmware_freq, expected_freq);
+						firmware_spl, expected_spl, firmware_freq, expected_freq);
 		}
 		else
 		{
@@ -412,20 +412,20 @@ CodecStatus_t Codec_MmeAudioDtshd_c::ValidateDecodeContext(CodecBaseDecodeContex
 		if ((Status.ElapsedTime / 1000) > period)
 		{
 			CODEC_TRACE("MME command took a lot of time (%d vs %d)\n",
-				    Status.ElapsedTime, period);
+						Status.ElapsedTime, period);
 		}
 	}
 	// Fill the parsed parameters with the DTS stream metadata
 	Codec_MmeAudioDtshd_c::FillStreamMetadata(AudioParameters, (MME_LxAudioDecoderFrameStatus_t *)&Status);
 	// Validate the extended status (without propagating errors)
 	(void) ValidatePcmProcessingExtendedStatus(Context,
-						   (MME_PcmProcessingFrameExtStatus_t *) &LocalDecodeContext->DecodeStatus.PcmStatus);
+											   (MME_PcmProcessingFrameExtStatus_t *) &LocalDecodeContext->DecodeStatus.PcmStatus);
 	if (TranscodeEnable)
 	{
 		TranscodeDtshdToDts(&LocalDecodeContext->BaseContext,
-				    LocalDecodeContext->TranscodeBufferIndex,
-				    &LocalDecodeContext->ContextFrameParameters,
-				    TranscodedBuffers);
+							LocalDecodeContext->TranscodeBufferIndex,
+							&LocalDecodeContext->ContextFrameParameters,
+							TranscodedBuffers);
 	}
 	return CodecNoError;
 }
@@ -437,7 +437,7 @@ CodecStatus_t Codec_MmeAudioDtshd_c::ValidateDecodeContext(CodecBaseDecodeContex
 /// \todo Can we make this code common between EAC3 and DTSHD handling.
 ///
 void Codec_MmeAudioDtshd_c::HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-						 MME_PcmProcessingStatusTemplate_t *PcmStatus)
+												 MME_PcmProcessingStatusTemplate_t *PcmStatus)
 {
 	ParsedAudioParameters_t *AudioParameters;
 	MME_LxAudioDecoderMixingMetadata_t *MixingMetadata = (MME_LxAudioDecoderMixingMetadata_t *) PcmStatus;
@@ -486,9 +486,9 @@ void Codec_MmeAudioDtshd_c::HandleMixingMetadata(CodecBaseDecodeContext_t *Conte
 /// the the transcoded buffer.
 ///
 void Codec_MmeAudioDtshd_c::TranscodeDtshdToDts(CodecBaseDecodeContext_t *BaseContext,
-						unsigned int TranscodeBufferIndex,
-						DtshdAudioFrameParameters_t *FrameParameters,
-						CodecBufferState_t *TranscodedBuffers)
+												unsigned int TranscodeBufferIndex,
+												DtshdAudioFrameParameters_t *FrameParameters,
+												CodecBufferState_t *TranscodedBuffers)
 {
 	MME_Command_t *Cmd = &BaseContext->MMECommand;
 	unsigned char *SrcPtr = (unsigned char *)Cmd->DataBuffers_p[0]->ScatterPages_p[0].Page_p;
@@ -597,9 +597,9 @@ CodecStatus_t Codec_MmeAudioDtshd_c::GetTranscodeBuffer(void)
 	// Obtain the interesting references to the buffer
 	//
 	CurrentTranscodeBuffer->ObtainDataReference(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferLength,
-						    NULL,
-						    (void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
-						    Configuration.AddressingMode);
+												NULL,
+												(void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
+												Configuration.AddressingMode);
 //
 	return CodecNoError;
 }
@@ -674,10 +674,10 @@ CodecStatus_t Codec_MmeAudioDtshd_c::GetTranscodedFrameBufferPool(BufferPool_t *
 #endif
 		//
 		Status = BufferManager->CreatePool(&TranscodedFramePool,
-						   TranscodedFrameBufferType,
-						   DTSHD_TRANSCODE_BUFFER_COUNT,
-						   DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT,
-						   TranscodedFrameMemory);
+										   TranscodedFrameBufferType,
+										   DTSHD_TRANSCODE_BUFFER_COUNT,
+										   DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT,
+										   TranscodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("GetTranscodedFrameBufferPool(%s) - Failed to create the pool.\n", Configuration.CodecName);

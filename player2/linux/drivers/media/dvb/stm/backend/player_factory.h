@@ -37,7 +37,7 @@ Date Modification Name
 #endif
 
 #define FACTORY_DEBUG(fmt, args...) ((void) (ENABLE_FACTORY_DEBUG && \
-					     (report(severity_note, "Player factory:%s: " fmt, __FUNCTION__, ##args), 0)))
+											 (report(severity_note, "Player factory:%s: " fmt, __FUNCTION__, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define FACTORY_TRACE(fmt, args...) (report(severity_note, "Player factory:%s: " fmt, __FUNCTION__, ##args))

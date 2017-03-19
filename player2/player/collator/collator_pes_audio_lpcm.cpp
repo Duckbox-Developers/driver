@@ -235,9 +235,9 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		// since Configuration.ExtendedHeaderLength is not the same as PrivateHeaderLength,
 		// so skip these bytes in this case
 		*FrameLength = PesPrivateToSkip +
-			       NextParsedFrameHeader.FirstAccessUnitPointer +
-			       FirstAccessUnitOffset[StreamType] -
-			       NextParsedFrameHeader.PrivateHeaderLength;
+					   NextParsedFrameHeader.FirstAccessUnitPointer +
+					   FirstAccessUnitOffset[StreamType] -
+					   NextParsedFrameHeader.PrivateHeaderLength;
 		PesPrivateToSkip = 0;
 		COLLATOR_TRACE("First packet: Skipping %d bytes\n", *FrameLength);
 		return (Status);
@@ -276,7 +276,7 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 		COLLATOR_DEBUG("Reading %d bytes (rest of frame)\n", *FrameLength);
 	}
 	else if ((AccumulatedFrameNumber >= NbAudioFramesToGlob[StreamType][NextParsedFrameHeader.SamplingFrequency1]) ||
-			IsPesPrivateDataAreaNew)
+			 IsPesPrivateDataAreaNew)
 	{
 		// flush the frame if we have already more than x accumulated frames
 		// or if some pda key parameters are new
@@ -320,8 +320,8 @@ CollatorStatus_t Collator_PesAudioLpcm_c::DecideCollatorNextStateAndGetLength(un
 			*FrameLength = NextParsedFrameHeader.AudioFrameSize;
 		}
 		COLLATOR_DEBUG("Read frame of size %d (total frames in this chunk: %d)\n",
-			       *FrameLength,
-			       AccumulatedFrameNumber);
+					   *FrameLength,
+					   AccumulatedFrameNumber);
 	}
 	return Status;
 }
@@ -357,8 +357,8 @@ CollatorStatus_t Collator_PesAudioLpcm_c::HandlePesPrivateData(unsigned char *Pe
 	}
 	NextParsedFrameHeader.Type = StreamType;
 	FPStatus = FrameParser_AudioLpcm_c::ParseFrameHeader(PesPrivateData,
-							     &NextParsedFrameHeader,
-							     PesPayloadLength + Configuration.ExtendedHeaderLength);
+														 &NextParsedFrameHeader,
+														 PesPayloadLength + Configuration.ExtendedHeaderLength);
 	if (FPStatus != FrameParserNoError)
 	{
 		IsPesPrivateDataAreaValid = false;

@@ -61,7 +61,7 @@ class RingGeneric_c : public Ring_c
 
 		RingStatus_t Insert(unsigned int Value);
 		RingStatus_t Extract(unsigned int *Value,
-				     unsigned int BlockingPeriod = OS_INFINITE);
+							 unsigned int BlockingPeriod = OS_INFINITE);
 		RingStatus_t Flush(void);
 		bool NonEmpty(void);
 };

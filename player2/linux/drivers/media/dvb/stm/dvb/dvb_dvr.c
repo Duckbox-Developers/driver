@@ -49,13 +49,13 @@ extern int stm_tsm_inject_user_data(const char __user *data, off_t size);
 #endif
 
 static int DvrOpen(struct inode *Inode,
-		   struct file *File);
+				   struct file *File);
 static int DvrRelease(struct inode *Inode,
-		      struct file *File);
+					  struct file *File);
 static ssize_t DvrWrite(struct file *File,
-			const char __user *Buffer,
-			size_t Count,
-			loff_t *ppos);
+						const char __user *Buffer,
+						size_t Count,
+						loff_t *ppos);
 
 static struct file_operations OriginalDvrFops;
 static struct file_operations DvrFops;
@@ -92,7 +92,7 @@ struct dvb_device *DvrInit(const struct file_operations *KernelDvrFops)
 }
 
 static int DvrOpen(struct inode *Inode,
-		   struct file *File)
+				   struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct dmxdev *DmxDevice = (struct dmxdev *)DvbDevice->priv;
@@ -133,7 +133,7 @@ static int DvrOpen(struct inode *Inode,
 }
 
 static int DvrRelease(struct inode *Inode,
-		      struct file *File)
+					  struct file *File)
 {
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct dmxdev *DmxDevice = (struct dmxdev *)DvbDevice->priv;
@@ -247,7 +247,7 @@ static ssize_t DvrWrite(struct file *File, const char __user *Buffer, size_t Cou
 			int NumberOfBuffers = 0;
 			int BuffersInUse = 0;
 			DvbStreamGetDecodeBufferPoolStatus(Context0->VideoStream,
-							   &NumberOfBuffers, &BuffersInUse);
+											   &NumberOfBuffers, &BuffersInUse);
 			if (BuffersInUse > 5)
 			{
 				// 40 milliseconds corresponds to one full frame

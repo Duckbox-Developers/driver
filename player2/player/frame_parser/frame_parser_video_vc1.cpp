@@ -420,7 +420,7 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ForPlayUpdateReferenceFrameList(void
 	if (ParsedFrameParameters->ReferenceFrame)
 	{
 		LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-			    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+					!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (LastField)
 		{
 			if (ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FOR_FORWARD_DECODE)
@@ -519,7 +519,7 @@ FrameParserStatus_t FrameParser_VideoVc1_c::RevPlayRemoveReferenceFrameFromList(
 {
 	bool LastField;
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if ((ReferenceFrameList.EntryCount != 0) && LastField)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
@@ -616,10 +616,10 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ReadHeaders(void)
 				{
 					unsigned char *Buff = &BufferData[ExtractStartCodeOffset(Code) - 12];
 					report(severity_info, "::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
-					       Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
-					       Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
-					       Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
-					       Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
+						   Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
+						   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
+						   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
+						   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
 				}
 				report(severity_error, "Unknown start code %x\n", ExtractStartCodeCode(Code));
 #endif
@@ -675,10 +675,10 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ReadSequenceHeader(void)
 		Bits.GetPosition(&Buff, &Bib);
 		Buff -= 8;
 		report(severity_info, "::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
-		       Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
-		       Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
-		       Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
-		       Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
+			   Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
+			   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
+			   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
+			   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
 	}
 #endif
 	if (Bits.Show(2) != VC1_ADVANCED_PROFILE)
@@ -817,10 +817,10 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ReadEntryPointHeader(void)
 		Bits.GetPosition(&Buff, &Bib);
 		Buff -= 8;
 		report(severity_info, "EPH::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
-		       Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
-		       Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
-		       Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
-		       Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
+			   Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
+			   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
+			   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
+			   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
 	}
 #endif
 	// StreamParameters->UpdatedSinceLastFrame = true; // Dont set this as it'll invoke MME global params
@@ -853,14 +853,14 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ReadEntryPointHeader(void)
 		if (Header->coded_width > SequenceHeader->max_coded_width)
 		{
 			report(severity_info, "FrameParser_VideoVc1_c::ReadEntryPointHeader: Warning Coded Width %d greater than MaxCodedWidth %d - using %d\n",
-			       Header->coded_width, SequenceHeader->max_coded_width, SequenceHeader->max_coded_width);
+				   Header->coded_width, SequenceHeader->max_coded_width, SequenceHeader->max_coded_width);
 			Header->coded_width = SequenceHeader->max_coded_width;
 		}
 		Header->coded_height = (Height * 2) + 2;
 		if (Header->coded_height > SequenceHeader->max_coded_height)
 		{
 			report(severity_info, "FrameParser_VideoVc1_c::ReadEntryPointHeader: Warning Coded Height %d greater than MaxCodedHeight %d - using %d\n",
-			       Header->coded_height, SequenceHeader->max_coded_height, SequenceHeader->max_coded_height);
+				   Header->coded_height, SequenceHeader->max_coded_height, SequenceHeader->max_coded_height);
 			Header->coded_height = SequenceHeader->max_coded_height;
 		}
 	}
@@ -967,10 +967,10 @@ FrameParserStatus_t FrameParser_VideoVc1_c::ReadPictureHeaderAdvancedProfile(uns
 		Bits.GetPosition(&Buff, &Bib);
 		Buff -= 8;
 		report(severity_info, "Picture %d::::%02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
-		       PictureNo++, Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
-		       Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
-		       Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
-		       Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
+			   PictureNo++, Buff[0], Buff[1], Buff[2], Buff[3], Buff[4], Buff[5], Buff[6], Buff[7],
+			   Buff[8], Buff[9], Buff[10], Buff[11], Buff[12], Buff[13], Buff[14], Buff[15],
+			   Buff[16], Buff[17], Buff[18], Buff[19], Buff[20], Buff[21], Buff[22], Buff[23],
+			   Buff[24], Buff[25], Buff[26], Buff[27], Buff[28], Buff[29], Buff[30], Buff[31]);
 	}
 #endif
 	Bits.GetPosition(&StartPointer, &StartBitsInByte);
@@ -1727,10 +1727,10 @@ FrameParserStatus_t FrameParser_VideoVc1_c::CommitFrameForDecode(void)
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		report(severity_error, "FrameParser_VideoVc1_c::CommitFrameForDecode - Illegal combination (%c %c %c %c).\n",
-		       (ProgressiveSequence ? 'T' : 'F'),
-		       (Frame ? 'T' : 'F'),
-		       (RepeatFirstField ? 'T' : 'F'),
-		       (TopFieldFirst ? 'T' : 'F'));
+			   (ProgressiveSequence ? 'T' : 'F'),
+			   (Frame ? 'T' : 'F'),
+			   (RepeatFirstField ? 'T' : 'F'),
+			   (TopFieldFirst ? 'T' : 'F'));
 		//return FrameParserHeaderSyntaxError;
 	}
 	//
@@ -1865,7 +1865,7 @@ FrameParserStatus_t FrameParser_VideoVc1_c::CommitFrameForDecode(void)
 		// This calculation assumes that the display aspect ratio is 1:1. Therefore to convert to the pixel aspect ratio we
 		// must multiply by the horizontal pixel count and divide by the vertical pixel count
 		ParsedVideoParameters->Content.PixelAspectRatio = Rational_t ((ParsedVideoParameters->Content.DisplayHeight * ParsedVideoParameters->Content.Width),
-									      (ParsedVideoParameters->Content.DisplayWidth * ParsedVideoParameters->Content.Height));
+																	  (ParsedVideoParameters->Content.DisplayWidth * ParsedVideoParameters->Content.Height));
 	}
 	else
 		ParsedVideoParameters->Content.PixelAspectRatio = 1;
@@ -1878,12 +1878,12 @@ FrameParserStatus_t FrameParser_VideoVc1_c::CommitFrameForDecode(void)
 #if 0
 	static unsigned int FrameNo = 0;
 	report(severity_info, "%s: (%d, %d, %d, %d) - CountsIndex %d Legal %d PanScanCount %d \n", __FUNCTION__,
-	       ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField,
-	       CountsIndex(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
-	       Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
-	       PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField));
+		   ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField,
+		   CountsIndex(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
+		   Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
+		   PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField));
 	report(severity_info, "%s: - DisplayCount0 %d DisplayCount1 %d, FrameNo %d\n", __FUNCTION__,
-	       ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1], FrameNo++);
+		   ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1], FrameNo++);
 #endif
 	ParsedVideoParameters->PanScan.Count = PanAndScanCount;
 	for (i = 0; i < PanAndScanCount; i++)

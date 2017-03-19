@@ -97,42 +97,42 @@ class BufferPool_Generic_c : public BufferPool_c
 		void FreeUpABuffer(Buffer_Generic_t Buffer);
 
 		BufferStatus_t CheckMemoryParameters(BufferDataDescriptor_t *Descriptor,
-						     bool ArrayAllocate,
-						     unsigned int Size,
-						     void *MemoryPool,
-						     void *ArrayOfMemoryBlocks,
-						     char *MemoryPartitionName,
-						     const char *Caller,
-						     unsigned int *ItemSize = NULL);
+											 bool ArrayAllocate,
+											 unsigned int Size,
+											 void *MemoryPool,
+											 void *ArrayOfMemoryBlocks,
+											 char *MemoryPartitionName,
+											 const char *Caller,
+											 unsigned int *ItemSize = NULL);
 
 		BufferStatus_t AllocateMemoryBlock(BlockDescriptor_t Block,
-						   bool ArrayAllocate,
-						   unsigned int Index,
-						   Allocator_c *PoolAllocator,
-						   void *MemoryPool,
-						   void *ArrayOfMemoryBlocks,
-						   char *MemoryPartitionName,
-						   const char *Caller,
-						   bool RequiredSizeIsLowerBound = false);
+										   bool ArrayAllocate,
+										   unsigned int Index,
+										   Allocator_c *PoolAllocator,
+										   void *MemoryPool,
+										   void *ArrayOfMemoryBlocks,
+										   char *MemoryPartitionName,
+										   const char *Caller,
+										   bool RequiredSizeIsLowerBound = false);
 
 		BufferStatus_t DeAllocateMemoryBlock(BlockDescriptor_t Block);
 
 		BufferStatus_t ShrinkMemoryBlock(BlockDescriptor_t Block,
-						 unsigned int NewSize);
+										 unsigned int NewSize);
 
 		BufferStatus_t ExtendMemoryBlock(BlockDescriptor_t Block,
-						 unsigned int *NewSize,
-						 bool ExtendUpwards);
+										 unsigned int *NewSize,
+										 bool ExtendUpwards);
 
 	public:
 
 		BufferPool_Generic_c(BufferManager_Generic_t Manager,
-				     BufferDataDescriptor_t *Descriptor,
-				     unsigned int NumberOfBuffers,
-				     unsigned int Size,
-				     void *MemoryPool[3],
-				     void *ArrayOfMemoryBlocks[][3],
-				     char *DeviceMemoryPartitionName);
+							 BufferDataDescriptor_t *Descriptor,
+							 unsigned int NumberOfBuffers,
+							 unsigned int Size,
+							 void *MemoryPool[3],
+							 void *ArrayOfMemoryBlocks[][3],
+							 char *DeviceMemoryPartitionName);
 
 		~BufferPool_Generic_c(void);
 
@@ -141,10 +141,10 @@ class BufferPool_Generic_c : public BufferPool_c
 		//
 
 		BufferStatus_t AttachMetaData(MetaDataType_t Type,
-					      unsigned int Size = UNSPECIFIED_SIZE,
-					      void *MemoryPool = NULL,
-					      void *ArrayOfMemoryBlocks[] = NULL,
-					      char *DeviceMemoryPartitionName = NULL);
+									  unsigned int Size = UNSPECIFIED_SIZE,
+									  void *MemoryPool = NULL,
+									  void *ArrayOfMemoryBlocks[] = NULL,
+									  char *DeviceMemoryPartitionName = NULL);
 
 		BufferStatus_t DetachMetaData(MetaDataType_t Type);
 
@@ -153,10 +153,10 @@ class BufferPool_Generic_c : public BufferPool_c
 		//
 
 		BufferStatus_t GetBuffer(Buffer_t *Buffer,
-					 unsigned int OwnerIdentifier = UNSPECIFIED_OWNER,
-					 unsigned int RequiredSize = UNSPECIFIED_SIZE,
-					 bool NonBlocking = false,
-					 bool RequiredSizeIsLowerBound = false);
+								 unsigned int OwnerIdentifier = UNSPECIFIED_OWNER,
+								 unsigned int RequiredSize = UNSPECIFIED_SIZE,
+								 bool NonBlocking = false,
+								 bool RequiredSizeIsLowerBound = false);
 
 		BufferStatus_t AbortBlockingGetBuffer(void);
 
@@ -169,19 +169,19 @@ class BufferPool_Generic_c : public BufferPool_c
 		BufferStatus_t GetType(BufferType_t *Type);
 
 		BufferStatus_t GetPoolUsage(unsigned int *BuffersInPool,
-					    unsigned int *BuffersWithNonZeroReferenceCount = NULL,
-					    unsigned int *MemoryInPool = NULL,
-					    unsigned int *MemoryAllocated = NULL,
-					    unsigned int *MemoryInUse = NULL,
-					    unsigned int *LargestFreeMemoryBlock = NULL);
+									unsigned int *BuffersWithNonZeroReferenceCount = NULL,
+									unsigned int *MemoryInPool = NULL,
+									unsigned int *MemoryAllocated = NULL,
+									unsigned int *MemoryInUse = NULL,
+									unsigned int *LargestFreeMemoryBlock = NULL);
 
 		BufferStatus_t CountBuffersReferencedBy(
 			unsigned int OwnerIdentifier,
 			unsigned int *Count);
 
 		BufferStatus_t GetAllUsedBuffers(unsigned int ArraySize,
-						 Buffer_t *ArrayOfBuffers,
-						 unsigned int OwnerIdentifier);
+										 Buffer_t *ArrayOfBuffers,
+										 unsigned int OwnerIdentifier);
 
 		//
 		// Status dump/reporting

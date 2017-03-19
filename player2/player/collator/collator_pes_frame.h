@@ -62,10 +62,10 @@ class Collator_PesFrame_c : public Collator_Pes_c
 		Collator_PesFrame_c();
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false,
-				       unsigned int *DataLengthRemaining = NULL);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false,
+							   unsigned int *DataLengthRemaining = NULL);
 
 		CollatorStatus_t InternalFrameFlush(bool FlushedByStreamTerminate);
 		CollatorStatus_t InternalFrameFlush(void);

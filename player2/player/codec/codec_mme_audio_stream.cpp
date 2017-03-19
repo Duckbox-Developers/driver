@@ -239,9 +239,9 @@ CodecStatus_t Codec_MmeAudioStream_c::RegisterOutputBufferRing(Ring_t Ring)
 		// Get the memory and Create the pool with it
 #if __KERNEL__
 		Status = PartitionAllocatorOpen(&TransformCodedFrameMemoryDevice,
-						Configuration.TranscodedMemoryPartitionName,
-						CodedMemorySize,
-						true);
+										Configuration.TranscodedMemoryPartitionName,
+										CodedMemorySize,
+										true);
 		if (Status != allocator_ok)
 		{
 			CODEC_ERROR("(%s) - Failed to allocate memory\n", Configuration.CodecName);
@@ -258,7 +258,7 @@ CodecStatus_t Codec_MmeAudioStream_c::RegisterOutputBufferRing(Ring_t Ring)
 		//Configuration.CodedMemorySize = 4*1024*1024;
 #endif
 		Status = BufferManager->CreatePool(&TransformCodedFramePool, CodedFrameBufferType,
-						   MAX_DECODE_BUFFERS, CodedMemorySize, TransformCodedFrameMemory);
+										   MAX_DECODE_BUFFERS, CodedMemorySize, TransformCodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("(%s) - Failed to create the coded frame pool.\n", Configuration.CodecName);
@@ -447,7 +447,7 @@ CodecStatus_t Codec_MmeAudioStream_c::SendMMEDecodeCommand(void)
 	if (Status == BufferNoError)
 	{
 		Status = AttachedCodedDataBuffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersType,
-									  (void **)(&ParsedFrameParams));
+																  (void **)(&ParsedFrameParams));
 		//CODEC_TRACE ("%s (%llx,%llx)\n", __FUNCTION__, ParsedFrameParams->NormalizedPlaybackTime, ParsedFrameParams->NativePlaybackTime);
 		if (Status == BufferNoError)
 		{
@@ -569,7 +569,7 @@ CodecStatus_t Codec_MmeAudioStream_c::ValidateDecodeContext(CodecBaseDecodeConte
 	if (PlayerStatus == PlayerNoError)
 	{
 		long long CalculatedDelta = ((unsigned long long)AudioParameters->SampleCount * 1000000ull) /
-					    ((unsigned long long)AudioParameters->Source.SampleRateHz);
+									((unsigned long long)AudioParameters->Source.SampleRateHz);
 		// post-decode the DTS isn't interesting (especially given we had to fiddle with it in the
 		// frame parser) so we discard it entirely rather then extracting it from the codec's reply.
 		DecodedFrameParsedFrameParameters->NativeDecodeTime = INVALID_TIME;
@@ -607,10 +607,10 @@ CodecStatus_t Codec_MmeAudioStream_c::ValidateDecodeContext(CodecBaseDecodeConte
 			if (DeltaDelta < -PtsJitterTollerenceThreshold || DeltaDelta > PtsJitterTollerenceThreshold)
 			{
 				CODEC_ERROR("(%s)Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld got %lld )\n",
-					    Configuration.CodecName,
-					    LastNormalizedPlaybackTime + CalculatedDelta,
-					    DecodedFrameParsedFrameParameters->NormalizedPlaybackTime,
-					    CalculatedDelta, RealDelta);
+							Configuration.CodecName,
+							LastNormalizedPlaybackTime + CalculatedDelta,
+							DecodedFrameParsedFrameParameters->NormalizedPlaybackTime,
+							CalculatedDelta, RealDelta);
 			}
 		}
 		LastNormalizedPlaybackTime = DecodedFrameParsedFrameParameters->NormalizedPlaybackTime;
@@ -710,7 +710,7 @@ CodecStatus_t Codec_MmeAudioStream_c::AbortMMECommands(BufferPool_t CommandConte
 			if (Status != BufferNoError)
 			{
 				CODEC_ERROR("(%s) Could not get data reference for in-use buffer at %p\n", Configuration.CodecName,
-					    AllocatedBuffers[i]);
+							AllocatedBuffers[i]);
 				return CodecError;
 			}
 			CODEC_TRACE("Selected command %08x\n", OutstandingCommandContexts[i]->MMECommand.CmdStatus.CmdId);
@@ -754,10 +754,10 @@ CodecStatus_t Codec_MmeAudioStream_c::AbortMMECommands(BufferPool_t CommandConte
 				if (MME_INVALID_ARGUMENT &&
 						((Command.CmdStatus.State == MME_COMMAND_COMPLETED) || (Command.CmdStatus.State == MME_COMMAND_FAILED)))
 					CODEC_TRACE("Ignored error during abort (command %08x already complete)\n",
-						    Command.CmdStatus.CmdId);
+								Command.CmdStatus.CmdId);
 				else
 					CODEC_ERROR("(%s) Cannot issue abort on command %08x (%d)\n", Configuration.CodecName,
-						    Command.CmdStatus.CmdId, Error);
+								Command.CmdStatus.CmdId, Error);
 			}
 		}
 		// Allow a little time for the co-processor to react
@@ -813,12 +813,12 @@ void Codec_MmeAudioStream_c::CallbackFromMME(MME_Event_t Event, MME_Command_t *C
 {
 	CodecBaseDecodeContext_t *DecodeContext;
 	CODEC_DEBUG("Callback! CmdId %x CmdCode %s State %d Error %d\n",
-		    CallbackData->CmdStatus.CmdId,
-		    CallbackData->CmdCode == MME_SET_GLOBAL_TRANSFORM_PARAMS ? "MME_SET_GLOBAL_TRANSFORM_PARAMS" :
-		    CallbackData->CmdCode == MME_SEND_BUFFERS ? "MME_SEND_BUFFERS" :
-		    CallbackData->CmdCode == MME_TRANSFORM ? "MME_TRANSFORM" : "UNKNOWN",
-		    CallbackData->CmdStatus.State,
-		    CallbackData->CmdStatus.Error);
+				CallbackData->CmdStatus.CmdId,
+				CallbackData->CmdCode == MME_SET_GLOBAL_TRANSFORM_PARAMS ? "MME_SET_GLOBAL_TRANSFORM_PARAMS" :
+				CallbackData->CmdCode == MME_SEND_BUFFERS ? "MME_SEND_BUFFERS" :
+				CallbackData->CmdCode == MME_TRANSFORM ? "MME_TRANSFORM" : "UNKNOWN",
+				CallbackData->CmdStatus.State,
+				CallbackData->CmdStatus.Error);
 	Codec_MmeBase_c::CallbackFromMME(Event, CallbackData);
 	//
 	// Switch to perform appropriate actions per command
@@ -1078,8 +1078,8 @@ void Codec_MmeAudioStream_c::TransformThread(void)
 		{
 			CODEC_TRACE("Commands prepared %d, CommandsCompleted %d)\n", MMECommandPreparedCount, MMECommandCompletedCount);
 			CODEC_TRACE("SendBuffers %d, %d, Transforms %d, %d, \n",
-				    SendBuffersCommandsIssued, SendBuffersCommandsCompleted,
-				    TransformCommandsIssued, TransformCommandsCompleted);
+						SendBuffersCommandsIssued, SendBuffersCommandsCompleted,
+						TransformCommandsIssued, TransformCommandsCompleted);
 			HighWatermarkOfDiscardDecodesUntil = DiscardDecodesUntil;
 			Status = AbortMMECommands(TransformContextPool);
 			if (Status != CodecNoError)

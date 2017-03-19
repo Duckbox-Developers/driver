@@ -173,9 +173,9 @@ class FrameParser_Video_c : public FrameParser_Base_c
 
 		virtual FrameParserStatus_t InitializePostDecodeParameterSettings(void);
 		virtual void CalculateFrameIndexAndPts(ParsedFrameParameters_t *ParsedFrame,
-						       ParsedVideoParameters_t *ParsedVideo);
+											   ParsedVideoParameters_t *ParsedVideo);
 		virtual void CalculateDts(ParsedFrameParameters_t *ParsedFrame,
-					  ParsedVideoParameters_t *ParsedVideo);
+								  ParsedVideoParameters_t *ParsedVideo);
 
 		//
 		// Extensions to the class to be fulfilled by my inheritors,

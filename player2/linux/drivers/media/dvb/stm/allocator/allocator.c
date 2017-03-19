@@ -198,7 +198,7 @@ static OSDEV_MmapEntrypoint(AllocatorMmap)
 // The ioctl function to handle allocating the memory
 
 static OSDEV_Status_t AllocatorIoctlAllocateData(AllocatorContext_t *AllocatorContext,
-						 unsigned int ParameterAddress)
+												 unsigned int ParameterAddress)
 {
 	allocator_ioctl_allocate_t params;
 #if !defined(MULTICOM324)
@@ -211,7 +211,7 @@ static OSDEV_Status_t AllocatorIoctlAllocateData(AllocatorContext_t *AllocatorCo
 	memcpy(AllocatorContext->PartitionName, params.PartitionName, ALLOCATOR_MAX_PARTITION_NAME_SIZE);
 //
 	AllocatorContext->Memory = OSDEV_MallocPartitioned(AllocatorContext->PartitionName,
-							   AllocatorContext->Size);
+													   AllocatorContext->Size);
 	if (AllocatorContext->Memory == NULL)
 	{
 		OSDEV_Print("AllocatorIoctlAllocateData : Unable to allocate memory\n");
@@ -228,14 +228,14 @@ static OSDEV_Status_t AllocatorIoctlAllocateData(AllocatorContext_t *AllocatorCo
 	AllocatorContext->UnCachedAddress = (unsigned char *)OSDEV_IOReMap((unsigned int)AllocatorContext->PhysicalAddress, AllocatorContext->Size);
 #if !defined(MULTICOM324)
 	IcsErr = ICS_region_add(AllocatorContext->CachedAddress, AllocatorContext->PhysicalAddress, AllocatorContext->Size,
-				ICS_CACHED, ics_cpu_mask(), &AllocatorContext->CachedRegion);
+							ICS_CACHED, ics_cpu_mask(), &AllocatorContext->CachedRegion);
 	if (IcsErr != ICS_SUCCESS)
 	{
 		OSDEV_Print("AllocatorIoctlAllocateData : - Unable to allocate Cached ICS region.\n");
 		return OSDEV_Error;
 	}
 	IcsErr = ICS_region_add(AllocatorContext->UnCachedAddress, AllocatorContext->PhysicalAddress, AllocatorContext->Size,
-				ICS_UNCACHED, ics_cpu_mask(), &AllocatorContext->UnCachedRegion);
+							ICS_UNCACHED, ics_cpu_mask(), &AllocatorContext->UnCachedRegion);
 	if (IcsErr != ICS_SUCCESS)
 	{
 		OSDEV_Print("AllocatorIoctlAllocateData : - Unable to allocate Uncached ICS region.\n");

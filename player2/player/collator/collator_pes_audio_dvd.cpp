@@ -100,18 +100,18 @@ void Collator_PesAudioDvd_c::AdjustDvdSyncWordPredictionAfterConsumingData(int A
 {
 	if (Adjustment > 0)
 		COLLATOR_ERROR("Probably implementation error - positive adjustment requested (%d)\n",
-			       Adjustment);
+					   Adjustment);
 	if (-Adjustment > SyncWordPrediction)
 		SyncWordPrediction = INVALID_PREDICTION;
 	if (SyncWordPrediction != WILDCARD_PREDICTION && SyncWordPrediction != INVALID_PREDICTION)
 	{
 		COLLATOR_DEBUG("Adjusting prediction from %d to %d\n",
-			       SyncWordPrediction, SyncWordPrediction + Adjustment);
+					   SyncWordPrediction, SyncWordPrediction + Adjustment);
 		SyncWordPrediction += Adjustment;
 	}
 	else
 		COLLATOR_DEBUG("Prediciton is %s - no adjustment made\n",
-			       (SyncWordPrediction == WILDCARD_PREDICTION ? "wildcarded" : "invalid"));
+					   (SyncWordPrediction == WILDCARD_PREDICTION ? "wildcarded" : "invalid"));
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -187,7 +187,7 @@ void Collator_PesAudioDvd_c::VerifyDvdSyncWordPrediction(int Offset)
 		if (--RemainingWildcardsPermitted < 0)
 		{
 			COLLATOR_TRACE("Having trouble re-locking, %s DVD wildcard mode.\n",
-				       (PassPesPrivateDataToElementaryStreamHandler ? "entering" : "leaving"));
+						   (PassPesPrivateDataToElementaryStreamHandler ? "entering" : "leaving"));
 			PassPesPrivateDataToElementaryStreamHandler = !PassPesPrivateDataToElementaryStreamHandler;
 			// having switched modes we can reset our counter.
 			RemainingWildcardsPermitted = MaxWildcardsPermitted;

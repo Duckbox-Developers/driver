@@ -151,7 +151,7 @@ CollatorStatus_t Collator_Pes_c::DiscardAccumulatedData(void)
 //
 
 CollatorStatus_t Collator_Pes_c::InputJump(bool SurplusDataInjected,
-					   bool ContinuousReverseJump)
+										   bool ContinuousReverseJump)
 {
 	CollatorStatus_t Status;
 //
@@ -454,16 +454,16 @@ CollatorStatus_t Collator_Pes_c::ReadPesHeader(void)
 				M1 = PlaybackTime < LastPts;
 				T1 = M0 ? (LastPts - PlaybackTime) : (PlaybackTime - LastPts);
 				report(severity_info, "Collator PTS %d - %2d:%02d:%02d.%03d - %016llx - %c%lld - %c%lld\n",
-				       Configuration.GenerateStartCodeList,
-				       (MilliSeconds / 3600000),
-				       ((MilliSeconds / 60000) % 60),
-				       ((MilliSeconds / 1000) % 60),
-				       (MilliSeconds % 1000),
-				       PlaybackTime,
-				       (M0 ? '-' : ' '),
-				       ((T0 * 300) / 27),
-				       (M1 ? '-' : ' '),
-				       ((T1 * 300) / 27));
+					   Configuration.GenerateStartCodeList,
+					   (MilliSeconds / 3600000),
+					   ((MilliSeconds / 60000) % 60),
+					   ((MilliSeconds / 1000) % 60),
+					   (MilliSeconds % 1000),
+					   PlaybackTime,
+					   (M0 ? '-' : ' '),
+					   ((T0 * 300) / 27),
+					   (M1 ? '-' : ' '),
+					   ((T1 * 300) / 27));
 				LastPts = PlaybackTime;
 			}
 #endif

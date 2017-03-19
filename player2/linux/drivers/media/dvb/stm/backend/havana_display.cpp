@@ -55,10 +55,10 @@ HavanaDisplay_c::~HavanaDisplay_c(void)
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaDisplay_c::GetManifestor(class HavanaPlayer_c *HavanaPlayer,
-					      char *Media,
-					      char *Encoding,
-					      unsigned int SurfaceId,
-					      class Manifestor_c **Manifestor)
+											  char *Media,
+											  char *Encoding,
+											  unsigned int SurfaceId,
+											  class Manifestor_c **Manifestor)
 {
 	HavanaStatus_t Status = HavanaNoError;
 	//DISPLAY_DEBUG("%p\n", this->Manifestor);
@@ -119,8 +119,8 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor(class HavanaPlayer_c *HavanaPlayer
 				return HavanaNoMemory;
 			}
 		}
+		//}}}
 	}
-	//}}}
 	else if (strcmp(Media, BACKEND_VIDEO_ID) == 0)
 	{
 		class Manifestor_Video_c *VideoManifestor;
@@ -199,8 +199,8 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor(class HavanaPlayer_c *HavanaPlayer
 		Partition = "BPA2_Region1";
 #endif
 		DecodeBufferParameters.BufferConfiguration.TotalBufferMemory = (SurfaceId == DISPLAY_ID_MAIN) ?
-									       PRIMARY_VIDEO_BUFFER_MEMORY :
-									       SECONDARY_VIDEO_BUFFER_MEMORY;
+																	   PRIMARY_VIDEO_BUFFER_MEMORY :
+																	   SECONDARY_VIDEO_BUFFER_MEMORY;
 		if (strcmp(Encoding, "dvp") == 0)
 		{
 			DecodeBufferParameters.BufferConfiguration.TotalBufferMemory = AVR_VIDEO_BUFFER_MEMORY;
@@ -222,10 +222,10 @@ HavanaStatus_t HavanaDisplay_c::GetManifestor(class HavanaPlayer_c *HavanaPlayer
 			DecodeBufferParameters.BufferConfiguration.TotalBufferMemory /= 2;
 		}
 		HAVANA_DEBUG("Will allocate upto %d buffers of type %d out of %08x bytes from the %s partition\n",
-			     DecodeBufferParameters.BufferConfiguration.MaxBufferCount,
-			     DecodeBufferParameters.BufferConfiguration.DecodedBufferFormat,
-			     DecodeBufferParameters.BufferConfiguration.TotalBufferMemory,
-			     Partition);
+					 DecodeBufferParameters.BufferConfiguration.MaxBufferCount,
+					 DecodeBufferParameters.BufferConfiguration.DecodedBufferFormat,
+					 DecodeBufferParameters.BufferConfiguration.TotalBufferMemory,
+					 Partition);
 		ManifestorStatus = VideoManifestor->SetModuleParameters(sizeof(ManifestorParameterBlock_t), &DecodeBufferParameters);
 		if (ManifestorStatus != ManifestorNoError)
 		{

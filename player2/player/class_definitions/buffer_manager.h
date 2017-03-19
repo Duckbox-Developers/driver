@@ -101,8 +101,8 @@ class BufferManager_c : public BaseComponentClass_c
 			BufferType_t *Type) = 0;
 
 		virtual BufferStatus_t GetDescriptor(BufferType_t Type,
-						     BufferPredefinedType_t RequiredKind,
-						     BufferDataDescriptor_t **Descriptor) = 0;
+											 BufferPredefinedType_t RequiredKind,
+											 BufferDataDescriptor_t **Descriptor) = 0;
 
 		//
 		// Create/destroy a pool of buffers rather than overload the create function,
@@ -112,12 +112,12 @@ class BufferManager_c : public BaseComponentClass_c
 		//
 
 		virtual BufferStatus_t CreatePool(BufferPool_t *Pool,
-						  BufferType_t Type,
-						  unsigned int NumberOfBuffers = UNRESTRICTED_NUMBER_OF_BUFFERS,
-						  unsigned int Size = UNSPECIFIED_SIZE,
-						  void *MemoryPool[3] = NULL,
-						  void *ArrayOfMemoryBlocks[][3] = NULL,
-						  char *DeviceMemoryPartitionName = NULL) = 0;
+										  BufferType_t Type,
+										  unsigned int NumberOfBuffers = UNRESTRICTED_NUMBER_OF_BUFFERS,
+										  unsigned int Size = UNSPECIFIED_SIZE,
+										  void *MemoryPool[3] = NULL,
+										  void *ArrayOfMemoryBlocks[][3] = NULL,
+										  char *DeviceMemoryPartitionName = NULL) = 0;
 
 		virtual BufferStatus_t DestroyPool(BufferPool_t Pool) = 0;
 

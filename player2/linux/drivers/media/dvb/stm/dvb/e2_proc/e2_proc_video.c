@@ -87,11 +87,11 @@ extern void switch_video_command_kernel(char *kbuf);
  */
 
 extern int DisplayCreate(char *Media,
-			 unsigned int SurfaceId);
+						 unsigned int SurfaceId);
 extern int DvbDisplayDelete(char *Media,
-			    unsigned int SurfaceId);
+							unsigned int SurfaceId);
 extern int isDisplayCreated(char *Media,
-			    unsigned int SurfaceId);
+							unsigned int SurfaceId);
 
 /* FIXME Header ? */
 #define SAAIOGREG 1 /* read registers */
@@ -187,24 +187,24 @@ static struct Modes
 	},
 
 	{
-		16, "1080p60", 1920, 1080, 1920, 1080, 16, 6734, 148,  88, 36, 4, 44, 5,
+		16, "1080p60", 1920, 1080, 1920, 1080, 16, 6734, 148, 88, 36, 4, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_CONUPDATE
 	},
 	{
-		15, "1080p59", 1920, 1080, 1920, 1080, 16, 6741, 148,  88, 36, 4, 44, 5,
+		15, "1080p59", 1920, 1080, 1920, 1080, 16, 6741, 148, 88, 36, 4, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_CONUPDATE
 	},
 	{
-		14, "1080p50", 1920, 1080, 1920, 1080, 16, 6734, 148,  528, 36, 4, 44, 5,
+		14, "1080p50", 1920, 1080, 1920, 1080, 16, 6734, 148, 528, 36, 4, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_CONUPDATE
 	},
 
 	{
-		13, "1080p30", 1920, 1080, 1920, 1080, 16, 13468, 148,  88, 36, 4, 44, 5,
+		13, "1080p30", 1920, 1080, 1920, 1080, 16, 13468, 148, 88, 36, 4, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_CONUPDATE
 	},
 	{
-		12, "1080p29", 1920, 1080, 1920, 1080, 16, 13481, 148,  88, 36, 4, 44, 5,
+		12, "1080p29", 1920, 1080, 1920, 1080, 16, 13481, 148, 88, 36, 4, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_CONUPDATE
 	},
 	{
@@ -221,11 +221,11 @@ static struct Modes
 	},
 
 	{
-		8, "1080i60", 1920, 1080, 1920, 1080, 16, 13468, 148,  88, 35, 5, 44, 5,
+		8, "1080i60", 1920, 1080, 1920, 1080, 16, 13468, 148, 88, 35, 5, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_INTERLACED | FB_VMODE_CONUPDATE
 	},
 	{
-		7, "1080i59", 1920, 1080, 1920, 1080, 16, 13481, 148,  88, 35, 5, 44, 5,
+		7, "1080i59", 1920, 1080, 1920, 1080, 16, 13481, 148, 88, 35, 5, 44, 5,
 		FB_SYNC_HOR_HIGH_ACT | FB_SYNC_VERT_HIGH_ACT, FB_VMODE_INTERLACED | FB_VMODE_CONUPDATE
 	},
 	{
@@ -269,7 +269,7 @@ static struct Modes
 	},
 #endif
 	{
-		1, "pal"   , 720, 576, 720, 576, 16, 74074, 68, 12, 38, 5, 64, 6, 0,
+		1, "pal", 720, 576, 720, 576, 16, 74074, 68, 12, 38, 5, 64, 6, 0,
 		FB_VMODE_INTERLACED | FB_VMODE_CONUPDATE
 	},
 	{ 0, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
@@ -294,7 +294,7 @@ int proc_video_policy_get(void)
 {
 	/* Dagobert: You cannot use this semaphore here because this will be called from
 	 * VideoIoctl which holds this semaphore too. This means deadlock.
-	   mutex_lock (&(ProcDeviceContext->DvbContext->Lock));
+	 * mutex_lock (&(ProcDeviceContext->DvbContext->Lock));
 	*/
 	if (ProcDeviceContext->VideoStream != NULL)
 	{
@@ -369,7 +369,7 @@ int proc_video_policy_get(void)
 	}
 	/* Dagobert: You cannot use this semaphore here because this will be called from
 	 * VideoIoctl which holds this semaphore too. This means deadlock.
-	    mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
+	 * mutex_unlock (&(ProcDeviceContext->DvbContext->Lock));
 	*/
 	return policy_ply;
 }
@@ -558,7 +558,7 @@ int proc_video_switch_choices_read(char *page, char **start, off_t off, int coun
 
 //TODO: say avs to send the widescreenflag if needed
 int proc_video_aspect_write(struct file *file, const char __user *buf,
-			    unsigned long count, void *data)
+							unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -597,7 +597,7 @@ int proc_video_aspect_write(struct file *file, const char __user *buf,
 		}
 		/*if (strncmp("221:1", myString, count - 1) == 0)
 		{
-		    aspect_e2 = VIDEO_FORMAT_221_1;
+			aspect_e2 = VIDEO_FORMAT_221_1;
 		}*/
 		//we dont support any, whatever this is
 		if (strncmp("any", myString, count - 1) == 0)
@@ -616,7 +616,7 @@ out:
 }
 
 int proc_video_aspect_read(char *page, char **start, off_t off, int count,
-			   int *eof, void *data_unused)
+						   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -630,7 +630,7 @@ int proc_video_aspect_read(char *page, char **start, off_t off, int count,
 	{
 		len = sprintf(page, "16:9\n");
 		/*} else if (aspect_e2 == VIDEO_FORMAT_221_1) {
-		    len = sprintf(page, "221:1\n");*/
+			len = sprintf(page, "221:1\n");*/
 	}
 	else //should never occur
 	{
@@ -640,7 +640,7 @@ int proc_video_aspect_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_aspect_choices_read(char *page, char **start, off_t off, int count,
-				   int *eof, void *data_unused)
+								   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -653,7 +653,7 @@ int proc_video_aspect_choices_read(char *page, char **start, off_t off, int coun
 }
 
 int proc_video_policy_write(struct file *file, const char __user *buf,
-			    unsigned long count, void *data)
+							unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -722,7 +722,7 @@ out:
 }
 
 int proc_video_policy_read(char *page, char **start, off_t off, int count,
-			   int *eof, void *data_unused)
+						   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -748,7 +748,7 @@ int proc_video_policy_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_policy_choices_read(char *page, char **start, off_t off, int count,
-				   int *eof, void *data_unused)
+								   int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -760,7 +760,7 @@ int proc_video_policy_choices_read(char *page, char **start, off_t off, int coun
 
 /* hack hack ;-) */
 int proc_video_videomode_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -870,7 +870,7 @@ int proc_video_videomode_write(struct file *file, const char __user *buf,
 					DisplayCreate(BACKEND_VIDEO_ID, ProcDeviceContext->Id);
 					VideoIoctlPlay(ProcDeviceContext);
 					err = DvbStreamSetOutputWindow(ProcDeviceContext->VideoStream,
-								       0, 0, Options[modeToSet].xres, Options[modeToSet].yres);
+												   0, 0, Options[modeToSet].xres, Options[modeToSet].yres);
 					if (err != 0)
 					{
 						printk("failed to set output window %d, %d, %d\n", Options[modeToSet].xres, Options[modeToSet].yres, err);
@@ -897,7 +897,7 @@ out:
 }
 
 int proc_video_videomode_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 	int vLoop = 0;
@@ -954,7 +954,7 @@ int proc_video_videomode_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_pal_h_start_write(struct file *file, const char __user *buf,
-				 unsigned long count, void *data)
+								 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -1015,7 +1015,7 @@ int proc_video_pal_h_start_write(struct file *file, const char __user *buf,
 				DisplayCreate(BACKEND_VIDEO_ID, ProcDeviceContext->Id);
 				VideoIoctlPlay(ProcDeviceContext);
 				err = DvbStreamSetOutputWindow(ProcDeviceContext->VideoStream,
-							       0, 0, screen_info.xres, screen_info.yres);
+											   0, 0, screen_info.xres, screen_info.yres);
 				if (err != 0)
 				{
 					printk("failed to set output window %d, %d, %d\n", screen_info.xres, screen_info.yres, err);
@@ -1041,7 +1041,7 @@ out:
 }
 
 int proc_video_pal_h_end_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -1102,7 +1102,7 @@ int proc_video_pal_h_end_write(struct file *file, const char __user *buf,
 				DisplayCreate(BACKEND_VIDEO_ID, ProcDeviceContext->Id);
 				VideoIoctlPlay(ProcDeviceContext);
 				err = DvbStreamSetOutputWindow(ProcDeviceContext->VideoStream,
-							       0, 0, screen_info.xres, screen_info.yres);
+											   0, 0, screen_info.xres, screen_info.yres);
 				if (err != 0)
 				{
 					printk("failed to set output window %d, %d, %d\n", screen_info.xres, screen_info.yres, err);
@@ -1128,7 +1128,7 @@ out:
 }
 
 int proc_video_pal_v_start_write(struct file *file, const char __user *buf,
-				 unsigned long count, void *data)
+								 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -1189,7 +1189,7 @@ int proc_video_pal_v_start_write(struct file *file, const char __user *buf,
 				DisplayCreate(BACKEND_VIDEO_ID, ProcDeviceContext->Id);
 				VideoIoctlPlay(ProcDeviceContext);
 				err = DvbStreamSetOutputWindow(ProcDeviceContext->VideoStream,
-							       0, 0, screen_info.xres, screen_info.yres);
+											   0, 0, screen_info.xres, screen_info.yres);
 				if (err != 0)
 				{
 					printk("failed to set output window %d, %d, %d\n", screen_info.xres, screen_info.yres, err);
@@ -1215,7 +1215,7 @@ out:
 }
 
 int proc_video_pal_v_end_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -1276,7 +1276,7 @@ int proc_video_pal_v_end_write(struct file *file, const char __user *buf,
 				DisplayCreate(BACKEND_VIDEO_ID, ProcDeviceContext->Id);
 				VideoIoctlPlay(ProcDeviceContext);
 				err = DvbStreamSetOutputWindow(ProcDeviceContext->VideoStream,
-							       0, 0, screen_info.xres, screen_info.yres);
+											   0, 0, screen_info.xres, screen_info.yres);
 				if (err != 0)
 				{
 					printk("failed to set output window %d, %d, %d\n", screen_info.xres, screen_info.yres, err);
@@ -1302,7 +1302,7 @@ out:
 }
 
 int proc_video_pal_h_start_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data_unused)
+								int *eof, void *data_unused)
 {
 	int len = 0;
 	void *fb = NULL;
@@ -1321,7 +1321,7 @@ int proc_video_pal_h_start_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_pal_h_end_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 	void *fb = NULL;
@@ -1340,7 +1340,7 @@ int proc_video_pal_h_end_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_pal_v_start_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data_unused)
+								int *eof, void *data_unused)
 {
 	int len = 0;
 	void *fb = NULL;
@@ -1359,7 +1359,7 @@ int proc_video_pal_v_start_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_pal_v_end_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 	void *fb = NULL;
@@ -1378,7 +1378,7 @@ int proc_video_pal_v_end_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_video_videomode_choices_write(struct file *file, const char __user *buf,
-				       unsigned long count, void *data)
+									   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -1399,7 +1399,7 @@ int proc_video_videomode_choices_write(struct file *file, const char __user *buf
 }
 
 int proc_video_videomode_choices_read(char *page, char **start, off_t off, int count,
-				      int *eof, void *data_unused)
+									  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -1427,7 +1427,7 @@ int proc_video_videomode_choices_read(char *page, char **start, off_t off, int c
 }
 
 int proc_video_videomode_preferred_write(struct file *file, const char __user *buf,
-					 unsigned long count, void *data)
+										 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -1458,7 +1458,7 @@ out:
 }
 
 int proc_video_videomode_preferred_read(char *page, char **start, off_t off, int count,
-					int *eof, void *data_unused)
+										int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -1469,7 +1469,7 @@ int proc_video_videomode_preferred_read(char *page, char **start, off_t off, int
 }
 
 int proc_video_alpha_write(struct file *file, const char __user *buf,
-			   unsigned long count, void *data)
+						   unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -1510,7 +1510,7 @@ out:
 }
 
 int proc_video_alpha_read(char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+						  int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE

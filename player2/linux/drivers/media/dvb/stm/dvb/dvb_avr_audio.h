@@ -187,7 +187,7 @@ void AvrAudioSetEmphasis(avr_v4l2_audio_handle_t *AudioContext, bool Emphasis);
 bool AvrAudioGetEmphasis(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetChannelSelect(avr_v4l2_audio_handle_t *AudioContext,
-			      enum v4l2_avr_audio_channel_select ChannelSelect);
+							  enum v4l2_avr_audio_channel_select ChannelSelect);
 enum v4l2_avr_audio_channel_select AvrAudioGetChannelSelect(avr_v4l2_audio_handle_t *AudioContext);
 
 void AvrAudioSetSilenceThreshold(avr_v4l2_audio_handle_t *AudioContext, int Threshold);

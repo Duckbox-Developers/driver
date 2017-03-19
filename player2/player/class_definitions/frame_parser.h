@@ -116,8 +116,8 @@ class FrameParser_c : public BaseComponentClass_c
 		virtual FrameParserStatus_t ResetCollatedHeaderState(void) = 0;
 		virtual unsigned int RequiredPresentationLength(unsigned char StartCode) = 0;
 		virtual FrameParserStatus_t PresentCollatedHeader(unsigned char StartCode,
-								  unsigned char *HeaderBytes,
-								  FrameParserHeaderFlag_t *Flags) = 0;
+														  unsigned char *HeaderBytes,
+														  FrameParserHeaderFlag_t *Flags) = 0;
 };
 
 // ---------------------------------------------------------------------

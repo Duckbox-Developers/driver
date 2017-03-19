@@ -166,8 +166,8 @@ Codec_MmeAudioEAc3_c::Codec_MmeAudioEAc3_c(void)
 #endif
 	isFwEac3Capable = (((AudioDecoderTransformCapability.DecoderCapabilityExtFlags[0]) >> (4 * ACC_AC3)) & (1 << ACC_DOLBY_DIGITAL_PLUS));
 	CODEC_TRACE("%s\n", isFwEac3Capable ?
-		    "Using extended AC3 decoder (DD+ streams will be correctly decoded)" :
-		    "Using standard AC3 decoder (DD+ streams will be unplayable)");
+				"Using extended AC3 decoder (DD+ streams will be correctly decoded)" :
+				"Using standard AC3 decoder (DD+ streams will be unplayable)");
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -417,7 +417,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::ValidateDecodeContext(CodecBaseDecodeContext
 	Codec_MmeAudioEAc3_c::FillStreamMetadata(AudioParameters, (MME_LxAudioDecoderFrameStatus_t *)&Status);
 	// Validate the extended status (without propagating errors)
 	(void) ValidatePcmProcessingExtendedStatus(Context,
-						   (MME_PcmProcessingFrameExtStatus_t *) &DecodeContext->DecodeStatus.PcmStatus);
+											   (MME_PcmProcessingFrameExtStatus_t *) &DecodeContext->DecodeStatus.PcmStatus);
 	if (TranscodeEnable)
 	{
 		TranscodedBuffers[DecodeContext->TranscodeBufferIndex].Buffer->SetUsedDataSize(TranscodedBufferSize);
@@ -432,7 +432,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::ValidateDecodeContext(CodecBaseDecodeContext
 /// \todo Can we make this code common between EAC3 and DTSHD handling.
 ///
 void Codec_MmeAudioEAc3_c::HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-						MME_PcmProcessingStatusTemplate_t *PcmStatus)
+												MME_PcmProcessingStatusTemplate_t *PcmStatus)
 {
 	ParsedAudioParameters_t *AudioParameters;
 	MME_LxAudioDecoderMixingMetadata_t *MixingMetadata = (MME_LxAudioDecoderMixingMetadata_t *) PcmStatus;
@@ -587,9 +587,9 @@ CodecStatus_t Codec_MmeAudioEAc3_c::GetTranscodeBuffer(void)
 	// Obtain the interesting references to the buffer
 	//
 	CurrentTranscodeBuffer->ObtainDataReference(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferLength,
-						    NULL,
-						    (void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
-						    Configuration.AddressingMode);
+												NULL,
+												(void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
+												Configuration.AddressingMode);
 //
 	return CodecNoError;
 }
@@ -686,10 +686,10 @@ CodecStatus_t Codec_MmeAudioEAc3_c::GetTranscodedFrameBufferPool(BufferPool_t *T
 #endif
 		//
 		Status = BufferManager->CreatePool(&TranscodedFramePool,
-						   TranscodedFrameBufferType,
-						   EAC3_TRANSCODE_BUFFER_COUNT,
-						   EAC3_FRAME_MAX_SIZE * EAC3_TRANSCODE_BUFFER_COUNT,
-						   TranscodedFrameMemory);
+										   TranscodedFrameBufferType,
+										   EAC3_TRANSCODE_BUFFER_COUNT,
+										   EAC3_FRAME_MAX_SIZE * EAC3_TRANSCODE_BUFFER_COUNT,
+										   TranscodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("GetTranscodedFrameBufferPool(%s) - Failed to create the pool.\n", Configuration.CodecName);

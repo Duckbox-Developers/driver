@@ -44,9 +44,9 @@ extern int VideoIoctlClearBuffer(struct DeviceContext_s *Context);
 
 extern struct snd_kcontrol **pseudoGetControls(int *numbers);
 extern int snd_pseudo_integer_get(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol);
+								  struct snd_ctl_elem_value *ucontrol);
 extern int snd_pseudo_integer_put(struct snd_kcontrol *kcontrol,
-				  struct snd_ctl_elem_value *ucontrol);
+								  struct snd_ctl_elem_value *ucontrol);
 int avs_command_kernel(unsigned int cmd, void *arg);
 
 #if defined(ADB_BOX)
@@ -84,7 +84,7 @@ int proc_audio_delay_pcm_read(char *page, char **start, off_t off, int count, in
 #endif
 
 int proc_audio_delay_bitstream_write(struct file *file, const char __user *buf,
-				     unsigned long count, void *data)
+									 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -146,7 +146,7 @@ out:
 }
 
 int proc_audio_delay_bitstream_read(char *page, char **start, off_t off, int count,
-				    int *eof, void *data_unused)
+									int *eof, void *data_unused)
 {
 	int len = 0;
 	int number = 0;
@@ -290,7 +290,7 @@ void spdif_out_mute(int mute)
 }
 
 int proc_audio_j1_mute_write(struct file *file, const char __user *buf,
-			     unsigned long count, void *data)
+							 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -399,7 +399,7 @@ out:
 }
 
 int proc_audio_j1_mute_read(char *page, char **start, off_t off, int count,
-			    int *eof, void *data_unused)
+							int *eof, void *data_unused)
 {
 	int len = 0;
 	int number = 0;
@@ -442,7 +442,7 @@ int e2_proc_audio_getPassthrough(void)
 }
 
 int proc_audio_ac3_write(struct file *file, const char __user *buf,
-			 unsigned long count, void *data)
+						 unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -522,7 +522,7 @@ out:
 }
 
 int proc_audio_ac3_read(char *page, char **start, off_t off, int count,
-			int *eof, void *data_unused)
+						int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE
@@ -540,7 +540,7 @@ int proc_audio_ac3_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_audio_ac3_choices_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data_unused)
+								int *eof, void *data_unused)
 {
 	int len = 0;
 #ifdef VERY_VERBOSE

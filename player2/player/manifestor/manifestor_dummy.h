@@ -207,7 +207,7 @@ class Manifestor_Dummy_c : public Manifestor_c
 			if (Status == BufferNoError)
 			{
 				(*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
-								   (void **)(&AttachedRequestStructure));
+												   (void **)(&AttachedRequestStructure));
 				memcpy(AttachedRequestStructure, RequestedStructure, sizeof(BufferStructure_t));
 			}
 			return Status;

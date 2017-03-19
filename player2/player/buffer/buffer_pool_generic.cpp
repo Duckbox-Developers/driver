@@ -49,12 +49,12 @@ Date Modification Name
 //
 
 BufferPool_Generic_c::BufferPool_Generic_c(BufferManager_Generic_t Manager,
-					   BufferDataDescriptor_t *Descriptor,
-					   unsigned int NumberOfBuffers,
-					   unsigned int Size,
-					   void *MemoryPool[3],
-					   void *ArrayOfMemoryBlocks[][3],
-					   char *DeviceMemoryPartitionName)
+										   BufferDataDescriptor_t *Descriptor,
+										   unsigned int NumberOfBuffers,
+										   unsigned int Size,
+										   void *MemoryPool[3],
+										   void *ArrayOfMemoryBlocks[][3],
+										   char *DeviceMemoryPartitionName)
 {
 	unsigned int i, j;
 	BufferStatus_t Status;
@@ -124,7 +124,7 @@ BufferPool_Generic_c::BufferPool_Generic_c(BufferManager_Generic_t Manager,
 		if (Descriptor->AllocateOnPoolCreation)
 		{
 			Status = CheckMemoryParameters(Descriptor, true, Size, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName,
-						       "BufferPool_Generic_c::BufferPool_Generic_c", &ItemSize);
+										   "BufferPool_Generic_c::BufferPool_Generic_c", &ItemSize);
 			if (Status != BufferNoError)
 			{
 				TidyUp();
@@ -145,7 +145,7 @@ BufferPool_Generic_c::BufferPool_Generic_c(BufferManager_Generic_t Manager,
 			BufferBlock->Size = ItemSize * NumberOfBuffers;
 			BufferBlock->MemoryAllocatorDevice = ALLOCATOR_INVALID_DEVICE;
 			Status = AllocateMemoryBlock(BufferBlock, true, 0, NULL, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName,
-						     "BufferPool_Generic_c::BufferPool_Generic_c");
+										 "BufferPool_Generic_c::BufferPool_Generic_c");
 			if (Status != BufferNoError)
 			{
 				TidyUp();
@@ -231,8 +231,8 @@ BufferPool_Generic_c::~BufferPool_Generic_c(void)
 	TidyUp();
 	if (ReferenceCount != 0)
 		report(severity_error, "BufferPool_Generic_c::~BufferPool_Generic_c - Destroying pool of type '%s', Final reference count = %d\n",
-		       (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName,
-		       ReferenceCount);
+			   (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName,
+			   ReferenceCount);
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -274,7 +274,7 @@ BufferStatus_t BufferPool_Generic_c::AttachMetaData(
 	// Check the parameters and associated information to see if we can do this
 	//
 	Status = CheckMemoryParameters(Descriptor, true, Size, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName,
-				       "BufferPool_Generic_c::AttachMetaData", &ItemSize);
+								   "BufferPool_Generic_c::AttachMetaData", &ItemSize);
 	if (Status != BufferNoError)
 		return Status;
 	//
@@ -291,7 +291,7 @@ BufferStatus_t BufferPool_Generic_c::AttachMetaData(
 	Block->Size = ItemSize * NumberOfBuffers;
 	Block->MemoryAllocatorDevice = ALLOCATOR_INVALID_DEVICE;
 	Status = AllocateMemoryBlock(Block, true, 0, NULL, MemoryPool, ArrayOfMemoryBlocks, DeviceMemoryPartitionName,
-				     "BufferPool_Generic_c::AttachMetaData");
+								 "BufferPool_Generic_c::AttachMetaData");
 	if (Status != BufferNoError)
 	{
 		delete Block;
@@ -376,7 +376,7 @@ BufferStatus_t BufferPool_Generic_c::DetachMetaData(
 		if (Buffer->ReferenceCount != 0)
 		{
 			report(severity_note, "BufferPool_Generic_c::DetachMetaData - Detaching meta data (%s) from a live buffer (%s) - Implementation error.\n",
-			       Manager->TypeDescriptors[Type & TYPE_INDEX_MASK].TypeName, BufferDescriptor->TypeName);
+				   Manager->TypeDescriptors[Type & TYPE_INDEX_MASK].TypeName, BufferDescriptor->TypeName);
 #if 0
 			// Helpful dump and clean terminate for Nick
 			Dump(DumpAll);
@@ -437,7 +437,7 @@ BufferStatus_t BufferPool_Generic_c::GetBuffer(
 	if (!BufferDescriptor->AllocateOnPoolCreation && (BufferDescriptor->AllocationSource != NoAllocation))
 	{
 		Status = CheckMemoryParameters(BufferDescriptor, false, RequiredSize, MemoryPool, NULL, MemoryPartitionName,
-					       "BufferPool_Generic_c::GetBuffer", &ItemSize);
+									   "BufferPool_Generic_c::GetBuffer", &ItemSize);
 		if (Status != BufferNoError)
 			return Status;
 	}
@@ -479,7 +479,7 @@ BufferStatus_t BufferPool_Generic_c::GetBuffer(
 			if ((OS_GetTimeInMicroSeconds() - EntryTime) > BUFFER_MAX_EXPECTED_WAIT_PERIOD)
 			{
 				report(severity_info, "BufferPool_Generic_c::GetBuffer - Waiting for a buffer of type %04x - '%s'\n", BufferDescriptor->Type,
-				       (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName);
+					   (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName);
 				EntryTime = OS_GetTimeInMicroSeconds();
 			}
 		}
@@ -496,9 +496,9 @@ BufferStatus_t BufferPool_Generic_c::GetBuffer(
 		LocalBuffer->BufferBlock->AttachedToPool = true;
 		LocalBuffer->BufferBlock->Size = ItemSize;
 		Status = AllocateMemoryBlock(LocalBuffer->BufferBlock, false, 0, MemoryPoolAllocator,
-					     MemoryPool, NULL, MemoryPartitionName,
-					     "BufferPool_Generic_c::GetBuffer",
-					     RequiredSizeIsLowerBound);
+									 MemoryPool, NULL, MemoryPartitionName,
+									 "BufferPool_Generic_c::GetBuffer",
+									 RequiredSizeIsLowerBound);
 		if (Status != BufferNoError)
 			return Status;
 	}
@@ -686,7 +686,7 @@ BufferStatus_t BufferPool_Generic_c::GetPoolUsage(
 		case AllocateIndividualSuppliedBlocks:
 			TotalMemory = Size * NumberOfBuffers;
 			LargestFreeBlock = (((NumberOfBuffers == NOT_SPECIFIED) ? CountOfBuffers : NumberOfBuffers)
-					    != CountOfReferencedBuffers) ? Size : 0;
+								!= CountOfReferencedBuffers) ? Size : 0;
 			break;
 		case NoAllocation:
 		case AllocateFromOSMemory:
@@ -793,7 +793,7 @@ void BufferPool_Generic_c::Dump(unsigned int Flags)
 	if ((Flags & DumpPoolStates) != 0)
 	{
 		report(severity_info, " Pool of type %04x - '%s'\n", BufferDescriptor->Type,
-		       (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName);
+			   (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName);
 //
 		GetPoolUsage(NULL, &BuffersWithNonZeroReferenceCount, &MemoryInPool, &MemoryAllocated, &MemoryInUse);
 		if (NumberOfBuffers == NOT_SPECIFIED)
@@ -803,12 +803,12 @@ void BufferPool_Generic_c::Dump(unsigned int Flags)
 		report(severity_info, "\tThere is %08x memory available to the pool (0 => Unlimited), %08x is allocated, and %08x is actually used.\n", MemoryInPool, MemoryAllocated, MemoryInUse);
 //
 		report(severity_info, "\t%s attached to every element of pool.\n",
-		       (ListOfMetaData == NULL) ? "There are no Meta data items" : "The following meta data items are");
+			   (ListOfMetaData == NULL) ? "There are no Meta data items" : "The following meta data items are");
 		for (MetaData = ListOfMetaData;
 				MetaData != NULL;
 				MetaData = MetaData->Next)
 			report(severity_info, "\t %04x - %s\n", MetaData->Descriptor->Type,
-			       (MetaData->Descriptor->TypeName == NULL) ? "Unnamed" : MetaData->Descriptor->TypeName);
+				   (MetaData->Descriptor->TypeName == NULL) ? "Unnamed" : MetaData->Descriptor->TypeName);
 	}
 //
 	if ((Flags & DumpBufferStates) != 0)
@@ -1174,7 +1174,7 @@ BufferStatus_t BufferPool_Generic_c::DeAllocateMemoryBlock(
 	switch (Descriptor->AllocationSource)
 	{
 		case AllocateFromOSMemory:
-			delete(unsigned char *)Block->Address[CachedAddress];
+			delete (unsigned char *)Block->Address[CachedAddress];
 			break;
 		case AllocateFromNamedDeviceMemory:
 		case AllocateFromDeviceVideoLMIMemory:

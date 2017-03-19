@@ -19,7 +19,7 @@
 extern struct stmfb_info *stmfb_get_fbinfo_ptr(void);
 
 int proc_vmpeg_0_dst_left_write(struct file *file, const char __user *buf,
-				unsigned long count, void *data)
+								unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -88,7 +88,7 @@ out:
 }
 
 int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count,
-			       int *eof, void *data)
+							   int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
@@ -133,7 +133,7 @@ int proc_vmpeg_0_dst_left_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_dst_top_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -202,7 +202,7 @@ out:
 }
 
 int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data)
+							  int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
@@ -247,7 +247,7 @@ int proc_vmpeg_0_dst_top_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_dst_width_write(struct file *file, const char __user *buf,
-				 unsigned long count, void *data)
+								 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -316,7 +316,7 @@ out:
 }
 
 int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data)
+								int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
@@ -361,7 +361,7 @@ int proc_vmpeg_0_dst_width_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_dst_height_write(struct file *file, const char __user *buf,
-				  unsigned long count, void *data)
+								  unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -430,7 +430,7 @@ out:
 }
 
 int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count,
-				 int *eof, void *data)
+								 int *eof, void *data)
 {
 	int len = 0;
 	int l, t, w, h;
@@ -475,7 +475,7 @@ int proc_vmpeg_0_dst_height_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count,
-			   int *eof, void *data)
+						   int *eof, void *data)
 {
 	int len = 0;
 	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
@@ -492,7 +492,7 @@ int proc_vmpeg_0_yres_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count,
-			   int *eof, void *data)
+						   int *eof, void *data)
 {
 	int len = 0;
 	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
@@ -509,7 +509,7 @@ int proc_vmpeg_0_xres_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_framerate_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data)
+								int *eof, void *data)
 {
 	int len = 0;
 	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
@@ -526,7 +526,7 @@ int proc_vmpeg_0_framerate_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_aspect_read(char *page, char **start, off_t off, int count,
-			     int *eof, void *data)
+							 int *eof, void *data)
 {
 	int len = 0;
 	struct DeviceContext_s *pContext = (struct DeviceContext_s *)data;
@@ -543,7 +543,7 @@ int proc_vmpeg_0_aspect_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_vmpeg_0_dst_all_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;

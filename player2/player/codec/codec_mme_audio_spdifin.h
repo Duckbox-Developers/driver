@@ -106,9 +106,9 @@ class Codec_MmeAudioSpdifin_c : public Codec_MmeAudio_c
 
 		CodecStatus_t CreateAttributeEvents(void);
 		CodecStatus_t GetAttribute(const char *Attribute,
-					   PlayerAttributeDescriptor_t *Value);
+								   PlayerAttributeDescriptor_t *Value);
 		CodecStatus_t SetAttribute(const char *Attribute,
-					   PlayerAttributeDescriptor_t *Value);
+								   PlayerAttributeDescriptor_t *Value);
 
 		//
 		// Stream specific functions

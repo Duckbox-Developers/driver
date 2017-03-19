@@ -278,14 +278,14 @@ ManifestorStatus_t Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c *Buffer)
 	StreamBuffer[BufferIndex].EventPending = EventPending;
 	EventPending = false;
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataParsedFrameParametersReferenceType,
-						       (void **) &StreamBuffer[BufferIndex].FrameParameters);
+												   (void **) &StreamBuffer[BufferIndex].FrameParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed frame parameters %x.\n", BufferStatus);
 		return ManifestorError;
 	}
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataParsedAudioParametersType,
-						       (void **) &StreamBuffer[BufferIndex].AudioParameters);
+												   (void **) &StreamBuffer[BufferIndex].AudioParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed audio parameters %x.\n", BufferStatus);
@@ -293,14 +293,14 @@ ManifestorStatus_t Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c *Buffer)
 	}
 	Buffer->DumpToRelayFS(ST_RELAY_TYPE_DECODED_AUDIO_BUFFER, ST_RELAY_SOURCE_AUDIO_MANIFESTOR + RelayfsIndex, (void *)Player);
 	BufferStatus = Buffer->ObtainMetaDataReference(Player->MetaDataAudioOutputTimingType,
-						       (void **) &StreamBuffer[BufferIndex].AudioOutputTiming);
+												   (void **) &StreamBuffer[BufferIndex].AudioOutputTiming);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer audio output timing parameters %x.\n", BufferStatus);
 		return ManifestorError;
 	}
 	BufferStatus = Buffer->ObtainDataReference(NULL, NULL,
-						   (void **)(&StreamBuffer[BufferIndex].Data), UnCachedAddress);
+											   (void **)(&StreamBuffer[BufferIndex].Data), UnCachedAddress);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to obtain buffer's data reference %x.\n", BufferStatus);
@@ -311,7 +311,7 @@ ManifestorStatus_t Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c *Buffer)
 	// Check if there are new audio parameters (i.e. change of sample rate etc.) and note this
 	//
 	if (0 == memcmp(&LastSeenAudioParameters, StreamBuffer[BufferIndex].AudioParameters,
-			sizeof(LastSeenAudioParameters)))
+					sizeof(LastSeenAudioParameters)))
 	{
 		StreamBuffer[BufferIndex].UpdateAudioParameters = false;
 	}
@@ -319,7 +319,7 @@ ManifestorStatus_t Manifestor_Audio_c::QueueDecodeBuffer(class Buffer_c *Buffer)
 	{
 		StreamBuffer[BufferIndex].UpdateAudioParameters = true;
 		memcpy(&LastSeenAudioParameters, StreamBuffer[BufferIndex].AudioParameters,
-		       sizeof(LastSeenAudioParameters));
+			   sizeof(LastSeenAudioParameters));
 	}
 	//
 	// Allow the sub-class to have a peek at the buffer before we queue it for display
@@ -384,7 +384,7 @@ ManifestorStatus_t Manifestor_Audio_c::GetNativeTimeOfCurrentlyManifestedFrame(u
 		return ManifestorError;
 	}
 	BufferStatus = StreamBuffer[BufferQueueHead].Buffer->ObtainMetaDataReference(
-			       Player->MetaDataParsedFrameParametersReferenceType, (void **)&FrameParameters);
+					   Player->MetaDataParsedFrameParametersReferenceType, (void **)&FrameParameters);
 	if (BufferStatus != BufferNoError)
 	{
 		MANIFESTOR_ERROR("Unable to access buffer parsed frame parameters %x.\n", BufferStatus);

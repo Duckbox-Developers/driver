@@ -104,7 +104,7 @@ Date Modification Name
 #define MIXER_AUDIO_MAX_INPUT_BUFFERS (MIXER_MAX_CLIENTS + 1 + MIXER_MAX_INTERACTIVE_CLIENTS)
 #define MIXER_AUDIO_MAX_OUTPUT_BUFFERS 4
 #define MIXER_AUDIO_MAX_BUFFERS (MIXER_AUDIO_MAX_INPUT_BUFFERS +\
-				 MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
+								 MIXER_AUDIO_MAX_OUTPUT_BUFFERS)
 
 #if defined(__TDT__)
 #define MIXER_AUDIO_PAGES_PER_BUFFER 32
@@ -354,13 +354,13 @@ class Mixer_Mme_c: public Mixer_c
 		void ResetMixingMetadata();
 
 		PlayerStatus_t FillOutTransformerGlobalParameters(MME_LxMixerBDTransformerGlobalParams_Extended_t *
-								  GlobalParams);
+														  GlobalParams);
 
 		PcmPlayer_c::OutputEncoding LookupOutputEncoding(int dev_num, unsigned int freq = 0);
 		unsigned int LookupOutputSamplingFrequency(int dev_num);
 #if 0
 		unsigned int LookupOutputNumberOfSamples(int dev_num, unsigned int NominalMixerGranuleSize,
-							 unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
+												 unsigned int ActualSampleRateHz, unsigned int NominalOutputSamplingFrequency);
 #endif
 		unsigned int LookupOutputNumberOfChannels(int dev_num);
 
@@ -368,21 +368,21 @@ class Mixer_Mme_c: public Mixer_c
 		unsigned int LookupRepetitionPeriod(PcmPlayer_c::OutputEncoding Encoding);
 
 		void FillOutDeviceDownmixParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams,
-						    int dev_num, bool EnableDMix);
+											int dev_num, bool EnableDMix);
 		void FillOutDeviceSpdifParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &PcmParams,
-						  int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding);
+										  int dev_num, PcmPlayer_c::OutputEncoding OutputEncoding);
 		PlayerStatus_t FillOutDevicePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-							  PcmParams, int dev_num);
+												  PcmParams, int dev_num);
 
 		PlayerStatus_t AggregatePcmParameters(MME_LxPcmPostProcessingGlobalParameters_Frozen_t &
-						      PcmParams);
+											  PcmParams);
 
 		PlayerStatus_t FillOutMixCommand();
 		PlayerStatus_t FillOutOutputBuffer(MME_DataBuffer_t *DataBuffer);
 		void FillOutInputBuffer(unsigned int ManifestorId);
 		void FillOutInteractiveBuffer(unsigned int InteractiveId);
 		void FillOutSilentBuffer(MME_DataBuffer_t *DataBuffer,
-					 tMixerFrameParams *MixerFrameParams = NULL);
+								 tMixerFrameParams *MixerFrameParams = NULL);
 
 		PlayerStatus_t UpdateOutputBuffer(MME_DataBuffer_t *DataBuffer);
 		void UpdateInputBuffer(unsigned int ManifestorId);
@@ -415,18 +415,18 @@ class Mixer_Mme_c: public Mixer_c
 		PlayerStatus_t Halt();
 		PlayerStatus_t Reset();
 		PlayerStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						   void *ParameterBlock);
+										   void *ParameterBlock);
 
 		PlayerStatus_t RegisterManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t DeRegisterManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t EnableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t DisableManifestor(Manifestor_AudioKsound_c *Manifestor);
 		PlayerStatus_t UpdateManifestorParameters(Manifestor_AudioKsound_c *Manifestor,
-							  ParsedAudioParameters_t *ParsedAudioParameters);
+												  ParsedAudioParameters_t *ParsedAudioParameters);
 		PlayerStatus_t SetManifestorEmergencyMuteState(Manifestor_AudioKsound_c *Manifestor, bool Muted);
 
 		PlayerStatus_t LookupDataBuffer(Manifestor_AudioKsound_c *Manifestor,
-						MME_DataBuffer_t **DataBufferPP);
+										MME_DataBuffer_t **DataBufferPP);
 
 		PlayerStatus_t SetOutputRateAdjustment(int adjust);
 

@@ -65,7 +65,7 @@ struct stmfbio_output_configuration
 extern struct DeviceContext_s *ProcDeviceContext;
 
 int proc_hdmi_audio_source_write(struct file *file, const char __user *buf,
-				 unsigned long count, void *data)
+								 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -110,7 +110,7 @@ out:
 }
 
 int proc_hdmi_audio_source_read(char *page, char **start, off_t off, int count,
-				int *eof, void *data_unused)
+								int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value = 0;
@@ -139,7 +139,7 @@ int proc_hdmi_audio_source_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_hdmi_audio_source_choices_read(char *page, char **start, off_t off, int count,
-					int *eof, void *data_unused)
+										int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);
@@ -150,7 +150,7 @@ int proc_hdmi_audio_source_choices_read(char *page, char **start, off_t off, int
 }
 
 int proc_hdmi_edid_handling_write(struct file *file, const char __user *buf,
-				  unsigned long count, void *data)
+								  unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -191,7 +191,7 @@ out:
 }
 
 int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count,
-				 int *eof, void *data_unused)
+								 int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int value = 0;
@@ -214,7 +214,7 @@ int proc_hdmi_edid_handling_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_hdmi_output_write(struct file *file, const char __user *buf,
-			   unsigned long count, void *data)
+						   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -259,7 +259,7 @@ out:
 }
 
 int proc_hdmi_output_read(char *page, char **start, off_t off, int count,
-			  int *eof, void *data_unused)
+						  int *eof, void *data_unused)
 {
 	int len = 0;
 	unsigned int disabled = 0;
@@ -286,7 +286,7 @@ int proc_hdmi_output_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_hdmi_output_choices_read(char *page, char **start, off_t off, int count,
-				  int *eof, void *data_unused)
+								  int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);

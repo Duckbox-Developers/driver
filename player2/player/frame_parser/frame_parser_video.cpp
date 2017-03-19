@@ -291,9 +291,9 @@ FrameParserStatus_t FrameParser_Video_c::ProcessBuffer(void)
 	{
 #if 0
 		report(severity_info, "Disco - %d %d %d - %d (%d %d %d)\n",
-		       CodedFrameParameters->StreamDiscontinuity, CodedFrameParameters->ContinuousReverseJump, CodedFrameParameters->FlushBeforeDiscontinuity,
-		       (PlaybackDirection == PlayForward),
-		       ReverseDecodeStack->NonEmpty(), ReverseDecodeUnsatisfiedReferenceStack->NonEmpty(), ReverseDecodeSingleFrameStack->NonEmpty());
+			   CodedFrameParameters->StreamDiscontinuity, CodedFrameParameters->ContinuousReverseJump, CodedFrameParameters->FlushBeforeDiscontinuity,
+			   (PlaybackDirection == PlayForward),
+			   ReverseDecodeStack->NonEmpty(), ReverseDecodeUnsatisfiedReferenceStack->NonEmpty(), ReverseDecodeSingleFrameStack->NonEmpty());
 #endif
 		if ((PlaybackDirection == PlayBackward) && CodedFrameParameters->ContinuousReverseJump)
 		{
@@ -466,7 +466,7 @@ FrameParserStatus_t FrameParser_Video_c::RevPlayProcessFrame(void)
 	// (we just don't claim to effect a release).
 	//
 	NewFrame = ParsedFrameParameters->NewFrameParameters &&
-		   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+			   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (RevPlayDiscardingState)
 	{
 		if (NewFrame)
@@ -572,20 +572,20 @@ FrameParserStatus_t FrameParser_Video_c::ForPlayQueueFrameForDecode(void)
 		for (i = 0; i < Length; i++)
 			Checksum += Data[i];
 		report(severity_info, "Q %d ( K = %d, R = %d, RL= {%d %d %d}, ST = %d, PS = %d, FPFP= %d, FS = %d) (%08x %d)\n",
-		       NextDecodeFrameIndex,
-		       ParsedFrameParameters->KeyFrame,
-		       ParsedFrameParameters->ReferenceFrame,
-		       ParsedFrameParameters->ReferenceFrameList[0].EntryCount, ParsedFrameParameters->ReferenceFrameList[1].EntryCount, ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
-		       ParsedVideoParameters->SliceType,
-		       ParsedVideoParameters->PictureStructure,
-		       ParsedFrameParameters->FirstParsedParametersForOutputFrame,
-		       ParsedVideoParameters->FirstSlice,
-		       Checksum, Length);
+			   NextDecodeFrameIndex,
+			   ParsedFrameParameters->KeyFrame,
+			   ParsedFrameParameters->ReferenceFrame,
+			   ParsedFrameParameters->ReferenceFrameList[0].EntryCount, ParsedFrameParameters->ReferenceFrameList[1].EntryCount, ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
+			   ParsedVideoParameters->SliceType,
+			   ParsedVideoParameters->PictureStructure,
+			   ParsedFrameParameters->FirstParsedParametersForOutputFrame,
+			   ParsedVideoParameters->FirstSlice,
+			   Checksum, Length);
 #if 0
 		report(severity_info, "\t\t%4d %4d %4d %4d - %4d %4d %4d %4d - %4d %4d %4d %4d\n",
-		       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
-		       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
-		       ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3]);
+			   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
+			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
+			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3]);
 #endif
 	}
 #endif
@@ -962,7 +962,7 @@ FrameParserStatus_t FrameParser_Video_c::RevPlayPurgeUnsatisfiedReferenceStack(v
 		// Adjust the counts of discarded frames
 		//
 		NewFrame = ParsedFrameParameters->NewFrameParameters &&
-			   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (NewFrame)
 			RevPlayDiscardedFrameCount++;
 		//
@@ -1021,7 +1021,7 @@ FrameParserStatus_t FrameParser_Video_c::RevPlayCheckResourceUtilization(void)
 	if (ParsedFrameParameters->NewStreamParameters)
 		NumberOfUtilizedStreamParameters++;
 	NewFrame = ParsedVideoParameters->FirstSlice &&
-		   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+			   ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (NewFrame && ParsedFrameParameters->ReferenceFrame)
 		NumberOfUtilizedDecodeBuffers++;
 	//
@@ -1101,7 +1101,7 @@ FrameParserStatus_t FrameParser_Video_c::InitializePostDecodeParameterSettings(v
 	{
 		CodedFrameDecodeTimeValid = false;
 		ReasonableDecodeTime = (ParsedFrameParameters->NativePlaybackTime == INVALID_TIME) ||
-				       ((CodedFramePlaybackTime - CodedFrameDecodeTime) < MAXIMUM_DECODE_TIME_OFFSET);
+							   ((CodedFramePlaybackTime - CodedFrameDecodeTime) < MAXIMUM_DECODE_TIME_OFFSET);
 		if (ReasonableDecodeTime)
 		{
 			ParsedFrameParameters->NativeDecodeTime = CodedFrameDecodeTime;
@@ -1110,7 +1110,7 @@ FrameParserStatus_t FrameParser_Video_c::InitializePostDecodeParameterSettings(v
 		else
 		{
 			report(severity_error, "FrameParser_Video_c::InitializePostDecodeParameterSettings - (PTS - DTS) ridiculuously large (%lld 90kHz ticks)\n",
-			       (CodedFramePlaybackTime - CodedFrameDecodeTime));
+				   (CodedFramePlaybackTime - CodedFrameDecodeTime));
 		}
 	}
 //
@@ -1509,7 +1509,7 @@ FrameParserStatus_t FrameParser_Video_c::RevPlayAppendToReferenceFrameList(void)
 	bool LastField;
 //
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (ParsedFrameParameters->ReferenceFrame && LastField)
 	{
 		if (ReferenceFrameList.EntryCount >= MAX_ENTRIES_IN_REFERENCE_FRAME_LIST)
@@ -1537,7 +1537,7 @@ FrameParserStatus_t FrameParser_Video_c::RevPlayRemoveReferenceFrameFromList(voi
 	bool LastField;
 //
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if (ReferenceFrameList.EntryCount != 0)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);
@@ -1679,7 +1679,7 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int Size)
 	if (Size > (ANTI_EMULATION_BUFFER_SIZE - 16))
 	{
 		report(severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %u (avail: %d) - Implementation error.\n",
-		       Size, (ANTI_EMULATION_BUFFER_SIZE - 16));
+			   Size, (ANTI_EMULATION_BUFFER_SIZE - 16));
 		return;
 	}
 	//
@@ -1770,7 +1770,7 @@ FrameParserStatus_t FrameParser_Video_c::TestAntiEmulationBuffer(void)
 	if ((BytesUsed != 0) && (BytesUsed > AntiEmulationContent))
 	{
 		report(severity_error, "FrameParser_Video_c::TestAntiEmulationBuffer - Anti emulation buffering failure (%d [%d,%d]) - Implementation error\n",
-		       AntiEmulationContent - BytesUsed, BytesUsed, AntiEmulationContent);
+			   AntiEmulationContent - BytesUsed, BytesUsed, AntiEmulationContent);
 		return FrameParserError;
 	}
 #if 0

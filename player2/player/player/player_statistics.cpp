@@ -73,7 +73,7 @@ Date Modification Name
 //
 
 void Player_Generic_c::ProcessStatistics(PlayerStream_t Stream,
-					 PlayerSequenceNumber_t *Record)
+										 PlayerSequenceNumber_t *Record)
 {
 #if 0
 	unsigned char Policy;

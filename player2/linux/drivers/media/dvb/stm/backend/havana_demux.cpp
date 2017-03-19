@@ -49,8 +49,8 @@ HavanaDemux_c::~HavanaDemux_c(void)
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaDemux_c::Init(class Player_c *Player,
-				   PlayerPlayback_t PlayerPlayback,
-				   DemultiplexorContext_t DemultiplexorContext)
+								   PlayerPlayback_t PlayerPlayback,
+								   DemultiplexorContext_t DemultiplexorContext)
 {
 	DEMUX_DEBUG("\n");
 	this->Player = Player;
@@ -66,7 +66,7 @@ HavanaStatus_t HavanaDemux_c::Init(class Player_c *Player,
 //}}}
 //{{{ InjectData
 HavanaStatus_t HavanaDemux_c::InjectData(const unsigned char *Data,
-					 unsigned int DataLength)
+										 unsigned int DataLength)
 {
 	Buffer_t Buffer;
 	PlayerInputDescriptor_t *InputDescriptor;

@@ -206,7 +206,7 @@ CodecStatus_t Codec_MmeVideoVc1_c::RegisterOutputBufferRing(Ring_t Ring)
 	unsigned int Size;
 	Size = (1920 >> 4) * (1088 >> 4) * 16; // Allocate the maximum for now. FIX ME & save space on smaller streams.
 	Status = BufferManager->CreatePool(&Vc1MbStructPool, Vc1MbStructType, DecodeBufferCount, Size,
-					   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+									   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		CODEC_ERROR("Failed to create macroblock structure pool.\n");
@@ -376,7 +376,7 @@ CodecStatus_t Codec_MmeVideoVc1_c::FillOutDecodeCommand(void)
 		}
 #if 0
 		report(severity_info, "%s: Luma (%d, %d), Chroma %d, %d)\n", __FUNCTION__,
-		       RangeMapLumaPresent, RangeMapLuma, RangeMapChromaPresent, RangeMapChroma);
+			   RangeMapLumaPresent, RangeMapLuma, RangeMapChromaPresent, RangeMapChroma);
 #endif
 		if ((RangeMapLumaPresent || RangeMapChromaPresent) && (PostProcessControlBufferPool != NULL))
 		{
@@ -720,7 +720,7 @@ CodecStatus_t Codec_MmeVideoVc1_c::DumpDecodeParameters(void *Parameters)
 
 //{{{ SaveIntensityCompenationData
 void Codec_MmeVideoVc1_c::SaveIntensityCompensationData(unsigned int RefBufferIndex,
-							VC9_IntensityComp_t *Intensity)
+														VC9_IntensityComp_t *Intensity)
 {
 	Vc1FrameParameters_t *Frame = (Vc1FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
 	CodecIntensityCompensation_t *RefIntensityComp = &BufferState[RefBufferIndex].AppliedIntensityCompensation;
@@ -775,7 +775,7 @@ void Codec_MmeVideoVc1_c::SaveIntensityCompensationData(unsigned int RefBufferIn
 //}}}
 //{{{ GetForwardIntensityCompenationData
 void Codec_MmeVideoVc1_c::GetForwardIntensityCompensationData(unsigned int RefBufferIndex,
-							      VC9_IntensityComp_t *Intensity)
+															  VC9_IntensityComp_t *Intensity)
 {
 	Vc1FrameParameters_t *Frame = (Vc1FrameParameters_t *)ParsedFrameParameters->FrameParameterStructure;
 	CodecIntensityCompensation_t *RefIntensityComp = &BufferState[RefBufferIndex].AppliedIntensityCompensation;
@@ -813,7 +813,7 @@ void Codec_MmeVideoVc1_c::GetForwardIntensityCompensationData(unsigned int RefBu
 //}}}
 //{{{ GetBackwardIntensityCompenationData
 void Codec_MmeVideoVc1_c::GetBackwardIntensityCompensationData(unsigned int RefBufferIndex,
-							       VC9_IntensityComp_t *Intensity)
+															   VC9_IntensityComp_t *Intensity)
 {
 	CodecIntensityCompensation_t *RefIntensityComp = &BufferState[RefBufferIndex].AppliedIntensityCompensation;
 	Intensity->BackTop_1 = RefIntensityComp->Top1;

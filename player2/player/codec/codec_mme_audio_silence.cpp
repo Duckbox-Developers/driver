@@ -282,9 +282,9 @@ CodecStatus_t Codec_MmeAudioSilence_c::ValidateDecodeContext(CodecBaseDecodeCont
 	if (TranscodeEnable)
 	{
 		Codec_MmeAudioDtshd_c::TranscodeDtshdToDts(&LocalDecodeContext->BaseContext,
-							   LocalDecodeContext->TranscodeBufferIndex,
-							   &LocalDecodeContext->ContextFrameParameters.DtshdAudioFrameParameters,
-							   TranscodedBuffers);
+												   LocalDecodeContext->TranscodeBufferIndex,
+												   &LocalDecodeContext->ContextFrameParameters.DtshdAudioFrameParameters,
+												   TranscodedBuffers);
 	}
 	return CodecNoError;
 }
@@ -373,9 +373,9 @@ CodecStatus_t Codec_MmeAudioSilence_c::GetTranscodeBuffer(void)
 	// Obtain the interesting references to the buffer
 	//
 	CurrentTranscodeBuffer->ObtainDataReference(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferLength,
-						    NULL,
-						    (void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
-						    Configuration.AddressingMode);
+												NULL,
+												(void **)(&TranscodedBuffers[CurrentTranscodeBufferIndex].BufferPointer),
+												Configuration.AddressingMode);
 //
 	return CodecNoError;
 }
@@ -450,10 +450,10 @@ CodecStatus_t Codec_MmeAudioSilence_c::GetTranscodedFrameBufferPool(BufferPool_t
 #endif
 		//
 		Status = BufferManager->CreatePool(&TranscodedFramePool,
-						   TranscodedFrameBufferType,
-						   DTSHD_TRANSCODE_BUFFER_COUNT,
-						   DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT,
-						   TranscodedFrameMemory);
+										   TranscodedFrameBufferType,
+										   DTSHD_TRANSCODE_BUFFER_COUNT,
+										   DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT,
+										   TranscodedFrameMemory);
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("GetTranscodedFrameBufferPool(%s) - Failed to create the pool.\n", Configuration.CodecName);

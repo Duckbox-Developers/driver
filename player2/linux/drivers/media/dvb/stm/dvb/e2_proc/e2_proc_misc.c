@@ -30,7 +30,7 @@ static int output_stat = 0;
 struct stpio_pin *output_pin;
 
 int proc_misc_12V_output_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -65,7 +65,7 @@ out:
 }
 
 int proc_misc_12V_output_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 //	printk("%s %d %d\n", __FUNCTION__, count, current_input);

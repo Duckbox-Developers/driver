@@ -60,7 +60,7 @@ struct BackendContext_s
 static struct BackendContext_s *Backend;
 
 int register_dvb_backend(char *Name,
-			 struct dvb_backend_operations *Ops)
+						 struct dvb_backend_operations *Ops)
 {
 	if (Backend == NULL)
 	{
@@ -163,12 +163,12 @@ int DvbPlaybackDelete(struct PlaybackContext_s *Playback)
 
 /*{{{ DvbPlaybackAddStream*/
 int DvbPlaybackAddStream(struct PlaybackContext_s *Playback,
-			 char *Media,
-			 char *Format,
-			 char *Encoding,
-			 unsigned int DemuxId,
-			 unsigned int SurfaceId,
-			 struct StreamContext_s **Stream)
+						 char *Media,
+						 char *Format,
+						 char *Encoding,
+						 unsigned int DemuxId,
+						 unsigned int SurfaceId,
+						 struct StreamContext_s **Stream)
 {
 	int Result;
 	unsigned int NewStream = false;
@@ -235,15 +235,15 @@ int DvbPlaybackAddStream(struct PlaybackContext_s *Playback,
 	}
 	else if (Demux)
 		Result = Backend->Ops->playback_add_demux(Playback->Handle,
-							  DemuxId,
-							  &(*Stream)->Handle);
+												  DemuxId,
+												  &(*Stream)->Handle);
 	else
 		Result = Backend->Ops->playback_add_stream(Playback->Handle,
-							   Media,
-							   Format,
-							   Encoding,
-							   SurfaceId,
-							   &(*Stream)->Handle);
+												   Media,
+												   Format,
+												   Encoding,
+												   SurfaceId,
+												   &(*Stream)->Handle);
 	if (Result < 0)
 	{
 		BACKEND_ERROR("Unable to create stream context\n");
@@ -268,7 +268,7 @@ int DvbPlaybackAddStream(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackRemoveStream*/
 int DvbPlaybackRemoveStream(struct PlaybackContext_s *Playback,
-			    struct StreamContext_s *Stream)
+							struct StreamContext_s *Stream)
 {
 	int Result = 0;
 	BACKEND_DEBUG("%p: Usage = %d\n", Playback, Playback->UsageCount);
@@ -294,7 +294,7 @@ int DvbPlaybackRemoveStream(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackSetSpeed*/
 int DvbPlaybackSetSpeed(struct PlaybackContext_s *Playback,
-			unsigned int Speed)
+						unsigned int Speed)
 {
 	int Result;
 	if (Playback == NULL)
@@ -307,7 +307,7 @@ int DvbPlaybackSetSpeed(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackGetSpeed*/
 int DvbPlaybackGetSpeed(struct PlaybackContext_s *Playback,
-			unsigned int *Speed)
+						unsigned int *Speed)
 {
 	int Result;
 	if (Playback == NULL) /* No playback to start audio in */
@@ -320,8 +320,8 @@ int DvbPlaybackGetSpeed(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackSetOption*/
 int DvbPlaybackSetOption(struct PlaybackContext_s *Playback,
-			 play_option_t Option,
-			 unsigned int Value)
+						 play_option_t Option,
+						 unsigned int Value)
 {
 	int Result;
 	if ((Playback == NULL) || (Playback->Handle == NULL)) /* No playback to set option on */
@@ -334,8 +334,8 @@ int DvbPlaybackSetOption(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackSetNativePlaybackTime*/
 int DvbPlaybackSetNativePlaybackTime(struct PlaybackContext_s *Playback,
-				     unsigned long long NativeTime,
-				     unsigned long long SystemTime)
+									 unsigned long long NativeTime,
+									 unsigned long long SystemTime)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)
@@ -348,8 +348,8 @@ int DvbPlaybackSetNativePlaybackTime(struct PlaybackContext_s *Playback,
 		return 0;
 	}
 	Result = Backend->Ops->playback_set_native_playback_time(Playback->Handle,
-								 NativeTime,
-								 SystemTime);
+															 NativeTime,
+															 SystemTime);
 	if (Result < 0)
 		BACKEND_ERROR("Unable to set native playback time\n");
 	return Result;
@@ -357,7 +357,7 @@ int DvbPlaybackSetNativePlaybackTime(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlayerGetPlayerEnvironment*/
 int DvbPlaybackGetPlayerEnvironment(struct PlaybackContext_s *Playback,
-				    playback_handle_t *playerplayback)
+									playback_handle_t *playerplayback)
 {
 	int Result = 0;
 	if (Playback == NULL) return -EINVAL;
@@ -369,7 +369,7 @@ int DvbPlaybackGetPlayerEnvironment(struct PlaybackContext_s *Playback,
 /*}}}*/
 /*{{{ DvbPlaybackSetClockDataPoint*/
 int DvbPlaybackSetClockDataPoint(struct PlaybackContext_s *Playback,
-				 dvb_clock_data_point_t *ClockData)
+								 dvb_clock_data_point_t *ClockData)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)
@@ -385,7 +385,7 @@ int DvbPlaybackSetClockDataPoint(struct PlaybackContext_s *Playback,
 
 /*{{{ DvbStreamEnable*/
 int DvbStreamEnable(struct StreamContext_s *Stream,
-		    unsigned int Enable)
+					unsigned int Enable)
 {
 	int Result = 0;
 	if ((Stream == NULL) || (Stream->Handle == NULL))
@@ -398,8 +398,8 @@ int DvbStreamEnable(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamSetId*/
 int DvbStreamSetId(struct StreamContext_s *Stream,
-		   unsigned int DemuxId,
-		   unsigned int Id)
+				   unsigned int DemuxId,
+				   unsigned int Id)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to set id */
@@ -412,7 +412,7 @@ int DvbStreamSetId(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamChannelSelect*/
 int DvbStreamChannelSelect(struct StreamContext_s *Stream,
-			   channel_select_t Channel)
+						   channel_select_t Channel)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to set id */
@@ -425,8 +425,8 @@ int DvbStreamChannelSelect(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamSetOption*/
 int DvbStreamSetOption(struct StreamContext_s *Stream,
-		       play_option_t Option,
-		       unsigned int Value)
+					   play_option_t Option,
+					   unsigned int Value)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No playback to set option on */
@@ -439,8 +439,8 @@ int DvbStreamSetOption(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamGetOption*/
 int DvbStreamGetOption(struct StreamContext_s *Stream,
-		       play_option_t Option,
-		       unsigned int *Value)
+					   play_option_t Option,
+					   unsigned int *Value)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to get option on */
@@ -453,7 +453,7 @@ int DvbStreamGetOption(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamGetPlayInfo*/
 int DvbStreamGetPlayInfo(struct StreamContext_s *Stream,
-			 struct play_info_s *PlayInfo)
+						 struct play_info_s *PlayInfo)
 {
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return -EINVAL;
@@ -462,7 +462,7 @@ int DvbStreamGetPlayInfo(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamSetPlayInterval*/
 int DvbStreamSetPlayInterval(struct StreamContext_s *Stream,
-			     dvb_play_interval_t *PlayInterval)
+							 dvb_play_interval_t *PlayInterval)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No playback to set option on */
@@ -480,8 +480,8 @@ int DvbStreamSetPlayInterval(struct StreamContext_s *Stream,
  (or program stream or system stream) into the player.
 */
 int DvbStreamInject(struct StreamContext_s *Stream,
-		    const unsigned char *Buffer,
-		    unsigned int Length)
+					const unsigned char *Buffer,
+					unsigned int Length)
 {
 	int Result = 0;
 	mutex_lock(&(Stream->Lock));
@@ -496,10 +496,10 @@ int DvbStreamInject(struct StreamContext_s *Stream,
  (or program stream or system stream) into the player.
 */
 int DvbStreamInjectPacket(struct StreamContext_s *Stream,
-			  const unsigned char *Buffer,
-			  unsigned int Length,
-			  bool PresentationTimeValid,
-			  unsigned long long PresentationTime)
+						  const unsigned char *Buffer,
+						  unsigned int Length,
+						  bool PresentationTimeValid,
+						  unsigned long long PresentationTime)
 {
 	int Result = 0;
 	mutex_lock(&(Stream->Lock));
@@ -510,14 +510,14 @@ int DvbStreamInjectPacket(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamDrain*/
 int DvbStreamDrain(struct StreamContext_s *Stream,
-		   unsigned int Discard)
+				   unsigned int Discard)
 {
 	return DvbStreamDrain2(Stream, Discard, 0);
 }
 
 int DvbStreamDrain2(struct StreamContext_s *Stream,
-		    unsigned int Discard,
-		    unsigned int NonBlock)
+					unsigned int Discard,
+					unsigned int NonBlock)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to drain */
@@ -554,8 +554,8 @@ int DvbStreamStep(struct StreamContext_s *Stream)
 /*}}}*/
 /*{{{ DvbStreamSwitch*/
 int DvbStreamSwitch(struct StreamContext_s *Stream,
-		    char *Format,
-		    char *Encoding)
+					char *Format,
+					char *Encoding)
 {
 	BACKEND_DEBUG("%p\n", Stream);
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream */
@@ -565,7 +565,7 @@ int DvbStreamSwitch(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamDiscontinuity*/
 int DvbStreamDiscontinuity(struct StreamContext_s *Stream,
-			   discontinuity_t Discontinuity)
+						   discontinuity_t Discontinuity)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL))
@@ -578,8 +578,8 @@ int DvbStreamDiscontinuity(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamRegisterEventSignalCallback*/
 stream_event_signal_callback DvbStreamRegisterEventSignalCallback(struct StreamContext_s *Stream,
-								  struct DeviceContext_s *Context,
-								  stream_event_signal_callback Callback)
+																  struct DeviceContext_s *Context,
+																  stream_event_signal_callback Callback)
 {
 	if ((Stream == NULL) || (Stream->Handle == NULL))
 		return NULL;
@@ -588,13 +588,13 @@ stream_event_signal_callback DvbStreamRegisterEventSignalCallback(struct StreamC
 /*}}}*/
 /*{{{ DvbStreamGetDecodeBuffer*/
 int DvbStreamGetDecodeBuffer(struct StreamContext_s *Stream,
-			     buffer_handle_t *Buffer,
-			     unsigned char **Data,
-			     unsigned int Format,
-			     unsigned int DimensionCount,
-			     unsigned int Dimensions[],
-			     unsigned int *Index,
-			     unsigned int *Stride)
+							 buffer_handle_t *Buffer,
+							 unsigned char **Data,
+							 unsigned int Format,
+							 unsigned int DimensionCount,
+							 unsigned int Dimensions[],
+							 unsigned int *Index,
+							 unsigned int *Stride)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL))
@@ -607,7 +607,7 @@ int DvbStreamGetDecodeBuffer(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamReturnDecodeBuffer*/
 int DvbStreamReturnDecodeBuffer(struct StreamContext_s *Stream,
-				buffer_handle_t *Buffer)
+								buffer_handle_t *Buffer)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL))
@@ -621,8 +621,8 @@ int DvbStreamReturnDecodeBuffer(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamGetDecodeBufferPoolStatus*/
 int DvbStreamGetDecodeBufferPoolStatus(struct StreamContext_s *Stream,
-				       unsigned int *BuffersInPool,
-				       unsigned int *BuffersWithNonZeroReferenceCount)
+									   unsigned int *BuffersInPool,
+									   unsigned int *BuffersWithNonZeroReferenceCount)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL))
@@ -637,10 +637,10 @@ int DvbStreamGetDecodeBufferPoolStatus(struct StreamContext_s *Stream,
 #ifdef __TDT__
 /*{{{ DvbStreamGetOutputWindow*/
 int DvbStreamGetOutputWindow(struct StreamContext_s *Stream,
-			     unsigned int *X,
-			     unsigned int *Y,
-			     unsigned int *Width,
-			     unsigned int *Height)
+							 unsigned int *X,
+							 unsigned int *Y,
+							 unsigned int *Width,
+							 unsigned int *Height)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to set id */
@@ -654,10 +654,10 @@ int DvbStreamGetOutputWindow(struct StreamContext_s *Stream,
 #endif
 /*{{{ DvbStreamSetOutputWindow*/
 int DvbStreamSetOutputWindow(struct StreamContext_s *Stream,
-			     unsigned int X,
-			     unsigned int Y,
-			     unsigned int Width,
-			     unsigned int Height)
+							 unsigned int X,
+							 unsigned int Y,
+							 unsigned int Width,
+							 unsigned int Height)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to set id */
@@ -670,10 +670,10 @@ int DvbStreamSetOutputWindow(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamSetInputWindow*/
 int DvbStreamSetInputWindow(struct StreamContext_s *Stream,
-			    unsigned int X,
-			    unsigned int Y,
-			    unsigned int Width,
-			    unsigned int Height)
+							unsigned int X,
+							unsigned int Y,
+							unsigned int Width,
+							unsigned int Height)
 {
 	int Result;
 	if ((Stream == NULL) || (Stream->Handle == NULL)) /* No stream to set id */
@@ -694,7 +694,7 @@ int DvbStreamSetInputWindow(struct StreamContext_s *Stream,
  guarantee this (since we don't have a length argument).
 */
 int DvbStreamIdentifyAudio(struct StreamContext_s *Stream,
-			   unsigned int *Id)
+						   unsigned int *Id)
 {
 	int Status = 0;
 	unsigned char *Header = Stream->Buffer;
@@ -750,7 +750,7 @@ int DvbStreamIdentifyAudio(struct StreamContext_s *Stream,
 	else
 	{
 		BACKEND_ERROR("Cannot identify Unknown stream format %02x %02x %02x %02x %02x %02x %02x %02x\n",
-			      Header[0], Header[1], Header[2], Header[3], Header[4], Header[5], Header[6], Header[7]);
+					  Header[0], Header[1], Header[2], Header[3], Header[4], Header[5], Header[6], Header[7]);
 		Status = -EINVAL;
 	}
 	return Status;
@@ -758,7 +758,7 @@ int DvbStreamIdentifyAudio(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamIdentifyVideo*/
 int DvbStreamIdentifyVideo(struct StreamContext_s *Stream,
-			   unsigned int *Id)
+						   unsigned int *Id)
 {
 	int Status = 0;
 	unsigned char *Header = Stream->Buffer;
@@ -783,8 +783,8 @@ int DvbStreamIdentifyVideo(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamGetFirstBuffer*/
 int DvbStreamGetFirstBuffer(struct StreamContext_s *Stream,
-			    const char __user *Buffer,
-			    unsigned int Length)
+							const char __user *Buffer,
+							unsigned int Length)
 {
 	int CopyAmount;
 	mutex_lock(&(Stream->Lock));
@@ -798,8 +798,8 @@ int DvbStreamGetFirstBuffer(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbStreamGetPlayerEnvironment*/
 int DvbStreamGetPlayerEnvironment(struct StreamContext_s *Stream,
-				  playback_handle_t *playerplayback,
-				  stream_handle_t *playerstream)
+								  playback_handle_t *playerplayback,
+								  stream_handle_t *playerstream)
 {
 	int Result;
 	if (Stream == NULL) return -EINVAL;
@@ -811,7 +811,7 @@ int DvbStreamGetPlayerEnvironment(struct StreamContext_s *Stream,
 /*}}}*/
 /*{{{ DvbDisplayDelete*/
 int DvbDisplayDelete(char *Media,
-		     unsigned int SurfaceId)
+					 unsigned int SurfaceId)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)
@@ -827,7 +827,7 @@ int DvbDisplayDelete(char *Media,
 #ifdef __TDT__
 /*{{{ DisplayCreate */
 int DisplayCreate(char *Media,
-		  unsigned int SurfaceId)
+				  unsigned int SurfaceId)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)
@@ -841,7 +841,7 @@ int DisplayCreate(char *Media,
 /*}}}*/
 /*{{{ isDisplayCreated */
 int isDisplayCreated(char *Media,
-		     unsigned int SurfaceId)
+					 unsigned int SurfaceId)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)
@@ -855,7 +855,7 @@ int isDisplayCreated(char *Media,
 
 /*{{{ DvbDisplaySynchronize*/
 int DvbDisplaySynchronize(char *Media,
-			  unsigned int SurfaceId)
+						  unsigned int SurfaceId)
 {
 	int Result = 0;
 	if (Backend->Ops == NULL)

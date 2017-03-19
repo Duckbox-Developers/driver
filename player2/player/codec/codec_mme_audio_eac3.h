@@ -103,7 +103,7 @@ class Codec_MmeAudioEAc3_c : public Codec_MmeAudio_c
 		CodecStatus_t FillOutDecodeCommand(void);
 		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
 		void HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-					  MME_PcmProcessingStatusTemplate_t *PcmStatus);
+								  MME_PcmProcessingStatusTemplate_t *PcmStatus);
 		CodecStatus_t DumpSetStreamParameters(void *Parameters);
 		CodecStatus_t DumpDecodeParameters(void *Parameters);
 		void SetCommandIO(void);

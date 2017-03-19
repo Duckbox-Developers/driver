@@ -327,7 +327,7 @@ FrameParserStatus_t FrameParser_AudioRma_c::ReadHeaders(void)
 	ParsedFrameParameters->FrameParameterStructure = FrameParameters;
 	FrameParameters->FrameSize = CurrentStreamParameters.SubPacketSize;
 	FrameParameters->BitRate = (CurrentStreamParameters.SubPacketSize * CurrentStreamParameters.SampleRate * 8) /
-				   CurrentStreamParameters.SamplesPerFrame;
+							   CurrentStreamParameters.SamplesPerFrame;
 	ParsedAudioParameters->Source.BitsPerSample = CurrentStreamParameters.SampleSize;
 	ParsedAudioParameters->Source.ChannelCount = CurrentStreamParameters.ChannelCount;
 	ParsedAudioParameters->Source.SampleRateHz = CurrentStreamParameters.SampleRate;

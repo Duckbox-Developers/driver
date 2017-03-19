@@ -18,7 +18,7 @@
 extern struct DeviceContext_s *DeviceContext;
 
 int proc_denc_0_wss_write(struct file *file, const char __user *buf,
-			  unsigned long count, void *data)
+						  unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -45,7 +45,7 @@ out:
 }
 
 int proc_denc_0_wss_read(char *page, char **start, off_t off, int count,
-			 int *eof, void *data_unused)
+						 int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s\n", __FUNCTION__);

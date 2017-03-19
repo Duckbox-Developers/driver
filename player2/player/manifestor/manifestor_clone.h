@@ -92,16 +92,16 @@ class Manifestor_Clone_c : public Manifestor_c
 		PlayerStatus_t Reset(void);
 
 		PlayerStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						   void *ParameterBlock);
+										   void *ParameterBlock);
 
 		PlayerStatus_t RegisterPlayer(Player_t Player,
-					      PlayerPlayback_t Playback,
-					      PlayerStream_t Stream,
-					      Collator_t Collator = NULL,
-					      FrameParser_t FrameParser = NULL,
-					      Codec_t Codec = NULL,
-					      OutputTimer_t OutputTimer = NULL,
-					      Manifestor_t Manifestor = NULL);
+									  PlayerPlayback_t Playback,
+									  PlayerStream_t Stream,
+									  Collator_t Collator = NULL,
+									  FrameParser_t FrameParser = NULL,
+									  Codec_t Codec = NULL,
+									  OutputTimer_t OutputTimer = NULL,
+									  Manifestor_t Manifestor = NULL);
 
 		//
 		// Class functions
@@ -130,7 +130,7 @@ class Manifestor_Clone_c : public Manifestor_c
 		ManifestorStatus_t GetNativeTimeOfCurrentlyManifestedFrame(unsigned long long *Time);
 
 		ManifestorStatus_t GetDecodeBuffer(BufferStructure_t *RequestedStructure,
-						   Buffer_t *Buffer);
+										   Buffer_t *Buffer);
 
 		ManifestorStatus_t GetDecodeBufferCount(unsigned int *Count);
 
@@ -144,7 +144,7 @@ class Manifestor_Clone_c : public Manifestor_c
 
 		ManifestorStatus_t SetCloneTo(Manifestor_t CloneTo);
 		ManifestorStatus_t GetManifestors(Manifestor_t *Original,
-						  Manifestor_t *CloneTo);
+										  Manifestor_t *CloneTo);
 };
 #endif
 

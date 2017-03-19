@@ -176,7 +176,7 @@ FrameParserStatus_t FrameParser_AudioAvs_c::ParseFrameHeader(unsigned char *Fram
 	unsigned int NumSamplesPerChannel;
 //
 	FrameHeader = FrameHeaderBytes[0] << 24 | FrameHeaderBytes[1] << 16 |
-		      FrameHeaderBytes[2] << 8 | FrameHeaderBytes[3];
+				  FrameHeaderBytes[2] << 8 | FrameHeaderBytes[3];
 	return FrameParserNoError;
 }
 
@@ -440,7 +440,7 @@ FrameParserStatus_t FrameParser_AudioAvs_c::GeneratePostDecodeParameterSettings(
 	//
 	HandleUpdateStreamParameters();
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						ParsedFrameHeader.SamplingFrequency);
+											ParsedFrameHeader.SamplingFrequency);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

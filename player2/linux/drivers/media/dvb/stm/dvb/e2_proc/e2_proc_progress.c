@@ -18,7 +18,7 @@
 extern struct DeviceContext_s *DeviceContext;
 static int progress = 0;
 int proc_progress_write(struct file *file, const char __user *buf,
-			unsigned long count, void *data)
+						unsigned long count, void *data)
 {
 	char *page;
 	char *myString;
@@ -44,7 +44,7 @@ out:
 }
 
 int proc_progress_read(char *page, char **start, off_t off, int count,
-		       int *eof, void *data_unused)
+					   int *eof, void *data_unused)
 {
 	int len = 0;
 	len = sprintf(page, "%d\n", progress);

@@ -73,8 +73,8 @@ static BufferDataDescriptor_t Vp6CodecDecodeContextDescriptor = BUFFER_VP6_CODEC
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t *CallbackData, void *UserData);
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -204,7 +204,7 @@ CodecStatus_t Codec_MmeVideoVp6_c::SendMMEStreamParameters(void)
 		MMEInitializationParameters.CallbackUserData = this;
 		FillOutTransformerInitializationParameters();
 		MMEStatus = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-						&MMEInitializationParameters, &MMEHandle);
+										&MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus == MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", DecodingWidth, DecodingHeight);

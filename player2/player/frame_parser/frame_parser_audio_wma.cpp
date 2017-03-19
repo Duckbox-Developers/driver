@@ -80,8 +80,8 @@ static BufferDataDescriptor_t WmaAudioFrameParametersBuffer = BUFFER_WMA_AUDIO_F
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioWma_c::ParseStreamHeader(unsigned char *FrameHeaderBytes,
-							      WmaAudioStreamParameters_t *StreamParameters,
-							      bool Verbose)
+															  WmaAudioStreamParameters_t *StreamParameters,
+															  bool Verbose)
 {
 	unsigned int FrameDataLength;
 	unsigned int *FrameDataU32 = (unsigned int *)FrameHeaderBytes;
@@ -99,7 +99,7 @@ FrameParserStatus_t FrameParser_AudioWma_c::ParseStreamHeader(unsigned char *Fra
 		return FrameParserError;
 	}
 	FrameData = WaveFormatEx.decode(StreamPropertiesObject.type_specific_data,
-					StreamPropertiesObject.type_specific_data_length);
+									StreamPropertiesObject.type_specific_data_length);
 	if (Verbose)
 		WaveFormatEx.dump(true);
 	if (!FrameData)
@@ -108,8 +108,8 @@ FrameParserStatus_t FrameParser_AudioWma_c::ParseStreamHeader(unsigned char *Fra
 		return FrameParserError;
 	}
 	FrameData = TypeSpecificData.decode(WaveFormatEx.codec_id,
-					    WaveFormatEx.codec_specific_data,
-					    WaveFormatEx.codec_specific_data_size);
+										WaveFormatEx.codec_specific_data,
+										WaveFormatEx.codec_specific_data_size);
 	if (Verbose)
 		TypeSpecificData.dump(true);
 	if (!FrameData)
@@ -167,8 +167,8 @@ FrameParserStatus_t FrameParser_AudioWma_c::ParseStreamHeader(unsigned char *Fra
 	StreamParameters->BitsPerSample = WaveFormatEx.bits_per_sample;
 	// Set valit bits per sample. If type Specific data sets the value use that, otherwise set same as bits per sample
 	StreamParameters->ValidBitsPerSample = (TypeSpecificData.valid_bits_per_sample == 0) ?
-					       WaveFormatEx.bits_per_sample :
-					       TypeSpecificData.valid_bits_per_sample;
+										   WaveFormatEx.bits_per_sample :
+										   TypeSpecificData.valid_bits_per_sample;
 	StreamParameters->ChannelMask = TypeSpecificData.channel_mask;
 	StreamParameters->SamplesPerBlock = TypeSpecificData.samples_per_block;
 	if (Verbose)
@@ -406,8 +406,8 @@ FrameParserStatus_t FrameParser_AudioWma_c::GeneratePostDecodeParameterSettings(
 	if (ParsedFrameParameters->NormalizedDecodeTime > ParsedFrameParameters->NormalizedPlaybackTime)
 	{
 		FRAME_ERROR("DTS(%lldus) > PTS(%lldus)!!!\n",
-			    ParsedFrameParameters->NormalizedDecodeTime,
-			    ParsedFrameParameters->NormalizedPlaybackTime);
+					ParsedFrameParameters->NormalizedDecodeTime,
+					ParsedFrameParameters->NormalizedPlaybackTime);
 		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime;
 	}
 	if (ValidTime(ParsedFrameParameters->NormalizedDecodeTime) &&

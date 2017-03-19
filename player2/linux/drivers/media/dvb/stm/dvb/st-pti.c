@@ -135,7 +135,7 @@ extern int twinhead;
 #endif
 
 int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
-		     struct DeviceContext_s *DeviceContext)
+					 struct DeviceContext_s *DeviceContext)
 {
 	struct dvb_demux *demux = dvbdmxfeed->demux;
 	int vLoop, my_pes_type;
@@ -165,8 +165,8 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 #endif
 #ifdef VERY_VERBOSE
 	printk("start dmx %p, sh %d, pid %d, t %d, pt %d\n", demux,
-	       pSession->session, dvbdmxfeed->pid, dvbdmxfeed->type,
-	       dvbdmxfeed->pes_type);
+		   pSession->session, dvbdmxfeed->pid, dvbdmxfeed->type,
+		   dvbdmxfeed->pes_type);
 #endif
 	switch (dvbdmxfeed->type)
 	{
@@ -178,7 +178,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 		case DMX_TYPE_PES:
 		default:
 			printk("%s: feed type = %d (not supported) <\n", __FUNCTION__,
-			       dvbdmxfeed->type);
+				   dvbdmxfeed->type);
 			return -EINVAL;
 	}
 	if (dvbdmxfeed->type == DMX_TYPE_TS)
@@ -199,7 +199,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 				break;
 			default:
 				printk("%s: pes type = %d (not supported) <\n", __FUNCTION__,
-				       dvbdmxfeed->pes_type);
+					   dvbdmxfeed->pes_type);
 				return -EINVAL;
 		}
 	}
@@ -242,7 +242,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 			}
 #ifdef VERY_VERBOSE
 			printk("pid %d already collecting. references %d \n",
-			       dvbdmxfeed->pid, pSession->references[vLoop]);
+				   dvbdmxfeed->pid, pSession->references[vLoop]);
 #endif
 			return 0;
 		}
@@ -252,16 +252,16 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 	pSession->pes_type[pSession->num_pids] = my_pes_type;
 	pSession->references[pSession->num_pids] = 1;
 	pSession->slots[pSession->num_pids] = pti_hal_get_new_slot_handle(pSession->session,
-									  dvbdmxfeed->type,
-									  dvbdmxfeed->
-									  pes_type, demux, NULL, NULL);
+																	  dvbdmxfeed->type,
+																	  dvbdmxfeed->
+																	  pes_type, demux, NULL, NULL);
 	pSession->descramblerindex[pSession->num_pids] = pSession->descramblerForPid[dvbdmxfeed->pid];
 #ifdef VERY_VERBOSE
 	printk("SlotHandle = %d\n", pSession->slots[pSession->num_pids]);
 #endif
 	if (pti_hal_slot_link_buffer(pSession->session,
-				     pSession->slots[pSession->num_pids],
-				     bufType) != 0)
+								 pSession->slots[pSession->num_pids],
+								 bufType) != 0)
 	{
 		// free slot
 		pti_hal_slot_free(pSession->session, pSession->slots[pSession->num_pids]);
@@ -277,11 +277,11 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 		{
 			int err;
 			if ((err = pti_hal_descrambler_link(pSession->session,
-							    pSession->descramblers[pSession->descramblerindex[pSession->num_pids]],
-							    pSession->slots[pSession->num_pids])) != 0)
+												pSession->descramblers[pSession->descramblerindex[pSession->num_pids]],
+												pSession->slots[pSession->num_pids])) != 0)
 				printk("Error linking slot %d to descrambler %d, err = %d\n",
-				       pSession->slots[pSession->num_pids],
-				       pSession->descramblers[pSession->descramblerindex[pSession->num_pids]], err);
+					   pSession->slots[pSession->num_pids],
+					   pSession->descramblers[pSession->descramblerindex[pSession->num_pids]], err);
 #ifdef VERY_VERBOSE
 			else
 				printk("linking slot %d to descrambler %d, session = %d type=%d\n", pSession->slots[pSession->num_pids], pSession->descramblers[pSession->descramblerindex[pSession->num_pids]], pSession->session, dvbdmxfeed->pes_type);
@@ -289,18 +289,18 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 		}
 	}
 	pti_hal_slot_set_pid(pSession->session, pSession->slots[pSession->num_pids],
-			     dvbdmxfeed->pid);
+						 dvbdmxfeed->pid);
 	//pti_hal_buffer_enable ( pSession->session, pSession->buffers[0] );
 	//pti_hal_buffer_enable ( pSession->session, pSession->buffers[1] );
 	pSession->num_pids++;
 	dprintk("%s: pid = %d, num_pids = %d \n", __FUNCTION__, dvbdmxfeed->pid,
-		pSession->num_pids);
+			pSession->num_pids);
 #if 0
 	printk("# pid t pt ref\n");
 	for (vLoop = 0; vLoop < (pSession->num_pids); vLoop++)
 	{
 		printk("%d %4d %d %2d %d\n", vLoop, pSession->pidtable[vLoop], pSession->type[vLoop], pSession->pes_type[vLoop],
-		       pSession->references[vLoop]);
+			   pSession->references[vLoop]);
 	}
 #endif
 //	dprintk("%s: <\n", __FUNCTION__);
@@ -310,7 +310,7 @@ int stpti_start_feed(struct dvb_demux_feed *dvbdmxfeed,
 EXPORT_SYMBOL(stpti_start_feed);
 
 int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
-		    struct DeviceContext_s *pContext)
+					struct DeviceContext_s *pContext)
 {
 	int n, vLoop, my_pes_type;
 	int haveFound = 0;
@@ -358,7 +358,7 @@ int stpti_stop_feed(struct dvb_demux_feed *dvbdmxfeed,
 			if (pSession->references[vLoop] == 0)
 			{
 				pti_hal_slot_unlink_buffer(pSession->session,
-							   pSession->slots[vLoop]);
+										   pSession->slots[vLoop]);
 				//pti_hal_buffer_disable ( pSession->session, pSession->buffers[0] );
 				pti_hal_slot_clear_pid(pSession->session, pSession->slots[vLoop]);
 				pti_hal_slot_free(pSession->session, pSession->slots[vLoop]);
@@ -436,7 +436,7 @@ static int convert_source(const dmx_source_t source)
  || defined(HL101)
 			tag = SWTS0;
 #elif defined(IPBOX9900) \
- || defined(IPBOX99) 
+ || defined(IPBOX99)
 			if (twinhead == 1)
 			{
 				tag = SWTS0;
@@ -566,7 +566,7 @@ void ptiInit(struct DeviceContext_s *pContext)
 	}
 #endif
 	printk("%s context = %p, demux = %p\n", __FUNCTION__,
-	       pContext, &pContext->DvbDemux);
+		   pContext, &pContext->DvbDemux);
 	if (pContext->pPtiSession != NULL)
 	{
 		printk("PTI ERROR: attempted to initialize a device context with an existing session\n");
@@ -695,7 +695,7 @@ int SetSource(struct dmx_demux *demux, const dmx_source_t *src)
 	if ((pContext == NULL) || (pContext->pPtiSession == NULL) || (src == NULL))
 	{
 		printk("%s(): invalid pointer (%p, %p, %p)\n",
-		       __func__, pContext, pContext->pPtiSession, src);
+			   __func__, pContext, pContext->pPtiSession, src);
 		return -EINVAL;
 	}
 #ifdef VERY_VERBOSE

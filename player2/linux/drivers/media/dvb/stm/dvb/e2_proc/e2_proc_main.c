@@ -37,6 +37,10 @@
  * | |
  * | --------- force_dvi
  * | |
+ * | --------- hdmi_colorspace
+ * | |
+ * | --------- hdmi_colorspace_choices
+ * | |
  * | --------- policy
  * | |
  * | --------- policy_choices
@@ -198,8 +202,8 @@ proc = open("/sys/class/stmcoredisplay/display0/hdmi0.0/modes", "r")
 #include "../dvb_module.h"
 #include "linux/dvb/stm_ioctls.h"
 
-       /* external functions provided by the module e2_procfs */
-       extern int install_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc, void *data);
+	   /* external functions provided by the module e2_procfs */
+	   extern int install_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc, void *data);
 extern int remove_e2_procs(char *name, read_proc_t *read_proc, write_proc_t *write_proc);
 
 extern int proc_progress_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
@@ -220,6 +224,9 @@ extern int proc_audio_j1_mute_write(struct file *file, const char __user *buf, u
 extern int proc_video_aspect_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
 extern int proc_video_aspect_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_video_aspect_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_video_hdmi_colorspace_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
+extern int proc_video_hdmi_colorspace_write(struct file *file, const char __user *buf, unsigned long count, void *data);
+extern int proc_video_hdmi_colorspace_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
 extern int proc_video_policy_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
 extern int proc_video_policy_write(struct file *file, const char __user *buf, unsigned long count, void *data);
 extern int proc_video_policy_choices_read(char *page, char **start, off_t off, int count, int *eof, void *data_unused);
@@ -378,6 +385,8 @@ struct e2_procs
 	/*
 	 {"stb/video/force_dvi", NULL, NULL, 0},
 	*/
+	{"stb/video/hdmi_colorspace", proc_video_hdmi_colorspace_read, proc_video_hdmi_colorspace_write, 0},
+	{"stb/video/hdmi_colorspace_choices", proc_video_hdmi_colorspace_choices_read, NULL, 0},
 	{"stb/video/policy", proc_video_policy_read, proc_video_policy_write, 0},
 	{"stb/video/policy_choices", proc_video_policy_choices_read, NULL, 0},
 	{"stb/video/videomode", proc_video_videomode_read, proc_video_videomode_write, 0},
@@ -502,8 +511,8 @@ void init_e2_proc(struct DeviceContext_s *DC)
 	for (i = 0; i < sizeof(e2_procs) / sizeof(e2_procs[0]); i++)
 	{
 		install_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
-				 e2_procs[i].write_proc,
-				 &DC->DvbContext->DeviceContext[e2_procs[i].context]);
+						 e2_procs[i].write_proc,
+						 &DC->DvbContext->DeviceContext[e2_procs[i].context]);
 	}
 	/* save players device context */
 	ProcDeviceContext = DC;
@@ -515,6 +524,6 @@ void cleanup_e2_proc(void)
 	for (i = sizeof(e2_procs) / sizeof(e2_procs[0]) - 1; i >= 0; i--)
 	{
 		remove_e2_procs(e2_procs[i].name, e2_procs[i].read_proc,
-				e2_procs[i].write_proc);
+						e2_procs[i].write_proc);
 	}
 }

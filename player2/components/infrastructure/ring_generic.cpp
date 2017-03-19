@@ -69,7 +69,7 @@ RingStatus_t RingGeneric_c::Insert(unsigned int Value)
 // Extract function
 
 RingStatus_t RingGeneric_c::Extract(unsigned int *Value,
-				    unsigned int BlockingPeriod)
+									unsigned int BlockingPeriod)
 {
 	//
 	// If there is nothing in the ring we wait for up to the specified period.

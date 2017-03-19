@@ -56,7 +56,8 @@ struct alsa_backend_operations
 
 	int (*mixer_alloc_substream)(component_handle_t Component, int *SubStreamId);
 	int (*mixer_free_substream)(component_handle_t Component, int SubStreamId);
-	int (*mixer_setup_substream)(component_handle_t Component, int SubStreamId, struct alsa_substream_descriptor *Descriptor);
+	int (*mixer_setup_substream)(component_handle_t Component, int SubStreamId,
+								 struct alsa_substream_descriptor *Descriptor);
 	int (*mixer_prepare_substream)(component_handle_t Component, int SubStreamId);
 	int (*mixer_start_substream)(component_handle_t Component, int SubStreamId);
 	int (*mixer_stop_substream)(component_handle_t Component, int SubStreamId);

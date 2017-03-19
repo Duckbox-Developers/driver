@@ -75,7 +75,7 @@ static int StmMonitorProbe(struct device *dev)
 	if (!MonitorDeviceData)
 	{
 		MONITOR_ERROR("%s: Device probe failed. Check your kernel SoC config!!\n",
-			      __FUNCTION__);
+					  __FUNCTION__);
 		return -ENODEV;
 	}
 	ModuleContext = kzalloc(sizeof(struct ModuleContext_s), GFP_KERNEL);
@@ -120,10 +120,10 @@ static int StmMonitorProbe(struct device *dev)
 			return -ENODEV;
 		}
 		DeviceContext->Device = device_create(ModuleContext->DeviceClass,
-						      NULL,
-						      DeviceContext->CDev.dev,
-						      NULL,
-						      kobject_name(&(DeviceContext->CDev.kobj)));
+											  NULL,
+											  DeviceContext->CDev.dev,
+											  NULL,
+											  kobject_name(&(DeviceContext->CDev.kobj)));
 		if (IS_ERR(DeviceContext->Device))
 		{
 			printk(KERN_ERR "%s: unable to create device\n", __FUNCTION__);

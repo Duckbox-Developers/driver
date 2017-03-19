@@ -36,8 +36,8 @@ Date Modification Name
 
 #if 0
 int DmxWrite(struct dmx_demux *Demux,
-	     const char *Buffer,
-	     size_t Count);
+			 const char *Buffer,
+			 size_t Count);
 #endif
 int StartFeed(struct dvb_demux_feed *Feed);
 int StopFeed(struct dvb_demux_feed *Feed);

@@ -104,8 +104,8 @@ static int EAC3SamplingFreq[] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 
 FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-							      EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
-							      int GivenFrameSize)
+															  EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
+															  int GivenFrameSize)
 {
 	int StreamIndex = 0, FrameSize = 0 ;
 	EAc3AudioParsedFrameHeader_t NextParsedFrameHeader;
@@ -173,25 +173,25 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 	ParsedFrameHeader->Length = FrameSize;
 	ParsedFrameHeader->NumberOfSamples = NumberOfSamples;
 	FRAME_DEBUG("SamplingFrequency %d, FrameSize %d, Indp substreams: %d, Dep substreams: %d\n",
-		    ParsedFrameHeader->SamplingFrequency,
-		    ParsedFrameHeader->Length,
-		    NumberOfIndependantSubStreams,
-		    NumberOfDependantSubStreams);
+				ParsedFrameHeader->SamplingFrequency,
+				ParsedFrameHeader->Length,
+				NumberOfIndependantSubStreams,
+				NumberOfDependantSubStreams);
 	if (FirstTime)
 	{
 		if (ParsedFrameHeader->Type == TypeAc3)
 		{
 			FRAME_TRACE("AC3 stream properties: SamplingFrequency %d, FrameSize %d\n",
-				    ParsedFrameHeader->SamplingFrequency,
-				    ParsedFrameHeader->Length);
+						ParsedFrameHeader->SamplingFrequency,
+						ParsedFrameHeader->Length);
 		}
 		else
 		{
 			FRAME_TRACE("DD+ stream properties: SamplingFrequency %d, FrameSize %d, Indp substreams: %d, Dep substreams: %d\n",
-				    ParsedFrameHeader->SamplingFrequency,
-				    ParsedFrameHeader->Length,
-				    NumberOfIndependantSubStreams,
-				    NumberOfDependantSubStreams);
+						ParsedFrameHeader->SamplingFrequency,
+						ParsedFrameHeader->Length,
+						NumberOfIndependantSubStreams,
+						NumberOfDependantSubStreams);
 		}
 		FirstTime = false;
 	}
@@ -253,8 +253,8 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseFrameHeader(unsigned char *Fra
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-								    EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
-								    bool SearchForConvSync)
+																	EAc3AudioParsedFrameHeader_t *ParsedFrameHeader,
+																	bool SearchForConvSync)
 {
 	unsigned int SamplingFrequency;
 	unsigned int FrameSize = 0;
@@ -337,9 +337,9 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 				int bsid = Bits.Get(5);
 				int dialnorm = Bits.Get(5);
 				FRAME_DEBUG("StrmType: %d, substream id: %d, FrameSize: %d, fscod: %d, fscod2_numblk: %d\n",
-					    StrmType, ParsedFrameHeader->SubStreamId, FrameSize, fscod, fscod2_numblk);
+							StrmType, ParsedFrameHeader->SubStreamId, FrameSize, fscod, fscod2_numblk);
 				FRAME_DEBUG("acmod: %d, lfeon: %d, bsid: %d, dialnorm: %d\n",
-					    acmod, lfeon, bsid, dialnorm);
+							acmod, lfeon, bsid, dialnorm);
 				if (Bits.Get(1)) // compre
 				{
 					FRAME_DEBUG("compre on\n");
@@ -465,7 +465,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 		return FrameParserError;
 	}
 	FRAME_DEBUG("SamplingFrequency: %d, FrameSize: %d, Frame type: % d, NbSamples: %d, convsync: %d \n",
-		    SamplingFrequency, FrameSize, Type, NbSamples, convsync);
+				SamplingFrequency, FrameSize, Type, NbSamples, convsync);
 	//
 	ParsedFrameHeader->Type = Type;
 	ParsedFrameHeader->SamplingFrequency = SamplingFrequency;
@@ -550,7 +550,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ReadHeaders(void)
 	if (ParsedFrameHeader.Length != BufferLength)
 	{
 		FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
-			    BufferLength, ParsedFrameHeader.Length);
+					BufferLength, ParsedFrameHeader.Length);
 		return FrameParserError;
 	}
 	FrameToDecode = true;
@@ -663,7 +663,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::GeneratePostDecodeParameterSettings
 	// no call to HandleUpdateStreamParameters() because UpdateStreamParameters is always false
 	FRAME_ASSERT(false == UpdateStreamParameters && NULL == StreamParametersBuffer);
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						ParsedFrameHeader.SamplingFrequency);
+											ParsedFrameHeader.SamplingFrequency);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

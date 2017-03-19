@@ -24,7 +24,7 @@ static int wakeup_time = 0;
 #endif
 
 int proc_fp_lnb_sense1_write(struct file *file, const char __user *buf,
-			     unsigned long count, void *data)
+							 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -45,7 +45,7 @@ out:
 }
 
 int proc_fp_lnb_sense1_read(char *page, char **start, off_t off, int count,
-			    int *eof, void *data_unused)
+							int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
@@ -53,7 +53,7 @@ int proc_fp_lnb_sense1_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_fp_lnb_sense2_write(struct file *file, const char __user *buf,
-			     unsigned long count, void *data)
+							 unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -74,7 +74,7 @@ out:
 }
 
 int proc_fp_lnb_sense2_read(char *page, char **start, off_t off, int count,
-			    int *eof, void *data_unused)
+							int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
@@ -82,7 +82,7 @@ int proc_fp_lnb_sense2_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_fp_led0_pattern_write(struct file *file, const char __user *buf,
-			       unsigned long count, void *data)
+							   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -103,7 +103,7 @@ out:
 }
 
 int proc_fp_led0_pattern_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
@@ -111,7 +111,7 @@ int proc_fp_led0_pattern_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_fp_led_pattern_speed_write(struct file *file, const char __user *buf,
-				    unsigned long count, void *data)
+									unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -132,7 +132,7 @@ out:
 }
 
 int proc_fp_led_pattern_speed_read(char *page, char **start, off_t off, int count,
-				   int *eof, void *data_unused)
+								   int *eof, void *data_unused)
 {
 	int len = 0;
 	printk("%s %d\n", __FUNCTION__, count);
@@ -140,7 +140,7 @@ int proc_fp_led_pattern_speed_read(char *page, char **start, off_t off, int coun
 }
 
 int proc_fp_version_read(char *page, char **start, off_t off, int count,
-			 int *eof, void *data_unused)
+						 int *eof, void *data_unused)
 {
 	int len = 0;
 	len = sprintf(page, "0\n");
@@ -148,7 +148,7 @@ int proc_fp_version_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_fp_wakeup_time_read(char *page, char **start, off_t off, int count,
-			     int *eof, void *data_unused)
+							 int *eof, void *data_unused)
 {
 	int len = 0;
 #if defined(IPBOX9900) || defined(IPBOX99)
@@ -160,7 +160,7 @@ int proc_fp_wakeup_time_read(char *page, char **start, off_t off, int count,
 }
 
 int proc_fp_wakeup_time_write(struct file *file, const char __user *buf,
-			      unsigned long count, void *data)
+							  unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;
@@ -190,7 +190,7 @@ out:
 }
 
 int proc_fp_was_timer_wakeup_read(char *page, char **start, off_t off, int count,
-				  int *eof, void *data_unused)
+								  int *eof, void *data_unused)
 {
 	int len = 0;
 	len = sprintf(page, "%d\n", was_timer_wakeup);
@@ -198,7 +198,7 @@ int proc_fp_was_timer_wakeup_read(char *page, char **start, off_t off, int count
 }
 
 int proc_fp_was_timer_wakeup_write(struct file *file, const char __user *buf,
-				   unsigned long count, void *data)
+								   unsigned long count, void *data)
 {
 	char *page;
 	ssize_t ret = -ENOMEM;

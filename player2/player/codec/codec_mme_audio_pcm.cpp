@@ -209,7 +209,7 @@ CodecStatus_t Codec_MmeAudioPcm_c::FillOutSetStreamParametersCommand(void)
 		MMEInitializationParameters.CallbackUserData = this;
 		FillOutTransformerInitializationParameters();
 		MMEStatus = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-						&MMEInitializationParameters, &MMEHandle);
+										&MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus == MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", DecodingWidth, DecodingHeight);

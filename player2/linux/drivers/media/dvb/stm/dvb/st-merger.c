@@ -563,7 +563,7 @@ void spark_stm_tsm_init(void)
 	ctrl_outl(ret | 0x8, tsm_io + TSM_PTI_SEL);
 	ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 	ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
-		  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN, tsm_io + TSM_STREAM3_CFG);
+			  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN, tsm_io + TSM_STREAM3_CFG);
 	/* don't touch the DMA engine -- seems unnecessary on reinit */
 	if (reinit)
 		return;
@@ -1406,8 +1406,8 @@ void stm_tsm_init(int use_cimax)
 		ctrl_outl(ret | 0x8, tsm_io + TSM_PTI_SEL);
 		ret = ctrl_inl(tsm_io + TSM_STREAM3_CFG);
 		ctrl_outl((ret & TSM_RAM_ALLOC_START(0xff)) |
-			  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN
-			  , tsm_io + TSM_STREAM3_CFG);
+				  TSM_PRIORITY(0x7) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES | TSM_SYNC_NOT_ASYNC | TSM_ASYNC_SOP_TOKEN
+				  , tsm_io + TSM_STREAM3_CFG);
 		/* don't touch the DMA engine -- seems unnecessary on reinit */
 		if (reinit)
 			return;
@@ -1615,54 +1615,54 @@ void stm_tsm_init(int use_cimax)
 			{
 				printk("BZZB TsinMode = SERIAL*st-merger*\n\t");
 				writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-				       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 1) |
-				       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
-				       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
-				       TSM_ALIGN_BYTE_SOP |
-				       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
-				       tsm_io + TSM_STREAM_CONF(chan));
+					   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 1) |
+					   (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+					   (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+					   TSM_ALIGN_BYTE_SOP |
+					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+					   tsm_io + TSM_STREAM_CONF(chan));
 			}
 			else if (TsinMode == PARALLEL)
 			{
 				printk("BSKA,BSLA,BXZB TsinMode = Parallel *st-merger*\n\t");
 				writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-				       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-				       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
-				       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
-				       TSM_ALIGN_BYTE_SOP |
-				       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
-				       tsm_io + TSM_STREAM_CONF(chan));
+					   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+					   (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+					   (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+					   TSM_ALIGN_BYTE_SOP |
+					   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+					   tsm_io + TSM_STREAM_CONF(chan));
 			}
 #elif defined(SAGEMCOM88)
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-			       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-			       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
-			       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
-			       TSM_ALIGN_BYTE_SOP |
-			       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
-			       tsm_io + TSM_STREAM_CONF(chan));
+				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+				   (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+				   (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+				   TSM_ALIGN_BYTE_SOP |
+				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+				   tsm_io + TSM_STREAM_CONF(chan));
 #else
 			printk("TsinMode = Parallel *st-merger*\n\t");
 			writel((readl(tsm_io + TSM_STREAM_CONF(chan)) & TSM_RAM_ALLOC_START(0xff)) |
-			       (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
-			       (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
-			       (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
-			       TSM_ALIGN_BYTE_SOP |
-			       TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
-			       tsm_io + TSM_STREAM_CONF(chan));
+				   (options & STM_SERIAL_NOT_PARALLEL ? TSM_SERIAL_NOT_PARALLEL : 0) |
+				   (options & STM_INVERT_CLOCK ? TSM_INVERT_BYTECLK : 0) |
+				   (options & STM_PACKET_CLOCK_VALID ? TSM_SYNC_NOT_ASYNC : 0) |
+				   TSM_ALIGN_BYTE_SOP |
+				   TSM_PRIORITY(0xf) | TSM_STREAM_ON | TSM_ADD_TAG_BYTES,
+				   tsm_io + TSM_STREAM_CONF(chan));
 #endif
 #ifdef alt
 			writel(TSM_SYNC(config->channels[n].lock) |
-			       TSM_DROP(config->channels[n].drop) |
-			       TSM_SOP_TOKEN(0x47) |
-			       TSM_PACKET_LENGTH(188)
-			       , tsm_io + TSM_STREAM_SYNC(chan));
+				   TSM_DROP(config->channels[n].drop) |
+				   TSM_SOP_TOKEN(0x47) |
+				   TSM_PACKET_LENGTH(188)
+				   , tsm_io + TSM_STREAM_SYNC(chan));
 #endif // alt
 			writel(TSM_SYNC(3 /* lock */) |
-			       TSM_DROP(3 /*drop*/) |
-			       TSM_SOP_TOKEN(0x47) |
-			       TSM_PACKET_LENGTH(188)
-			       , tsm_io + TSM_STREAM_SYNC(chan));
+				   TSM_DROP(3 /*drop*/) |
+				   TSM_SOP_TOKEN(0x47) |
+				   TSM_PACKET_LENGTH(188)
+				   , tsm_io + TSM_STREAM_SYNC(chan));
 		}
 		/* Put TSMERGER into normal mode */
 		writel(TSM_CFG_BYPASS_NORMAL, tsm_io + TSM_SYSTEM_CFG);

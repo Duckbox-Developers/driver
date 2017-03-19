@@ -182,8 +182,8 @@ const static char FirstAccessUnitOffset[] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 
 FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-							      LpcmAudioParsedFrameHeader_t *NextParsedFrameHeader,
-							      int GivenFrameSize)
+															  LpcmAudioParsedFrameHeader_t *NextParsedFrameHeader,
+															  int GivenFrameSize)
 {
 	BitStreamClass_c Bits;
 	LpcmSamplingFreq_t AudioSamplingFrequency1;
@@ -482,7 +482,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	else if ((FirstAccessUnitPointer + FirstAccessUnitOffset[StreamType]) < AudioPesPrivateDataLength[StreamType])
 	{
 		FRAME_ERROR("Invalid FirstAccessUnitPointer (%d) + FirstAccessUnitOffset (%d) must be >= AudioPesPrivateDataLength (%d)\n",
-			    FirstAccessUnitPointer, FirstAccessUnitOffset[StreamType], AudioPesPrivateDataLength[StreamType]);
+					FirstAccessUnitPointer, FirstAccessUnitOffset[StreamType], AudioPesPrivateDataLength[StreamType]);
 		return FrameParserError;
 		//FirstAccessUnitPointer = AudioPesPrivateDataLength[StreamType] - FirstAccessUnitOffset[StreamType];
 	}
@@ -490,7 +490,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	{
 		unsigned int Payload = (GivenFrameSize - (FirstAccessUnitPointer + FirstAccessUnitOffset[StreamType]));
 		FRAME_DEBUG("Payload %d , GivenFrameSize %d\n",
-			    Payload, GivenFrameSize);
+					Payload, GivenFrameSize);
 		// take ceiled number of frame header
 		NbAccessUnits = Payload / AudioFrameSize;
 		NbAccessUnits = ((NbAccessUnits * AudioFrameSize) < Payload) ? NbAccessUnits + 1 : NbAccessUnits;
@@ -500,21 +500,21 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	if (StreamType != TypeLpcmSPDIFIN)
 	{
 		FRAME_DEBUG("SamplingFreq %d Hz, FrameSize %d, Type % d, WordSize %d , Aud Frame Id %d\n",
-			    LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
+					LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
 		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d, Nb Channels % d, Nb Samples %d \n",
-			    FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
+					FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
 		if (StreamType == TypeLpcmDVDAudio)
 		{
 			FRAME_DEBUG("GR2 properties: SamplingFreq %d Hz, WordSize2 %d\n",
-				    LpcmDVDSamplingFreq[AudioSamplingFrequency2], WordSize2);
+						LpcmDVDSamplingFreq[AudioSamplingFrequency2], WordSize2);
 		}
 	}
 	else
 	{
 		FRAME_DEBUG("SamplingFreq %d Hz, FrameSize %d, Type % d, WordSize %d , Aud Frame Id %d\n",
-			    LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
+					LpcmDVDSamplingFreq[AudioSamplingFrequency1], FrameSize, StreamType, WordSize1, AudioFrameNumber);
 		FRAME_DEBUG("FirstAccessUnitPointer %d, NbAccessUnits %d, Nb Channels % d, Nb Samples %d \n",
-			    FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
+					FirstAccessUnitPointer, NbAccessUnits, NumberOfAudioChannels, NbSamples);
 	}
 	// we will send a whole audio frame
 	NextParsedFrameHeader->Type = StreamType;
@@ -638,7 +638,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ReadHeaders(void)
 	if ((ParsedFrameHeader.Length + AudioPesPrivateDataLength[ParsedFrameHeader.Type]) != BufferLength)
 	{
 		FRAME_ERROR("Buffer length (%d) is inconsistent with frame header (%d), bad collator selected?\n",
-			    BufferLength, ParsedFrameHeader.Length);
+					BufferLength, ParsedFrameHeader.Length);
 		return FrameParserError;
 	}
 	FrameToDecode = true;
@@ -781,7 +781,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::GeneratePostDecodeParameterSettings
 // if( ParsedFrameParameters->NormalizedPlaybackTime > DecodeLatencyInMicroseconds )
 // {
 		ParsedFrameParameters->NormalizedDecodeTime = ParsedFrameParameters->NormalizedPlaybackTime -
-							      DecodeLatencyInMicroseconds;
+													  DecodeLatencyInMicroseconds;
 // }
 // else
 // {

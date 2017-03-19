@@ -300,9 +300,9 @@ PlayerStatus_t Player_Generic_c::ScanEventListForMatch(
 //
 
 bool Player_Generic_c::EventMatchesCriteria(PlayerEventRecord_t *Record,
-					    PlayerPlayback_t Playback,
-					    PlayerStream_t Stream,
-					    PlayerEventMask_t Events)
+											PlayerPlayback_t Playback,
+											PlayerStream_t Stream,
+											PlayerEventMask_t Events)
 {
 	bool PlaybackMatch;
 	bool StreamMatch;

@@ -65,10 +65,10 @@ class Collator_PesVideoDivx_c : public Collator_PesVideo_c
 		CollatorStatus_t Reset(void);
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false,
-				       unsigned int *DataLengthRemaining = NULL);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false,
+							   unsigned int *DataLengthRemaining = NULL);
 };
 
 #endif // H_COLLATOR_PES_VIDEO_DIVX

@@ -88,12 +88,12 @@ static int __init StmLoadModule(void)
 	MME_ERROR status = MME_SUCCESS;
 	// Now do the MME Init
 	status = MME_RegisterTransformer(
-			 mmeName,
-			 abortCmd,
-			 getTransformerCapability,
-			 initTransformer,
-			 processCommand,
-			 termTransformer);
+				 mmeName,
+				 abortCmd,
+				 getTransformerCapability,
+				 initTransformer,
+				 processCommand,
+				 termTransformer);
 	if (status == MME_SUCCESS)
 		OSDEV_Print("%s loaded\n", MODULE_NAME);
 	else
@@ -224,7 +224,7 @@ void copyFrameParameters(Mpeg2HardFrameParams_t *frameParamsOut, MPEG2_Transform
 	*/
 	frameParamsOut->compressedDataFrame = (unsigned char *)frameParamsIn->PictureStartAddrCompressedBuffer_p;
 	frameParamsOut->compressedDataSize = (unsigned int)frameParamsIn->PictureStopAddrCompressedBuffer_p -
-					     (unsigned int)frameParamsIn->PictureStartAddrCompressedBuffer_p;
+										 (unsigned int)frameParamsIn->PictureStartAddrCompressedBuffer_p;
 	frameParamsOut->lumaDecodeFramebuffer = (unsigned char *)frameParamsIn->DecodedBufferAddress.DecodedLuma_p;
 	frameParamsOut->chromaDecodeFramebuffer = (unsigned char *)frameParamsIn->DecodedBufferAddress.DecodedChroma_p;
 	frameParamsOut->horizontalDecimationFactor = 1;

@@ -139,8 +139,8 @@ CollatorStatus_t Collator_PesVideoDivx_c::Input(
 			HeaderSize = PES_INITIAL_HEADER_SIZE;
 			if (RemainingLength >= (PES_INITIAL_HEADER_SIZE - GotPartialPesHeaderBytes))
 				HeaderSize = GotPartialPesHeaderBytes >= PES_INITIAL_HEADER_SIZE ?
-					     PES_HEADER_SIZE(StoredPesHeader) :
-					     PES_HEADER_SIZE(RemainingData - GotPartialPesHeaderBytes);
+							 PES_HEADER_SIZE(StoredPesHeader) :
+							 PES_HEADER_SIZE(RemainingData - GotPartialPesHeaderBytes);
 			Transfer = min(RemainingLength, (HeaderSize - GotPartialPesHeaderBytes));
 			memcpy(StoredPesHeader + GotPartialPesHeaderBytes, RemainingData, Transfer);
 			GotPartialPesHeaderBytes += Transfer;
@@ -346,7 +346,7 @@ CollatorStatus_t Collator_PesVideoDivx_c::Input(
 				}
 			}
 			else if (Configuration.DeferredTerminateFlag &&
-					((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode))
+					 ((Code & Configuration.BlockTerminateMask) == Configuration.BlockTerminateCode))
 			{
 				IgnoreCodes = true;
 				TerminationFlagIsSet = true;

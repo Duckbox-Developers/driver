@@ -72,8 +72,8 @@ HavanaPlayback_c::~HavanaPlayback_c(void)
 //}}}
 //{{{ Init
 HavanaStatus_t HavanaPlayback_c::Init(class HavanaPlayer_c *HavanaPlayer,
-				      class Player_c *Player,
-				      class BufferManager_c *BufferManager)
+									  class Player_c *Player,
+									  class BufferManager_c *BufferManager)
 {
 	PlayerStatus_t PlayerStatus = PlayerNoError;
 	PLAYBACK_DEBUG("\n");
@@ -118,7 +118,7 @@ HavanaStatus_t HavanaPlayback_c::Init(class HavanaPlayer_c *HavanaPlayer,
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayback_c::AddDemux(unsigned int DemuxId,
-					  class HavanaDemux_c **HavanaDemux)
+										  class HavanaDemux_c **HavanaDemux)
 {
 	HavanaStatus_t Status;
 	class Demultiplexor_c *Demultiplexor;
@@ -143,8 +143,8 @@ HavanaStatus_t HavanaPlayback_c::AddDemux(unsigned int DemuxId,
 		return HavanaNoMemory;
 	}
 	Status = Demux[DemuxId]->Init(Player,
-				      PlayerPlayback,
-				      DemuxContext);
+								  PlayerPlayback,
+								  DemuxContext);
 	if (Status != HavanaNoError)
 	{
 		delete Demux[DemuxId];
@@ -209,10 +209,10 @@ HavanaStatus_t HavanaPlayback_c::Active(void)
 /// \return Havana status code, HavanaNoError indicates success.
 //}}}
 HavanaStatus_t HavanaPlayback_c::AddStream(char *Media,
-					   char *Format,
-					   char *Encoding,
-					   unsigned int SurfaceId,
-					   class HavanaStream_c **HavanaStream)
+										   char *Format,
+										   char *Encoding,
+										   unsigned int SurfaceId,
+										   class HavanaStream_c **HavanaStream)
 {
 	HavanaStatus_t Status;
 	int i;
@@ -240,12 +240,12 @@ HavanaStatus_t HavanaPlayback_c::AddStream(char *Media,
 		return HavanaNoMemory;
 	}
 	Status = Stream[i]->Init(HavanaPlayer,
-				 Player,
-				 PlayerPlayback,
-				 Media,
-				 Format,
-				 Encoding,
-				 SurfaceId);
+							 Player,
+							 PlayerPlayback,
+							 Media,
+							 Format,
+							 Encoding,
+							 SurfaceId);
 	if (Status != HavanaNoError)
 	{
 		delete Stream[i];
@@ -345,7 +345,7 @@ HavanaStatus_t HavanaPlayback_c::GetSpeed(int *PlaySpeed)
 //}}}
 //{{{ SetNativePlaybackTime
 HavanaStatus_t HavanaPlayback_c::SetNativePlaybackTime(unsigned long long NativeTime,
-						       unsigned long long SystemTime)
+													   unsigned long long SystemTime)
 {
 	PlayerStatus_t Status;
 	Status = Player->SetNativePlaybackTime(PlayerPlayback, NativeTime, SystemTime);
@@ -359,7 +359,7 @@ HavanaStatus_t HavanaPlayback_c::SetNativePlaybackTime(unsigned long long Native
 //}}}
 //{{{ SetOption
 HavanaStatus_t HavanaPlayback_c::SetOption(play_option_t Option,
-					   unsigned int Value)
+										   unsigned int Value)
 {
 	unsigned char PolicyValue = 0;
 	PlayerPolicy_t PlayerPolicy;

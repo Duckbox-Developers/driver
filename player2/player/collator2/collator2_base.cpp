@@ -258,10 +258,10 @@ CollatorStatus_t Collator2_Base_c::RegisterOutputBufferRing(Ring_t Ring)
 //
 
 CollatorStatus_t Collator2_Base_c::Input(PlayerInputDescriptor_t *Input,
-					 unsigned int DataLength,
-					 void *Data,
-					 bool NonBlocking,
-					 unsigned int *DataLengthRemaining)
+										 unsigned int DataLength,
+										 void *Data,
+										 bool NonBlocking,
+										 unsigned int *DataLengthRemaining)
 {
 	CollatorStatus_t Status;
 	Rational_t Speed;
@@ -513,7 +513,7 @@ CollatorStatus_t Collator2_Base_c::OutputOnePartition(PartitionPoint_t *Descript
 			report(severity_fatal, "Collator2_Base_c::OutputOnePartition - We assume word alignment of buffer structure - Implementation error.\n");
 		CheckForGlitchPromotion(Descriptor);
 		BufferAndFlag = (unsigned int)Descriptor->Buffer |
-				(((Descriptor->FrameFlags & FrameParserHeaderFlagPossibleReversiblePoint) != 0) ? 1 : 0);
+						(((Descriptor->FrameFlags & FrameParserHeaderFlagPossibleReversiblePoint) != 0) ? 1 : 0);
 		ReverseFrameStack->Push(BufferAndFlag);
 		if ((Descriptor->FrameFlags & FrameParserHeaderFlagConfirmReversiblePoint) != 0)
 		{
@@ -735,8 +735,8 @@ CollatorStatus_t Collator2_Base_c::PartitionOutput(void)
 	// if not then can we get a new one, and transfer any data we have to it.
 	//
 	AcceptableBufferSpace = ((NextPartition->PartitionSize > LargestFrameSeen) ?
-				 min((NextPartition->PartitionSize + (MaximumCodedFrameSize / 16)), MaximumCodedFrameSize) :
-				 (LargestFrameSeen + MINIMUM_ACCUMULATION_HEADROOM)) - NextPartition->PartitionSize;
+							 min((NextPartition->PartitionSize + (MaximumCodedFrameSize / 16)), MaximumCodedFrameSize) :
+							 (LargestFrameSeen + MINIMUM_ACCUMULATION_HEADROOM)) - NextPartition->PartitionSize;
 	MinimumSoughtSize = CodedFrameBufferUsedSpace + AcceptableBufferSpace;
 	ExtendCodedFrameBufferAtEarliestOpportunity = false;
 	if (CodedFrameBufferFreeSpace < AcceptableBufferSpace)

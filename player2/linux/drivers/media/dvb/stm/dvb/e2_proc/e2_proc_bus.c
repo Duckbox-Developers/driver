@@ -44,8 +44,8 @@ static struct dvb_device *dvbdev_find_device(int minor)
 		adap1 = list_entry(entry, struct dvb_adapter, list_head);
 #if 0
 		printk("adap %d, list_head %p, prev %p, next %p\n",
-		       adap1->num, &adap1->list_head, adap1->list_head.prev,
-		       adap1->list_head.next);
+			   adap1->num, &adap1->list_head, adap1->list_head.prev,
+			   adap1->list_head.next);
 #endif
 		if (adap1->num == number)
 		{
@@ -62,7 +62,7 @@ static struct dvb_device *dvbdev_find_device(int minor)
 }
 
 int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count,
-			      int *eof, void *data_unused)
+							  int *eof, void *data_unused)
 {
 	int len = 0;
 	int i, j, k;
@@ -142,10 +142,10 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count,
 #endif
 			}
 			len += sprintf(page + len, "NIM Socket %d:\n"
-				       "Type: %s\n"
-				       "Name: %s\n"
-				       "Frontend_Device: %d\n",
-				       feIndex, pType, fe->ops.info.name, feIndex);
+						   "Type: %s\n"
+						   "Name: %s\n"
+						   "Frontend_Device: %d\n",
+						   feIndex, pType, fe->ops.info.name, feIndex);
 #if (DVB_API_VERSION >= 5)
 			if (fe->ops.info.caps & FE_CAN_MULTISTREAM)
 				len += sprintf(page + len, "Multistream: yes\n");
@@ -153,7 +153,7 @@ int proc_bus_nim_sockets_read(char *page, char **start, off_t off, int count,
 			if (pMode)
 			{
 				len += sprintf(page + len, "Mode 0: %s\n"
-					       "Mode 1: %s\n", pType, pMode);
+							   "Mode 1: %s\n", pType, pMode);
 			}
 			feIndex++;
 		}

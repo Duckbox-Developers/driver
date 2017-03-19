@@ -132,7 +132,7 @@ class Manifestor_CloneDummy_c : public Manifestor_c
 		}
 
 		ManifestorStatus_t GetDecodeBuffer(BufferStructure_t *RequestedStructure,
-						   Buffer_t *Buffer)
+										   Buffer_t *Buffer)
 		{
 			report(severity_fatal, "GetDecodeBuffer - Called\n");
 			return ManifestorNoError;

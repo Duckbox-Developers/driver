@@ -108,9 +108,9 @@ CollatorStatus_t Collator_PesAudioAac_c::FindNextSyncWord(int *CodeOffset)
 			ElementaryPtr = &RemainingElementaryData[i - PotentialFrameHeaderLength];
 		}
 		FrameParserStatus_t FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(ElementaryPtr,
-											&ParsedFrameHeader,
-											AAC_HEADER_SIZE,
-											AAC_GET_SYNCHRO);
+																				&ParsedFrameHeader,
+																				AAC_HEADER_SIZE,
+																				AAC_GET_SYNCHRO);
 		if (FPStatus == FrameParserNoError)
 		{
 			// it seems like we got a synchonization...
@@ -137,9 +137,9 @@ CollatorStatus_t Collator_PesAudioAac_c::DecideCollatorNextStateAndGetLength(uns
 	AacAudioParsedFrameHeader_t ParsedFrameHeader;
 	//
 	FPStatus = FrameParser_AudioAac_c::ParseFrameHeader(StoredFrameHeader,
-							    &ParsedFrameHeader,
-							    FrameHeaderLength,
-							    AAC_GET_LENGTH);
+														&ParsedFrameHeader,
+														FrameHeaderLength,
+														AAC_GET_LENGTH);
 	if (FPStatus == FrameParserNoError)
 	{
 		if (FormatType == AAC_AUDIO_UNDEFINED)

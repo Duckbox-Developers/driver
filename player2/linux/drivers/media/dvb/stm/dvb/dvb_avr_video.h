@@ -406,51 +406,51 @@ int DvpVideoClose(dvp_v4l2_video_handle_t *Context);
 int DvpVideoThreadHandle(void *Data);
 
 int DvpVideoIoctlSetFramebuffer(dvp_v4l2_video_handle_t *Context,
-				unsigned int Width,
-				unsigned int Height,
-				unsigned int BytesPerLine,
-				unsigned int Control);
+								unsigned int Width,
+								unsigned int Height,
+								unsigned int BytesPerLine,
+								unsigned int Control);
 
 int DvpVideoIoctlSetStandard(dvp_v4l2_video_handle_t *Context,
-			     v4l2_std_id Id);
+							 v4l2_std_id Id);
 
 int DvpVideoIoctlOverlayStart(dvp_v4l2_video_handle_t *Context);
 
 int DvpVideoIoctlCrop(dvp_v4l2_video_handle_t *Context,
-		      struct v4l2_crop *Crop);
+					  struct v4l2_crop *Crop);
 
 int DvpVideoIoctlSetControl(dvp_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int Value);
+							unsigned int Control,
+							unsigned int Value);
 
 int DvpVideoIoctlGetControl(dvp_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int *Value);
+							unsigned int Control,
+							unsigned int *Value);
 
 // ////////////////////////////
 
 int DvpVideoIoctlAncillaryRequestBuffers(dvp_v4l2_video_handle_t *Context,
-					 unsigned int DesiredCount,
-					 unsigned int DesiredSize,
-					 unsigned int *ActualCount,
-					 unsigned int *ActualSize);
+										 unsigned int DesiredCount,
+										 unsigned int DesiredSize,
+										 unsigned int *ActualCount,
+										 unsigned int *ActualSize);
 
 int DvpVideoIoctlAncillaryQueryBuffer(dvp_v4l2_video_handle_t *Context,
-				      unsigned int Index,
-				      bool *Queued,
-				      bool *Done,
-				      unsigned char **PhysicalAddress,
-				      unsigned char **UnCachedAddress,
-				      unsigned long long *CaptureTime,
-				      unsigned int *Bytes,
-				      unsigned int *Size);
+									  unsigned int Index,
+									  bool *Queued,
+									  bool *Done,
+									  unsigned char **PhysicalAddress,
+									  unsigned char **UnCachedAddress,
+									  unsigned long long *CaptureTime,
+									  unsigned int *Bytes,
+									  unsigned int *Size);
 
 int DvpVideoIoctlAncillaryQueueBuffer(dvp_v4l2_video_handle_t *Context,
-				      unsigned int Index);
+									  unsigned int Index);
 
 int DvpVideoIoctlAncillaryDeQueueBuffer(dvp_v4l2_video_handle_t *Context,
-					unsigned int *Index,
-					bool Blocking);
+										unsigned int *Index,
+										bool Blocking);
 
 int DvpVideoIoctlAncillaryStreamOn(dvp_v4l2_video_handle_t *Context);
 int DvpVideoIoctlAncillaryStreamOff(dvp_v4l2_video_handle_t *Context);

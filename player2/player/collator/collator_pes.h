@@ -137,7 +137,7 @@ class Collator_Pes_c : public Collator_Base_c
 		CollatorStatus_t DiscardAccumulatedData(void);
 
 		CollatorStatus_t InputJump(bool SurplusDataInjected,
-					   bool ContinuousReverseJump);
+								   bool ContinuousReverseJump);
 };
 
 #endif

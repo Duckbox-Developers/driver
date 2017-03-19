@@ -37,9 +37,9 @@ Date Modification Name
 
 #ifdef __TDT__
 typedef int (read_proc_t)(char *page, char **start, off_t off,
-			  int count, int *eof, void *data);
+						  int count, int *eof, void *data);
 typedef int (write_proc_t)(struct file *file, const char __user *buffer,
-			   unsigned long count, void *data);
+						   unsigned long count, void *data);
 #endif
 
 extern "C" {
@@ -55,11 +55,10 @@ extern "C" {
 	extern int cpp_install_e2_procs(const char *path, read_proc_t *read_func, write_proc_t *write_func, void *instance);
 	extern int cpp_remove_e2_procs(const char *path, read_proc_t *read_func, write_proc_t *write_func);
 #endif
-
 	typedef struct __wait_queue_head wait_queue_head_t;
 #define TASK_INTERRUPTIBLE 1
 	extern void __wake_up(wait_queue_head_t *q, unsigned int mode,
-			      int nr_exclusive, void *key);
+						  int nr_exclusive, void *key);
 #define wake_up_interruptible(x) __wake_up(x, TASK_INTERRUPTIBLE, 1, NULL)
 	extern wait_queue_head_t g_ManifestorLastWaitQueue;
 };
@@ -79,11 +78,11 @@ struct QueueRecord_s
 // Static constant data
 //
 static void initial_frame_display_callback(void *Buffer,
-					   TIME64 VsyncTime);
+										   TIME64 VsyncTime);
 static void display_callback(void *Buffer,
-			     TIME64 VsyncTime);
+							 TIME64 VsyncTime);
 static void done_callback(void *Buffer,
-			  const stm_buffer_presentation_stats_t *Data);
+						  const stm_buffer_presentation_stats_t *Data);
 
 #ifdef __TDT__
 extern "C" {
@@ -343,8 +342,8 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::UpdateOutputSurfaceDescriptor(void)
 /// \return ManifestorNoError if plane opened successfully
 //}}}
 ManifestorStatus_t Manifestor_VideoStmfb_c::OpenOutputSurface(DeviceHandle_t Device,
-							      unsigned int PlaneId,
-							      unsigned int OutputId)
+															  unsigned int PlaneId,
+															  unsigned int OutputId)
 {
 	ManifestorStatus_t Status;
 	MANIFESTOR_DEBUG("\n");
@@ -380,9 +379,9 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::OpenOutputSurface(DeviceHandle_t Dev
 	if (Status != ManifestorNoError)
 		return Status;
 	MANIFESTOR_DEBUG("Width %d, height %d, FrameRate %d.%06d, Progressive %d\n",
-			 SurfaceDescriptor.DisplayWidth, SurfaceDescriptor.DisplayHeight,
-			 SurfaceDescriptor.FrameRate.IntegerPart(), SurfaceDescriptor.FrameRate.RemainderDecimal(),
-			 SurfaceDescriptor.Progressive);
+					 SurfaceDescriptor.DisplayWidth, SurfaceDescriptor.DisplayHeight,
+					 SurfaceDescriptor.FrameRate.IntegerPart(), SurfaceDescriptor.FrameRate.RemainderDecimal(),
+					 SurfaceDescriptor.Progressive);
 //
 	if (stm_display_plane_lock(Plane) < 0)
 	{
@@ -437,12 +436,12 @@ int Manifestor_VideoStmfb_c::set_dei_fmd(struct file *file, const char __user *b
 				((strncmp("disable", myString, count - 1) == 0)))
 			value = false;
 		else if ((strncmp("1", myString, count - 1) == 0) ||
-				((strncmp("true", myString, count - 1) == 0)) ||
-				((strncmp("enable", myString, count - 1) == 0)))
+				 ((strncmp("true", myString, count - 1) == 0)) ||
+				 ((strncmp("enable", myString, count - 1) == 0)))
 			value = true;
 		if ((err = stm_display_plane_set_control(Plane,
-							 PLANE_CTRL_DEI_FMD_ENABLE,
-							 value)) < 0)
+												 PLANE_CTRL_DEI_FMD_ENABLE,
+												 value)) < 0)
 			MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 		else
 			MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -491,8 +490,8 @@ int Manifestor_VideoStmfb_c::set_dei_mode(struct file *file, const char __user *
 		else if ((strncmp("2", myString, count - 1) == 0) || ((strncmp("median", myString, count - 1) == 0)))
 			value = PCDEIC_MEDIAN;
 		if ((err = stm_display_plane_set_control(Plane,
-							 PLANE_CTRL_DEI_MODE,
-							 value)) < 0)
+												 PLANE_CTRL_DEI_MODE,
+												 value)) < 0)
 			MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 		else
 			MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -538,8 +537,8 @@ int Manifestor_VideoStmfb_c::set_dei_ctrl(struct file *file, const char __user *
 		myString[count] = '\0';
 		sscanf(myString, "%d", &value);
 		if ((err = stm_display_plane_set_control(Plane,
-							 PLANE_CTRL_DEI_CTRLREG,
-							 value)) < 0)
+												 PLANE_CTRL_DEI_CTRLREG,
+												 value)) < 0)
 			MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 		else
 			MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -583,8 +582,8 @@ int Manifestor_VideoStmfb_c::set_psi_brightness(struct file *file, const char __
 		if ((value >= 0) && (value <= 255))
 		{
 			if ((err = stm_display_plane_set_control(Plane,
-								 PLANE_CTRL_PSI_BRIGHTNESS,
-								 value)) < 0)
+													 PLANE_CTRL_PSI_BRIGHTNESS,
+													 value)) < 0)
 				MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 			else
 				MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -628,8 +627,8 @@ int Manifestor_VideoStmfb_c::set_psi_saturation(struct file *file, const char __
 		if ((value >= 0) && (value <= 255))
 		{
 			if ((err = stm_display_plane_set_control(Plane,
-								 PLANE_CTRL_PSI_SATURATION,
-								 value)) < 0)
+													 PLANE_CTRL_PSI_SATURATION,
+													 value)) < 0)
 				MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 			else
 				MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -673,8 +672,8 @@ int Manifestor_VideoStmfb_c::set_psi_contrast(struct file *file, const char __us
 		if ((value >= 0) && (value <= 255))
 		{
 			if ((err = stm_display_plane_set_control(Plane,
-								 PLANE_CTRL_PSI_CONTRAST,
-								 value)) < 0)
+													 PLANE_CTRL_PSI_CONTRAST,
+													 value)) < 0)
 				MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 			else
 				MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -718,8 +717,8 @@ int Manifestor_VideoStmfb_c::set_psi_tint(struct file *file, const char __user *
 		if ((value >= 0) && (value <= 255))
 		{
 			if ((err = stm_display_plane_set_control(Plane,
-								 PLANE_CTRL_PSI_TINT,
-								 value)) < 0)
+													 PLANE_CTRL_PSI_TINT,
+													 value)) < 0)
 				MANIFESTOR_ERROR("Manifestor_VideoStmfb_c::%s - error %d\n", __func__, err);
 			else
 				MANIFESTOR_TRACE("Manifestor_VideoStmfb_c::%s - setting value %s ok\n", __func__, myString);
@@ -770,7 +769,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::CloseOutputSurface(void)
 
 //{{{ Some shared functions used for queuing buffers
 static void SelectDisplaySource(struct BufferStructure_s *BufferStructure,
-				stm_display_buffer_t *DisplayBuff)
+								stm_display_buffer_t *DisplayBuff)
 {
 	switch (BufferStructure->Format)
 	{
@@ -853,8 +852,8 @@ static int SelectColourMatrixCoefficients(struct ParsedVideoParameters_s *VideoP
 }
 
 void Manifestor_VideoStmfb_c::SelectDisplayBufferPointers(struct BufferStructure_s *BufferStructure,
-							  struct StreamBuffer_s *StreamBuff,
-							  stm_display_buffer_t *DisplayBuff)
+														  struct StreamBuffer_s *StreamBuff,
+														  stm_display_buffer_t *DisplayBuff)
 {
 	// Fill in src fields depends on decimation
 	if ((!StreamBuff->DecimateIfAvailable) || (BufferStructure->DecimatedSize == 0))
@@ -897,7 +896,7 @@ void Manifestor_VideoStmfb_c::SelectDisplayBufferPointers(struct BufferStructure
 }
 
 void Manifestor_VideoStmfb_c::ApplyPixelAspectRatioCorrection(stm_display_buffer_t *DisplayBuff,
-							      struct ParsedVideoParameters_s *VideoParameters)
+															  struct ParsedVideoParameters_s *VideoParameters)
 {
 	Rational_t RestrictedPixelAspectRatio;
 	if (PixelAspectRatioCorrectionPolicyValue < PolicyValuePixelAspectRatioCorrectionDisabled)
@@ -923,10 +922,10 @@ void Manifestor_VideoStmfb_c::ApplyPixelAspectRatioCorrection(stm_display_buffer
 /// \return Success or fail
 //}}}
 ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int BufferIndex,
-							struct ParsedFrameParameters_s *FrameParameters,
-							struct ParsedVideoParameters_s *VideoParameters,
-							struct VideoOutputTiming_s *VideoOutputTiming,
-							struct BufferStructure_s *BufferStructure)
+														struct ParsedFrameParameters_s *FrameParameters,
+														struct ParsedVideoParameters_s *VideoParameters,
+														struct VideoOutputTiming_s *VideoOutputTiming,
+														struct BufferStructure_s *BufferStructure)
 {
 	struct StreamBuffer_s *StreamBuff = &StreamBuffer[BufferIndex];
 	stm_display_buffer_t *DisplayBuff = &DisplayBuffer[BufferIndex];
@@ -1013,7 +1012,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int BufferIndex
 	// Fill in info fields
 	DisplayBuff->info.ulFlags = STM_PLANE_PRESENTATION_PERSISTENT;
 	DisplayBuff->info.presentationTime = (VideoOutputTiming->SystemPlaybackTime != UNSPECIFIED_TIME) ?
-					     VideoOutputTiming->SystemPlaybackTime : 0;
+										 VideoOutputTiming->SystemPlaybackTime : 0;
 	DisplayBuff->info.pUserData = StreamBuff;
 //{{{ COMMENT
 	/*
@@ -1047,8 +1046,8 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int BufferIndex
 			PCount += VideoOutputTiming->PanScan.DisplayCount[i];
 		if (PCount != (VideoOutputTiming->DisplayCount[0] + VideoOutputTiming->DisplayCount[1]))
 			MANIFESTOR_DEBUG("Warning display counts do not match: Display count %d, %d, Pan scan count (%d) %d %d %d\n",
-					 VideoOutputTiming->DisplayCount[0], VideoOutputTiming->DisplayCount[1], VideoOutputTiming->PanScan.Count,
-					 VideoOutputTiming->PanScan.DisplayCount[0], VideoOutputTiming->PanScan.DisplayCount[1], VideoOutputTiming->PanScan.DisplayCount[2]);
+							 VideoOutputTiming->DisplayCount[0], VideoOutputTiming->DisplayCount[1], VideoOutputTiming->PanScan.Count,
+							 VideoOutputTiming->PanScan.DisplayCount[0], VideoOutputTiming->PanScan.DisplayCount[1], VideoOutputTiming->PanScan.DisplayCount[2]);
 		//for (i = 0; i < VideoOutputTiming->PanScan.Count; i++)
 		//{
 		//      MANIFESTOR_DEBUG ("Pan scan (%d, %d), Horiz %d, vert %d\n", i, VideoOutputTiming->PanScan.DisplayCount[i],
@@ -1247,8 +1246,8 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueBuffer(unsigned int BufferIndex
 /// \return Success or fail
 //}}}
 ManifestorStatus_t Manifestor_VideoStmfb_c::QueueInitialFrame(unsigned int BufferIndex,
-							      struct ParsedVideoParameters_s *VideoParameters,
-							      struct BufferStructure_s *BufferStructure)
+															  struct ParsedVideoParameters_s *VideoParameters,
+															  struct BufferStructure_s *BufferStructure)
 {
 	struct StreamBuffer_s *StreamBuff = &StreamBuffer[BufferIndex];
 	stm_display_buffer_t *DisplayBuff = &DisplayBuffer[BufferIndex];
@@ -1258,6 +1257,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueInitialFrame(unsigned int Buffe
 	// Clear the DisplayBuff record
 	//
 	memset((void *)DisplayBuff, 0, sizeof(stm_display_buffer_t));
+//
 	StreamBuff->QueueCount = 0;
 	StreamBuff->Manifestor = this;
 	StreamBuff->TimeOnDisplay = INVALID_TIME;
@@ -1382,8 +1382,8 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::UpdateDisplayWindows(void)
 	//}
 	if (!Stepping)
 		MANIFESTOR_DEBUG("%d,%d, %dx%d, Dest %d,%d, %dx%d\n",
-				 InputWindow.X, InputWindow.Y, InputWindow.Width, InputWindow.Height,
-				 OutputWindow.X, OutputWindow.Y, OutputWindow.Width, OutputWindow.Height);
+						 InputWindow.X, InputWindow.Y, InputWindow.Width, InputWindow.Height,
+						 OutputWindow.X, OutputWindow.Y, OutputWindow.Width, OutputWindow.Height);
 	// Check output window fits in active area
 	CurrentMode = stm_display_output_get_current_display_mode(Output);
 	if (CurrentMode == NULL)
@@ -1414,7 +1414,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::UpdateDisplayWindows(void)
 			(InputWindow.Height > PlaneCaps.ulMaxHeight))
 	{
 		MANIFESTOR_ERROR("Content %d x %d not supported by display (min: %lu x %lu, max: %lu x %lu)\n", InputWindow.Width, InputWindow.Height,
-				 PlaneCaps.ulMinWidth, PlaneCaps.ulMinHeight, PlaneCaps.ulMaxWidth, PlaneCaps.ulMaxHeight);
+						 PlaneCaps.ulMinWidth, PlaneCaps.ulMinHeight, PlaneCaps.ulMaxWidth, PlaneCaps.ulMaxHeight);
 		return ManifestorUnplayable;
 	}
 	srcRect.x = InputWindow.X;
@@ -1443,7 +1443,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::UpdateDisplayWindows(void)
 //
 
 ManifestorStatus_t Manifestor_VideoStmfb_c::CheckInputDimensions(unsigned int Width,
-								 unsigned int Height)
+																 unsigned int Height)
 {
 	stm_plane_caps_t PlaneCaps;
 	MANIFESTOR_DEBUG("\n");
@@ -1455,7 +1455,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::CheckInputDimensions(unsigned int Wi
 			(Height > PlaneCaps.ulMaxHeight))
 	{
 		MANIFESTOR_ERROR("Content %d x %d not supported by display (min: %lu x %lu, max: %lu x %lu)\n", Width, Height,
-				 PlaneCaps.ulMinWidth, PlaneCaps.ulMinHeight, PlaneCaps.ulMaxWidth, PlaneCaps.ulMaxHeight);
+						 PlaneCaps.ulMinWidth, PlaneCaps.ulMinHeight, PlaneCaps.ulMaxWidth, PlaneCaps.ulMaxHeight);
 		return ManifestorError;
 	}
 	return ManifestorNoError;
@@ -1516,7 +1516,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::Disable(void)
 //
 
 bool Manifestor_VideoStmfb_c::BufferAvailable(unsigned char *Address,
-					      unsigned int Size)
+											  unsigned int Size)
 {
 	unsigned char *End;
 	unsigned char *DisplayEnd;
@@ -1538,7 +1538,7 @@ bool Manifestor_VideoStmfb_c::BufferAvailable(unsigned char *Address,
 
 //{{{ DisplayCallback
 void Manifestor_VideoStmfb_c::DisplayCallback(struct StreamBuffer_s *Buffer,
-					      TIME64 VsyncTime)
+											  TIME64 VsyncTime)
 {
 	Buffer->TimeOnDisplay = VsyncTime;
 	BufferOnDisplay = Buffer->BufferIndex;
@@ -1573,7 +1573,7 @@ void Manifestor_VideoStmfb_c::DisplayCallback(struct StreamBuffer_s *Buffer,
 #endif
 }
 static void display_callback(void *Buffer,
-			     TIME64 VsyncTime)
+							 TIME64 VsyncTime)
 {
 	struct StreamBuffer_s *StreamBuffer = (struct StreamBuffer_s *)Buffer;
 	class Manifestor_VideoStmfb_c *Manifestor = (Manifestor_VideoStmfb_c *)StreamBuffer->Manifestor;
@@ -1582,7 +1582,7 @@ static void display_callback(void *Buffer,
 //}}}
 //{{{ InitialFrameDisplayCallback
 void Manifestor_VideoStmfb_c::InitialFrameDisplayCallback(struct StreamBuffer_s *Buffer,
-							  TIME64 VsyncTime)
+														  TIME64 VsyncTime)
 {
 	unsigned int Parameters[MONITOR_PARAMETER_COUNT];
 	Buffer->TimeOnDisplay = VsyncTime;
@@ -1597,7 +1597,7 @@ void Manifestor_VideoStmfb_c::InitialFrameDisplayCallback(struct StreamBuffer_s 
 	MonitorSignalEvent(MONITOR_EVENT_INFORMATION, Parameters, "First field on display");
 }
 static void initial_frame_display_callback(void *Buffer,
-					   TIME64 VsyncTime)
+										   TIME64 VsyncTime)
 {
 	struct StreamBuffer_s *StreamBuffer = (struct StreamBuffer_s *)Buffer;
 	class Manifestor_VideoStmfb_c *Manifestor = (Manifestor_VideoStmfb_c *)StreamBuffer->Manifestor;
@@ -1606,8 +1606,8 @@ static void initial_frame_display_callback(void *Buffer,
 //}}}
 //{{{ DoneCallback
 void Manifestor_VideoStmfb_c::DoneCallback(struct StreamBuffer_s *Buffer,
-					   TIME64 VsyncTime,
-					   unsigned int Status)
+										   TIME64 VsyncTime,
+										   unsigned int Status)
 {
 	//if ((Buffer->BufferState != BufferStateQueued) || (--(Buffer->QueueCount) != 0))
 	if ((Buffer->BufferState != BufferStateQueued) && (Buffer->BufferState != BufferStateMultiQueue))
@@ -1629,7 +1629,7 @@ void Manifestor_VideoStmfb_c::DoneCallback(struct StreamBuffer_s *Buffer,
 }
 
 static void done_callback(void *Buffer,
-			  const stm_buffer_presentation_stats_t *Data)
+						  const stm_buffer_presentation_stats_t *Data)
 {
 	struct StreamBuffer_s *StreamBuffer = (struct StreamBuffer_s *)Buffer;
 	class Manifestor_VideoStmfb_c *Manifestor = (Manifestor_VideoStmfb_c *)StreamBuffer->Manifestor;
@@ -1640,17 +1640,17 @@ static void done_callback(void *Buffer,
 	if (Data)
 	{
 		sprintf(buffer, "%llx %08x %x %x %x %x\n",
-			StreamBuffer->NativePlaybackTime,
-			(unsigned int)Data->ulStatus,
-			(unsigned int)Data->ulYCRC[0],
-			(unsigned int)Data->ulUVCRC[0],
-			(unsigned int)Data->ulYCRC[1],
-			(unsigned int)Data->ulUVCRC[1]);
+				StreamBuffer->NativePlaybackTime,
+				(unsigned int)Data->ulStatus,
+				(unsigned int)Data->ulYCRC[0],
+				(unsigned int)Data->ulUVCRC[0],
+				(unsigned int)Data->ulYCRC[1],
+				(unsigned int)Data->ulUVCRC[1]);
 		st_relayfs_write(ST_RELAY_TYPE_CRC,
-				 ST_RELAY_SOURCE_VIDEO_MANIFESTOR + Manifestor->RelayfsIndex,
-				 (unsigned char *)buffer,
-				 strlen(buffer),
-				 NULL);
+						 ST_RELAY_SOURCE_VIDEO_MANIFESTOR + Manifestor->RelayfsIndex,
+						 (unsigned char *)buffer,
+						 strlen(buffer),
+						 NULL);
 	}
 #endif
 	Manifestor->DoneCallback(StreamBuffer, Data ? Data->vsyncTime : 0, Data ? (unsigned int)Data->ulStatus : 0);

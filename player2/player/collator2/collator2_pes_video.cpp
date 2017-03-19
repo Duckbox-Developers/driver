@@ -601,8 +601,8 @@ CollatorStatus_t Collator2_PesVideo_c::ProcessInputBackward(
 				(Code == PES_PADDING_START_CODE))
 		{
 			DiscardingData = (Code == PES_PADDING_START_CODE) || // It's a padding packet
-					 (NextPartition->PartitionSize < PES_INITIAL_HEADER_SIZE) || // There isn't a full pes header
-					 (NextPartition->PartitionSize < PES_HEADER_SIZE(NextPartition->PartitionBase));
+							 (NextPartition->PartitionSize < PES_INITIAL_HEADER_SIZE) || // There isn't a full pes header
+							 (NextPartition->PartitionSize < PES_HEADER_SIZE(NextPartition->PartitionBase));
 			if (!DiscardingData)
 			{
 				Status = ReadPesHeader(NextPartition->PartitionBase);

@@ -30,7 +30,7 @@ DECLARE_MUTEX(cmd_mutex);
 
 FILE *usb_fout;
 #define FWRITE(p,s,n,f) st_relayfs_write(ST_RELAY_TYPE_MME_LOG, ST_RELAY_SOURCE_MME_LOG, \
-					 (unsigned char *) p, s*n, 0)
+										 (unsigned char *) p, s*n, 0)
 #define FOPEN(n,p) usb_fout
 #define FFOPEN(n,p) usb_fout
 #define FCLOSE(f) f = NULL
@@ -140,8 +140,8 @@ void acc_mme_logstop(void)
 }
 
 MME_ERROR acc_MME_InitTransformer(const char *Name,
-				  MME_TransformerInitParams_t *Params_p,
-				  MME_TransformerHandle_t *Handle_p)
+								  MME_TransformerInitParams_t *Params_p,
+								  MME_TransformerHandle_t *Handle_p)
 {
 	MME_ERROR mme_status;
 	FILE *fcmd = cmd_log_lock();

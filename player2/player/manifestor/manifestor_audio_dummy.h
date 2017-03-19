@@ -208,13 +208,13 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 				return ManifestorError;
 			}
 			report(severity_info, "Manifestor_AudioDummy_c::QueueDecodeBuffer - Queueing %4d - Normalized playback time %lluus\n",
-			       ParsedFrameParameters->DisplayFrameIndex, ParsedFrameParameters->NormalizedPlaybackTime);
+				   ParsedFrameParameters->DisplayFrameIndex, ParsedFrameParameters->NormalizedPlaybackTime);
 			for (unsigned int i = 0; i < 4; i++)
 			{
 				unsigned int j = ParsedAudioParameters->Source.ChannelCount * i;
 				report(severity_info, "Sample[%3d] (24-bits): %06x %06x %06x %06x %06x %06x %06x %06x %06x %06x\n", i,
-				       pcm[j + 0] >> 8, pcm[j + 1] >> 8, pcm[j + 2] >> 8, pcm[j + 3] >> 8, pcm[j + 4] >> 8,
-				       pcm[j + 5] >> 8, pcm[j + 6] >> 8, pcm[j + 7] >> 8, pcm[j + 8] >> 8, pcm[j + 9] >> 8);
+					   pcm[j + 0] >> 8, pcm[j + 1] >> 8, pcm[j + 2] >> 8, pcm[j + 3] >> 8, pcm[j + 4] >> 8,
+					   pcm[j + 5] >> 8, pcm[j + 6] >> 8, pcm[j + 7] >> 8, pcm[j + 8] >> 8, pcm[j + 9] >> 8);
 			}
 			OutputRing->Insert((unsigned int)Buffer);
 			return ManifestorNoError;
@@ -252,7 +252,7 @@ class Manifestor_AudioDummy_c : public Manifestor_c
 			if (Status == BufferNoError)
 			{
 				(*Buffer)->ObtainMetaDataReference(Player->MetaDataBufferStructureType,
-								   (void **)(&AttachedRequestStructure));
+												   (void **)(&AttachedRequestStructure));
 				memcpy(AttachedRequestStructure, RequestedStructure, sizeof(BufferStructure_t));
 			}
 			return Status;

@@ -132,9 +132,9 @@ CodecStatus_t Codec_MmeAudioMpeg_c::FillOutTransformerGlobalParameters(MME_LxAud
 {
 //
 	CODEC_TRACE("Initializing MPEG layer %s audio decoder\n",
-		    (DecoderId == ACC_MP2A_ID ? "I/II" :
-		     DecoderId == ACC_MP3_ID ? "III" :
-		     "unknown"));
+				(DecoderId == ACC_MP2A_ID ? "I/II" :
+				 DecoderId == ACC_MP3_ID ? "III" :
+				 "unknown"));
 	// check for firmware decoder existence in case of SET_GLOBAL only
 	// (we don't know the frame type at init time)
 	if (ParsedFrameParameters)

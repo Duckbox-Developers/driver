@@ -137,8 +137,8 @@ class Codec_MmeVideoH264_c : public Codec_MmeVideo_c
 		CodecStatus_t FillOutDecodeCommandHostData(void);
 		CodecStatus_t FillOutDecodeCommandRefPicList(void);
 		unsigned int FillOutNewDescriptor(unsigned int ReferenceId,
-						  unsigned int BufferIndex,
-						  H264ReferenceDetails_t *Details);
+										  unsigned int BufferIndex,
+										  H264ReferenceDetails_t *Details);
 		CodecStatus_t H264ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex);
 
 		CodecStatus_t ReferenceFrameSlotAllocate(unsigned int BufferIndex);
@@ -172,7 +172,7 @@ class Codec_MmeVideoH264_c : public Codec_MmeVideo_c
 		CodecStatus_t DiscardQueuedDecodes(void);
 		CodecStatus_t ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex);
 		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
-						      ReferenceFrameList_t ReferenceFrameList[]);
+											  ReferenceFrameList_t ReferenceFrameList[]);
 		CodecStatus_t Input(Buffer_t CodedBuffer);
 
 		//

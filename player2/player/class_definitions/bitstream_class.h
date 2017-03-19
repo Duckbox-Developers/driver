@@ -192,7 +192,7 @@ class BitStreamClass_c
 		//
 
 		void GetPosition(unsigned char **Pointer,
-				 unsigned int *BitsInByte)
+						 unsigned int *BitsInByte)
 		{
 			*Pointer = (unsigned char *)BitsData - ((BitsAvailable + 7) / 8);
 			*BitsInByte = (BitsAvailable & 7) ? (BitsAvailable & 7) : 8;

@@ -90,7 +90,7 @@ class Codec_DvpVideo_c : public Codec_c
 			return CodecNoError;
 		}
 		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
-						      ReferenceFrameList_t ReferenceFrameList[])
+											  ReferenceFrameList_t ReferenceFrameList[])
 		{
 			return CodecNoError;
 		}
@@ -100,7 +100,7 @@ class Codec_DvpVideo_c : public Codec_c
 		//
 
 		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						  void *ParameterBlock)
+										  void *ParameterBlock)
 		{
 			return CodecNoError;
 		}

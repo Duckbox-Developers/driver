@@ -131,9 +131,9 @@ class Codec_MmeAudioDtshd_c : public Codec_MmeAudio_c
 		//
 		static void FillStreamMetadata(ParsedAudioParameters_t *AudioParameters, MME_LxAudioDecoderFrameStatus_t *Status);
 		static void TranscodeDtshdToDts(CodecBaseDecodeContext_t *BaseContext,
-						unsigned int TranscodeBufferIndex,
-						DtshdAudioFrameParameters_t *FrameParameters,
-						CodecBufferState_t *TranscodedBuffers);
+										unsigned int TranscodeBufferIndex,
+										DtshdAudioFrameParameters_t *FrameParameters,
+										CodecBufferState_t *TranscodedBuffers);
 
 	protected:
 
@@ -143,7 +143,7 @@ class Codec_MmeAudioDtshd_c : public Codec_MmeAudio_c
 		CodecStatus_t FillOutDecodeCommand(void);
 		CodecStatus_t ValidateDecodeContext(CodecBaseDecodeContext_t *Context);
 		void HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-					  MME_PcmProcessingStatusTemplate_t *PcmStatus);
+								  MME_PcmProcessingStatusTemplate_t *PcmStatus);
 		CodecStatus_t DumpSetStreamParameters(void *Parameters);
 		void SetCommandIO(void);
 		CodecStatus_t GetTranscodedFrameBufferPool(BufferPool_t *Tfp);

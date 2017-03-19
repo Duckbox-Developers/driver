@@ -105,11 +105,11 @@ class OutputTimer_Audio_c : public OutputTimer_Base_c
 		OutputTimerStatus_t InitializeConfiguration(void);
 
 		OutputTimerStatus_t FrameDuration(void *ParsedAudioVideoDataParameters,
-						  unsigned long long *Duration);
+										  unsigned long long *Duration);
 
 		OutputTimerStatus_t FillOutFrameTimingRecord(unsigned long long SystemTime,
-							     void *ParsedAudioVideoDataParameters,
-							     void *AudioVideoDataOutputTiming);
+													 void *ParsedAudioVideoDataParameters,
+													 void *AudioVideoDataOutputTiming);
 
 		OutputTimerStatus_t CorrectSynchronizationError(void);
 

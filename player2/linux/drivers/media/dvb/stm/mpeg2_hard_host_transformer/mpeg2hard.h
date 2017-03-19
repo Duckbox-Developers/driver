@@ -140,14 +140,14 @@ extern "C" {
 #endif
 
 Mpeg2HardStatus_t Mpeg2HardInit(char *Name,
-				Mpeg2HardInitParams_t *InitParams,
-				Mpeg2HardHandle_t *Handle);
+								Mpeg2HardInitParams_t *InitParams,
+								Mpeg2HardHandle_t *Handle);
 
 Mpeg2HardStatus_t Mpeg2HardSetSequenceParams(Mpeg2HardHandle_t Handle,
-					     Mpeg2HardSequenceParams_t *SequenceParams);
+											 Mpeg2HardSequenceParams_t *SequenceParams);
 
 Mpeg2HardStatus_t Mpeg2HardDecodeFrame(Mpeg2HardHandle_t Handle,
-				       Mpeg2HardFrameParams_t *FrameParams);
+									   Mpeg2HardFrameParams_t *FrameParams);
 
 Mpeg2HardStatus_t Mpeg2HardTerminate(Mpeg2HardHandle_t Handle);
 

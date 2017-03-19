@@ -53,10 +53,10 @@ Date Modification Name
 //
 
 CollatorStatus_t Collator_PacketDvp_c::Input(PlayerInputDescriptor_t *Input,
-					     unsigned int DataLength,
-					     void *Data,
-					     bool NonBlocking,
-					     unsigned int *DataLengthRemaining)
+											 unsigned int DataLength,
+											 void *Data,
+											 bool NonBlocking,
+											 unsigned int *DataLengthRemaining)
 {
 	CollatorStatus_t Status;
 	StreamInfo_t *CapturedFrameDescriptor = (StreamInfo_t *)Data;

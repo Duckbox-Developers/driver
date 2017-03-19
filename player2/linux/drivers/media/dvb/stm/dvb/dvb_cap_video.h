@@ -372,26 +372,26 @@ int CapVideoClose(cap_v4l2_video_handle_t *Context);
 int CapVideoThreadHandle(void *Data);
 
 int CapVideoIoctlSetFramebuffer(cap_v4l2_video_handle_t *Context,
-				unsigned int Width,
-				unsigned int Height,
-				unsigned int BytesPerLine,
-				unsigned int Control);
+								unsigned int Width,
+								unsigned int Height,
+								unsigned int BytesPerLine,
+								unsigned int Control);
 
 int CapVideoIoctlSetStandard(cap_v4l2_video_handle_t *Context,
-			     v4l2_std_id Id);
+							 v4l2_std_id Id);
 
 int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t *Context);
 
 int CapVideoIoctlCrop(cap_v4l2_video_handle_t *Context,
-		      struct v4l2_crop *Crop);
+					  struct v4l2_crop *Crop);
 
 int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int Value);
+							unsigned int Control,
+							unsigned int Value);
 
 int CapVideoIoctlGetControl(cap_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int *Value);
+							unsigned int Control,
+							unsigned int *Value);
 
 #endif /*STMCAPVIDEO_H_*/
 

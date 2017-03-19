@@ -91,10 +91,10 @@ static struct class_attribute player2_class_attributes[] =
 };
 
 static struct class player2_class =
-	{
-			.name = "player2",
-			.class_attrs = player2_class_attributes,
-	};
+{
+	.name = "player2",
+	.class_attrs = player2_class_attributes,
+};
 
 static void do_notify(void)
 {
@@ -306,7 +306,7 @@ void player_sysfs_new_attribute_notification(struct device *stream_dev)
 		 * abuse at runtime.
 		 */
 		BUG_ON(((char *) stream_dev < ((char *) playback_data)) ||
-		       ((char *) stream_dev >= ((char *) playback_data) + sizeof(playback_data)));
+			   ((char *) stream_dev >= ((char *) playback_data) + sizeof(playback_data)));
 		streamdata = container_of(stream_dev, struct stream_data_s, stream_class_device);
 		streamdata->notify_on_destroy = true;
 	}
@@ -337,10 +337,10 @@ int event_playback_created_handler(struct player_event_s *Event)
 	/* Create a class device and register it with sysfs ( = sysfs/class/player2/playback0,1,2,3....) */
 	PlaybackData->playback_dev_t = MKDEV(0, 0);
 	PlaybackData->playback_class_device = device_create(&player2_class, // pointer to the struct class that this device should be registered to
-							    NULL, // pointer to the parent struct class_device of this new device, if any
-							    PlaybackData->playback_dev_t, // the dev_t for the (char) device to be added
-							    NULL, // a pointer to a struct device that is associated with this class device
-							    "playback%d", PlaybackData->id); // string for the class device's name
+														NULL, // pointer to the parent struct class_device of this new device, if any
+														PlaybackData->playback_dev_t, // the dev_t for the (char) device to be added
+														NULL, // a pointer to a struct device that is associated with this class device
+														"playback%d", PlaybackData->id); // string for the class device's name
 	if (IS_ERR(PlaybackData->playback_class_device))
 	{
 		SYSFS_ERROR("Unable to create playback class device (%d)\n", (int)PlaybackData->playback_class_device);
@@ -413,14 +413,16 @@ int event_stream_created_handler(struct player_event_s *Event)
 	}
 	/* Populate structure */
 	StreamData->stream = Event->stream;
-	/* Create a class device and register it with sysfs ( = sysfs/class/player2/playbackx/stream0,1,2,3...) */
+	/*
+	 Create a device and register it with sysfs ( = sysfs/class/player2/playbackx/stream0,1,2,3...)
+	*/
 #if 0
 	StreamData->stream_dev_t = MKDEV(0, 0);
 	StreamData->stream_class_device = class_device_create(player2_class, // pointer to the struct class that this device should be registered to
-							      PlaybackData->playback_class_device, // pointer to the parent struct class_device of this new device, if any
-							      StreamData->stream_dev_t, // the dev_t for the (char) device to be added
-							      NULL, // a pointer to a struct device that is associated with this class device
-							      "stream%d", StreamData->id); // string for the class device's name
+														  PlaybackData->playback_class_device, // pointer to the parent struct class_device of this new device, if any
+														  StreamData->stream_dev_t, // the dev_t for the (char) device to be added
+														  NULL, // a pointer to a struct device that is associated with this class device
+														  "stream%d", StreamData->id); // string for the class device's name
 #endif
 	// Populate the class structure in similar way to class_device_create()
 	memset(&StreamData->stream_class_device, 0, sizeof(struct device));
@@ -604,7 +606,7 @@ void dump(void)
 		if (playback_data[p].playback)
 		{
 			SYSFS_DEBUG("***** (%d) Playback %p, dev_t %x, class_device %p\n", p, playback_data[p].playback,
-				    playback_data[p].playback_dev_t, playback_data[p].playback_class_device);
+						playback_data[p].playback_dev_t, playback_data[p].playback_class_device);
 			for (s = 0; s < STREAM_MAX_NUMBER; s++)
 			{
 				if (playback_data[p].stream_data[s].stream)

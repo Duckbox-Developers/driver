@@ -69,8 +69,8 @@ class Buffer_Generic_c : public Buffer_c
 	public:
 
 		Buffer_Generic_c(BufferManager_Generic_t Manager,
-				 BufferPool_Generic_t Pool,
-				 BufferDataDescriptor_t *Descriptor);
+						 BufferPool_Generic_t Pool,
+						 BufferDataDescriptor_t *Descriptor);
 		~Buffer_Generic_c(void);
 
 		//
@@ -78,9 +78,9 @@ class Buffer_Generic_c : public Buffer_c
 		//
 
 		BufferStatus_t AttachMetaData(MetaDataType_t Type,
-					      unsigned int Size = UNSPECIFIED_SIZE,
-					      void *MemoryBlock = NULL,
-					      char *DeviceMemoryPartitionName = NULL);
+									  unsigned int Size = UNSPECIFIED_SIZE,
+									  void *MemoryBlock = NULL,
+									  char *DeviceMemoryPartitionName = NULL);
 
 		BufferStatus_t DetachMetaData(MetaDataType_t Type);
 
@@ -97,32 +97,32 @@ class Buffer_Generic_c : public Buffer_c
 		BufferStatus_t ShrinkBuffer(unsigned int NewSize);
 
 		BufferStatus_t ExtendBuffer(unsigned int *NewSize,
-					    bool ExtendUpwards = true);
+									bool ExtendUpwards = true);
 
 		BufferStatus_t PartitionBuffer(unsigned int LeaveInFirstPartitionSize,
-					       bool DuplicateMetaData,
-					       Buffer_t *SecondPartition,
-					       unsigned int SecondOwnerIdentifier = UNSPECIFIED_OWNER,
-					       bool NonBlocking = false);
+									   bool DuplicateMetaData,
+									   Buffer_t *SecondPartition,
+									   unsigned int SecondOwnerIdentifier = UNSPECIFIED_OWNER,
+									   bool NonBlocking = false);
 
 		//
 		// Reference manipulation, and ownership control
 		//
 
 		BufferStatus_t RegisterDataReference(unsigned int BlockSize,
-						     void *Pointer,
-						     AddressType_t AddressType = CachedAddress);
+											 void *Pointer,
+											 AddressType_t AddressType = CachedAddress);
 
 		BufferStatus_t RegisterDataReference(unsigned int BlockSize,
-						     void *Pointers[3]);
+											 void *Pointers[3]);
 
 		BufferStatus_t ObtainDataReference(unsigned int *BlockSize,
-						   unsigned int *UsedDataSize,
-						   void **Pointer,
-						   AddressType_t AddressType = CachedAddress);
+										   unsigned int *UsedDataSize,
+										   void **Pointer,
+										   AddressType_t AddressType = CachedAddress);
 
 		BufferStatus_t TransferOwnership(unsigned int OwnerIdentifier0,
-						 unsigned int OwnerIdentifier1 = UNSPECIFIED_OWNER);
+										 unsigned int OwnerIdentifier1 = UNSPECIFIED_OWNER);
 
 		BufferStatus_t IncrementReferenceCount(
 			unsigned int OwnerIdentifier = UNSPECIFIED_OWNER);
@@ -151,12 +151,12 @@ class Buffer_Generic_c : public Buffer_c
 		BufferStatus_t GetMetaDataCount(unsigned int *Count);
 
 		BufferStatus_t GetMetaDataList(unsigned int ArraySize,
-					       unsigned int *ArrayOfMetaDataTypes);
+									   unsigned int *ArrayOfMetaDataTypes);
 
 		BufferStatus_t GetOwnerCount(unsigned int *Count);
 
 		BufferStatus_t GetOwnerList(unsigned int ArraySize,
-					    unsigned int *ArrayOfOwnerIdentifiers);
+									unsigned int *ArrayOfOwnerIdentifiers);
 
 		//
 		// Cache functions

@@ -48,10 +48,10 @@ class BufferPool_c : public BaseComponentClass_c
 		//
 
 		virtual BufferStatus_t AttachMetaData(MetaDataType_t Type,
-						      unsigned int Size = UNSPECIFIED_SIZE,
-						      void *MemoryPool = NULL,
-						      void *ArrayOfMemoryBlocks[] = NULL,
-						      char *DeviceMemoryPartitionName = NULL) = 0;
+											  unsigned int Size = UNSPECIFIED_SIZE,
+											  void *MemoryPool = NULL,
+											  void *ArrayOfMemoryBlocks[] = NULL,
+											  char *DeviceMemoryPartitionName = NULL) = 0;
 
 		virtual BufferStatus_t DetachMetaData(MetaDataType_t Type) = 0;
 
@@ -60,10 +60,10 @@ class BufferPool_c : public BaseComponentClass_c
 		//
 
 		virtual BufferStatus_t GetBuffer(Buffer_t *Buffer,
-						 unsigned int OwnerIdentifier = UNSPECIFIED_OWNER,
-						 unsigned int RequiredSize = UNSPECIFIED_SIZE,
-						 bool NonBlocking = false,
-						 bool RequiredSizeIsLowerBound = false) = 0;
+										 unsigned int OwnerIdentifier = UNSPECIFIED_OWNER,
+										 unsigned int RequiredSize = UNSPECIFIED_SIZE,
+										 bool NonBlocking = false,
+										 bool RequiredSizeIsLowerBound = false) = 0;
 
 		virtual BufferStatus_t AbortBlockingGetBuffer(void) = 0;
 
@@ -76,19 +76,19 @@ class BufferPool_c : public BaseComponentClass_c
 		virtual BufferStatus_t GetType(BufferType_t *Type) = 0;
 
 		virtual BufferStatus_t GetPoolUsage(unsigned int *BuffersInPool,
-						    unsigned int *BuffersWithNonZeroReferenceCount = NULL,
-						    unsigned int *MemoryInPool = NULL,
-						    unsigned int *MemoryAllocated = NULL,
-						    unsigned int *MemoryInUse = NULL,
-						    unsigned int *LargestFreeMemoryBlock = NULL) = 0;
+											unsigned int *BuffersWithNonZeroReferenceCount = NULL,
+											unsigned int *MemoryInPool = NULL,
+											unsigned int *MemoryAllocated = NULL,
+											unsigned int *MemoryInUse = NULL,
+											unsigned int *LargestFreeMemoryBlock = NULL) = 0;
 
 		virtual BufferStatus_t CountBuffersReferencedBy(
 			unsigned int OwnerIdentifier,
 			unsigned int *Count) = 0;
 
 		virtual BufferStatus_t GetAllUsedBuffers(unsigned int ArraySize,
-							 Buffer_t *ArrayOfBuffers,
-							 unsigned int OwnerIdentifier) = 0;
+												 Buffer_t *ArrayOfBuffers,
+												 unsigned int OwnerIdentifier) = 0;
 
 		//
 		// Status dump/reporting

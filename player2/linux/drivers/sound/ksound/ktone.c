@@ -53,10 +53,10 @@ static short sins(short x)
 }
 
 static void generate_signal(unsigned int *p,
-			    unsigned int nrchannels,
-			    unsigned int nrsamples,
-			    unsigned int samplerate,
-			    unsigned int freq, unsigned int *phasep)
+							unsigned int nrchannels,
+							unsigned int nrsamples,
+							unsigned int samplerate,
+							unsigned int freq, unsigned int *phasep)
 {
 	unsigned int phase = *phasep;
 	unsigned int step;
@@ -144,7 +144,7 @@ static int ktone(void *unused)
 	{
 #if 0
 		generate_signal(samples, nrchannels, period_size, samplerate,
-				freq, &state);
+						freq, &state);
 		res = ksnd_pcm_writei(handle, samples, period_size, nrchannels);
 		if (0 != res)
 		{
@@ -173,7 +173,7 @@ static int ktone(void *unused)
 			void *samples;
 			res =
 				ksnd_pcm_mmap_begin(handle, &my_areas, &offset,
-						    &frames);
+									&frames);
 			if (res < 0)
 			{
 				printk("Failed to mmap buffer\n");
@@ -184,7 +184,7 @@ static int ktone(void *unused)
 			samples += offset * my_areas[0].step / 8;
 			/*printk("offset %d base %p samples %p\n", offset, my_areas[0].addr, samples); */
 			generate_signal(samples, nrchannels, frames, samplerate,
-					freq, &state);
+							freq, &state);
 			commitres =
 				ksnd_pcm_mmap_commit(handle, offset, frames);
 			if (commitres < 0
@@ -192,8 +192,8 @@ static int ktone(void *unused)
 			{
 				if ((res =
 							xrun_recovery(handle,
-								      commitres >=
-								      0 ? -EPIPE : commitres)) <
+										  commitres >=
+										  0 ? -EPIPE : commitres)) <
 						0)
 				{
 					printk("MMAP commit error\n");

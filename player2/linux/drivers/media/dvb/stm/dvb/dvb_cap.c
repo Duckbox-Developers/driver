@@ -130,7 +130,7 @@ static struct stvin_description g_vinDevice[] =
  * NOTE1: SystemTime, NativeTime and the Pts values must be max 33 bits long -> &= 0x1ffffffffULL
  * NOTE2: all the timings values are expressed in usecs in these functions */
 int cap_set_external_time_mapping(cap_v4l2_shared_handle_t *shared_context, struct StreamContext_s *stream,
-				  unsigned long long nativetime, unsigned long long systemtime)
+								  unsigned long long nativetime, unsigned long long systemtime)
 {
 	int result = 0;
 	struct PlaybackContext_s *playback = shared_context->cap_device_context.Playback;
@@ -174,7 +174,7 @@ int cap_set_external_time_mapping(cap_v4l2_shared_handle_t *shared_context, stru
 	{
 #if 0
 		DVB_DEBUG("Munging nativetime (%lld -> %lld)\n",
-			  nativetime, nativetime + audio_video_latency_offset);
+				  nativetime, nativetime + audio_video_latency_offset);
 #endif
 		nativetime += shared_context->audio_video_latency_offset;
 	}
@@ -230,7 +230,7 @@ void cap_set_vsync_offset(cap_v4l2_shared_handle_t *shared_context, long long vs
  ******************************/
 
 static int cap_ioctl_overlay_start(cap_v4l2_shared_handle_t *shared_context,
-				   struct stm_v4l2_handles *handle)
+								   struct stm_v4l2_handles *handle)
 {
 	int ret = 0;
 	playback_handle_t playerplayback;
@@ -252,7 +252,7 @@ static int cap_ioctl_overlay_start(cap_v4l2_shared_handle_t *shared_context,
 	 * drift appart.
 	 */
 	ret = DvbPlaybackSetOption(shared_context->cap_device_context.Playback,
-				   PLAY_OPTION_MASTER_CLOCK, PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER);
+							   PLAY_OPTION_MASTER_CLOCK, PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER);
 	if (ret < 0)
 	{
 		DVB_ERROR("PLAY_OPTION_VALUE_SYSTEM_CLOCK_MASTER coult not be set\n");
@@ -260,7 +260,7 @@ static int cap_ioctl_overlay_start(cap_v4l2_shared_handle_t *shared_context,
 	}
 	// Wait for the playback's creational event to be acted upon
 	ret = DvbPlaybackGetPlayerEnvironment(shared_context->cap_device_context.Playback,
-					      &playerplayback);
+										  &playerplayback);
 	if (ret < 0)
 	{
 		DVB_ERROR("Cannot get internal player handle\n");
@@ -291,7 +291,7 @@ static int cap_ioctl_overlay_start(cap_v4l2_shared_handle_t *shared_context,
 }
 
 static int cap_ioctl_overlay_stop(cap_v4l2_shared_handle_t *shared_context,
-				  struct stm_v4l2_handles *handle)
+								  struct stm_v4l2_handles *handle)
 {
 	int ret = 0;
 	if (shared_context->cap_device_context.Playback == NULL)
@@ -326,8 +326,8 @@ static int cap_ioctl_overlay_stop(cap_v4l2_shared_handle_t *shared_context,
  * \todo Most of this initialization ought to migrate into the video driver.
  */
 static int cap_ioctl_video_set_input(cap_v4l2_shared_handle_t *shared_context,
-				     struct stm_v4l2_handles *handle,
-				     int id)
+									 struct stm_v4l2_handles *handle,
+									 int id)
 {
 	int ret = 0;
 #ifdef NICK_TEST_HACK
@@ -397,7 +397,7 @@ static int cap_ioctl_video_set_input(cap_v4l2_shared_handle_t *shared_context,
 }
 
 static int cap_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driver,
-		     int device, enum _stm_v4l2_driver_type type, struct file *file, unsigned int cmd, void *arg)
+					 int device, enum _stm_v4l2_driver_type type, struct file *file, unsigned int cmd, void *arg)
 {
 	cap_v4l2_shared_handle_t *shared_context = driver->priv;
 	int res;
@@ -412,7 +412,7 @@ static int cap_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *dr
 			{
 				struct v4l2_framebuffer *argp = arg;
 				CapVideoIoctlSetFramebuffer(handle->v4l2type[STM_V4L2_VIDEO_INPUT].handle,
-							    argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
+											argp->fmt.width, argp->fmt.height, argp->fmt.bytesperline, argp->fmt.priv);
 				break;
 			}
 			CASE(VIDIOC_S_STD)

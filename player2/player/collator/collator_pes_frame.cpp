@@ -115,10 +115,10 @@ CollatorStatus_t Collator_PesFrame_c::Reset(void)
 /// \return Collator status code, CollatorNoError indicates success.
 ///
 CollatorStatus_t Collator_PesFrame_c::Input(PlayerInputDescriptor_t *Input,
-					    unsigned int DataLength,
-					    void *Data,
-					    bool NonBlocking,
-					    unsigned int *DataLengthRemaining)
+											unsigned int DataLength,
+											void *Data,
+											bool NonBlocking,
+											unsigned int *DataLengthRemaining)
 {
 	CollatorStatus_t Status = CollatorNoError;
 	bool PrivateDataPresent;
@@ -239,7 +239,7 @@ CollatorStatus_t Collator_PesFrame_c::Input(PlayerInputDescriptor_t *Input,
 			}
 		}
 		COLLATOR_DEBUG("%s PrivateDataPresent %d, RemainingDataLength %d, PayloadLength %d\n",
-			       __FUNCTION__, PrivateDataPresent, RemainingDataLength, PayloadLength);
+					   __FUNCTION__, PrivateDataPresent, RemainingDataLength, PayloadLength);
 	}
 	InputExit();
 	return CollatorNoError;

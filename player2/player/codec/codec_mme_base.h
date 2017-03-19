@@ -59,7 +59,7 @@ Date Modification Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define CODEC_DEBUG(fmt, args...) ((void)(ENABLE_CODEC_DEBUG && \
-					  (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args), 0)))
+										  (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define CODEC_TRACE(fmt, args...) (report(severity_note, "%s: " fmt, CODEC_FUNCTION, ##args))
@@ -67,7 +67,7 @@ Date Modification Name
 #define CODEC_ERROR(fmt, args...) (report(severity_error, "%s: " fmt, CODEC_FUNCTION, ##args))
 
 #define CODEC_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-							   CODEC_FUNCTION, #x, __FILE__, __LINE__); while(0)
+												   CODEC_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -363,8 +363,8 @@ class Codec_MmeBase_c : public Codec_c
 		// Functions
 
 		CodecStatus_t InitializeDataType(BufferDataDescriptor_t *InitialDescriptor,
-						 BufferType_t *Type,
-						 BufferDataDescriptor_t **ManagedDescriptor);
+										 BufferType_t *Type,
+										 BufferDataDescriptor_t **ManagedDescriptor);
 
 		CodecStatus_t DecrementReferenceCount(unsigned int BufferIndex);
 		CodecStatus_t CalculateMaximumFrameRate(CodecBaseDecodeContext_t *DecodeContext);
@@ -383,7 +383,7 @@ class Codec_MmeBase_c : public Codec_c
 
 	public:
 		virtual void CallbackFromMME(MME_Event_t Event,
-					     MME_Command_t *Command);
+									 MME_Command_t *Command);
 
 	public:
 
@@ -403,7 +403,7 @@ class Codec_MmeBase_c : public Codec_c
 		CodecStatus_t Reset(void);
 
 		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						  void *ParameterBlock);
+										  void *ParameterBlock);
 
 		//
 		// Codec class functions
@@ -420,7 +420,7 @@ class Codec_MmeBase_c : public Codec_c
 		CodecStatus_t ReleaseReferenceFrame(unsigned int ReferenceFrameDecodeIndex);
 
 		CodecStatus_t CheckReferenceFrameList(unsigned int NumberOfReferenceFrameLists,
-						      ReferenceFrameList_t ReferenceFrameList[]);
+											  ReferenceFrameList_t ReferenceFrameList[]);
 
 		CodecStatus_t ReleaseDecodeBuffer(Buffer_t Buffer);
 
@@ -433,12 +433,12 @@ class Codec_MmeBase_c : public Codec_c
 	protected:
 
 		CodecStatus_t MapBufferToDecodeIndex(unsigned int DecodeIndex,
-						     unsigned int BufferIndex);
+											 unsigned int BufferIndex);
 
 		CodecStatus_t UnMapBufferIndex(unsigned int BufferIndex);
 
 		CodecStatus_t TranslateDecodeIndex(unsigned int DecodeIndex,
-						   unsigned int *BufferIndex);
+										   unsigned int *BufferIndex);
 
 		CodecStatus_t GetDecodeBuffer(void);
 
@@ -447,7 +447,7 @@ class Codec_MmeBase_c : public Codec_c
 		CodecStatus_t TranslateReferenceFrameLists(bool IncrementUseCountForReferenceFrame);
 
 		CodecStatus_t SetOutputOnDecodesComplete(unsigned int BufferIndex,
-							 bool TestForImmediateOutput);
+												 bool TestForImmediateOutput);
 
 		virtual CodecStatus_t SendMMEStreamParameters(void); // DivX needs its own version
 		virtual CodecStatus_t SendMMEDecodeCommand(void); // WMA/OGG need to enhance

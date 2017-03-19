@@ -63,10 +63,10 @@ class Collator_PesVideoMjpeg_c : public Collator_PesVideo_c
 		CollatorStatus_t Reset(void);
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false,
-				       unsigned int *DataLengthRemaining = NULL);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false,
+							   unsigned int *DataLengthRemaining = NULL);
 
 };
 

@@ -25,12 +25,12 @@ HavanaFactory_c::~HavanaFactory_c(void)
 	//HAVANA_DEBUG("\n");
 }
 HavanaStatus_t HavanaFactory_c::Init(class HavanaFactory_c *FactoryList,
-				     const char *Id,
-				     const char *SubId,
-				     PlayerStreamType_t StreamType,
-				     PlayerComponent_t Component,
-				     unsigned int Version,
-				     void *(*NewFactory)(void))
+									 const char *Id,
+									 const char *SubId,
+									 PlayerStreamType_t StreamType,
+									 PlayerComponent_t Component,
+									 unsigned int Version,
+									 void *(*NewFactory)(void))
 {
 	//HAVANA_DEBUG("\n");
 	NextFactory = FactoryList;
@@ -59,16 +59,16 @@ HavanaStatus_t HavanaFactory_c::ReLink(class HavanaFactory_c *Next)
 /// \return true if can build the component, false if not
 //}}}
 bool HavanaFactory_c::CanBuild(const char *Id,
-			       const char *SubId,
-			       PlayerStreamType_t StreamType,
-			       PlayerComponent_t Component)
+							   const char *SubId,
+							   PlayerStreamType_t StreamType,
+							   PlayerComponent_t Component)
 {
 //	HAVANA_ERROR("I am %s, %s, %x, %x - Looking for %s, %s, %x, %x\n", this->Id, this->SubId, PlayerStreamType, PlayerComponent,
 //			Id, SubId, StreamType, Component);
 	if ((StreamType == PlayerStreamType) && (Component == PlayerComponent) && (strcmp(Id, this->Id) == 0))
 		return ((strcmp(SubId, this->SubId) == 0) ||
-			(strcmp(SubId, FACTORY_ANY_ID) == 0) ||
-			(strcmp(FACTORY_ANY_ID, this->SubId) == 0));
+				(strcmp(SubId, FACTORY_ANY_ID) == 0) ||
+				(strcmp(FACTORY_ANY_ID, this->SubId) == 0));
 	else
 		return false;
 }
@@ -82,8 +82,8 @@ HavanaStatus_t HavanaFactory_c::Build(void **Class)
 }
 class HavanaFactory_c *HavanaFactory_c::Next(void)
 {
-		//HAVANA_DEBUG("\n");
-		return NextFactory;
+	//HAVANA_DEBUG("\n");
+	return NextFactory;
 }
 unsigned int HavanaFactory_c::Version(void)
 {

@@ -193,19 +193,19 @@ void *OS_Malloc(unsigned int Size);
 OS_Status_t OS_Free(void *Address);
 
 void OS_InvalidateCacheRange(void *CPUAddress,
-			     unsigned int size);
+							 unsigned int size);
 void OS_FlushCacheAll(void);
 void OS_FlushCacheRange(void *CPUAddress,
-			unsigned int size);
+						unsigned int size);
 void OS_PurgeCacheRange(void *CPUAddress,
-			unsigned int size);
+						unsigned int size);
 void *OS_PeripheralAddress(void *CPUAddress);
 
 // --------------------------------------------------------------
 // The Semaphore functions
 
 OS_Status_t OS_SemaphoreInitialize(OS_Semaphore_t *Semaphore,
-				   unsigned int InitialCount);
+								   unsigned int InitialCount);
 OS_Status_t OS_SemaphoreTerminate(OS_Semaphore_t *Semaphore);
 OS_Status_t OS_SemaphoreWait(OS_Semaphore_t *Semaphore);
 OS_Status_t OS_SemaphoreSignal(OS_Semaphore_t *Semaphore);
@@ -223,7 +223,8 @@ OS_Status_t OS_UnLockMutex(OS_Mutex_t *Mutex);
 // The Event functions - not implemented
 
 OS_Status_t OS_InitializeEvent(OS_Event_t *Event);
-OS_Status_t OS_WaitForEvent(OS_Event_t *Event, OS_Timeout_t Timeout);
+OS_Status_t OS_WaitForEvent(OS_Event_t *Event,
+							OS_Timeout_t Timeout);
 OS_Status_t OS_WaitForEventInterruptible(OS_Event_t *Event);
 bool OS_TestEventSet(OS_Event_t *Event);
 OS_Status_t OS_SetEvent(OS_Event_t *Event);
@@ -235,10 +236,10 @@ OS_Status_t OS_TerminateEvent(OS_Event_t *Event);
 // The Thread functions
 
 OS_Status_t OS_CreateThread(OS_Thread_t *Thread,
-			    OS_TaskEntry_t TaskEntry,
-			    OS_TaskParam_t Parameter,
-			    const char *Name,
-			    OS_TaskPriority_t Priority);
+							OS_TaskEntry_t TaskEntry,
+							OS_TaskParam_t Parameter,
+							const char *Name,
+							OS_TaskPriority_t Priority);
 void OS_TerminateThread(void);
 OS_Status_t OS_JoinThread(OS_Thread_t Thread);
 char *OS_ThreadName(void);
@@ -249,14 +250,14 @@ OS_Status_t OS_SetPriority(OS_TaskPriority_t Priority);
 
 OS_Status_t OS_InitializeMessageQueue(OS_MessageQueue_t *Queue);
 OS_Status_t OS_SendMessageCode(OS_MessageQueue_t Queue,
-			       unsigned int Code);
+							   unsigned int Code);
 OS_Status_t OS_GetMessageCode(OS_MessageQueue_t Queue,
-			      unsigned int *Code,
-			      bool Blocking);
+							  unsigned int *Code,
+							  bool Blocking);
 OS_Status_t OS_GetMessage(OS_MessageQueue_t Queue,
-			  void *Message,
-			  unsigned int MaxSizeOfMessage,
-			  bool Blocking);
+						  void *Message,
+						  unsigned int MaxSizeOfMessage,
+						  bool Blocking);
 
 // --------------------------------------------------------------
 // The Miscellaneous functions
@@ -267,7 +268,7 @@ unsigned int OS_GetTimeInMilliSeconds(void);
 unsigned long long OS_GetTimeInMicroSeconds(void);
 void OS_SleepMilliSeconds(unsigned int Value);
 void OS_RegisterTuneable(const char *Name,
-			 unsigned int *Address);
+						 unsigned int *Address);
 
 // ----------------------------------------------------------------------------------------
 //
@@ -295,7 +296,7 @@ typedef enum
 } OS_WatchAccessType_t;
 
 void OS_Add_Hardware_Watchpoint(unsigned int *WatchedAddress,
-				OS_WatchAccessType_t AccessType);
+								OS_WatchAccessType_t AccessType);
 void OS_Disable_Hardware_Watchpoint(void);
 void OS_Reenable_Hardware_Watchpoint(void);
 

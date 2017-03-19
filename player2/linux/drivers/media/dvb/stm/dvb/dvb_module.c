@@ -217,10 +217,10 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
 		/* Unregister the built-in dvr device and replace it with our own version */
 		dvb_unregister_device(DmxDevice->dvr_dvbdev);
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DmxDevice->dvr_dvbdev,
-				    DvrDevice,
-				    DmxDevice,
-				    DVB_DEVICE_DVR);
+							&DmxDevice->dvr_dvbdev,
+							DvrDevice,
+							DmxDevice,
+							DVB_DEVICE_DVR);
 		DeviceContext->MemoryFrontend.source = DMX_MEMORY_FE;
 		Result = DvbDemux->dmx.add_frontend(&DvbDemux->dmx, &DeviceContext->MemoryFrontend);
 		if (Result < 0)
@@ -232,43 +232,43 @@ long DvbGenericUnlockedIoctl(struct file *file, unsigned int foo, unsigned long 
 		}
 #else
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DeviceContext->DemuxDevice,
-				    DemuxInit(DeviceContext),
-				    DeviceContext,
-				    DVB_DEVICE_DEMUX);
+							&DeviceContext->DemuxDevice,
+							DemuxInit(DeviceContext),
+							DeviceContext,
+							DVB_DEVICE_DEMUX);
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DeviceContext->DvrDevice,
-				    DvrInit(DeviceContext),
-				    DeviceContext,
-				    DVB_DEVICE_DVR);
+							&DeviceContext->DvrDevice,
+							DvrInit(DeviceContext),
+							DeviceContext,
+							DVB_DEVICE_DVR);
 #endif
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DeviceContext->AudioDevice,
-				    AudioInit(DeviceContext),
-				    DeviceContext,
-				    DVB_DEVICE_AUDIO);
+							&DeviceContext->AudioDevice,
+							AudioInit(DeviceContext),
+							DeviceContext,
+							DVB_DEVICE_AUDIO);
 #ifdef __TDT__
 		/* register the CA device (e.g. CIMAX) */
 		if (i < 3)
 #ifndef VIP2_V1
 			dvb_register_device(&DvbContext->DvbAdapter,
-					    &DeviceContext->CaDevice,
-					    CaInit(DeviceContext),
-					    DeviceContext,
-					    DVB_DEVICE_CA);
+								&DeviceContext->CaDevice,
+								CaInit(DeviceContext),
+								DeviceContext,
+								DVB_DEVICE_CA);
 #endif
 #else
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DeviceContext->CaDevice,
-				    CaInit(DeviceContext),
-				    DeviceContext,
-				    DVB_DEVICE_CA);
+							&DeviceContext->CaDevice,
+							CaInit(DeviceContext),
+							DeviceContext,
+							DVB_DEVICE_CA);
 #endif
 		dvb_register_device(&DvbContext->DvbAdapter,
-				    &DeviceContext->VideoDevice,
-				    VideoInit(DeviceContext),
-				    DeviceContext,
-				    DVB_DEVICE_VIDEO);
+							&DeviceContext->VideoDevice,
+							VideoInit(DeviceContext),
+							DeviceContext,
+							DVB_DEVICE_VIDEO);
 		DeviceContext->Id = i;
 		DeviceContext->numRunningFeeds = 0;
 		DeviceContext->DemuxContext = DeviceContext; /* wire directly to own demux by default */

@@ -184,7 +184,7 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *Fra
 	unsigned int NumSamplesPerChannel;
 //
 	FrameHeader = FrameHeaderBytes[0] << 24 | FrameHeaderBytes[1] << 16 |
-		      FrameHeaderBytes[2] << 8 | FrameHeaderBytes[3];
+				  FrameHeaderBytes[2] << 8 | FrameHeaderBytes[3];
 	if ((FrameHeader & MPEG_AUDIO_START_CODE_MASK) != MPEG_AUDIO_START_CODE)
 	{
 		FRAME_ERROR("Invalid start code %x\n", FrameHeader & MPEG_AUDIO_START_CODE_MASK);
@@ -226,18 +226,18 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *Fra
 	SamplingFrequencyIndex = (FrameHeader & MPEG_AUDIO_SAMPLING_FREQUENCY_MASK) >> MPEG_AUDIO_SAMPLING_FREQUENCY_SHIFT;
 	Padding = (FrameHeader & MPEG_AUDIO_PADDING_MASK) >> MPEG_AUDIO_PADDING_SHIFT;
 	BitRate = (MpegIndex == 0) ? Mpeg1BitRateLookup[LayerIndex][BitRateIndex] :
-		  Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
+			  Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
 	if (BitRate == 0)
 	{
 		FRAME_ERROR("Invalid bit rate, %x, %x, %x, %x\n",
-			    FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
+					FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
 		return FrameParserError;
 	}
 	SamplingFrequency = SamplingFrequencyLookup[MpegIndex][SamplingFrequencyIndex];
 	if (SamplingFrequency == 0)
 	{
 		FRAME_ERROR("Invalid frequency, %x, %x, %x\n",
-			    FrameHeader, MpegIndex, SamplingFrequencyIndex);
+					FrameHeader, MpegIndex, SamplingFrequencyIndex);
 		return FrameParserError;
 	}
 	//
@@ -269,7 +269,7 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *Fra
 	}
 	//
 	FRAME_DEBUG("Header %8x, MPEG%dL%d, BitRate %3d, Frequency %5d, FrameSize %d, Padding %d\n",
-		    FrameHeader, MpegIndex + 1, LayerIndex + 1, BitRate, SamplingFrequency, FrameSize, Padding);
+				FrameHeader, MpegIndex + 1, LayerIndex + 1, BitRate, SamplingFrequency, FrameSize, Padding);
 	//
 	ParsedFrameHeader->Header = FrameHeader;
 	ParsedFrameHeader->Layer = LayerIndex + 1;
@@ -542,7 +542,7 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::GeneratePostDecodeParameterSettings
 	//
 	HandleUpdateStreamParameters();
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						ParsedFrameHeader.SamplingFrequency);
+											ParsedFrameHeader.SamplingFrequency);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

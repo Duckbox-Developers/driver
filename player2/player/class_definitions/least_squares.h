@@ -101,7 +101,7 @@ class LeastSquares_c
 		//
 
 		void Add(long long DeltaY,
-			 long long DeltaX)
+				 long long DeltaX)
 		{
 			CumulativeY += DeltaY;
 			CumulativeX += DeltaX;

@@ -365,8 +365,8 @@ static cap_v4l2_video_handle_t *CapVideoSysfsLookupContext(struct class_device *
 {
 	int streamid = player_sysfs_get_stream_id(class_dev);
 	BUG_ON(streamid < 0 ||
-	       streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
-	       NULL == VideoContextLookupTable[streamid]);
+		   streamid >= ARRAY_SIZE(VideoContextLookupTable) ||
+		   NULL == VideoContextLookupTable[streamid]);
 	return VideoContextLookupTable[streamid];
 }
 
@@ -401,7 +401,7 @@ static cap_v4l2_video_handle_t *CapVideoSysfsLookupContext(struct class_device *
 		int Result; \
 		\
 		Result = class_device_create_file(VideoContext->CapSysfsClassDevice, \
-						  &class_device_attr_##LinuxName); \
+										  &class_device_attr_##LinuxName); \
 		if (Result) { \
 			DVB_ERROR("class_device_create_file failed (%d)\n", Result); \
 			return -1; \
@@ -555,7 +555,7 @@ int CapVideoClose(cap_v4l2_video_handle_t *Context)
 		}
 		stmcore_get_display_pipeline(0, &pipeline_data);
 		Result = stmcore_unregister_vsync_callback(pipeline_data.display_runtime,
-							   &vsync_cb_info);
+												   &vsync_cb_info);
 		if (Result)
 		{
 			printk("Error in %s: failed to deregister vsync callback\n", __FUNCTION__);
@@ -577,7 +577,7 @@ int CapVideoClose(cap_v4l2_video_handle_t *Context)
 //
 
 static int CapConfigureVerticalResizeCoefficients(cap_v4l2_video_handle_t *Context,
-						  unsigned int ScalingFactorStep)
+												  unsigned int ScalingFactorStep)
 {
 	volatile int *CapRegs = Context->CapRegs;
 	unsigned int i;
@@ -604,7 +604,7 @@ static int CapConfigureVerticalResizeCoefficients(cap_v4l2_video_handle_t *Conte
 //
 
 static int CapConfigureHorizontalResizeCoefficients(cap_v4l2_video_handle_t *Context,
-						    unsigned int ScalingFactorStep)
+													unsigned int ScalingFactorStep)
 {
 	volatile int *CapRegs = Context->CapRegs;
 	unsigned int i;
@@ -688,7 +688,7 @@ static int CapRecalculateScaling(cap_v4l2_video_handle_t *Context)
 		Context->ScaledInputCrop.Height = ((Context->InputCrop.Height * ScalingOutputHeight) / ScalingInputHeight);
 		ScaledInputHeight = ((Context->ModeHeight * ScalingOutputHeight) / ScalingInputHeight);
 		printk("New VSRC 0x%08x - Scaled input height %d Crop Y %d Crop Height %d\n",
-		       NewVSRC, ScaledInputHeight, Context->ScaledInputCrop.Y, Context->ScaledInputCrop.Height);
+			   NewVSRC, ScaledInputHeight, Context->ScaledInputCrop.Y, Context->ScaledInputCrop.Height);
 	}
 #if 0
 	NICK
@@ -717,8 +717,8 @@ static int CapRecalculateScaling(cap_v4l2_video_handle_t *Context)
 	Context->NextOutputWindow = Context->OutputCrop;
 	up(&Context->CapScalingStateLock);
 	printk("Scaling input height %d scaling output height %d (%s)\n",
-	       ScalingInputHeight, ScalingOutputHeight,
-	       Context->StreamInfo.interlaced ? "interlaced" : "progressive");
+		   ScalingInputHeight, ScalingOutputHeight,
+		   Context->StreamInfo.interlaced ? "interlaced" : "progressive");
 	//printk("NextRegisterVBPminusVTP 0x%x\n",Context->NextRegisterVBPminusVTP);
 //
 	return 0;
@@ -784,12 +784,12 @@ static int CapGetVideoBuffer(cap_v4l2_video_handle_t *Context)
 	up(&Context->CapScalingStateLock);
 //
 	Result = DvbStreamGetDecodeBuffer(Context->DeviceContext->VideoStream,
-					  &Record->Buffer,
-					  &Record->Data,
-					  SurfaceFormat,
-					  2, Dimensions,
-					  &BufferIndex,
-					  &Context->BytesPerLine);
+									  &Record->Buffer,
+									  &Record->Data,
+									  SurfaceFormat,
+									  2, Dimensions,
+									  &BufferIndex,
+									  &Context->BytesPerLine);
 	if (Result != 0)
 	{
 		printk("Error in %s: StreamGetDecodeBuffer failed\n", __FUNCTION__);
@@ -932,7 +932,7 @@ static int CapInjectVideoBuffer(cap_v4l2_video_handle_t *Context)
 //
 unsigned long cap_address;
 static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t *Context,
-					 unsigned long long Now)
+										 unsigned long long Now)
 {
 	volatile int *CapRegs = Context->CapRegs;
 	CapBufferStack_t *Record;
@@ -968,10 +968,10 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t *Context,
 	{
 		printk("CAP Video - Too early to fill buffer(%d), Discarding a frame (%lld)\n", Context->CapNextBufferToFill, (Record->ExpectedFillTime - Now));
 		printk(" %016llx %016llx %016llx %016llx\n",
-		       Context->CapBufferStack[(Context->CapNextBufferToFill - 3) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
-		       Context->CapBufferStack[(Context->CapNextBufferToFill - 2) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
-		       Context->CapBufferStack[(Context->CapNextBufferToFill - 1) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
-		       Context->CapBufferStack[(Context->CapNextBufferToFill - 0) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime);
+			   Context->CapBufferStack[(Context->CapNextBufferToFill - 3) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
+			   Context->CapBufferStack[(Context->CapNextBufferToFill - 2) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
+			   Context->CapBufferStack[(Context->CapNextBufferToFill - 1) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime,
+			   Context->CapBufferStack[(Context->CapNextBufferToFill - 0) % CAP_VIDEO_DECODE_BUFFER_STACK_SIZE].ExpectedFillTime);
 	}
 	else if (BufferAdvance > 1)
 	{
@@ -1026,9 +1026,9 @@ static int CapConfigureNextCaptureBuffer(cap_v4l2_video_handle_t *Context,
 	{
 		printk("Stored pitch %d ", CapRegs[GAM_CAP_PMP]);
 		printk("Pix Width %d - Pix Height %d (%d)\n",
-		       CapRegs[GAM_CAP_CMW] & 0x7ff,
-		       (CapRegs[GAM_CAP_CMW] >> 16) & 0x7ff,
-		       CapRegs[GAM_CAP_CMW] >> 30);
+			   CapRegs[GAM_CAP_CMW] & 0x7ff,
+			   (CapRegs[GAM_CAP_CMW] >> 16) & 0x7ff,
+			   CapRegs[GAM_CAP_CMW] >> 30);
 	}
 #endif
 //
@@ -1178,7 +1178,7 @@ static int CapParseModeValues(cap_v4l2_video_handle_t *Context)
 	//
 	Context->CapControlPixelAspectRatioCorrection = CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE; // cjt hack
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION,
-			   Context->CapControlPixelAspectRatioCorrection);
+					   Context->CapControlPixelAspectRatioCorrection);
 	//
 	// Calculate how many buffers we will need to pre-inject.
 	// That is the buffers injected ahead of filling.
@@ -1200,7 +1200,7 @@ static int CapParseModeValues(cap_v4l2_video_handle_t *Context)
 	Context->SynchronizeEnabled = ControlValue(VsyncLockEnable);
 	Context->AppliedLatency = ControlValue(VideoLatency) - Context->CapLatency;
 	DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_EXTERNAL_TIME_MAPPING_VSYNC_LOCKED,
-			   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
+					   Context->SynchronizeEnabled ? PLAY_OPTION_VALUE_ENABLE : PLAY_OPTION_VALUE_DISABLE);
 	//
 	// Based on the mode<dimension> values, recalculate the scaling values.
 	//
@@ -1239,19 +1239,19 @@ static int CapParseModeValues(cap_v4l2_video_handle_t *Context)
 	// Setup the control register values (No constants, so I commented each field)
 	//
 	Context->RegisterCTL = (ControlValue(CSignOut) << 27) | // Change chroma sign when capturing YCbCr888 or YCbCr422R
-			       (ControlValue(CSignIn) << 26) | // Color space converter, input chrominance components
-			       (ControlValue(BF709Not601) << 25) | // Color space converter, colorimetry selection
-			       (ControlValue(YCbCr2RGB) << 24) | // Enable YCbCr to RGB colour space conversion
-			       (ControlValue(BigNotLittle) << 23) | // Big or little endian bitmap
-			       (ControlValue(CapFormat) << 16) | // Capture buffer format
-			       (ControlValue(EnHsRc) << 10) | // Enable horizontal resize
-			       (ControlValue(EnVsRc) << 9) | // Enable vertical resize
-			       (1 << 8) | // Start capture !!
-			       (ControlValue(SSCap) << 7) | // Single shot capture
-			       (ControlValue(TFCap) << 6) | // Top field capture
-			       (ControlValue(BFCap) << 5) | // Back field capture
-			       (ControlValue(VTGSel) << 4) | // VTG 1 / 2 select
-			       (ControlValue(Source) << 0) ; // Source selection
+						   (ControlValue(CSignIn) << 26) | // Color space converter, input chrominance components
+						   (ControlValue(BF709Not601) << 25) | // Color space converter, colorimetry selection
+						   (ControlValue(YCbCr2RGB) << 24) | // Enable YCbCr to RGB colour space conversion
+						   (ControlValue(BigNotLittle) << 23) | // Big or little endian bitmap
+						   (ControlValue(CapFormat) << 16) | // Capture buffer format
+						   (ControlValue(EnHsRc) << 10) | // Enable horizontal resize
+						   (ControlValue(EnVsRc) << 9) | // Enable vertical resize
+						   (1 << 8) | // Start capture !!
+						   (ControlValue(SSCap) << 7) | // Single shot capture
+						   (ControlValue(TFCap) << 6) | // Top field capture
+						   (ControlValue(BFCap) << 5) | // Back field capture
+						   (ControlValue(VTGSel) << 4) | // VTG 1 / 2 select
+						   (ControlValue(Source) << 0) ; // Source selection
 //
 	return 0;
 }
@@ -1304,9 +1304,9 @@ static int CapConfigureCapture(cap_v4l2_video_handle_t *Context)
 	CapRegs[GAM_CAP_PMP] = Record->RegisterVMP; // pitch in bytes
 	CapRegs[GAM_CAP_CTL] = Context->RegisterCTL; // Let er rip
 	printk("CTL 0x%08x - CWO 0x%08x - CWS 0x%08x - VTP 0x%08x\nVBP 0x%08x - PMP 0x%08x - CMW 0x%08x - HSRC 0x%08x\nVSRC 0x%08x - PKZ 0x%08x\n",
-	       CapRegs[GAM_CAP_CTL], CapRegs[GAM_CAP_CWO], CapRegs[GAM_CAP_CWS], CapRegs[GAM_CAP_VTP],
-	       CapRegs[GAM_CAP_VBP], CapRegs[GAM_CAP_PMP], CapRegs[GAM_CAP_CMW], CapRegs[GAM_CAP_HSRC],
-	       CapRegs[GAM_CAP_VSRC], CapRegs[GAM_CAP_PKZ]);
+		   CapRegs[GAM_CAP_CTL], CapRegs[GAM_CAP_CWO], CapRegs[GAM_CAP_CWS], CapRegs[GAM_CAP_VTP],
+		   CapRegs[GAM_CAP_VBP], CapRegs[GAM_CAP_PMP], CapRegs[GAM_CAP_CMW], CapRegs[GAM_CAP_HSRC],
+		   CapRegs[GAM_CAP_VSRC], CapRegs[GAM_CAP_PKZ]);
 	{
 		unsigned int i;
 		for (i = 0 ; i < WORDS_PER_HORIZONTAL_FILTER; ++i)
@@ -1420,8 +1420,8 @@ static int CapStop(cap_v4l2_video_handle_t *Context)
 //
 
 static int CapFrameRate(cap_v4l2_video_handle_t *Context,
-			unsigned long long MicroSeconds,
-			unsigned int Frames)
+						unsigned long long MicroSeconds,
+						unsigned int Frames)
 {
 	unsigned int i;
 	unsigned long long MicroSecondsPerFrame;
@@ -1489,7 +1489,7 @@ static int CapFrameRate(cap_v4l2_video_handle_t *Context,
 //
 	if (Context->StandardFrameRate)
 		printk("CapFrameRate - Framerate = %lld/%lld (%s)\n", Context->StreamInfo.FrameRateNumerator, Context->StreamInfo.FrameRateDenominator,
-		       (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
+			   (Context->StreamInfo.interlaced ? "Interlaced" : "Progressive"));
 	//
 	// Recalculate how many buffers we will need to pre-inject.
 	// If this has increased, then allow more injections by performing up
@@ -1515,7 +1515,7 @@ static int CapFrameRate(cap_v4l2_video_handle_t *Context,
 //
 
 static int CapWarmUpFailure(cap_v4l2_video_handle_t *Context,
-			    unsigned long long MicroSeconds)
+							unsigned long long MicroSeconds)
 {
 // printk( "$$$ CapWarmUpFailure %5d => %5lld %5lld $$$\n", CapTimeForNFrames(1), CapTimeForNFrames(Context->CapInterruptFrameCount), MicroSeconds );
 	//
@@ -1676,20 +1676,20 @@ void CapInterrupt(void *data, stm_field_t vsync)
 			DriftLimit = (1 * CapTimeForNFrames(CAP_MAXIMUM_TIME_INTEGRATION_FRAMES)) / 1000000;
 			Clamp(Context->CapCurrentDriftError, -DriftLimit, DriftLimit);
 			printk("New Correction factor %lld.%09lld [%3lld] (%lld.%09lld - %5d) - %5lld\n",
-			       (Context->CapFrameDurationCorrection >> CAP_CORRECTION_FIXED_POINT_BITS),
-			       (((Context->CapFrameDurationCorrection & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
-			       AffectOfChangeOnPreviousFrameTimes,
-			       (CorrectionFactor >> CAP_CORRECTION_FIXED_POINT_BITS),
-			       (((CorrectionFactor & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
-			       Context->CapInterruptFrameCount, Context->CapCurrentDriftError);
+				   (Context->CapFrameDurationCorrection >> CAP_CORRECTION_FIXED_POINT_BITS),
+				   (((Context->CapFrameDurationCorrection & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
+				   AffectOfChangeOnPreviousFrameTimes,
+				   (CorrectionFactor >> CAP_CORRECTION_FIXED_POINT_BITS),
+				   (((CorrectionFactor & 0xfffffff) * 1000000000) >> CAP_CORRECTION_FIXED_POINT_BITS),
+				   Context->CapInterruptFrameCount, Context->CapCurrentDriftError);
 			//
 			// Initialize for next integration
 			//
 			Context->CapInterruptFrameCount = 0;
 			Context->CapTimeAtZeroInterruptFrameCount = Now;
 			Context->CapIntegrateForAtLeastNFrames = (Context->CapIntegrateForAtLeastNFrames >= CAP_MAXIMUM_TIME_INTEGRATION_FRAMES) ?
-								 CAP_MAXIMUM_TIME_INTEGRATION_FRAMES :
-								 (Context->CapIntegrateForAtLeastNFrames * 2);
+													 CAP_MAXIMUM_TIME_INTEGRATION_FRAMES :
+													 (Context->CapIntegrateForAtLeastNFrames * 2);
 			break;
 		case CapMovingToInactive:
 			break;
@@ -1706,7 +1706,7 @@ void CapInterrupt(void *data, stm_field_t vsync)
 //
 
 static void CapEventHandler(context_handle_t EventContext,
-			    struct stream_event_s *Event)
+							struct stream_event_s *Event)
 {
 	cap_v4l2_video_handle_t *Context;
 	//
@@ -1807,12 +1807,12 @@ static int CapVideoThread(void *data)
 	// Initialize then player with a stream
 	//
 	Result = DvbPlaybackAddStream(Context->DeviceContext->Playback,
-				      BACKEND_VIDEO_ID,
-				      BACKEND_PES_ID,
-				      BACKEND_DVP_ID,
-				      DEMUX_INVALID_ID,
-				      Context->DeviceContext->Id, // SurfaceId .....
-				      &Context->DeviceContext->VideoStream);
+								  BACKEND_VIDEO_ID,
+								  BACKEND_PES_ID,
+								  BACKEND_DVP_ID,
+								  DEMUX_INVALID_ID,
+								  Context->DeviceContext->Id, // SurfaceId .....
+								  &Context->DeviceContext->VideoStream);
 	if (Result < 0)
 	{
 		printk("CapVideoThread - PlaybackAddStream failed with %d\n", Result);
@@ -1829,7 +1829,7 @@ static int CapVideoThread(void *data)
 	// Interject our event handler
 	//
 	DvbStreamRegisterEventSignalCallback(Context->DeviceContext->VideoStream, (context_handle_t)Context,
-					     (stream_event_signal_callback)CapEventHandler);
+										 (stream_event_signal_callback)CapEventHandler);
 	//
 	// Set the appropriate policies
 	//
@@ -1862,13 +1862,13 @@ static int CapVideoThread(void *data)
 		if ((CaptureCurrentDisplayMode != NULL) && (CaptureCurrentDisplayMode->Mode != PreviousDisplayMode->Mode))
 		{
 			printk("/\\/\\/\\ Updating Capture Display Settings w %4ld h %4ld %s /\\/\\/\\\n",
-			       CaptureCurrentDisplayMode->ModeParams.ActiveAreaWidth,
-			       CaptureCurrentDisplayMode->ModeParams.ActiveAreaHeight,
-			       (CaptureCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
+				   CaptureCurrentDisplayMode->ModeParams.ActiveAreaWidth,
+				   CaptureCurrentDisplayMode->ModeParams.ActiveAreaHeight,
+				   (CaptureCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
 			printk("/\\/\\/\\ Updating Output Display Settings w %4ld h %4ld %s /\\/\\/\\\n",
-			       DisplayCurrentDisplayMode->ModeParams.ActiveAreaWidth,
-			       DisplayCurrentDisplayMode->ModeParams.ActiveAreaHeight,
-			       (DisplayCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
+				   DisplayCurrentDisplayMode->ModeParams.ActiveAreaWidth,
+				   DisplayCurrentDisplayMode->ModeParams.ActiveAreaHeight,
+				   (DisplayCurrentDisplayMode->ModeParams.ScanType == SCAN_P) ? "progressive" : "interlaced");
 			if (CapVideoIoctlSetStandard(Context, CaptureCurrentDisplayMode->Mode) == 0)
 				PreviousDisplayMode = CaptureCurrentDisplayMode;
 			if (Context->OutputCrop.Width > 720 || Context->OutputCrop.Width == 0)
@@ -2062,10 +2062,10 @@ static int CapSynchronizerThread(void *data)
 //
 
 int CapVideoIoctlSetFramebuffer(cap_v4l2_video_handle_t *Context,
-				unsigned int Width,
-				unsigned int Height,
-				unsigned int BytesPerLine,
-				unsigned int Control)
+								unsigned int Width,
+								unsigned int Height,
+								unsigned int BytesPerLine,
+								unsigned int Control)
 {
 	printk("VIDIOC_S_FBUF: DOING NOTHING !!!! - W = %4d, H = %4d, BPL = %4d, Crtl = %08x\n", Width, Height, BytesPerLine, Control);
 	return 0;
@@ -2074,7 +2074,7 @@ int CapVideoIoctlSetFramebuffer(cap_v4l2_video_handle_t *Context,
 // -----------------------------
 
 int CapVideoIoctlSetStandard(cap_v4l2_video_handle_t *Context,
-			     v4l2_std_id Id)
+							 v4l2_std_id Id)
 {
 	int i;
 	const stm_mode_line_t *NewCaptureMode = NULL;
@@ -2147,7 +2147,7 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t *Context)
 	vsync_cb_info.context = (void *)Context;
 	vsync_cb_info.cb = CapInterrupt;
 	if (stmcore_register_vsync_callback(pipeline_data.display_runtime,
-					    &vsync_cb_info) < 0)
+										&vsync_cb_info) < 0)
 	{
 		printk(KERN_ERR "********** Cannot register vsync callback ***********\n");
 		return -ENODEV;
@@ -2215,13 +2215,13 @@ int CapVideoIoctlOverlayStart(cap_v4l2_video_handle_t *Context)
 // -----------------------------
 
 int CapVideoIoctlCrop(cap_v4l2_video_handle_t *Context,
-		      struct v4l2_crop *Crop)
+					  struct v4l2_crop *Crop)
 {
 #if 0
 	printk("VIDIOC_S_CROP:\n");
 	printk(" %s %3dx%3d\n",
-	       ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
-	       Crop->c.width, Crop->c.height);
+		   ((Crop->type == V4L2_BUF_TYPE_VIDEO_OVERLAY) ? "OutputWindow" : "InputWindow "),
+		   Crop->c.width, Crop->c.height);
 #endif
 	if ((Context == NULL) || (Context->DeviceContext->VideoStream == NULL))
 		return -EINVAL;
@@ -2289,8 +2289,8 @@ int CapVideoIoctlCrop(cap_v4l2_video_handle_t *Context,
 // -----------------------------
 
 int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int Value)
+							unsigned int Control,
+							unsigned int Value)
 {
 	int ret;
 	printk("VIDIOC_S_CTRL->V4L2_CID_STM_CAPIF_");
@@ -2464,7 +2464,7 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 			break;
 		case V4L2_CID_STM_CAPIF_PIXEL_ASPECT_RATIO_CORRECTION:
 			CheckAndSet("PIXEL_ASPECT_RATIO_CORRECTION", CAP_PIXEL_ASPECT_RATIO_CORRECTION_MIN_VALUE,
-				    CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->CapControlPixelAspectRatioCorrection);
+						CAP_PIXEL_ASPECT_RATIO_CORRECTION_MAX_VALUE, Context->CapControlPixelAspectRatioCorrection);
 			if (Context->DeviceContext->VideoStream == NULL)
 				return -EINVAL;
 			ret = DvbStreamSetOption(Context->DeviceContext->VideoStream, PLAY_OPTION_PIXEL_ASPECT_RATIO_CORRECTION, Value);
@@ -2484,8 +2484,8 @@ int CapVideoIoctlSetControl(cap_v4l2_video_handle_t *Context,
 // --------------------------------
 
 int CapVideoIoctlGetControl(cap_v4l2_video_handle_t *Context,
-			    unsigned int Control,
-			    unsigned int *Value)
+							unsigned int Control,
+							unsigned int *Value)
 {
 	printk("VIDIOC_G_CTRL->V4L2_CID_STM_CAPIF_");
 	switch (Control)

@@ -97,7 +97,7 @@ PlayerStatus_t Player_Generic_c::SetPlaybackSpeed(
 	// Do we need to re-time the queued frames
 	//
 	ReTimeQueuedFrames = (Playback->Direction == Direction) &&
-			     (Playback->Speed != Speed);
+						 (Playback->Speed != Speed);
 	//
 	// Record the new speed and direction
 	//
@@ -355,7 +355,7 @@ unsigned long long Player_Generic_c::GetLastNativeTime(
 //
 
 void Player_Generic_c::SetLastNativeTime(PlayerPlayback_t Playback,
-					 unsigned long long Time)
+										 unsigned long long Time)
 {
 	Playback->LastNativeTime = Time;
 }

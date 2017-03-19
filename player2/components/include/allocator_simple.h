@@ -82,13 +82,13 @@ class AllocatorSimple_c : public Allocator_c
 	public:
 
 		AllocatorSimple_c(unsigned int BufferSize,
-				  unsigned int SegmentSize,
-				  unsigned char *PhysicalAddress);
+						  unsigned int SegmentSize,
+						  unsigned char *PhysicalAddress);
 		~AllocatorSimple_c(void);
 
 		AllocatorStatus_t Allocate(unsigned int Size,
-					   unsigned char **Block,
-					   bool NonBlocking = false);
+								   unsigned char **Block,
+								   bool NonBlocking = false);
 
 		AllocatorStatus_t AllocateLargest(
 			unsigned int *Size,
@@ -103,7 +103,7 @@ class AllocatorSimple_c : public Allocator_c
 		AllocatorStatus_t Free(void);
 
 		AllocatorStatus_t Free(unsigned int Size,
-				       unsigned char *Block);
+							   unsigned char *Block);
 
 		AllocatorStatus_t LargestFreeBlock(
 			unsigned int *Size);

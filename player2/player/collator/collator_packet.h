@@ -78,9 +78,9 @@ class Collator_Packet_c : public Collator_Base_c
 		//
 
 		CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-				       unsigned int DataLength,
-				       void *Data,
-				       bool NonBlocking = false);
+							   unsigned int DataLength,
+							   void *Data,
+							   bool NonBlocking = false);
 };
 
 #endif

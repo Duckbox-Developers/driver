@@ -58,21 +58,21 @@ typedef enum
 void report_init(void);
 
 void report_restricted_severity_levels(int lower_restriction,
-				       int upper_restriction);
+									   int upper_restriction);
 
 #if (defined(__KERNEL__) && !defined(CONFIG_PRINTK)) || !defined(REPORT)
 static inline void report(report_severity_t report_severity, const char *format, ...) { }
 #else
 void report(report_severity_t report_severity,
-	    const char *format, ...);
+			const char *format, ...);
 #endif
 
 #ifdef REPORT
 void report_dump_hex(report_severity_t level,
-		     unsigned char *data,
-		     int length,
-		     int width,
-		     void *start);
+					 unsigned char *data,
+					 int length,
+					 int width,
+					 void *start);
 #else
 #define report_dump_hex(a,b,c,d,e) do { } while(0)
 #endif
@@ -87,8 +87,8 @@ static unsigned int *debug_data = (unsigned int *)(DEBUG_EVENT_BASE + 0x40);
 
 #define print_debug_events() {int i; for( i=0; i<(512+16); i+=8 ) \
 			report( severity_info, " %08x %08x %08x %08x %08x %08x %08x %08x\n", \
-				debug_base[i+0],debug_base[i+1],debug_base[i+2],debug_base[i+3], \
-				debug_base[i+4],debug_base[i+5],debug_base[i+6],debug_base[i+7] ); }
+					debug_base[i+0],debug_base[i+1],debug_base[i+2],debug_base[i+3], \
+					debug_base[i+4],debug_base[i+5],debug_base[i+6],debug_base[i+7] ); }
 
 //#define debug_event(code) if( debug_base[15] != 0xfeedface ) {volatile unsigned int dummy; dummy=debug_base[0]; debug_data[dummy++] = (unsigned int)code; dummy &= 0x1ff; debug_data[dummy] = 0xffffffff; debug_base[0] = dummy; dummy = debug_base[32];} else { while(true) task_delay(100); }
 #define debug_event(code) {volatile unsigned int dummy; dummy=debug_base[0]; debug_data[dummy++] = (unsigned int)code; dummy &= 0x1ff; debug_data[dummy] = 0xffffffff; debug_base[0] = dummy; }

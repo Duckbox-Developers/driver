@@ -268,9 +268,9 @@ PlayerStatus_t Player_Generic_c::RegisterDemultiplexor(
 // Set a policy
 //
 PlayerStatus_t Player_Generic_c::SetPolicy(PlayerPlayback_t Playback,
-					   PlayerStream_t Stream,
-					   PlayerPolicy_t Policy,
-					   unsigned char PolicyValue)
+										   PlayerStream_t Stream,
+										   PlayerPolicy_t Policy,
+										   unsigned char PolicyValue)
 {
 	PlayerPolicyState_t *SpecificPolicyRecord;
 	report(severity_info, "SetPolicy - %08x %08x %-45s %d\n", Playback, Stream, LookupPlayerPolicy(Policy), PolicyValue);
@@ -343,7 +343,7 @@ PlayerStatus_t Player_Generic_c::SetModuleParameters(
 			(ParameterBlockSize >= PLAYER_MAX_INLINE_PARAMETER_BLOCK_SIZE))
 	{
 		report(severity_error, "Player_Generic_c::SetModuleParameters - Parameter block size larger than soft limit (%d > %d).\n",
-		       ParameterBlockSize, PLAYER_MAX_INLINE_PARAMETER_BLOCK_SIZE);
+			   ParameterBlockSize, PLAYER_MAX_INLINE_PARAMETER_BLOCK_SIZE);
 		return PlayerError;
 	}
 //
@@ -541,7 +541,7 @@ PlayerStatus_t Player_Generic_c::SetPresentationInterval(
 			((Playback != PlayerAllPlaybacks) && (Playback != Stream->Playback)))
 	{
 		report(severity_error, "Player_Generic_c::SetPresentationInterval - Invalid combination of Playback/Stream specifiers (%d %d %d).\n",
-		       (Playback != PlayerAllPlaybacks), (Stream != PlayerAllStreams), ((Stream == PlayerAllStreams) ? 1 : (Playback == Stream->Playback)));
+			   (Playback != PlayerAllPlaybacks), (Stream != PlayerAllStreams), ((Stream == PlayerAllStreams) ? 1 : (Playback == Stream->Playback)));
 		return PlayerError;
 	}
 	//
@@ -610,11 +610,11 @@ PlayerStatus_t Player_Generic_c::GetBufferManager(
 //
 
 PlayerStatus_t Player_Generic_c::GetClassList(PlayerStream_t Stream,
-					      Collator_t *Collator,
-					      FrameParser_t *FrameParser,
-					      Codec_t *Codec,
-					      OutputTimer_t *OutputTimer,
-					      Manifestor_t *Manifestor)
+											  Collator_t *Collator,
+											  FrameParser_t *FrameParser,
+											  Codec_t *Codec,
+											  OutputTimer_t *OutputTimer,
+											  Manifestor_t *Manifestor)
 {
 	if (Collator != NULL)
 		*Collator = Stream->Collator;
@@ -685,15 +685,15 @@ PlayerStatus_t Player_Generic_c::GetPresentationInterval(
 	{
 		Limit = Stream->Playback->PresentationIntervalReversalLimitStartNormalizedTime;
 		*IntervalStartNormalizedTime = (Limit == INVALID_TIME) ?
-					       Stream->RequestedPresentationIntervalStartNormalizedTime :
-					       max(Limit, Stream->RequestedPresentationIntervalStartNormalizedTime);
+									   Stream->RequestedPresentationIntervalStartNormalizedTime :
+									   max(Limit, Stream->RequestedPresentationIntervalStartNormalizedTime);
 	}
 	if (IntervalEndNormalizedTime != NULL)
 	{
 		Limit = Stream->Playback->PresentationIntervalReversalLimitEndNormalizedTime;
 		*IntervalEndNormalizedTime = (Limit == INVALID_TIME) ?
-					     Stream->RequestedPresentationIntervalEndNormalizedTime :
-					     min(Limit, Stream->RequestedPresentationIntervalEndNormalizedTime);
+									 Stream->RequestedPresentationIntervalEndNormalizedTime :
+									 min(Limit, Stream->RequestedPresentationIntervalEndNormalizedTime);
 	}
 	return PlayerNoError;
 }
@@ -704,8 +704,8 @@ PlayerStatus_t Player_Generic_c::GetPresentationInterval(
 //
 
 unsigned char Player_Generic_c::PolicyValue(PlayerPlayback_t Playback,
-					    PlayerStream_t Stream,
-					    PlayerPolicy_t Policy)
+											PlayerStream_t Stream,
+											PlayerPolicy_t Policy)
 {
 	unsigned char Value;
 	unsigned int Offset;

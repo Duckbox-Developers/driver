@@ -229,7 +229,7 @@ CodecStatus_t Codec_MmeAudioLpcm_c::FillOutTransformerGlobalParameters(MME_LxAud
 			Resampling = ACC_LPCM_RSPL_48;
 		}
 		else if ((StreamSamplingFreq == 96000) &&
-				(AudioOutputSurface->SampleRateHz == 48000))
+				 (AudioOutputSurface->SampleRateHz == 48000))
 		{
 			Resampling = ACC_LPCM_RSPL_96;
 		}

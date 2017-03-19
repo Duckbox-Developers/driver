@@ -724,33 +724,33 @@ static unsigned char ZZScan8x8[64] =
 // -----------------------------------------
 
 static unsigned int DefaultScalingList4x4Intra[16] = { 6, 13, 13, 20,
-						       20, 20, 28, 28,
-						       28, 28, 32, 32,
-						       32, 37, 37, 42
-						     };
+													   20, 20, 28, 28,
+													   28, 28, 32, 32,
+													   32, 37, 37, 42
+													 };
 static unsigned int DefaultScalingList4x4Inter[16] = { 10, 14, 14, 20,
-						       20, 20, 24, 24,
-						       24, 24, 27, 27,
-						       27, 30, 30, 34
-						     };
+													   20, 20, 24, 24,
+													   24, 24, 27, 27,
+													   27, 30, 30, 34
+													 };
 static unsigned int DefaultScalingList8x8Intra[64] = { 6, 10, 10, 13, 11, 13, 16, 16,
-						       16, 16, 18, 18, 18, 18, 18, 23,
-						       23, 23, 23, 23, 23, 25, 25, 25,
-						       25, 25, 25, 25, 27, 27, 27, 27,
-						       27, 27, 27, 27, 29, 29, 29, 29,
-						       29, 29, 29, 31, 31, 31, 31, 31,
-						       31, 33, 33, 33, 33, 33, 36, 36,
-						       36, 36, 38, 38, 38, 40, 40, 42
-						     };
+													   16, 16, 18, 18, 18, 18, 18, 23,
+													   23, 23, 23, 23, 23, 25, 25, 25,
+													   25, 25, 25, 25, 27, 27, 27, 27,
+													   27, 27, 27, 27, 29, 29, 29, 29,
+													   29, 29, 29, 31, 31, 31, 31, 31,
+													   31, 33, 33, 33, 33, 33, 36, 36,
+													   36, 36, 38, 38, 38, 40, 40, 42
+													 };
 static unsigned int DefaultScalingList8x8Inter[64] = { 9, 13, 13, 15, 13, 15, 17, 17,
-						       17, 17, 19, 19, 19, 19, 19, 21,
-						       21, 21, 21, 21, 21, 22, 22, 22,
-						       22, 22, 22, 22, 24, 24, 24, 24,
-						       24, 24, 24, 24, 25, 25, 25, 25,
-						       25, 25, 25, 27, 27, 27, 27, 27,
-						       27, 28, 28, 28, 28, 28, 30, 30,
-						       30, 30, 32, 32, 32, 33, 33, 35
-						     };
+													   17, 17, 19, 19, 19, 19, 19, 21,
+													   21, 21, 21, 21, 21, 22, 22, 22,
+													   22, 22, 22, 22, 24, 24, 24, 24,
+													   24, 24, 24, 24, 25, 25, 25, 25,
+													   25, 25, 25, 27, 27, 27, 27, 27,
+													   27, 28, 28, 28, 28, 28, 30, 30,
+													   30, 30, 32, 32, 32, 33, 33, 35
+													 };
 
 static unsigned int *DefaultScalingList[8] =
 {
@@ -1134,11 +1134,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 			{
 				Header->seq_scaling_list_present_flag[i] = u(1);
 				Status = ReadScalingList(Header->seq_scaling_list_present_flag[i],
-							 Header->ScalingList4x4[i],
-							 DefaultScalingList[i],
-							 FallbackScalingList[i],
-							 16,
-							 &Header->UseDefaultScalingMatrix4x4Flag[i]);
+										 Header->ScalingList4x4[i],
+										 DefaultScalingList[i],
+										 FallbackScalingList[i],
+										 16,
+										 &Header->UseDefaultScalingMatrix4x4Flag[i]);
 				if (Status != FrameParserNoError)
 				{
 					SPSBuffer->DecrementReferenceCount();
@@ -1149,11 +1149,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 			{
 				Header->seq_scaling_list_present_flag[i + 6] = u(1);
 				Status = ReadScalingList(Header->seq_scaling_list_present_flag[i + 6],
-							 Header->ScalingList8x8[i],
-							 DefaultScalingList[i + 6],
-							 FallbackScalingList[i + 6],
-							 64,
-							 &Header->UseDefaultScalingMatrix8x8Flag[i]);
+										 Header->ScalingList8x8[i],
+										 DefaultScalingList[i + 6],
+										 FallbackScalingList[i + 6],
+										 64,
+										 &Header->UseDefaultScalingMatrix8x8Flag[i]);
 				if (Status != FrameParserNoError)
 				{
 					SPSBuffer->DecrementReferenceCount();
@@ -1178,7 +1178,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 		if (Header->num_ref_frames_in_pic_order_cnt_cycle > H264_MAX_REF_FRAMES_IN_PIC_ORDER_CNT_CYCLE)
 		{
 			report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - num_ref_frames_in_pic_order_cnt_cycle exceeds our soft restriction (%d,%d).\n",
-			       Header->num_ref_frames_in_pic_order_cnt_cycle, H264_MAX_REF_FRAMES_IN_PIC_ORDER_CNT_CYCLE);
+				   Header->num_ref_frames_in_pic_order_cnt_cycle, H264_MAX_REF_FRAMES_IN_PIC_ORDER_CNT_CYCLE);
 			SPSBuffer->DecrementReferenceCount();
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
@@ -1190,7 +1190,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	if (Header->num_ref_frames > H264_MAX_REFERENCE_FRAMES)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - Too many reference frames!!! %d max id %d\n",
-		       Header->num_ref_frames, H264_MAX_REFERENCE_FRAMES);
+			   Header->num_ref_frames, H264_MAX_REFERENCE_FRAMES);
 		SPSBuffer->DecrementReferenceCount();
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
@@ -1262,10 +1262,10 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	report(severity_info, "\tqpprime_y_zero_transform_bypass_flag = %6d\n", Header->qpprime_y_zero_transform_bypass_flag);
 	report(severity_info, "\tseq_scaling_matrix_present_flag = %6d\n", Header->seq_scaling_matrix_present_flag);
 	report(severity_info, "\t\t%d %d %d %d %d %d %d %d\n",
-	       Header->seq_scaling_list_present_flag[0], Header->seq_scaling_list_present_flag[1],
-	       Header->seq_scaling_list_present_flag[2], Header->seq_scaling_list_present_flag[3],
-	       Header->seq_scaling_list_present_flag[4], Header->seq_scaling_list_present_flag[5],
-	       Header->seq_scaling_list_present_flag[6], Header->seq_scaling_list_present_flag[7]);
+		   Header->seq_scaling_list_present_flag[0], Header->seq_scaling_list_present_flag[1],
+		   Header->seq_scaling_list_present_flag[2], Header->seq_scaling_list_present_flag[3],
+		   Header->seq_scaling_list_present_flag[4], Header->seq_scaling_list_present_flag[5],
+		   Header->seq_scaling_list_present_flag[6], Header->seq_scaling_list_present_flag[7]);
 	report(severity_info, "\tlog2_max_frame_num_minus4 = %6d\n", Header->log2_max_frame_num_minus4);
 	report(severity_info, "\tpic_order_cnt_type = %6d\n", Header->pic_order_cnt_type);
 	if (Header->pic_order_cnt_type == 0)
@@ -1415,7 +1415,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 	if (Header->num_slice_groups_minus1 >= H264_MAX_SLICE_GROUPS)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_slice_groups_minus1 exceeds our soft restriction (%d,%d).\n",
-		       Header->num_slice_groups_minus1, H264_MAX_SLICE_GROUPS - 1);
+			   Header->num_slice_groups_minus1, H264_MAX_SLICE_GROUPS - 1);
 		PPSBuffer->DecrementReferenceCount();
 		return FrameParserError;
 	}
@@ -1436,8 +1436,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			}
 		}
 		else if ((Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING0) ||
-				(Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING1) ||
-				(Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING2))
+				 (Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING1) ||
+				 (Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING2))
 		{
 			Header->slice_group_change_direction_flag = u(1);
 			Header->slice_group_change_rate_minus1 = ue(v);
@@ -1448,7 +1448,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			if (Header->pic_size_in_map_units_minus1 >= H264_MAX_PIC_SIZE_IN_MAP_UNITS)
 			{
 				report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_slice_group_map_units_minus1 exceeds our soft restriction (%d,%d).\n",
-				       Header->pic_size_in_map_units_minus1, H264_MAX_PIC_SIZE_IN_MAP_UNITS - 1);
+					   Header->pic_size_in_map_units_minus1, H264_MAX_PIC_SIZE_IN_MAP_UNITS - 1);
 				PPSBuffer->DecrementReferenceCount();
 				return FrameParserError;
 			}
@@ -1472,8 +1472,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			(Header->num_ref_idx_l1_active_minus1 >= H264_MAX_REF_L1_IDX_ACTIVE))
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_ref_idx_l?_active_minus1 out of supported range (%d > %d or %d > %d)\n",
-		       Header->num_ref_idx_l0_active_minus1, H264_MAX_REF_L0_IDX_ACTIVE - 1,
-		       Header->num_ref_idx_l1_active_minus1, H264_MAX_REF_L1_IDX_ACTIVE - 1);
+			   Header->num_ref_idx_l0_active_minus1, H264_MAX_REF_L0_IDX_ACTIVE - 1,
+			   Header->num_ref_idx_l1_active_minus1, H264_MAX_REF_L1_IDX_ACTIVE - 1);
 		PPSBuffer->DecrementReferenceCount();
 		return FrameParserError;
 	}
@@ -1515,11 +1515,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			{
 				Header->pic_scaling_list_present_flag[i] = u(1);
 				Status = ReadScalingList(Header->pic_scaling_list_present_flag[i],
-							 Header->ScalingList4x4[i],
-							 DefaultScalingList[i],
-							 FallbackScalingList[i],
-							 16,
-							 &Header->UseDefaultScalingMatrix4x4Flag[i]);
+										 Header->ScalingList4x4[i],
+										 DefaultScalingList[i],
+										 FallbackScalingList[i],
+										 16,
+										 &Header->UseDefaultScalingMatrix4x4Flag[i]);
 				if (Status != FrameParserNoError)
 				{
 					PPSBuffer->DecrementReferenceCount();
@@ -1532,11 +1532,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 				{
 					Header->pic_scaling_list_present_flag[i + 6] = u(1);
 					Status = ReadScalingList(Header->pic_scaling_list_present_flag[i + 6],
-								 Header->ScalingList8x8[i],
-								 DefaultScalingList[i + 6],
-								 FallbackScalingList[i + 6],
-								 64,
-								 &Header->UseDefaultScalingMatrix8x8Flag[i]);
+											 Header->ScalingList8x8[i],
+											 DefaultScalingList[i + 6],
+											 FallbackScalingList[i + 6],
+											 64,
+											 &Header->UseDefaultScalingMatrix8x8Flag[i]);
 					if (Status != FrameParserNoError)
 					{
 						PPSBuffer->DecrementReferenceCount();
@@ -1583,8 +1583,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			}
 		}
 		else if ((Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING0) ||
-				(Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING1) ||
-				(Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING2))
+				 (Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING1) ||
+				 (Header->slice_group_map_type == H264_SLICE_GROUP_MAP_CHANGING2))
 		{
 			report(severity_info, "\tslice_group_change_direction_flag = %6d\n", Header->slice_group_change_direction_flag);
 			report(severity_info, "\tslice_group_change_rate_minus1 = %6d\n", Header->slice_group_change_rate_minus1);
@@ -1609,10 +1609,10 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 	report(severity_info, "\ttransform_8x8_mode_flag = %6d\n", Header->transform_8x8_mode_flag);
 	report(severity_info, "\tpic_scaling_matrix_present_flag = %6d\n", Header->pic_scaling_matrix_present_flag);
 	report(severity_info, "\t\t%d %d %d %d %d %d %d %d\n",
-	       Header->pic_scaling_list_present_flag[0], Header->pic_scaling_list_present_flag[1],
-	       Header->pic_scaling_list_present_flag[2], Header->pic_scaling_list_present_flag[3],
-	       Header->pic_scaling_list_present_flag[4], Header->pic_scaling_list_present_flag[5],
-	       Header->pic_scaling_list_present_flag[6], Header->pic_scaling_list_present_flag[7]);
+		   Header->pic_scaling_list_present_flag[0], Header->pic_scaling_list_present_flag[1],
+		   Header->pic_scaling_list_present_flag[2], Header->pic_scaling_list_present_flag[3],
+		   Header->pic_scaling_list_present_flag[4], Header->pic_scaling_list_present_flag[5],
+		   Header->pic_scaling_list_present_flag[6], Header->pic_scaling_list_present_flag[7]);
 	report(severity_info, "\tsecond_chroma_qp_index_offset = %6d\n", Header->second_chroma_qp_index_offset);
 #endif
 //
@@ -2034,7 +2034,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSliceHeader(void)
 		return Status;
 //
 	if ((Header->PictureParameterSet->weighted_pred_flag && (SLICE_TYPE_IS(Header->slice_type, H264_SLICE_TYPE_P) ||
-								 SLICE_TYPE_IS(Header->slice_type, H264_SLICE_TYPE_SP))) ||
+															 SLICE_TYPE_IS(Header->slice_type, H264_SLICE_TYPE_SP))) ||
 			((Header->PictureParameterSet->weighted_bipred_idc == 1) && SLICE_TYPE_IS(Header->slice_type, H264_SLICE_TYPE_B)))
 	{
 		Status = ReadPredWeightTable();
@@ -2326,7 +2326,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadSeiPanScanMessage(void)
 		if ((SEIPanScanRectangle.pan_scan_cnt_minus1 + 1) > H264_SEI_MAX_PAN_SCAN_VALUES)
 		{
 			report(severity_error, "FrameParser_VideoH264_c::ReadSeiPanScanMessage - pan_scan_cnt_minus1 (%d) out of range (0..2)\n",
-			       SEIPanScanRectangle.pan_scan_cnt_minus1);
+				   SEIPanScanRectangle.pan_scan_cnt_minus1);
 			return FrameParserHeaderSyntaxError;
 		}
 		for (i = 0; i <= SEIPanScanRectangle.pan_scan_cnt_minus1; i++)
@@ -2601,7 +2601,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculatePicOrderCnts(void)
 					((PrevPicOrderCntLsb - SliceHeader->pic_order_cnt_lsb) >= (MaxPicOrderCntLsb / 2)))
 				PicOrderCntMsb = PrevPicOrderCntMsb + MaxPicOrderCntLsb;
 			else if ((SliceHeader->pic_order_cnt_lsb > PrevPicOrderCntLsb) &&
-					((SliceHeader->pic_order_cnt_lsb - PrevPicOrderCntLsb) > (MaxPicOrderCntLsb / 2)))
+					 ((SliceHeader->pic_order_cnt_lsb - PrevPicOrderCntLsb) > (MaxPicOrderCntLsb / 2)))
 				PicOrderCntMsb = PrevPicOrderCntMsb - MaxPicOrderCntLsb;
 			else
 				PicOrderCntMsb = PrevPicOrderCntMsb;
@@ -2771,8 +2771,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculatePicOrderCnts(void)
 	SliceHeader->PicOrderCntTop = TopFieldOrderCnt;
 	SliceHeader->PicOrderCntBot = BottomFieldOrderCnt;
 	SliceHeader->PicOrderCnt = SliceHeader->field_pic_flag ?
-				   (SliceHeader->bottom_field_flag ? BottomFieldOrderCnt : TopFieldOrderCnt) :
-				   min(TopFieldOrderCnt, BottomFieldOrderCnt);
+							   (SliceHeader->bottom_field_flag ? BottomFieldOrderCnt : TopFieldOrderCnt) :
+							   min(TopFieldOrderCnt, BottomFieldOrderCnt);
 	//
 	// Now calculate the extended pic order count used for frame re-ordering
 	// this is based on pic order count, or on the dpb output delay if picture
@@ -2784,8 +2784,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculatePicOrderCnts(void)
 		BaseDpbValue = 0;
 	}
 	SliceHeader->ExtendedPicOrderCnt = DisplayOrderByDpbValues ?
-					   (PicOrderCntOffset + BaseDpbValue + SEIPictureTiming.dpb_output_delay) :
-					   (PicOrderCntOffset + SliceHeader->PicOrderCnt);
+									   (PicOrderCntOffset + BaseDpbValue + SEIPictureTiming.dpb_output_delay) :
+									   (PicOrderCntOffset + SliceHeader->PicOrderCnt);
 	//
 	// If we have a memory control clear, and we are deriving frame
 	// re-ordering from picture order counts then increment the PicOrderCntOffset
@@ -2797,9 +2797,9 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculatePicOrderCnts(void)
 //
 #ifdef DUMP_REFLISTS
 	report(severity_info, "xxx CalculatePicOrderCnts %d - (%3d %d %4d) - P %4d, T %4d, B %4d (%016llx)\n",
-	       SliceHeader->SequenceParameterSet->pic_order_cnt_type,
-	       SliceHeader->frame_num, SliceHeader->slice_type, SliceHeader->pic_order_cnt_lsb,
-	       SliceHeader->PicOrderCnt, TopFieldOrderCnt, BottomFieldOrderCnt, SliceHeader->ExtendedPicOrderCnt);
+		   SliceHeader->SequenceParameterSet->pic_order_cnt_type,
+		   SliceHeader->frame_num, SliceHeader->slice_type, SliceHeader->pic_order_cnt_lsb,
+		   SliceHeader->PicOrderCnt, TopFieldOrderCnt, BottomFieldOrderCnt, SliceHeader->ExtendedPicOrderCnt);
 #endif
 	return FrameParserNoError;
 }
@@ -2952,9 +2952,9 @@ FrameParserStatus_t FrameParser_VideoH264_c::InitializePSliceReferencePictureLis
 	// Finally process these to generate ReferenceFrameList 0
 	//
 	InitializeReferencePictureListField(&ReferenceFrameListShortTerm[0],
-					    &ReferenceFrameListLongTerm,
-					    NumActiveReferences,
-					    &ReferenceFrameList[P_REF_PIC_LIST]);
+										&ReferenceFrameListLongTerm,
+										NumActiveReferences,
+										&ReferenceFrameList[P_REF_PIC_LIST]);
 //
 	return FrameParserNoError;
 }
@@ -3174,43 +3174,43 @@ FrameParserStatus_t FrameParser_VideoH264_c::InitializeBSliceReferencePictureLis
 	//
 #ifdef DUMP_REFLISTS
 	report(severity_info, " Reference frame lists (%s) PicOrderCnt = %d :-\n",
-	       (!SliceHeader->bottom_field_flag ? "Top field" : "Bottom field"), SliceHeader->PicOrderCnt);
+		   (!SliceHeader->bottom_field_flag ? "Top field" : "Bottom field"), SliceHeader->PicOrderCnt);
 	report(severity_info, " ReferenceFrameListShortTerm[0].EntryCount - %d entries (Lower %d Upper %d):-\n", ReferenceFrameListShortTerm[0].EntryCount, LowerEntries, Count);
 	for (i = 0; i < ReferenceFrameListShortTerm[0].EntryCount; i++)
 	{
 		report(severity_info, "\tDecodeIndex %5d, FrameNumber %4d PicOrderCnt %4d (%4d)\n",
-		       ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].DecodeFrameIndex,
-		       ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].FrameNum,
-		       ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].PicOrderCntBot);
+			   ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].DecodeFrameIndex,
+			   ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].FrameNum,
+			   ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListShortTerm[0].EntryIndicies[i]].PicOrderCntBot);
 	}
 	report(severity_info, " ReferenceFrameListShortTerm[1].EntryCount - %d entries (Lower %d Upper %d:-\n", ReferenceFrameListShortTerm[1].EntryCount, LowerEntries, Count);
 	for (i = 0; i < ReferenceFrameListShortTerm[1].EntryCount; i++)
 	{
 		report(severity_info, "\tDecodeIndex %5d, FrameNumber %4d PicOrderCnt %4d (%4d)\n",
-		       ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].DecodeFrameIndex,
-		       ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].FrameNum,
-		       ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].PicOrderCntBot);
+			   ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].DecodeFrameIndex,
+			   ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].FrameNum,
+			   ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListShortTerm[1].EntryIndicies[i]].PicOrderCntBot);
 	}
 	report(severity_info, " ReferenceFrameListLongTerm.EntryCount - %d entries (Count %d):-\n", ReferenceFrameListLongTerm.EntryCount, Count);
 	for (i = 0; i < ReferenceFrameListLongTerm.EntryCount; i++)
 	{
 		report(severity_info, "\tDecodeIndex %5d, FrameNumber %4d PicOrderCnt %4d (%4d)\n",
-		       ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].DecodeFrameIndex,
-		       ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].FrameNum,
-		       ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].PicOrderCntBot);
+			   ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].DecodeFrameIndex,
+			   ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].FrameNum,
+			   ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].PicOrderCntTop, ReferenceFrames[ReferenceFrameListLongTerm.EntryIndicies[i]].PicOrderCntBot);
 	}
 #endif
 	//
 	// Process these to generate RefPicLists
 	//
 	InitializeReferencePictureListField(&ReferenceFrameListShortTerm[0],
-					    &ReferenceFrameListLongTerm,
-					    NumActiveReferences0,
-					    &ReferenceFrameList[B_REF_PIC_LIST_0]);
+										&ReferenceFrameListLongTerm,
+										NumActiveReferences0,
+										&ReferenceFrameList[B_REF_PIC_LIST_0]);
 	InitializeReferencePictureListField(&ReferenceFrameListShortTerm[1],
-					    &ReferenceFrameListLongTerm,
-					    NumActiveReferences1,
-					    &ReferenceFrameList[B_REF_PIC_LIST_1]);
+										&ReferenceFrameListLongTerm,
+										NumActiveReferences1,
+										&ReferenceFrameList[B_REF_PIC_LIST_1]);
 	//
 	// Finally, if the lists are identical, and have more than
 	// 1 entry, then we swap the first two entries of list 1.
@@ -3368,8 +3368,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculateReferencePictureListsFrame
 		if (ReferenceFrames[i].Usage != NotUsedForReference)
 		{
 			FrameNumWrap = (ReferenceFrames[i].FrameNum > SliceHeader->frame_num) ?
-				       ReferenceFrames[i].FrameNum - MaxFrameNum :
-				       ReferenceFrames[i].FrameNum;
+						   ReferenceFrames[i].FrameNum - MaxFrameNum :
+						   ReferenceFrames[i].FrameNum;
 			ReferenceFrames[i].FrameNumWrap = FrameNumWrap;
 			ReferenceFrames[i].PicNum = FrameNumWrap;
 			ReferenceFrames[i].LongTermPicNum = ReferenceFrames[i].LongTermFrameIdx;
@@ -3425,8 +3425,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CalculateReferencePictureListsField
 		if (ReferenceFrames[i].Usage != NotUsedForReference)
 		{
 			FrameNumWrap = (ReferenceFrames[i].FrameNum > SliceHeader->frame_num) ?
-				       ReferenceFrames[i].FrameNum - MaxFrameNum :
-				       ReferenceFrames[i].FrameNum;
+						   ReferenceFrames[i].FrameNum - MaxFrameNum :
+						   ReferenceFrames[i].FrameNum;
 			ReferenceFrames[i].FrameNumWrap = FrameNumWrap;
 			ReferenceFrames[i].PicNum = (2 * FrameNumWrap);
 			ReferenceFrames[i].LongTermPicNum = (2 * ReferenceFrames[i].LongTermFrameIdx);
@@ -3506,10 +3506,10 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareReferenceFrameList(void)
 #ifdef DUMP_REFLISTS
 	{
 		report(severity_info, "\n Reference picture lists (%d %d %d) (%c slice) (%s):-\n",
-		       ReferenceFrameList[0].EntryCount, ReferenceFrameList[1].EntryCount, ReferenceFrameList[2].EntryCount,
-		       (ParsedVideoParameters->SliceType == SliceTypeB) ? 'B' :
-		       ((ParsedVideoParameters->SliceType == SliceTypeP) ? 'P' : 'I'),
-		       (!SliceHeader->SequenceParameterSet->frame_mbs_only_flag && SliceHeader->field_pic_flag ? (!SliceHeader->bottom_field_flag ? "Top field" : "Bottom field") : "Frame"));
+			   ReferenceFrameList[0].EntryCount, ReferenceFrameList[1].EntryCount, ReferenceFrameList[2].EntryCount,
+			   (ParsedVideoParameters->SliceType == SliceTypeB) ? 'B' :
+			   ((ParsedVideoParameters->SliceType == SliceTypeP) ? 'P' : 'I'),
+			   (!SliceHeader->SequenceParameterSet->frame_mbs_only_flag && SliceHeader->field_pic_flag ? (!SliceHeader->bottom_field_flag ? "Top field" : "Bottom field") : "Frame"));
 		for (i = 0; i < H264_NUM_REF_FRAME_LISTS; i++)
 		{
 			report(severity_info, " ReferenceFrameList[%d] - %d entries :-\n", i, ReferenceFrameList[i].EntryCount);
@@ -3517,13 +3517,13 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareReferenceFrameList(void)
 			{
 				unsigned int I = ReferenceFrameList[i].EntryIndicies[j];
 				report(severity_info, "\tDecodeIndex %5d, Field/Frame '%s' Usage %s PictureNumber %4d PicOrderCnt T %4d B %4d X %4d\n",
-				       ReferenceFrames[I].DecodeFrameIndex,
-				       (ReferenceFrameList[i].H264ReferenceDetails[j].UsageCode ? ((ReferenceFrameList[i].H264ReferenceDetails[j].UsageCode == REF_PIC_USE_FIELD_TOP) ? "Top Field" : "Bottom Field") : "Frame"),
-				       (ReferenceFrameList[i].H264ReferenceDetails[j].LongTermReference ? "LongTerm, " : "ShortTerm,"),
-				       ReferenceFrameList[i].H264ReferenceDetails[j].PictureNumber,
-				       ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCntTop,
-				       ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCntBot,
-				       ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCnt);
+					   ReferenceFrames[I].DecodeFrameIndex,
+					   (ReferenceFrameList[i].H264ReferenceDetails[j].UsageCode ? ((ReferenceFrameList[i].H264ReferenceDetails[j].UsageCode == REF_PIC_USE_FIELD_TOP) ? "Top Field" : "Bottom Field") : "Frame"),
+					   (ReferenceFrameList[i].H264ReferenceDetails[j].LongTermReference ? "LongTerm, " : "ShortTerm,"),
+					   ReferenceFrameList[i].H264ReferenceDetails[j].PictureNumber,
+					   ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCntTop,
+					   ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCntBot,
+					   ReferenceFrameList[i].H264ReferenceDetails[j].PicOrderCnt);
 			}
 		}
 		report(severity_info, "\n");
@@ -3546,22 +3546,22 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareReferenceFrameList(void)
 #if 0
 	if (ParsedVideoParameters->SliceType == SliceTypeB)
 		report(severity_info, "B - %d {%3d %3d %3d %3d}, %d {%3d %3d %3d %3d} - %08x - %d %d\n",
-		       ParsedFrameParameters->ReferenceFrameList[1].EntryCount,
-		       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1],
-		       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
-		       ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
-		       ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1],
-		       ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3], Status, NumShortTerm, NumLongTerm);
+			   ParsedFrameParameters->ReferenceFrameList[1].EntryCount,
+			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1],
+			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
+			   ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
+			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1],
+			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3], Status, NumShortTerm, NumLongTerm);
 	report(severity_info, "Q264 (R = %d, K = %d, PS = %d, IF = %d, FSTV= %d, FPFP= %d, FS = %d, ST = %d, EC = %d)\n",
-	       ParsedFrameParameters->ReferenceFrame,
-	       ParsedFrameParameters->KeyFrame,
-	       ParsedVideoParameters->PictureStructure,
-	       ParsedFrameParameters->IndependentFrame,
-	       FrameSliceTypeVaries,
-	       ParsedFrameParameters->FirstParsedParametersForOutputFrame,
-	       ParsedVideoParameters->FirstSlice,
-	       SliceHeader->slice_type,
-	       ParsedFrameParameters->ReferenceFrameList[0].EntryCount);
+		   ParsedFrameParameters->ReferenceFrame,
+		   ParsedFrameParameters->KeyFrame,
+		   ParsedVideoParameters->PictureStructure,
+		   ParsedFrameParameters->IndependentFrame,
+		   FrameSliceTypeVaries,
+		   ParsedFrameParameters->FirstParsedParametersForOutputFrame,
+		   ParsedVideoParameters->FirstSlice,
+		   SliceHeader->slice_type,
+		   ParsedFrameParameters->ReferenceFrameList[0].EntryCount);
 #endif
 //
 	return Status;
@@ -3573,8 +3573,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareReferenceFrameList(void)
 //
 
 FrameParserStatus_t FrameParser_VideoH264_c::ReleaseReference(bool ActuallyRelease,
-							      unsigned int Entry,
-							      unsigned int ReleaseUsage)
+															  unsigned int Entry,
+															  unsigned int ReleaseUsage)
 {
 	unsigned int OldUsage;
 	unsigned int UsedForShortTermReference;
@@ -3790,8 +3790,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 							((ReferenceFrames[i].Usage & AnyUsedForShortTermReference) != 0))
 					{
 						FrameNumWrap = (ReferenceFrames[i].FrameNum > FrameNum) ?
-							       ReferenceFrames[i].FrameNum - MaxFrameNum :
-							       ReferenceFrames[i].FrameNum;
+									   ReferenceFrames[i].FrameNum - MaxFrameNum :
+									   ReferenceFrames[i].FrameNum;
 						if (FrameNumWrap < LowestFrameNumWrap)
 						{
 							LowestFrameNumWrap = FrameNumWrap;
@@ -3816,8 +3816,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 				if (ReferenceFrames[i].Usage != NotUsedForReference)
 				{
 					FrameNumWrap = (ReferenceFrames[i].FrameNum > SliceHeader->frame_num) ?
-						       ReferenceFrames[i].FrameNum - MaxFrameNum :
-						       ReferenceFrames[i].FrameNum;
+								   ReferenceFrames[i].FrameNum - MaxFrameNum :
+								   ReferenceFrames[i].FrameNum;
 					ReferenceFrames[i].PicNum = Field ? (2 * FrameNumWrap) : FrameNumWrap;
 					ReferenceFrames[i].LongTermPicNum = Field ? (2 * ReferenceFrames[i].LongTermFrameIdx) : ReferenceFrames[i].LongTermFrameIdx;
 				}
@@ -3826,12 +3826,12 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 			for (i = 0; i < (NumReferenceFrames + 1); i++)
 				if (ReferenceFrames[i].Usage != NotUsedForReference)
 					report(severity_info, "\tDFI %5d, F/F %s, Usage %c%c, FrameNumber %4d (%4d), LongTermIndex %4d\n",
-					       ReferenceFrames[i].DecodeFrameIndex,
-					       (ReferenceFrames[i].Field ? "Field" : "Frame"),
-					       (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
-					       (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
-					       ReferenceFrames[i].FrameNum, ReferenceFrames[i].PicNum,
-					       ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
+						   ReferenceFrames[i].DecodeFrameIndex,
+						   (ReferenceFrames[i].Field ? "Field" : "Frame"),
+						   (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
+						   (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
+						   ReferenceFrames[i].FrameNum, ReferenceFrames[i].PicNum,
+						   ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
 #endif
 			for (i = 0; ; i++)
 			{
@@ -3839,11 +3839,11 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 					break;
 #ifdef DUMP_REFLISTS
 				report(severity_info, "MMCO(%d %d %d) - %d - %3d %3d %3d %3d\n", Field, Top, FrameNum,
-				       MMC->memory_management_control_operation[i],
-				       MMC->difference_of_pic_nums_minus1[i],
-				       MMC->long_term_pic_num[i],
-				       MMC->long_term_frame_idx[i],
-				       MMC->max_long_term_frame_idx_plus1[i]);
+					   MMC->memory_management_control_operation[i],
+					   MMC->difference_of_pic_nums_minus1[i],
+					   MMC->long_term_pic_num[i],
+					   MMC->long_term_frame_idx[i],
+					   MMC->max_long_term_frame_idx_plus1[i]);
 #endif
 #define FRAME_MMCO 0
 #define FIELD_MMCO 128
@@ -3867,8 +3867,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 									((ReferenceFrames[j].PicNum == PicNumX) || ((ReferenceFrames[j].PicNum + 1) == PicNumX)))
 							{
 								ReleaseCode = (ReferenceFrames[j].PicNum == PicNumX) ?
-									      OtherFieldUsedForShortTermReference :
-									      UsedForShortTermReference;
+											  OtherFieldUsedForShortTermReference :
+											  UsedForShortTermReference;
 								ReleaseReference(ActuallyReleaseReferenceFrames, j, ReleaseCode);
 								break;
 							}
@@ -3890,8 +3890,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 									((ReferenceFrames[j].LongTermPicNum == MMC->long_term_pic_num[i]) || ((ReferenceFrames[j].LongTermPicNum + 1) == MMC->long_term_pic_num[i])))
 							{
 								ReleaseCode = (ReferenceFrames[j].LongTermPicNum == MMC->long_term_pic_num[i]) ?
-									      OtherFieldUsedForLongTermReference :
-									      UsedForLongTermReference;
+											  OtherFieldUsedForLongTermReference :
+											  UsedForLongTermReference;
 								ReleaseReference(ActuallyReleaseReferenceFrames, j, ReleaseCode);
 								break;
 							}
@@ -3967,8 +3967,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 									(ReferenceFrames[j].LongTermFrameIdx > (MMC->max_long_term_frame_idx_plus1[i] - 1)))
 								ReleaseReference(ActuallyReleaseReferenceFrames, j, AnyUsedForLongTermReference);
 						MaxLongTermFrameIdx = MMC->max_long_term_frame_idx_plus1[i] ?
-								      (MMC->max_long_term_frame_idx_plus1[i] - 1) :
-								      NO_LONG_TERM_FRAME_INDICES;
+											  (MMC->max_long_term_frame_idx_plus1[i] - 1) :
+											  NO_LONG_TERM_FRAME_INDICES;
 						break;
 //
 					case H264_MMC_CLEAR + FRAME_MMCO:
@@ -4030,12 +4030,12 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 		for (i = 0; i < (NumReferenceFrames + 1); i++)
 			if (ReferenceFrames[i].Usage != NotUsedForReference)
 				report(severity_info, "\tDFI %5d, F/F %s, Usage %c%c, FrameNumber %4d, LongTermIndex %4d\n",
-				       ReferenceFrames[i].DecodeFrameIndex,
-				       (ReferenceFrames[i].Field ? "Field" : "Frame"),
-				       (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
-				       (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
-				       ReferenceFrames[i].FrameNum,
-				       ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
+					   ReferenceFrames[i].DecodeFrameIndex,
+					   (ReferenceFrames[i].Field ? "Field" : "Frame"),
+					   (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
+					   (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
+					   ReferenceFrames[i].FrameNum,
+					   ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
 #endif
 	}
 //
@@ -4044,12 +4044,12 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 	for (i = 0; i < (NumReferenceFrames + 1); i++)
 		if (ReferenceFrames[i].Usage != NotUsedForReference)
 			report(severity_info, "\tDFI %5d, F/F %s, Usage %c%c, FrameNumber %4d, LongTermIndex %4d\n",
-			       ReferenceFrames[i].DecodeFrameIndex,
-			       (ReferenceFrames[i].Field ? "Field" : "Frame"),
-			       (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
-			       (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
-			       ReferenceFrames[i].FrameNum,
-			       ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
+				   ReferenceFrames[i].DecodeFrameIndex,
+				   (ReferenceFrames[i].Field ? "Field" : "Frame"),
+				   (((ReferenceFrames[i].Usage & UsedForTopLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForTopShortTermReference) != 0) ? 'S' : 'x')),
+				   (((ReferenceFrames[i].Usage & UsedForBotLongTermReference) != 0) ? 'L' : (((ReferenceFrames[i].Usage & UsedForBotShortTermReference) != 0) ? 'S' : 'x')),
+				   ReferenceFrames[i].FrameNum,
+				   ((ReferenceFrames[i].Usage & AnyUsedForLongTermReference) != 0) ? ReferenceFrames[i].LongTermFrameIdx : 9999);
 #endif
 //
 	return FrameParserNoError;
@@ -4354,8 +4354,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	SliceType = SliceTypeTranslation[SliceHeader->slice_type];
 	Frame = SliceHeader->field_pic_flag == 0;
 	PictureStructure = Frame ?
-			   StructureFrame :
-			   ((SliceHeader->bottom_field_flag != 0) ? StructureBottomField : StructureTopField);
+					   StructureFrame :
+					   ((SliceHeader->bottom_field_flag != 0) ? StructureBottomField : StructureTopField);
 	//
 	// Construct stream parameters
 	//
@@ -4440,18 +4440,18 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	if (AccumulatedPictureStructure != StructureEmpty)
 	{
 		FieldSequenceError = (AccumulatedPictureStructure == PictureStructure) ||
-				     (PictureStructure == StructureFrame);
+							 (PictureStructure == StructureFrame);
 		ReferenceNatureChange = AccumulatedReferenceField != (SliceHeader->nal_ref_idc != 0);
 		AccumulatedNonPairedField = FieldSequenceError ||
-					    ReferenceNatureChange ||
-					    (AccumulatedFrameNumber != SliceHeader->frame_num);
+									ReferenceNatureChange ||
+									(AccumulatedFrameNumber != SliceHeader->frame_num);
 		if (AccumulatedNonPairedField)
 		{
 #if 0
 			report(severity_info, "NickQ NonPairedOutput - (%d %d) (%d %d) (%d %d)\n",
-			       (AccumulatedPictureStructure == PictureStructure), (PictureStructure == StructureFrame),
-			       AccumulatedReferenceField, (SliceHeader->nal_ref_idc != 0),
-			       AccumulatedFrameNumber, SliceHeader->frame_num);
+				   (AccumulatedPictureStructure == PictureStructure), (PictureStructure == StructureFrame),
+				   AccumulatedReferenceField, (SliceHeader->nal_ref_idc != 0),
+				   AccumulatedFrameNumber, SliceHeader->frame_num);
 #endif
 			//
 			// Correct the non-paired field to be a whole frame.
@@ -4486,8 +4486,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	// fix juddering on some HD channels
 	/* if( ForceInterlacedProgressive )
 	{
-		DeducedInterlacedFlag = ForcedInterlacedFlag;
-		DeducedTopFieldFirst = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
+	    DeducedInterlacedFlag = ForcedInterlacedFlag;
+	    DeducedTopFieldFirst = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
 	}
 
 	else */ if (FixDeducedFlags)
@@ -4556,8 +4556,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	ParsedFrameParameters->ContinuousReverseJump = ContinuousReverseJump;
 	Policy = Player->PolicyValue(Playback, Stream, PolicyH264AllowNonIDRResynchronization);
 	ParsedFrameParameters->KeyFrame = (Policy != PolicyValueApply) ?
-					  (SliceHeader->nal_unit_type == NALU_TYPE_IDR) :
-					  (SliceType == SliceTypeI);
+									  (SliceHeader->nal_unit_type == NALU_TYPE_IDR) :
+									  (SliceType == SliceTypeI);
 	ParsedFrameParameters->IndependentFrame = ParsedFrameParameters->KeyFrame || (SliceType == SliceTypeI);
 	ParsedFrameParameters->ReferenceFrame = (SliceHeader->nal_ref_idc != 0);
 //
@@ -4574,8 +4574,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	if ((SPS->frame_cropping_rect_top_offset != 0) || (SPS->frame_cropping_rect_left_offset != 0))
 	{
 		report(severity_error, "FrameParser_VideoH264_c::CommitFrameForDecode - Unexpected frame cropping rectangle (%d, %d, %d, %d).\n",
-		       SPS->frame_cropping_rect_left_offset, SPS->frame_cropping_rect_top_offset,
-		       SPS->frame_cropping_rect_right_offset, SPS->frame_cropping_rect_bottom_offset);
+			   SPS->frame_cropping_rect_left_offset, SPS->frame_cropping_rect_top_offset,
+			   SPS->frame_cropping_rect_right_offset, SPS->frame_cropping_rect_bottom_offset);
 		return FrameParserError;
 	}
 	ParsedVideoParameters->Content.Width -= (SliceHeader->CropUnitX * SPS->frame_cropping_rect_right_offset);
@@ -4608,13 +4608,13 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	//
 // *INDENT-ON*
 	ParsedVideoParameters->Content.FrameRate = (SPS->vui_seq_parameters.num_units_in_tick == 0) ?
-						   0 :
-						   Rational_t(SPS->vui_seq_parameters.time_scale, SPS->vui_seq_parameters.num_units_in_tick);
+											   0 :
+											   Rational_t(SPS->vui_seq_parameters.time_scale, SPS->vui_seq_parameters.num_units_in_tick);
 	if (SPS->vui_seq_parameters.fixed_frame_rate_flag)
 	{
 		pic_struct = (SPS->vui_seq_parameters.pict_struct_present_flag && SEIPictureTiming.Valid) ?
-			     SEIPictureTiming.pic_struct :
-			     SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
+					 SEIPictureTiming.pic_struct :
+					 SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
 		switch (pic_struct)
 		{
 			// Frame rate is tied to progressive sequence or not, timing stuff is related to field counts
@@ -4670,14 +4670,14 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	{
 		if (!Frame)
 			pic_struct = (SliceHeader->bottom_field_flag == 0) ?
-				     SEI_PICTURE_TIMING_PICSTRUCT_TOP_FIELD :
-				     SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_FIELD;
+						 SEI_PICTURE_TIMING_PICSTRUCT_TOP_FIELD :
+						 SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_FIELD;
 		else if (SPS->frame_mbs_only_flag && (SliceHeader->PicOrderCntTop == SliceHeader->PicOrderCntBot))
 			pic_struct = SEI_PICTURE_TIMING_PICSTRUCT_FRAME;
 		else
 			pic_struct = (SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot) ?
-				     SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM :
-				     SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP;
+						 SEI_PICTURE_TIMING_PICSTRUCT_TOP_BOTTOM :
+						 SEI_PICTURE_TIMING_PICSTRUCT_BOTTOM_TOP;
 	}
 	//
 	// Now generate the actual values from the specified or derived pic_struct
@@ -4772,8 +4772,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	if ((ParsedVideoParameters->InterlacedFrame != DeducedInterlacedFlag) ||
 			(ParsedVideoParameters->TopFieldFirst != DeducedTopFieldFirst))
 		report(severity_info, "ZZZ FrameParser_VideoH264_c::CommitFrameForDecode - Deduction do not match reality (%d %d -> %d %d), %d %2d\n",
-		       DeducedInterlacedFlag, DeducedTopFieldFirst, ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
-		       SPS->vui_seq_parameters.pict_struct_present_flag, pic_struct);
+			   DeducedInterlacedFlag, DeducedTopFieldFirst, ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
+			   SPS->vui_seq_parameters.pict_struct_present_flag, pic_struct);
 	//
 	// If this is the first slice, then adjust the BaseDpbValue
 	//
@@ -4802,14 +4802,14 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 #if 0
 	{
 		report(severity_info, "NickQ %3d - PStruct = %d (%d %d %d - %d %d) - Ref %d %d Fn %2d Dpb (%2d + %2d) = %2d Extended Dpb %16llx\n",
-		       NextDecodeFrameIndex,
-		       ParsedVideoParameters->PictureStructure,
-		       ParsedVideoParameters->Content.Progressive,
-		       ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
-		       ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1],
-		       ParsedFrameParameters->KeyFrame, ParsedFrameParameters->ReferenceFrame,
-		       SliceHeader->frame_num,
-		       BaseDpbValue, SEIPictureTiming.dpb_output_delay, BaseDpbValue + SEIPictureTiming.dpb_output_delay, SliceHeader->ExtendedPicOrderCnt);
+			   NextDecodeFrameIndex,
+			   ParsedVideoParameters->PictureStructure,
+			   ParsedVideoParameters->Content.Progressive,
+			   ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
+			   ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1],
+			   ParsedFrameParameters->KeyFrame, ParsedFrameParameters->ReferenceFrame,
+			   SliceHeader->frame_num,
+			   BaseDpbValue, SEIPictureTiming.dpb_output_delay, BaseDpbValue + SEIPictureTiming.dpb_output_delay, SliceHeader->ExtendedPicOrderCnt);
 	}
 #endif
 	return FrameParserNoError;
@@ -4965,14 +4965,14 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 		InvalidPTSSequence = false;
 		// Check those before me in the list
 		Jump = (i != 0) &&
-		       ValidTime(DeferredList[OrderedDeferredList[i - 1]].ParsedFrameParameters->NormalizedPlaybackTime) &&
-		       (PTS < DeferredList[OrderedDeferredList[i - 1]].ParsedFrameParameters->NormalizedPlaybackTime);
+			   ValidTime(DeferredList[OrderedDeferredList[i - 1]].ParsedFrameParameters->NormalizedPlaybackTime) &&
+			   (PTS < DeferredList[OrderedDeferredList[i - 1]].ParsedFrameParameters->NormalizedPlaybackTime);
 		if (Jump && ((DeferredList[OrderedDeferredList[i - 1]].ParsedFrameParameters->NormalizedPlaybackTime - PTS) < 1000000))
 			InvalidPTSSequence = true;
 		// Check those after me in the list
 		Jump = (i < (DeferredListEntries - 1)) &&
-		       ValidTime(DeferredList[OrderedDeferredList[i + 1]].ParsedFrameParameters->NormalizedPlaybackTime) &&
-		       (PTS > DeferredList[OrderedDeferredList[i + 1]].ParsedFrameParameters->NormalizedPlaybackTime);
+			   ValidTime(DeferredList[OrderedDeferredList[i + 1]].ParsedFrameParameters->NormalizedPlaybackTime) &&
+			   (PTS > DeferredList[OrderedDeferredList[i + 1]].ParsedFrameParameters->NormalizedPlaybackTime);
 		if (Jump && ((PTS - DeferredList[OrderedDeferredList[i + 1]].ParsedFrameParameters->NormalizedPlaybackTime) < 1000000))
 			InvalidPTSSequence = true;
 		if (InvalidPTSSequence && !DpbValuesInvalidatedByPTS)
@@ -5042,8 +5042,8 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long Ex
 	// Do we need to update the default frame rate based on PTS values
 	//
 	UsePTSFrameRate = !UserSpecifiedDefaultFrameRate &&
-			  ValidPTSDeducedFrameRate &&
-			  (Player->PolicyValue(Playback, Stream, PolicyUsePTSDeducedDefaultFrameRates) == PolicyValueApply);
+					  ValidPTSDeducedFrameRate &&
+					  (Player->PolicyValue(Playback, Stream, PolicyUsePTSDeducedDefaultFrameRates) == PolicyValueApply);
 	if (UsePTSFrameRate)
 		DefaultFrameRate = PTSDeducedFrameRate;
 }
@@ -5077,8 +5077,8 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long 
 	// Do we need to update the default frame rate based on PTS values
 	//
 	UsePTSFrameRate = !UserSpecifiedDefaultFrameRate &&
-			  ValidPTSDeducedFrameRate &&
-			  (Player->PolicyValue(Playback, Stream, PolicyUsePTSDeducedDefaultFrameRates) == PolicyValueApply);
+					  ValidPTSDeducedFrameRate &&
+					  (Player->PolicyValue(Playback, Stream, PolicyUsePTSDeducedDefaultFrameRates) == PolicyValueApply);
 	if (UsePTSFrameRate)
 		DefaultFrameRate = PTSDeducedFrameRate;
 }
@@ -5089,7 +5089,7 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long 
 //
 
 void FrameParser_VideoH264_c::SetupPanScanValues(ParsedFrameParameters_t *ParsedFrameParameters,
-						 ParsedVideoParameters_t *ParsedVideoParameters)
+												 ParsedVideoParameters_t *ParsedVideoParameters)
 {
 	unsigned int i;
 	bool PanScanIsOn;
@@ -5123,29 +5123,29 @@ void FrameParser_VideoH264_c::SetupPanScanValues(ParsedFrameParameters_t *Parsed
 			PanScanState.Count = SEIPanScanRectangle->pan_scan_cnt_minus1 + 1;
 			PanScanState.RepetitionPeriod = SEIPanScanRectangle->pan_scan_rect_repetition_period;
 			FrameHeightInMbs = ((2 - SliceHeader->SequenceParameterSet->frame_mbs_only_flag) *
-					    (SliceHeader->SequenceParameterSet->pic_height_in_map_units_minus1 + 1)) /
-					   (1 + SliceHeader->field_pic_flag);
+								(SliceHeader->SequenceParameterSet->pic_height_in_map_units_minus1 + 1)) /
+							   (1 + SliceHeader->field_pic_flag);
 			for (i = 0; i < PanScanState.Count; i++)
 			{
 #if 1
 				Left = 16 * SliceHeader->CropUnitX * SliceHeader->SequenceParameterSet->frame_cropping_rect_left_offset +
-				       SEIPanScanRectangle->pan_scan_rect_left_offset[i];
+					   SEIPanScanRectangle->pan_scan_rect_left_offset[i];
 				Right = 16 * (16 * (SliceHeader->SequenceParameterSet->pic_width_in_mbs_minus1 + 1) -
-					      SliceHeader->CropUnitX * SliceHeader->SequenceParameterSet->frame_cropping_rect_right_offset) +
-					SEIPanScanRectangle->pan_scan_rect_right_offset[i];
+							  SliceHeader->CropUnitX * SliceHeader->SequenceParameterSet->frame_cropping_rect_right_offset) +
+						SEIPanScanRectangle->pan_scan_rect_right_offset[i];
 				Top = 16 * SliceHeader->CropUnitY * SliceHeader->SequenceParameterSet->frame_cropping_rect_top_offset +
-				      SEIPanScanRectangle->pan_scan_rect_top_offset[i];
+					  SEIPanScanRectangle->pan_scan_rect_top_offset[i];
 				Bottom = 16 * (16 * FrameHeightInMbs -
-					       SliceHeader->CropUnitY * SliceHeader->SequenceParameterSet->frame_cropping_rect_bottom_offset) +
-					 SEIPanScanRectangle->pan_scan_rect_bottom_offset[i];
+							   SliceHeader->CropUnitY * SliceHeader->SequenceParameterSet->frame_cropping_rect_bottom_offset) +
+						 SEIPanScanRectangle->pan_scan_rect_bottom_offset[i];
 #else
 				// Ignoring the crop rectangle
 				Left = SEIPanScanRectangle->pan_scan_rect_left_offset[i];
 				Right = 16 * 16 * (SliceHeader->SequenceParameterSet->pic_width_in_mbs_minus1 + 1) +
-					SEIPanScanRectangle->pan_scan_rect_right_offset[i];
+						SEIPanScanRectangle->pan_scan_rect_right_offset[i];
 				Top = SEIPanScanRectangle->pan_scan_rect_top_offset[i];
 				Bottom = 16 * 16 * FrameHeightInMbs +
-					 SEIPanScanRectangle->pan_scan_rect_bottom_offset[i];
+						 SEIPanScanRectangle->pan_scan_rect_bottom_offset[i];
 #endif
 				PanScanState.Width[i] = Right - Left;
 				PanScanState.Height[i] = Bottom - Top;
@@ -5160,7 +5160,7 @@ void FrameParser_VideoH264_c::SetupPanScanValues(ParsedFrameParameters_t *Parsed
 	DisplayFormat = Player->PolicyValue(Playback, Stream, PolicyDisplayFormat);
 	DisplayAspectRatio = Player->PolicyValue(Playback, Stream, PolicyDisplayAspectRatio);
 	PanScanIsOn = (DisplayFormat == PolicyValuePanScan) &&
-		      (DisplayAspectRatio == PolicyValue4x3);
+				  (DisplayAspectRatio == PolicyValue4x3);
 	//
 	// setup the values
 	//

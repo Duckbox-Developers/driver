@@ -132,7 +132,7 @@ CollatorStatus_t Collator2_Pes_c::DiscardAccumulatedData(void)
 //
 
 CollatorStatus_t Collator2_Pes_c::InputJump(bool SurplusDataInjected,
-					    bool ContinuousReverseJump)
+											bool ContinuousReverseJump)
 {
 	CollatorStatus_t Status;
 //

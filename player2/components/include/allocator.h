@@ -55,8 +55,8 @@ class Allocator_c
 		virtual ~Allocator_c(void) {};
 
 		virtual AllocatorStatus_t Allocate(unsigned int Size,
-						   unsigned char **Block,
-						   bool NonBlocking = false) = 0;
+										   unsigned char **Block,
+										   bool NonBlocking = false) = 0;
 
 		virtual AllocatorStatus_t AllocateLargest(
 			unsigned int *Size,
@@ -71,7 +71,7 @@ class Allocator_c
 		virtual AllocatorStatus_t Free(void) = 0;
 
 		virtual AllocatorStatus_t Free(unsigned int Size,
-					       unsigned char *Block) = 0;
+									   unsigned char *Block) = 0;
 
 		virtual AllocatorStatus_t LargestFreeBlock(unsigned int *Size) = 0;
 };

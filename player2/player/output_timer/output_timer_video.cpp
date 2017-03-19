@@ -169,7 +169,7 @@ OutputTimerStatus_t OutputTimer_Video_c::InitializeConfiguration(void)
 //
 
 OutputTimerStatus_t OutputTimer_Video_c::FrameDuration(void *ParsedAudioVideoDataParameters,
-						       unsigned long long *Duration)
+													   unsigned long long *Duration)
 {
 	ParsedVideoParameters_t *ParsedVideoParameters = (ParsedVideoParameters_t *)ParsedAudioVideoDataParameters;
 	Rational_t TimePerFrame;
@@ -226,10 +226,10 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 	//
 #if 0
 	report(severity_info, "NickOrd - PictureStructure = %d (%d %d %d - %d %d)\n",
-	       ParsedVideoParameters->PictureStructure,
-	       ParsedVideoParameters->Content.Progressive,
-	       ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
-	       ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1]);
+		   ParsedVideoParameters->PictureStructure,
+		   ParsedVideoParameters->Content.Progressive,
+		   ParsedVideoParameters->InterlacedFrame, ParsedVideoParameters->TopFieldFirst,
+		   ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1]);
 #endif
 	Player->GetPlaybackSpeed(Playback, &Speed, &Direction);
 	//
@@ -260,7 +260,7 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 	// Update the record of whether or not we have seen interlaced frames
 	//
 	InterlacedContentOnInterlacedDisplay = ParsedVideoParameters->InterlacedFrame &&
-					       !VideoOutputSurfaceDescriptor->Progressive;
+										   !VideoOutputSurfaceDescriptor->Progressive;
 	if (InterlacedContentOnInterlacedDisplay && !PartialFrame)
 		SeenInterlacedContentOnInterlacedDisplay = true;
 	//
@@ -271,7 +271,7 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 	if (!inrange(FrameRate, 1, 120))
 	{
 		report(severity_error, "OutputTimer_Video_c::FillOutFrameTimingRecord - Ridiculous frame rate %d.%06dfps.\n",
-		       FrameRate.IntegerPart(), FrameRate.RemainderDecimal());
+			   FrameRate.IntegerPart(), FrameRate.RemainderDecimal());
 		FrameRate = VideoOutputSurfaceDescriptor->FrameRate;
 		if (!ParsedVideoParameters->Content.Progressive)
 			FrameRate = FrameRate / 2;
@@ -285,7 +285,7 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 	// This may need modifying later, but for now we go with it.
 	//
 	RemoveAnyThreeTwoPulldown = inrange(FrameRate, 29, 31) &&
-				    ((VideoOutputSurfaceDescriptor->FrameRate < 51) || (Speed != 1));
+								((VideoOutputSurfaceDescriptor->FrameRate < 51) || (Speed != 1));
 	if (!ThreeTwoPulldownDetected &&
 			!ParsedVideoParameters->Content.Progressive &&
 			!ParsedVideoParameters->InterlacedFrame &&
@@ -376,9 +376,9 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 		LastAdjustedSpeedAfterFrameDrop = AdjustedSpeedAfterFrameDrop;
 #if 0
 		report(severity_info, "OutputTimer_Video_c::FillOutFrameTimingRecord - DisplayFrameRate %d.%06d, ContentFrameRate %d.%06d, CountMultiplier %d.%06d\n",
-		       PreviousDisplayFrameRate.IntegerPart(), PreviousDisplayFrameRate.RemainderDecimal(),
-		       PreviousFrameRate.IntegerPart(), PreviousFrameRate.RemainderDecimal(),
-		       CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal());
+			   PreviousDisplayFrameRate.IntegerPart(), PreviousDisplayFrameRate.RemainderDecimal(),
+			   PreviousFrameRate.IntegerPart(), PreviousFrameRate.RemainderDecimal(),
+			   CountMultiplier.IntegerPart(), CountMultiplier.RemainderDecimal());
 #endif
 	}
 	//
@@ -462,8 +462,8 @@ OutputTimerStatus_t OutputTimer_Video_c::FillOutFrameTimingRecord(
 				report(severity_error, "OutputTimer_Video_c::FillOutFrameTimingRecord - Pan scan counts and display counts do not match.\n");
 				report(severity_info, " Display %2d %2d => %2d %2d\n", ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1], VideoOutputTiming->DisplayCount[0], VideoOutputTiming->DisplayCount[1]);
 				report(severity_info, " Pan Scan %2d %2d %2d => %2d %2d %2d\n",
-				       ParsedVideoParameters->PanScan.DisplayCount[0], ParsedVideoParameters->PanScan.DisplayCount[1], ParsedVideoParameters->PanScan.DisplayCount[2],
-				       VideoOutputTiming->PanScan.DisplayCount[0], VideoOutputTiming->PanScan.DisplayCount[1], VideoOutputTiming->PanScan.DisplayCount[2]);
+					   ParsedVideoParameters->PanScan.DisplayCount[0], ParsedVideoParameters->PanScan.DisplayCount[1], ParsedVideoParameters->PanScan.DisplayCount[2],
+					   VideoOutputTiming->PanScan.DisplayCount[0], VideoOutputTiming->PanScan.DisplayCount[1], VideoOutputTiming->PanScan.DisplayCount[2]);
 			}
 		}
 	}

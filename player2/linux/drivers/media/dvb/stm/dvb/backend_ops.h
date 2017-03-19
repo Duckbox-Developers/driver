@@ -335,7 +335,7 @@ typedef enum
 typedef dvb_clock_data_point_t clock_data_point_t;
 
 typedef void (*stream_event_signal_callback)(context_handle_t context,
-					     struct stream_event_s *event);
+											 struct stream_event_s *event);
 
 struct dvb_backend_operations
 {
@@ -344,122 +344,122 @@ struct dvb_backend_operations
 	int (*playback_create)(playback_handle_t *playback);
 	int (*playback_delete)(playback_handle_t playback);
 	int (*playback_get_speed)(playback_handle_t playback,
-				  int *speed);
+							  int *speed);
 	int (*playback_set_speed)(playback_handle_t playback,
-				  int speed);
+							  int speed);
 	int (*playback_add_demux)(playback_handle_t playback,
-				  int demux_id,
-				  demux_handle_t *demux_context);
+							  int demux_id,
+							  demux_handle_t *demux_context);
 	int (*playback_remove_demux)(playback_handle_t playback,
-				     demux_handle_t demux_context);
+								 demux_handle_t demux_context);
 	int (*playback_add_stream)(playback_handle_t playback,
-				   char *media,
-				   char *format,
-				   char *encoding,
-				   unsigned int surface_id,
-				   stream_handle_t *stream);
+							   char *media,
+							   char *format,
+							   char *encoding,
+							   unsigned int surface_id,
+							   stream_handle_t *stream);
 	int (*playback_remove_stream)(playback_handle_t playback,
-				      stream_handle_t stream);
+								  stream_handle_t stream);
 	int (*playback_set_native_playback_time)(playback_handle_t playback,
-						 unsigned long long NativeTime,
-						 unsigned long long SystemTime);
+											 unsigned long long NativeTime,
+											 unsigned long long SystemTime);
 	int (*playback_set_option)(playback_handle_t playback,
-				   play_option_t option,
-				   unsigned int value);
+							   play_option_t option,
+							   unsigned int value);
 	int (*playback_get_player_environment)(playback_handle_t Playback,
-					       playback_handle_t *playerplayback);
+										   playback_handle_t *playerplayback);
 	int (*playback_set_clock_data_point)(playback_handle_t playback,
-					     clock_data_point_t *data_point);
+										 clock_data_point_t *data_point);
 
 	int (*demux_inject_data)(demux_handle_t demux,
-				 unsigned const char *data,
-				 unsigned int data_length);
+							 unsigned const char *data,
+							 unsigned int data_length);
 	int (*stream_inject_data)(stream_handle_t stream,
-				  unsigned const char *data,
-				  unsigned int data_length);
+							  unsigned const char *data,
+							  unsigned int data_length);
 	int (*stream_inject_data_packet)(stream_handle_t stream,
-					 unsigned const char *data,
-					 unsigned int data_length,
-					 bool presentation_time_valid,
-					 unsigned long long presentation_time);
+									 unsigned const char *data,
+									 unsigned int data_length,
+									 bool presentation_time_valid,
+									 unsigned long long presentation_time);
 	int (*stream_discontinuity)(stream_handle_t stream,
-				    discontinuity_t discontinuity);
+								discontinuity_t discontinuity);
 
 	int (*stream_enable)(stream_handle_t stream,
-			     unsigned int enable);
+						 unsigned int enable);
 	int (*stream_set_id)(stream_handle_t stream,
-			     unsigned int demux_id,
-			     unsigned int id);
+						 unsigned int demux_id,
+						 unsigned int id);
 	int (*stream_channel_select)(stream_handle_t stream,
-				     channel_select_t channel);
+								 channel_select_t channel);
 	int (*stream_set_option)(stream_handle_t stream,
-				 play_option_t option,
-				 unsigned int value);
+							 play_option_t option,
+							 unsigned int value);
 	int (*stream_get_option)(stream_handle_t stream,
-				 play_option_t option,
-				 unsigned int *value);
+							 play_option_t option,
+							 unsigned int *value);
 	int (*stream_drain)(stream_handle_t stream,
-			    unsigned int discard,
-			    unsigned int nonblock);
+						unsigned int discard,
+						unsigned int nonblock);
 	int (*stream_check_drained)(stream_handle_t stream);
 	int (*stream_step)(stream_handle_t Stream);
 	int (*stream_get_play_info)(stream_handle_t stream,
-				    struct play_info_s *play_info);
+								struct play_info_s *play_info);
 	int (*stream_switch)(stream_handle_t stream,
-			     char *format,
-			     char *encoding);
+						 char *format,
+						 char *encoding);
 	int (*stream_set_alarm)(stream_handle_t stream,
-				unsigned long long pts);
+							unsigned long long pts);
 	int (*stream_get_decode_buffer)(stream_handle_t stream,
-					buffer_handle_t *buffer,
-					unsigned char **data,
-					unsigned int Format,
-					unsigned int DimensionCount,
-					unsigned int Dimensions[],
-					unsigned int *Index,
-					unsigned int *Stride);
+									buffer_handle_t *buffer,
+									unsigned char **data,
+									unsigned int Format,
+									unsigned int DimensionCount,
+									unsigned int Dimensions[],
+									unsigned int *Index,
+									unsigned int *Stride);
 	int (*stream_return_decode_buffer)(stream_handle_t stream,
-					   buffer_handle_t *buffer);
+									   buffer_handle_t *buffer);
 	int (*stream_set_output_window)(stream_handle_t stream,
-					unsigned int X,
-					unsigned int Y,
-					unsigned int Width,
-					unsigned int Height);
+									unsigned int X,
+									unsigned int Y,
+									unsigned int Width,
+									unsigned int Height);
 	int (*stream_get_output_window)(stream_handle_t stream,
-					unsigned int *X,
-					unsigned int *Y,
-					unsigned int *Width,
-					unsigned int *Height);
+									unsigned int *X,
+									unsigned int *Y,
+									unsigned int *Width,
+									unsigned int *Height);
 	int (*stream_set_input_window)(stream_handle_t stream,
-				       unsigned int X,
-				       unsigned int Y,
-				       unsigned int Width,
-				       unsigned int Height);
+								   unsigned int X,
+								   unsigned int Y,
+								   unsigned int Width,
+								   unsigned int Height);
 	int (*stream_set_play_interval)(stream_handle_t stream,
-					play_interval_t *play_interval);
+									play_interval_t *play_interval);
 	int (*stream_get_decode_buffer_pool_status)(stream_handle_t stream,
-						    unsigned int *BuffersInPool,
-						    unsigned int *BuffersWithNonZeroReferenceCount);
+												unsigned int *BuffersInPool,
+												unsigned int *BuffersWithNonZeroReferenceCount);
 	int (*stream_get_player_environment)(stream_handle_t stream,
-					     playback_handle_t *PlayerPlayback,
-					     stream_handle_t *PlayerStream);
+										 playback_handle_t *PlayerPlayback,
+										 stream_handle_t *PlayerStream);
 	stream_event_signal_callback(*stream_register_event_signal_callback)(stream_handle_t stream,
-									     context_handle_t context,
-									     stream_event_signal_callback callback);
+																		 context_handle_t context,
+																		 stream_event_signal_callback callback);
 
 	int (*display_create)(char *Media,
-			      unsigned int SurfaceId);
+						  unsigned int SurfaceId);
 	int (*display_delete)(char *Media,
-			      unsigned int SurfaceId);
+						  unsigned int SurfaceId);
 	int (*display_synchronize)(char *Media,
-				   unsigned int SurfaceId);
+							   unsigned int SurfaceId);
 
 #ifdef __TDT__
 	int (*is_display_created)(char *Media,
-				  unsigned int SurfaceId);
+							  unsigned int SurfaceId);
 #endif
 };
 
 int register_dvb_backend(char *name,
-			 struct dvb_backend_operations *backend_ops);
+						 struct dvb_backend_operations *backend_ops);
 #endif

@@ -230,8 +230,8 @@ FrameParserStatus_t FrameParser_VideoDvp_c::ReadHeaders(void)
 	ParsedVideoParameters->Content.OverscanAppropriate = 0;
 	ParsedVideoParameters->Content.VideoFullRange = (StreamInfo->VideoFullRange != 0);
 	ParsedVideoParameters->Content.ColourMatrixCoefficients = ((StreamInfo->ColourMode == DVP_COLOUR_MODE_601) ? MatrixCoefficients_ITU_R_BT601 :
-								   ((StreamInfo->ColourMode == DVP_COLOUR_MODE_709) ? MatrixCoefficients_ITU_R_BT709 :
-								    MatrixCoefficients_Undefined));
+															   ((StreamInfo->ColourMode == DVP_COLOUR_MODE_709) ? MatrixCoefficients_ITU_R_BT709 :
+																MatrixCoefficients_Undefined));
 	ParsedVideoParameters->InterlacedFrame = StreamInfo->interlaced;
 	ParsedVideoParameters->DisplayCount[0] = 1;
 	ParsedVideoParameters->DisplayCount[1] = ParsedVideoParameters->InterlacedFrame ? 1 : 0;
@@ -249,16 +249,16 @@ FrameParserStatus_t FrameParser_VideoDvp_c::ReadHeaders(void)
 	{
 		InputWindow = StreamInfo->InputWindow;
 		Player->CallInSequence(Stream, SequenceType, CodedFramePlaybackTime,
-				       ManifestorVideoFnSetInputWindow,
-				       InputWindow.X, InputWindow.Y, InputWindow.Width, InputWindow.Height);
+							   ManifestorVideoFnSetInputWindow,
+							   InputWindow.X, InputWindow.Y, InputWindow.Width, InputWindow.Height);
 	}
 //
 	if (memcmp(&StreamInfo->OutputWindow, &OutputWindow, sizeof(DvpRectangle_t)) != 0)
 	{
 		OutputWindow = StreamInfo->OutputWindow;
 		Player->CallInSequence(Stream, SequenceType, CodedFramePlaybackTime,
-				       ManifestorVideoFnSetOutputWindow,
-				       OutputWindow.X, OutputWindow.Y, OutputWindow.Width, OutputWindow.Height);
+							   ManifestorVideoFnSetOutputWindow,
+							   OutputWindow.X, OutputWindow.Y, OutputWindow.Width, OutputWindow.Height);
 	}
 //
 	return FrameParserNoError;

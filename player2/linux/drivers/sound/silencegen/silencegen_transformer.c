@@ -88,9 +88,9 @@ static MME_ERROR SilenceGen_TermTransformer(void *ctx)
 MME_ERROR SilenceGen_RegisterTransformer(const char *name)
 {
 	return MME_RegisterTransformer(name,
-				       SilenceGen_AbortCommand,
-				       SilenceGen_GetTransformerCapability,
-				       SilenceGen_InitTransformer,
-				       SilenceGen_ProcessCommand,
-				       SilenceGen_TermTransformer);
+								   SilenceGen_AbortCommand,
+								   SilenceGen_GetTransformerCapability,
+								   SilenceGen_InitTransformer,
+								   SilenceGen_ProcessCommand,
+								   SilenceGen_TermTransformer);
 }

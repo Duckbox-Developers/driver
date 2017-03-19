@@ -110,20 +110,20 @@ class Demultiplexor_Base_c : public Demultiplexor_c
 		DemultiplexorStatus_t DestroyContext(DemultiplexorContext_t Context);
 
 		DemultiplexorStatus_t AddStream(DemultiplexorContext_t Context,
-						PlayerStream_t Stream,
-						unsigned int StreamIdentifier);
+										PlayerStream_t Stream,
+										unsigned int StreamIdentifier);
 
 		DemultiplexorStatus_t RemoveStream(DemultiplexorContext_t Context,
-						   unsigned int StreamIdentifier);
+										   unsigned int StreamIdentifier);
 
 		DemultiplexorStatus_t SwitchStream(DemultiplexorContext_t Context,
-						   PlayerStream_t Stream);
+										   PlayerStream_t Stream);
 
 		DemultiplexorStatus_t InputJump(DemultiplexorContext_t Context);
 
 		DemultiplexorStatus_t Demux(PlayerPlayback_t Playback,
-					    DemultiplexorContext_t Context,
-					    Buffer_t Buffer);
+									DemultiplexorContext_t Context,
+									Buffer_t Buffer);
 };
 
 #endif

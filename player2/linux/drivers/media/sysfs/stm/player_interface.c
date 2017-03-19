@@ -49,7 +49,7 @@ struct PlayerInterfaceContext_s
 static struct PlayerInterfaceContext_s *PlayerInterface;
 
 int register_player_interface(char *Name,
-			      struct player_interface_operations *Ops)
+							  struct player_interface_operations *Ops)
 {
 	if (PlayerInterface == NULL)
 	{
@@ -94,8 +94,8 @@ int PlayerInterfaceDelete()
 
 /*{{{ ComponentGetAttribute*/
 int ComponentGetAttribute(player_component_handle_t Component,
-			  const char *Attribute,
-			  union attribute_descriptor_u *Value)
+						  const char *Attribute,
+						  union attribute_descriptor_u *Value)
 {
 	int Result = 0;
 	Result = PlayerInterface->Ops->component_get_attribute(Component, Attribute, Value);
@@ -106,8 +106,8 @@ int ComponentGetAttribute(player_component_handle_t Component,
 /*}}} */
 /*{{{ ComponentSetAttribute*/
 int ComponentSetAttribute(player_component_handle_t Component,
-			  const char *Attribute,
-			  union attribute_descriptor_u *Value)
+						  const char *Attribute,
+						  union attribute_descriptor_u *Value)
 {
 	int Result = 0;
 	INTERFACE_DEBUG("\n");

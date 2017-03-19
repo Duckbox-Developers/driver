@@ -116,119 +116,119 @@ class Player_c
 		//
 
 		virtual PlayerStatus_t SpecifySignalledEvents(PlayerPlayback_t Playback,
-							      PlayerStream_t Stream,
-							      PlayerEventMask_t Events,
-							      void *UserData = NULL) = 0;
+													  PlayerStream_t Stream,
+													  PlayerEventMask_t Events,
+													  void *UserData = NULL) = 0;
 
 		virtual PlayerStatus_t SetEventSignal(PlayerPlayback_t Playback,
-						      PlayerStream_t Stream,
-						      PlayerEventMask_t Events,
-						      OS_Event_t *Event) = 0;
+											  PlayerStream_t Stream,
+											  PlayerEventMask_t Events,
+											  OS_Event_t *Event) = 0;
 
 		virtual PlayerStatus_t GetEventRecord(PlayerPlayback_t Playback,
-						      PlayerStream_t Stream,
-						      PlayerEventMask_t Events,
-						      PlayerEventRecord_t *Record,
-						      bool NonBlocking = false) = 0;
+											  PlayerStream_t Stream,
+											  PlayerEventMask_t Events,
+											  PlayerEventRecord_t *Record,
+											  bool NonBlocking = false) = 0;
 
 		//
 		// Mechanisms for policy management
 		//
 
 		virtual PlayerStatus_t SetPolicy(PlayerPlayback_t Playback,
-						 PlayerStream_t Stream,
-						 PlayerPolicy_t Policy,
-						 unsigned char PolicyValue = PolicyValueApply) = 0;
+										 PlayerStream_t Stream,
+										 PlayerPolicy_t Policy,
+										 unsigned char PolicyValue = PolicyValueApply) = 0;
 
 		//
 		// Mechanisms for managing playbacks
 		//
 
 		virtual PlayerStatus_t CreatePlayback(OutputCoordinator_t OutputCoordinator,
-						      PlayerPlayback_t *Playback,
-						      bool SignalEvent = false,
-						      void *EventUserData = NULL) = 0;
+											  PlayerPlayback_t *Playback,
+											  bool SignalEvent = false,
+											  void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t TerminatePlayback(PlayerPlayback_t Playback,
-							 bool SignalEvent = false,
-							 void *EventUserData = NULL) = 0;
+												 bool SignalEvent = false,
+												 void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t AddStream(PlayerPlayback_t Playback,
-						 PlayerStream_t *Stream,
-						 PlayerStreamType_t StreamType,
-						 Collator_t Collator,
-						 FrameParser_t FrameParser,
-						 Codec_t Codec,
-						 OutputTimer_t OutputTimer,
-						 Manifestor_t Manifestor = NULL,
-						 bool SignalEvent = false,
-						 void *EventUserData = NULL) = 0;
+										 PlayerStream_t *Stream,
+										 PlayerStreamType_t StreamType,
+										 Collator_t Collator,
+										 FrameParser_t FrameParser,
+										 Codec_t Codec,
+										 OutputTimer_t OutputTimer,
+										 Manifestor_t Manifestor = NULL,
+										 bool SignalEvent = false,
+										 void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t RemoveStream(PlayerStream_t Stream,
-						    bool SignalEvent = false,
-						    void *EventUserData = NULL) = 0;
+											bool SignalEvent = false,
+											void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t SwitchStream(PlayerStream_t Stream,
-						    Collator_t Collator = NULL,
-						    FrameParser_t FrameParser = NULL,
-						    Codec_t Codec = NULL,
-						    OutputTimer_t OutputTimer = NULL,
-						    bool NonBlocking = false,
-						    bool SignalEvent = false,
-						    void *EventUserData = NULL) = 0;
+											Collator_t Collator = NULL,
+											FrameParser_t FrameParser = NULL,
+											Codec_t Codec = NULL,
+											OutputTimer_t OutputTimer = NULL,
+											bool NonBlocking = false,
+											bool SignalEvent = false,
+											void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t DrainStream(PlayerStream_t Stream,
-						   bool NonBlocking = false,
-						   bool SignalEvent = false,
-						   void *EventUserData = NULL) = 0;
+										   bool NonBlocking = false,
+										   bool SignalEvent = false,
+										   void *EventUserData = NULL) = 0;
 
 		virtual PlayerStatus_t CheckStreamDrained(PlayerStream_t Stream,
-							  void *EventUserData = NULL) = 0;
+												  void *EventUserData = NULL) = 0;
 
 		//
 		// Mechanisms for managing time
 		//
 
 		virtual PlayerStatus_t SetPlaybackSpeed(PlayerPlayback_t Playback,
-							Rational_t Speed,
-							PlayDirection_t Direction) = 0;
+												Rational_t Speed,
+												PlayDirection_t Direction) = 0;
 
 		virtual PlayerStatus_t SetPresentationInterval(PlayerPlayback_t Playback,
-							       PlayerStream_t Stream = PlayerAllStreams,
-							       unsigned long long IntervalStartNativeTime = INVALID_TIME,
-							       unsigned long long IntervalEndNativeTime = INVALID_TIME) = 0;
+													   PlayerStream_t Stream = PlayerAllStreams,
+													   unsigned long long IntervalStartNativeTime = INVALID_TIME,
+													   unsigned long long IntervalEndNativeTime = INVALID_TIME) = 0;
 
 		virtual PlayerStatus_t StreamStep(PlayerStream_t Stream) = 0;
 
 		virtual PlayerStatus_t SetNativePlaybackTime(PlayerPlayback_t Playback,
-							     unsigned long long NativeTime,
-							     unsigned long long SystemTime = INVALID_TIME) = 0;
+													 unsigned long long NativeTime,
+													 unsigned long long SystemTime = INVALID_TIME) = 0;
 
 		virtual PlayerStatus_t RetrieveNativePlaybackTime(PlayerPlayback_t Playback,
-								  unsigned long long *NativeTime) = 0;
+														  unsigned long long *NativeTime) = 0;
 
 		virtual PlayerStatus_t TranslateNativePlaybackTime(PlayerPlayback_t Playback,
-								   unsigned long long NativeTime,
-								   unsigned long long *SystemTime) = 0;
+														   unsigned long long NativeTime,
+														   unsigned long long *SystemTime) = 0;
 
 		virtual PlayerStatus_t RequestTimeNotification(PlayerStream_t Stream,
-							       unsigned long long NativeTime,
-							       void *EventUserData = NULL) = 0;
+													   unsigned long long NativeTime,
+													   void *EventUserData = NULL) = 0;
 
 		//
 		// Clock recovery support - for playbacks with system clock as master
 		//
 
 		virtual PlayerStatus_t ClockRecoveryInitialize(PlayerPlayback_t Playback,
-							       PlayerTimeFormat_t SourceTimeFormat = TimeFormatPts) = 0;
+													   PlayerTimeFormat_t SourceTimeFormat = TimeFormatPts) = 0;
 
 		virtual PlayerStatus_t ClockRecoveryDataPoint(PlayerPlayback_t Playback,
-							      unsigned long long SourceTime,
-							      unsigned long long LocalTime) = 0;
+													  unsigned long long SourceTime,
+													  unsigned long long LocalTime) = 0;
 
 		virtual PlayerStatus_t ClockRecoveryEstimate(PlayerPlayback_t Playback,
-							     unsigned long long *SourceTime,
-							     unsigned long long *LocalTime = NULL) = 0;
+													 unsigned long long *SourceTime,
+													 unsigned long long *LocalTime = NULL) = 0;
 
 		//
 		// Mechanisms for data insertion
@@ -237,15 +237,15 @@ class Player_c
 		virtual PlayerStatus_t GetInjectBuffer(Buffer_t *Buffer) = 0;
 
 		virtual PlayerStatus_t InjectData(PlayerPlayback_t Playback,
-						  Buffer_t Buffer) = 0;
+										  Buffer_t Buffer) = 0;
 
 		virtual PlayerStatus_t InputJump(PlayerPlayback_t Playback,
-						 PlayerStream_t Stream,
-						 bool SurplusDataInjected,
-						 bool ContinuousReverseJump = false) = 0;
+										 PlayerStream_t Stream,
+										 bool SurplusDataInjected,
+										 bool ContinuousReverseJump = false) = 0;
 
 		virtual PlayerStatus_t InputGlitch(PlayerPlayback_t Playback,
-						   PlayerStream_t Stream) = 0;
+										   PlayerStream_t Stream) = 0;
 
 		//
 		// Mechanisms or data extraction
@@ -264,11 +264,11 @@ class Player_c
 		//
 
 		virtual PlayerStatus_t SetModuleParameters(PlayerPlayback_t Playback,
-							   PlayerStream_t Stream,
-							   PlayerComponent_t Component,
-							   bool Immediately,
-							   unsigned int ParameterBlockSize,
-							   void *ParameterBlock) = 0;
+												   PlayerStream_t Stream,
+												   PlayerComponent_t Component,
+												   bool Immediately,
+												   unsigned int ParameterBlockSize,
+												   void *ParameterBlock) = 0;
 
 		//
 		// Support functions for the child classes
@@ -277,61 +277,61 @@ class Player_c
 		virtual PlayerStatus_t GetBufferManager(BufferManager_t *BufferManager) = 0;
 
 		virtual PlayerStatus_t GetClassList(PlayerStream_t Stream,
-						    Collator_t *Collator,
-						    FrameParser_t *FrameParser,
-						    Codec_t *Codec,
-						    OutputTimer_t *OutputTimer,
-						    Manifestor_t *Manifestor) = 0;
+											Collator_t *Collator,
+											FrameParser_t *FrameParser,
+											Codec_t *Codec,
+											OutputTimer_t *OutputTimer,
+											Manifestor_t *Manifestor) = 0;
 
 		virtual PlayerStatus_t GetCodedFrameBufferPool(PlayerStream_t Stream,
-							       BufferPool_t *Pool = NULL,
-							       unsigned int *MaximumCodedFrameSize = NULL) = 0;
+													   BufferPool_t *Pool = NULL,
+													   unsigned int *MaximumCodedFrameSize = NULL) = 0;
 
 		virtual PlayerStatus_t GetDecodeBufferPool(PlayerStream_t Stream,
-							   BufferPool_t *Pool) = 0;
+												   BufferPool_t *Pool) = 0;
 
 		virtual PlayerStatus_t GetPostProcessControlBufferPool(
 			PlayerStream_t Stream,
 			BufferPool_t *Pool) = 0;
 
 		virtual PlayerStatus_t CallInSequence(PlayerStream_t Stream,
-						      PlayerSequenceType_t SequenceType,
-						      PlayerSequenceValue_t SequenceValue,
-						      PlayerComponentFunction_t Fn,
-						      ...) = 0;
+											  PlayerSequenceType_t SequenceType,
+											  PlayerSequenceValue_t SequenceValue,
+											  PlayerComponentFunction_t Fn,
+											  ...) = 0;
 
 		virtual PlayerStatus_t GetPlaybackSpeed(PlayerPlayback_t Playback,
-							Rational_t *Speed,
-							PlayDirection_t *Direction) = 0;
+												Rational_t *Speed,
+												PlayDirection_t *Direction) = 0;
 
 		virtual PlayerStatus_t GetPresentationInterval(PlayerStream_t Stream,
-							       unsigned long long *IntervalStartNormalizedTime,
-							       unsigned long long *IntervalEndNormalizedTime) = 0;
+													   unsigned long long *IntervalStartNormalizedTime,
+													   unsigned long long *IntervalEndNormalizedTime) = 0;
 
 		virtual unsigned char PolicyValue(PlayerPlayback_t Playback,
-						  PlayerStream_t Stream,
-						  PlayerPolicy_t Policy) = 0;
+										  PlayerStream_t Stream,
+										  PlayerPolicy_t Policy) = 0;
 
 		virtual PlayerStatus_t SignalEvent(PlayerEventRecord_t *Record) = 0;
 
 		virtual PlayerStatus_t AttachDemultiplexor(PlayerStream_t Stream,
-							   Demultiplexor_t Demultiplexor,
-							   DemultiplexorContext_t Context) = 0;
+												   Demultiplexor_t Demultiplexor,
+												   DemultiplexorContext_t Context) = 0;
 
 		virtual PlayerStatus_t DetachDemultiplexor(PlayerStream_t Stream) = 0;
 
 		virtual PlayerStatus_t MarkStreamUnPlayable(PlayerStream_t Stream) = 0;
 
 		virtual PlayerStatus_t CheckForDemuxBufferMismatch(PlayerPlayback_t Playback,
-								   PlayerStream_t Stream) = 0;
+														   PlayerStream_t Stream) = 0;
 
 		virtual void RecordNonDecodedFrame(PlayerStream_t Stream,
-						   Buffer_t Buffer,
-						   ParsedFrameParameters_t *ParsedFrameParameters) = 0;
+										   Buffer_t Buffer,
+										   ParsedFrameParameters_t *ParsedFrameParameters) = 0;
 
 		virtual unsigned long long GetLastNativeTime(PlayerPlayback_t Playback) = 0;
 		virtual void SetLastNativeTime(PlayerPlayback_t Playback,
-					       unsigned long long Time) = 0;
+									   unsigned long long Time) = 0;
 };
 
 // ---------------------------------------------------------------------

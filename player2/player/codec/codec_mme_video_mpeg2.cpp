@@ -249,20 +249,20 @@ CodecStatus_t Codec_MmeVideoMpeg2_c::FillOutSetStreamParametersCommand(void)
 		Context->StreamParameters.chroma_format = (MPEG2_ChromaFormat_t)Parsed->SequenceExtensionHeader.chroma_format;
 	}
 	Context->StreamParameters.MatrixFlags = (Parsed->SequenceHeader.load_intra_quantizer_matrix ? MPEG2_LOAD_INTRA_QUANTIZER_MATRIX_FLAG : 0) |
-						(Parsed->SequenceHeader.load_non_intra_quantizer_matrix ? MPEG2_LOAD_NON_INTRA_QUANTIZER_MATRIX_FLAG : 0);
+											(Parsed->SequenceHeader.load_non_intra_quantizer_matrix ? MPEG2_LOAD_NON_INTRA_QUANTIZER_MATRIX_FLAG : 0);
 //
 	intra_quantizer_matrix = Parsed->CumulativeQuantMatrices.load_intra_quantizer_matrix ?
-				 Parsed->CumulativeQuantMatrices.intra_quantizer_matrix :
-				 DefaultIntraQuantizationMatrix;
+							 Parsed->CumulativeQuantMatrices.intra_quantizer_matrix :
+							 DefaultIntraQuantizationMatrix;
 	non_intra_quantizer_matrix = Parsed->CumulativeQuantMatrices.load_non_intra_quantizer_matrix ?
-				     Parsed->CumulativeQuantMatrices.non_intra_quantizer_matrix :
-				     DefaultNonIntraQuantizationMatrix;
+								 Parsed->CumulativeQuantMatrices.non_intra_quantizer_matrix :
+								 DefaultNonIntraQuantizationMatrix;
 	chroma_intra_quantizer_matrix = Parsed->CumulativeQuantMatrices.load_chroma_intra_quantizer_matrix ?
-					Parsed->CumulativeQuantMatrices.chroma_intra_quantizer_matrix :
-					intra_quantizer_matrix;
+									Parsed->CumulativeQuantMatrices.chroma_intra_quantizer_matrix :
+									intra_quantizer_matrix;
 	chroma_non_intra_quantizer_matrix = Parsed->CumulativeQuantMatrices.load_chroma_non_intra_quantizer_matrix ?
-					    Parsed->CumulativeQuantMatrices.chroma_non_intra_quantizer_matrix :
-					    non_intra_quantizer_matrix;
+										Parsed->CumulativeQuantMatrices.chroma_non_intra_quantizer_matrix :
+										non_intra_quantizer_matrix;
 	memcpy(Context->StreamParameters.intra_quantiser_matrix, intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	memcpy(Context->StreamParameters.non_intra_quantiser_matrix, non_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
 	memcpy(Context->StreamParameters.chroma_intra_quantiser_matrix, chroma_intra_quantizer_matrix, sizeof(QuantiserMatrix_t));
@@ -368,18 +368,18 @@ CodecStatus_t Codec_MmeVideoMpeg2_c::FillOutDecodeCommand(void)
 		Picture->intra_dc_precision = (MPEG2_IntraDCPrecision_t)Parsed->PictureCodingExtensionHeader.intra_dc_precision;
 		Picture->picture_structure = (MPEG2_PictureStructure_t)Parsed->PictureCodingExtensionHeader.picture_structure;
 		Picture->mpeg_decoding_flags = (Parsed->PictureCodingExtensionHeader.top_field_first << 0) |
-					       (Parsed->PictureCodingExtensionHeader.frame_pred_frame_dct << 1) |
-					       (Parsed->PictureCodingExtensionHeader.concealment_motion_vectors << 2) |
-					       (Parsed->PictureCodingExtensionHeader.q_scale_type << 3) |
-					       (Parsed->PictureCodingExtensionHeader.intra_vlc_format << 4) |
-					       (Parsed->PictureCodingExtensionHeader.alternate_scan << 5) |
-					       (Parsed->PictureCodingExtensionHeader.progressive_frame << 6);
+									   (Parsed->PictureCodingExtensionHeader.frame_pred_frame_dct << 1) |
+									   (Parsed->PictureCodingExtensionHeader.concealment_motion_vectors << 2) |
+									   (Parsed->PictureCodingExtensionHeader.q_scale_type << 3) |
+									   (Parsed->PictureCodingExtensionHeader.intra_vlc_format << 4) |
+									   (Parsed->PictureCodingExtensionHeader.alternate_scan << 5) |
+									   (Parsed->PictureCodingExtensionHeader.progressive_frame << 6);
 		if (Picture->picture_structure == MPEG2_TOP_FIELD_TYPE)
 			Param->AdditionalFlags = (BufferState[CurrentDecodeBufferIndex].ParsedVideoParameters->TopFieldFirst) ?
-						 MPEG2_ADDITIONAL_FLAG_FIRST_FIELD : MPEG2_ADDITIONAL_FLAG_SECOND_FIELD;
+									 MPEG2_ADDITIONAL_FLAG_FIRST_FIELD : MPEG2_ADDITIONAL_FLAG_SECOND_FIELD;
 		else if (Picture->picture_structure == MPEG2_BOTTOM_FIELD_TYPE)
 			Param->AdditionalFlags = (BufferState[CurrentDecodeBufferIndex].ParsedVideoParameters->TopFieldFirst) ?
-						 MPEG2_ADDITIONAL_FLAG_SECOND_FIELD : MPEG2_ADDITIONAL_FLAG_FIRST_FIELD;
+									 MPEG2_ADDITIONAL_FLAG_SECOND_FIELD : MPEG2_ADDITIONAL_FLAG_FIRST_FIELD;
 	}
 	else
 	{
@@ -390,7 +390,7 @@ CodecStatus_t Codec_MmeVideoMpeg2_c::FillOutDecodeCommand(void)
 		Picture->intra_dc_precision = MPEG2_INTRA_DC_PRECISION_8_BITS;
 		Picture->picture_structure = MPEG2_FRAME_TYPE;
 		Picture->mpeg_decoding_flags = MPEG_DECODING_FLAGS_TOP_FIELD_FIRST |
-					       MPEG_DECODING_FLAGS_PROGRESSIVE_FRAME;
+									   MPEG_DECODING_FLAGS_PROGRESSIVE_FRAME;
 	}
 	//
 	// Fill out the reference frame list stuff
@@ -459,17 +459,17 @@ CodecStatus_t Codec_MmeVideoMpeg2_c::DumpSetStreamParameters(void *Parameters)
 	report(severity_info, "AZA - chroma_format = %d\n", StreamParams->chroma_format);
 	report(severity_info, "AZA - MatrixFlags = %d\n", StreamParams->MatrixFlags);
 	report(severity_info, "AZA - intra_quantiser_matrix = %02x %02x %02x %02x %02x %02x %02x %02x\n",
-	       StreamParams->intra_quantiser_matrix[0], StreamParams->intra_quantiser_matrix[1], StreamParams->intra_quantiser_matrix[2], StreamParams->intra_quantiser_matrix[3],
-	       StreamParams->intra_quantiser_matrix[4], StreamParams->intra_quantiser_matrix[5], StreamParams->intra_quantiser_matrix[6], StreamParams->intra_quantiser_matrix[7]);
+		   StreamParams->intra_quantiser_matrix[0], StreamParams->intra_quantiser_matrix[1], StreamParams->intra_quantiser_matrix[2], StreamParams->intra_quantiser_matrix[3],
+		   StreamParams->intra_quantiser_matrix[4], StreamParams->intra_quantiser_matrix[5], StreamParams->intra_quantiser_matrix[6], StreamParams->intra_quantiser_matrix[7]);
 	report(severity_info, "AZA - non_intra_quantiser_matrix = %02x %02x %02x %02x %02x %02x %02x %02x\n",
-	       StreamParams->non_intra_quantiser_matrix[0], StreamParams->non_intra_quantiser_matrix[1], StreamParams->non_intra_quantiser_matrix[2], StreamParams->non_intra_quantiser_matrix[3],
-	       StreamParams->non_intra_quantiser_matrix[4], StreamParams->non_intra_quantiser_matrix[5], StreamParams->non_intra_quantiser_matrix[6], StreamParams->non_intra_quantiser_matrix[7]);
+		   StreamParams->non_intra_quantiser_matrix[0], StreamParams->non_intra_quantiser_matrix[1], StreamParams->non_intra_quantiser_matrix[2], StreamParams->non_intra_quantiser_matrix[3],
+		   StreamParams->non_intra_quantiser_matrix[4], StreamParams->non_intra_quantiser_matrix[5], StreamParams->non_intra_quantiser_matrix[6], StreamParams->non_intra_quantiser_matrix[7]);
 	report(severity_info, "AZA - chroma_intra_quantiser_matrix = %02x %02x %02x %02x %02x %02x %02x %02x\n",
-	       StreamParams->chroma_intra_quantiser_matrix[0], StreamParams->chroma_intra_quantiser_matrix[1], StreamParams->chroma_intra_quantiser_matrix[2], StreamParams->chroma_intra_quantiser_matrix[3],
-	       StreamParams->chroma_intra_quantiser_matrix[4], StreamParams->chroma_intra_quantiser_matrix[5], StreamParams->chroma_intra_quantiser_matrix[6], StreamParams->chroma_intra_quantiser_matrix[7]);
+		   StreamParams->chroma_intra_quantiser_matrix[0], StreamParams->chroma_intra_quantiser_matrix[1], StreamParams->chroma_intra_quantiser_matrix[2], StreamParams->chroma_intra_quantiser_matrix[3],
+		   StreamParams->chroma_intra_quantiser_matrix[4], StreamParams->chroma_intra_quantiser_matrix[5], StreamParams->chroma_intra_quantiser_matrix[6], StreamParams->chroma_intra_quantiser_matrix[7]);
 	report(severity_info, "AZA - chroma_non_intra_quantiser_matrix = %02x %02x %02x %02x %02x %02x %02x %02x\n",
-	       StreamParams->chroma_non_intra_quantiser_matrix[0], StreamParams->chroma_non_intra_quantiser_matrix[1], StreamParams->chroma_non_intra_quantiser_matrix[2], StreamParams->chroma_non_intra_quantiser_matrix[3],
-	       StreamParams->chroma_non_intra_quantiser_matrix[4], StreamParams->chroma_non_intra_quantiser_matrix[5], StreamParams->chroma_non_intra_quantiser_matrix[6], StreamParams->chroma_non_intra_quantiser_matrix[7]);
+		   StreamParams->chroma_non_intra_quantiser_matrix[0], StreamParams->chroma_non_intra_quantiser_matrix[1], StreamParams->chroma_non_intra_quantiser_matrix[2], StreamParams->chroma_non_intra_quantiser_matrix[3],
+		   StreamParams->chroma_non_intra_quantiser_matrix[4], StreamParams->chroma_non_intra_quantiser_matrix[5], StreamParams->chroma_non_intra_quantiser_matrix[6], StreamParams->chroma_non_intra_quantiser_matrix[7]);
 	return CodecNoError;
 }
 

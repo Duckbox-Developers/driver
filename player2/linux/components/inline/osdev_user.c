@@ -66,7 +66,7 @@ OSDEV_Status_t OSDEV_Stat(const char *Name)
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_Open(const char *Name,
-			  OSDEV_DeviceIdentifier_t *Handle)
+						  OSDEV_DeviceIdentifier_t *Handle)
 {
 	unsigned int i;
 	unsigned int Major;
@@ -128,9 +128,9 @@ OSDEV_Status_t OSDEV_Close(OSDEV_DeviceIdentifier_t Handle)
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_Read(OSDEV_DeviceIdentifier_t Handle,
-			  void *Buffer,
-			  unsigned int SizeToRead,
-			  unsigned int *SizeRead)
+						  void *Buffer,
+						  unsigned int SizeToRead,
+						  unsigned int *SizeRead)
 {
 	printk("Error-%s-\nOSDEV_Read - Read not a supported function\n", OS_ThreadName());
 	return OSDEV_Error;
@@ -139,9 +139,9 @@ OSDEV_Status_t OSDEV_Read(OSDEV_DeviceIdentifier_t Handle,
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_Write(OSDEV_DeviceIdentifier_t Handle,
-			   void *Buffer,
-			   unsigned int SizeToWrite,
-			   unsigned int *SizeWrote)
+						   void *Buffer,
+						   unsigned int SizeToWrite,
+						   unsigned int *SizeWrote)
 {
 	printk("Error-%s-\nOSDEV_Write - Write not a supported function\n", OS_ThreadName());
 	return OSDEV_Error;
@@ -150,9 +150,9 @@ OSDEV_Status_t OSDEV_Write(OSDEV_DeviceIdentifier_t Handle,
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_Ioctl(OSDEV_DeviceIdentifier_t Handle,
-			   unsigned int Command,
-			   void *Argument,
-			   unsigned int ArgumentSize)
+						   unsigned int Command,
+						   void *Argument,
+						   unsigned int ArgumentSize)
 {
 	OSDEV_Status_t Status;
 //
@@ -169,10 +169,10 @@ OSDEV_Status_t OSDEV_Ioctl(OSDEV_DeviceIdentifier_t Handle,
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_Map(OSDEV_DeviceIdentifier_t Handle,
-			 unsigned int Offset,
-			 unsigned int Length,
-			 void **MapAddress,
-			 unsigned int Flags)
+						 unsigned int Offset,
+						 unsigned int Length,
+						 void **MapAddress,
+						 unsigned int Flags)
 {
 	OSDEV_Status_t Status;
 //
@@ -199,8 +199,8 @@ OSDEV_Status_t OSDEV_Map(OSDEV_DeviceIdentifier_t Handle,
 // -----------------------------------------------------------------------------------------------
 
 OSDEV_Status_t OSDEV_UnMap(OSDEV_DeviceIdentifier_t Handle,
-			   void *MapAddress,
-			   unsigned int Length)
+						   void *MapAddress,
+						   unsigned int Length)
 {
 	return OSDEV_NoError;
 }

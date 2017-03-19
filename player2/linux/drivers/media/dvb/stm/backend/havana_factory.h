@@ -54,17 +54,17 @@ class HavanaFactory_c
 		HavanaFactory_c(void);
 		~HavanaFactory_c(void);
 		HavanaStatus_t Init(class HavanaFactory_c *FactoryList,
-				    const char *Id,
-				    const char *SubId,
-				    PlayerStreamType_t StreamType,
-				    PlayerComponent_t Component,
-				    unsigned int Version,
-				    void *(*NewFactory)(void));
+							const char *Id,
+							const char *SubId,
+							PlayerStreamType_t StreamType,
+							PlayerComponent_t Component,
+							unsigned int Version,
+							void *(*NewFactory)(void));
 		HavanaStatus_t ReLink(class HavanaFactory_c *FactoryList);
 		bool CanBuild(const char *Id,
-			      const char *SubId,
-			      PlayerStreamType_t StreamType,
-			      PlayerComponent_t Component);
+					  const char *SubId,
+					  PlayerStreamType_t StreamType,
+					  PlayerComponent_t Component);
 		HavanaStatus_t Build(void **Class);
 		class HavanaFactory_c *Next(void);
 		unsigned int Version(void);

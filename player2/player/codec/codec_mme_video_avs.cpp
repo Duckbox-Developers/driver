@@ -249,7 +249,7 @@ CodecStatus_t Codec_MmeVideoAvs_c::RegisterOutputBufferRing(Ring_t Ring)
 	unsigned int Size;
 	Size = ((DecodingWidth + 15) / 16) * ((DecodingHeight + 15) / 16) * 6 * sizeof(unsigned int);
 	Status = BufferManager->CreatePool(&AvsMbStructPool, AvsMbStructType, DecodeBufferCount, Size,
-					   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+									   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		CODEC_ERROR("Failed to create macroblock structure pool.\n");

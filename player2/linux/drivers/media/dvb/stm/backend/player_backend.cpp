@@ -64,8 +64,8 @@ int BackendDelete(void)
 
 //{{{ DemuxInjectData
 int DemuxInjectData(demux_handle_t Demux,
-		    const unsigned char *Data,
-		    unsigned int DataLength)
+					const unsigned char *Data,
+					unsigned int DataLength)
 {
 	class HavanaDemux_c *HavanaDemux = (class HavanaDemux_c *)Demux;
 	HavanaDemux->InjectData(Data, DataLength);
@@ -99,8 +99,8 @@ int PlaybackDelete(playback_handle_t Playback)
 //}}}
 //{{{ PlaybackAddDemux
 int PlaybackAddDemux(playback_handle_t Playback,
-		     int DemuxId,
-		     demux_handle_t *Demux)
+					 int DemuxId,
+					 demux_handle_t *Demux)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	class HavanaDemux_c *HavanaDemux = NULL;
@@ -117,7 +117,7 @@ int PlaybackAddDemux(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackRemoveDemux
 int PlaybackRemoveDemux(playback_handle_t Playback,
-			demux_handle_t Demux)
+						demux_handle_t Demux)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	class HavanaDemux_c *HavanaDemux = (class HavanaDemux_c *)Demux;
@@ -131,11 +131,11 @@ int PlaybackRemoveDemux(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackAddStream
 int PlaybackAddStream(playback_handle_t Playback,
-		      char *Media,
-		      char *Format,
-		      char *Encoding,
-		      unsigned int SurfaceId,
-		      stream_handle_t *Stream)
+					  char *Media,
+					  char *Format,
+					  char *Encoding,
+					  unsigned int SurfaceId,
+					  stream_handle_t *Stream)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	class HavanaStream_c *HavanaStream = NULL;
@@ -154,7 +154,7 @@ int PlaybackAddStream(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackRemoveStream
 int PlaybackRemoveStream(playback_handle_t Playback,
-			 stream_handle_t Stream)
+						 stream_handle_t Stream)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
@@ -168,7 +168,7 @@ int PlaybackRemoveStream(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackSetSpeed
 int PlaybackSetSpeed(playback_handle_t Playback,
-		     int Speed)
+					 int Speed)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 //	PLAYER_DEBUG("\n");
@@ -181,7 +181,7 @@ int PlaybackSetSpeed(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackGetSpeed
 int PlaybackGetSpeed(playback_handle_t Playback,
-		     int *PlaySpeed)
+					 int *PlaySpeed)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 //	PLAYER_DEBUG("\n");
@@ -195,8 +195,8 @@ int PlaybackGetSpeed(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackSetNativePlaybackTime
 int PlaybackSetNativePlaybackTime(playback_handle_t Playback,
-				  unsigned long long NativeTime,
-				  unsigned long long SystemTime)
+								  unsigned long long NativeTime,
+								  unsigned long long SystemTime)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	//PLAYER_DEBUG("\n");
@@ -212,8 +212,8 @@ int PlaybackSetNativePlaybackTime(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackSetOption
 int PlaybackSetOption(playback_handle_t Playback,
-		      play_option_t Option,
-		      unsigned int Value)
+					  play_option_t Option,
+					  unsigned int Value)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 //	PLAYER_DEBUG("\n");
@@ -226,7 +226,7 @@ int PlaybackSetOption(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackGetPlayerEnvironment
 int PlaybackGetPlayerEnvironment(playback_handle_t Playback,
-				 playback_handle_t *playerplayback)
+								 playback_handle_t *playerplayback)
 {
 	PlayerPlayback_t player_playback = NULL;
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
@@ -241,7 +241,7 @@ int PlaybackGetPlayerEnvironment(playback_handle_t Playback,
 //}}}
 //{{{ PlaybackSetClockdataPoint
 int PlaybackSetClockDataPoint(playback_handle_t Playback,
-			      clock_data_point_t *DataPoint)
+							  clock_data_point_t *DataPoint)
 {
 	class HavanaPlayback_c *HavanaPlayback = (class HavanaPlayback_c *)Playback;
 	PLAYER_DEBUG("\n");
@@ -258,8 +258,8 @@ int PlaybackSetClockDataPoint(playback_handle_t Playback,
 
 //{{{ StreamInjectData
 int StreamInjectData(stream_handle_t Stream,
-		     const unsigned char *Data,
-		     unsigned int DataLength)
+					 const unsigned char *Data,
+					 unsigned int DataLength)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -271,10 +271,10 @@ int StreamInjectData(stream_handle_t Stream,
 //}}}
 //{{{ StreamInjectDataPacket
 int StreamInjectDataPacket(stream_handle_t Stream,
-			   const unsigned char *Data,
-			   unsigned int DataLength,
-			   bool PresentationTimeValid,
-			   unsigned long long PresentationTime)
+						   const unsigned char *Data,
+						   unsigned int DataLength,
+						   bool PresentationTimeValid,
+						   unsigned long long PresentationTime)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -286,7 +286,7 @@ int StreamInjectDataPacket(stream_handle_t Stream,
 //}}}
 //{{{ StreamDiscontinuity
 int StreamDiscontinuity(stream_handle_t Stream,
-			discontinuity_t Discontinuity)
+						discontinuity_t Discontinuity)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -294,15 +294,15 @@ int StreamDiscontinuity(stream_handle_t Stream,
 		return -EINVAL;
 	//PLAYER_DEBUG("%x %x %x\n", Discontinuity, Discontinuity & DISCONTINUITY_CONTINUOUS_REVERSE, Discontinuity & DISCONTINUITY_SURPLUS_DATA);
 	if (HavanaStream->Discontinuity((Discontinuity & DISCONTINUITY_CONTINUOUS_REVERSE) != 0,
-					(Discontinuity & DISCONTINUITY_SURPLUS_DATA) != 0) != HavanaNoError)
+									(Discontinuity & DISCONTINUITY_SURPLUS_DATA) != 0) != HavanaNoError)
 		return -EINVAL;
 	return 0;
 }
 //}}}
 //{{{ StreamDrain
 int StreamDrain(stream_handle_t Stream,
-		unsigned int Discard,
-		unsigned int NonBlock)
+				unsigned int Discard,
+				unsigned int NonBlock)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -321,7 +321,7 @@ int StreamCheckDrained(stream_handle_t Stream)
 //}}}
 //{{{ StreamEnable
 int StreamEnable(stream_handle_t Stream,
-		 unsigned int Enable)
+				 unsigned int Enable)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -334,8 +334,8 @@ int StreamEnable(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetId
 int StreamSetId(stream_handle_t Stream,
-		unsigned int DemuxId,
-		unsigned int Id)
+				unsigned int DemuxId,
+				unsigned int Id)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -348,7 +348,7 @@ int StreamSetId(stream_handle_t Stream,
 //}}}
 //{{{ StreamChannelSelect
 int StreamChannelSelect(stream_handle_t Stream,
-			channel_select_t Channel)
+						channel_select_t Channel)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -362,8 +362,8 @@ int StreamChannelSelect(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetOption
 int StreamSetOption(stream_handle_t Stream,
-		    play_option_t Option,
-		    unsigned int Value)
+					play_option_t Option,
+					unsigned int Value)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -376,8 +376,8 @@ int StreamSetOption(stream_handle_t Stream,
 //}}}
 //{{{ StreamGetOption
 int StreamGetOption(stream_handle_t Stream,
-		    play_option_t Option,
-		    unsigned int *Value)
+					play_option_t Option,
+					unsigned int *Value)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -402,8 +402,8 @@ int StreamStep(stream_handle_t Stream)
 //}}}
 //{{{ StreamSwitch
 int StreamSwitch(stream_handle_t Stream,
-		 char *Format,
-		 char *Encoding)
+				 char *Format,
+				 char *Encoding)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -416,7 +416,7 @@ int StreamSwitch(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetAlarm
 int StreamSetAlarm(stream_handle_t Stream,
-		   unsigned long long Pts)
+				   unsigned long long Pts)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 	PLAYER_DEBUG("\n");
@@ -427,7 +427,7 @@ int StreamSetAlarm(stream_handle_t Stream,
 //}}}
 //{{{ StreamGetPlayInfo
 int StreamGetPlayInfo(stream_handle_t Stream,
-		      struct play_info_s *PlayInfo)
+					  struct play_info_s *PlayInfo)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -440,13 +440,13 @@ int StreamGetPlayInfo(stream_handle_t Stream,
 //}}}
 //{{{ StreamGetDecodeBuffer
 int StreamGetDecodeBuffer(stream_handle_t Stream,
-			  buffer_handle_t *Buffer,
-			  unsigned char **Data,
-			  unsigned int Format,
-			  unsigned int DimensionCount,
-			  unsigned int Dimensions[],
-			  unsigned int *Index,
-			  unsigned int *Stride)
+						  buffer_handle_t *Buffer,
+						  unsigned char **Data,
+						  unsigned int Format,
+						  unsigned int DimensionCount,
+						  unsigned int Dimensions[],
+						  unsigned int *Index,
+						  unsigned int *Stride)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -459,7 +459,7 @@ int StreamGetDecodeBuffer(stream_handle_t Stream,
 //}}}
 //{{{ StreamReturnDecodeBuffer
 int StreamReturnDecodeBuffer(stream_handle_t Stream,
-			     buffer_handle_t *Buffer)
+							 buffer_handle_t *Buffer)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -472,8 +472,8 @@ int StreamReturnDecodeBuffer(stream_handle_t Stream,
 //}}}
 //{{{ StreamGetDecodeBufferPoolStatus
 int StreamGetDecodeBufferPoolStatus(stream_handle_t Stream,
-				    unsigned int *BuffersInPool,
-				    unsigned int *BuffersWithNonZeroReferenceCount)
+									unsigned int *BuffersInPool,
+									unsigned int *BuffersWithNonZeroReferenceCount)
 
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
@@ -487,10 +487,10 @@ int StreamGetDecodeBufferPoolStatus(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetOutputWindow
 int StreamSetOutputWindow(stream_handle_t Stream,
-			  unsigned int X,
-			  unsigned int Y,
-			  unsigned int Width,
-			  unsigned int Height)
+						  unsigned int X,
+						  unsigned int Y,
+						  unsigned int Width,
+						  unsigned int Height)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -503,8 +503,8 @@ int StreamSetOutputWindow(stream_handle_t Stream,
 //}}}
 //{{{ StreamRegisterEventSignalCallback
 stream_event_signal_callback StreamRegisterEventSignalCallback(stream_handle_t Stream,
-							       context_handle_t Context,
-							       stream_event_signal_callback Callback)
+															   context_handle_t Context,
+															   stream_event_signal_callback Callback)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -515,10 +515,10 @@ stream_event_signal_callback StreamRegisterEventSignalCallback(stream_handle_t S
 //}}}
 //{{{ StreamGetOutputWindow
 int StreamGetOutputWindow(stream_handle_t Stream,
-			  unsigned int *X,
-			  unsigned int *Y,
-			  unsigned int *Width,
-			  unsigned int *Height)
+						  unsigned int *X,
+						  unsigned int *Y,
+						  unsigned int *Width,
+						  unsigned int *Height)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -531,10 +531,10 @@ int StreamGetOutputWindow(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetInputWindow
 int StreamSetInputWindow(stream_handle_t Stream,
-			 unsigned int X,
-			 unsigned int Y,
-			 unsigned int Width,
-			 unsigned int Height)
+						 unsigned int X,
+						 unsigned int Y,
+						 unsigned int Width,
+						 unsigned int Height)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -547,7 +547,7 @@ int StreamSetInputWindow(stream_handle_t Stream,
 //}}}
 //{{{ StreamSetPlayInterval
 int StreamSetPlayInterval(stream_handle_t Stream,
-			  play_interval_t *PlayInterval)
+						  play_interval_t *PlayInterval)
 {
 	class HavanaStream_c *HavanaStream = (class HavanaStream_c *)Stream;
 //	PLAYER_DEBUG("\n");
@@ -560,8 +560,8 @@ int StreamSetPlayInterval(stream_handle_t Stream,
 //}}}
 //{{{ StreamGetPlayerEnvironment
 int StreamGetPlayerEnvironment(stream_handle_t Stream,
-			       playback_handle_t *playerplayback,
-			       stream_handle_t *playerstream)
+							   playback_handle_t *playerplayback,
+							   stream_handle_t *playerstream)
 {
 	PlayerPlayback_t player_playback = NULL;
 	PlayerStream_t player_stream = NULL;
@@ -595,7 +595,7 @@ int MixerGetInstance(int StreamId, component_handle_t *Classoid)
 			return -EINVAL;
 	}
 	Status = HavanaPlayer->CallFactory(BACKEND_AUDIO_ID, BackendId,
-					   StreamTypeAudio, ComponentExternal, Classoid);
+									   StreamTypeAudio, ComponentExternal, Classoid);
 	if (Status == HavanaNoMemory)
 		return -ENOMEM;
 	else if (Status != HavanaNoError)
@@ -639,7 +639,7 @@ int MixerFreeSubStream(component_handle_t Component, int SubStreamId)
 //}}}
 //{{{ MixerSetupSubStream
 int MixerSetupSubStream(component_handle_t Component, int SubStreamId,
-			struct alsa_substream_descriptor *Descriptor)
+						struct alsa_substream_descriptor *Descriptor)
 {
 	Mixer_Mme_c *Mixer = (Mixer_Mme_c *) Component;
 	PlayerStatus_t Status;
@@ -685,7 +685,7 @@ int MixerStopSubStream(component_handle_t Component, int SubStreamId)
 
 //{{{ DisplayCreate
 int DisplayCreate(char *Media,
-		  unsigned int SurfaceId)
+				  unsigned int SurfaceId)
 {
 	class HavanaDisplay_c *Display;
 	PLAYER_DEBUG("SurfaceId = %d\n", SurfaceId);
@@ -697,7 +697,7 @@ int DisplayCreate(char *Media,
 #ifdef __TDT__
 //{{{ DisplayCreate
 int isDisplayCreated(char *Media,
-		     unsigned int SurfaceId)
+					 unsigned int SurfaceId)
 {
 	PLAYER_DEBUG("SurfaceId = %d\n", SurfaceId);
 	return (HavanaPlayer->isDisplayCreated(Media, SurfaceId));
@@ -706,7 +706,7 @@ int isDisplayCreated(char *Media,
 #endif
 //{{{ DisplayDelete
 int DisplayDelete(char *Media,
-		  unsigned int SurfaceId)
+				  unsigned int SurfaceId)
 {
 	PLAYER_DEBUG("SurfaceId = %d\n", SurfaceId);
 	if (HavanaPlayer->DeleteDisplay(Media, SurfaceId) != HavanaNoError)
@@ -717,7 +717,7 @@ int DisplayDelete(char *Media,
 
 //{{{ DisplaySynchronize
 int DisplaySynchronize(char *Media,
-		       unsigned int SurfaceId)
+					   unsigned int SurfaceId)
 {
 	if (HavanaPlayer->SynchronizeDisplay(Media, SurfaceId) != HavanaNoError)
 		return -EINVAL;
@@ -727,8 +727,8 @@ int DisplaySynchronize(char *Media,
 
 //{{{ ComponentGetAttribute
 int ComponentGetAttribute(player_component_handle_t Component,
-			  const char *Attribute,
-			  union attribute_descriptor_u *Value)
+						  const char *Attribute,
+						  union attribute_descriptor_u *Value)
 {
 	BaseComponentClass_c *PlayerComponent = (BaseComponentClass_c *)Component;
 	PlayerStatus_t Status;
@@ -760,8 +760,8 @@ int ComponentGetAttribute(player_component_handle_t Component,
 //}}}
 //{{{ ComponentSetAttribute
 int ComponentSetAttribute(player_component_handle_t Component,
-			  const char *Attribute,
-			  union attribute_descriptor_u *Value)
+						  const char *Attribute,
+						  union attribute_descriptor_u *Value)
 {
 	BaseComponentClass_c *PlayerComponent = (BaseComponentClass_c *)Component;
 	PlayerStatus_t Status;
@@ -775,8 +775,8 @@ int ComponentSetAttribute(player_component_handle_t Component,
 //{{{ COMMENT ComponentSetModuleParameters
 #if 0
 int ComponentSetModuleParameters(player_component_handle_t Component,
-				 void *Data,
-				 unsigned int Size)
+								 void *Data,
+								 unsigned int Size)
 {
 	BaseComponentClass_c *Component = (BaseComponentClass_c *)Component;
 	PlayerStatus_t Status;
@@ -807,7 +807,7 @@ player_event_signal_callback PlayerRegisterEventSignalCallback(player_event_sign
 // operator new
 ////////////////////////////////////////////////////////////////////////////
 
-void *operator new(unsigned int size)
+void *operator new (unsigned int size)
 {
 #if 0
 	void *Addr = __builtin_new(size);
@@ -822,7 +822,7 @@ void *operator new(unsigned int size)
 // operator delete
 ////////////////////////////////////////////////////////////////////////////
 
-void operator delete(void *mem)
+void operator delete (void *mem)
 {
 #if 0
 	HAVANA_DEBUG("Deleting (%p)\n", mem);

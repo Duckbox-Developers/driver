@@ -62,7 +62,7 @@ PlayerStatus_t Player_Generic_c::GetInjectBuffer(Buffer_t *Buffer)
 //
 
 PlayerStatus_t Player_Generic_c::InjectData(PlayerPlayback_t Playback,
-					    Buffer_t Buffer)
+											Buffer_t Buffer)
 {
 	unsigned int i;
 	unsigned int Length;
@@ -137,9 +137,9 @@ PlayerStatus_t Player_Generic_c::InjectData(PlayerPlayback_t Playback,
 //
 
 PlayerStatus_t Player_Generic_c::InputJump(PlayerPlayback_t Playback,
-					   PlayerStream_t Stream,
-					   bool SurplusDataInjected,
-					   bool ContinuousReverseJump)
+										   PlayerStream_t Stream,
+										   bool SurplusDataInjected,
+										   bool ContinuousReverseJump)
 {
 	PlayerStatus_t Status;
 	PlayerStatus_t CurrentStatus;
@@ -193,7 +193,7 @@ PlayerStatus_t Player_Generic_c::InputJump(PlayerPlayback_t Playback,
 //
 
 PlayerStatus_t Player_Generic_c::InputGlitch(PlayerPlayback_t Playback,
-					     PlayerStream_t Stream)
+											 PlayerStream_t Stream)
 {
 	PlayerStatus_t Status;
 	PlayerStatus_t CurrentStatus;
@@ -280,14 +280,14 @@ PlayerStatus_t Player_Generic_c::CheckForDemuxBufferMismatch(
 		if (Stream != OtherStream)
 		{
 			OtherStream->CodedFrameBufferPool->GetPoolUsage(&CodedFrameBufferCount,
-									&CodedFrameBuffersInUse,
-									&MemoryInPool,
-									&MemoryAllocated, NULL);
+															&CodedFrameBuffersInUse,
+															&MemoryInPool,
+															&MemoryAllocated, NULL);
 			if (((CodedFrameBuffersInUse * 10) >= (CodedFrameBufferCount * 9)) ||
 					((MemoryAllocated * 10) >= (MemoryInPool * 9)))
 			{
 				report(severity_info, "\t\tStream(%s) appears to have filled all it's input buffers,\n\t\tprobable inappropriate buffer sizing for the multiplexed stream.\n",
-				       ToString(OtherStream->StreamType));
+					   ToString(OtherStream->StreamType));
 				break;
 			}
 		}

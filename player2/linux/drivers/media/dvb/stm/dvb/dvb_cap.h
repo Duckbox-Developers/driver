@@ -39,7 +39,7 @@ typedef struct cap_v4l_shared_handle_s
 } cap_v4l2_shared_handle_t;
 
 int cap_set_external_time_mapping(cap_v4l2_shared_handle_t *shared_context, struct StreamContext_s *stream,
-				  unsigned long long nativetime, unsigned long long systemtime);
+								  unsigned long long nativetime, unsigned long long systemtime);
 void cap_invalidate_external_time_mapping(cap_v4l2_shared_handle_t *shared_context);
 
 void cap_set_vsync_offset(cap_v4l2_shared_handle_t *shared_context, long long vsync_offset);

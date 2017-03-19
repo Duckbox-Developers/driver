@@ -180,7 +180,7 @@ CodecStatus_t Codec_MmeVideoDivxHd_c::RegisterOutputBufferRing(Ring_t Ring)
 	unsigned int Size;
 	Size = (1280 >> 4) * (736 >> 4) * 32; // Allocate the maximum for now. FIX ME & save space on smaller streams.
 	Status = BufferManager->CreatePool(&DivxMbStructPool, DivxMbStructType, DecodeBufferCount, Size,
-					   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+									   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "<Blah Blah> - Failed to create macroblock structure pool.\n");
@@ -232,8 +232,8 @@ CodecStatus_t Codec_MmeVideoDivxHd_c::FillOutTransformerInitializationParameters
 }
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	// report(severity_error,"%s :: %d\n",__FUNCTION__,__LINE__);
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;

@@ -84,8 +84,8 @@ static unsigned int PictureNo = 0;
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t *CallbackData, void *UserData);
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -203,8 +203,8 @@ CodecStatus_t Codec_MmeVideoRmv_c::RegisterOutputBufferRing(Ring_t Ring)
 	}
 	// Now create the pool
 	Status = BufferManager->CreatePool(&SegmentListPool, SegmentListType,
-					   Configuration.DecodeContextCount, (sizeof(RV89Dec_Segment_Info)) * RMV_MAX_SEGMENTS,
-					   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+									   Configuration.DecodeContextCount, (sizeof(RV89Dec_Segment_Info)) * RMV_MAX_SEGMENTS,
+									   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 	if (Status != BufferNoError)
 	{
 		CODEC_ERROR("Failed to create segment list pool.\n");
@@ -269,7 +269,7 @@ CodecStatus_t Codec_MmeVideoRmv_c::SendMMEStreamParameters(void)
 		MMEInitializationParameters.CallbackUserData = this;
 		FillOutTransformerInitializationParameters();
 		MMEStatus = MME_InitTransformer(Configuration.TransformName[SelectedTransformer],
-						&MMEInitializationParameters, &MMEHandle);
+										&MMEInitializationParameters, &MMEHandle);
 		if (MMEStatus == MME_SUCCESS)
 		{
 			CODEC_DEBUG("New Stream Params %dx%d\n", InitializationParameters.MaxWidth, InitializationParameters.MaxHeight);
@@ -316,7 +316,7 @@ CodecStatus_t Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 		IsRV8 = 0;
 	}
 	else if ((SequenceHeader->BitstreamVersion == RV8_BITSTREAM_VERSION) &&
-			(SequenceHeader->BitstreamMinorVersion == RV8_BITSTREAM_MINOR_VERSION))
+			 (SequenceHeader->BitstreamMinorVersion == RV8_BITSTREAM_MINOR_VERSION))
 	{
 		FormatId = RV89DEC_FID_REALVIDEO30;
 		IsRV8 = 1;
@@ -330,7 +330,7 @@ CodecStatus_t Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 	else
 	{
 		CODEC_ERROR("Invalid Bitstream versions (%d, %d)\n",
-			    SequenceHeader->BitstreamVersion, SequenceHeader->BitstreamMinorVersion);
+					SequenceHeader->BitstreamVersion, SequenceHeader->BitstreamMinorVersion);
 		return CodecError;
 	}
 	NumRPRSizes = IsRV8 ? SequenceHeader->NumRPRSizes : 0;
@@ -400,7 +400,7 @@ CodecStatus_t Codec_MmeVideoRmv_c::FillOutSetStreamParametersCommand(void)
 #endif
 		// Get the segment list buffer
 		Status = SegmentListPool->GetBuffer(&SegmentInfoBuffer,
-						    (sizeof(RV89Dec_Segment_Info)) * (SegmentList->NumSegments + 1));
+											(sizeof(RV89Dec_Segment_Info)) * (SegmentList->NumSegments + 1));
 		if (Status != BufferNoError)
 		{
 			CODEC_ERROR("Failed to get segment info buffer.\n");

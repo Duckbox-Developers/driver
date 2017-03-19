@@ -100,7 +100,7 @@ struct stfe *stfe_create(void *private_data, void *start_feed, void *stop_feed)
 	if ((result = dvb_dmx_init(&stfe->dvb_demux)) < 0)
 	{
 		printk("stfe_init: dvb_dmx_init failed (errno = %d)\n",
-		       result);
+			   result);
 		goto err;
 	}
 	stfe->dmxdev.filternum = stfe->dvb_demux.filternum;
@@ -109,7 +109,7 @@ struct stfe *stfe_create(void *private_data, void *start_feed, void *stop_feed)
 	if ((result = dvb_dmxdev_init(&stfe->dmxdev, &stfe->adapter)) < 0)
 	{
 		printk("stfe_init: dvb_dmxdev_init failed (errno = %d)\n",
-		       result);
+			   result);
 		dvb_dmx_release(&stfe->dvb_demux);
 		goto err;
 	}

@@ -884,10 +884,10 @@ FrameParserStatus_t FrameParser_VideoAvs_c::CommitFrameForDecode(void)
 	if (!Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField))
 	{
 		FRAME_ERROR("%s - Illegal combination (%c %c %c %c).\n", __FUNCTION__,
-			    (ProgressiveSequence ? 'T' : 'F'),
-			    (Frame ? 'T' : 'F'),
-			    (RepeatFirstField ? 'T' : 'F'),
-			    (TopFieldFirst ? 'T' : 'F'));
+					(ProgressiveSequence ? 'T' : 'F'),
+					(Frame ? 'T' : 'F'),
+					(RepeatFirstField ? 'T' : 'F'),
+					(TopFieldFirst ? 'T' : 'F'));
 		return FrameParserHeaderSyntaxError;
 	}
 #if 0
@@ -983,10 +983,10 @@ FrameParserStatus_t FrameParser_VideoAvs_c::CommitFrameForDecode(void)
 	ParsedVideoParameters->DisplayCount[1] = DisplayCount1(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField);
 #if 0
 	report(severity_info, "%s:%d (%d, %d, %d, %d) - CountsIndex %d Legal %d PanScanCount %d \n", __FUNCTION__, __LINE__,
-	       ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField,
-	       CountsIndex(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
-	       Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
-	       PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField));
+		   ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField,
+		   CountsIndex(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
+		   Legal(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField),
+		   PanScanCount(ProgressiveSequence, Frame, TopFieldFirst, RepeatFirstField));
 	report(severity_info, "%s:%d - DisplayCount0 %d DisplayCount1 %d\n", __FUNCTION__, __LINE__, ParsedVideoParameters->DisplayCount[0], ParsedVideoParameters->DisplayCount[1]);
 #endif
 	ParsedVideoParameters->PanScan.Count = PanAndScanCount;
@@ -1117,7 +1117,7 @@ FrameParserStatus_t FrameParser_VideoAvs_c::ForPlayUpdateReferenceFrameList(void
 	if (ParsedFrameParameters->ReferenceFrame)
 	{
 		LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-			    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+					!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 		if (LastField)
 		{
 			if (ReferenceFrameList.EntryCount >= MAX_REFERENCE_FRAMES_FOR_FORWARD_DECODE)
@@ -1277,7 +1277,7 @@ FrameParserStatus_t FrameParser_VideoAvs_c::RevPlayRemoveReferenceFrameFromList(
 {
 	bool LastField;
 	LastField = (ParsedVideoParameters->PictureStructure == StructureFrame) ||
-		    !ParsedFrameParameters->FirstParsedParametersForOutputFrame;
+				!ParsedFrameParameters->FirstParsedParametersForOutputFrame;
 	if ((ReferenceFrameList.EntryCount != 0) && LastField)
 	{
 		Player->CallInSequence(Stream, SequenceTypeImmediate, TIME_NOT_APPLICABLE, CodecFnReleaseReferenceFrame, ParsedFrameParameters->DecodeFrameIndex);

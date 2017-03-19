@@ -159,7 +159,7 @@ class Codec_MmeAudioStream_c : public Codec_MmeAudio_c
 		CodecStatus_t RegisterOutputBufferRing(Ring_t Ring);
 
 		void CallbackFromMME(MME_Event_t Event,
-				     MME_Command_t *Command);
+							 MME_Command_t *Command);
 		CodecStatus_t SendMMEDecodeCommand(void);
 
 		CodecStatus_t Input(Buffer_t CodedBuffer);

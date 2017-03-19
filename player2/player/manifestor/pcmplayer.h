@@ -47,7 +47,7 @@ Date Modification Name
 
 /* Output debug information (which may be on the critical path) but is usually turned off */
 #define PCMPLAYER_DEBUG(fmt, args...) ((void)(ENABLE_PCMPLAYER_DEBUG && \
-					      (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args), 0)))
+											  (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args), 0)))
 
 /* Output trace information off the critical path */
 #define PCMPLAYER_TRACE(fmt, args...) (report(severity_note, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args))
@@ -55,7 +55,7 @@ Date Modification Name
 #define PCMPLAYER_ERROR(fmt, args...) (report(severity_error, "%s%s: " fmt, PCMPLAYER_TAG, PCMPLAYER_FUNCTION, ##args))
 
 #define PCMPLAYER_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
-							       PCMPLAYER_FUNCTION, #x, __FILE__, __LINE__); while(0)
+													   PCMPLAYER_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
 ////////////////////////////////////////////////////////////////////////////
 ///

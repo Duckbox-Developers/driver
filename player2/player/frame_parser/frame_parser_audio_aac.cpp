@@ -134,10 +134,10 @@ const char *FrameTypeName[] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-							     AacAudioParsedFrameHeader_t *ParsedFrameHeader,
-							     int AvailableBytes,
-							     AacFrameParsingPurpose_t Action,
-							     bool EnableHeaderUnplayableErrors)
+															 AacAudioParsedFrameHeader_t *ParsedFrameHeader,
+															 int AvailableBytes,
+															 AacFrameParsingPurpose_t Action,
+															 bool EnableHeaderUnplayableErrors)
 {
 	unsigned int SamplingFrequency = 0;
 	unsigned int SampleCount = 0;
@@ -156,10 +156,10 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader(unsigned char *Fram
 			return FrameParserError;
 		}
 		if (FrameParserNoError != FrameParser_AudioAac_c::ParseAudioMuxElementConfig(&Bits,
-											     &SamplingFrequency,
-											     &SampleCount,
-											     AvailableBytes - AAC_LOAS_ASS_SYNC_LENGTH_HEADER_SIZE,
-											     Action))
+																					 &SamplingFrequency,
+																					 &SampleCount,
+																					 AvailableBytes - AAC_LOAS_ASS_SYNC_LENGTH_HEADER_SIZE,
+																					 Action))
 		{
 			return FrameParserError;
 		}
@@ -247,10 +247,10 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader(unsigned char *Fram
 					AvailableBytes -= 1;
 				}
 				if (FrameParserNoError != FrameParser_AudioAac_c::ParseAudioMuxElementConfig(&Bits,
-													     &SamplingFrequency,
-													     &SampleCount,
-													     AvailableBytes,
-													     Action))
+																							 &SamplingFrequency,
+																							 &SampleCount,
+																							 AvailableBytes,
+																							 Action))
 				{
 					return FrameParserError;
 				}
@@ -280,10 +280,10 @@ FrameParserStatus_t FrameParser_AudioAac_c::ParseFrameHeader(unsigned char *Fram
 }
 
 FrameParserStatus_t FrameParser_AudioAac_c::ParseAudioMuxElementConfig(BitStreamClass_c *Bits,
-								       unsigned int *SamplingFrequency,
-								       unsigned int *SampleCount,
-								       int AvailableBytes,
-								       AacFrameParsingPurpose_t Action)
+																	   unsigned int *SamplingFrequency,
+																	   unsigned int *SampleCount,
+																	   int AvailableBytes,
+																	   AacFrameParsingPurpose_t Action)
 {
 	// do as if a sbr extension is always present (searching for the sbr flag requires parsing efforts...)
 	bool ImplicitSbrExtension = true;
@@ -486,10 +486,10 @@ FrameParserStatus_t FrameParser_AudioAac_c::ReadHeaders(void)
 	{
 		isFirstFrame = false;
 		FRAME_TRACE("AAC Frame type: %s, FrameSize %d, Number of samples: %d, SamplingFrequency %d, \n",
-			    FrameTypeName[ParsedFrameHeader.Type],
-			    ParsedFrameHeader.Length,
-			    ParsedFrameHeader.NumberOfSamples,
-			    ParsedFrameHeader.SamplingFrequency);
+					FrameTypeName[ParsedFrameHeader.Type],
+					ParsedFrameHeader.Length,
+					ParsedFrameHeader.NumberOfSamples,
+					ParsedFrameHeader.SamplingFrequency);
 	}
 	if ((ParsedFrameHeader.SamplingFrequency == 0) || (ParsedFrameHeader.NumberOfSamples == 0))
 	{
@@ -622,7 +622,7 @@ FrameParserStatus_t FrameParser_AudioAac_c::GeneratePostDecodeParameterSettings(
 	// no call to HandleUpdateStreamParameters() because UpdateStreamParameters is always false
 	FRAME_ASSERT(false == UpdateStreamParameters && NULL == StreamParametersBuffer);
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						ParsedFrameHeader.SamplingFrequency);
+											ParsedFrameHeader.SamplingFrequency);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

@@ -107,16 +107,16 @@ class FrameParser_AudioAac_c : public FrameParser_Audio_c
 		FrameParserStatus_t TestForTrickModeFrameDrop(void);
 
 		static FrameParserStatus_t ParseFrameHeader(unsigned char *FrameHeader,
-							    AacAudioParsedFrameHeader_t *ParsedFrameHeader,
-							    int AvailableBytes,
-							    AacFrameParsingPurpose_t Action,
-							    bool EnableHeaderUnplayableErrors = false);
+													AacAudioParsedFrameHeader_t *ParsedFrameHeader,
+													int AvailableBytes,
+													AacFrameParsingPurpose_t Action,
+													bool EnableHeaderUnplayableErrors = false);
 
 		static FrameParserStatus_t ParseAudioMuxElementConfig(BitStreamClass_c *Bits,
-								      unsigned int *SamplingFrequency,
-								      unsigned int *SampleCount,
-								      int AvailableBytes,
-								      AacFrameParsingPurpose_t Action);
+															  unsigned int *SamplingFrequency,
+															  unsigned int *SampleCount,
+															  int AvailableBytes,
+															  AacFrameParsingPurpose_t Action);
 };
 
 #endif /* H_FRAME_PARSER_AUDIO_AAC */

@@ -57,8 +57,8 @@ Date Modification Name
 typedef void (*MME_GenericCallback_t)(MME_Event_t Event, MME_Command_t *CallbackData, void *UserData);
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -848,9 +848,9 @@ CodecStatus_t Codec_MmeBase_c::GetDecodeBuffer(void)
 	// Obtain the interesting references to the buffer
 	//
 	CurrentDecodeBuffer->ObtainDataReference(&BufferState[CurrentDecodeBufferIndex].BufferLength,
-						 NULL,
-						 (void **)(&BufferState[CurrentDecodeBufferIndex].BufferPointer),
-						 Configuration.AddressingMode);
+											 NULL,
+											 (void **)(&BufferState[CurrentDecodeBufferIndex].BufferPointer),
+											 Configuration.AddressingMode);
 	Status = CurrentDecodeBuffer->AttachMetaData(Player->MetaDataParsedFrameParametersReferenceType, UNSPECIFIED_SIZE, (void *)ParsedFrameParameters);
 	if (Status != PlayerNoError)
 	{
@@ -1039,7 +1039,7 @@ CodecStatus_t Codec_MmeBase_c::TranslateReferenceFrameLists(bool IncrementUseCou
 		for (j = 0; j < ParsedFrameParameters->ReferenceFrameList[i].EntryCount; j++)
 		{
 			Status = TranslateDecodeIndex(ParsedFrameParameters->ReferenceFrameList[i].EntryIndicies[j],
-						      &BufferIndex);
+										  &BufferIndex);
 			if (Status != CodecNoError)
 			{
 				//
@@ -1051,22 +1051,22 @@ CodecStatus_t Codec_MmeBase_c::TranslateReferenceFrameLists(bool IncrementUseCou
 				report(severity_info, " Missing index is %d (%d %d)\n", ParsedFrameParameters->ReferenceFrameList[i].EntryIndicies[j], ParsedFrameParameters->NumberOfReferenceFrameLists, ParsedFrameParameters->ReferenceFrameList[i].EntryCount);
 				report(severity_info, " Missing %d %d\n", ParsedFrameParameters->DecodeFrameIndex, ParsedFrameParameters->ReferenceFrameList[i].EntryIndicies[j]);
 				report(severity_info, " Missing %d - %2d %2d %2d %2d %2d %2d %2d %2d\n", ParsedFrameParameters->ReferenceFrameList[0].EntryCount,
-				       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1],
-				       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
-				       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[4], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[5],
-				       ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[6], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[7]);
+					   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[1],
+					   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[3],
+					   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[4], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[5],
+					   ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[6], ParsedFrameParameters->ReferenceFrameList[0].EntryIndicies[7]);
 				report(severity_info, " Missing %d - %2d %2d %2d %2d %2d %2d %2d %2d\n", ParsedFrameParameters->ReferenceFrameList[1].EntryCount,
-				       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1],
-				       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
-				       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[4], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[5],
-				       ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[6], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[7]);
+					   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1],
+					   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
+					   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[4], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[5],
+					   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[6], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[7]);
 				BufferIndex = CurrentDecodeBufferIndex;
 			}
 #if 0 //----patch start
 			if ((BufferIndex == INVALID_INDEX) || (BufferIndex >= MAX_DECODE_BUFFERS))
 			{
 				report(severity_error, "Codec_MmeBase_c::TranslateReferenceFrameLists(%s) - Reference frame buffer index is INVALID (curr=%d/0x%x, max=%d/0x%x) - skipping frame.\n",
-				       Configuration.CodecName, BufferIndex, MAX_DECODE_BUFFERS);
+					   Configuration.CodecName, BufferIndex, MAX_DECODE_BUFFERS);
 				return CodecError;
 			}
 #endif //----patch end
@@ -1086,8 +1086,8 @@ CodecStatus_t Codec_MmeBase_c::TranslateReferenceFrameLists(bool IncrementUseCou
 //
 
 CodecStatus_t Codec_MmeBase_c::InitializeDataType(BufferDataDescriptor_t *InitialDescriptor,
-						  BufferType_t *Type,
-						  BufferDataDescriptor_t **ManagedDescriptor)
+												  BufferType_t *Type,
+												  BufferDataDescriptor_t **ManagedDescriptor)
 {
 	PlayerStatus_t Status;
 	Status = BufferManager->FindBufferDataType(InitialDescriptor->TypeName, Type);
@@ -1187,7 +1187,7 @@ CodecStatus_t Codec_MmeBase_c::GloballyVerifyMMECapabilities(void)
 	for (unsigned int i = 0; i < CODEC_MAX_TRANSFORMERS; i++)
 	{
 		if (i > 0 && 0 == strcmp(Configuration.TransformName[i],
-					 Configuration.TransformName[i - 1]))
+								 Configuration.TransformName[i - 1]))
 			break;
 		Status = VerifyMMECapabilities(i);
 		if (Status == CodecNoError)
@@ -1233,7 +1233,7 @@ CodecStatus_t Codec_MmeBase_c::InitializeMMETransformer(void)
 	if (MMEStatus != MME_SUCCESS)
 	{
 		report(severity_error, "Codec_MmmBase_c::InitializeMMETransformer(%s,%s) - Failed to initialize mme transformer (%08x).\n",
-		       Configuration.CodecName, Configuration.TransformName[SelectedTransformer], MMEStatus);
+			   Configuration.CodecName, Configuration.TransformName[SelectedTransformer], MMEStatus);
 		return CodecError;
 	}
 	//report(severity_info, "Initialised MME with handle %x\n",MMEHandle);
@@ -1262,7 +1262,7 @@ CodecStatus_t Codec_MmeBase_c::TerminateMMETransformer(void)
 		// Wait a reasonable time for all mme transactions to terminate
 		//
 		MaxTimeToWait = (Configuration.StreamParameterContextCount + Configuration.DecodeContextCount) *
-				CODEC_MAX_WAIT_FOR_MME_COMMAND_COMPLETION;
+						CODEC_MAX_WAIT_FOR_MME_COMMAND_COMPLETION;
 		for (i = 0; ((i < MaxTimeToWait / 10) && (MMECommandPreparedCount > (MMECommandCompletedCount + MMECommandAbortedCount))); i++)
 		{
 			OS_SleepMilliSeconds(10);
@@ -1463,9 +1463,9 @@ void Codec_MmeBase_c::CallbackFromMME(MME_Event_t Event, MME_Command_t *Callback
 					unsigned long long Now = OS_GetTimeInMicroSeconds();
 					if ((Now - DecodeContext->DecodeCommenceTime) > 30000)
 						report(severity_info, "Decode times - CommenceInterval %6lld, CompleteInterval %6lld, DurationInterval %6lld.\n",
-						       DecodeContext->DecodeCommenceTime - LastCommence,
-						       Now - LastComplete,
-						       Now - DecodeContext->DecodeCommenceTime);
+							   DecodeContext->DecodeCommenceTime - LastCommence,
+							   Now - LastComplete,
+							   Now - DecodeContext->DecodeCommenceTime);
 					LastCommence = DecodeContext->DecodeCommenceTime;
 					LastComplete = Now;
 				}
@@ -1518,7 +1518,7 @@ CodecStatus_t Codec_MmeBase_c::DecrementReferenceCount(unsigned int BufferIndex)
 				(BufferState[BufferIndex].DecodesInProgress != 0))
 		{
 			report(severity_error, "Codec_MmeBase_c::DecrementReferenceCount(%s) - BufferState inconsistency (%d %d), implementation error.\n", Configuration.CodecName,
-			       BufferState[BufferIndex].ReferenceFrameCount, BufferState[BufferIndex].DecodesInProgress);
+				   BufferState[BufferIndex].ReferenceFrameCount, BufferState[BufferIndex].DecodesInProgress);
 		}
 		UnMapBufferIndex(BufferIndex);
 		memset(&BufferState[BufferIndex], 0x00, sizeof(CodecBufferState_t));
@@ -1564,10 +1564,10 @@ CodecStatus_t Codec_MmeBase_c::CalculateMaximumFrameRate(CodecBaseDecodeContext_
 #if 0
 	if ((NextDecodeTime % DecodeTimeIntegrationPeriod) == 0)
 		report(severity_error, "Decode Times(%s) - Average = %lld(over %d), Max Framerate = %d\n",
-		       Configuration.CodecName,
-		       TotalDecodeTime / DecodeTimeIntegrationPeriod,
-		       DecodeTimeIntegrationPeriod,
-		       (unsigned int)((1000000ull * DecodeTimeIntegrationPeriod) / TotalDecodeTime));
+			   Configuration.CodecName,
+			   TotalDecodeTime / DecodeTimeIntegrationPeriod,
+			   DecodeTimeIntegrationPeriod,
+			   (unsigned int)((1000000ull * DecodeTimeIntegrationPeriod) / TotalDecodeTime));
 #endif
 	Configuration.TrickModeParameters.EmpiricalMaximumDecodeFrameRateShortIntegration = Rational_t((1000000ull * DecodeTimeShortIntegrationPeriod), ShortTotalDecodeTime);
 	Configuration.TrickModeParameters.EmpiricalMaximumDecodeFrameRateLongIntegration = Rational_t((1000000ull * DecodeTimeLongIntegrationPeriod), LongTotalDecodeTime);

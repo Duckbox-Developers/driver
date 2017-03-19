@@ -266,10 +266,10 @@ FrameParserStatus_t FrameParser_VideoMjpeg_c::ReadStartOfFrame(void)
 	FRAME_TRACE(" NumberOfComponents %d\n", Header->number_of_components);
 	for (unsigned int i = 0; i < Header->number_of_components; i++)
 		FRAME_TRACE(" Id = %d, HSF = %d, VSF = %d, QTI = %d\n",
-			    Header->components[i].id,
-			    Header->components[i].horizontal_sampling_factor,
-			    Header->components[i].vertical_sampling_factor,
-			    Header->components[i].quantization_table_index);
+					Header->components[i].id,
+					Header->components[i].horizontal_sampling_factor,
+					Header->components[i].vertical_sampling_factor,
+					Header->components[i].quantization_table_index);
 #endif
 	return FrameParserNoError;
 }
@@ -314,10 +314,10 @@ FrameParserStatus_t FrameParser_VideoMjpeg_c::ReadQuantizationMatrices(void)
 #ifdef DUMP_HEADERS
 	FRAME_TRACE(" MJPEG_DQT (Quantization tables)\n");
 	FRAME_TRACE(" %04x %04x %04x %04x - %04x %04x %04x %04x - %04x %04x %04x %04x - %04x %04x %04x %04x\n",
-		    QuantizationMatrices[0][0], QuantizationMatrices[0][1], QuantizationMatrices[0][2], QuantizationMatrices[0][3],
-		    QuantizationMatrices[1][0], QuantizationMatrices[1][1], QuantizationMatrices[1][2], QuantizationMatrices[1][3],
-		    QuantizationMatrices[2][0], QuantizationMatrices[2][1], QuantizationMatrices[2][2], QuantizationMatrices[2][3],
-		    QuantizationMatrices[3][0], QuantizationMatrices[3][1], QuantizationMatrices[3][2], QuantizationMatrices[3][3]);
+				QuantizationMatrices[0][0], QuantizationMatrices[0][1], QuantizationMatrices[0][2], QuantizationMatrices[0][3],
+				QuantizationMatrices[1][0], QuantizationMatrices[1][1], QuantizationMatrices[1][2], QuantizationMatrices[1][3],
+				QuantizationMatrices[2][0], QuantizationMatrices[2][1], QuantizationMatrices[2][2], QuantizationMatrices[2][3],
+				QuantizationMatrices[3][0], QuantizationMatrices[3][1], QuantizationMatrices[3][2], QuantizationMatrices[3][3]);
 #endif
 	return FrameParserNoError;
 }
@@ -409,9 +409,9 @@ FrameParserStatus_t FrameParser_VideoMjpeg_c::ReadStartOfScan(void)
 	FRAME_TRACE(" NumberOfComponents %d\n", StartOfScan.NumberOfComponents);
 	for (int i = 0; i < StartOfScan.NumberOfComponents; i++)
 		FRAME_TRACE(" Id = %d, Huffman DC table = %d, AC table = %d\n",
-			    StartOfScan.Components[i].Id,
-			    StartOfScan.Components[i].HuffmanDCIndex,
-			    StartOfScan.Components[i].HuffmanACIndex);
+					StartOfScan.Components[i].Id,
+					StartOfScan.Components[i].HuffmanDCIndex,
+					StartOfScan.Components[i].HuffmanACIndex);
 	FRAME_TRACE(" StartSpectral %02x\n", StartOfScan.StartOfSpectralSelection);
 	FRAME_TRACE(" EndSpectral %02x\n", StartOfScan.EndOfSpectralSelection);
 	FRAME_TRACE(" ApproximationHigh %d\n", StartOfScan.ApproximationBitPositionHigh);

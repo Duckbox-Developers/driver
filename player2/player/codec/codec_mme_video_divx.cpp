@@ -149,8 +149,8 @@ CodecStatus_t Codec_MmeVideoDivx_c::FillOutTransformerInitializationParameters(v
 }
 
 static void MMECallbackStub(MME_Event_t Event,
-			    MME_Command_t *CallbackData,
-			    void *UserData)
+							MME_Command_t *CallbackData,
+							void *UserData)
 {
 	Codec_MmeBase_c *Self = (Codec_MmeBase_c *)UserData;
 	Self->CallbackFromMME(Event, CallbackData);
@@ -191,9 +191,9 @@ CodecStatus_t Codec_MmeVideoDivx_c::SendMMEStreamParameters(void)
 			CurrentVersion = 500;
 		}
 		report(severity_info, "Using transformer %s - version %d - %s\n",
-		       Configuration.TransformName[TransformerID],
-		       CurrentVersion,
-		       (DivxFirmware && (TransformerID > 1)) ? "DivX" : "MPEG4p2");
+			   Configuration.TransformName[TransformerID],
+			   CurrentVersion,
+			   (DivxFirmware && (TransformerID > 1)) ? "DivX" : "MPEG4p2");
 		status = MME_InitTransformer(Configuration.TransformName[TransformerID], &MMEInitializationParameters, &MMEHandle);
 	}
 	if (status == MME_SUCCESS)
@@ -436,7 +436,7 @@ CodecStatus_t Codec_MmeVideoDivx_c::HandleCapabilities(void)
 	if (Status == BufferNoError)
 	{
 		Status = BufferManager->CreatePool(&DivxRasterStructPool, DivxRasterStructType, DecodeBufferCount, MaxBytesPerFrame,
-						   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
+										   NULL, NULL, Configuration.AncillaryMemoryPartitionName);
 		if (Status != BufferNoError)
 		{
 			report(severity_error, "Codec_MmeVideoDivx_c::HandleCapabilities - Failed to create raster frame buffer pool.\n");

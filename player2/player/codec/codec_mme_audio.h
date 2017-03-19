@@ -135,9 +135,9 @@ class Codec_MmeAudio_c : public Codec_MmeBase_c
 		virtual CodecStatus_t FillOutTransformerGlobalParameters(MME_LxAudioDecoderGlobalParams_t *GlobalParams);
 		virtual CodecStatus_t FillOutTransformerInitializationParameters(void);
 		virtual CodecStatus_t ValidatePcmProcessingExtendedStatus(CodecBaseDecodeContext_t *Context,
-									  MME_PcmProcessingFrameExtStatus_t *PcmStatus);
+																  MME_PcmProcessingFrameExtStatus_t *PcmStatus);
 		virtual void HandleMixingMetadata(CodecBaseDecodeContext_t *Context,
-						  MME_PcmProcessingStatusTemplate_t *PcmStatus);
+										  MME_PcmProcessingStatusTemplate_t *PcmStatus);
 //! AWTODO - add virtual function for DecodeContext that WMA codec can over-ride for different buffers and MME command
 		virtual CodecStatus_t FillOutDecodeContext(void);
 		virtual void FinishedDecode(void);
@@ -162,10 +162,10 @@ class Codec_MmeAudio_c : public Codec_MmeBase_c
 		CodecStatus_t Halt(void);
 		CodecStatus_t Reset(void);
 		CodecStatus_t SetModuleParameters(unsigned int ParameterBlockSize,
-						  void *ParameterBlock);
+										  void *ParameterBlock);
 		CodecStatus_t CreateAttributeEvents(void);
 		CodecStatus_t GetAttribute(const char *Attribute,
-					   PlayerAttributeDescriptor_t *Value);
+								   PlayerAttributeDescriptor_t *Value);
 
 		//
 		// Codec class functions

@@ -203,8 +203,8 @@ CodecStatus_t Codec_MmeAudioWma_c::FillOutTransformerGlobalParameters(MME_LxAudi
 			//MME_WmaAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
 			MME_WmaProLslAudioStreamInfo_t &streamInfo = Config.AudioStreamInfo;
 			streamInfo.nVersion = (StreamParams->FormatTag == WMA_VERSION_2_9) ? 2 : // WMA V2
-					      (StreamParams->FormatTag == WMA_VERSION_9_PRO) ? 3 : // WMA Pro
-					      (StreamParams->FormatTag == WMA_LOSSLESS) ? 4 : 1; // WMA lossless - Default to WMA version1?
+								  (StreamParams->FormatTag == WMA_VERSION_9_PRO) ? 3 : // WMA Pro
+								  (StreamParams->FormatTag == WMA_LOSSLESS) ? 4 : 1; // WMA lossless - Default to WMA version1?
 			streamInfo.wFormatTag = StreamParams->FormatTag;
 			streamInfo.nSamplesPerSec = StreamParams->SamplesPerSecond;
 			streamInfo.nAvgBytesPerSec = StreamParams->AverageNumberOfBytesPerSecond;

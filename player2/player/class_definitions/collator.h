@@ -66,15 +66,15 @@ class Collator_c : public BaseComponentClass_c
 		virtual CollatorStatus_t RegisterOutputBufferRing(Ring_t Ring) = 0;
 
 		virtual CollatorStatus_t InputJump(bool SurplusDataInjected,
-						   bool ContinuousReverseJump) = 0;
+										   bool ContinuousReverseJump) = 0;
 
 		virtual CollatorStatus_t InputGlitch(void) = 0;
 
 		virtual CollatorStatus_t Input(PlayerInputDescriptor_t *Input,
-					       unsigned int DataLength,
-					       void *Data,
-					       bool NonBlocking = false,
-					       unsigned int *DataLengthRemaining = NULL) = 0;
+									   unsigned int DataLength,
+									   void *Data,
+									   bool NonBlocking = false,
+									   unsigned int *DataLengthRemaining = NULL) = 0;
 
 		virtual CollatorStatus_t FrameFlush(void) = 0;
 

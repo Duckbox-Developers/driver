@@ -298,10 +298,10 @@ static MME_ERROR PcmTranscoder_TermTransformer(void *Context)
 MME_ERROR PcmTranscoder_RegisterTransformer(const char *Name)
 {
 	return MME_RegisterTransformer(Name,
-				       PcmTranscoder_AbortCommand,
-				       PcmTranscoder_GetTransformerCapability,
-				       PcmTranscoder_InitTransformer,
-				       PcmTranscoder_ProcessCommand,
-				       PcmTranscoder_TermTransformer);
+								   PcmTranscoder_AbortCommand,
+								   PcmTranscoder_GetTransformerCapability,
+								   PcmTranscoder_InitTransformer,
+								   PcmTranscoder_ProcessCommand,
+								   PcmTranscoder_TermTransformer);
 }
 /*}}}*/

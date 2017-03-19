@@ -198,9 +198,9 @@ struct snd_interval
 {
 	unsigned int min, max;
 	unsigned int openmin: 1,
-		 openmax: 1,
-		 integer: 1,
-		 empty: 1;
+			 openmax: 1,
+			 integer: 1,
+			 empty: 1;
 };
 
 #define SNDRV_MASK_MAX 256
@@ -213,8 +213,7 @@ struct snd_mask
 struct snd_pcm_hw_params
 {
 	unsigned int flags;
-	struct snd_mask masks[SNDRV_PCM_HW_PARAM_LAST_MASK -
-				      SNDRV_PCM_HW_PARAM_FIRST_MASK + 1];
+	struct snd_mask masks[SNDRV_PCM_HW_PARAM_LAST_MASK - SNDRV_PCM_HW_PARAM_FIRST_MASK + 1];
 	struct snd_mask mres[5]; /* reserved masks */
 	struct snd_interval intervals[SNDRV_PCM_HW_PARAM_LAST_INTERVAL - SNDRV_PCM_HW_PARAM_FIRST_INTERVAL + 1];
 	struct snd_interval ires[9]; /* reserved intervals */
@@ -253,7 +252,6 @@ typedef struct snd_ctl_elem_id snd_ctl_elem_id_t;
 /************* sound/typedef.h ************/
 typedef struct snd_pcm_substream snd_pcm_substream_t;
 /******************************************/
-
 #endif
 
 typedef struct _ksnd_pcm ksnd_pcm_t;
@@ -287,7 +285,7 @@ struct _ksnd_pcm
 };
 
 int ksnd_pcm_open(ksnd_pcm_t **handle, int card, int device,
-		  snd_pcm_stream_t stream);
+				  snd_pcm_stream_t stream);
 void ksnd_pcm_close(ksnd_pcm_t *handle);
 int ksnd_pcm_delay(ksnd_pcm_t *handle, snd_pcm_sframes_t *delay);
 int ksnd_pcm_get_samplerate(ksnd_pcm_t *substream);
@@ -306,7 +304,7 @@ int ksnd_pcm_mtimestamp(ksnd_pcm_t *pcm, snd_pcm_uframes_t *avail, struct timesp
 snd_pcm_uframes_t ksnd_pcm_avail_update(ksnd_pcm_t *substream);
 int ksnd_pcm_wait(ksnd_pcm_t *pcm, int timeout);
 int ksnd_pcm_writei(ksnd_pcm_t *handle,
-		    int *data, unsigned int size, unsigned int srcchannels);
+					int *data, unsigned int size, unsigned int srcchannels);
 #define ksnd_pcm_mmap_writei(h, d, s, sc) ksnd_pcm_writei(h, d, s, sc)
 
 /* TODO: ksnd_pcm_readi
@@ -314,10 +312,10 @@ int ksnd_pcm_writei(ksnd_pcm_t *handle,
 */
 
 int ksnd_pcm_mmap_begin(ksnd_pcm_t *pcm, const snd_pcm_channel_area_t **areas,
-			snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames);
+						snd_pcm_uframes_t *offset, snd_pcm_uframes_t *frames);
 snd_pcm_sframes_t ksnd_pcm_mmap_commit(ksnd_pcm_t *pcm,
-				       snd_pcm_uframes_t offset,
-				       snd_pcm_uframes_t frames);
+									   snd_pcm_uframes_t offset,
+									   snd_pcm_uframes_t frames);
 
 int ksnd_pcm_hw_params(ksnd_pcm_t *kpcm, ksnd_pcm_hw_params_t *params);
 int ksnd_pcm_hw_params_any(ksnd_pcm_t *kpcm, ksnd_pcm_hw_params_t *params);
@@ -328,11 +326,11 @@ int ksnd_pcm_hw_params_any(ksnd_pcm_t *kpcm, ksnd_pcm_hw_params_t *params);
 
 /* TODO: ksnd_pcm_set_params differs significantly from snd_pcm_set_params */
 int ksnd_pcm_set_params(ksnd_pcm_t *handle,
-			int nrchannels, int sampledepth, int samplerate,
-			int periodsize, int buffersize);
+						int nrchannels, int sampledepth, int samplerate,
+						int periodsize, int buffersize);
 int ksnd_pcm_get_params(ksnd_pcm_t *kpcm,
-			snd_pcm_uframes_t *buffer_size,
-			snd_pcm_uframes_t *period_size);
+						snd_pcm_uframes_t *buffer_size,
+						snd_pcm_uframes_t *period_size);
 
 /*
  * accessors for h/ware parameters

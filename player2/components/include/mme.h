@@ -361,9 +361,9 @@ MME_ERROR MME_AbortCommand(MME_TransformerHandle_t Handle, MME_CommandId_t CmdId
  * to pass between a host and companion
  */
 MME_ERROR MME_AllocDataBuffer(MME_TransformerHandle_t handle,
-			      MME_UINT size,
-			      MME_AllocationFlags_t flags,
-			      MME_DataBuffer_t **dataBuffer_p);
+							  MME_UINT size,
+							  MME_AllocationFlags_t flags,
+							  MME_DataBuffer_t **dataBuffer_p);
 
 /* MME_DeregisterTransformer()
  * Deregister a transformer that has been registered
@@ -384,7 +384,7 @@ MME_ERROR MME_FreeDataBuffer(MME_DataBuffer_t *DataBuffer_p);
  * Obtain the capabilities of a transformer
  */
 MME_ERROR MME_GetTransformerCapability(const char *TransformerName,
-				       MME_TransformerCapability_t *TransformerCapability_p);
+									   MME_TransformerCapability_t *TransformerCapability_p);
 
 /* MME_Init()
  * Initialize MME
@@ -395,8 +395,8 @@ MME_ERROR MME_Init(void);
  * Create a transformer instance on a companion
  */
 MME_ERROR MME_InitTransformer(const char *Name,
-			      MME_TransformerInitParams_t *Params_p,
-			      MME_TransformerHandle_t *Handle_p);
+							  MME_TransformerInitParams_t *Params_p,
+							  MME_TransformerHandle_t *Handle_p);
 
 /* MME_ModifyTuneable()
  * Modify system wide configuration parameters such as thread priority.
@@ -412,11 +412,11 @@ MME_ERROR MME_NotifyHost(MME_Event_t event, MME_Command_t *commandInfo, MME_ERRO
  * Register a transformer after which intantiations may be made
  */
 MME_ERROR MME_RegisterTransformer(const char *name,
-				  MME_AbortCommand_t abortFunc,
-				  MME_GetTransformerCapability_t getTransformerCapabilityFunc,
-				  MME_InitTransformer_t initTransformerFunc,
-				  MME_ProcessCommand_t processCommandFunc,
-				  MME_TermTransformer_t termTransformerFunc);
+								  MME_AbortCommand_t abortFunc,
+								  MME_GetTransformerCapability_t getTransformerCapabilityFunc,
+								  MME_InitTransformer_t initTransformerFunc,
+								  MME_ProcessCommand_t processCommandFunc,
+								  MME_TermTransformer_t termTransformerFunc);
 
 /* MME_RegisterTransport()
  * Register an existing EMBX transport for use by MME

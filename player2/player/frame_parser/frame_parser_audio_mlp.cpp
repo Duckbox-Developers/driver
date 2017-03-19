@@ -97,7 +97,7 @@ static const int MlpSamplingFreq[MlpSamplingFreqNone] =
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioMlp_c::ParseSingleFrameHeader(unsigned char *FrameHeaderBytes,
-								   MlpAudioParsedFrameHeader_t *LocalParsedFrameHeader)
+																   MlpAudioParsedFrameHeader_t *LocalParsedFrameHeader)
 {
 	BitStreamClass_c Bits;
 	int AccessUnitLength;
@@ -120,7 +120,7 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseSingleFrameHeader(unsigned char
 	{
 		FRAME_ERROR("Uncorrect value for Acces Unit Length: %d\n", AccessUnitLength);
 		FRAME_DEBUG("Frame header bytes: %2x, %2x, %2x, %2x\n",
-			    FrameHeaderBytes[0], FrameHeaderBytes[1], FrameHeaderBytes[2], FrameHeaderBytes[3]);
+					FrameHeaderBytes[0], FrameHeaderBytes[1], FrameHeaderBytes[2], FrameHeaderBytes[3]);
 		return FrameParserError;
 	}
 #endif
@@ -149,7 +149,7 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseSingleFrameHeader(unsigned char
 					(FreqId >= MlpSamplingFreqNone))
 			{
 				FRAME_ERROR("Invalid Sampling Frequency: %d\n",
-					    FreqId);
+							FreqId);
 				return FrameParserError;
 			}
 		}
@@ -198,12 +198,12 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseSingleFrameHeader(unsigned char
 	if (IsMajorSync)
 	{
 		FRAME_DEBUG("IsMajorSync, IsFBAType: %d, Length: %d, NumberOfSamples: %d, Frequency %d\n",
-			    IsFBAType, AccessUnitLength, LocalParsedFrameHeader->NumberOfSamples, MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency]);
+					IsFBAType, AccessUnitLength, LocalParsedFrameHeader->NumberOfSamples, MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency]);
 	}
 	else
 	{
 		FRAME_DEBUG("Length: %d\n",
-			    AccessUnitLength);
+					AccessUnitLength);
 	}
 	return FrameParserNoError;
 }
@@ -216,8 +216,8 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseSingleFrameHeader(unsigned char
 /// \return Frame parser status code, FrameParserNoError indicates success.
 ///
 FrameParserStatus_t FrameParser_AudioMlp_c::ParseFrameHeader(unsigned char *FrameHeaderBytes,
-							     MlpAudioParsedFrameHeader_t *LocalParsedFrameHeader,
-							     int GivenFrameSize)
+															 MlpAudioParsedFrameHeader_t *LocalParsedFrameHeader,
+															 int GivenFrameSize)
 {
 	int StreamIndex = 0, FrameSize = 0 ;
 	MlpAudioParsedFrameHeader_t NextParsedFrameHeader;
@@ -244,8 +244,8 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseFrameHeader(unsigned char *Fram
 				LocalParsedFrameHeader->NumberOfSamples = NextParsedFrameHeader.NumberOfSamples;
 				IsFirstMajorFrame = false;
 				FRAME_TRACE("Mlp stream properties: Sampling Freq: %d, Nb of samples: %d\n",
-					    MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency],
-					    LocalParsedFrameHeader->NumberOfSamples);
+							MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency],
+							LocalParsedFrameHeader->NumberOfSamples);
 			}
 			else
 			{
@@ -261,12 +261,12 @@ FrameParserStatus_t FrameParser_AudioMlp_c::ParseFrameHeader(unsigned char *Fram
 	while (StreamIndex < GivenFrameSize);
 	LocalParsedFrameHeader->Length = FrameSize;
 	LocalParsedFrameHeader->NumberOfSamples = MlpSampleCount[LocalParsedFrameHeader->SamplingFrequency] *
-						  LocalParsedFrameHeader->AudioFrameNumber;
+											  LocalParsedFrameHeader->AudioFrameNumber;
 	FRAME_DEBUG("SamplingFrequency: %d, FrameSize: %d, NumberOfSamples: %d, NbFrames: %d \n",
-		    MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency],
-		    LocalParsedFrameHeader->Length,
-		    LocalParsedFrameHeader->NumberOfSamples,
-		    LocalParsedFrameHeader->AudioFrameNumber);
+				MlpSamplingFreq[LocalParsedFrameHeader->SamplingFrequency],
+				LocalParsedFrameHeader->Length,
+				LocalParsedFrameHeader->NumberOfSamples,
+				LocalParsedFrameHeader->AudioFrameNumber);
 	return FrameParserNoError;
 }
 
@@ -472,7 +472,7 @@ FrameParserStatus_t FrameParser_AudioMlp_c::GeneratePostDecodeParameterSettings(
 	//
 	HandleUpdateStreamParameters();
 	GenerateNextFrameNormalizedPlaybackTime(ParsedFrameHeader.NumberOfSamples,
-						MlpSamplingFreq[ParsedFrameHeader.SamplingFrequency]);
+											MlpSamplingFreq[ParsedFrameHeader.SamplingFrequency]);
 //
 	//DumpParsedFrameParameters( ParsedFrameParameters, __PRETTY_FUNCTION__ );
 	return FrameParserNoError;

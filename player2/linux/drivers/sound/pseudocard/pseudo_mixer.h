@@ -90,7 +90,7 @@ struct snd_pseudo_mixer_fatpipe
 };
 
 // *INDENT-OFF*
-enum snd_pseudo_mixer_channel_pair                           /* pair0   pair1   pair2   pair3   pair4   */
+enum snd_pseudo_mixer_channel_pair                       /* pair0   pair1   pair2   pair3   pair4   */
 {
 	SND_PSEUDO_MIXER_CHANNEL_PAIR_DEFAULT,               /*   Y       Y       Y       Y       Y     */
 	SND_PSEUDO_MIXER_CHANNEL_PAIR_L_R = 0,               /*   Y                               Y     */
@@ -303,12 +303,12 @@ struct snd_pseudo_mixer_downmix_rom
 typedef int16_t snd_pseudo_mixer_downmix_Q15;
 
 typedef void (snd_pseudo_mixer_observer_t)(void *ctx,
-					   const struct snd_pseudo_mixer_settings *mixer_settings);
+										   const struct snd_pseudo_mixer_settings *mixer_settings);
 
 int snd_pseudo_register_mixer_observer(int mixer_num,
-				       snd_pseudo_mixer_observer_t *observer, void *ctx);
+									   snd_pseudo_mixer_observer_t *observer, void *ctx);
 int snd_pseudo_deregister_mixer_observer(int mixer_num,
-					 snd_pseudo_mixer_observer_t *observer, void *ctx);
+										 snd_pseudo_mixer_observer_t *observer, void *ctx);
 
 struct snd_pseudo_mixer_downmix_rom *snd_pseudo_get_downmix_rom(int mixer_num);
 

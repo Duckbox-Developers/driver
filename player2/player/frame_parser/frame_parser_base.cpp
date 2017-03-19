@@ -345,8 +345,8 @@ FrameParserStatus_t FrameParser_Base_c::TranslatePlaybackTimeNativeToNormalized(
 	{
 		LastSetNativeTime = Player->GetLastNativeTime(Playback);
 		NativeTimeBaseLine = ValidTime(LastSetNativeTime) ?
-				     ((LastSetNativeTime - NativeTime + 0x0000000100000000ULL) & 0xfffffffe00000000ULL) :
-				     0;
+							 ((LastSetNativeTime - NativeTime + 0x0000000100000000ULL) & 0xfffffffe00000000ULL) :
+							 0;
 		LastNativeTimeUsedInBaseline = NativeTime;
 	}
 	//
@@ -359,7 +359,7 @@ FrameParserStatus_t FrameParser_Base_c::TranslatePlaybackTimeNativeToNormalized(
 			((NativeTime & WrapMask) == 0))
 		NativeTimeBaseLine += WrapOffset;
 	else if (((LastNativeTimeUsedInBaseline & WrapMask) == 0) &&
-			((NativeTime & WrapMask) == WrapMask))
+			 ((NativeTime & WrapMask) == WrapMask))
 		NativeTimeBaseLine -= WrapOffset;
 	LastNativeTimeUsedInBaseline = NativeTime;
 	//
@@ -528,11 +528,11 @@ FrameParserStatus_t FrameParser_Base_c::QueueFrameForDecode(void)
 	ParsedFrameParameters->DecodeFrameIndex = NextDecodeFrameIndex++;
 #if 0
 	report(severity_info, "Q %d (F = %d, K = %d, I = %d, R = %d)\n",
-	       ParsedFrameParameters->DecodeFrameIndex,
-	       ParsedFrameParameters->FirstParsedParametersForOutputFrame,
-	       ParsedFrameParameters->KeyFrame,
-	       ParsedFrameParameters->IndependentFrame,
-	       ParsedFrameParameters->ReferenceFrame);
+		   ParsedFrameParameters->DecodeFrameIndex,
+		   ParsedFrameParameters->FirstParsedParametersForOutputFrame,
+		   ParsedFrameParameters->KeyFrame,
+		   ParsedFrameParameters->IndependentFrame,
+		   ParsedFrameParameters->ReferenceFrame);
 #endif
 //
 	Buffer->IncrementReferenceCount(IdentifierProcessParseToDecode);

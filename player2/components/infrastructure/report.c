@@ -79,7 +79,7 @@ void report_init(void)
 /* --- */
 
 void report_restricted_severity_levels(int lower_restriction,
-				       int upper_restriction)
+									   int upper_restriction)
 {
 	severity_restriction_lower = lower_restriction;
 	severity_restriction_upper = upper_restriction;
@@ -128,7 +128,7 @@ static void report_output(char *report_buffer)
 
 #if (!defined(__KERNEL__) || defined(CONFIG_PRINTK)) && defined(REPORT)
 void report(report_severity_t report_severity,
-	    const char *format, ...)
+			const char *format, ...)
 {
 	va_list list;
 	char report_buffer[REPORT_STRING_SIZE];
@@ -139,8 +139,8 @@ void report(report_severity_t report_severity,
 	if (report_severity >= severity_error)
 	{
 		sprintf(report_buffer, "***** %s-%s: ",
-			((report_severity >= severity_fatal) ? "Fatal" : "Error"),
-			OS_ThreadName());
+				((report_severity >= severity_fatal) ? "Fatal" : "Error"),
+				OS_ThreadName());
 		report_output(report_buffer);
 	}
 	va_start(list, format);
@@ -164,10 +164,10 @@ void report(report_severity_t report_severity,
  A useful reporting hex function
 ----------------------------------------------------------- */
 void report_dump_hex(report_severity_t level,
-		     unsigned char *data,
-		     int length,
-		     int width,
-		     void *start)
+					 unsigned char *data,
+					 int length,
+					 int width,
+					 void *start)
 {
 	int n, i;
 	char str[256];

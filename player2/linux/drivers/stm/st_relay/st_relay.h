@@ -114,8 +114,8 @@ static inline int st_relayfs_open(void)
 	return 0;
 }
 static inline void st_relayfs_write(unsigned int id, unsigned int source,
-				    unsigned char *buf, unsigned int len,
-				    void *info) {}
+									unsigned char *buf, unsigned int len,
+									void *info) {}
 
 static inline unsigned int st_relayfs_getindex(unsigned int source)
 {

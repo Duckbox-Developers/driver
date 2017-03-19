@@ -189,9 +189,9 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
 		// reset the accumulated error
 		NextFramePlaybackTimeAccumulatedError = 0;
 		FRAME_DEBUG("Using real PTS for frame %d: %lluus (delta %lldus)\n",
-			    NextDecodeFrameIndex,
-			    ParsedFrameParameters->NormalizedPlaybackTime,
-			    ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
+					NextDecodeFrameIndex,
+					ParsedFrameParameters->NormalizedPlaybackTime,
+					ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
 		// Squawk if time does not progress quite as expected.
 		if (LastNormalizedPlaybackTime != UNSPECIFIED_TIME)
 		{
@@ -202,8 +202,8 @@ FrameParserStatus_t FrameParser_Audio_c::HandleCurrentFrameNormalizedPlaybackTim
 			if (DeltaDelta < -PtsJitterTollerenceThreshold || DeltaDelta > PtsJitterTollerenceThreshold)
 			{
 				FRAME_ERROR("Unexpected change in playback time. Expected %lldus, got %lldus (deltas: exp. %lld got %lld )\n",
-					    NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
-					    SyntheticDelta, RealDelta);
+							NextFrameNormalizedPlaybackTime, ParsedFrameParameters->NormalizedPlaybackTime,
+							SyntheticDelta, RealDelta);
 			}
 		}
 	}
@@ -297,13 +297,13 @@ void FrameParser_Audio_c::HandleInvalidPlaybackTime()
 	FrameParserStatus_t Status;
 	ParsedFrameParameters->NormalizedPlaybackTime = NextFrameNormalizedPlaybackTime;
 	FRAME_DEBUG("Using synthetic PTS for frame %d: %lluus (delta %lldus)\n",
-		    NextDecodeFrameIndex,
-		    ParsedFrameParameters->NormalizedPlaybackTime,
-		    ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
+				NextDecodeFrameIndex,
+				ParsedFrameParameters->NormalizedPlaybackTime,
+				ParsedFrameParameters->NormalizedPlaybackTime - LastNormalizedPlaybackTime);
 	if (ValidTime(ParsedFrameParameters->NormalizedPlaybackTime))
 	{
 		Status = TranslatePlaybackTimeNormalizedToNative(NextFrameNormalizedPlaybackTime,
-								 &ParsedFrameParameters->NativePlaybackTime);
+														 &ParsedFrameParameters->NativePlaybackTime);
 		/* Non-fatal error. Having no native timestamp does not harm the player but may harm the values it
 		 * reports to applications (e.g. get current PTS).
 		 */

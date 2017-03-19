@@ -87,10 +87,10 @@ CollatorStatus_t Collator_PesVideoRaw_c::Reset(void)
 //
 
 CollatorStatus_t Collator_PesVideoRaw_c::Input(PlayerInputDescriptor_t *Input,
-					       unsigned int DataLength,
-					       void *Data,
-					       bool NonBlocking,
-					       unsigned int *DataLengthRemaining)
+											   unsigned int DataLength,
+											   void *Data,
+											   bool NonBlocking,
+											   unsigned int *DataLengthRemaining)
 {
 	PlayerStatus_t Status = PlayerNoError;
 	COLLATOR_ASSERT(!NonBlocking);
