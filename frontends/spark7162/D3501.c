@@ -4602,6 +4602,7 @@ static int d3501_read_status(struct dvb_frontend *fe, enum fe_status *status)
 			printk("1. Tuner unlocked\n");
 		}
 	}
+}
 
 	if (nim_s3501_i2c_close(&state->spark_nimdev))
 		return S3501_ERR_I2C_NO_ACK;
