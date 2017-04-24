@@ -125,4 +125,8 @@ extern struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 					   struct i2c_adapter *i2c,
 					   enum stv090x_demodulator demod);
 
+/* dir = 0 -> output, dir = 1 -> input/open-drain */
+extern int stv090x_set_gpio(struct dvb_frontend *fe, u8 gpio,
+		u8 dir, u8 value, u8 xor_value);
+
 #endif /* __STV090x_H */
