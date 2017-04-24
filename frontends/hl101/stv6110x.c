@@ -456,9 +456,8 @@ struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
 {
 	struct stv6110x_state *stv6110x;
 	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
-	int ret;
 
-	stv6110x = kzalloc(sizeof(struct stv6110x_state), GFP_KERNEL);
+	stv6110x = kzalloc(sizeof (struct stv6110x_state), GFP_KERNEL);
 	if (stv6110x == NULL)
 		goto error;
 
@@ -468,44 +467,21 @@ struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
 	memcpy(stv6110x->regs, default_regs, 8);
 
 	/* setup divider */
-	switch (stv6110x->config->clk_div)
-	{
-		default:
-		case 1:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
-			break;
-		case 2:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
-			break;
-		case 4:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
-			break;
-		case 8:
-		case 0:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
-			break;
-	}
-
-	if (fe->ops.i2c_gate_ctrl)
-	{
-		ret = fe->ops.i2c_gate_ctrl(fe, 1);
-		if (ret < 0)
-			goto error;
-	}
-
-	ret = stv6110x_write_regs(stv6110x, 0, stv6110x->regs,
-				  ARRAY_SIZE(stv6110x->regs));
-	if (ret < 0)
-	{
-		dprintk(FE_ERROR, 1, "[STV6110X] Initialization failed");
-		goto error;
-	}
-
-	if (fe->ops.i2c_gate_ctrl)
-	{
-		ret = fe->ops.i2c_gate_ctrl(fe, 0);
-		if (ret < 0)
-			goto error;
+	switch (stv6110x->config->clk_div) {
+	default:
+	case 1:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
+		break;
+	case 2:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
+		break;
+	case 4:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
+		break;
+	case 8:
+	case 0:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
+		break;
 	}
 
 	fe->tuner_priv		= stv6110x;
