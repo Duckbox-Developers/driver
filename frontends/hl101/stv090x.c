@@ -4609,18 +4609,40 @@ static int stv090x_get_property(struct dvb_frontend *fe, struct dtv_property *tv
 	return 0;
 }
 
+static int stv090x_set_pls(struct stv090x_state *state, u8 pls_mode, u32 pls_code)
+{
+	if (pls_mode == 0 && pls_code == 0)
+		pls_code = 1;
+	pls_mode &= 0x03;
+	pls_code &= 0x3FFFF;
+
+	dprintk(FE_DEBUG, 1, "Set PLS code %d (mode %d)", pls_code, pls_mode);
+	if (STV090x_WRITE_DEMOD(state, PLROOT2, (pls_mode<<2) | (pls_code>>16)) < 0)
+		goto err;
+	if (STV090x_WRITE_DEMOD(state, PLROOT1, pls_code>>8) < 0)
+		goto err;
+	if (STV090x_WRITE_DEMOD(state, PLROOT0, pls_code) < 0)
+		goto err;
+	return 0;
+err:
+	dprintk(FE_ERROR, 1, "I/O error");
+	return -1;
+}
+
 static int stv090x_set_mis(struct stv090x_state *state, int mis)
 {
 	u32 reg;
 
-	if (mis < 0 || mis > 255) {
+	if (mis == NO_STREAM_ID_FILTER) {
 		dprintk(FE_DEBUG, 1, "Disable MIS filtering");
+		stv090x_set_pls(state, 0, 0);
 		reg = STV090x_READ_DEMOD(state, PDELCTRL1);
 		STV090x_SETFIELD_Px(reg, FILTER_EN_FIELD, 0x00);
 		if (STV090x_WRITE_DEMOD(state, PDELCTRL1, reg) < 0)
 			goto err;
 	} else {
 		dprintk(FE_DEBUG, 1, "Enable MIS filtering - %d", mis);
+		stv090x_set_pls(state, (mis>>26) & 0x3, (mis>>8) & 0x3FFFF);
 		reg = STV090x_READ_DEMOD(state, PDELCTRL1);
 		STV090x_SETFIELD_Px(reg, FILTER_EN_FIELD, 0x01);
 		if (STV090x_WRITE_DEMOD(state, PDELCTRL1, reg) < 0)
