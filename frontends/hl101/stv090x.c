@@ -1542,8 +1542,12 @@ static int stv090x_i2c_gate_ctrl(struct stv090x_state *state, int enable)
 	 * relevant operations themselves.
 	 */
 
-//	if (enable)
-//		mutex_lock(&state->internal->tuner_lock);
+//	if (enable) {
+//		if (state->config->tuner_i2c_lock)
+//			state->config->tuner_i2c_lock(&state->frontend, 1);
+//		else
+//			mutex_lock(&state->internal->tuner_lock);
+//	}
 
 //	reg = STV090x_READ_DEMOD(state, I2CRPT);
 	if (enable)
@@ -1562,13 +1566,20 @@ static int stv090x_i2c_gate_ctrl(struct stv090x_state *state, int enable)
 			goto err;
 	}
 
-//	if (!enable)
-//		mutex_unlock(&state->internal->tuner_lock);
+//	if (!enable) {
+//		if (state->config->tuner_i2c_lock)
+//			state->config->tuner_i2c_lock(&state->frontend, 0);
+//		else
+//			mutex_unlock(&state->internal->tuner_lock);
+//	}
 
 	return 0;
 err:
 	dprintk(FE_ERROR, 1, "I/O error");
-//	mutex_unlock(&state->internal->tuner_lock);
+//	if (state->config->tuner_i2c_lock)
+//		state->config->tuner_i2c_lock(&state->frontend, 0);
+//	else
+//		mutex_unlock(&state->internal->tuner_lock);
 	return -1;
 }
 
