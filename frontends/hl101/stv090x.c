@@ -3882,10 +3882,13 @@ static int stv090x_optimize_track(struct stv090x_state *state)
 			STV090x_SETFIELD_Px(reg, DVBS2_ENABLE_FIELD, 1);
 			if (STV090x_WRITE_DEMOD(state, DMDCFGMD, reg) < 0)
 				goto err;
-			if (STV090x_WRITE_DEMOD(state, ACLC, 0) < 0)
-				goto err;
-			if (STV090x_WRITE_DEMOD(state, BCLC, 0) < 0)
-				goto err;
+			if (state->internal->dev_ver >= 0x30)
+			{
+				if (STV090x_WRITE_DEMOD(state, ACLC, 0) < 0)
+					goto err;
+				if (STV090x_WRITE_DEMOD(state, BCLC, 0) < 0)
+					goto err;
+			}
 			if (state->frame_len == STV090x_LONG_FRAME)
 			{
 				reg = STV090x_READ_DEMOD(state, DMDMODCOD);
