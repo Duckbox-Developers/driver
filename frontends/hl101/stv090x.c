@@ -5762,6 +5762,9 @@ static int stv090x_setup(struct dvb_frontend *fe)
 		goto err;
 	if (stv090x_write_reg(state, STV090x_TSTRES0, 0x00) < 0)
 		goto err;
+		/* workaround for stuck DiSEqC output */
+	if (config->diseqc_envelope_mode)
+		stv090x_send_diseqc_burst(fe, SEC_MINI_A);
 
 	return 0;
 err:
@@ -5773,41 +5776,41 @@ static struct dvb_frontend_ops stv090x_ops =
 {
 
 	.info = {
-		.name				= "STV090x Multistandard",
-		.type				= FE_QPSK,
+		.name			= "STV090x Multistandard",
+		.type			= FE_QPSK,
 		.frequency_min		= 950000,
 		.frequency_max 		= 2150000,
 		.frequency_stepsize	= 0,
-		.frequency_tolerance = 0,
+		.frequency_tolerance	= 0,
 		.symbol_rate_min 	= 1000000,
 		.symbol_rate_max 	= 45000000,
-		.caps				= FE_CAN_INVERSION_AUTO |
-		FE_CAN_FEC_AUTO       |
-		FE_CAN_QPSK           |
-		FE_CAN_2G_MODULATION
+		.caps			= FE_CAN_INVERSION_AUTO |
+					  FE_CAN_FEC_AUTO       |
+					  FE_CAN_QPSK           |
+					  FE_CAN_2G_MODULATION
 	},
 
-	.release				= stv090x_release,
-	.init					= stv090x_init,
+	.release			= stv090x_release,
+	.init				= stv090x_init,
 
-	.sleep					= stv090x_sleep,
+	.sleep				= stv090x_sleep,
 	.get_frontend_algo		= stv090x_frontend_algo,
 	.set_property			= stv090x_set_property,
 	.get_property			= stv090x_get_property,
 
 	.i2c_gate_ctrl			= stv090x_i2c_gate_ctrl,
 
-	.diseqc_send_master_cmd	= stv090x_send_diseqc_msg,
+	.diseqc_send_master_cmd		= stv090x_send_diseqc_msg,
 	.diseqc_send_burst		= stv090x_send_diseqc_burst,
-	.diseqc_recv_slave_reply = stv090x_recv_slave_reply,
-	.set_tone				= stv090x_set_tone,
+	.diseqc_recv_slave_reply	= stv090x_recv_slave_reply,
+	.set_tone			= stv090x_set_tone,
 	.set_voltage			= stv090x_set_voltage,
 
-	.search					= stv090x_search,
+	.search				= stv090x_search,
 	.read_status			= stv090x_read_status,
-	.read_ber				= stv090x_read_per,
-	.read_signal_strength	= stv090x_read_signal_strength,
-	.read_snr				= stv090x_read_cnr
+	.read_ber			= stv090x_read_per,
+	.read_signal_strength		= stv090x_read_signal_strength,
+	.read_snr			= stv090x_read_cnr
 };
 
 
@@ -5824,7 +5827,7 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 
 	state->verbose				= &verbose;
 	state->config				= config;
-	state->i2c					= i2c;
+	state->i2c				= i2c;
 	state->frontend.ops			= stv090x_ops;
 	state->frontend.demodulator_priv	= state;
 	state->demod				= demod;
