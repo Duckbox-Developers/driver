@@ -427,8 +427,6 @@ static struct dvb_tuner_ops stv6110x_ops =
 		.frequency_step	= 0,
 	},
 
-	.init			= stv6110x_init,
-	.sleep          	= stv6110x_sleep,
 #if 0
 	.get_status		= stv6110x_get_status,
 	.get_state		= stv6110x_get_state,
@@ -439,17 +437,17 @@ static struct dvb_tuner_ops stv6110x_ops =
 
 static struct tuner_devctl stv6110x_ctl =
 {
-	.tuner_init				= stv6110x_init,
-	.tuner_sleep			= stv6110x_sleep,
-	.tuner_set_mode			= stv6110x_set_mode,
+	.tuner_init		= stv6110x_init,
+	.tuner_sleep		= stv6110x_sleep,
+	.tuner_set_mode		= stv6110x_set_mode,
 	.tuner_set_frequency	= stv6110x_set_frequency,
 	.tuner_get_frequency	= stv6110x_get_frequency,
 	.tuner_set_bandwidth	= stv6110x_set_bandwidth,
 	.tuner_get_bandwidth	= stv6110x_get_bandwidth,
-	.tuner_set_bbgain		= stv6110x_set_bbgain,
-	.tuner_get_bbgain		= stv6110x_get_bbgain,
-	.tuner_set_refclk		= stv6110x_set_refclock,
-	.tuner_get_status		= stv6110x_get_status,
+	.tuner_set_bbgain	= stv6110x_set_bbgain,
+	.tuner_get_bbgain	= stv6110x_get_bbgain,
+	.tuner_set_refclk	= stv6110x_set_refclock,
+	.tuner_get_status	= stv6110x_get_status,
 };
 
 struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
