@@ -5982,10 +5982,6 @@ static int stv090x_setup(struct dvb_frontend *fe)
 		goto err;
 	if (stv090x_write_reg(state, STV090x_TSTRES0, 0x00) < 0)
 		goto err;
-		/* workaround for stuck DiSEqC output */
-	if (config->diseqc_envelope_mode)
-		stv090x_send_diseqc_burst(fe, SEC_MINI_A);
-
 	return 0;
 err:
 	dprintk(FE_ERROR, 1, "I/O error");
@@ -6053,7 +6049,7 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 	struct stv090x_state *state = NULL;
 	struct stv090x_dev *temp_int;
 
-	state = kzalloc(sizeof(struct stv090x_state), GFP_KERNEL);
+	state = kzalloc(sizeof (struct stv090x_state), GFP_KERNEL);
 	if (state == NULL)
 		goto error;
 
@@ -6068,21 +6064,13 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 	state->rolloff				= STV090x_RO_35; /* default */
 
 	temp_int = find_dev(state->i2c,
-			    state->config->address);
+				state->config->address);
 
-	if ((temp_int != NULL) && (state->demod_mode == STV090x_DUAL))
-	{
+	if ((temp_int != NULL) && (state->demod_mode == STV090x_DUAL)) {
 		state->internal = temp_int->internal;
 		state->internal->num_used++;
 		dprintk(FE_INFO, 1, "Found Internal Structure!");
-		dprintk(FE_ERROR, 1, "Attaching %s demodulator(%d) Cut=0x%02x",
-			state->device == STV0900 ? "STV0900" : "STV0903",
-			demod,
-			state->internal->dev_ver);
-		return &state->frontend;
-	}
-	else
-	{
+	} else {
 		state->internal = kmalloc(sizeof(struct stv090x_internal),
 					  GFP_KERNEL);
 		temp_int = append_internal(state->internal);
@@ -6092,19 +6080,24 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 		state->internal->i2c_adap = state->i2c;
 		state->internal->i2c_addr = state->config->address;
 		dprintk(FE_INFO, 1, "Create New Internal Structure!");
+
+		mutex_init(&state->internal->demod_lock);
+		mutex_init(&state->internal->tuner_lock);
+
+		if (stv090x_setup(&state->frontend) < 0) {
+			dprintk(FE_ERROR, 1, "Error setting up device");
+			goto error;
+		}
 	}
 
-	mutex_init(&state->internal->demod_lock);
-	mutex_init(&state->internal->tuner_lock);
+	/* workaround for stuck DiSEqC output */
+	if (config->diseqc_envelope_mode)
+		stv090x_send_diseqc_burst(&state->frontend, SEC_MINI_A);
 
-	if (stv090x_setup(&state->frontend) < 0) {
-		dprintk(FE_ERROR, 1, "Error setting up device");
-		goto error;
-	}
 	dprintk(FE_ERROR, 1, "Attaching %s demodulator(%d) Cut=0x%02x",
-		state->device == STV0900 ? "STV0900" : "STV0903",
-		demod,
-		state->internal->dev_ver);
+	       state->device == STV0900 ? "STV0900" : "STV0903",
+	       demod,
+	       state->internal->dev_ver);
 
 	return &state->frontend;
 
