@@ -4649,35 +4649,42 @@ static enum dvbfe_search stv090x_search(struct dvb_frontend *fe, struct dvb_fron
 	struct stv090x_state *state = fe->demodulator_priv;
 	struct dtv_frontend_properties *props = &fe->dtv_property_cache;
 
-	if (p->frequency == 0)
+	if (props->frequency == 0)
 		return DVBFE_ALGO_SEARCH_INVALID;
 
-	state->delsys = props->delivery_system;
-	state->frequency = p->frequency;
-	state->srate = p->u.qpsk.symbol_rate;
+	switch (props->delivery_system) {
+	case SYS_DSS:
+		state->delsys = STV090x_DSS;
+		break;
+	case SYS_DVBS:
+		state->delsys = STV090x_DVBS1;
+		break;
+	case SYS_DVBS2:
+		state->delsys = STV090x_DVBS2;
+		break;
+	default:
+		return DVBFE_ALGO_SEARCH_INVALID;
+	}
+
+	state->frequency = props->frequency;
+	state->srate = props->symbol_rate;
 	state->search_mode = STV090x_SEARCH_AUTO;
 	state->algo = STV090x_COLD_SEARCH;
 	state->fec = STV090x_PRERR;
-	if (state->srate > 10000000)
-	{
+	if (state->srate > 10000000) {
 		dprintk(FE_DEBUG, 1, "Search range: 10 MHz");
 		state->search_range = 10000000;
-	}
-	else
-	{
+	} else {
 		dprintk(FE_DEBUG, 1, "Search range: 5 MHz");
 		state->search_range = 5000000;
 	}
 
 	stv090x_set_mis(state, props->stream_id);
 
-	if (stv090x_algo(state) == STV090x_RANGEOK)
-	{
+	if (stv090x_algo(state) == STV090x_RANGEOK) {
 		dprintk(FE_DEBUG, 1, "Search success!");
 		return DVBFE_ALGO_SEARCH_SUCCESS;
-	}
-	else
-	{
+	} else {
 		dprintk(FE_DEBUG, 1, "Search failed!");
 		return DVBFE_ALGO_SEARCH_FAILED;
 	}
