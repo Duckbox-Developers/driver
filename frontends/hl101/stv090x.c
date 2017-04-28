@@ -1167,13 +1167,7 @@ static struct stv090x_reg stv0900_initval[] =
 static struct stv090x_reg stv0903_initval[] =
 {
 	{ STV090x_OUTCFG,		0x00 },
-#if   defined(TUNER_IX7306)
-	{ STV090x_AGCRF1CFG,		0x10 },		// 0x10 for sharp7306, 0x11 for stb6110
-#elif defined(TUNER_STB6110)
-	{ STV090x_AGCRF1CFG,		0x11 },		// 0x10 for sharp7306, 0x11 for stb6110
-#else
-#error "You must define tuner type..."
-#endif
+	{ STV090x_AGCRF1CFG,		0x11 },
 	{ STV090x_STOPCLK1,		0x48 },
 	{ STV090x_STOPCLK2,		0x14 },
 	{ STV090x_TSTTNR1,		0x27 },
@@ -6024,6 +6018,21 @@ static int stv090x_init(struct dvb_frontend *fe)
 	if (stv090x_i2c_gate_ctrl(state, 1) < 0)
 		goto err;
 
+	reg = stv090x_read_reg(state, STV090x_AGCRF1CFG);
+	reg = config->agc_rf1_inv ? (reg & 0xFE) : (reg | 0x01);
+	if (stv090x_write_reg(state, STV090x_AGCRF1CFG, reg) < 0)
+		goto err;
+
+	printk("stv090x_init: AGCRF1CFG = 0x%02X\n",reg);
+
+	reg = stv090x_read_reg(state, STV090x_AGCRF2CFG);
+	reg = config->agc_rf2_inv ? (reg & 0xFE) : (reg | 0x01);
+	if (stv090x_write_reg(state, STV090x_AGCRF2CFG, reg) < 0)
+		goto err;
+
+	printk("stv090x_init: AGCRF2CFG = 0x%02X\n",reg);
+
+
 	if (config->tuner_set_mode)
 	{
 		if (config->tuner_set_mode(fe, TUNER_WAKE) < 0)
@@ -6060,8 +6069,8 @@ static int stv090x_setup(struct dvb_frontend *fe)
 {
 	struct stv090x_state *state = fe->demodulator_priv;
 	const struct stv090x_config *config = state->config;
-	const struct stv090x_reg *stv090x_initval = NULL;
-	const struct stv090x_reg *stv090x_cut20_val = NULL;
+	struct stv090x_reg *stv090x_initval = NULL;
+	struct stv090x_reg *stv090x_cut20_val = NULL;
 	unsigned long t1_size = 0, t2_size = 0;
 	u32 reg = 0;
 
@@ -6123,6 +6132,10 @@ static int stv090x_setup(struct dvb_frontend *fe)
 	dprintk(FE_DEBUG, 1, "Setting up initial values");
 	for (i = 0; i < t1_size; i++)
 	{
+		if (stv090x_initval[i].addr == STV090x_AGCRF1CFG)
+			stv090x_initval[i].data = config->agc_rf1_inv ? (stv090x_initval[i].data & 0xFE) : (stv090x_initval[i].data | 0x01);
+		if (stv090x_initval[i].addr == STV090x_AGCRF2CFG)
+			stv090x_initval[i].data = config->agc_rf2_inv ? (stv090x_initval[i].data & 0xFE) : (stv090x_initval[i].data | 0x01);
 		if (stv090x_write_reg(state, stv090x_initval[i].addr, stv090x_initval[i].data) < 0)
 			goto err;
 	}

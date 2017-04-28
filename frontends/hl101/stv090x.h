@@ -29,7 +29,7 @@
 #  include <linux/stm/pio.h>
 #endif
 
-//#define	TUNER_IX7306
+#define	TUNER_IX7306
 #define	TUNER_STB6110
 
 enum stv090x_demodulator
@@ -108,6 +108,8 @@ struct stv090x_config
 	enum stv090x_adc_range	adc1_range; /* default: 2Vpp */
 	enum stv090x_adc_range	adc2_range; /* default: 2Vpp */
 
+	bool agc_rf1_inv;
+	bool agc_rf2_inv;
 	bool diseqc_envelope_mode;
 
 	int (*tuner_init)(struct dvb_frontend *fe);

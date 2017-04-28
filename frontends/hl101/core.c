@@ -25,7 +25,7 @@ static int tunerType;
 static char *tuner = "stb6100";
 
 module_param(demod, charp, 0);
-MODULE_PARM_DESC(demod, "demodulator type: stb0899, stv090x, cx24116 (default stb0899");
+MODULE_PARM_DESC(demod, "demodulator type: stb0899, stv090x, (default stb0899");
 
 module_param(tuner, charp, 0);
 MODULE_PARM_DESC(tuner, "tuner type: stb6100, stv6110x, sharp7306 (default stb6100");
@@ -34,16 +34,12 @@ MODULE_PARM_DESC(tuner, "tuner type: stb6100, stv6110x, sharp7306 (default stb61
 #define I2C_ADDR_STB6100 	(0xc0 >> 1)
 #define I2C_ADDR_STV090X	(0xd0 >> 1)
 #define I2C_ADDR_STV6110X	(0xc0 >> 1)
-#define I2C_ADDR_CX24116	(0x0a >> 1)
 #define I2C_ADDR_IX7306		(0xc0 >> 1)
-
-#define CLK_EXT_IX7306 		 4000000
 
 enum
 {
 	STV090X,
 	STB0899,
-	CX24116,
 };
 
 enum
@@ -531,86 +527,88 @@ static const struct stb0899_s1_reg stb0899_init_tst[] =
 
 static struct stb0899_config stb0899_config =
 {
-	.init_dev        = stb0899_init_dev,
-	.init_s2_demod   = stb0899_init_s2_demod,
-	.init_s1_demod   = stb0899_init_s1_demod,
-	.init_s2_fec     = stb0899_init_s2_fec,
-	.init_tst        = stb0899_init_tst,
+	.init_dev 		= stb0899_init_dev,
+	.init_s2_demod 		= stb0899_init_s2_demod,
+	.init_s1_demod 		= stb0899_init_s1_demod,
+	.init_s2_fec 		= stb0899_init_s2_fec,
+	.init_tst 		= stb0899_init_tst,
 
 	.lnb_enable 		= NULL,
-	.lnb_vsel	 		= NULL,
+	.lnb_vsel 		= NULL,
 
-	.demod_address   = I2C_ADDR_STB0899, /* I2C Address */
-	.block_sync_mode = STB0899_SYNC_FORCED, /* ? */
+	.demod_address 		= I2C_ADDR_STB0899, /* I2C Address */
+	.block_sync_mode 	= STB0899_SYNC_FORCED, /* ? */
 
-	.xtal_freq       = 27000000,         /* Assume Hz ? */
-	.inversion       = IQ_SWAP_ON,       /* ? */
+	.xtal_freq 		= 27000000,         /* Assume Hz ? */
+	.inversion 		= IQ_SWAP_ON,       /* ? */
 
-	.lo_clk          = 76500000,
-	.hi_clk          = 99000000,
+	.lo_clk 		= 76500000,
+	.hi_clk 		= 99000000,
 
-	.ts_output_mode  = 0,                /* Use parallel mode */
-	.clock_polarity  = 0,                /*  */
-	.data_clk_parity = 0,                /*  */
-	.fec_mode        = 0,                /*  */
+	.ts_output_mode	 	= 0,                /* Use parallel mode */
+	.clock_polarity 	= 0,                /*  */
+	.data_clk_parity 	= 0,                /*  */
+	.fec_mode 		= 0,                /*  */
 
-	.esno_ave            = CORE_STB0899_DVBS2_ESNO_AVE,
-	.esno_quant          = CORE_STB0899_DVBS2_ESNO_QUANT,
-	.avframes_coarse     = CORE_STB0899_DVBS2_AVFRAMES_COARSE,
-	.avframes_fine       = CORE_STB0899_DVBS2_AVFRAMES_FINE,
-	.miss_threshold      = CORE_STB0899_DVBS2_MISS_THRESHOLD,
-	.uwp_threshold_acq   = CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
-	.uwp_threshold_track = CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
-	.uwp_threshold_sof   = CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
-	.sof_search_timeout  = CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
+	.esno_ave 		= CORE_STB0899_DVBS2_ESNO_AVE,
+	.esno_quant 		= CORE_STB0899_DVBS2_ESNO_QUANT,
+	.avframes_coarse 	= CORE_STB0899_DVBS2_AVFRAMES_COARSE,
+	.avframes_fine 		= CORE_STB0899_DVBS2_AVFRAMES_FINE,
+	.miss_threshold 	= CORE_STB0899_DVBS2_MISS_THRESHOLD,
+	.uwp_threshold_acq 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
+	.uwp_threshold_track 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
+	.uwp_threshold_sof 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
+	.sof_search_timeout 	= CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
 
-	.btr_nco_bits          = CORE_STB0899_DVBS2_BTR_NCO_BITS,
-	.btr_gain_shift_offset = CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
-	.crl_nco_bits          = CORE_STB0899_DVBS2_CRL_NCO_BITS,
-	.ldpc_max_iter         = CORE_STB0899_DVBS2_LDPC_MAX_ITER,
+	.btr_nco_bits		= CORE_STB0899_DVBS2_BTR_NCO_BITS,
+	.btr_gain_shift_offset 	= CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
+	.crl_nco_bits 		= CORE_STB0899_DVBS2_CRL_NCO_BITS,
+	.ldpc_max_iter 		= CORE_STB0899_DVBS2_LDPC_MAX_ITER,
 
-	.tuner_get_frequency	= stb6100_get_frequency,
-	.tuner_set_frequency	= stb6100_set_frequency,
-	.tuner_set_bandwidth	= stb6100_set_bandwidth,
-	.tuner_get_bandwidth	= stb6100_get_bandwidth,
-	.tuner_set_rfsiggain	= NULL,
+	.tuner_get_frequency 	= stb6100_get_frequency,
+	.tuner_set_frequency 	= stb6100_set_frequency,
+	.tuner_set_bandwidth 	= stb6100_set_bandwidth,
+	.tuner_get_bandwidth 	= stb6100_get_bandwidth,
+	.tuner_set_rfsiggain 	= NULL,
 };
 
 static struct stv090x_config stv090x_config =
 {
 	.device			= STV0903,
-	.demod_mode		= STV090x_DUAL/*STV090x_SINGLE*/,
-	.clk_mode		= STV090x_CLK_EXT,
+	.demod_mode 		= STV090x_DUAL/*STV090x_SINGLE*/,
+	.clk_mode 		= STV090x_CLK_EXT,
 
-	.xtal			= 8000000,
-	.address		= I2C_ADDR_STV090X,
+	.xtal 			= 8000000,
+	.address 		= I2C_ADDR_STV090X,
 
-	.ts1_mode		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
-	.ts2_mode		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
-	.ts1_clk		= 0,
-	.ts2_clk		= 0,
+	.ts1_mode 		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
+	.ts2_mode 		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
+	.ts1_clk 		= 0,
+	.ts2_clk 		= 0,
 
-	.lnb_enable 	= NULL,
-	.lnb_vsel	 	= NULL,
+	.lnb_enable 		= NULL,
+	.lnb_vsel 		= NULL,
 
-	.repeater_level	= STV090x_RPTLEVEL_16,
+	.repeater_level		= STV090x_RPTLEVEL_16,
 
-	.tuner_init				= NULL,
-	.tuner_set_mode			= NULL,
-	.tuner_set_frequency	= NULL,
-	.tuner_get_frequency	= NULL,
-	.tuner_set_bandwidth	= NULL,
-	.tuner_get_bandwidth	= NULL,
-	.tuner_set_bbgain		= NULL,
-	.tuner_get_bbgain		= NULL,
-	.tuner_set_refclk		= NULL,
-	.tuner_get_status		= NULL,
+	.adc1_range 		= STV090x_ADC_1Vpp,
+	.agc_rf1_inv 		= 1,
+	.tuner_init 		= NULL,
+	.tuner_set_mode 	= NULL,
+	.tuner_set_frequency 	= NULL,
+	.tuner_get_frequency 	= NULL,
+	.tuner_set_bandwidth 	= NULL,
+	.tuner_get_bandwidth 	= NULL,
+	.tuner_set_bbgain 	= NULL,
+	.tuner_get_bbgain 	= NULL,
+	.tuner_set_refclk 	= NULL,
+	.tuner_get_status 	= NULL,
 };
 
 static struct stb6100_config stb6100_config =
 {
-	.tuner_address = I2C_ADDR_STB6100,
-	.refclock      = 27000000
+	.tuner_address		= I2C_ADDR_STB6100,
+	.refclock		= 27000000
 };
 
 static struct stv6110x_config stv6110x_config =
@@ -622,11 +620,11 @@ static struct stv6110x_config stv6110x_config =
 
 static const struct ix7306_config bs2s7hz7306a_config =
 {
-	.name		= "Sharp BS2S7HZ7306A",
-	.addr		= I2C_ADDR_IX7306,
-	.step_size 	= IX7306_STEP_1000,
-	.bb_lpf		= IX7306_LPF_12,
-	.bb_gain	= IX7306_GAIN_2dB,
+	.name			= "Sharp BS2S7HZ7306A",
+	.addr			= I2C_ADDR_IX7306,
+	.step_size		= IX7306_STEP_1000,
+	.bb_lpf			= IX7306_LPF_10,
+	.bb_gain		= IX7306_GAIN_0dB,
 };
 
 static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
@@ -655,25 +653,27 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 				{
 					case SHARP7306:
 						ctl = dvb_attach(ix7306_attach, frontend, &bs2s7hz7306a_config, cfg->i2c_adap);
+						stv090x_config.agc_rf1_inv = 1;
 						break;
 					case STV6110X:
 					default:
 						ctl = dvb_attach(stv6110x_attach, frontend, &stv6110x_config, cfg->i2c_adap);
+						stv090x_config.agc_rf1_inv = 0;
 				}
 
 				if (ctl)
 				{
 					printk("%s: %s attached\n", __FUNCTION__, tuner);
-					stv090x_config.tuner_init	  	  	= ctl->tuner_init;
-					stv090x_config.tuner_set_mode	  	= ctl->tuner_set_mode;
+					stv090x_config.tuner_init 		= ctl->tuner_init;
+					stv090x_config.tuner_set_mode 		= ctl->tuner_set_mode;
 					stv090x_config.tuner_set_frequency 	= ctl->tuner_set_frequency;
 					stv090x_config.tuner_get_frequency 	= ctl->tuner_get_frequency;
 					stv090x_config.tuner_set_bandwidth 	= ctl->tuner_set_bandwidth;
 					stv090x_config.tuner_get_bandwidth 	= ctl->tuner_get_bandwidth;
-					stv090x_config.tuner_set_bbgain	  	= ctl->tuner_set_bbgain;
-					stv090x_config.tuner_get_bbgain	  	= ctl->tuner_get_bbgain;
-					stv090x_config.tuner_set_refclk	  	= ctl->tuner_set_refclk;
-					stv090x_config.tuner_get_status	  	= ctl->tuner_get_status;
+					stv090x_config.tuner_set_bbgain 	= ctl->tuner_set_bbgain;
+					stv090x_config.tuner_get_bbgain 	= ctl->tuner_get_bbgain;
+					stv090x_config.tuner_set_refclk 	= ctl->tuner_set_refclk;
+					stv090x_config.tuner_get_status = 	ctl->tuner_get_status;
 				}
 				else
 				{
@@ -718,6 +718,9 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 	}
 
 	return frontend;
+
+	if (frontend->ops.init)
+		frontend->ops.init(frontend);
 
 error_out:
 	printk("fe_core: Frontend registration failed!\n");
@@ -896,11 +899,6 @@ int __init fe_core_init(void)
 	{
 		printk("demodulator: stv090x dvb-s2    ");
 		demodType = STV090X;
-	}
-	else if (strcmp("cx24116", demod) == 0)
-	{
-		printk("demodulator: cx24116 dvb-s2    ");
-		demodType = CX24116;
 	}
 
 	if ((tuner[0] == 0) || (strcmp("stb6100", tuner) == 0))
