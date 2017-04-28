@@ -41,6 +41,10 @@
 
 static unsigned int verbose = 0;
 
+static unsigned int ts_nosync=1;
+module_param(ts_nosync, int, 0644);
+MODULE_PARM_DESC(ts_nosync, "TS FIFO Minimum latence mode (default:on)");
+
 /* internal params node */
 struct stv090x_dev
 {
@@ -5550,223 +5554,210 @@ static int stv0900_set_tspath(struct stv090x_state *state)
 {
 	u32 reg;
 
-	if (state->internal->dev_ver >= 0x20)
-	{
-		switch (state->config->ts1_mode)
-		{
-			case STV090x_TSMODE_PARALLEL_PUNCTURED:
-			case STV090x_TSMODE_DVBCI:
-				switch (state->config->ts2_mode)
-				{
-					case STV090x_TSMODE_SERIAL_PUNCTURED:
-					case STV090x_TSMODE_SERIAL_CONTINUOUS:
-					default:
-						stv090x_write_reg(state, STV090x_TSGENERAL, 0x00);
-						break;
-
-					case STV090x_TSMODE_PARALLEL_PUNCTURED:
-					case STV090x_TSMODE_DVBCI:
-						if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x06) < 0) /* Mux'd stream mode */
-							goto err;
-						reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
-						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
-						if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
-							goto err;
-						reg = stv090x_read_reg(state, STV090x_P2_TSCFGM);
-						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
-						if (stv090x_write_reg(state, STV090x_P2_TSCFGM, reg) < 0)
-							goto err;
-						if (stv090x_write_reg(state, STV090x_P1_TSSPEED, 0x14) < 0)
-							goto err;
-						if (stv090x_write_reg(state, STV090x_P2_TSSPEED, 0x28) < 0)
-							goto err;
-						break;
-				}
-				break;
-
+	if (state->internal->dev_ver >= 0x20) {
+		switch (state->config->ts1_mode) {
+		case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		case STV090x_TSMODE_DVBCI:
+			switch (state->config->ts2_mode) {
 			case STV090x_TSMODE_SERIAL_PUNCTURED:
 			case STV090x_TSMODE_SERIAL_CONTINUOUS:
 			default:
-				switch (state->config->ts2_mode)
-				{
-					case STV090x_TSMODE_SERIAL_PUNCTURED:
-					case STV090x_TSMODE_SERIAL_CONTINUOUS:
-					default:
-						if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0c) < 0)
-							goto err;
-						break;
-
-					case STV090x_TSMODE_PARALLEL_PUNCTURED:
-					case STV090x_TSMODE_DVBCI:
-						if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0a) < 0)
-							goto err;
-						break;
-				}
+				stv090x_write_reg(state, STV090x_TSGENERAL, 0x00);
 				break;
-		}
-	}
-	else
-	{
-		switch (state->config->ts1_mode)
-		{
+
 			case STV090x_TSMODE_PARALLEL_PUNCTURED:
 			case STV090x_TSMODE_DVBCI:
-				switch (state->config->ts2_mode)
-				{
-					case STV090x_TSMODE_SERIAL_PUNCTURED:
-					case STV090x_TSMODE_SERIAL_CONTINUOUS:
-					default:
-						stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x10);
-						break;
-
-					case STV090x_TSMODE_PARALLEL_PUNCTURED:
-					case STV090x_TSMODE_DVBCI:
-						stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x16);
-						reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
-						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
-						if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
-							goto err;
-						reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
-						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 0);
-						if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
-							goto err;
-						if (stv090x_write_reg(state, STV090x_P1_TSSPEED, 0x14) < 0)
-							goto err;
-						if (stv090x_write_reg(state, STV090x_P2_TSSPEED, 0x28) < 0)
-							goto err;
-						break;
-				}
+				if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x06) < 0) /* Mux'd stream mode */
+					goto err;
+				reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
+				STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
+				if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
+					goto err;
+				reg = stv090x_read_reg(state, STV090x_P2_TSCFGM);
+				STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
+				if (stv090x_write_reg(state, STV090x_P2_TSCFGM, reg) < 0)
+					goto err;
+				if (stv090x_write_reg(state, STV090x_P1_TSSPEED, 0x14) < 0)
+					goto err;
+				if (stv090x_write_reg(state, STV090x_P2_TSSPEED, 0x28) < 0)
+					goto err;
 				break;
+			}
+			break;
 
+		case STV090x_TSMODE_SERIAL_PUNCTURED:
+		case STV090x_TSMODE_SERIAL_CONTINUOUS:
+		default:
+			switch (state->config->ts2_mode) {
 			case STV090x_TSMODE_SERIAL_PUNCTURED:
 			case STV090x_TSMODE_SERIAL_CONTINUOUS:
 			default:
-				switch (state->config->ts2_mode)
-				{
-					case STV090x_TSMODE_SERIAL_PUNCTURED:
-					case STV090x_TSMODE_SERIAL_CONTINUOUS:
-					default:
-						stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x14);
-						break;
-
-					case STV090x_TSMODE_PARALLEL_PUNCTURED:
-					case STV090x_TSMODE_DVBCI:
-						stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x12);
-						break;
-				}
+				if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0c) < 0)
+					goto err;
 				break;
+
+			case STV090x_TSMODE_PARALLEL_PUNCTURED:
+			case STV090x_TSMODE_DVBCI:
+				if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x0a) < 0)
+					goto err;
+				break;
+			}
+			break;
+		}
+	} else {
+		switch (state->config->ts1_mode) {
+		case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		case STV090x_TSMODE_DVBCI:
+			switch (state->config->ts2_mode) {
+			case STV090x_TSMODE_SERIAL_PUNCTURED:
+			case STV090x_TSMODE_SERIAL_CONTINUOUS:
+			default:
+				stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x10);
+				break;
+
+			case STV090x_TSMODE_PARALLEL_PUNCTURED:
+			case STV090x_TSMODE_DVBCI:
+				stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x16);
+				reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
+				STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
+				if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
+					goto err;
+				reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
+				STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 0);
+				if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
+					goto err;
+				if (stv090x_write_reg(state, STV090x_P1_TSSPEED, 0x14) < 0)
+					goto err;
+				if (stv090x_write_reg(state, STV090x_P2_TSSPEED, 0x28) < 0)
+					goto err;
+				break;
+			}
+			break;
+
+		case STV090x_TSMODE_SERIAL_PUNCTURED:
+		case STV090x_TSMODE_SERIAL_CONTINUOUS:
+		default:
+			switch (state->config->ts2_mode) {
+			case STV090x_TSMODE_SERIAL_PUNCTURED:
+			case STV090x_TSMODE_SERIAL_CONTINUOUS:
+			default:
+				stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x14);
+				break;
+
+			case STV090x_TSMODE_PARALLEL_PUNCTURED:
+			case STV090x_TSMODE_DVBCI:
+				stv090x_write_reg(state, STV090x_TSGENERAL1X, 0x12);
+				break;
+			}
+			break;
 		}
 	}
 
-	switch (state->config->ts1_mode)
-	{
-		case STV090x_TSMODE_PARALLEL_PUNCTURED:
-			reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
-			if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	switch (state->config->ts1_mode) {
+	case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
+		if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_DVBCI:
-			reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
-			if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_DVBCI:
+		reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
+		if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_SERIAL_PUNCTURED:
-			reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
-			if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_SERIAL_PUNCTURED:
+		reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
+		if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_SERIAL_CONTINUOUS:
-			reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
-			if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_SERIAL_CONTINUOUS:
+		reg = stv090x_read_reg(state, STV090x_P1_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts1_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
+		if (stv090x_write_reg(state, STV090x_P1_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
-	switch (state->config->ts2_mode)
-	{
-		case STV090x_TSMODE_PARALLEL_PUNCTURED:
-			reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
-			if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	switch (state->config->ts2_mode) {
+	case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
+		if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_DVBCI:
-			reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
-			if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_DVBCI:
+		reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x00);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
+		if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_SERIAL_PUNCTURED:
-			reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
-			if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_SERIAL_PUNCTURED:
+		reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x00);
+		if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		case STV090x_TSMODE_SERIAL_CONTINUOUS:
-			reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
-			STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
-			STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
-			STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
-			if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
-				goto err;
-			break;
+	case STV090x_TSMODE_SERIAL_CONTINUOUS:
+		reg = stv090x_read_reg(state, STV090x_P2_TSCFGH);
+		STV090x_SETFIELD_Px(reg, TSFIFO_TEIUPDATE_FIELD, state->config->ts2_tei);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SERIAL_FIELD, 0x01);
+		STV090x_SETFIELD_Px(reg, TSFIFO_DVBCI_FIELD, 0x01);
+		if (stv090x_write_reg(state, STV090x_P2_TSCFGH, reg) < 0)
+			goto err;
+		break;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
-	if (state->config->ts1_clk > 0)
-	{
+	if (state->config->ts1_clk > 0) {
 		u32 speed;
 
-		switch (state->config->ts1_mode)
-		{
-			case STV090x_TSMODE_PARALLEL_PUNCTURED:
-			case STV090x_TSMODE_DVBCI:
-			default:
-				speed = state->internal->mclk /
-					(state->config->ts1_clk / 4);
-				if (speed < 0x08)
-					speed = 0x08;
-				if (speed > 0xFF)
-					speed = 0xFF;
-				break;
-			case STV090x_TSMODE_SERIAL_PUNCTURED:
-			case STV090x_TSMODE_SERIAL_CONTINUOUS:
-				speed = state->internal->mclk /
-					(state->config->ts1_clk / 32);
-				if (speed < 0x20)
-					speed = 0x20;
-				if (speed > 0xFF)
-					speed = 0xFF;
-				break;
+		switch (state->config->ts1_mode) {
+		case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		case STV090x_TSMODE_DVBCI:
+		default:
+			speed = state->internal->mclk /
+				(state->config->ts1_clk / 4);
+			if (speed < 0x08)
+				speed = 0x08;
+			if (speed > 0xFF)
+				speed = 0xFF;
+			break;
+		case STV090x_TSMODE_SERIAL_PUNCTURED:
+		case STV090x_TSMODE_SERIAL_CONTINUOUS:
+			speed = state->internal->mclk /
+				(state->config->ts1_clk / 32);
+			if (speed < 0x20)
+				speed = 0x20;
+			if (speed > 0xFF)
+				speed = 0xFF;
+			break;
 		}
 		reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
 		STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
@@ -5776,37 +5767,59 @@ static int stv0900_set_tspath(struct stv090x_state *state)
 			goto err;
 	}
 
-	if (state->config->ts2_clk > 0)
-	{
+	if (state->config->ts2_clk > 0) {
 		u32 speed;
 
-		switch (state->config->ts2_mode)
-		{
-			case STV090x_TSMODE_PARALLEL_PUNCTURED:
-			case STV090x_TSMODE_DVBCI:
-			default:
-				speed = state->internal->mclk /
-					(state->config->ts2_clk / 4);
-				if (speed < 0x08)
-					speed = 0x08;
-				if (speed > 0xFF)
-					speed = 0xFF;
-				break;
-			case STV090x_TSMODE_SERIAL_PUNCTURED:
-			case STV090x_TSMODE_SERIAL_CONTINUOUS:
-				speed = state->internal->mclk /
-					(state->config->ts2_clk / 32);
-				if (speed < 0x20)
-					speed = 0x20;
-				if (speed > 0xFF)
-					speed = 0xFF;
-				break;
+		switch (state->config->ts2_mode) {
+		case STV090x_TSMODE_PARALLEL_PUNCTURED:
+		case STV090x_TSMODE_DVBCI:
+		default:
+			speed = state->internal->mclk /
+				(state->config->ts2_clk / 4);
+			if (speed < 0x08)
+				speed = 0x08;
+			if (speed > 0xFF)
+				speed = 0xFF;
+			break;
+		case STV090x_TSMODE_SERIAL_PUNCTURED:
+		case STV090x_TSMODE_SERIAL_CONTINUOUS:
+			speed = state->internal->mclk /
+				(state->config->ts2_clk / 32);
+			if (speed < 0x20)
+				speed = 0x20;
+			if (speed > 0xFF)
+				speed = 0xFF;
+			break;
 		}
 		reg = stv090x_read_reg(state, STV090x_P2_TSCFGM);
 		STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
 		if (stv090x_write_reg(state, STV090x_P2_TSCFGM, reg) < 0)
 			goto err;
 		if (stv090x_write_reg(state, STV090x_P2_TSSPEED, speed) < 0)
+			goto err;
+	}
+
+	if (ts_nosync)
+	{
+		dprintk(FE_DEBUG, 1, "TS FIFO Minimum Latence mode\n");
+		reg = stv090x_read_reg(state, STV090x_P1_TSSTATEM);
+		STV090x_SETFIELD_Px(reg, TSOUT_NOSYNC, 1);
+		if (stv090x_write_reg(state, STV090x_P1_TSSTATEM, reg) < 0)
+			goto err;
+
+		reg = stv090x_read_reg(state, STV090x_P2_TSSTATEM);
+		STV090x_SETFIELD_Px(reg, TSOUT_NOSYNC, 1);
+		if (stv090x_write_reg(state, STV090x_P2_TSSTATEM, reg) < 0)
+			goto err;
+
+		reg = stv090x_read_reg(state, STV090x_P1_TSSYNC);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SYNCMODE, 2);
+		if (stv090x_write_reg(state, STV090x_P1_TSSYNC, reg) < 0)
+			goto err;
+
+		reg = stv090x_read_reg(state, STV090x_P2_TSSYNC);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SYNCMODE, 2);
+		if (stv090x_write_reg(state, STV090x_P2_TSSYNC, reg) < 0)
 			goto err;
 	}
 
@@ -5930,6 +5943,20 @@ static int stv0903_set_tspath(struct stv090x_state *state)
 		if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
 			goto err;
 		if (stv090x_write_reg(state, STV090x_P1_TSSPEED, speed) < 0)
+			goto err;
+	}
+
+	if (ts_nosync)
+	{
+		dprintk(FE_DEBUG, 1, "TS FIFO Minimum Latence mode\n");
+		reg = stv090x_read_reg(state, STV090x_P1_TSSTATEM);
+		STV090x_SETFIELD_Px(reg, TSOUT_NOSYNC, 1);
+		if (stv090x_write_reg(state, STV090x_P1_TSSTATEM, reg) < 0)
+			goto err;
+
+		reg = stv090x_read_reg(state, STV090x_P1_TSSYNC);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SYNCMODE, 2);
+		if (stv090x_write_reg(state, STV090x_P1_TSSYNC, reg) < 0)
 			goto err;
 	}
 
