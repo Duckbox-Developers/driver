@@ -746,7 +746,7 @@ init_fe_device(struct dvb_adapter *adapter,
 	/* initialize the config data */
 	cfg->i2c_adap = i2c_get_adapter(tuner_cfg->i2c_bus);
 
-	printk("i2c adapter = 0x%0x\n", cfg->i2c_adap);
+	printk("i2c adapter = 0x%0x\n", (unsigned int) cfg->i2c_adap);
 
 	cfg->i2c_addr = tuner_cfg->i2c_addr;
 

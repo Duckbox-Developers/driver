@@ -258,7 +258,7 @@ static void pll_setdata_QM1D1B0004(struct dvb_frontend *fe, int *byte_)
 {
 	struct ix7306_state *state = fe->tuner_priv;
 	u8		ucOperData[5];
-	u8		byte1, byte2, byte3, byte4;
+	u8		byte1,/*byte2,*/byte3, byte4;
 
 	//in this function ,we operator ucOperData instead of byte_
 	memset(ucOperData, 0 , sizeof(ucOperData));
