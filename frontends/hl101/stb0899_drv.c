@@ -2031,12 +2031,12 @@ static struct dvb_frontend_ops stb0899_ops =
 {
 
 	.info = {
-		.name				= "STB0899 Multistandard",
-		.type				= FE_QPSK, /* with old API */
+		.name			= "STB0899 Multistandard",
+		.type			= FE_QPSK, /* with old API */
 		.frequency_min		= 950000,
 		.frequency_max 		= 2150000,
 		.frequency_stepsize	= 0,
-		.frequency_tolerance = 0,
+		.frequency_tolerance	= 0,
 		.symbol_rate_min 	=  1000000,
 		.symbol_rate_max 	= 45000000,
 
@@ -2055,39 +2055,38 @@ static struct dvb_frontend_ops stb0899_ops =
 	.set_property			= stb0899_set_property,
 	.get_property			= stb0899_get_property,
 	.get_frontend_algo		= stb0899_frontend_algo,
-	.search					= stb0899_search,
-	.track					= stb0899_track,
+	.search				= stb0899_search,
+	.track				= stb0899_track,
 	.get_frontend			= stb0899_get_frontend,
 
 	.read_status			= stb0899_read_status,
-	.read_snr				= stb0899_read_snr,
-	.read_signal_strength	= stb0899_read_signal_strength,
-	.read_ber				= stb0899_read_ber,
+	.read_snr			= stb0899_read_snr,
+	.read_signal_strength		= stb0899_read_signal_strength,
+	.read_ber			= stb0899_read_ber,
 
 	.set_voltage			= stb0899_set_voltage,
-	.set_tone				= stb0899_set_tone,
+	.set_tone			= stb0899_set_tone,
 
 	.diseqc_send_master_cmd		= stb0899_send_diseqc_msg,
 	.diseqc_recv_slave_reply	= stb0899_recv_slave_reply,
-	.diseqc_send_burst			= stb0899_send_diseqc_burst,
+	.diseqc_send_burst		= stb0899_send_diseqc_burst,
 };
 
 struct dvb_frontend *stb0899_attach(struct stb0899_config *config, struct i2c_adapter *i2c)
 {
 	struct stb0899_state *state = NULL;
-	enum stb0899_inversion inversion;
 
 	state = kzalloc(sizeof(struct stb0899_state), GFP_KERNEL);
 	if (state == NULL)
 		goto error;
 
-	inversion				= config->inversion;
 	state->verbose				= &verbose;
 	state->config				= config;
 	state->i2c				= i2c;
 	state->frontend.ops			= stb0899_ops;
 	state->frontend.demodulator_priv	= state;
-	state->internal.inversion		= inversion;
+	/* use configured inversion as default -- we'll later autodetect inversion */
+	state->internal.inversion		= config->inversion;
 
 	stb0899_wakeup(&state->frontend);
 	if (stb0899_get_dev_id(state) == -ENODEV)
