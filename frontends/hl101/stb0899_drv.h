@@ -56,7 +56,6 @@ enum stb0899_inversion
 {
 	IQ_SWAP_OFF	= 0,
 	IQ_SWAP_ON,
-	IQ_SWAP_AUTO
 };
 
 #define STB0899_GPIO00				0xf140
