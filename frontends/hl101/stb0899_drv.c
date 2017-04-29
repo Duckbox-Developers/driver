@@ -753,6 +753,7 @@ static int stb0899_send_diseqc_msg(struct dvb_frontend *fe, struct dvb_diseqc_ma
 	STB0899_SETFIELD_VAL(DISPRECHARGE, reg, 0);
 	stb0899_write_reg(state, STB0899_DISCNTRL1, reg);
 
+	msleep(100);
 	return 0;
 }
 
