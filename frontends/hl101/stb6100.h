@@ -105,7 +105,7 @@ struct stb6100_state
 
 
 extern struct dvb_frontend *stb6100_attach(struct dvb_frontend *fe,
-					   struct stb6100_config *config,
+					   const struct stb6100_config *config,
 					   struct i2c_adapter *i2c);
 
 #endif
