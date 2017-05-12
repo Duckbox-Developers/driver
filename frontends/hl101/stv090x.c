@@ -4563,14 +4563,14 @@ err:
 
 static int stv090x_set_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 {
-	struct stv090x_state *state = fe->demodulator_priv;
+	//struct stv090x_state *state = fe->demodulator_priv;
 	//dprintk(state->verbose, FE_ERROR, 1, "%s(..)\n", __func__);
 	return 0;
 }
 
 static int stv090x_get_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 {
-	struct stv090x_state *state = fe->demodulator_priv;
+	//struct stv090x_state *state = fe->demodulator_priv;
 	//dprintk(state->verbose, FE_ERROR, 1, "%s(..)\n", __func__);
 
 	/* get delivery system info */
