@@ -25,7 +25,7 @@ static int tunerType;
 static char *tuner = "stb6100";
 
 module_param(demod, charp, 0);
-MODULE_PARM_DESC(demod, "demodulator type: stb0899, stv090x, cx24116 (default stb0899");
+MODULE_PARM_DESC(demod, "demodulator type: stb0899, stv090x, (default stb0899");
 
 module_param(tuner, charp, 0);
 MODULE_PARM_DESC(tuner, "tuner type: stb6100, stv6110x, sharp7306 (default stb6100");
@@ -34,16 +34,12 @@ MODULE_PARM_DESC(tuner, "tuner type: stb6100, stv6110x, sharp7306 (default stb61
 #define I2C_ADDR_STB6100 	(0xc0 >> 1)
 #define I2C_ADDR_STV090X	(0xd0 >> 1)
 #define I2C_ADDR_STV6110X	(0xc0 >> 1)
-#define I2C_ADDR_CX24116	(0x0a >> 1)
 #define I2C_ADDR_IX7306		(0xc0 >> 1)
-
-#define CLK_EXT_IX7306 		 4000000
 
 enum
 {
 	STV090X,
 	STB0899,
-	CX24116,
 };
 
 enum
@@ -57,6 +53,10 @@ static struct core *core[MAX_DVB_ADAPTERS];
 
 static struct stb0899_config stb0899_config;
 static struct stb6100_config stb6100_config;
+
+#define OLD_CONFIG
+
+#ifdef OLD_CONFIG
 
 static const struct stb0899_s1_reg stb0899_init_dev [] =
 {
@@ -80,7 +80,7 @@ static const struct stb0899_s1_reg stb0899_init_dev [] =
 	{ STB0899_IRQMSK_1	, 0xff },
 	{ STB0899_IRQMSK_0	, 0xff },
 	{ STB0899_I2CCFG	, 0x88 },
-	{ STB0899_I2CRPT	, 0x58 },
+	{ STB0899_I2CRPT	, 0x48 },//58=ok
 	{ STB0899_GPIO00CFG	, 0x82 },
 	{ STB0899_GPIO01CFG	, 0x82 }, /* 0x02 -> LED green 0x82 -> LED orange */
 	{ STB0899_GPIO02CFG	, 0x82 },
@@ -122,7 +122,7 @@ static const struct stb0899_s1_reg stb0899_init_dev [] =
 	{ STB0899_INTBUFCTRL	, 0x0a },
 	{ STB0899_AGC2I1	, 0x00 },
 	{ STB0899_AGC2I2	, 0x00 },
-	{ STB0899_AGCIQIN       , 0x00 },
+	{ STB0899_AGCIQIN   	, 0x00 },
 	{ STB0899_TSTRES	, 0x40 }, //rjkm
 	{0xffff, 0xff},
 };
@@ -138,7 +138,11 @@ static const struct stb0899_s2_reg stb0899_init_s2_demod[]  =
 	{ STB0899_OFF0_DMD_CNTRL	, STB0899_BASE_DMD_CNTRL	, 0x0000000f },	/* DMDCNTRL	*/
 
 	{ STB0899_OFF0_IF_AGC_CNTRL	, STB0899_BASE_IF_AGC_CNTRL	, 0x03fb4a20 },	/* IFAGCCNTRL	*/
-	{ STB0899_OFF0_BB_AGC_CNTRL	, STB0899_BASE_BB_AGC_CNTRL	, 0x00200c97 },	/* BBAGCCNTRL	*/
+
+	//new value 0x00200C17	- poprawia sie jakosc obieranych kanalow HD
+	//old value 0x00200c97
+	//{ STB0899_OFF0_BB_AGC_CNTRL	, STB0899_BASE_BB_AGC_CNTRL	, 0x00200c97 },	/* BBAGCCNTRL	*/
+	{ STB0899_OFF0_BB_AGC_CNTRL	, STB0899_BASE_BB_AGC_CNTRL	, 0x00200C17 },	/* BBAGCCNTRL	*/
 
 	{ STB0899_OFF0_CRL_CNTRL	, STB0899_BASE_CRL_CNTRL	, 0x00000016 },	/* CRLCNTRL	*/
 	{ STB0899_OFF0_CRL_PHS_INIT	, STB0899_BASE_CRL_PHS_INIT	, 0x00000000 },	/* CRLPHSINIT	*/
@@ -403,9 +407,9 @@ static const struct stb0899_s1_reg stb0899_init_s1_demod[] =
 	{ STB0899_PCKLENLL		, 0xcc },
 	{ STB0899_RSPCKLEN		, 0xbd },
 	{ STB0899_TSSTATUS		, 0x90 },
-	{ STB0899_ERRCTRL1		, 0xb6 },
-	{ STB0899_ERRCTRL2      	, 0x95 },
-	{ STB0899_ERRCTRL3      	, 0x8d },
+	{ STB0899_ERRCTRL1		, 0x93 }, //b6 - z oryginalnego sterownika
+	{ STB0899_ERRCTRL2		, 0xe3 }, //95
+	{ STB0899_ERRCTRL3		, 0xb0 }, //8d
 	{ STB0899_DMONMSK1		, 0x27 },
 	{ STB0899_DMONMSK0		, 0x03 },
 	{ STB0899_DEMAPVIT		, 0x5c },
@@ -443,7 +447,6 @@ static const struct stb0899_s1_reg stb0899_init_s1_demod[] =
 	{ STB0899_UPKTERRORL		, 0x00 },
 	{ 0xffff			, 0xff },
 };
-
 
 static const struct stb0899_s2_reg stb0899_init_s2_fec[] =
 {
@@ -511,6 +514,496 @@ static const struct stb0899_s1_reg stb0899_init_tst[] =
 	{ STB0899_GHOSTREG	, 0x81 },
 	{ 0xffff		, 0xff },
 };
+#else        //oldconfig
+
+static const struct stb0899_s1_reg stb0899_init_dev [] =
+{
+	{0xF000, 0x30},
+	{0xF0A0, 0x32},
+	{0xF0A1, 0x80},
+	{0xF0A4, 0x04},
+	{0xF0A5, 0x00},
+	{0xF0A6, 0x00},
+	{0xF0A7, 0x00},
+	{0xF0A8, 0x20},
+	{0xF0A9, 0x99},
+	{0xF0AA, 0xA8},
+	{0xF101, 0x0B},
+	{0xF110, 0x11},
+	{0xF111, 0x0A},
+	{0xF112, 0x05},
+	{0xF113, 0x00},
+	{0xF114, 0x00},
+	{0xF11C, 0x00},
+	{0xF11D, 0x00},
+	{0xF120, 0xFE},
+	{0xF121, 0x81},
+	{0xF122, 0xFF},
+	{0xF123, 0xF4},
+	{0xF124, 0xF3},
+	{0xF125, 0xFC},
+	{0xF126, 0xFF},
+	{0xF127, 0xFF},
+	{0xF128, 0x00},
+	{0xF129, 0x88},
+	{0xF12A, 0x48},//bylo 58
+//5c nie dziala
+//58 - 101 1 0 00
+//5c - 101 1 1 00
+	{0xF139, 0x00},
+	{0xF13A, 0x32},
+	{0xF13B, 0x71},
+	{0xF13C, 0x90},
+	{0xF13D, 0x60},
+	{0xF13E, 0x00},
+	{0xF140, 0x82},
+	{0xF141, 0x82},
+	{0xF142, 0x82},
+	{0xF143, 0x40},
+	{0xF144, 0x82},
+	{0xF145, 0x82},
+	{0xF146, 0x82},
+	{0xF147, 0x82},
+	{0xF148, 0x82},
+	{0xF149, 0x82},
+	{0xF14A, 0x82},
+	{0xF14B, 0x82},
+	{0xF14C, 0x82},
+	{0xF14D, 0x82},
+	{0xF14E, 0x82},
+	{0xF14F, 0x82},
+	{0xF150, 0x82},
+	{0xF151, 0x82},
+	{0xF152, 0x82},
+	{0xF153, 0x82},
+	{0xF154, 0x82},
+	{0xF155, 0xB8},
+	{0xF156, 0xBA},
+	{0xF157, 0x1C},
+	{0xF158, 0x82},
+	{0xF159, 0x91},
+	{0xF15A, 0x82},
+	{0xF15B, 0x7E},
+	{0xF15C, 0x82},
+	{0xF15D, 0x82},
+	{0xF15E, 0x82},
+	{0xF15F, 0x20},
+	{0xF160, 0x82},
+	{0xF161, 0x82},
+	{0xF162, 0x82},
+	{0xF163, 0x82},
+	{0xF164, 0x82},
+	{0xF165, 0x82},
+	{0xF166, 0x82},
+	{0xF167, 0x82},
+	{0xF1B3, 0x15},//17 nie dziala
+	{0xF1B6, 0x02},
+	{0xF1B7, 0x00},
+	{0xF1B8, 0x01},
+	{0xF1C2, 0x20},
+	{0xF1C3, 0x00},
+	{0xF1E0, 0x0B},
+	{0xF1E1, 0x00},
+	{0xF1E2, 0x00},
+	{0xF200, 0x00},
+	{0xF201, 0x0A},
+	{0xffff, 0xff},
+};
+
+static const struct stb0899_s2_reg stb0899_init_s2_demod[]  =
+{
+	//offset 00
+	{0xF300, 0x00000000, 0x00000002},
+	{0xF304, 0x00000000, 0x3ED097B6},
+	{0xF308, 0x00000000, 0x00003FFD},
+	{0xF30C, 0x00000000, 0x00003fff},
+	{0xF310, 0x00000000, 0x000007D7},
+	{0xF314, 0x00000000, 0x00000201},
+	{0xF31C, 0x00000000, 0x0000000F},
+	{0xF320, 0x00000000, 0x03FB4A20},
+	{0xF324, 0x00000000, 0x00200C17}, // !!!!!!!!!!!!!
+	{0xF328, 0x00000000, 0x00000016},
+	{0xF32C, 0x00000000, 0x00000000},
+	{0xF330, 0x00000000, 0x00000000},
+	{0xF334, 0x00000000, 0x00000000},
+	{0xF338, 0x00000000, 0x3ED097B6},
+	{0xF33C, 0x00000000, 0x00000000},
+	{0xF340, 0x00000000, 0x00000000},
+	{0xF344, 0x00000000, 0x0F6CDC01},
+	{0xF348, 0x00000000, 0x00000000},
+	{0xF34C, 0x00000000, 0x00003993},
+	{0xF350, 0x00000000, 0x000D3C6F},
+	{0xF354, 0x00000000, 0x00000000},
+	{0xF358, 0x00000000, 0x00000000},
+	{0xF35C, 0x00000000, 0x0238E38E},
+	{0xF360, 0x00000000, 0x00000000},
+	{0xF364, 0x00000000, 0x00000000},
+	{0xF368, 0x00000000, 0x00000000},
+	{0xF36C, 0x00000000, 0x00000000},
+	{0xF37C, 0x00000000, 0x00000000},
+
+	//offset 20
+	{0xF310, 0x00000020, 0x00000000},
+	{0xF314, 0x00000020, 0x3FD90000},
+	{0xF358, 0x00000020, 0x00000001}, //bxzb
+	{0xF35C, 0x00000020, 0x00000002},
+	{0xF360, 0x00000020, 0x00000000},
+	{0xF364, 0x00000020, 0x000012CF},
+	{0xF368, 0x00000020, 0x00000000},
+	{0xF36C, 0x00000020, 0x00000001},
+	{0xF374, 0x00000020, 0x00000007},
+	{0xF378, 0x00000020, 0x00000002},
+
+	//offset 40
+	{0xF300, 0x00000040, 0x00000000},
+	{0xF304, 0x00000040, 0x00000000},
+	{0xF308, 0x00000040, 0x00000000},
+	{0xF30C, 0x00000040, 0x00000000},
+	{0xF310, 0x00000040, 0x00000000},
+	{0xF314, 0x00000040, 0x00000000},
+	{0xF318, 0x00000040, 0x00000000},
+	{0xF31C, 0x00000040, 0x00000000},
+	{0xF320, 0x00000040, 0x00000000},
+	{0xF324, 0x00000040, 0x00000000},
+	{0xF328, 0x00000040, 0x00000000},
+	{0xF32C, 0x00000040, 0x00000000},
+	{0xF330, 0x00000040, 0x00000000},
+	{0xF334, 0x00000040, 0x00000000},
+	{0xF338, 0x00000040, 0x00000000},
+	{0xF33C, 0x00000040, 0x00000000},
+	{0xF344, 0x00000040, 0x000001FF},
+	{0xF348, 0x00000040, 0x0000FF02},
+	{0xF34C, 0x00000040, 0x000003FD},
+	{0xF350, 0x00000040, 0x0000F006},
+	{0xF354, 0x00000040, 0x00001CE4},
+	{0xF358, 0x00000040, 0x000015FF},
+	{0xF35C, 0x00000040, 0x00004535},
+	{0xF360, 0x00000040, 0x0000D3F2},
+	{0xF364, 0x00000040, 0x00001BFF},
+	{0xF368, 0x00000040, 0x0000FD0C},
+	{0xF370, 0x00000040, 0x00001402},
+	{0xF374, 0x00000040, 0x0000CBCE},
+	{0xF378, 0x00000040, 0x00002113},
+	{0xF37C, 0x00000040, 0x0000C6ED},
+
+	//offset 60
+	{0xF300, 0x00000060, 0x00001B11},
+	{0xF304, 0x00000060, 0x0000D4ED},
+	{0xF308, 0x00000060, 0x000005DB},
+
+//	{0xF30c,0x00000060,0x0000F2F5},//tego nie ma z bxzb
+
+	{0xF310, 0x00000060, 0x0000CAD9},
+	{0xF314, 0x00000060, 0x00000F18},
+	{0xF318, 0x00000060, 0x0000B6C8},
+	{0xF320, 0x00000060, 0x0000B7D0},
+	{0xF324, 0x00000060, 0x00000F10},
+	{0xF328, 0x00000060, 0x0000D1E7},
+	{0xF32C, 0x00000060, 0x000011E1},
+	{0xF330, 0x00000060, 0x0000E0F7},
+	{0xF334, 0x00000060, 0x0000E1C0},
+	{0xF338, 0x00000060, 0x00001CF0},
+	{0xF33C, 0x00000060, 0x0000D8D1},
+	{0xF340, 0x00000060, 0x00001901},
+	{0xF344, 0x00000060, 0x0000C6CC},
+	{0xF348, 0x00000060, 0x00002617}, //bxzb
+	{0xF34C, 0x00000060, 0x0000BAD9},
+	{0xF350, 0x00000060, 0x0000FF23},
+	{0xF354, 0x00000060, 0x0000BC1D},
+	{0xF358, 0x00000060, 0x000014E2},
+	{0xF35C, 0x00000060, 0x000002F5},
+	{0xF360, 0x00000060, 0x0000E7D2},
+	{0xF364, 0x00000060, 0x0000F7FF},
+	{0xF368, 0x00000060, 0x0000ABC9},
+	{0xF36C, 0x00000060, 0x000001E2},
+	{0xF370, 0x00000060, 0x0000BFDF},
+	{0xF374, 0x00000060, 0x000007ED},
+	{0xF378, 0x00000060, 0x0000DAEA},
+	{0xF37C, 0x00000060, 0x0000EFC6},
+
+	//offset 400
+	{0xF300, 0x00000400, 0x00000001},
+	{0xF304, 0x00000400, 0x00005654},
+	{0xF30C, 0x00000400, 0x00000000},
+	{0xF310, 0x00000400, 0x00020019},
+	{0xF314, 0x00000400, 0x004B3237},
+	{0xF318, 0x00000400, 0x0003DD17},
+	{0xF31C, 0x00000400, 0x00008008},
+	{0xF320, 0x00000400, 0x002A3106},
+	{0xF324, 0x00000400, 0x0006140A},
+	{0xF328, 0x00000400, 0x00008000},
+	{0xF32C, 0x00000400, 0x00000000},
+	{0xF340, 0x00000400, 0x00000000},
+	{0xF344, 0x00000400, 0x00000471},
+	{0xF34C, 0x00000400, 0x017B0465},
+	{0xF350, 0x00000400, 0x00000002},
+	{0xF354, 0x00000400, 0x00196464},
+	{0xF358, 0x00000400, 0x00000603},
+	{0xF35C, 0x00000400, 0x02046666},
+	{0xF360, 0x00000400, 0x10046583},
+	{0xF364, 0x00000400, 0x00010404},
+	{0xF368, 0x00000400, 0x0002AA8A},
+	{0xF36C, 0x00000400, 0x00000000},
+	{0xF370, 0x00000400, 0x00000001},
+	{0xF374, 0x00000400, 0x00000500},
+	{0xF378, 0x00000400, 0x0028A0A0},
+	{0xF37C, 0x00000400, 0x00000000},
+
+	//offset 440
+	{0xF308, 0x00000440, 0x00800C17},
+	{0xF30C, 0x00000440, 0x00000CED},
+	{0xF310, 0x00000440, 0x00000000},
+	{0xF314, 0x00000440, 0x00054802},
+	{0xF320, 0x00000440, 0x00000000},
+	{0xF324, 0x00000440, 0x00000000},
+	{0xF328, 0x00000440, 0x00000000},
+	{0xF32C, 0x00000440, 0x00000000},
+	{0xF330, 0x00000440, 0x00000000},
+	{0xF334, 0x00000440, 0x00000400},
+	{0xF338, 0x00000440, 0x00000000},
+	{0xF33C, 0x00000440, 0x00000000},
+	{0xF340, 0x00000440, 0x00000000},
+	{0xF344, 0x00000440, 0x00000000},
+	{0xF348, 0x00000440, 0x00000000},
+	{0xF350, 0x00000440, 0x00000000},
+	{0xF354, 0x00000440, 0x00000000},
+	{0xF358, 0x00000440, 0x00000000},
+	{0xF35C, 0x00000440, 0x00000000},
+	{0xF360, 0x00000440, 0x00000000},
+	{0xF364, 0x00000440, 0x00000000},
+	{0xF36C, 0x00000440, 0x00000000},
+	{0xF370, 0x00000440, 0x00000000},
+	{0xF374, 0x00000440, 0x00000000},
+	{0xF378, 0x00000440, 0x00000000},
+
+	//offset 460
+	{0xF300, 0x00000460, 0x00000FFF},
+	{0xF304, 0x00000460, 0x00000000},
+	{0xF308, 0x00000460, 0x00000001},
+	{0xF30C, 0x00000460, 0x00000001},
+	{0xF310, 0x00000460, 0x00000FFD},
+	{0xF314, 0x00000460, 0x00000367},
+	{0xF318, 0x00000460, 0x00000002},
+	{0xF31C, 0x00000460, 0x00000002},
+	{0xF320, 0x00000460, 0x00000002},
+	{0xF324, 0x00000460, 0x00000FFF},
+	{0xF328, 0x00000460, 0x00000003},
+	{0xF330, 0x00000460, 0x00000FFC},
+	{0xF334, 0x00000460, 0x00000FFE},
+	{0xF338, 0x00000460, 0x00000FFC},
+	{0xF33C, 0x00000460, 0x00000000},
+	{0xF340, 0x00000460, 0x00000FFA},
+	{0xF344, 0x00000460, 0x00000000},
+	{0xF348, 0x00000460, 0x00000004},
+	{0xF34C, 0x00000460, 0x00000FFE},
+	{0xF350, 0x00000460, 0x00000001},
+	{0xF354, 0x00000460, 0x00000002},
+	{0xF358, 0x00000460, 0x00000000},
+	{0xffff, 0xffffffff, 0xffffffff},
+};
+
+static const struct stb0899_s1_reg stb0899_init_s1_demod[] =
+{
+	{0xF40E, 0x00},
+	{0xF410, 0xC9},
+	{0xF412, 0x01},
+	{0xF413, 0x10},
+	{0xF417, 0x23},
+	{0xF418, 0x4E},
+	{0xF419, 0x34},
+	{0xF41A, 0x84},
+	{0xF41B, 0xF7},
+	{0xF41C, 0x87},
+	{0xF41D, 0x94},
+	{0xF41E, 0x41},
+	{0xF41F, 0xF1},
+	{0xF420, 0xE3},
+	{0xF425, 0xB4},
+	{0xF426, 0x10},
+	{0xF427, 0x30},
+	{0xF428, 0xFD},
+	{0xF429, 0xFF},
+	{0xF42A, 0x0D},
+	{0xF42B, 0x10},
+	{0xF42C, 0x6A},
+	{0xF42E, 0x80},
+	{0xF436, 0x44},
+	{0xF437, 0x5E},//bxzb
+	{0xF438, 0x2B},
+	{0xF439, 0x7F},
+	{0xF43A, 0x00},
+	{0xF43B, 0xB8},
+	{0xF43E, 0x80},
+	{0xF43F, 0x8A},
+	{0xF440, 0x29},
+	{0xF441, 0x27},
+	{0xF444, 0xCA},
+	{0xF445, 0x01},
+	{0xF446, 0x2F},
+	{0xF447, 0x68},
+	{0xF448, 0x40},
+	{0xF44C, 0x2F},
+	{0xF44D, 0x68},
+	{0xF44E, 0x40},
+	{0xF4E0, 0x1A},
+	{0xF4E1, 0x00},
+	{0xF4E2, 0x19},
+	{0xF4E3, 0x00},
+	{0xF4E4, 0x19},
+	{0xF4E5, 0x00},
+	{0xF4E6, 0x19},
+	{0xF4E7, 0x00},
+	{0xF4E8, 0x17},
+	{0xF4E9, 0x00},
+	{0xF50C, 0x00},
+	{0xF50D, 0x00},
+	{0xF50F, 0x72},
+	{0xF523, 0x28},
+	{0xF524, 0x00},
+	{0xF525, 0x00},
+	{0xF526, 0x00},
+	{0xF527, 0x00},
+	{0xF528, 0x0A},
+	{0xF529, 0xDD},
+	{0xF530, 0x06},
+	{0xF533, 0x01},
+	{0xF534, 0xB0},
+	{0xF535, 0x7A},
+	{0xF536, 0x58},
+	{0xF537, 0x38},
+	{0xF538, 0x34},
+	{0xF539, 0x24},
+	{0xF53C, 0xFF},
+	{0xF53D, 0x19},
+	{0xF548, 0xB1},
+	{0xF549, 0x42},
+	{0xF54A, 0x41},
+	{0xF54B, 0x12},
+	{0xF54C, 0x0C},
+	{0xF54D, 0x00},
+	{0xF54E, 0x80},
+	{0xF54F, 0x69},
+	{0xF550, 0x00},
+	{0xF551, 0x02},
+	{0xF552, 0x00},//bxzb
+	{0xF553, 0x00},
+	{0xF55A, 0x1B},
+	{0xF55B, 0xD7},
+	{0xF55C, 0x00},
+	{0xF55D, 0x00},
+	{0xF55E, 0xBC},
+	{0xF55F, 0xCC},
+	{0xF560, 0xBD},
+	{0xF561, 0xD8},
+	{0xF574, 0x93},//0x93},//0xB6},65 = s1
+	{0xF575, 0xe3},//0x95},e3 = s2
+	{0xF576, 0xb0},//0x8D},
+	{0xF57B, 0x27},
+	{0xF57C, 0x03},
+	{0xF583, 0x5C},
+	{0xF58C, 0x19},
+	{0xF600, 0x48},
+	{0xF601, 0x00},
+	{0xF602, 0x00},
+	{0xF603, 0x00},
+	{0xF604, 0x77},
+	{0xF605, 0x00},
+	{0xF606, 0x00},
+	{0xF607, 0x00},
+	{0xF608, 0x00},
+	{0xF609, 0x00},
+	{0xF60A, 0x00},
+	{0xF60B, 0x00},
+	{0xF60C, 0x00},
+	{0xF60D, 0x00},
+	{0xF60E, 0x00},
+	{0xF60F, 0x00},
+	{0xF610, 0xF0},
+	{0xF611, 0x00},
+	{0xF612, 0x05},
+	{0xF613, 0xE0},
+	{0xF614, 0xE3},
+	{0xF615, 0x00},
+	{0xF616, 0x67},
+	{0xF617, 0x02},
+	{0xF618, 0xF8},
+	{0xF619, 0x19},
+	{0xF61A, 0x2B},
+	{0xF61B, 0x00},
+	{0xF61C, 0x05},
+	{0xF61D, 0x00},
+	{0xF61E, 0x26},
+	{0xffff, 0xff},
+};
+
+static const struct stb0899_s2_reg stb0899_init_s2_fec[] =
+{
+
+	{0xFA04, 0x00000000, 0x00000008},
+	{0xFA08, 0x00000000, 0x000000B4},
+	{0xFA10, 0x00000000, 0x000004B5},
+	{0xFA14, 0x00000000, 0x00000B4B},
+	{0xFA1C, 0x00000000, 0x00000078},
+	{0xFA20, 0x00000000, 0x000001E0},
+	{0xFA24, 0x00000000, 0x0000A8C0},
+	{0xFA28, 0x00000000, 0x0000000C},
+
+	//offset 800
+	{0xFA00, 0x00000800, 0x00000001},
+	{0xFA04, 0x00000800, 0x00000545},
+	{0xFA08, 0x00000800, 0x00000040},
+	{0xFA0C, 0x00000800, 0x00000000},
+	{0xFA10, 0x00000800, 0x00000000},
+	{0xFA14, 0x00000800, 0x00000008},
+	{0xFA18, 0x00000800, 0x00000008},
+	{0xFA1C, 0x00000800, 0x000002A5},
+	{0xFA20, 0x00000800, 0x00000000},
+	{0xFA24, 0x00000800, 0x00000008},
+	{0xFA28, 0x00000800, 0x00000000},
+	{0xFA38, 0x00000800, 0x00000000},
+	{0xffff, 0xffffffff, 0xffffffff},
+};
+
+static const struct stb0899_s1_reg stb0899_init_tst[] =
+{
+	{0xFF10, 0x00},
+	{0xFF11, 0x00},
+	{0xFF12, 0x00},
+	{0xFF13, 0x00},
+	{0xFF14, 0x00},
+	{0xFF15, 0x00},
+	{0xFF16, 0x00},
+	{0xFF17, 0x00},
+	{0xFF1D, 0x00},
+	{0xFF1E, 0x00},
+	{0xFF24, 0x00},
+	{0xFF25, 0x00},
+	{0xFF28, 0x00},
+	{0xFF40, 0x00},
+	{0xFF41, 0x00},
+	{0xFF42, 0x00},
+	{0xFF48, 0x00},
+	{0xFF49, 0xC0},
+	{0xFF4A, 0x00},
+	{0xFF4B, 0x00},
+	{0xFF4C, 0x00},
+	{0xFF4D, 0x00},
+	{0xFF50, 0x00},
+	{0xFF51, 0x00},
+	{0xFF52, 0x00},
+	{0xFF53, 0x00},
+	{0xFF54, 0x00},
+	{0xFF55, 0x00},
+	{0xFF56, 0x00},
+	{0xFF58, 0x00},
+	{0xFF59, 0x00},
+	{0xFF5A, 0x00},
+	{0xFF5C, 0x00},
+	{0xFF5D, 0x00},
+	{0xFF5E, 0x00},
+	{0xffff, 0xff},
+};
+#endif	//oldconfig
 
 
 #define CORE_STB0899_DVBS2_ESNO_AVE              3
@@ -531,86 +1024,88 @@ static const struct stb0899_s1_reg stb0899_init_tst[] =
 
 static struct stb0899_config stb0899_config =
 {
-	.init_dev        = stb0899_init_dev,
-	.init_s2_demod   = stb0899_init_s2_demod,
-	.init_s1_demod   = stb0899_init_s1_demod,
-	.init_s2_fec     = stb0899_init_s2_fec,
-	.init_tst        = stb0899_init_tst,
+	.init_dev 		= stb0899_init_dev,
+	.init_s2_demod 		= stb0899_init_s2_demod,
+	.init_s1_demod 		= stb0899_init_s1_demod,
+	.init_s2_fec 		= stb0899_init_s2_fec,
+	.init_tst 		= stb0899_init_tst,
 
 	.lnb_enable 		= NULL,
-	.lnb_vsel	 		= NULL,
+	.lnb_vsel 		= NULL,
 
-	.demod_address   = I2C_ADDR_STB0899, /* I2C Address */
-	.block_sync_mode = STB0899_SYNC_FORCED, /* ? */
+	.demod_address 		= I2C_ADDR_STB0899, /* I2C Address */
+	.block_sync_mode 	= STB0899_SYNC_FORCED, /* ? */
 
-	.xtal_freq       = 27000000,         /* Assume Hz ? */
-	.inversion       = IQ_SWAP_ON,       /* ? */
+	.xtal_freq 		= 27000000,         /* Assume Hz ? */
+	.inversion 		= IQ_SWAP_ON,       /* ? */
 
-	.lo_clk          = 76500000,
-	.hi_clk          = 99000000,
+	.lo_clk 		= 76500000,
+	.hi_clk 		= 99000000,
 
-	.ts_output_mode  = 0,                /* Use parallel mode */
-	.clock_polarity  = 0,                /*  */
-	.data_clk_parity = 0,                /*  */
-	.fec_mode        = 0,                /*  */
+	.ts_output_mode	 	= 0,                /* Use parallel mode */
+	.clock_polarity 	= 0,                /*  */
+	.data_clk_parity 	= 0,                /*  */
+	.fec_mode 		= 0,                /*  */
 
-	.esno_ave            = CORE_STB0899_DVBS2_ESNO_AVE,
-	.esno_quant          = CORE_STB0899_DVBS2_ESNO_QUANT,
-	.avframes_coarse     = CORE_STB0899_DVBS2_AVFRAMES_COARSE,
-	.avframes_fine       = CORE_STB0899_DVBS2_AVFRAMES_FINE,
-	.miss_threshold      = CORE_STB0899_DVBS2_MISS_THRESHOLD,
-	.uwp_threshold_acq   = CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
-	.uwp_threshold_track = CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
-	.uwp_threshold_sof   = CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
-	.sof_search_timeout  = CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
+	.esno_ave 		= CORE_STB0899_DVBS2_ESNO_AVE,
+	.esno_quant 		= CORE_STB0899_DVBS2_ESNO_QUANT,
+	.avframes_coarse 	= CORE_STB0899_DVBS2_AVFRAMES_COARSE,
+	.avframes_fine 		= CORE_STB0899_DVBS2_AVFRAMES_FINE,
+	.miss_threshold 	= CORE_STB0899_DVBS2_MISS_THRESHOLD,
+	.uwp_threshold_acq 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_ACQ,
+	.uwp_threshold_track 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_TRACK,
+	.uwp_threshold_sof 	= CORE_STB0899_DVBS2_UWP_THRESHOLD_SOF,
+	.sof_search_timeout 	= CORE_STB0899_DVBS2_SOF_SEARCH_TIMEOUT,
 
-	.btr_nco_bits          = CORE_STB0899_DVBS2_BTR_NCO_BITS,
-	.btr_gain_shift_offset = CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
-	.crl_nco_bits          = CORE_STB0899_DVBS2_CRL_NCO_BITS,
-	.ldpc_max_iter         = CORE_STB0899_DVBS2_LDPC_MAX_ITER,
+	.btr_nco_bits		= CORE_STB0899_DVBS2_BTR_NCO_BITS,
+	.btr_gain_shift_offset 	= CORE_STB0899_DVBS2_BTR_GAIN_SHIFT_OFFSET,
+	.crl_nco_bits 		= CORE_STB0899_DVBS2_CRL_NCO_BITS,
+	.ldpc_max_iter 		= CORE_STB0899_DVBS2_LDPC_MAX_ITER,
 
-	.tuner_get_frequency	= stb6100_get_frequency,
-	.tuner_set_frequency	= stb6100_set_frequency,
-	.tuner_set_bandwidth	= stb6100_set_bandwidth,
-	.tuner_get_bandwidth	= stb6100_get_bandwidth,
-	.tuner_set_rfsiggain	= NULL,
+	.tuner_get_frequency 	= stb6100_get_frequency,
+	.tuner_set_frequency 	= stb6100_set_frequency,
+	.tuner_set_bandwidth 	= stb6100_set_bandwidth,
+	.tuner_get_bandwidth 	= stb6100_get_bandwidth,
+	.tuner_set_rfsiggain 	= NULL,
 };
 
 static struct stv090x_config stv090x_config =
 {
 	.device			= STV0903,
-	.demod_mode		= STV090x_DUAL/*STV090x_SINGLE*/,
-	.clk_mode		= STV090x_CLK_EXT,
+	.demod_mode 		= STV090x_DUAL/*STV090x_SINGLE*/,
+	.clk_mode 		= STV090x_CLK_EXT,
 
-	.xtal			= 8000000,
-	.address		= I2C_ADDR_STV090X,
+	.xtal 			= 8000000,
+	.address 		= I2C_ADDR_STV090X,
 
-	.ts1_mode		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
-	.ts2_mode		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
-	.ts1_clk		= 0,
-	.ts2_clk		= 0,
+	.ts1_mode 		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
+	.ts2_mode 		= STV090x_TSMODE_DVBCI/*STV090x_TSMODE_SERIAL_CONTINUOUS*/,
+	.ts1_clk 		= 0,
+	.ts2_clk 		= 0,
 
-	.lnb_enable 	= NULL,
-	.lnb_vsel	 	= NULL,
+	.lnb_enable 		= NULL,
+	.lnb_vsel 		= NULL,
 
-	.repeater_level	= STV090x_RPTLEVEL_16,
+	.repeater_level		= STV090x_RPTLEVEL_16,
 
-	.tuner_init				= NULL,
-	.tuner_set_mode			= NULL,
-	.tuner_set_frequency	= NULL,
-	.tuner_get_frequency	= NULL,
-	.tuner_set_bandwidth	= NULL,
-	.tuner_get_bandwidth	= NULL,
-	.tuner_set_bbgain		= NULL,
-	.tuner_get_bbgain		= NULL,
-	.tuner_set_refclk		= NULL,
-	.tuner_get_status		= NULL,
+	.adc1_range 		= STV090x_ADC_1Vpp,
+	.agc_rf1_inv 		= 1,
+	.tuner_init 		= NULL,
+	.tuner_set_mode 	= NULL,
+	.tuner_set_frequency 	= NULL,
+	.tuner_get_frequency 	= NULL,
+	.tuner_set_bandwidth 	= NULL,
+	.tuner_get_bandwidth 	= NULL,
+	.tuner_set_bbgain 	= NULL,
+	.tuner_get_bbgain 	= NULL,
+	.tuner_set_refclk 	= NULL,
+	.tuner_get_status 	= NULL,
 };
 
 static struct stb6100_config stb6100_config =
 {
-	.tuner_address = I2C_ADDR_STB6100,
-	.refclock      = 27000000
+	.tuner_address		= I2C_ADDR_STB6100,
+	.refclock		= 27000000
 };
 
 static struct stv6110x_config stv6110x_config =
@@ -622,11 +1117,11 @@ static struct stv6110x_config stv6110x_config =
 
 static const struct ix7306_config bs2s7hz7306a_config =
 {
-	.name		= "Sharp BS2S7HZ7306A",
-	.addr		= I2C_ADDR_IX7306,
-	.step_size 	= IX7306_STEP_1000,
-	.bb_lpf		= IX7306_LPF_12,
-	.bb_gain	= IX7306_GAIN_2dB,
+	.name			= "Sharp BS2S7HZ7306A",
+	.addr			= I2C_ADDR_IX7306,
+	.step_size		= IX7306_STEP_1000,
+	.bb_lpf			= IX7306_LPF_10,
+	.bb_gain		= IX7306_GAIN_0dB,
 };
 
 static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
@@ -655,25 +1150,27 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 				{
 					case SHARP7306:
 						ctl = dvb_attach(ix7306_attach, frontend, &bs2s7hz7306a_config, cfg->i2c_adap);
+						stv090x_config.agc_rf1_inv = 1;
 						break;
 					case STV6110X:
 					default:
 						ctl = dvb_attach(stv6110x_attach, frontend, &stv6110x_config, cfg->i2c_adap);
+						stv090x_config.agc_rf1_inv = 0;
 				}
 
 				if (ctl)
 				{
 					printk("%s: %s attached\n", __FUNCTION__, tuner);
-					stv090x_config.tuner_init	  	  	= ctl->tuner_init;
-					stv090x_config.tuner_set_mode	  	= ctl->tuner_set_mode;
+					stv090x_config.tuner_init 		= ctl->tuner_init;
+					stv090x_config.tuner_set_mode 		= ctl->tuner_set_mode;
 					stv090x_config.tuner_set_frequency 	= ctl->tuner_set_frequency;
 					stv090x_config.tuner_get_frequency 	= ctl->tuner_get_frequency;
 					stv090x_config.tuner_set_bandwidth 	= ctl->tuner_set_bandwidth;
 					stv090x_config.tuner_get_bandwidth 	= ctl->tuner_get_bandwidth;
-					stv090x_config.tuner_set_bbgain	  	= ctl->tuner_set_bbgain;
-					stv090x_config.tuner_get_bbgain	  	= ctl->tuner_get_bbgain;
-					stv090x_config.tuner_set_refclk	  	= ctl->tuner_set_refclk;
-					stv090x_config.tuner_get_status	  	= ctl->tuner_get_status;
+					stv090x_config.tuner_set_bbgain 	= ctl->tuner_set_bbgain;
+					stv090x_config.tuner_get_bbgain 	= ctl->tuner_get_bbgain;
+					stv090x_config.tuner_set_refclk 	= ctl->tuner_set_refclk;
+					stv090x_config.tuner_get_status = 	ctl->tuner_get_status;
 				}
 				else
 				{
@@ -719,6 +1216,9 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 
 	return frontend;
 
+	if (frontend->ops.init)
+		frontend->ops.init(frontend);
+
 error_out:
 	printk("fe_core: Frontend registration failed!\n");
 	if (frontend)
@@ -746,7 +1246,7 @@ init_fe_device(struct dvb_adapter *adapter,
 	/* initialize the config data */
 	cfg->i2c_adap = i2c_get_adapter(tuner_cfg->i2c_bus);
 
-	printk("i2c adapter = 0x%0x\n", cfg->i2c_adap);
+	printk("i2c adapter = 0x%0x\n", (unsigned int) cfg->i2c_adap);
 
 	cfg->i2c_addr = tuner_cfg->i2c_addr;
 
@@ -897,11 +1397,6 @@ int __init fe_core_init(void)
 		printk("demodulator: stv090x dvb-s2    ");
 		demodType = STV090X;
 	}
-	else if (strcmp("cx24116", demod) == 0)
-	{
-		printk("demodulator: cx24116 dvb-s2    ");
-		demodType = CX24116;
-	}
 
 	if ((tuner[0] == 0) || (strcmp("stb6100", tuner) == 0))
 	{
@@ -934,3 +1429,4 @@ module_exit(fe_core_exit);
 MODULE_DESCRIPTION("Tunerdriver");
 MODULE_AUTHOR("Spider-Team");
 MODULE_LICENSE("GPL");
+

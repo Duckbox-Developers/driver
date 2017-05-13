@@ -23,7 +23,7 @@
 #include "stb0899_priv.h"
 #include "stb0899_reg.h"
 
-inline u32 stb0899_do_div(u64 n, u32 d)
+static inline u32 stb0899_do_div(u64 n, u32 d)
 {
 	/* wrap do_div() for ease of use */
 
@@ -239,8 +239,8 @@ static enum stb0899_status stb0899_search_tmg(struct stb0899_state *state)
 
 		if (next_loop)
 		{
-			STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(state->config->inversion * derot_freq));
-			STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(state->config->inversion * derot_freq));
+			STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(internal->inversion * derot_freq));
+			STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(internal->inversion * derot_freq));
 			stb0899_write_regs(state, STB0899_CFRM, cfr, 2); /* derotator frequency		*/
 		}
 
@@ -251,7 +251,7 @@ static enum stb0899_status stb0899_search_tmg(struct stb0899_state *state)
 	if (internal->status == TIMINGOK)
 	{
 		stb0899_read_regs(state, STB0899_CFRM, cfr, 2); /* get derotator frequency		*/
-		internal->derot_freq = state->config->inversion * MAKEWORD16(cfr[0], cfr[1]);
+		internal->derot_freq = internal->inversion * MAKEWORD16(cfr[0], cfr[1]);
 		dprintk(state->verbose, FE_DEBUG, 1, "------->TIMING OK ! Derot Freq = %d", internal->derot_freq);
 	}
 
@@ -340,8 +340,8 @@ static enum stb0899_status stb0899_search_carrier(struct stb0899_state *state)
 				STB0899_SETFIELD_VAL(CFD_ON, reg, 1);
 				stb0899_write_reg(state, STB0899_CFD, reg);
 
-				STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(state->config->inversion * derot_freq));
-				STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(state->config->inversion * derot_freq));
+				STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(internal->inversion * derot_freq));
+				STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(internal->inversion * derot_freq));
 				stb0899_write_regs(state, STB0899_CFRM, cfr, 2); /* derotator frequency	*/
 			}
 
@@ -471,8 +471,8 @@ static enum stb0899_status stb0899_search_data(struct stb0899_state *state)
 				STB0899_SETFIELD_VAL(CFD_ON, reg, 1);
 				stb0899_write_reg(state, STB0899_CFD, reg);
 
-				STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(state->config->inversion * derot_freq));
-				STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(state->config->inversion * derot_freq));
+				STB0899_SETFIELD_VAL(CFRM, cfr[0], MSB(internal->inversion * derot_freq));
+				STB0899_SETFIELD_VAL(CFRL, cfr[1], LSB(internal->inversion * derot_freq));
 				stb0899_write_regs(state, STB0899_CFRM, cfr, 2); /* derotator frequency	*/
 
 				stb0899_check_carrier(state);
@@ -487,7 +487,15 @@ static enum stb0899_status stb0899_search_data(struct stb0899_state *state)
 	if (internal->status == DATAOK)
 	{
 		stb0899_read_regs(state, STB0899_CFRM, cfr, 2); /* get derotator frequency	*/
-		internal->derot_freq = state->config->inversion * MAKEWORD16(cfr[0], cfr[1]);
+
+		/* store autodetected IQ swapping as default for DVB-S2 tuning */
+		reg = stb0899_read_reg(state, STB0899_IQSWAP);
+		if (STB0899_GETFIELD(SYM, reg))
+			internal->inversion = IQ_SWAP_ON;
+		else
+			internal->inversion = IQ_SWAP_OFF;
+
+		internal->derot_freq = internal->inversion * MAKEWORD16(cfr[0], cfr[1]);
 		dprintk(state->verbose, FE_DEBUG, 1, "------> DATAOK ! Derot Freq=%d", internal->derot_freq);
 	}
 
@@ -506,7 +514,7 @@ static enum stb0899_status stb0899_check_range(struct stb0899_state *state)
 	int range_offst, tp_freq;
 
 	range_offst = internal->srch_range / 2000;
-	tp_freq = internal->freq + (internal->derot_freq * internal->mclk) / 1000;
+	tp_freq = internal->freq - (internal->derot_freq * internal->mclk) / 1000;
 
 	if ((tp_freq >= params->freq - range_offst) && (tp_freq <= params->freq + range_offst))
 	{
@@ -721,7 +729,7 @@ enum stb0899_status stb0899_dvbs_algo(struct stb0899_state *state)
 							"RANGE OK ! derot freq=%d, mclk=%d",
 							internal->derot_freq, internal->mclk);
 
-						internal->freq = params->freq + ((internal->derot_freq * internal->mclk) / 1000);
+						internal->freq = params->freq - ((internal->derot_freq * internal->mclk) / 1000);
 						reg = stb0899_read_reg(state, STB0899_PLPARM);
 						internal->fecrate = STB0899_GETFIELD(VITCURPUN, reg);
 						dprintk(state->verbose, FE_DEBUG, 1,
@@ -1514,9 +1522,6 @@ enum stb0899_status stb0899_dvbs2_algo(struct stb0899_state *state)
 		case IQ_SWAP_ON:
 			STB0899_SETFIELD_VAL(SPECTRUM_INVERT, reg, 1);
 			break;
-		case IQ_SWAP_AUTO:	/* use last successful search first	*/
-			STB0899_SETFIELD_VAL(SPECTRUM_INVERT, reg, 1);
-			break;
 	}
 	stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_DMD_CNTRL2, STB0899_OFF0_DMD_CNTRL2, reg);
 	stb0899_dvbs2_reacquire(state);
@@ -1547,46 +1552,40 @@ enum stb0899_status stb0899_dvbs2_algo(struct stb0899_state *state)
 		}
 	}
 
-	if (internal->status != DVBS2_FEC_LOCK)
-	{
-		if (internal->inversion == IQ_SWAP_AUTO)
-		{
-			reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CNTRL2);
-			iqSpectrum = STB0899_GETFIELD(SPECTRUM_INVERT, reg);
-			/* IQ Spectrum Inversion	*/
-			STB0899_SETFIELD_VAL(SPECTRUM_INVERT, reg, !iqSpectrum);
-			stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_DMD_CNTRL2, STB0899_OFF0_DMD_CNTRL2, reg);
-			/* start acquistion process	*/
-			stb0899_dvbs2_reacquire(state);
+	if (internal->status != DVBS2_FEC_LOCK) {
+		reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CNTRL2);
+		iqSpectrum = STB0899_GETFIELD(SPECTRUM_INVERT, reg);
+		/* IQ Spectrum Inversion	*/
+		STB0899_SETFIELD_VAL(SPECTRUM_INVERT, reg, !iqSpectrum);
+		stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_DMD_CNTRL2, STB0899_OFF0_DMD_CNTRL2, reg);
+		/* start acquistion process	*/
+		stb0899_dvbs2_reacquire(state);
 
-			/* Wait for demod lock (UWP and CSM)	*/
-			internal->status = stb0899_dvbs2_get_dmd_status(state, searchTime);
-			if (internal->status == DVBS2_DEMOD_LOCK)
-			{
-				i = 0;
-				/* Demod Locked, check FEC	*/
-				internal->status = stb0899_dvbs2_get_fec_status(state, FecLockTime);
-				/*try thrice for false locks, (UWP and CSM Locked but no FEC)	*/
-				while ((internal->status != DVBS2_FEC_LOCK) && (i < 3))
-				{
-					/*	Read the frequency offset*/
-					offsetfreq = STB0899_READ_S2REG(STB0899_S2DEMOD, CRL_FREQ);
+		/* Wait for demod lock (UWP and CSM)	*/
+		internal->status = stb0899_dvbs2_get_dmd_status(state, searchTime);
+		if (internal->status == DVBS2_DEMOD_LOCK) {
+			i = 0;
+			/* Demod Locked, check FEC	*/
+			internal->status = stb0899_dvbs2_get_fec_status(state, FecLockTime);
+			/*try thrice for false locks, (UWP and CSM Locked but no FEC)	*/
+			while ((internal->status != DVBS2_FEC_LOCK) && (i < 3)) {
+				/*	Read the frequency offset*/
+				offsetfreq = STB0899_READ_S2REG(STB0899_S2DEMOD, CRL_FREQ);
 
-					/* Set the Nominal frequency to the found frequency offset for the next reacquire*/
-					reg = STB0899_READ_S2REG(STB0899_S2DEMOD, CRL_NOM_FREQ);
-					STB0899_SETFIELD_VAL(CRL_NOM_FREQ, reg, offsetfreq);
-					stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_CRL_NOM_FREQ, STB0899_OFF0_CRL_NOM_FREQ, reg);
+				/* Set the Nominal frequency to the found frequency offset for the next reacquire*/
+				reg = STB0899_READ_S2REG(STB0899_S2DEMOD, CRL_NOM_FREQ);
+				STB0899_SETFIELD_VAL(CRL_NOM_FREQ, reg, offsetfreq);
+				stb0899_write_s2reg(state, STB0899_S2DEMOD, STB0899_BASE_CRL_NOM_FREQ, STB0899_OFF0_CRL_NOM_FREQ, reg);
 
-					stb0899_dvbs2_reacquire(state);
-					internal->status = stb0899_dvbs2_get_fec_status(state, searchTime);
-					i++;
-				}
+				stb0899_dvbs2_reacquire(state);
+				internal->status = stb0899_dvbs2_get_fec_status(state, searchTime);
+				i++;
 			}
-			/*
-						if (pParams->DVBS2State == FE_DVBS2_FEC_LOCKED)
-							pParams->IQLocked = !iqSpectrum;
-			*/
 		}
+/*
+		if (pParams->DVBS2State == FE_DVBS2_FEC_LOCKED)
+			pParams->IQLocked = !iqSpectrum;
+*/
 	}
 	if (internal->status == DVBS2_FEC_LOCK)
 	{
@@ -1638,13 +1637,21 @@ enum stb0899_status stb0899_dvbs2_algo(struct stb0899_state *state)
 		/* Store signal parameters	*/
 		offsetfreq = STB0899_READ_S2REG(STB0899_S2DEMOD, CRL_FREQ);
 
+		/* sign extend 30 bit value before using it in calculations */
+		if (offsetfreq & (1 << 29))
+			offsetfreq |= -1 << 30;
+
 		offsetfreq = offsetfreq / ((1 << 30) / 1000);
 		offsetfreq *= (internal->master_clk / 1000000);
-		reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CNTRL2);
-		if (STB0899_GETFIELD(SPECTRUM_INVERT, reg))
-			offsetfreq *= -1;
 
-		internal->freq = internal->freq - offsetfreq;
+		/* store current inversion for next run */
+ 		reg = STB0899_READ_S2REG(STB0899_S2DEMOD, DMD_CNTRL2);
+ 		if (STB0899_GETFIELD(SPECTRUM_INVERT, reg))
+			internal->inversion = IQ_SWAP_ON;
+		else
+			internal->inversion = IQ_SWAP_OFF;
+
+		internal->freq = internal->freq + offsetfreq;
 		internal->srate = stb0899_dvbs2_get_srate(state);
 
 		reg = STB0899_READ_S2REG(STB0899_S2DEMOD, UWP_STAT2);

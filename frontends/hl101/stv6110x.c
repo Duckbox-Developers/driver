@@ -22,6 +22,7 @@
 
 #include <linux/init.h>
 #include <linux/kernel.h>
+#include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/string.h>
 
@@ -319,7 +320,10 @@ static int stv6110x_set_mode(struct dvb_frontend *fe, enum tuner_mode mode)
 
 static int stv6110x_sleep(struct dvb_frontend *fe)
 {
-	return stv6110x_set_mode(fe, TUNER_SLEEP);
+	if (fe->tuner_priv)
+		return stv6110x_set_mode(fe, TUNER_SLEEP);
+
+	return 0;
 }
 
 static int stv6110x_get_status(struct dvb_frontend *fe, u32 *status)
@@ -426,8 +430,6 @@ static struct dvb_tuner_ops stv6110x_ops =
 		.frequency_step	= 0,
 	},
 
-	.init			= stv6110x_init,
-	.sleep          	= stv6110x_sleep,
 #if 0
 	.get_status		= stv6110x_get_status,
 	.get_state		= stv6110x_get_state,
@@ -438,17 +440,17 @@ static struct dvb_tuner_ops stv6110x_ops =
 
 static struct tuner_devctl stv6110x_ctl =
 {
-	.tuner_init				= stv6110x_init,
-	.tuner_sleep			= stv6110x_sleep,
-	.tuner_set_mode			= stv6110x_set_mode,
+	.tuner_init		= stv6110x_init,
+	.tuner_sleep		= stv6110x_sleep,
+	.tuner_set_mode		= stv6110x_set_mode,
 	.tuner_set_frequency	= stv6110x_set_frequency,
 	.tuner_get_frequency	= stv6110x_get_frequency,
 	.tuner_set_bandwidth	= stv6110x_set_bandwidth,
 	.tuner_get_bandwidth	= stv6110x_get_bandwidth,
-	.tuner_set_bbgain		= stv6110x_set_bbgain,
-	.tuner_get_bbgain		= stv6110x_get_bbgain,
-	.tuner_set_refclk		= stv6110x_set_refclock,
-	.tuner_get_status		= stv6110x_get_status,
+	.tuner_set_bbgain	= stv6110x_set_bbgain,
+	.tuner_get_bbgain	= stv6110x_get_bbgain,
+	.tuner_set_refclk	= stv6110x_set_refclock,
+	.tuner_get_status	= stv6110x_get_status,
 };
 
 struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
@@ -457,11 +459,10 @@ struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
 {
 	struct stv6110x_state *stv6110x;
 	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
-	int ret;
 
-	stv6110x = kzalloc(sizeof(struct stv6110x_state), GFP_KERNEL);
-	if (stv6110x == NULL)
-		goto error;
+	stv6110x = kzalloc(sizeof (struct stv6110x_state), GFP_KERNEL);
+	if (!stv6110x)
+		return NULL;
 
 	stv6110x->i2c		= i2c;
 	stv6110x->config	= config;
@@ -469,54 +470,28 @@ struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
 	memcpy(stv6110x->regs, default_regs, 8);
 
 	/* setup divider */
-	switch (stv6110x->config->clk_div)
-	{
-		default:
-		case 1:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
-			break;
-		case 2:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
-			break;
-		case 4:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
-			break;
-		case 8:
-		case 0:
-			STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
-			break;
-	}
-
-	if (fe->ops.i2c_gate_ctrl)
-	{
-		ret = fe->ops.i2c_gate_ctrl(fe, 1);
-		if (ret < 0)
-			goto error;
-	}
-
-	ret = stv6110x_write_regs(stv6110x, 0, stv6110x->regs,
-				  ARRAY_SIZE(stv6110x->regs));
-	if (ret < 0)
-	{
-		dprintk(FE_ERROR, 1, "[STV6110X] Initialization failed");
-		goto error;
-	}
-
-	if (fe->ops.i2c_gate_ctrl)
-	{
-		ret = fe->ops.i2c_gate_ctrl(fe, 0);
-		if (ret < 0)
-			goto error;
+	switch (stv6110x->config->clk_div) {
+	default:
+	case 1:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 0);
+		break;
+	case 2:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 1);
+		break;
+	case 4:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 2);
+		break;
+	case 8:
+	case 0:
+		STV6110x_SETFIELD(stv6110x->regs[STV6110x_CTRL2], CTRL2_CO_DIV, 3);
+		break;
 	}
 
 	fe->tuner_priv		= stv6110x;
 	fe->ops.tuner_ops	= stv6110x_ops;
 
-	printk("%s: Attaching STV6110x \n", __func__);
+	printk(KERN_INFO "%s: Attaching STV6110x\n", __func__);
 	return stv6110x->devctl;
 
-error:
-	kfree(stv6110x);
-	return NULL;
 }
 EXPORT_SYMBOL(stv6110x_attach);

@@ -29,7 +29,7 @@
 #  include <linux/stm/pio.h>
 #endif
 
-//#define	TUNER_IX7306
+#define	TUNER_IX7306
 #define	TUNER_STB6110
 
 enum stv090x_demodulator
@@ -99,17 +99,22 @@ struct stv090x_config
 	u32 ts1_clk;
 	u32 ts2_clk;
 
+	u8 ts1_tei : 1;
+	u8 ts2_tei : 1;
+
 	enum stv090x_i2crpt	repeater_level;
 
 	u8			tuner_bbgain; /* default: 10db */
 	enum stv090x_adc_range	adc1_range; /* default: 2Vpp */
 	enum stv090x_adc_range	adc2_range; /* default: 2Vpp */
 
+	bool agc_rf1_inv;
+	bool agc_rf2_inv;
 	bool diseqc_envelope_mode;
 
 	int (*tuner_init)(struct dvb_frontend *fe);
 	int (*tuner_sleep)(struct dvb_frontend *fe);
-	int (*tuner_set_mode)(struct dvb_frontend *fe, enum tuner_mode mode);
+	int (*tuner_set_mode)(struct dvb_frontend *fe, u32 mode);
 	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
 	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
 	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
@@ -118,10 +123,14 @@ struct stv090x_config
 	int (*tuner_get_bbgain)(struct dvb_frontend *fe, u32 *gain);
 	int (*tuner_set_refclk)(struct dvb_frontend *fe, u32 refclk);
 	int (*tuner_get_status)(struct dvb_frontend *fe, u32 *status);
+	//void (*tuner_i2c_lock) (struct dvb_frontend *fe, int lock);
+
+	/* dir = 0 -> output, dir = 1 -> input/open-drain */
+	int (*set_gpio)(struct dvb_frontend *fe, u8 gpio, u8 dir, u8 value,
+			 u8 xor_value);
 };
 
-
-extern struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
+extern struct dvb_frontend *stv090x_attach(struct stv090x_config *config,
 					   struct i2c_adapter *i2c,
 					   enum stv090x_demodulator demod);
 
