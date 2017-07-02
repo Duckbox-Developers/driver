@@ -1,5 +1,5 @@
 /*
- *   lnb24.c - Dummy LNB power controller
+ * lnb24.c - Dummy LNB power controller
  *
  */
 
@@ -22,7 +22,6 @@
 int lnb24_command_kernel(struct i2c_client *client, unsigned int cmd, void *arg)
 {
 	dprintk(10, "%s (%x)\n", __func__, cmd);
-
 	switch (cmd)
 	{
 		case LNB_VOLTAGE_OFF:

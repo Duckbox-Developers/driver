@@ -1,22 +1,22 @@
 /*
-	STV0900/0903 Multistandard Broadcast Frontend driver
-	Copyright (C) Manu Abraham <abraham.manu@gmail.com>
+ STV0900/0903 Multistandard Broadcast Frontend driver
+ Copyright (C) Manu Abraham <abraham.manu@gmail.com>
 
-	Copyright (C) ST Microelectronics
+ Copyright (C) ST Microelectronics
 
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation; either version 2 of the License, or
-	(at your option) any later version.
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
 
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
 #ifndef __STV090x_PRIV_H
@@ -24,70 +24,67 @@
 
 #include "dvb_frontend.h"
 
-#define FE_ERROR				0
-#define FE_NOTICE				1
-#define FE_INFO					2
-#define FE_DEBUG				3
-#define FE_DEBUGREG				4
+#define FE_ERROR 0
+#define FE_NOTICE 1
+#define FE_INFO 2
+#define FE_DEBUG 3
+#define FE_DEBUGREG 4
 
-#define dprintk(__y, __z, format, arg...) do {						\
-		if (__z) {									\
-			if	((verbose > FE_ERROR) && (verbose > __y))			\
-				printk(KERN_ERR "%s: " format "\n", __func__ , ##arg);		\
-			else if	((verbose > FE_NOTICE) && (verbose > __y))			\
-				printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg);	\
-			else if ((verbose > FE_INFO) && (verbose > __y))			\
-				printk(KERN_INFO "%s: " format "\n", __func__ , ##arg);		\
-			else if ((verbose > FE_DEBUG) && (verbose > __y))			\
-				printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg);	\
-		} else {									\
-			if (verbose > __y)							\
-				printk(format, ##arg);						\
-		}										\
+#define dprintk(__y, __z, format, arg...) do { \
+		if (__z) { \
+			if ((verbose > FE_ERROR) && (verbose > __y)) \
+				printk(KERN_ERR "%s: " format "\n", __func__ , ##arg); \
+			else if ((verbose > FE_NOTICE) && (verbose > __y)) \
+				printk(KERN_NOTICE "%s: " format "\n", __func__ , ##arg); \
+			else if ((verbose > FE_INFO) && (verbose > __y)) \
+				printk(KERN_INFO "%s: " format "\n", __func__ , ##arg); \
+			else if ((verbose > FE_DEBUG) && (verbose > __y)) \
+				printk(KERN_DEBUG "%s: " format "\n", __func__ , ##arg); \
+		} else { \
+			if (verbose > __y) \
+				printk(format, ##arg); \
+		} \
 	} while (0)
 
-#define STV090x_READ_DEMOD(__state, __reg) ((			\
-								(__state)->demod == STV090x_DEMODULATOR_1)	?	\
-					    stv090x_read_reg(__state, STV090x_P2_##__reg) :		\
-					    stv090x_read_reg(__state, STV090x_P1_##__reg))
+#define STV090x_READ_DEMOD(__state, __reg) (( \
+											  (__state)->demod == STV090x_DEMODULATOR_1) ? \
+											stv090x_read_reg(__state, STV090x_P2_##__reg) : \
+											stv090x_read_reg(__state, STV090x_P1_##__reg))
 
-#define STV090x_WRITE_DEMOD(__state, __reg, __data) ((		\
-								(__state)->demod == STV090x_DEMODULATOR_1)	?	\
-						     stv090x_write_reg(__state, STV090x_P2_##__reg, __data) :\
-						     stv090x_write_reg(__state, STV090x_P1_##__reg, __data))
+#define STV090x_WRITE_DEMOD(__state, __reg, __data) (( \
+													   (__state)->demod == STV090x_DEMODULATOR_1) ? \
+													 stv090x_write_reg(__state, STV090x_P2_##__reg, __data) :\
+													 stv090x_write_reg(__state, STV090x_P1_##__reg, __data))
 
-#define STV090x_ADDR_OFFST(__state, __x) ((			\
-								(__state->demod) == STV090x_DEMODULATOR_1)	?	\
-					  STV090x_P1_##__x :				\
-					  STV090x_P2_##__x)
+#define STV090x_ADDR_OFFST(__state, __x) (( \
+											(__state->demod) == STV090x_DEMODULATOR_1) ? \
+										  STV090x_P1_##__x : \
+										  STV090x_P2_##__x)
 
+#define STV090x_SETFIELD(mask, bitf, val) (mask = (mask & (~(((1 << STV090x_WIDTH_##bitf) - 1) <<\
+															 STV090x_OFFST_##bitf))) | \
+												  (val << STV090x_OFFST_##bitf))
 
-#define STV090x_SETFIELD(mask, bitf, val)	(mask = (mask & (~(((1 << STV090x_WIDTH_##bitf) - 1) <<\
-								   STV090x_OFFST_##bitf))) | \
-							(val << STV090x_OFFST_##bitf))
+#define STV090x_GETFIELD(val, bitf) ((val >> STV090x_OFFST_##bitf) & ((1 << STV090x_WIDTH_##bitf) - 1))
 
-#define STV090x_GETFIELD(val, bitf)		((val >> STV090x_OFFST_##bitf) & ((1 << STV090x_WIDTH_##bitf) - 1))
+#define STV090x_SETFIELD_Px(mask, bitf, val) (mask = (mask & (~(((1 << STV090x_WIDTH_Px_##bitf) - 1) <<\
+																STV090x_OFFST_Px_##bitf))) | \
+													 (val << STV090x_OFFST_Px_##bitf))
 
+#define STV090x_GETFIELD_Px(val, bitf) ((val >> STV090x_OFFST_Px_##bitf) & ((1 << STV090x_WIDTH_Px_##bitf) - 1))
 
-#define STV090x_SETFIELD_Px(mask, bitf, val)	(mask = (mask & (~(((1 << STV090x_WIDTH_Px_##bitf) - 1) <<\
-								   STV090x_OFFST_Px_##bitf))) | \
-							(val << STV090x_OFFST_Px_##bitf))
+#define MAKEWORD16(__a, __b) (((__a) << 8) | (__b))
 
-#define STV090x_GETFIELD_Px(val, bitf)		((val >> STV090x_OFFST_Px_##bitf) & ((1 << STV090x_WIDTH_Px_##bitf) - 1))
+#define MSB(__x) ((__x >> 8) & 0xff)
+#define LSB(__x) (__x & 0xff)
 
-#define MAKEWORD16(__a, __b)			(((__a) << 8) | (__b))
+#define STV090x_IQPOWER_THRESHOLD 30
+#define STV090x_SEARCH_AGC2_TH_CUT20 700
+#define STV090x_SEARCH_AGC2_TH_CUT30 1400
 
-#define MSB(__x)				((__x >> 8) & 0xff)
-#define LSB(__x)				(__x & 0xff)
-
-
-#define STV090x_IQPOWER_THRESHOLD	  30
-#define STV090x_SEARCH_AGC2_TH_CUT20	 700
-#define STV090x_SEARCH_AGC2_TH_CUT30	1400
-
-#define STV090x_SEARCH_AGC2_TH(__ver)	\
-	((__ver <= 0x20) ?		\
-	 STV090x_SEARCH_AGC2_TH_CUT20 :	\
+#define STV090x_SEARCH_AGC2_TH(__ver) \
+	((__ver <= 0x20) ? \
+	 STV090x_SEARCH_AGC2_TH_CUT20 : \
 	 STV090x_SEARCH_AGC2_TH_CUT30)
 
 enum stv090x_signal_state
@@ -208,7 +205,7 @@ enum stv090x_delsys
 
 struct stv090x_long_frame_crloop
 {
-	enum stv090x_modcod	modcod;
+	enum stv090x_modcod modcod;
 
 	u8 crl_pilots_on_2;
 	u8 crl_pilots_off_2;
@@ -224,11 +221,11 @@ struct stv090x_long_frame_crloop
 
 struct stv090x_short_frame_crloop
 {
-	enum stv090x_modulation	modulation;
+	enum stv090x_modulation modulation;
 
-	u8 crl_2;  /*      SR <   3M */
-	u8 crl_5;  /*  3 < SR <=  7M */
-	u8 crl_10; /*  7 < SR <= 15M */
+	u8 crl_2; /* SR < 3M */
+	u8 crl_5; /* 3 < SR <= 7M */
+	u8 crl_10; /* 7 < SR <= 15M */
 	u8 crl_20; /* 10 < SR <= 25M */
 	u8 crl_30; /* 10 < SR <= 45M */
 };
@@ -236,7 +233,7 @@ struct stv090x_short_frame_crloop
 struct stv090x_reg
 {
 	u16 addr;
-	u8  data;
+	u8 data;
 };
 
 struct stv090x_tab
@@ -247,50 +244,50 @@ struct stv090x_tab
 
 struct stv090x_internal
 {
-	struct i2c_adapter 	*i2c_adap;
-	u8			i2c_addr;
+	struct i2c_adapter *i2c_adap;
+	u8 i2c_addr;
 
-	struct mutex		demod_lock; /* Lock access to shared register */
-	struct mutex		tuner_lock; /* Lock access to tuners */
-	s32			mclk; /* Masterclock Divider factor */
-	u32			dev_ver;
+	struct mutex demod_lock; /* Lock access to shared register */
+	struct mutex tuner_lock; /* Lock access to tuners */
+	s32 mclk; /* Masterclock Divider factor */
+	u32 dev_ver;
 
-	int			num_used;
+	int num_used;
 };
 
 struct stv090x_state
 {
-	enum stv090x_device		device;
-	enum stv090x_demodulator	demod;
-	enum stv090x_mode		demod_mode;
-	struct stv090x_internal		*internal;
+	enum stv090x_device device;
+	enum stv090x_demodulator demod;
+	enum stv090x_mode demod_mode;
+	struct stv090x_internal *internal;
 
-	struct i2c_adapter		*i2c;
-	const struct stv090x_config	*config;
-	struct dvb_frontend		frontend;
+	struct i2c_adapter *i2c;
+	const struct stv090x_config *config;
+	struct dvb_frontend frontend;
 
-	u32				*verbose; /* Cached module verbosity */
+	u32 *verbose; /* Cached module verbosity */
 
-	enum stv090x_delsys		delsys;
-	enum stv090x_fec		fec;
-	enum stv090x_modulation		modulation;
-	enum stv090x_modcod		modcod;
-	enum stv090x_search		search_mode;
-	enum stv090x_frame		frame_len;
-	enum stv090x_pilot		pilots;
-	enum stv090x_rolloff		rolloff;
-	enum stv090x_inversion		inversion;
-	enum stv090x_algo		algo;
+	enum stv090x_delsys delsys;
+	enum stv090x_fec fec;
+	enum stv090x_modulation modulation;
+	enum stv090x_modcod modcod;
+	enum stv090x_search search_mode;
+	enum stv090x_frame frame_len;
+	enum stv090x_pilot pilots;
+	enum stv090x_rolloff rolloff;
+	enum stv090x_inversion inversion;
+	enum stv090x_algo algo;
 
-	u32				frequency;
-	u32				srate;
+	u32 frequency;
+	u32 srate;
 
-	s32				tuner_bw;
+	s32 tuner_bw;
 
-	s32				search_range;
+	s32 search_range;
 
-	s32				DemodTimeout;
-	s32				FecTimeout;
+	s32 DemodTimeout;
+	s32 FecTimeout;
 };
 
 #endif /* __STV090x_PRIV_H */

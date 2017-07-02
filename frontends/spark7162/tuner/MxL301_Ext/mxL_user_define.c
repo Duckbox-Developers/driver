@@ -20,7 +20,7 @@ Copyright(C) 2011 SHARP CORPORATION
  Copyright, Maxlinear, Inc.
  All Rights Reserved
 
- File Name:      MxL_User_Define.c
+ File Name: MxL_User_Define.c
 
  */
 #include <types.h>
@@ -44,71 +44,63 @@ void MxL_Delay(UINT32 mSec)
 	usleep(mSec);
 }
 
-/* '11/02/22 : OKAMOTO  Read/Write data on specified bit. */
+/* '11/02/22 : OKAMOTO Read/Write data on specified bit. */
 /*====================================================*
-    MXL301_register_read_reg_struct
-   --------------------------------------------------
-    Description     read data on specified bit
-    Argument        DeviceAddr  - MxL Tuner Device address
-                    in_reg  Register address
-                    pRegData    Register data
-    Return Value    UINT32(MxL_OK:Success, Others:Fail)
+ MXL301_register_read_reg_struct
+ --------------------------------------------------
+ Description read data on specified bit
+ Argument DeviceAddr - MxL Tuner Device address
+ in_reg Register address
+ pRegData Register data
+ Return Value UINT32(MxL_OK:Success, Others:Fail)
  *====================================================*/
 UINT32 MXL301_register_read_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_reg, UINT8 *pRegData)
 {
-
 	UINT8 nFilter = 0;
 	UINT8 nReadData = 0;
 	UINT8 i;
 	UINT32 Status = 0;
-
 	/* Check input value */
 	if (in_reg.BottomBit > in_reg.TopBit)
 		return MxL_ERR_OTHERS;
 	if (in_reg.TopBit > 7)
 		return MxL_ERR_OTHERS;
-
 	/* Read register */
 	Status = tun_mxl301_i2c_read(tuner_idx, in_reg.RegAddr, &nReadData);
 	if (Status != MxL_OK)
 	{
 		return Status;
 	}
-
 	/* Shift Data */
 	nReadData = nReadData >> in_reg.BottomBit;
-
 	/* Make Filter */
 	nFilter = 0x00;
 	for (i = 0; i < (in_reg.TopBit - in_reg.BottomBit + 1); i++)
 	{
 		nFilter |= 1 << i;
 	}
-
 	/* Filter read data */
 	*pRegData = nFilter & nReadData;
-
 	return MxL_OK;
 }
 
-/* '11/02/22 : OKAMOTO  Read/Write data on specified bit. */
+/* '11/02/22 : OKAMOTO Read/Write data on specified bit. */
 /*====================================================*
-    MXL301_register_write_reg_struct
-   --------------------------------------------------
-    Description     write data on specified bit
-    Argument        DeviceAddr  - MxL Tuner Device address
-                    in_reg  Register address
-                    RegData Register data
-    Return Value    UINT32(MxL_OK:Success, Others:Fail)
+ MXL301_register_write_reg_struct
+ --------------------------------------------------
+ Description write data on specified bit
+ Argument DeviceAddr - MxL Tuner Device address
+ in_reg Register address
+ RegData Register data
+ Return Value UINT32(MxL_OK:Success, Others:Fail)
  *====================================================*/
-UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_reg, UINT8   RegData)
+UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_reg, UINT8 RegData)
 {
 	UINT8 nFilter = 0;
 	UINT8 nWriteData = 0;
 	UINT8 nReadData = 0;
 	UINT8 i;
 	UINT32 Status = 0;
-
 	/* Check input value */
 	if (in_reg.BottomBit > in_reg.TopBit)
 		return MxL_ERR_OTHERS;
@@ -116,7 +108,6 @@ UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_r
 		return MxL_ERR_OTHERS;
 	if (RegData >= (1 << (in_reg.TopBit - in_reg.BottomBit + 1)))
 		return MxL_ERR_OTHERS;
-
 	if ((in_reg.TopBit == 7) && (in_reg.BottomBit == 0))
 	{
 		//Not use filering
@@ -130,7 +121,6 @@ UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_r
 		{
 			return Status;
 		}
-
 		/* Make Filter */
 		nFilter = 0x00;
 		for (i = 0; i < in_reg.BottomBit; i++)
@@ -141,17 +131,13 @@ UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_r
 		{
 			nFilter |= 1 << i;
 		}
-
 		/* Filtering */
 		nFilter = nFilter & nReadData;
-
 		/* Shift write data*/
 		nWriteData = RegData << in_reg.BottomBit;
-
 		/* Make write data */
 		nWriteData = nFilter | nWriteData;
 	}
-
 	/* Write register */
 	{
 		UINT8 Array[2];
@@ -164,21 +150,19 @@ UINT32 MXL301_register_write_reg_struct(UINT32 tuner_idx, MXL301_REG_STRUCT in_r
 
 INT32 MXL301_register_write_bit_name(UINT32 tuner_idx, MxL_BIT_NAME bit_name, UINT8 RegData)
 {
-	const MXL301_REG_STRUCT DIG_IDAC_CODE   = {0x0D, 5, 0};
-	const MXL301_REG_STRUCT DIG_ENIDAC_BYP  = {0x0D, 7, 7};
-	const MXL301_REG_STRUCT DIG_ENIDAC      = {0x0D, 6, 6};
-	const MXL301_REG_STRUCT DIG_ATTOFF      = {0x0B, 5, 0};
-	const MXL301_REG_STRUCT DIG_ATTON       = {0x0C, 5, 0};
-	const MXL301_REG_STRUCT DIG_IDAC_MODE   = {0x0C, 6, 6};
-	const MXL301_REG_STRUCT FRONT_BO        = {0x78, 5, 0};
-	const MXL301_REG_STRUCT IF1_OFF     = {0x00, 0, 0};
-	const MXL301_REG_STRUCT IF2_OFF     = {0x00, 1, 1};
+	const MXL301_REG_STRUCT DIG_IDAC_CODE = {0x0D, 5, 0};
+	const MXL301_REG_STRUCT DIG_ENIDAC_BYP = {0x0D, 7, 7};
+	const MXL301_REG_STRUCT DIG_ENIDAC = {0x0D, 6, 6};
+	const MXL301_REG_STRUCT DIG_ATTOFF = {0x0B, 5, 0};
+	const MXL301_REG_STRUCT DIG_ATTON = {0x0C, 5, 0};
+	const MXL301_REG_STRUCT DIG_IDAC_MODE = {0x0C, 6, 6};
+	const MXL301_REG_STRUCT FRONT_BO = {0x78, 5, 0};
+	const MXL301_REG_STRUCT IF1_OFF = {0x00, 0, 0};
+	const MXL301_REG_STRUCT IF2_OFF = {0x00, 1, 1};
 	const MXL301_REG_STRUCT MAIN_TO_IF2 = {0x00, 4, 4};
-	const MXL301_REG_STRUCT AGC_MODE    = {0x21, 0, 0};
-
-	/* '11/09/30 : OKAMOTO  Implement "MxL_agc_gain_fix". */
-	const MXL301_REG_STRUCT AGC_GAIN_FIX    = {0x15, 3, 2};
-
+	const MXL301_REG_STRUCT AGC_MODE = {0x21, 0, 0};
+	/* '11/09/30 : OKAMOTO Implement "MxL_agc_gain_fix". */
+	const MXL301_REG_STRUCT AGC_GAIN_FIX = {0x15, 3, 2};
 	MxL_ERR_MSG Status;
 	switch (bit_name)
 	{
@@ -215,12 +199,10 @@ INT32 MXL301_register_write_bit_name(UINT32 tuner_idx, MxL_BIT_NAME bit_name, UI
 		case MxL_BIT_NAME_AGC_MODE:
 			Status = MXL301_register_write_reg_struct(tuner_idx, AGC_MODE, RegData);
 			break;
-
-		/* '11/09/30 : OKAMOTO  Implement "MxL_agc_gain_fix". */
+		/* '11/09/30 : OKAMOTO Implement "MxL_agc_gain_fix". */
 		case MxL_BIT_NAME_AGC_GAIN_FIX:
 			Status = MXL301_register_write_reg_struct(tuner_idx, AGC_GAIN_FIX, RegData);
 			break;
-
 		default:
 			Status = MxL_ERR_OTHERS;
 			break;

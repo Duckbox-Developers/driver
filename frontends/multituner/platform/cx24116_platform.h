@@ -3,10 +3,10 @@
 
 struct cx24116_private_data_s
 {
-	u32   useUnknown; /* use unknwon commands from new fw */
-	u32   usedLNB;
+	u32 useUnknown; /* use unknwon commands from new fw */
+	u32 usedLNB;
 	char *fw_name;
-	u32   fastDelay;
+	u32 fastDelay;
 };
 
 #endif

@@ -3,21 +3,21 @@
  *
  * @author konfetti
  *
- * 	Copyright (C) 2011 duckbox
+ * Copyright (C) 2011 duckbox
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include <linux/kernel.h>
@@ -41,13 +41,13 @@
 
 #include "ufs922_platform.h"
 
-#elif defined (CUBEREVO_MINI2)  || defined (CUBEREVO_MINI) || \
-      defined (CUBEREVO_250HD)  || defined (CUBEREVO_MINI_FTA) || defined (CUBEREVO_3000HD)
+#elif defined (CUBEREVO_MINI2) || defined (CUBEREVO_MINI) || \
+ defined (CUBEREVO_250HD) || defined (CUBEREVO_MINI_FTA) || defined (CUBEREVO_3000HD)
 
 #include "cuberevo_mini_platform.h"
 
 #elif defined (CUBEREVO) || defined (CUBEREVO_9500HD) || \
-      defined (CUBEREVO_2000HD)
+ defined (CUBEREVO_2000HD)
 
 #include "cuberevo_platform.h"
 
@@ -64,17 +64,14 @@
 int __init frontend_platform_init(void)
 {
 	int ret;
-
 	ret = platform_add_devices(platform, sizeof(platform)
-				   / sizeof(struct platform_device *));
+							   / sizeof(struct platform_device *));
 	if (ret != 0)
 	{
 		printk("failed to register platform device\n");
 	}
-
 	return ret;
 }
-
 
 MODULE_DESCRIPTION("Frontend platform module");
 

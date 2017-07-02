@@ -11,42 +11,40 @@ Copyright(C) 2011 SHARP CORPORATION
 
 /*
  Description: The source code is for MxL301RF user to quickly integrate MxL301RF into their software.
-    There are two functions the user can call to generate a array of I2C command that's require to
-    program the MxL301RF tuner. The user should pass an array pointer and an integer pointer in to the
-    function. The funciton will fill up the array with format like follow:
+ There are two functions the user can call to generate a array of I2C command that's require to
+ program the MxL301RF tuner. The user should pass an array pointer and an integer pointer in to the
+ function. The funciton will fill up the array with format like follow:
 
-        addr1
-        data1
-        addr2
-        data2
-        ...
+ addr1
+ data1
+ addr2
+ data2
+ ...
 
-    The user can then pass this array to their I2C function to perform programming the tuner.
+ The user can then pass this array to their I2C function to perform programming the tuner.
 */
 /* #include "StdAfx.h" */
 #include <types.h>
 #include "mxl301rf.h"
 
-UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store the addr and data pairs for I2C write */
-		     UINT32 *Array_Size,         /* a integer pointer that store the number of element in above array */
-		     UINT8 Mode,
-		     UINT32 Xtal_Freq_Hz,
-		     UINT32 IF_Freq_Hz,
-		     UINT8 Invert_IF,
-		     UINT8 Clk_Out_Enable,
-		     UINT8 Clk_Out_Amp,
-		     UINT8 Xtal_Cap,
-		     UINT8 AGC_sel,
-		     UINT8 IF_Out
+UINT32 MxL301RF_Init(UINT8 *pArray, /* a array pointer that store the addr and data pairs for I2C write */
+					 UINT32 *Array_Size, /* a integer pointer that store the number of element in above array */
+					 UINT8 Mode,
+					 UINT32 Xtal_Freq_Hz,
+					 UINT32 IF_Freq_Hz,
+					 UINT8 Invert_IF,
+					 UINT8 Clk_Out_Enable,
+					 UINT8 Clk_Out_Amp,
+					 UINT8 Xtal_Cap,
+					 UINT8 AGC_sel,
+					 UINT8 IF_Out
 
-		     /* '11/10/06 : OKAMOTO  Select AGC external or internal. */
-		     , BOOL bInternalAgcEnable
-		    )
+					 /* '11/10/06 : OKAMOTO Select AGC external or internal. */
+					 , BOOL bInternalAgcEnable
+					)
 {
-
 	UINT32 Reg_Index = 0;
 	UINT32 Array_Index = 0;
-
 	/* Terrestial register settings */
 	IRVType IRV_Init[] =
 	{
@@ -72,7 +70,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0xAE, 0x03}, /*Common Override - Added V9.2.1.0 */
 		{ 0x54, 0xE3}, /*Common Override - Added V9.2.6.0 */
 		{ 0x56, 0x47}, /*Common Override - Added V9.2.6.0 */
-		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0   */
+		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0 */
 
 		{ 0x09, 0x01}, /*Common Terrestial Override */
 		{ 0xA4, 0x51}, /*Common Terrestial Override */
@@ -94,11 +92,10 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0x01, 0x01}, /*TOP_MASTER_ENABLE=1 */
 		{0xFF, 0xFF}
 	};
-
 	/* Cable register settings */
 	IRVType IRV_Init_Cable[] =
 	{
-		/*{ Addr, Data}  */
+		/*{ Addr, Data} */
 		{ 0x00, 0x02},
 		{ 0x02, 0xA6},
 		{ 0x05, 0x4A},
@@ -120,7 +117,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0xAE, 0x03}, /*Common Override - Added V9.2.1.0 */
 		{ 0x54, 0xE1}, /*Common Override - Added V9.2.6.0 */
 		{ 0x56, 0x47}, /*Common Override - Added V9.2.6.0 */
-		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0   */
+		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0 */
 
 		{ 0x09, 0x04}, /*Common Cable Override */
 		{ 0xA0, 0x8C}, /*Common Cable Override */
@@ -144,11 +141,10 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0x01, 0x01}, /*TOP_MASTER_ENABLE=1 */
 		{0xFF, 0xFF}
 	};
-
 	/* Analog register settings */
 	IRVType IRV_Init_Analog[] =
 	{
-		/*{ Addr, Data}  */
+		/*{ Addr, Data} */
 		{ 0x00, 0x02},
 		{ 0x02, 0xA6},
 		{ 0x05, 0x4A},
@@ -170,7 +166,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0xAE, 0x03}, /*Common Override - Added V9.2.1.0 */
 		{ 0x54, 0xE3}, /*Common Override - Added V9.2.6.0 */
 		{ 0x56, 0x47}, /*Common Override - Added V9.2.6.0 */
-		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0   */
+		{ 0x55, 0x12}, /*Common Override - Added V9.2.7.0 */
 
 		{ 0x29, 0x23}, /* Common Analog Override */
 		{ 0x09, 0x15}, /* Common Analog Override */
@@ -180,7 +176,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{ 0xA0, 0x88}, /* Common Analog Override */
 		{ 0xA3, 0x3A}, /* Common Analog Override */
 		{ 0x57, 0x61}, /* Common Analog Override */
-		{ 0x9D, 0x52}, /* Common Analog Override - Added V9.2.8.0   */
+		{ 0x9D, 0x52}, /* Common Analog Override - Added V9.2.8.0 */
 		{ 0x5A, 0x64}, /* Common Analog Override - Changed V9.2.1.0 */
 		{ 0x7B, 0x00}, /* Common Analog Override - Changed V9.2.1.0 */
 		{ 0x7E, 0x2A}, /* Common Analog Override - Changed V9.2.1.0 */
@@ -200,9 +196,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		{0xFF, 0xFF}
 	};
 	/*edit Init setting here */
-
 	PIRVType myIRV = NULL;
-
 	switch (Mode)
 	{
 		case MxL_MODE_DVBT: /*DVBT Mode */
@@ -220,13 +214,12 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		case MxL_MODE_CAB_STD:
 			myIRV = IRV_Init_Cable;
 			break;
-
 		case MxL_MODE_ANA_MN:
 			myIRV = IRV_Init_Analog;
 			SetIRVBit(myIRV, 0x29, 0xC0, 0xC0);
-			SetIRVBit(myIRV, 0x57, 0xFF, 0x60);                 /* V9.2.8.0 */
-			SetIRVBit(myIRV, 0x55, 0xFF, 0x11);             /* V9.2.8.0 */
-			SetIRVBit(myIRV, 0x56, 0xFF, 0x37);             /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x57, 0xFF, 0x60); /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x55, 0xFF, 0x11); /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x56, 0xFF, 0x37); /* V9.2.8.0 */
 			break;
 		case MxL_MODE_ANA_BG:
 			myIRV = IRV_Init_Analog;
@@ -236,15 +229,15 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		case MxL_MODE_ANA_I:
 			myIRV = IRV_Init_Analog;
 			SetIRVBit(myIRV, 0x29, 0xC0, 0xC0);
-			SetIRVBit(myIRV, 0x55, 0xFF, 0x11);             /* V9.2.8.0 */
-			SetIRVBit(myIRV, 0x56, 0xFF, 0x37);             /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x55, 0xFF, 0x11); /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x56, 0xFF, 0x37); /* V9.2.8.0 */
 			break;
 		case MxL_MODE_ANA_DKL:
 			myIRV = IRV_Init_Analog;
 			SetIRVBit(myIRV, 0x29, 0xC0, 0xC0);
 			SetIRVBit(myIRV, 0x2D, 0x08, 0x08);
-			SetIRVBit(myIRV, 0x55, 0xFF, 0x11);                 /* V9.2.8.0 */
-			SetIRVBit(myIRV, 0x56, 0xFF, 0x37);                 /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x55, 0xFF, 0x11); /* V9.2.8.0 */
+			SetIRVBit(myIRV, 0x56, 0xFF, 0x37); /* V9.2.8.0 */
 			break;
 		case MxL_MODE_ANA_SECAM:
 			myIRV = IRV_Init_Analog;
@@ -253,12 +246,11 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		case MxL_MODE_ANA_SECAM_ACC:
 			myIRV = IRV_Init_Analog;
 			SetIRVBit(myIRV, 0x29, 0xC0, 0x00);
-			SetIRVBit(myIRV, 0x90, 0xFF, 0x18);             /* V9.4.2.0 */
+			SetIRVBit(myIRV, 0x90, 0xFF, 0x18); /* V9.4.2.0 */
 			break;
 		default:
 			return MxL_ERR_INIT;
 	} /* switch(Mode) */
-
 	switch (IF_Freq_Hz)
 	{
 		case MxL_IF_3_65_MHZ:
@@ -266,7 +258,6 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 			SetIRVBit(myIRV, 0xAF, 0xFF, 0xA2);
 			SetIRVBit(myIRV, 0x0E, 0xFF, 0x8A);
 			SetIRVBit(myIRV, 0x0F, 0xFF, 0x08);
-
 			break;
 		case MxL_IF_4_MHZ:
 			SetIRVBit(myIRV, 0x02, 0x0F, 0x01);
@@ -277,14 +268,12 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 			SetIRVBit(myIRV, 0xAF, 0xFF, 0xA2);
 			SetIRVBit(myIRV, 0x0E, 0xFF, 0x9B);
 			SetIRVBit(myIRV, 0x0F, 0xFF, 0x08);
-
 			break;
 		case MxL_IF_4_15_MHZ:
 			SetIRVBit(myIRV, 0x02, 0x0F, 0x00);
 			SetIRVBit(myIRV, 0xAF, 0xFF, 0xA2);
 			SetIRVBit(myIRV, 0x0E, 0xFF, 0x9D);
 			SetIRVBit(myIRV, 0x0F, 0xFF, 0x08);
-
 			break;
 		case MxL_IF_4_5_MHZ:
 			SetIRVBit(myIRV, 0x02, 0x0F, 0x02);
@@ -338,8 +327,7 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		default:
 			return MxL_ERR_INIT;
 	} /* switch(IF_Freq_Hz) */
-
-	if (IF_Freq_Hz  <= 11 * MHz)
+	if (IF_Freq_Hz <= 11 * MHz)
 	{
 		SetIRVBit(myIRV, 0x02, 0xC0, 0x00);
 		SetIRVBit(myIRV, 0xAC, 0xFF, 0x00);
@@ -363,32 +351,30 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 			SetIRVBit(myIRV, 0xAC, 0xFF, 0x00);
 		}
 	}
-
 	/* IF Inversion */
 	if (Mode == MxL_MODE_DVBT || Mode == MxL_MODE_ATSC
 			|| Mode == MxL_MODE_CAB_STD)
 	{
 		if (Invert_IF)
-			SetIRVBit(myIRV, 0x02, 0x10, 0x10);   /*Invert IF*/
+			SetIRVBit(myIRV, 0x02, 0x10, 0x10); /*Invert IF*/
 		else
-			SetIRVBit(myIRV, 0x02, 0x10, 0x00);   /*Normal IF*/
+			SetIRVBit(myIRV, 0x02, 0x10, 0x00); /*Normal IF*/
 	}
 	else if (Mode == MxL_MODE_ANA_MN || Mode == MxL_MODE_ANA_BG || Mode == MxL_MODE_ANA_I
-			|| Mode == MxL_MODE_ANA_DKL || Mode == MxL_MODE_ANA_SECAM)
+			 || Mode == MxL_MODE_ANA_DKL || Mode == MxL_MODE_ANA_SECAM)
 	{
 		if (Invert_IF)
-			SetIRVBit(myIRV, 0x02, 0x30, 0x20);   /*Invert IF*/
+			SetIRVBit(myIRV, 0x02, 0x30, 0x20); /*Invert IF*/
 		else
-			SetIRVBit(myIRV, 0x02, 0x30, 0x10);   /*Normal IF*/
+			SetIRVBit(myIRV, 0x02, 0x30, 0x10); /*Normal IF*/
 	}
 	else /* SECAM L' */
 	{
 		if (Invert_IF)
-			SetIRVBit(myIRV, 0x02, 0x30, 0x30);   /*Invert IF*/
+			SetIRVBit(myIRV, 0x02, 0x30, 0x30); /*Invert IF*/
 		else
-			SetIRVBit(myIRV, 0x02, 0x30, 0x00);   /*Normal IF*/
+			SetIRVBit(myIRV, 0x02, 0x30, 0x00); /*Normal IF*/
 	}
-
 	switch (Xtal_Freq_Hz)
 	{
 		case MxL_XTAL_16_MHZ:
@@ -444,13 +430,10 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		default:
 			return MxL_ERR_INIT;
 	}
-
-	if (!Clk_Out_Enable) /*default is enable  */
+	if (!Clk_Out_Enable) /*default is enable */
 		SetIRVBit(myIRV, 0x05, 0x40, 0x00);
-
 	/* Clk_Out_Amp */
 	SetIRVBit(myIRV, 0x05, 0x0F, Clk_Out_Amp);
-
 	/* Xtal Capacitor */
 	if (Xtal_Cap > 0 && Xtal_Cap <= MxL_XTAL_CAP_25_PF)
 		SetIRVBit(myIRV, 0x07, 0xFF, Xtal_Cap);
@@ -458,12 +441,10 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		SetIRVBit(myIRV, 0x07, 0xFF, 0x3F);
 	else
 		return MxL_ERR_INIT;
-
 	if (IF_Out == MxL_IF_PATH1)
 		SetIRVBit(myIRV, 0x00, 0x13, 0x02);
 	else if (IF_Out == MxL_IF_PATH2)
 		SetIRVBit(myIRV, 0x00, 0x13, 0x11);
-
 	/* AGC Select */
 	if (AGC_sel == MxL_AGC_SEL1)
 		SetIRVBit(myIRV, 0x21, 0x01, 0x00);
@@ -471,11 +452,9 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		SetIRVBit(myIRV, 0x21, 0x01, 0x01);
 	else
 		return MxL_ERR_INIT;
-
-	/* '11/10/06 : OKAMOTO  Select AGC external or internal. */
+	/* '11/10/06 : OKAMOTO Select AGC external or internal. */
 	if (bInternalAgcEnable)
 		SetIRVBit(myIRV, 0x2E, 0xFF, 0x5E);
-
 	/* Generate one Array that Contain Data, Address */
 	while (myIRV[Reg_Index].Num != 0xFF || myIRV[Reg_Index].Val != 0xFF)
 	{
@@ -483,35 +462,33 @@ UINT32 MxL301RF_Init(UINT8 *pArray,             /* a array pointer that store th
 		pArray[Array_Index++] = myIRV[Reg_Index].Val;
 		Reg_Index++;
 	}
-
 	*Array_Size = Array_Index;
 	return MxL_OK;
 }
 
 UINT32 MxL301RF_RFTune(UINT8 *pArray,
-		       UINT32 *Array_Size,
-		       UINT32 RF_Freq,
-		       UINT8 BWMHz,
-		       UINT8 Mode
-		      )
+					   UINT32 *Array_Size,
+					   UINT32 RF_Freq,
+					   UINT8 BWMHz,
+					   UINT8 Mode
+					  )
 
 {
 	IRVType IRV_RFTune_Digital[] =
 	{
 		/*{ Addr, Data} */
-		{ 0x13, 0x00},  /*abort tune */
+		{ 0x13, 0x00}, /*abort tune */
 		{ 0x3B, 0xC0}, /* Added V9.1.6.0 */
 		{ 0x3B, 0x80}, /* Added V9.1.6.0 */
-		{ 0x10, 0x15},  /*  BW */
-		{ 0x1A, 0x05}, /* Added V9.2.1.0    */
+		{ 0x10, 0x15}, /* BW */
+		{ 0x1A, 0x05}, /* Added V9.2.1.0 */
 		{ 0x61, 0x00}, /* Added V9.2.8.0 */
 		{ 0x62, 0xA0}, /* Added V9.2.8.0 */
-		{ 0x11, 0x40},  /* 2 bytes to store RF frequency */
+		{ 0x11, 0x40}, /* 2 bytes to store RF frequency */
 		{ 0x12, 0x0E}, /* 2 bytes to store RF frequency */
-		{ 0x13, 0x01}, /* start tune        */
+		{ 0x13, 0x01}, /* start tune */
 		{ 0xFF, 0xFF}
 	};
-
 	IRVType IRV_RFTune_Analog[] =
 	{
 		/*{ Addr, Data} */
@@ -519,27 +496,26 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 		{ 0x3B, 0xC0}, /* Added V9.1.6.0 */
 		{ 0x3B, 0x80}, /* Added V9.1.6.0 */
 		{ 0x0A, 0x0A}, /* Analog only Override -changed V9.1.3.0 from 4.2.3.2.5*/
-		{ 0x10, 0x15}, /*  BW */
+		{ 0x10, 0x15}, /* BW */
 		{ 0xA8, 0x46},
 		{ 0xA2, 0xD3},
 		{ 0xB0, 0x00},
 		{ 0xA6, 0x04},
 		{ 0x38, 0x01},
 		{ 0x39, 0x0D}, /* Added V9.2.1.0 */
-		{ 0x4B, 0x06}, /* Added V9.2.7.0 - From Init to RFTune  */
-		{ 0x7D, 0xAB}, /* Added V9.2.7.0 - From Init to RFTune  */
-		{ 0x7F, 0x78}, /* Added V9.2.7.0 - From Init to RFTune  */
+		{ 0x4B, 0x06}, /* Added V9.2.7.0 - From Init to RFTune */
+		{ 0x7D, 0xAB}, /* Added V9.2.7.0 - From Init to RFTune */
+		{ 0x7F, 0x78}, /* Added V9.2.7.0 - From Init to RFTune */
 		{ 0x61, 0x00}, /* Added V9.1.7.0 */
 		{ 0x62, 0xA0}, /* Added V9.1.7.0 */
 		{ 0x85, 0x00}, /* Added V9.2.6.0 */
 		{ 0x86, 0x00}, /* Added V9.2.6.0 */
-		{ 0x1A, 0x05}, /* Added V9.2.1.0    */
-		{ 0x11, 0x40},  /* 2 bytes to store RF frequency */
+		{ 0x1A, 0x05}, /* Added V9.2.1.0 */
+		{ 0x11, 0x40}, /* 2 bytes to store RF frequency */
 		{ 0x12, 0x0E}, /* 2 bytes to store RF frequency */
 		{ 0x13, 0x01}, /* start tune */
 		{ 0xFF, 0xFF}
 	};
-
 	UINT32 dig_rf_freq = 0;
 	UINT32 temp = 0 ;
 	UINT32 Reg_Index = 0;
@@ -547,13 +523,11 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 	UINT32 i = 0;
 	UINT32 frac_divider = 1000000;
 	UINT32 kHz = 1000;
-	UINT8 isBreak = 0;  /* Add at V9.2.7.0 */
-
+	UINT8 isBreak = 0; /* Add at V9.2.7.0 */
 	PIRVType IRV_RFTune = NULL;
-
 	switch (Mode)
 	{
-		case MxL_MODE_DVBT:     /* DVB-T */
+		case MxL_MODE_DVBT: /* DVB-T */
 		case MxL_MODE_ATSC:
 		case MxL_MODE_CAB_STD:
 			IRV_RFTune = IRV_RFTune_Digital;
@@ -569,7 +543,6 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 		default:
 			return MxL_ERR_RFTUNE;
 	}
-
 	/* Set Mode setting for analog only*/
 	switch (Mode)
 	{
@@ -582,14 +555,14 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 			if (BWMHz == MxL_BW_7MHz || BWMHz == MxL_BW_6MHz)
 			{
 				SetIRVBit(IRV_RFTune, 0x0A, 0x71, 0x11);
-				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x32);    /* Added V9.2.6.0 */
-				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x08);    /* Added V9.2.6.0 */
+				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x32); /* Added V9.2.6.0 */
+				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x08); /* Added V9.2.6.0 */
 			}
 			else if (BWMHz == MxL_BW_8MHz)
 			{
 				SetIRVBit(IRV_RFTune, 0x0A, 0x71, 0x21);
-				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x6B);    /* Added V9.2.7.0 */
-				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x0E);    /* Added V9.2.7.0 */
+				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x6B); /* Added V9.2.7.0 */
+				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x0E); /* Added V9.2.7.0 */
 			}
 			else
 				return MxL_ERR_RFTUNE;
@@ -603,11 +576,10 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 			SetIRVBit(IRV_RFTune, 0x0A, 0x71, 0x41);
 			break;
 	}
-
 	/* Set BW setting */
 	switch (Mode)
 	{
-		case MxL_MODE_DVBT:     /* DVB-T */
+		case MxL_MODE_DVBT: /* DVB-T */
 			switch (BWMHz)
 			{
 				case MxL_BW_6MHz:
@@ -623,13 +595,11 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 					return MxL_ERR_RFTUNE;
 			}
 			break;
-
 		case MxL_MODE_ATSC: /*ATSC */
 			SetIRVBit(IRV_RFTune, 0x10, 0xFF, 0x99);
 			break;
-
 		case MxL_MODE_CAB_STD:
-		case MxL_MODE_ANA_MN: /*Analog (same as cable)  */
+		case MxL_MODE_ANA_MN: /*Analog (same as cable) */
 		case MxL_MODE_ANA_BG:
 		case MxL_MODE_ANA_I:
 		case MxL_MODE_ANA_DKL:
@@ -650,11 +620,9 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 					return MxL_ERR_RFTUNE;
 			}
 			break;
-
 		default:
 			return MxL_ERR_RFTUNE;
 	}
-
 	/*Convert RF frequency into 16 bits => 10 bit integer (MHz) + 6 bit fraction */
 	dig_rf_freq = RF_Freq / MHz; /*Whole number portion of RF freq (in MHz) */
 	temp = RF_Freq % MHz; /*Decimal portion of RF freq (in MHz) */
@@ -668,14 +636,11 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 			dig_rf_freq++;
 		}
 	}
-
 	/*add to have shift center point by 7.8124 kHz */
 	if (temp > 7812)
 		dig_rf_freq ++;
-
 	SetIRVBit(IRV_RFTune, 0x11, 0xFF, (UINT8)dig_rf_freq);
 	SetIRVBit(IRV_RFTune, 0x12, 0xFF, (UINT8)(dig_rf_freq >> 8));
-
 	/* Frequency Dependent Settings for Analog Only */
 	if (Mode >= MxL_MODE_ANA_MN)
 	{
@@ -686,39 +651,35 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 				SetIRVBit(IRV_RFTune, 0x38, 0xFF, 0x03);
 			else
 				SetIRVBit(IRV_RFTune, 0x38, 0xFF, 0x01);
-
-			SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x0D);    /* Added V9.2.1.0 */
+			SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x0D); /* Added V9.2.1.0 */
 			SetIRVBit(IRV_RFTune, 0xA2, 0xFF, 0xC3);
 			SetIRVBit(IRV_RFTune, 0xA6, 0xFF, 0x04);
 			SetIRVBit(IRV_RFTune, 0xA8, 0xFF, 0x46);
 			SetIRVBit(IRV_RFTune, 0xB0, 0xC0, 0x80);
-			SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x06);    /* Added V9.2.7.0   */
-			SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0xA0);    /* Added V9.2.7.0   */
-			SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x70);    /* Added V9.2.7.0   */
-
+			SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x06); /* Added V9.2.7.0 */
+			SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0xA0); /* Added V9.2.7.0 */
+			SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x70); /* Added V9.2.7.0 */
 			if (RF_Freq >= 231 * MHz)
 			{
-				SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x17);/* Added V9.2.7.0   */
-				SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x01);/* Added V9.2.7.0   */
-				SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0x60);/* Added V9.2.7.0   */
-				SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x30);/* Added V9.2.7.0   */
+				SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x17);/* Added V9.2.7.0 */
+				SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x01);/* Added V9.2.7.0 */
+				SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0x60);/* Added V9.2.7.0 */
+				SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x30);/* Added V9.2.7.0 */
 			}
 		}
 		else
 		{
 			SetIRVBit(IRV_RFTune, 0x38, 0xFF, 0x04);
-			SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x17);    /* Added V9.2.1.0 */
+			SetIRVBit(IRV_RFTune, 0x39, 0xFF, 0x17); /* Added V9.2.1.0 */
 			SetIRVBit(IRV_RFTune, 0xA2, 0xFF, 0xD3);
 			SetIRVBit(IRV_RFTune, 0xA6, 0xFF, 0x14);
 			SetIRVBit(IRV_RFTune, 0xA8, 0xFF, 0x40);
 			SetIRVBit(IRV_RFTune, 0xB0, 0xC0, 0x00);
-			SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x06);    /* Added V9.2.7.0   */
-			SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0xA0);    /* Added V9.2.7.0   */
-			SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x70);    /* Added V9.2.7.0   */
+			SetIRVBit(IRV_RFTune, 0x4B, 0xFF, 0x06); /* Added V9.2.7.0 */
+			SetIRVBit(IRV_RFTune, 0x7D, 0xF0, 0xA0); /* Added V9.2.7.0 */
+			SetIRVBit(IRV_RFTune, 0x7F, 0xF0, 0x70); /* Added V9.2.7.0 */
 		}
-
 	}
-
 	/* Spur shift function for analog mode V9.2.7.0 */
 	switch (Mode)
 	{
@@ -813,18 +774,17 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 #if defined(MODULE)
 			long long llRF_Freq = (long long)RF_Freq * 10;
 #endif
-
 			if (RF_Freq <= 682 * MHz)
 			{
 				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x4E);
 				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x08);
 			}
-			/*****     2012-09-07     *****/
+			/***** 2012-09-07 *****/
 			//YWDRIVER_MODI modify by lf for change to int start
 #if defined(MODULE)
 			else if (((llRF_Freq >= (long long)6895 * MHz) && (llRF_Freq <= (long long)6905 * MHz)) ||
-					((llRF_Freq >= (long long)7135 * MHz) && (llRF_Freq <= (long long)7145 * MHz)) ||
-					((llRF_Freq >= (long long)7375 * MHz) && (llRF_Freq <= (long long)7385 * MHz)))
+					 ((llRF_Freq >= (long long)7135 * MHz) && (llRF_Freq <= (long long)7145 * MHz)) ||
+					 ((llRF_Freq >= (long long)7375 * MHz) && (llRF_Freq <= (long long)7385 * MHz)))
 #else
 			else if (((RF_Freq >= 689.5 * MHz) && (RF_Freq <= 690.5 * MHz)) || ((RF_Freq >= 713.5 * MHz) && (RF_Freq <= 714.5 * MHz)) || ((RF_Freq >= 737.5 * MHz) && (RF_Freq <= 738.5 * MHz)))
 #endif
@@ -833,22 +793,22 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 				SetIRVBit(IRV_RFTune, 0x85, 0xFF, 0x40);
 				SetIRVBit(IRV_RFTune, 0x86, 0x0F, 0x0F);
 			}
-			/*****     2012-09-07     *****/
+			/***** 2012-09-07 *****/
 			//YWDRIVER_MODI modify by lf for change to int start
 #if defined(MODULE)
 			else if (((llRF_Freq >= (long long)7615 * MHz) && (llRF_Freq <= (long long)7625 * MHz)) ||
-					((llRF_Freq >= (long long)7855 * MHz) && (llRF_Freq <= (long long)7865 * MHz)) ||
-					((llRF_Freq >= (long long)8095 * MHz) && (llRF_Freq <= (long long)8105 * MHz))
-					|| ((llRF_Freq >= (long long)8335 * MHz) && (llRF_Freq <= (long long)8345 * MHz)) ||
-					((llRF_Freq >= (long long)8575 * MHz) && (llRF_Freq <= (long long)8585 * MHz)) ||
-					((llRF_Freq >= (long long)8815 * MHz) && (llRF_Freq <= (long long)8825 * MHz)))
+					 ((llRF_Freq >= (long long)7855 * MHz) && (llRF_Freq <= (long long)7865 * MHz)) ||
+					 ((llRF_Freq >= (long long)8095 * MHz) && (llRF_Freq <= (long long)8105 * MHz))
+					 || ((llRF_Freq >= (long long)8335 * MHz) && (llRF_Freq <= (long long)8345 * MHz)) ||
+					 ((llRF_Freq >= (long long)8575 * MHz) && (llRF_Freq <= (long long)8585 * MHz)) ||
+					 ((llRF_Freq >= (long long)8815 * MHz) && (llRF_Freq <= (long long)8825 * MHz)))
 #else
 			else if (((RF_Freq >= 761.5 * MHz) && (RF_Freq <= 762.5 * MHz)) ||
-					((RF_Freq >= 785.5 * MHz) && (RF_Freq <= 786.5 * MHz)) ||
-					((RF_Freq >= 809.5 * MHz) && (RF_Freq <= 810.5 * MHz))
-					|| ((RF_Freq >= 833.5 * MHz) && (RF_Freq <= 834.5 * MHz)) ||
-					((RF_Freq >= 857.5 * MHz) && (RF_Freq <= 858.5 * MHz)) ||
-					((RF_Freq >= 881.5 * MHz) && (RF_Freq <= 882.5 * MHz)))
+					 ((RF_Freq >= 785.5 * MHz) && (RF_Freq <= 786.5 * MHz)) ||
+					 ((RF_Freq >= 809.5 * MHz) && (RF_Freq <= 810.5 * MHz))
+					 || ((RF_Freq >= 833.5 * MHz) && (RF_Freq <= 834.5 * MHz)) ||
+					 ((RF_Freq >= 857.5 * MHz) && (RF_Freq <= 858.5 * MHz)) ||
+					 ((RF_Freq >= 881.5 * MHz) && (RF_Freq <= 882.5 * MHz)))
 #endif
 				//YWDRIVER_MODI modify by lf end
 			{
@@ -910,8 +870,7 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 		default:
 			break;
 	}
-
-	/*Generate one Array that Contain Data, Address  */
+	/*Generate one Array that Contain Data, Address */
 	/*while (IRV_RFTune[Reg_Index].Num || IRV_RFTune[Reg_Index].Val) - Updated to have 0xFF as the limit - hchan 18/02/2010*/
 	while (IRV_RFTune[Reg_Index].Num != 0xFF || IRV_RFTune[Reg_Index].Val != 0xFF)
 	{
@@ -919,8 +878,6 @@ UINT32 MxL301RF_RFTune(UINT8 *pArray,
 		pArray[Array_Index++] = IRV_RFTune[Reg_Index].Val;
 		Reg_Index++;
 	}
-
 	*Array_Size = Array_Index;
-
 	return MxL_OK;
 }

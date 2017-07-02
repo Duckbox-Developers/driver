@@ -1,5 +1,5 @@
 /*
- *   lnb_core.c - LNB power control driver
+ * lnb_core.c - LNB power control driver
  */
 
 #include "lnb_core.h"
@@ -48,9 +48,7 @@ static int lnb_newprobe(struct i2c_client *client, const struct i2c_device_id *i
 		dprintk(10, "Failure, client already registered\n");
 		return -ENODEV;
 	}
-
 	dprintk(10, "I2C device found at address 0x%02x\n", client->addr);
-
 	switch (devType)
 	{
 		case A8293:
@@ -91,9 +89,7 @@ static int lnb_remove(struct i2c_client *client)
 static int lnb_command_ioctl(struct i2c_client *client, unsigned int cmd, void *arg)
 {
 	int err = 0;
-
 	dprintk(10, "%s (%x)\n", __func__, cmd);
-
 	if (!client && (devType != LNB_PIO))
 	{
 		return -1;
@@ -123,9 +119,7 @@ int lnb_command_kernel(unsigned int cmd, void *arg)
 {
 	int err = 0;
 	struct i2c_client *client = lnb_client;
-
 	dprintk(10, "%s (%x)\n", __func__, cmd);
-
 	if (!client && (devType != LNB_PIO))
 	{
 		return -1;
@@ -171,9 +165,9 @@ static int lnb_close(struct inode *inode, struct file *filp)
 
 static struct file_operations lnb_fops =
 {
-	.owner   = THIS_MODULE,
-	.ioctl   = lnb_ioctl,
-	.open    = lnb_open,
+	.owner = THIS_MODULE,
+	.ioctl = lnb_ioctl,
+	.open = lnb_open,
 	.release = lnb_close
 };
 
@@ -205,7 +199,6 @@ static int lnb_detect(struct i2c_client *client, int kind, struct i2c_board_info
 			return -ENODEV;
 		}
 	}
-
 	switch (kind)
 	{
 		case A8293:
@@ -241,14 +234,14 @@ static struct i2c_driver lnb_i2c_driver =
 	.class = I2C_CLASS_TV_DIGITAL,
 	.driver = {
 		.owner = THIS_MODULE,
-		.name  = "lnb_driver", /* 2.6.30 requires name without spaces */
+		.name = "lnb_driver", /* 2.6.30 requires name without spaces */
 	},
-	.probe        = lnb_newprobe,
-	.detect       = lnb_detect,
-	.remove       = lnb_remove,
-	.id_table     = lnb_id,
+	.probe = lnb_newprobe,
+	.detect = lnb_detect,
+	.remove = lnb_remove,
+	.id_table = lnb_id,
 	.address_data = &addr_data,
-	.command      = lnb_command_ioctl
+	.command = lnb_command_ioctl
 };
 
 /*
@@ -259,17 +252,14 @@ int __init lnb_init(void)
 {
 	int res, err;
 	const char *name;
-
 	struct i2c_board_info info;
 	err = lnb_detect(NULL, -1, &info);
 	name = info.type;
-
 	if (err)
 	{
 		dprintk(1, "Unknown LNB type\n");
 		return err;
 	}
-
 	if (devType == LNB_PIO)
 	{
 		res = lnb_pio_init();
@@ -288,14 +278,12 @@ int __init lnb_init(void)
 			return res;
 		}
 	}
-
 	if (!lnb_client)
 	{
 		dprintk(1, "No client found\n");
 		i2c_del_driver(&lnb_i2c_driver);
 		return -EIO;
 	}
-
 	if (register_chrdev(LNB_MAJOR, "LNB", &lnb_fops) < 0)
 	{
 		dprintk(1, "Unable to register device\n");

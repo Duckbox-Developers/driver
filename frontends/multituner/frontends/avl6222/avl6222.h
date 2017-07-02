@@ -7,25 +7,25 @@
  *
  * @brief Availink avl2108 - DVBS/S2 Satellite demod driver with Sharp BS2S7HZ6360 tuner
  *
- * 	Copyright (C) 2009-2010 Duolabs Spa
- *                2011 adapted by konfetti for use with ufs922, octagon1008 and atevio7500
+ * Copyright (C) 2009-2010 Duolabs Spa
+ * 2011 adapted by konfetti for use with ufs922, octagon1008 and atevio7500
  *
  * based on avl6222 code from:
  * @author Ramon-Tomislav Rebersak <ramon.rebersak@gmail.com>
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #ifndef _AVL6222_H
@@ -43,31 +43,31 @@
  * Debug stuff
  *---------------------------------------------------------------------*/
 
-#define eprintk(args...)  do {      \
-		printk("avl6222: ERROR: " args);   \
+#define eprintk(args...) do { \
+		printk("avl6222: ERROR: " args); \
 	} while (0)
 
-#define format_addr(X, Y)		\
-	do {						\
-		Y[0] =(u8)((X) >> 16);	\
-		Y[1] =(u8)((X) >> 8);	\
-		Y[2] =(u8)(X);			\
+#define format_addr(X, Y) \
+	do { \
+		Y[0] =(u8)((X) >> 16); \
+		Y[1] =(u8)((X) >> 8); \
+		Y[2] =(u8)(X); \
 	} while (0)
 
 /*< Create a formatted 16 bit array */
-#define format_16(X, Y)			\
-	do {						\
-		Y[0] =(u8)((X) >> 8);	\
-		Y[1] =(u8)((X) & 0xFF);	\
+#define format_16(X, Y) \
+	do { \
+		Y[0] =(u8)((X) >> 8); \
+		Y[1] =(u8)((X) & 0xFF); \
 	} while (0)
 
 /*< Create a formatted 32 bit array */
-#define format_32(X, Y)			\
-	do {						\
-		Y[0] =(u8)((X) >> 24);	\
-		Y[1] =(u8)((X) >> 16);	\
-		Y[2] =(u8)((X) >> 8);	\
-		Y[3] =(u8)((X) & 0xFF);	\
+#define format_32(X, Y) \
+	do { \
+		Y[0] =(u8)((X) >> 24); \
+		Y[1] =(u8)((X) >> 16); \
+		Y[2] =(u8)((X) >> 8); \
+		Y[3] =(u8)((X) & 0xFF); \
 	} while (0)
 
 #define TAGDEBUG "[avl6222] "
@@ -80,13 +80,13 @@
  * Definitions
  *---------------------------------------------------------------------*/
 
-#define AVL6222_ADDITIONAL_DELAY  1
-#define AVL6222_ENABLE_MPEG_BUS   1
+#define AVL6222_ADDITIONAL_DELAY 1
+#define AVL6222_ENABLE_MPEG_BUS 1
 
 #define AVL6222_DEMOD_FW "dvb-fe-avl6222.fw" /*< Demod fw used for locking */
 
-#define I2C_MAX_READ	64
-#define I2C_MAX_WRITE	64
+#define I2C_MAX_READ 64
+#define I2C_MAX_WRITE 64
 
 #define cError1 (1 << 0)
 #define cError2 (1 << 1)
@@ -98,13 +98,12 @@
 #define cError8 (1 << 7)
 
 /* Error codes */
-#define AVL6222_OK		0			/*< No error */
-#define AVL6222_ERROR_GENERIC	1	/*< Generic error */
-#define AVL6222_ERROR_I2C	2	/*< i2c bus failed */
-#define AVL6222_ERROR_TIMEOUT	4	/*< Operation failed in a given time period */
-#define AVL6222_ERROR_PREV	8	/*< Still working on a previous command */
-#define AVL6222_ERROR_MEM	32	/*< Not enough memory for finishing the current job */
-
+#define AVL6222_OK 0 /*< No error */
+#define AVL6222_ERROR_GENERIC 1 /*< Generic error */
+#define AVL6222_ERROR_I2C 2 /*< i2c bus failed */
+#define AVL6222_ERROR_TIMEOUT 4 /*< Operation failed in a given time period */
+#define AVL6222_ERROR_PREV 8 /*< Still working on a previous command */
+#define AVL6222_ERROR_MEM 32 /*< Not enough memory for finishing the current job */
 
 /*****************************
  * Data type handling
@@ -157,9 +156,9 @@ struct avl6222_config
 	u8 demod_address; /*< the demodulator's i2c address */
 	u8 tuner_address; /*< the tuner's i2c address */
 
-	u16 demod_freq;	/*< Demod clock in 10kHz units */
-	u16 fec_freq;	/*< FEC clock in 10kHz units */
-	u16 mpeg_freq;	/*< MPEG clock in 10kHz units */
+	u16 demod_freq; /*< Demod clock in 10kHz units */
+	u16 fec_freq; /*< FEC clock in 10kHz units */
+	u16 mpeg_freq; /*< MPEG clock in 10kHz units */
 
 	u16 i2c_speed_khz;
 	u32 agc_polarization;
@@ -174,9 +173,9 @@ struct avl6222_config
 	u32 tuner_active_lh;
 
 	u32 lpf;
-	u8  lock_mode;
-	u8  iq_swap;
-	u8  auto_iq_swap;
+	u8 lock_mode;
+	u8 iq_swap;
+	u8 auto_iq_swap;
 
 	u16 agc_tri;
 	u16 mpeg_tri;
@@ -199,11 +198,11 @@ struct avl6222_diseqc_tx_status
 
 struct avl6222_ver_info
 {
-	u8 	major;
-	u8 	minor;
+	u8 major;
+	u8 minor;
 	u16 build;
-	u8 	patch_major;
-	u8 	patch_minor;
+	u8 patch_major;
+	u8 patch_minor;
 	u16 patch_build;
 };
 
@@ -226,22 +225,21 @@ struct avl6222_tuning
 	fe_spectral_inversion_t inversion;
 };
 
-
 // --------------------------------------------------------------------
 
 struct avl6222_state
 {
-	struct i2c_adapter		*i2c;
-	struct avl6222_config		*config;
-	struct dvb_frontend		frontend;
-	unsigned char			boot_done;
-	unsigned char			diseqc_status;
-	void				*lnb_priv;
-	struct equipment_s		equipment;
+	struct i2c_adapter *i2c;
+	struct avl6222_config *config;
+	struct dvb_frontend frontend;
+	unsigned char boot_done;
+	unsigned char diseqc_status;
+	void *lnb_priv;
+	struct equipment_s equipment;
 
 	/* mutex */
-	struct mutex			lock;
-	struct mutex			protect;
+	struct mutex lock;
+	struct mutex protect;
 };
 
 /*---------------------------------------------------------------------

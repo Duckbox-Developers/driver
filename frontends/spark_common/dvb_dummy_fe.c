@@ -1,22 +1,22 @@
 /*
- *  Driver for Dummy Frontend
+ * Driver for Dummy Frontend
  *
- *  Written by Emard <emard@softhome.net>
+ * Written by Emard <emard@softhome.net>
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *
- *  GNU General Public License for more details.
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.=
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.=
  */
 
 #include <linux/module.h>
@@ -37,11 +37,10 @@ struct dvb_dummy_fe_state
 static int dvb_dummy_fe_read_status(struct dvb_frontend *fe, fe_status_t *status)
 {
 	*status = FE_HAS_SIGNAL
-		  | FE_HAS_CARRIER
-		  | FE_HAS_VITERBI
-		  | FE_HAS_SYNC
-		  | FE_HAS_LOCK;
-
+			  | FE_HAS_CARRIER
+			  | FE_HAS_VITERBI
+			  | FE_HAS_SYNC
+			  | FE_HAS_LOCK;
 	return 0;
 }
 
@@ -82,7 +81,6 @@ static int dvb_dummy_fe_set_frontend(struct dvb_frontend *fe, struct dvb_fronten
 		if (fe->ops.i2c_gate_ctrl)
 			fe->ops.i2c_gate_ctrl(fe, 0);
 	}
-
 	return 0;
 }
 
@@ -114,7 +112,7 @@ static void dvb_dummy_fe_release(struct dvb_frontend *fe)
 
 #if (DVB_API_VERSION < 5)
 static int dvb_dummy_fe_ofdm_get_info(struct dvb_frontend *fe,
-				      struct dvbfe_info *fe_info)
+									  struct dvbfe_info *fe_info)
 {
 	if (fe_info->delivery == DVBFE_DELSYS_DVBT)
 	{
@@ -145,7 +143,7 @@ static int dvb_dummy_fe_ofdm_get_property(struct dvb_frontend *fe, struct dtv_pr
 
 #if (DVB_API_VERSION < 5)
 static int dvb_dummy_fe_qam_get_info(struct dvb_frontend *fe,
-				     struct dvbfe_info *fe_info)
+									 struct dvbfe_info *fe_info)
 {
 	if (fe_info->delivery == DVBFE_DELSYS_DVBC)
 	{
@@ -176,7 +174,7 @@ static int dvb_dummy_fe_qam_get_property(struct dvb_frontend *fe, struct dtv_pro
 
 #if (DVB_API_VERSION < 5)
 static int dvb_dummy_fe_qpsk_get_info(struct dvb_frontend *fe,
-				      struct dvbfe_info *fe_info)
+									  struct dvbfe_info *fe_info)
 {
 	if (fe_info->delivery == DVBFE_DELSYS_DVBS2)
 	{
@@ -212,16 +210,13 @@ static struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops;
 struct dvb_frontend *dvb_dummy_fe_ofdm_attach(void)
 {
 	struct dvb_dummy_fe_state *state = NULL;
-
 	/* allocate memory for the internal state */
 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
 	if (state == NULL) goto error;
-
 	/* create dvb_frontend */
 	memcpy(&state->frontend.ops, &dvb_dummy_fe_ofdm_ops, sizeof(struct dvb_frontend_ops));
 	state->frontend.demodulator_priv = state;
 	return &state->frontend;
-
 error:
 	kfree(state);
 	return NULL;
@@ -232,16 +227,13 @@ static struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops;
 struct dvb_frontend *dvb_dummy_fe_qpsk_attach(void)
 {
 	struct dvb_dummy_fe_state *state = NULL;
-
 	/* allocate memory for the internal state */
 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
 	if (state == NULL) goto error;
-
 	/* create dvb_frontend */
 	memcpy(&state->frontend.ops, &dvb_dummy_fe_qpsk_ops, sizeof(struct dvb_frontend_ops));
 	state->frontend.demodulator_priv = state;
 	return &state->frontend;
-
 error:
 	kfree(state);
 	return NULL;
@@ -252,16 +244,13 @@ static struct dvb_frontend_ops dvb_dummy_fe_qam_ops;
 struct dvb_frontend *dvb_dummy_fe_qam_attach(void)
 {
 	struct dvb_dummy_fe_state *state = NULL;
-
 	/* allocate memory for the internal state */
 	state = kzalloc(sizeof(struct dvb_dummy_fe_state), GFP_KERNEL);
 	if (state == NULL) goto error;
-
 	/* create dvb_frontend */
 	memcpy(&state->frontend.ops, &dvb_dummy_fe_qam_ops, sizeof(struct dvb_frontend_ops));
 	state->frontend.demodulator_priv = state;
 	return &state->frontend;
-
 error:
 	kfree(state);
 	return NULL;
@@ -271,10 +260,10 @@ static struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops =
 {
 
 	.info = {
-		.name               = "Dummy DVB-T",
-		.type               = FE_OFDM,
-		.frequency_min      = 0,
-		.frequency_max      = 863250000,
+		.name = "Dummy DVB-T",
+		.type = FE_OFDM,
+		.frequency_min = 0,
+		.frequency_max = 863250000,
 		.frequency_stepsize = 62500,
 		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
 		FE_CAN_FEC_4_5 | FE_CAN_FEC_5_6 | FE_CAN_FEC_6_7 |
@@ -299,9 +288,9 @@ static struct dvb_frontend_ops dvb_dummy_fe_ofdm_ops =
 	.read_snr = dvb_dummy_fe_read_snr,
 	.read_ucblocks = dvb_dummy_fe_read_ucblocks,
 #if (DVB_API_VERSION < 5)
-	.get_info           = dvb_dummy_fe_ofdm_get_info,
+	.get_info = dvb_dummy_fe_ofdm_get_info,
 #else
-	.get_property       = dvb_dummy_fe_ofdm_get_property,
+	.get_property = dvb_dummy_fe_ofdm_get_property,
 #endif
 };
 
@@ -309,13 +298,13 @@ static struct dvb_frontend_ops dvb_dummy_fe_qam_ops =
 {
 
 	.info = {
-		.name               = "Dummy DVB-C",
-		.type               = FE_QAM,
+		.name = "Dummy DVB-C",
+		.type = FE_QAM,
 		.frequency_stepsize = 62500,
-		.frequency_min      = 51000000,
-		.frequency_max      = 858000000,
-		.symbol_rate_min    = (57840000 / 2) / 64, /* SACLK/64 == (XIN/2)/64 */
-		.symbol_rate_max    = (57840000 / 2) / 4,  /* SACLK/4 */
+		.frequency_min = 51000000,
+		.frequency_max = 858000000,
+		.symbol_rate_min = (57840000 / 2) / 64, /* SACLK/64 == (XIN/2)/64 */
+		.symbol_rate_max = (57840000 / 2) / 4, /* SACLK/4 */
 		.caps = FE_CAN_QAM_16 | FE_CAN_QAM_32 | FE_CAN_QAM_64 |
 		FE_CAN_QAM_128 | FE_CAN_QAM_256 |
 		FE_CAN_FEC_AUTO | FE_CAN_INVERSION_AUTO
@@ -335,9 +324,9 @@ static struct dvb_frontend_ops dvb_dummy_fe_qam_ops =
 	.read_snr = dvb_dummy_fe_read_snr,
 	.read_ucblocks = dvb_dummy_fe_read_ucblocks,
 #if (DVB_API_VERSION < 5)
-	.get_info           = dvb_dummy_fe_qam_get_info,
+	.get_info = dvb_dummy_fe_qam_get_info,
 #else
-	.get_property       = dvb_dummy_fe_qam_get_property,
+	.get_property = dvb_dummy_fe_qam_get_property,
 #endif
 };
 
@@ -345,14 +334,14 @@ static struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops =
 {
 
 	.info = {
-		.name                = "Dummy DVB-S",
-		.type                = FE_QPSK,
-		.frequency_min       = 950000,
-		.frequency_max       = 2150000,
-		.frequency_stepsize  = 250,     /* kHz for QPSK frontends */
+		.name = "Dummy DVB-S",
+		.type = FE_QPSK,
+		.frequency_min = 950000,
+		.frequency_max = 2150000,
+		.frequency_stepsize = 250, /* kHz for QPSK frontends */
 		.frequency_tolerance = 29500,
-		.symbol_rate_min     = 1000000,
-		.symbol_rate_max     = 45000000,
+		.symbol_rate_min = 1000000,
+		.symbol_rate_max = 45000000,
 		.caps = FE_CAN_INVERSION_AUTO |
 		FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |
 		FE_CAN_FEC_5_6 | FE_CAN_FEC_7_8 | FE_CAN_FEC_AUTO |
@@ -376,9 +365,9 @@ static struct dvb_frontend_ops dvb_dummy_fe_qpsk_ops =
 	.set_voltage = dvb_dummy_fe_set_voltage,
 	.set_tone = dvb_dummy_fe_set_tone,
 #if (DVB_API_VERSION < 5)
-	.get_info           = dvb_dummy_fe_qpsk_get_info,
+	.get_info = dvb_dummy_fe_qpsk_get_info,
 #else
-	.get_property       = dvb_dummy_fe_qpsk_get_property,
+	.get_property = dvb_dummy_fe_qpsk_get_property,
 #endif
 };
 

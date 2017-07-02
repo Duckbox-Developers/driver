@@ -1,17 +1,17 @@
 /*******************************************************************************
  *
- * FILE NAME          : MxL603_TunerCfg.cpp
+ * FILE NAME : MxL603_TunerCfg.cpp
  *
- * AUTHOR             : Dong Liu
+ * AUTHOR : Dong Liu
  *
- * DATE CREATED       : 11/16/2011
- *                      11/20/2011 - MK
+ * DATE CREATED : 11/16/2011
+ * 11/20/2011 - MK
  *
- * DESCRIPTION        : This file contains demod and RF control parameters.
- *                      add a new function named Ctrl_WriteRegField
+ * DESCRIPTION : This file contains demod and RF control parameters.
+ * add a new function named Ctrl_WriteRegField
  *
  *******************************************************************************
- *                Copyright (c) 2011, MaxLinear, Inc.
+ * Copyright (c) 2011, MaxLinear, Inc.
  ******************************************************************************/
 
 #include "MxL603_TunerCfg.h"
@@ -45,7 +45,7 @@ MXL603_REG_CTRL_INFO_T MxL603_OverwriteDefaults[] =
 	{0x00, 0xFF, 0x01},
 	{0x62, 0xFF, 0x02},
 	{0x00, 0xFF, 0x00},
-	{0,    0,    0}
+	{0, 0, 0}
 };
 
 // Digital DVB-C application mode setting
@@ -75,7 +75,7 @@ MXL603_REG_CTRL_INFO_T MxL603_DigitalDvbc[] =
 	{0xD9, 0xFF, 0x00},
 	{0xEA, 0xFF, 0x00},
 	{0xDC, 0xFF, 0x1C},
-	{0,    0,    0}
+	{0, 0, 0}
 };
 
 // Digital ISDBT & ATSC application mode setting
@@ -102,7 +102,7 @@ MXL603_REG_CTRL_INFO_T MxL603_DigitalIsdbtAtsc[] =
 	{0xC5, 0xFF, 0x7C},
 	{0xD5, 0xFF, 0x03},
 	{0xD9, 0xFF, 0x04},
-	{0,    0,    0}
+	{0, 0, 0}
 };
 
 // Digital DVB-T 6MHz application mode setting
@@ -129,19 +129,19 @@ MXL603_REG_CTRL_INFO_T MxL603_DigitalDvbt[] =
 	{0xC5, 0xFF, 0x7C},
 	{0xD5, 0xFF, 0x03},
 	{0xD9, 0xFF, 0x04},
-	{0,    0,    0}
+	{0, 0, 0}
 };
 
 /*------------------------------------------------------------------------------
 --| FUNCTION NAME : MxL603_Ctrl_ProgramRegisters
 --|
---| AUTHOR        : Dong Liu
+--| AUTHOR : Dong Liu
 --|
---| DATE CREATED  : 07/23/2010
+--| DATE CREATED : 07/23/2010
 --|
---| DESCRIPTION   : This function writes multiple registers with provided data array.
+--| DESCRIPTION : This function writes multiple registers with provided data array.
 --|
---| RETURN VALUE  : None
+--| RETURN VALUE : None
 --|
 --|---------------------------------------------------------------------------*/
 
@@ -150,43 +150,37 @@ MXL_STATUS MxL603_Ctrl_ProgramRegisters(UINT32 devId, PMXL603_REG_CTRL_INFO_T ct
 	MXL_STATUS status = MXL_TRUE;
 	UINT16 i = 0;
 	UINT8 tmp = 0;
-
 	while (status == MXL_TRUE)
 	{
 		if ((ctrlRegInfoPtr[i].regAddr == 0) && (ctrlRegInfoPtr[i].mask == 0) && (ctrlRegInfoPtr[i].data == 0)) break;
-
 		// Check if partial bits of register were updated
 		if (ctrlRegInfoPtr[i].mask != 0xFF)
 		{
 			status = MxLWare603_OEM_ReadRegister(devId, ctrlRegInfoPtr[i].regAddr, &tmp);
 			if (status != MXL_TRUE) break;;
 		}
-
 		tmp &= (UINT8) ~ctrlRegInfoPtr[i].mask;
 		tmp |= (UINT8) ctrlRegInfoPtr[i].data;
-
 		status = MxLWare603_OEM_WriteRegister(devId, ctrlRegInfoPtr[i].regAddr, tmp);
 		if (status != MXL_TRUE) break;
-
 		i++;
 	}
-
 	return status;
 }
 
 /*------------------------------------------------------------------------------
 --| FUNCTION NAME : MxL603_Ctrl_WriteRegField
 --|
---| AUTHOR        : Dong Liu
+--| AUTHOR : Dong Liu
 --|
---| DATE CREATED  : 11/3/2009
+--| DATE CREATED : 11/3/2009
 --|
---| DESCRIPTION   : This function writes registers field that defined by Mask
---|                 and bit width. The write field position and width are defined
---|                 by mask byte. For example, if want to write 0x02 to a
---|                 register bit<5:4>, the input parameter shall be
---|                 ctrlRegInfoPtr struct:{ Reg_Addr, 0x30, (0x02)<<4 }
---|                 after writing, RegAddr content is --10---- (Bin Format)
+--| DESCRIPTION : This function writes registers field that defined by Mask
+--| and bit width. The write field position and width are defined
+--| by mask byte. For example, if want to write 0x02 to a
+--| register bit<5:4>, the input parameter shall be
+--| ctrlRegInfoPtr struct:{ Reg_Addr, 0x30, (0x02)<<4 }
+--| after writing, RegAddr content is --10---- (Bin Format)
 --|
 --|---------------------------------------------------------------------------*/
 
@@ -194,22 +188,17 @@ MXL_STATUS MxL603_Ctrl_WriteRegField(UINT32 devId, PMXL603_REG_CTRL_INFO_T ctrlR
 {
 	MXL_STATUS status = MXL_TRUE;
 	UINT8 tmp = 0;
-
 	if ((ctrlRegInfoPtr->regAddr == 0) && (ctrlRegInfoPtr->mask == 0) && (ctrlRegInfoPtr->data == 0))
 		return MXL_FALSE;
-
 	// Check if partial bits of register were updated
 	if (ctrlRegInfoPtr->mask != 0xFF)
 	{
 		status = MxLWare603_OEM_ReadRegister(devId, ctrlRegInfoPtr->regAddr, &tmp);
 		if (status != MXL_TRUE) return status;
 	}
-
-	tmp &= (UINT8)~ctrlRegInfoPtr->mask;  // Clear the field that need to set value
+	tmp &= (UINT8)~ctrlRegInfoPtr->mask; // Clear the field that need to set value
 	tmp |= (UINT8)(ctrlRegInfoPtr->data & ctrlRegInfoPtr->mask);
-
 	status = MxLWare603_OEM_WriteRegister(devId, ctrlRegInfoPtr->regAddr, tmp);
-
 	return status;
 }
 

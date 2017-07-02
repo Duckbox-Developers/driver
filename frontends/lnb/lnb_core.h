@@ -17,9 +17,8 @@
 #include <asm/string.h>
 
 #define I2C_DRIVERID_LNB 1
-#define LNB_MINOR        0
-#define LNB_MAJOR        149
-
+#define LNB_MINOR 0
+#define LNB_MAJOR 149
 
 /* IOCTL */
 #define LNB_VOLTAGE_OFF 0x2b0010

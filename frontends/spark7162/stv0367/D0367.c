@@ -4,13 +4,13 @@
 //			Copyright (C), 2011-2016, AV Frontier Tech. Co., Ltd.
 //
 //
-// 文 件 名：   $RCSfile$
+// 文 件 名： $RCSfile$
 //
-// 创 建 者：   Administrator
+// 创 建 者： Administrator
 //
-// 创建时间：   2011.05.09
+// 创建时间： 2011.05.09
 //
-// 最后更新：   $Date$
+// 最后更新： $Date$
 //
 //				$Author$
 //
@@ -18,13 +18,13 @@
 //
 //				$State$
 //
-// 文件描述：   d0367
+// 文件描述： d0367
 //
 /******************************************************************************/
 
-/********************************  文件包含************************************/
+/******************************** 文件包含************************************/
 
-#include <linux/kernel.h>  /* Kernel support */
+#include <linux/kernel.h> /* Kernel support */
 #include <linux/delay.h>
 #include <linux/i2c.h>
 
@@ -38,19 +38,19 @@
 #include "stv0367ofdm_init.h"
 #include "D0367_inner.h"
 
-/********************************  常量定义********************************/
+/******************************** 常量定义********************************/
 
-/********************************  数据结构********************************/
+/******************************** 数据结构********************************/
 
-/********************************  宏 定 义**********************************/
+/******************************** 宏 定 义**********************************/
 
-/********************************  变量定义********************************/
+/******************************** 变量定义********************************/
 
-/********************************  变量引用********************************/
+/******************************** 变量引用********************************/
 
-/********************************  函数声明********************************/
+/******************************** 函数声明********************************/
 
-/********************************  函数定义********************************/
+/******************************** 函数定义********************************/
 
 /*****************************************************
 **FUNCTION :: IOREG_GetRegAddress
@@ -104,13 +104,11 @@ int ChipGetFieldSign(U32 FieldId)
 int ChipGetFieldPosition(U8 Mask)
 {
 	int position = 0, i = 0;
-
 	while ((position == 0) && (i < 8))
 	{
 		position = (Mask >> i) & 0x01;
 		i++;
 	}
-
 	return (i - 1);
 }
 /*****************************************************
@@ -124,14 +122,12 @@ int ChipGetFieldBits(int mask, int Position)
 {
 	int bits, bit;
 	int i = 0;
-
 	bits = mask >> Position;
 	bit = bits ;
 	while ((bit > 0) && (i < 8))
 	{
 		i++;
 		bit = bits >> i;
-
 	}
 	return i;
 }
@@ -142,17 +138,16 @@ Name: ChipGetRegisterIndex
 Description:Get the index of a register from the pRegMapImage table
 
 Parameters:hChip ==> Handle to the chip
-      RegId ==> Id of the register (adress)
+ RegId ==> Id of the register (adress)
 
 Return Value:Index of the register in the register map image
 ---------------------------------------------------------------------------- */
 S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOHandle, U16 RegId)
 {
-	S32  regIndex = -1, reg = 0;
+	S32 regIndex = -1, reg = 0;
 	/* S32 top, bottom,mid; to be used for binary search*/
 	if (DeviceMap)
 	{
-
 		while (reg < DeviceMap->Registers)
 		{
 			if (DeviceMap->RegMap[reg].Address == RegId)
@@ -167,18 +162,15 @@ S32 ChipGetRegisterIndex(TUNER_IOREG_DeviceMap_t *DeviceMap, IOARCH_Handle_t IOH
 }
 
 void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
-		 IOARCH_Handle_t IOHandle,
-		 unsigned char *pcData, int nbdata)
+				 IOARCH_Handle_t IOHandle,
+				 unsigned char *pcData, int nbdata)
 {
 	struct i2c_adapter *i2c = (struct i2c_adapter *)IOHandle;
-
 	int ret;
-
 	struct i2c_msg msg[] =
 	{
 		{ .addr = 0x38 >> 1, .flags = 0, .buf = pcData, .len = nbdata },
 	};
-
 	ret = i2c_transfer(i2c, &msg[0], 1);
 	if (ret != 1)
 	{
@@ -188,17 +180,15 @@ void D0367_write(TUNER_IOREG_DeviceMap_t *DeviceMap,
 }
 
 void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
-		IOARCH_Handle_t IOHandle,
-		unsigned char *pcData, int NbRegs)
+				IOARCH_Handle_t IOHandle,
+				unsigned char *pcData, int NbRegs)
 {
 	int ret;
 	struct i2c_adapter *i2c = (struct i2c_adapter *)IOHandle;
-
 	struct i2c_msg msg[] =
 	{
 		{ .addr = 0x38 >> 1, .flags = I2C_M_RD, .buf = pcData, .len = NbRegs }
 	};
-
 	ret = i2c_transfer(i2c, msg, 1);
 	if (ret != 1)
 	{
@@ -209,15 +199,15 @@ void D0367_read(TUNER_IOREG_DeviceMap_t *DeviceMap,
 
 /*------------------------------------------------------------------------------*/
 /***********************************************************************
-    函数名称:   demod_d0367ter_Identify
+ 函数名称: demod_d0367ter_Identify
 
-    函数说明:   检测硬件是否0367ter
+ 函数说明: 检测硬件是否0367ter
 
-       修改记录:    日       期      作      者       修定
-                       ---------         ---------         -----
-                    2010-11-12      lwj         创建
+ 修改记录: 日 期 作 者 修定
+ --------- --------- -----
+ 2010-11-12 lwj 创建
 ************************************************************************/
-int  demod_d0367ter_Identify(struct i2c_adapter *i2c, U8  ucID)
+int demod_d0367ter_Identify(struct i2c_adapter *i2c, U8 ucID)
 {
 	int ret;
 	U8 pucActualID = 0;
@@ -242,7 +232,6 @@ int  demod_d0367ter_Identify(struct i2c_adapter *i2c, U8  ucID)
 		}
 	}
 	return YWHAL_ERROR_UNKNOWN_DEVICE;
-
 }
 
 /* EOF------------------------------------------------------------------------*/

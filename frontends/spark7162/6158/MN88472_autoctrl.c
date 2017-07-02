@@ -19,7 +19,7 @@ Copyright(C) 2011 SHARP CORPORATION
 // File : MN88472_pseq.rgs
 //
 DMD_u32_t MN88472_REG_AUTOCTRL_SIZE = 1976;
-DMD_u8_t  MN88472_REG_AUTOCTRL[] =
+DMD_u8_t MN88472_REG_AUTOCTRL[] =
 {
 	0x81, 0x00, 0x0b, 0x10, 0x00, 0xc0, 0x07, 0xb7,
 	0xc0, 0x07, 0xb8, 0xc0, 0x07, 0xb9, 0xc0, 0x07,
@@ -270,13 +270,13 @@ DMD_u8_t  MN88472_REG_AUTOCTRL[] =
 	0x05, 0x10, 0x00, 0xc0, 0x07, 0xb9, 0x01, 0xd7
 };
 #else
-/* '11/11/17 : OKAMOTO  Update to "MN88472_Device_Driver_111109". */
+/* '11/11/17 : OKAMOTO Update to "MN88472_Device_Driver_111109". */
 // MN88472 Autocontrol Register
 // Date : 2011/10/11 13:04
 // File : MN88472_pseq.rgs
 //
 UINT32 MN88472_REG_AUTOCTRL_SIZE = 1922;
-UINT8  MN88472_REG_AUTOCTRL[] =
+UINT8 MN88472_REG_AUTOCTRL[] =
 {
 	0x81, 0x00, 0x0b, 0x10, 0x00, 0xc0, 0x07, 0x81,
 	0xc0, 0x07, 0x82, 0xc0, 0x07, 0x83, 0xc0, 0x07,

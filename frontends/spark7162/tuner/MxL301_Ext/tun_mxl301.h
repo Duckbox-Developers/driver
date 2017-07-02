@@ -1,13 +1,13 @@
 /*****************************************************************************
-*    Copyright (C)2011 FULAN Corporation. All Rights Reserved.
+* Copyright (C)2011 FULAN Corporation. All Rights Reserved.
 *
-*    File:    tun_mxl301.h
+* File: tun_mxl301.h
 *
-*    Description:    MXL301 TUNER.
-*    History:
-*           Date            Athor        Version          Reason
-*       ============    =============   =========   =================
-*   1.  2011/08/26      dmq     Ver 0.1     Create file.
+* Description: MXL301 TUNER.
+* History:
+* Date Athor Version Reason
+* ============ ============= ========= =================
+* 1. 2011/08/26 dmq Ver 0.1 Create file.
 *****************************************************************************/
 
 #ifndef __TUN_MXL301_H__
@@ -32,4 +32,4 @@ INT32 tun_mxl301_status(UINT32 tuner_idx, UINT8 *lock);
 }
 #endif
 
-#endif  /* __TUN_MXL301_H__ */
+#endif /* __TUN_MXL301_H__ */

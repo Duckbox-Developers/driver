@@ -1,21 +1,21 @@
 /*
- *  mxl5007t.c - driver for the MaxLinear MxL5007T silicon tuner
+ * mxl5007t.c - driver for the MaxLinear MxL5007T silicon tuner
  *
- *  Copyright (C) 2008, 2009 Michael Krufky <mkrufky@linuxtv.org>
+ * Copyright (C) 2008, 2009 Michael Krufky <mkrufky@linuxtv.org>
  *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include <linux/i2c.h>
@@ -49,20 +49,20 @@ MODULE_PARM_DESC(debug, "set debug level");
 #define mxl_info(fmt, arg...) \
 	mxl_printk(KERN_INFO, fmt, ##arg)
 
-#define mxl_debug(fmt, arg...)				\
-	({							\
-		if (mxl5007t_debug)				\
-			mxl_printk(KERN_DEBUG, fmt, ##arg);	\
+#define mxl_debug(fmt, arg...) \
+	({ \
+		if (mxl5007t_debug) \
+			mxl_printk(KERN_DEBUG, fmt, ##arg); \
 	})
 
-#define mxl_fail(ret)							\
-	({									\
-		int __ret;							\
-		__ret = (ret < 0);						\
-		if (__ret)							\
-			mxl_printk(KERN_ERR, "error %d on line %d",		\
-				   ret, __LINE__);				\
-		__ret;								\
+#define mxl_fail(ret) \
+	({ \
+		int __ret; \
+		__ret = (ret < 0); \
+		if (__ret) \
+			mxl_printk(KERN_ERR, "error %d on line %d", \
+					   ret, __LINE__); \
+		__ret; \
 	})
 
 /* ------------------------------------------------------------------------- */
@@ -71,18 +71,18 @@ MODULE_PARM_DESC(debug, "set debug level");
 
 enum mxl5007t_mode
 {
-	MxL_MODE_ISDBT     =    0,
-	MxL_MODE_DVBT      =    1,
-	MxL_MODE_ATSC      =    2,
-	MxL_MODE_CABLE     = 0x10,
+	MxL_MODE_ISDBT = 0,
+	MxL_MODE_DVBT = 1,
+	MxL_MODE_ATSC = 2,
+	MxL_MODE_CABLE = 0x10,
 };
 
 enum mxl5007t_chip_version
 {
-	MxL_UNKNOWN_ID     = 0x00,
-	MxL_5007_V1_F1     = 0x11,
-	MxL_5007_V1_F2     = 0x12,
-	MxL_5007_V4        = 0x14,
+	MxL_UNKNOWN_ID = 0x00,
+	MxL_5007_V1_F1 = 0x11,
+	MxL_5007_V1_F2 = 0x12,
+	MxL_5007_V4 = 0x14,
 	MxL_5007_V2_100_F1 = 0x21,
 	MxL_5007_V2_100_F2 = 0x22,
 	MxL_5007_V2_200_F1 = 0x23,
@@ -191,7 +191,6 @@ struct mxl5007t_state
 static void set_reg_bits(struct reg_pair_t *reg_pair, u8 reg, u8 mask, u8 val)
 {
 	unsigned int i = 0;
-
 	while (reg_pair[i].reg || reg_pair[i].val)
 	{
 		if (reg_pair[i].reg == reg)
@@ -200,18 +199,15 @@ static void set_reg_bits(struct reg_pair_t *reg_pair, u8 reg, u8 mask, u8 val)
 			reg_pair[i].val |= val;
 		}
 		i++;
-
 	}
 	return;
 }
 
 static void copy_reg_bits(struct reg_pair_t *reg_pair1,
-			  struct reg_pair_t *reg_pair2)
+						  struct reg_pair_t *reg_pair2)
 {
 	unsigned int i, j;
-
 	i = j = 0;
-
 	while (reg_pair1[i].reg || reg_pair1[i].val)
 	{
 		while (reg_pair2[j].reg || reg_pair2[j].reg)
@@ -232,8 +228,8 @@ static void copy_reg_bits(struct reg_pair_t *reg_pair1,
 /* ------------------------------------------------------------------------- */
 
 static void mxl5007t_set_mode_bits(struct mxl5007t_state *state,
-				   enum mxl5007t_mode mode,
-				   s32 if_diff_out_level)
+								   enum mxl5007t_mode mode,
+								   s32 if_diff_out_level)
 {
 	switch (mode)
 	{
@@ -249,7 +245,7 @@ static void mxl5007t_set_mode_bits(struct mxl5007t_state *state,
 		case MxL_MODE_CABLE:
 			set_reg_bits(state->tab_init_cable, 0x09, 0xff, 0xc1);
 			set_reg_bits(state->tab_init_cable, 0x0a, 0xff,
-				     8 - if_diff_out_level);
+						 8 - if_diff_out_level);
 			set_reg_bits(state->tab_init_cable, 0x0b, 0xff, 0x17);
 			break;
 		default:
@@ -259,11 +255,10 @@ static void mxl5007t_set_mode_bits(struct mxl5007t_state *state,
 }
 
 static void mxl5007t_set_if_freq_bits(struct mxl5007t_state *state,
-				      enum mxl5007t_if_freq if_freq,
-				      int invert_if)
+									  enum mxl5007t_if_freq if_freq,
+									  int invert_if)
 {
 	u8 val;
-
 	switch (if_freq)
 	{
 		case MxL_IF_4_MHZ:
@@ -304,15 +299,13 @@ static void mxl5007t_set_if_freq_bits(struct mxl5007t_state *state,
 			return;
 	}
 	set_reg_bits(state->tab_init, 0x02, 0x0f, val);
-
 	/* set inverted IF or normal IF */
 	set_reg_bits(state->tab_init, 0x02, 0x10, invert_if ? 0x10 : 0x00);
-
 	return;
 }
 
 static void mxl5007t_set_xtal_freq_bits(struct mxl5007t_state *state,
-					enum mxl5007t_xtal_freq xtal_freq)
+										enum mxl5007t_xtal_freq xtal_freq)
 {
 	switch (xtal_freq)
 	{
@@ -377,26 +370,21 @@ static void mxl5007t_set_xtal_freq_bits(struct mxl5007t_state *state,
 			mxl_fail(-EINVAL);
 			return;
 	}
-
 	return;
 }
 
 static struct reg_pair_t *mxl5007t_calc_init_regs(struct mxl5007t_state *state,
-						  enum mxl5007t_mode mode)
+												  enum mxl5007t_mode mode)
 {
 	struct mxl5007t_config *cfg = state->config;
-
 	memcpy(&state->tab_init, &init_tab, sizeof(init_tab));
 	memcpy(&state->tab_init_cable, &init_tab_cable, sizeof(init_tab_cable));
-
 	mxl5007t_set_mode_bits(state, mode, cfg->if_diff_out_level);
 	mxl5007t_set_if_freq_bits(state, cfg->if_freq_hz, cfg->invert_if);
 	mxl5007t_set_xtal_freq_bits(state, cfg->xtal_freq_hz);
-
 	set_reg_bits(state->tab_init, 0x04, 0x01, cfg->loop_thru_enable);
 	set_reg_bits(state->tab_init, 0x03, 0x08, cfg->clk_out_enable << 3);
 	set_reg_bits(state->tab_init, 0x03, 0x07, cfg->clk_out_amp);
-
 	if (mode >= MxL_MODE_CABLE)
 	{
 		copy_reg_bits(state->tab_init, state->tab_init_cable);
@@ -416,15 +404,14 @@ enum mxl5007t_bw_mhz
 };
 
 static void mxl5007t_set_bw_bits(struct mxl5007t_state *state,
-				 enum mxl5007t_bw_mhz bw)
+								 enum mxl5007t_bw_mhz bw)
 {
 	u8 val;
-
 	switch (bw)
 	{
 		case MxL_BW_6MHz:
 			val = 0x15; /* set DIG_MODEINDEX, DIG_MODEINDEX_A,
-			     * and DIG_MODEINDEX_CSF */
+ * and DIG_MODEINDEX_CSF */
 			break;
 		case MxL_BW_7MHz:
 			val = 0x2a;
@@ -437,29 +424,23 @@ static void mxl5007t_set_bw_bits(struct mxl5007t_state *state,
 			return;
 	}
 	set_reg_bits(state->tab_rftune, 0x0c, 0x3f, val);
-
 	return;
 }
 
 static struct
 reg_pair_t *mxl5007t_calc_rf_tune_regs(struct mxl5007t_state *state,
-				       u32 rf_freq, enum mxl5007t_bw_mhz bw)
+									   u32 rf_freq, enum mxl5007t_bw_mhz bw)
 {
 	u32 dig_rf_freq = 0;
 	u32 temp;
 	u32 frac_divider = 1000000;
 	unsigned int i;
-
 	memcpy(&state->tab_rftune, &reg_pair_rftune, sizeof(reg_pair_rftune));
-
 	mxl5007t_set_bw_bits(state, bw);
-
 	/* Convert RF frequency into 16 bits =>
 	 * 10 bit integer (MHz) + 6 bit fraction */
 	dig_rf_freq = rf_freq / MHz;
-
 	temp = rf_freq % MHz;
-
 	for (i = 0; i < 6; i++)
 	{
 		dig_rf_freq <<= 1;
@@ -470,17 +451,13 @@ reg_pair_t *mxl5007t_calc_rf_tune_regs(struct mxl5007t_state *state,
 			dig_rf_freq++;
 		}
 	}
-
 	/* add to have shift center point by 7.8124 kHz */
 	if (temp > 7812)
 		dig_rf_freq++;
-
 	set_reg_bits(state->tab_rftune, 0x0d, 0xff, (u8) dig_rf_freq);
 	set_reg_bits(state->tab_rftune, 0x0e, 0xff, (u8)(dig_rf_freq >> 8));
-
 	if (rf_freq >= 333000000)
 		set_reg_bits(state->tab_rftune, 0x80, 0x40, 0x40);
-
 	return state->tab_rftune;
 }
 
@@ -490,10 +467,9 @@ static int mxl5007t_write_reg(struct mxl5007t_state *state, u8 reg, u8 val)
 {
 	u8 buf[] = { reg, val };
 	struct i2c_msg msg = { .addr = state->i2c_props.addr, .flags = 0,
-		       .buf = buf, .len = 2
+			   .buf = buf, .len = 2
 	};
 	int ret;
-
 	ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
 	if (ret != 1)
 	{
@@ -504,15 +480,14 @@ static int mxl5007t_write_reg(struct mxl5007t_state *state, u8 reg, u8 val)
 }
 
 static int mxl5007t_write_regs(struct mxl5007t_state *state,
-			       struct reg_pair_t *reg_pair)
+							   struct reg_pair_t *reg_pair)
 {
 	unsigned int i = 0;
 	int ret = 0;
-
 	while ((ret == 0) && (reg_pair[i].reg || reg_pair[i].val))
 	{
 		ret = mxl5007t_write_reg(state,
-					 reg_pair[i].reg, reg_pair[i].val);
+								 reg_pair[i].reg, reg_pair[i].val);
 		i++;
 	}
 	return ret;
@@ -533,7 +508,6 @@ static int mxl5007t_read_reg(struct mxl5007t_state *state, u8 reg, u8 *val)
 		},
 	};
 	int ret;
-
 	d[0] = 0xFB; //hop@: address of the register which contains address ...
 	d[1] = reg;
 	ret = i2c_transfer(state->i2c_props.adap, msg, 2);
@@ -554,7 +528,6 @@ static int mxl5007t_soft_reset(struct mxl5007t_state *state)
 		.buf = &d, .len = 1
 	};
 	int ret = i2c_transfer(state->i2c_props.adap, &msg, 1);
-
 	if (ret != 1)
 	{
 		mxl_err("failed!");
@@ -564,18 +537,15 @@ static int mxl5007t_soft_reset(struct mxl5007t_state *state)
 }
 
 static int mxl5007t_tuner_init(struct mxl5007t_state *state,
-			       enum mxl5007t_mode mode)
+							   enum mxl5007t_mode mode)
 {
 	struct reg_pair_t *init_regs;
 	int ret;
-
 	ret = mxl5007t_soft_reset(state);
 	if (mxl_fail(ret))
 		goto fail;
-
 	/* calculate initialization reg array */
 	init_regs = mxl5007t_calc_init_regs(state, mode);
-
 	ret = mxl5007t_write_regs(state, init_regs);
 	if (mxl_fail(ret))
 		goto fail;
@@ -585,14 +555,12 @@ fail:
 }
 
 static int mxl5007t_tuner_rf_tune(struct mxl5007t_state *state, u32 rf_freq_hz,
-				  enum mxl5007t_bw_mhz bw)
+								  enum mxl5007t_bw_mhz bw)
 {
 	struct reg_pair_t *rf_tune_regs;
 	int ret;
-
 	/* calculate channel change reg array */
 	rf_tune_regs = mxl5007t_calc_rf_tune_regs(state, rf_freq_hz, bw);
-
 	ret = mxl5007t_write_regs(state, rf_tune_regs);
 	if (mxl_fail(ret))
 		goto fail;
@@ -604,21 +572,17 @@ fail:
 /* ------------------------------------------------------------------------- */
 
 static int mxl5007t_synth_lock_status(struct mxl5007t_state *state,
-				      int *rf_locked, int *ref_locked)
+									  int *rf_locked, int *ref_locked)
 {
 	u8 d;
 	int ret;
-
 	*rf_locked = 0;
 	*ref_locked = 0;
-
 	ret = mxl5007t_read_reg(state, 0xd8, &d);
 	if (mxl_fail(ret))
 		goto fail;
-
 	if ((d & 0x0c) == 0x0c)
 		*rf_locked = 1;
-
 	if ((d & 0x03) == 0x03)
 		*ref_locked = 1;
 fail:
@@ -631,38 +595,32 @@ static int mxl5007t_get_status(struct dvb_frontend *fe, u32 *status)
 {
 	struct mxl5007t_state *state = fe->tuner_priv;
 	int rf_locked, ref_locked, ret;
-
 	*status = 0;
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
-
 	ret = mxl5007t_synth_lock_status(state, &rf_locked, &ref_locked);
 	if (mxl_fail(ret))
 		goto fail;
 	mxl_debug("%s%s", rf_locked ? "rf locked " : "",
-		  ref_locked ? "ref locked" : "");
-
+			  ref_locked ? "ref locked" : "");
 	if ((rf_locked) || (ref_locked))
 		*status |= TUNER_STATUS_LOCKED;
 fail:
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 0);
-
 	return ret;
 }
 
 /* ------------------------------------------------------------------------- */
 
 static int mxl5007t_set_params(struct dvb_frontend *fe,
-			       struct dvb_frontend_parameters *params)
+							   struct dvb_frontend_parameters *params)
 {
 	struct mxl5007t_state *state = fe->tuner_priv;
 	enum mxl5007t_bw_mhz bw;
 	enum mxl5007t_mode mode;
 	int ret;
 	u32 freq = params->frequency;
-
 	if (fe->ops.info.type == FE_ATSC)
 	{
 		switch (params->u.vsb.modulation)
@@ -706,29 +664,22 @@ static int mxl5007t_set_params(struct dvb_frontend *fe,
 		mxl_err("modulation type not supported!");
 		return -EINVAL;
 	}
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
-
 	mutex_lock(&state->lock);
-
 	ret = mxl5007t_tuner_init(state, mode);
 	if (mxl_fail(ret))
 		goto fail;
-
 	ret = mxl5007t_tuner_rf_tune(state, freq, bw);
 	if (mxl_fail(ret))
 		goto fail;
-
 	state->frequency = freq;
 	state->bandwidth = (fe->ops.info.type == FE_OFDM) ?
-			   params->u.ofdm.bandwidth : 0;
+					   params->u.ofdm.bandwidth : 0;
 fail:
 	mutex_unlock(&state->lock);
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 0);
-
 	return ret;
 }
 
@@ -738,17 +689,13 @@ static int mxl5007t_init(struct dvb_frontend *fe)
 {
 	struct mxl5007t_state *state = fe->tuner_priv;
 	int ret;
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
-
 	/* wake from standby */
 	ret = mxl5007t_write_reg(state, 0x01, 0x01);
 	mxl_fail(ret);
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 0);
-
 	return ret;
 }
 
@@ -756,19 +703,15 @@ static int mxl5007t_sleep(struct dvb_frontend *fe)
 {
 	struct mxl5007t_state *state = fe->tuner_priv;
 	int ret;
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 1);
-
 	/* enter standby mode */
 	ret = mxl5007t_write_reg(state, 0x01, 0x00);
 	mxl_fail(ret);
 	ret = mxl5007t_write_reg(state, 0x0f, 0x00);
 	mxl_fail(ret);
-
 	if (fe->ops.i2c_gate_ctrl)
 		fe->ops.i2c_gate_ctrl(fe, 0);
-
 	return ret;
 }
 
@@ -791,16 +734,11 @@ static int mxl5007t_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 static int mxl5007t_release(struct dvb_frontend *fe)
 {
 	struct mxl5007t_state *state = fe->tuner_priv;
-
 	mutex_lock(&mxl5007t_list_mutex);
-
 	if (state)
 		hybrid_tuner_release_state(state);
-
 	mutex_unlock(&mxl5007t_list_mutex);
-
 	fe->tuner_priv = NULL;
-
 	return 0;
 }
 
@@ -811,18 +749,18 @@ static struct dvb_tuner_ops mxl5007t_tuner_ops =
 	.info = {
 		.name = "MaxLinear MxL5007T",
 #if 0
-		.frequency_min  = ,
-		.frequency_max  = ,
-		.frequency_step = ,
+		.frequency_min =,
+		.frequency_max =,
+		.frequency_step =,
 #endif
 	},
-	.init              = mxl5007t_init,
-	.sleep             = mxl5007t_sleep,
-	.set_params        = mxl5007t_set_params,
-	.get_status        = mxl5007t_get_status,
-	.get_frequency     = mxl5007t_get_frequency,
-	.get_bandwidth     = mxl5007t_get_bandwidth,
-	.release           = mxl5007t_release,
+	.init = mxl5007t_init,
+	.sleep = mxl5007t_sleep,
+	.set_params = mxl5007t_set_params,
+	.get_status = mxl5007t_get_status,
+	.get_frequency = mxl5007t_get_frequency,
+	.get_bandwidth = mxl5007t_get_bandwidth,
+	.release = mxl5007t_release,
 };
 
 static int mxl5007t_get_chip_id(struct mxl5007t_state *state)
@@ -830,11 +768,9 @@ static int mxl5007t_get_chip_id(struct mxl5007t_state *state)
 	char *name;
 	int ret;
 	u8 id;
-
 	ret = mxl5007t_read_reg(state, 0xd9, &id);
 	if (mxl_fail(ret))
 		goto fail;
-
 	switch (id)
 	{
 		case MxL_5007_V1_F1:
@@ -870,29 +806,27 @@ static int mxl5007t_get_chip_id(struct mxl5007t_state *state)
 	}
 	state->chip_id = id;
 	mxl_info("%s detected @ %d-%04x", name,
-		 i2c_adapter_id(state->i2c_props.adap),
-		 state->i2c_props.addr);
+			 i2c_adapter_id(state->i2c_props.adap),
+			 state->i2c_props.addr);
 	return 0;
 fail:
 	mxl_warn("unable to identify device @ %d-%04x",
-		 i2c_adapter_id(state->i2c_props.adap),
-		 state->i2c_props.addr);
-
+			 i2c_adapter_id(state->i2c_props.adap),
+			 state->i2c_props.addr);
 	state->chip_id = MxL_UNKNOWN_ID;
 	return ret;
 }
 
 struct dvb_frontend *mxl5007t_attach(struct dvb_frontend *fe,
-				     struct i2c_adapter *i2c, u8 addr,
-				     struct mxl5007t_config *cfg)
+									 struct i2c_adapter *i2c, u8 addr,
+									 struct mxl5007t_config *cfg)
 {
 	struct mxl5007t_state *state = NULL;
 	int instance, ret;
-
 	mutex_lock(&mxl5007t_list_mutex);
 	instance = hybrid_tuner_request_state(struct mxl5007t_state, state,
-					      hybrid_tuner_instance_list,
-					      i2c, addr, "mxl5007t");
+										  hybrid_tuner_instance_list,
+										  i2c, addr, "mxl5007t");
 	switch (instance)
 	{
 		case 0:
@@ -900,17 +834,12 @@ struct dvb_frontend *mxl5007t_attach(struct dvb_frontend *fe,
 		case 1:
 			/* new tuner instance */
 			state->config = cfg;
-
 			mutex_init(&state->lock);
-
 			if (fe->ops.i2c_gate_ctrl)
 				fe->ops.i2c_gate_ctrl(fe, 1);
-
 			ret = mxl5007t_get_chip_id(state);
-
 			if (fe->ops.i2c_gate_ctrl)
 				fe->ops.i2c_gate_ctrl(fe, 0);
-
 			/* check return value of mxl5007t_get_chip_id */
 			if (mxl_fail(ret))
 				goto fail;
@@ -921,14 +850,11 @@ struct dvb_frontend *mxl5007t_attach(struct dvb_frontend *fe,
 	}
 	fe->tuner_priv = state;
 	mutex_unlock(&mxl5007t_list_mutex);
-
 	memcpy(&fe->ops.tuner_ops, &mxl5007t_tuner_ops,
-	       sizeof(struct dvb_tuner_ops));
-
+		   sizeof(struct dvb_tuner_ops));
 	return fe;
 fail:
 	mutex_unlock(&mxl5007t_list_mutex);
-
 	mxl5007t_release(fe);
 	return NULL;
 }
