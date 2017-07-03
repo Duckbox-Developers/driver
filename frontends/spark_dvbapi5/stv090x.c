@@ -1107,8 +1107,9 @@ static struct stv090x_reg stx7111_initval[] =
 {
 	/* demod2 */
 	{ STV090x_OUTCFG, 0x00 },
-	{ STV090x_AGCRF1CFG, 0x10 }, // for ix7306
-// { STV090x_AGCRF1CFG, 0x11 },
+//	{ STV090x_AGCRF1CFG, 0x10 }, // for ix7306
+	{ STV090x_AGCRF1CFG, 0x11 },
+
 	{ STV090x_AGCRF2CFG, 0x13 },
 	{ STV090x_TSGENERAL, 0x00 },
 	{ STV090x_P2_DISTXCTL, 0x22 },
@@ -1148,9 +1149,6 @@ static struct stv090x_reg stx7111_initval[] =
 	{ 0xf43b, 0x00 },
 	{ 0xf43c, 0xc0 },
 	{ STV090x_P2_CARHDR, 0x20 },
-#if 0
-	{ STV090x_P2_TMGTHRISE, 0x20 },
-#endif
 	{ STV090x_P2_KREFTMG, 0x87 },
 	{ STV090x_P2_SFRUPRATIO, 0xf0 },
 	{ STV090x_P2_SFRLOWRATIO, 0x70 },
@@ -3333,7 +3331,7 @@ static int stv090x_get_loop_params(struct stv090x_state *state, s32 *freq_inc, s
 	car_max = 65536 * (car_max / 2);
 	car_max /= (state->mclk / 1000);
 	if (car_max > 0x4000)
-		car_max = 0x4000 ; /* maxcarrier should be<= +-1/4 Mclk */
+		car_max = 0x4000; /* maxcarrier should be<= +-1/4 Mclk */
 	inc = srate;
 	inc /= state->mclk / 1000;
 	inc *= 256;
@@ -5677,6 +5675,16 @@ static int stv090x_init(struct dvb_frontend *fe)
 	STV090x_SETFIELD_Px(reg, ROLLOFF_CONTROL_FIELD, state->rolloff);
 	if (STV090x_WRITE_DEMOD(state, DEMOD, reg) < 0)
 		goto err;
+	reg = stv090x_read_reg(state, STV090x_AGCRF1CFG);
+	reg = config->agc_rf1_inv ? (reg & 0xFE) : (reg | 0x01);
+	if (stv090x_write_reg(state, STV090x_AGCRF1CFG, reg) < 0)
+		goto err;
+	printk("stv090x_init: AGCRF1CFG = 0x%02X\n", reg);
+	reg = stv090x_read_reg(state, STV090x_AGCRF2CFG);
+	reg = config->agc_rf2_inv ? (reg & 0xFE) : (reg | 0x01);
+	if (stv090x_write_reg(state, STV090x_AGCRF2CFG, reg) < 0)
+		goto err;
+	printk("stv090x_init: AGCRF2CFG = 0x%02X\n", reg);
 	if (config->tuner_set_mode)
 	{
 		if (config->tuner_set_mode(fe, TUNER_WAKE) < 0)
@@ -5700,8 +5708,8 @@ static int stv090x_setup(struct dvb_frontend *fe)
 {
 	struct stv090x_state *state = fe->demodulator_priv;
 	const struct stv090x_config *config = state->config;
-	const struct stv090x_reg *stv090x_initval = NULL;
-	const struct stv090x_reg *stv090x_cut20_val = NULL;
+	struct stv090x_reg *stv090x_initval = NULL;
+	struct stv090x_reg *stv090x_cut20_val = NULL;
 	unsigned long t1_size = 0, t2_size = 0;
 	u32 reg = 0;
 	int i;
@@ -5750,6 +5758,10 @@ static int stv090x_setup(struct dvb_frontend *fe)
 	dprintk(10, "Setting up initial values\n");
 	for (i = 0; i < t1_size; i++)
 	{
+		if (stv090x_initval[i].addr == STV090x_AGCRF1CFG)
+			stv090x_initval[i].data = config->agc_rf1_inv ? (stv090x_initval[i].data & 0xFE) : (stv090x_initval[i].data | 0x01);
+		if (stv090x_initval[i].addr == STV090x_AGCRF2CFG)
+			stv090x_initval[i].data = config->agc_rf2_inv ? (stv090x_initval[i].data & 0xFE) : (stv090x_initval[i].data | 0x01);
 		if (stv090x_write_reg(state, stv090x_initval[i].addr, stv090x_initval[i].data) < 0)
 			goto err;
 	}
@@ -5778,6 +5790,18 @@ static int stv090x_setup(struct dvb_frontend *fe)
 		printk("INFO: Cut: 0x%02x probably incomplete support!\n",
 			   state->dev_ver);
 	}
+	/* ADC1 range */
+	reg = stv090x_read_reg(state, STV090x_TSTTNR1);
+	STV090x_SETFIELD(reg, ADC1_INMODE_FIELD,
+					 (config->adc1_range == STV090x_ADC_1Vpp) ? 0 : 1);
+	if (stv090x_write_reg(state, STV090x_TSTTNR1, reg) < 0)
+		goto err;
+	/* ADC2 range */
+	reg = stv090x_read_reg(state, STV090x_TSTTNR3);
+	STV090x_SETFIELD(reg, ADC2_INMODE_FIELD,
+					 (config->adc2_range == STV090x_ADC_1Vpp) ? 0 : 1);
+	if (stv090x_write_reg(state, STV090x_TSTTNR3, reg) < 0)
+		goto err;
 	if (stv090x_write_reg(state, STV090x_TSTRES0, 0x80) < 0)
 		goto err;
 	if (stv090x_write_reg(state, STV090x_TSTRES0, 0x00) < 0)
