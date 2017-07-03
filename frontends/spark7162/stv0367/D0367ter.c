@@ -229,11 +229,11 @@ static int dvb_d0367_fe_ofdm_set_frontend(struct dvb_frontend *fe,
 	IOHandle = state->IOHandle;
 	state->p = p;
 	D0367ter_ScanFreq(DeviceMap, IOHandle);
-	{
-		BOOL bIsLocked;
-		bIsLocked = FE_367ofdm_lock(&state->DeviceMap, state->IOHandle);
-		//printk("bIsLocked = %d\n", bIsLocked);
-	}
+#if 0
+	BOOL bIsLocked;
+	bIsLocked = FE_367ofdm_lock(&state->DeviceMap, state->IOHandle);
+	printk("bIsLocked = %d\n", bIsLocked);
+#endif
 	state->p = NULL;
 	return 0;
 }
@@ -686,7 +686,7 @@ YW_ErrorType_T D0367ter_ScanFreq(TUNER_IOREG_DeviceMap_t *DeviceMap,
 	U8 SenseTrialsAuto[2];
 	FE_367ofdm_InternalParams_t pParams;
 	FE_TER_SearchResult_t pResult;
-	//question pParams->Inv ¶àÉÙ
+	//question pParams->Inv
 	YWLIB_Memset(&pParams, 0, sizeof(FE_367ofdm_InternalParams_t));
 	YWLIB_Memset(&pResult, 0, sizeof(FE_TER_SearchResult_t));
 #if 0 //question

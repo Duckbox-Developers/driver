@@ -106,12 +106,11 @@ static int dvb_d0367_fe_qam_set_frontend(struct dvb_frontend *fe,
 	IOHandle = state->IOHandle;
 	state->p = p;
 	D0367qam_ScanFreq(DeviceMap, IOHandle);
-	{
-		BOOL bIsLocked;
-		bIsLocked = FE_367qam_Status(&state->DeviceMap, state->IOHandle);
-		_DEBUG
-		printk("%d:bIsLocked = %d\n", __LINE__, bIsLocked);
-	}
+#if 0
+	BOOL bIsLocked;
+	bIsLocked = FE_367qam_Status(&state->DeviceMap, state->IOHandle);
+	printk("%d:bIsLocked = %d\n", __LINE__, bIsLocked);
+#endif
 	state->p = NULL;
 	return 0;
 }
@@ -587,7 +586,7 @@ D0367qam_Algo(TUNER_IOREG_DeviceMap_t *DemodDeviceMap,
 		//lwj add end
 		//if (FE_TunerGetIF_Freq(pIntParams->hTuner) != 0)
 #if 0 //lwj remove
-		if (0) //IF Îª£°
+		if (0) //IF
 		{
 			if (FE_TunerGetIF_Freq(pIntParams->hTuner) > pIntParams->AdcClock_Hz / 1000)
 			{

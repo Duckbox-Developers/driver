@@ -4277,26 +4277,20 @@ static int d3501_read_status(struct dvb_frontend *fe, enum fe_status *status)
 			printk("1. Tuner get_status err\n");
 		}
 	}
-	_DEBUG
+	if (iTunerLock)
 	{
-		if (iTunerLock)
-		{
 #if defined(NIM_S3501_DEBUG)
-			printk("1. Tuner phase locked\n");
+		printk("1. Tuner phase locked\n");
 #endif
-		}
-		else
-		{
-			printk("1. Tuner unlocked\n");
-		}
 	}
-}
-
-if (nim_s3501_i2c_close(&state->spark_nimdev))
-	return S3501_ERR_I2C_NO_ACK;
+	else
+	{
+		printk("1. Tuner unlocked\n");
+	}
+	if (nim_s3501_i2c_close(&state->spark_nimdev))
+		return S3501_ERR_I2C_NO_ACK;
 #endif /* 0 */
-
-return iRet;
+	return iRet;
 }
 
 static enum dvbfe_algo d3501_frontend_algo(struct dvb_frontend *fe)

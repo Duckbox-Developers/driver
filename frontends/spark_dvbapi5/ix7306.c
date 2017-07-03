@@ -566,7 +566,7 @@ static int ix7306_init(struct dvb_frontend *fe)
 		printk("ix7306_init i2c_gate_ctrl 1 error\n");
 		return -1;
 	}
-	/*D¡ä tuner*/
+	/* tuner */
 	if (ix7306_write(state, init_data1, sizeof(init_data1)) < 0)
 	{
 		printk("nim_vz7306_control: I2C write error init_data1\n");

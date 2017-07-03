@@ -4,9 +4,6 @@
 #include <linux/dvb/frontend.h>
 #include <linux/module.h>
 #include <linux/dvb/version.h>
-#if DVB_API_VERSION < 5
-#include "compat.h"
-#endif
 
 #include <linux/mutex.h>
 #include "dvbdev.h"

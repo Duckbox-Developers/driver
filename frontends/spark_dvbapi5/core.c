@@ -5,11 +5,7 @@
 #include <linux/version.h>
 #include <linux/dvb/dmx.h>
 #include <linux/proc_fs.h>
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
-#else
-#include <linux/stpio.h>
-#endif
 
 #include <pvr_config.h>
 

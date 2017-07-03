@@ -52,11 +52,9 @@ extern short paramDebug;
 
 static unsigned int verbose = FE_DEBUGREG;
 
-#if defined(SPARK)
 static struct stpio_pin *fe_lnb_13_18;
 static struct stpio_pin *fe_lnb_14_19;
 static struct stpio_pin *fe_lnb_on_off;
-#endif
 
 #if defined(CONFIG_KERNELVERSION) && defined(FORTIS_HDBOX)/* STLinux 2.3 */
 void ctrl_fn_using_non_p3_address(void)
@@ -4771,23 +4769,23 @@ static enum dvbfe_search stv090x_search(struct dvb_frontend *fe, struct dvb_fron
 	state->fec = STV090x_PRERR;
 	if (state->srate > 10000000)
 	{
-		dprintk(1, "Search range: 10 MHz");
+		dprintk(1, "Search range: 10 MHz\n");
 		state->search_range = 10000000;
 	}
 	else
 	{
-		dprintk(1, "Search range: 5 MHz");
+		dprintk(1, "Search range: 5 MHz\n");
 		state->search_range = 5000000;
 	}
 	stv090x_set_mis(state, props->stream_id);
 	if (stv090x_algo(state) == STV090x_RANGEOK)
 	{
-		dprintk(1, "Search success!");
+		dprintk(1, "Search success!\n");
 		return DVBFE_ALGO_SEARCH_SUCCESS;
 	}
 	else
 	{
-		dprintk(1, "Search failed!");
+		dprintk(1, "Search failed!\n");
 		return DVBFE_ALGO_SEARCH_FAILED;
 	}
 	return DVBFE_ALGO_SEARCH_ERROR;
@@ -6063,9 +6061,7 @@ static struct dvb_frontend_ops stv090x_ops =
 	.init = stv090x_init,
 
 //workaround for tuner failed, a frontend open does not allways wakeup the tuner
-#ifndef FORTIS_HDBOX
 	.sleep = stv090x_sleep,
-#endif
 	.get_frontend_algo = stv090x_frontend_algo,
 
 	.i2c_gate_ctrl = stv090x_i2c_gate_ctrl,
@@ -6080,11 +6076,7 @@ static struct dvb_frontend_ops stv090x_ops =
 	.read_ber = stv090x_read_per,
 	.read_signal_strength = stv090x_read_signal_strength,
 	.read_snr = stv090x_read_cnr,
-#if DVB_API_VERSION < 5
-	.get_info = stv090x_get_info,
-#else
 	.get_property = stv090x_get_property,
-#endif
 
 	.set_voltage = spark_set_voltage,
 };
@@ -6108,9 +6100,7 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 	state->device = config->device;
 	state->rolloff = STV090x_RO_35; /* default */
 	state->tuner = tuner;
-	dprintk(10, "i2c adapter = %p\n", state->i2c);
-	printk("[stv090x_attach]i2c adapter = %p\n i2c addr=%d\n", state->i2c, config->address);
-#if defined(SPARK)
+	dprintk(10, "%s i2c adapter = %p\n i2c addr=%d\n", __func__, state->i2c, config->address);
 	fe_lnb_13_18 = stpio_request_pin(6, 6, "lnb 13/18", STPIO_OUT);
 	fe_lnb_14_19 = stpio_request_pin(5, 5, "lnb 14/19", STPIO_OUT);
 	fe_lnb_on_off = stpio_request_pin(6, 5, "lnb onoff", STPIO_OUT);
@@ -6131,7 +6121,6 @@ struct dvb_frontend *stv090x_attach(const struct stv090x_config *config,
 		}
 		goto error;
 	}
-#endif
 	mutex_init(&demod_lock);
 	if (stv090x_sleep(&state->frontend) < 0)
 	{
