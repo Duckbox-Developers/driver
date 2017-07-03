@@ -284,10 +284,6 @@ U32 D0367qam_GeFrequencyKhz(TUNER_IOREG_DeviceMap_t *DeviceMap,
 		return Frequency;
 	}
 	p = state->p;
-	if (!state)
-	{
-		return Frequency;
-	}
 	Frequency = p->frequency / 1000;
 	return Frequency;
 }
@@ -305,10 +301,6 @@ U32 D0367qam_GeSymbolRate(TUNER_IOREG_DeviceMap_t *DeviceMap,
 		return SymbolRate;
 	}
 	p = state->p;
-	if (!state)
-	{
-		return SymbolRate;
-	}
 	_DEBUG
 	printk("p->u.qam.symbol_rate = %d\n", p->u.qam.symbol_rate);
 	SymbolRate = p->u.qam.symbol_rate;
@@ -328,10 +320,6 @@ U32 D0367qam_GeModulation(TUNER_IOREG_DeviceMap_t *DeviceMap,
 		return Modulation;
 	}
 	p = state->p;
-	if (!state)
-	{
-		return Modulation;
-	}
 	switch (p->u.qam.modulation)
 	{
 		case QAM_16:
