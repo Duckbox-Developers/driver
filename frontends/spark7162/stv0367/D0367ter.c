@@ -360,6 +360,7 @@ static int dvb_d0367_fe_ofdm_get_property(struct dvb_frontend *fe, struct dtv_pr
 		switch (tvp->u.data)
 		{
 			case SYS_DVBT:
+			case SYS_DVBC_ANNEX_AC:
 				break;
 			default:
 				return -EINVAL;
@@ -375,7 +376,7 @@ static struct dvb_frontend_ops dvb_d0367_fe_ofdm_ops =
 	.info = {
 		.name = "Tuner3-T(T/C)",
 		.type = FE_OFDM,
-		.frequency_min = 0,
+		.frequency_min = 47000000,
 		.frequency_max = 863250000,
 		.frequency_stepsize = 62500,
 		.caps = FE_CAN_FEC_1_2 | FE_CAN_FEC_2_3 | FE_CAN_FEC_3_4 |

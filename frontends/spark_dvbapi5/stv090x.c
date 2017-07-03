@@ -6055,8 +6055,8 @@ static struct dvb_frontend_ops stv090x_ops =
 		.symbol_rate_max = 70000000,
 		.caps = FE_CAN_INVERSION_AUTO |
 		FE_CAN_FEC_AUTO |
-		FE_CAN_QPSK /*|
- FE_CAN_2G_MODULATION*/
+		FE_CAN_QPSK |
+		FE_CAN_2G_MODULATION
 	},
 
 	.release = stv090x_release,
