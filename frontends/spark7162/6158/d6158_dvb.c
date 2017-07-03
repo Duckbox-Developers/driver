@@ -194,15 +194,17 @@ int d6158_set_frontend(struct dvb_frontend *fe,
 					   struct dvb_frontend_parameters *p)
 {
 	struct dvb_d6158_fe_ofdm_state *state = fe->demodulator_priv;
+	struct dtv_frontend_properties *props = &fe->dtv_property_cache;
 	struct nim_device *dev = &state->spark_nimdev;
 	struct nim_panic6158_private *priv = dev->priv;
 	//UINT8 lock;
-	state->p = p;
+	UINT8 plp_id;
+	plp_id = props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0;
 	printk("-----------------------d6158_set_frontend\n");
 	//nim_panic6158_get_lock(dev,&lock);
 	//if(lock != 1)
 	{
-		demod_d6158_ScanFreqDVB(p, &state->spark_nimdev, priv->system);
+		demod_d6158_ScanFreqDVB(p, &state->spark_nimdev, priv->system, plp_id);
 	}
 	state->p = NULL;
 	return 0;
@@ -212,15 +214,18 @@ int d6158earda_set_frontend(struct dvb_frontend *fe,
 							struct dvb_frontend_parameters *p)
 {
 	struct dvb_d6158_fe_ofdm_state *state = fe->demodulator_priv;
+	struct dtv_frontend_properties *props = &fe->dtv_property_cache;
 	struct nim_device *dev = &state->spark_nimdev;
 	struct nim_panic6158_private *priv = dev->priv;
 	//UINT8 lock;
+	UINT8 plp_id;
+	plp_id = props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0;
 	state->p = p;
 	printk("-----------------------d6158_set_frontend\n");
 	//nim_panic6158_get_lock(dev,&lock);
 	//if(lock != 1)
 	{
-		demod_d6158earda_ScanFreq(p, &state->spark_nimdev, priv->system);
+		demod_d6158earda_ScanFreq(p, &state->spark_nimdev, priv->system, plp_id);
 	}
 	state->p = NULL;
 	return 0;
@@ -363,7 +368,7 @@ struct dvb_frontend *dvb_d6158_attach(struct i2c_adapter *i2c, UINT8 system)
 	Tuner_API.nim_Tuner_Init = tun_mxl301_init;
 	Tuner_API.nim_Tuner_Status = tun_mxl301_status;
 	Tuner_API.nim_Tuner_Control = tun_mxl301_control;
-	Tuner_API.tune_t2_first = 0;//when demod_d6158_ScanFreq,param.priv_param >DEMO_DVBT2,tuner tune T2 then t
+	Tuner_API.tune_t2_first = 1;//when demod_d6158_ScanFreq,param.priv_param >DEMO_DVBT2,tuner tune T2 then t
 	Tuner_API.tuner_config.demo_type = PANASONIC_DEMODULATOR;
 	Tuner_API.tuner_config.cTuner_Base_Addr = 0xC2;
 	Tuner_API.tuner_config.i2c_adap = (IOARCH_Handle_t *)i2c;

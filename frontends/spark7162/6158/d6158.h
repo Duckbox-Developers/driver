@@ -71,9 +71,9 @@ YW_ErrorType_T demod_d6158_GetSignalInfo(U8 Handle,
 										 unsigned int *Ber);
 
 YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
-									   struct nim_device *dev, UINT8 System);
+									   struct nim_device *dev, UINT8 System, UINT8 plp_id);
 YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
-										 struct nim_device *dev, UINT8 System);
+										 struct nim_device *dev, UINT8 System, UINT8 plp_id);
 void nim_config_EARDATEK11658(struct COFDM_TUNER_CONFIG_API *Tuner_API_T, UINT32 i2c_id, UINT8 idx);
 /******************************** º¯Êý¶¨Òå************************************/
 

@@ -1199,7 +1199,7 @@ static INT32 nim_panic6158_get_bandwidth(struct nim_device *dev, INT32 *bandwidt
 	return SUCCESS;
 }
 
-static INT32 nim_panic6158_tune_action(struct nim_device *dev, UINT8 system, UINT32 frq, UINT8 bw, UINT8 qam, UINT32 wait_time)
+static INT32 nim_panic6158_tune_action(struct nim_device *dev, UINT8 system, UINT32 frq, UINT8 bw, UINT8 qam, UINT32 wait_time, UINT8 PLP_id)
 {
 	INT32 ret = !SUCCESS;
 	INT32 retTuner = !SUCCESS;
@@ -1279,7 +1279,7 @@ static INT32 nim_panic6158_tune_action(struct nim_device *dev, UINT8 system, UIN
 		{
 			data = 0x80;
 			nim_reg_write(dev, DEMO_BANK_T2, DMD_FECSET1, &data, 1);
-			data = 0x0;
+			data = PLP_id;
 			nim_reg_write(dev, DEMO_BANK_T2, DMD_PLPID, &data, 1);
 			if (1 == priv->scan_stop_flag)
 				break;
@@ -1382,7 +1382,7 @@ INT32 nim_panic6158_channel_change(struct nim_device *dev, struct NIM_Channel_Ch
 	mode[0] = DEMO_BANK_C;
 	qam = QAM64;
 #endif
-	NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz, system mode:%d,qam=%d\n", frq, bw, mode[0], qam);
+	NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz, plp_id:%d system mode:%d, qam=%d\n", frq, bw, priv->PLP_id, mode[0], qam);
 	NIM_PANIC6158_PRINTF("tune_num:%d\n", tune_num);
 	priv->scan_stop_flag = 0;
 	for (i = 0; i < tune_num; i++)
@@ -1406,7 +1406,7 @@ INT32 nim_panic6158_channel_change(struct nim_device *dev, struct NIM_Channel_Ch
 			break;
 		//tune demo
 		wait_time = (PANIC6158_TUNE_MAX_NUM == tune_num && 0 == i) ? 1000 : 300;//ms
-		if (SUCCESS == nim_panic6158_tune_action(dev, mode[i], frq, bw, qam, wait_time))
+		if (SUCCESS == nim_panic6158_tune_action(dev, mode[i], frq, bw, qam, wait_time, priv->PLP_id))
 			break;
 	}
 	return SUCCESS;
@@ -1939,7 +1939,7 @@ INT32 nim_panic6158_channel_change_earda(struct nim_device *dev, struct NIM_Chan
 	}
 	else
 	{
-		NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz\n", frq, bw);
+		NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz, plp_id:%d\n", frq, bw, param->PLP_id);
 		if (DEMO_DVBT == param->priv_param)
 		{
 			mode[0] = DEMO_BANK_T;

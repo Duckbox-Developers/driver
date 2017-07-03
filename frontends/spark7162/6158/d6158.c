@@ -52,19 +52,7 @@
 
 #include "nim_panic6158_ext.h"
 
-/******************************** 常量定义************************************/
-
-/******************************** 数据结构************************************/
-
-/******************************** 宏 定 义************************************/
-
-/******************************** 变量定义************************************/
-
-/******************************** 变量引用************************************/
-
-/******************************** 函数声明************************************/
-
-/******************************** 函数定义************************************/
+/********************************************************************/
 
 YW_ErrorType_T demod_d6158_Close(U8 Index)
 {
@@ -164,8 +152,8 @@ int demod_d6158_Identify(struct i2c_adapter *i2c_adap, U8 ucID)
 	}
 	return YWHAL_ERROR_UNKNOWN_DEVICE;
 }
-YW_ErrorType_T demod_d6158_Repeat(IOARCH_Handle_t DemodIOHandle, /*demod io ??±ú*/
-								  IOARCH_Handle_t TunerIOHandle, /*?°?? io ??±ú*/
+YW_ErrorType_T demod_d6158_Repeat(IOARCH_Handle_t DemodIOHandle,
+								  IOARCH_Handle_t TunerIOHandle,
 								  TUNER_IOARCH_Operation_t Operation,
 								  unsigned short SubAddr,
 								  unsigned char *Data,
@@ -183,7 +171,7 @@ YW_ErrorType_T demod_d6158_Repeat(IOARCH_Handle_t DemodIOHandle, /*demod io ??±
 }
 
 YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
-									   struct nim_device *dev, UINT8 System)
+									   struct nim_device *dev, UINT8 System, UINT8 plp_id)
 {
 	// struct nim_device *dev;
 	INT32 ret = 0;
@@ -202,6 +190,7 @@ YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
 		//printk("p->frequency:%dKHz, bw:%dMHz\n",
 		// p->frequency, p->u.ofdm.bandwidth);
 		param.freq = p->frequency;
+		param.PLP_id = plp_id;
 		switch (p->u.ofdm.bandwidth)
 		{
 			case BANDWIDTH_6_MHZ:
@@ -249,7 +238,7 @@ YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
 }
 
 YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
-										 struct nim_device *dev, UINT8 System)
+										 struct nim_device *dev, UINT8 System, UINT8 plp_id)
 {
 	// struct nim_device *dev;
 	INT32 ret = 0;
@@ -268,6 +257,7 @@ YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
 		//printk("p->frequency:%dKHz, bw:%dMHz\n",
 		// p->frequency, p->u.ofdm.bandwidth);
 		param.freq = p->frequency / 1000;
+		param.PLP_id = plp_id;
 		switch (p->u.ofdm.bandwidth)
 		{
 			case BANDWIDTH_6_MHZ:
