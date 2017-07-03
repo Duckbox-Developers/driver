@@ -1110,6 +1110,23 @@ static struct stv090x_reg stx7111_initval[] =
 //	{ STV090x_AGCRF1CFG, 0x10 }, // for ix7306
 	{ STV090x_AGCRF1CFG, 0x11 },
 
+	{ STV090x_STOPCLK1, 0x00 },
+	{ STV090x_STOPCLK2, 0x14 },
+	{ STV090x_P1_IQCONST, 0x00 }, /* P1_IQCONST */
+	{ STV090x_P2_IQCONST, 0x00 }, /* P2_IQCONST */
+	{ STV090x_P1_AGC1AMM, 0x80 }, /* P1_AGC1AMM */
+	{ STV090x_P2_AGC1AMM, 0x80 }, /* P2_AGC1AMM */
+	{ STV090x_P1_AGC1QUAD, 0x02 }, /* P1_AGC1QUAD */
+	{ STV090x_P2_AGC1QUAD, 0x02 }, /* P2_AGC1QUAD */
+	{ STV090x_P1_AGC1CFG, 0x54 }, /* P1_AGC1CFG */
+	{ STV090x_P2_AGC1CFG, 0x54 }, /* P2_AGC1CFG */
+	{ STV090x_P1_AGC1REF, 0x58 }, /* P1_AGC1REF */
+	{ STV090x_P2_AGC1REF, 0x58 }, /* P2_AGC1REF */
+	{ STV090x_P1_AGC1CN, 0x19 }, /* P1_AGC1CN */
+	{ STV090x_P2_AGC1CN, 0x19 }, /* P2_AGC1CN */
+	{ STV090x_P1_CFRINC1, 0x03 }, /* P1_CFRINC1 */
+	{ STV090x_P2_CFRINC1, 0x03 }, /* P2_CFRINC1 */
+
 	{ STV090x_AGCRF2CFG, 0x13 },
 	{ STV090x_TSGENERAL, 0x00 },
 	{ STV090x_P2_DISTXCTL, 0x22 },
@@ -3967,6 +3984,30 @@ static int stv090x_optimize_track(struct stv090x_state *state)
 	dprintk(10, "%s >\n", __func__);
 	srate = stv090x_get_srate(state, state->mclk);
 	srate += stv090x_get_tmgoffst(state, srate);
+	if (state->delsys == STV090x_DVBS2 && srate > 10000000)
+	{
+		dprintk(50, "STV090x_NOTSSYNC\n");
+		reg = stv090x_read_reg(state, STV090x_P1_TSSTATEM);
+		STV090x_SETFIELD_Px(reg, TSOUT_NOSYNC, 1);
+		if (stv090x_write_reg(state, STV090x_P1_TSSTATEM, reg) < 0)
+			goto err;
+		reg = stv090x_read_reg(state, STV090x_P1_TSSYNC);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SYNCMODE, 2);
+		if (stv090x_write_reg(state, STV090x_P1_TSSYNC, reg) < 0)
+			goto err;
+	}
+	else
+	{
+		dprintk(50, "STV090x_TSSYNC\n");
+		reg = stv090x_read_reg(state, STV090x_P1_TSSTATEM);
+		STV090x_SETFIELD_Px(reg, TSOUT_NOSYNC, 0);
+		if (stv090x_write_reg(state, STV090x_P1_TSSTATEM, reg) < 0)
+			goto err;
+		reg = stv090x_read_reg(state, STV090x_P1_TSSYNC);
+		STV090x_SETFIELD_Px(reg, TSFIFO_SYNCMODE, 0);
+		if (stv090x_write_reg(state, STV090x_P1_TSSYNC, reg) < 0)
+			goto err;
+	}
 	switch (state->delsys)
 	{
 		case STV090x_DVBS1:
@@ -5406,10 +5447,6 @@ static int stv090x_set_tspath(struct stv090x_state *state)
 					case STV090x_TSMODE_DVBCI:
 						if (stv090x_write_reg(state, STV090x_TSGENERAL, 0x06) < 0) /* Mux'd stream mode */
 							goto err;
-						reg = stv090x_read_reg(state, STV090x_P1_TSCFGM);
-						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
-						if (stv090x_write_reg(state, STV090x_P1_TSCFGM, reg) < 0)
-							goto err;
 						reg = stv090x_read_reg(state, STV090x_P2_TSCFGM);
 						STV090x_SETFIELD_Px(reg, TSFIFO_MANSPEED_FIELD, 3);
 						if (stv090x_write_reg(state, STV090x_P2_TSCFGM, reg) < 0)
@@ -5643,6 +5680,18 @@ static int stv090x_init(struct dvb_frontend *fe)
 	const struct stv090x_config *config = state->config;
 	u32 reg;
 	dprintk(10, "%s >\n", __FUNCTION__);
+	if (state->device == STX7111)
+	{
+		dprintk(10, "%s demodulator Cut=0x%02x\n",
+				"STV090x(STX711x)",
+				state->dev_ver);
+	}
+	else
+	{
+		dprintk(10, "%s demodulator Cut=0x%02x\n",
+				state->device == STV0900 ? "STV0900" : "STV0903",
+				state->dev_ver);
+	}
 	if (state->mclk == 0)
 	{
 		/* call tuner init to configure the tuner's clock output
