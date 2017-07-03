@@ -1820,7 +1820,7 @@ static int stv090x_set_srate(struct stv090x_state *state, u32 srate)
 	}
 	dprintk(100, "0x%x\n", (sym >> 8) & 0xff);
 	dprintk(100, "0x%x\n", (sym & 0xff));
-	if (STV090x_WRITE_DEMOD(state, SFRINIT1, (sym >> 8) & 0x7f) < 0) /* MSB */
+	if (STV090x_WRITE_DEMOD(state, SFRINIT1, (sym >> 8) & 0xff) < 0) /* MSB */
 		goto err;
 	if (STV090x_WRITE_DEMOD(state, SFRINIT0, (sym & 0xff)) < 0) /* LSB */
 		goto err;
@@ -1892,7 +1892,7 @@ static int stv090x_set_min_srate(struct stv090x_state *state, u32 clk, u32 srate
 		sym = (srate << 9);
 		sym /= (state->mclk >> 7);
 	}
-	if (STV090x_WRITE_DEMOD(state, SFRLOW1, ((sym >> 8) & 0xff)) < 0) /* MSB */
+	if (STV090x_WRITE_DEMOD(state, SFRLOW1, ((sym >> 8) & 0x7f)) < 0) /* MSB */
 		goto err;
 	if (STV090x_WRITE_DEMOD(state, SFRLOW0, (sym & 0xff)) < 0) /* LSB */
 		goto err;
@@ -2513,7 +2513,7 @@ static int stv090x_start_search(struct stv090x_state *state)
 			}
 			if (STV090x_WRITE_DEMOD(state, CFRUP1, 0x0f) < 0)
 				goto err;
-			if (STV090x_WRITE_DEMOD(state, CFRUP1, 0xff) < 0)
+			if (STV090x_WRITE_DEMOD(state, CFRUP0, 0xff) < 0)
 				goto err;
 			if (STV090x_WRITE_DEMOD(state, CFRLOW1, 0xf0) < 0)
 				goto err;
@@ -2583,7 +2583,7 @@ static int stv090x_start_search(struct stv090x_state *state)
 		}
 		if (STV090x_WRITE_DEMOD(state, CFRUP1, MSB(freq)) < 0)
 			goto err;
-		if (STV090x_WRITE_DEMOD(state, CFRUP1, LSB(freq)) < 0)
+		if (STV090x_WRITE_DEMOD(state, CFRUP0, LSB(freq)) < 0)
 			goto err;
 		freq *= -1;
 		if (STV090x_WRITE_DEMOD(state, CFRLOW1, MSB(freq)) < 0)
