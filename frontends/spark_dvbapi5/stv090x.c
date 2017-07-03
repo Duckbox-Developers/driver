@@ -1702,7 +1702,7 @@ static int stv090x_i2c_gate_ctrl(struct dvb_frontend *fe, int enable)
 			STV090x_SETFIELD_Px(reg, I2CT_ON_FIELD, 0);
 			if ((STV090x_WRITE_DEMOD(state, I2CRPT, reg)) < 0)
 				goto err;
-			msleep(1);
+			msleep(50);
 		}
 	}
 	return 0;
@@ -2735,7 +2735,7 @@ static int stv090x_get_agc2_min_level(struct stv090x_state *state)
 			goto err;
 		if (STV090x_WRITE_DEMOD(state, DMDISTATE, 0x58) < 0) /* Demod RESET */
 			goto err;
-		msleep(1);
+		msleep(10);
 		for (j = 0; j < 10; j++)
 		{
 			agc2 += STV090x_READ_DEMOD(state, AGC2I1) << 8;
@@ -2851,7 +2851,7 @@ static u32 stv090x_srate_srch_coarse(struct stv090x_state *state)
 		STV090x_SETFIELD_Px(reg, I2C_DEMOD_MODE_FIELD, 0x00); /* trigger acquisition */
 		if (STV090x_WRITE_DEMOD(state, DMDISTATE, reg) < 0)
 			goto err;
-		msleep(1);
+		msleep(50);
 		for (i = 0; i < 10; i++)
 		{
 			reg = STV090x_READ_DEMOD(state, DSTATUS);
@@ -2887,7 +2887,7 @@ static u32 stv090x_srate_srch_coarse(struct stv090x_state *state)
 			}
 			if (stv090x_i2c_gate_ctrl(fe, 0) < 0)
 				goto err;
-			msleep(1);
+			msleep(50);
 			if (stv090x_i2c_gate_ctrl(fe, 1) < 0)
 				goto err;
 			if (state->config->tuner_get_status)
@@ -3038,7 +3038,7 @@ static int stv090x_get_dmdlock(struct stv090x_state *state, s32 timeout)
 				break;
 		}
 		if (!lock)
-			msleep(1);
+			msleep(10);
 #ifdef VERY_VERBOSE
 		else
 			printk("Demodulator acquired LOCK\n");
@@ -3170,7 +3170,7 @@ static int stv090x_chk_tmg(struct stv090x_state *state)
 		goto err;
 	if (STV090x_WRITE_DEMOD(state, DMDISTATE, 0x18) < 0) /* trigger acquisition */
 		goto err;
-	msleep(1);
+	msleep(10);
 	for (i = 0; i < 10; i++)
 	{
 		reg = STV090x_READ_DEMOD(state, DSTATUS);
@@ -3272,7 +3272,7 @@ static int stv090x_get_coldlock(struct stv090x_state *state, s32 timeout_dmd)
 					}
 					if (stv090x_i2c_gate_ctrl(fe, 0) < 0)
 						goto err;
-					msleep(1);
+					msleep(50);
 					if (stv090x_i2c_gate_ctrl(fe, 1) < 0)
 						goto err;
 					if (state->config->tuner_get_status)
@@ -3667,7 +3667,7 @@ static enum stv090x_signal_state stv090x_get_sig_params(struct stv090x_state *st
 	u32 reg;
 	s32 i = 0, offst_freq;
 	dprintk(10, "%s: >\n", __func__);
-	msleep(1);
+	msleep(5);
 	if (state->algo == STV090x_BLIND_SEARCH)
 	{
 		tmg = STV090x_READ_DEMOD(state, TMGREG2);
