@@ -39,8 +39,8 @@
 
 
 #define NUM_CHANNELS	15
-#define NUM_REGULATORYS	21
-//#define NUM_REGULATORYS	1
+//#define NUM_REGULATORYS	21
+#define NUM_REGULATORYS	1
 
 //Country codes
 #define USA							0x555320

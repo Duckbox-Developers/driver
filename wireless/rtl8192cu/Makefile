@@ -72,7 +72,7 @@ CONFIG_PLATFORM_ARM_SUN6I = n
 
 CONFIG_DRVEXT_MODULE = n
 
-export TOPDIR ?= $(shell pwd)
+export TOPDIR := $(PWD)
 
 ifeq ($(CONFIG_RTL8192C), y)
 
@@ -196,7 +196,7 @@ _HAL_INTFS_FILES += $(CHIP_FILES)
 
 
 ifeq ($(CONFIG_AUTOCFG_CP), y)
-$(shell cp $(TOPDIR)/autoconf_$(RTL871X)_$(HCI_NAME)_linux.h $(TOPDIR)/include/autoconf.h)
+$(shell cp $(PWD)/autoconf_$(RTL871X)_$(HCI_NAME)_linux.h $(PWD)/include/autoconf.h)
 endif
 
 
@@ -233,6 +233,8 @@ endif
 ifeq ($(CONFIG_INTEL_WIDI), y)
 EXTRA_CFLAGS += -DCONFIG_INTEL_WIDI
 endif
+
+PWD := $(shell pwd)
 
 ifeq ($(CONFIG_PLATFORM_I386_PC), y)
 EXTRA_CFLAGS += -DCONFIG_LITTLE_ENDIAN

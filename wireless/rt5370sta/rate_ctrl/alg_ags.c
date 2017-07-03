@@ -36,7 +36,6 @@
 /* */
     UCHAR AGS1x1HTRateTable[] = 
  {
-	
 	    /* */
 	    /* [Item no.] [Mode]* [CurrMCS] [TrainUp] [TrainDown] [downMCS  ] [upMCS3] [upMCS2] [upMCS1] */
 	    /* */
@@ -65,7 +64,6 @@
 /* */
     UCHAR AGS2x2HTRateTable[] = 
  {
-	
 	    /* */
 	    /* [Item no.] [Mode]* [CurrMCS] [TrainUp] [TrainDown] [downMCS  ] [upMCS3] [upMCS2] [upMCS1] */
 	    /* */
@@ -102,7 +100,6 @@
 /* */
     UCHAR AGS3x3HTRateTable[] = 
  {
-	
 	    /* */
 	    /* [Item no.] [Mode]* [CurrMCS] [TrainUp] [TrainDown] [downMCS  ] [upMCS3] [upMCS2] [upMCS1] */
 	    /* */
@@ -151,12 +148,12 @@ INT Show_AGS_Proc(
 	UINT32 IdQuality;
 
 
-	printk("MCS Group\t\tMCS Index\n");
-	printk("%d\t\t\t%d\n\n", pEntry->AGSCtrl.MCSGroup, pEntry->CurrTxRateIndex);
+	DBGPRINT(RT_DEBUG_OFF, ("MCS Group\t\tMCS Index\n"));
+	DBGPRINT(RT_DEBUG_OFF, ("%d\t\t\t%d\n\n", pEntry->AGSCtrl.MCSGroup, pEntry->CurrTxRateIndex));
 
-	printk("MCS Quality:\n");
+	DBGPRINT(RT_DEBUG_OFF, ("MCS Quality:\n"));
 	for(IdQuality=0; IdQuality<=23; IdQuality++)
-		printk("%02d\t\t%d\n", IdQuality, pEntry->TxQuality[IdQuality]);
+		DBGPRINT(RT_DEBUG_OFF, ("%02d\t\t%d\n", IdQuality, pEntry->TxQuality[IdQuality]));
 
 	return TRUE;
 }
@@ -761,8 +758,8 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 		pNextTxRate = (PRTMP_TX_RATE_SWITCH)(&pTable[(pEntry->CurrTxRateIndex + 1) * SIZE_OF_AGS_RATE_TABLE_ENTRY]);
 		MlmeSetTxRate(pAd, pEntry, pNextTxRate);
 
-		RTMPZeroMemory(pEntry->TxQuality, (sizeof(USHORT) * MAX_STEP_OF_TX_RATE_SWITCH));
-		RTMPZeroMemory(pEntry->PER, (sizeof(UCHAR) * MAX_STEP_OF_TX_RATE_SWITCH));
+		RTMPZeroMemory(pEntry->TxQuality, (sizeof(USHORT) * (MAX_TX_RATE_INDEX+1)));
+		RTMPZeroMemory(pEntry->PER, (sizeof(UCHAR) * (MAX_TX_RATE_INDEX+1)));
 
 		pEntry->fLastSecAccordingRSSI = TRUE;			
 		/* reset all OneSecTx counters */
@@ -936,7 +933,7 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 		
 		pEntry->TxRateUpPenalty = 0;
 		pEntry->LastSecTxRateChangeAction = 1; /* Tx rate up */
-		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * MAX_STEP_OF_TX_RATE_SWITCH);
+		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * (MAX_TX_RATE_INDEX+1));
 		pEntry->AGSCtrl.lastRateIdx = CurrRateIdx;
 
 		/* */
@@ -944,7 +941,7 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 		/* */
 		if (!pAd->StaCfg.StaQuickResponeForRateUpTimerRunning)
 		{
-			RTMPSetTimer(&pAd->StaCfg.StaQuickResponeForRateUpTimer, 100);
+			RTMPSetTimer(&pAd->StaCfg.StaQuickResponeForRateUpTimer, DEF_QUICK_RA_TIME_INTERVAL);
 
 			pAd->StaCfg.StaQuickResponeForRateUpTimerRunning = TRUE;
 		}
@@ -965,12 +962,10 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 		pEntry->PER[pEntry->CurrTxRateIndex] = 0;
 		pEntry->AGSCtrl.lastRateIdx = CurrRateIdx;
 
-		/* */
 		/* Tx rate fast train down */
-		/* */
 		if (!pAd->StaCfg.StaQuickResponeForRateUpTimerRunning)
 		{
-			RTMPSetTimer(&pAd->StaCfg.StaQuickResponeForRateUpTimer, 100);
+			RTMPSetTimer(&pAd->StaCfg.StaQuickResponeForRateUpTimer, DEF_QUICK_RA_TIME_INTERVAL);
 		
 			pAd->StaCfg.StaQuickResponeForRateUpTimerRunning = TRUE;
 		}
@@ -998,9 +993,7 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 		MlmeSetTxRate(pAd, pEntry, pNextTxRate);
 	}
 
-	/* */
 	/* RDG threshold control for the infrastructure mode only */
-	/* */
 /*	if (INFRA_ON(pAd) && (pAd->OpMode == OPMODE_STA) && (!DLS_ON(pAd)) && (!TDLS_ON(pAd))) */
 	if (INFRA_ON(pAd))
 	{
@@ -1048,19 +1041,19 @@ VOID MlmeDynamicTxRateSwitchingAGS(
 	DBGPRINT_RAW(RT_DEBUG_TRACE, ("AGS: <--- %s\n", __FUNCTION__));
 }
 
-/* */
-/* Auto Tx rate faster train up/down for AGS (Adaptive Group Switching) */
-/* */
-/* Parameters */
-/*	pAd: The adapter data structure */
-/*	pEntry: Pointer to a caller-supplied variable in which points to a MAC table entry */
-/*	pTable: Pointer to a caller-supplied variable in wich points to a Tx rate switching table */
-/*	TableSize: The size, in bytes, of the specified Tx rate switching table */
-/*	pAGSStatisticsInfo: Pointer to a caller-supplied variable in which points to the statistics information */
-/* */
-/* Return Value: */
-/*	None */
-/* */
+/*
+	Auto Tx rate faster train up/down for AGS (Adaptive Group Switching)
+	
+	Parameters
+		pAd: The adapter data structure
+		pEntry: Pointer to a caller-supplied variable in which points to a MAC table entry
+		pTable: Pointer to a caller-supplied variable in wich points to a Tx rate switching table
+		TableSize: The size, in bytes, of the specified Tx rate switching table
+		pAGSStatisticsInfo: Pointer to a caller-supplied variable in which points to the statistics information
+
+	Return Value:
+		None
+*/
 VOID StaQuickResponeForRateUpExecAGS(
 	IN PRTMP_ADAPTER pAd, 
 	IN PMAC_TABLE_ENTRY pEntry, 
@@ -1114,14 +1107,12 @@ VOID StaQuickResponeForRateUpExecAGS(
 		TrainUp = pCurrTxRate->TrainUp;
 		TrainDown	= pCurrTxRate->TrainDown;
 	}
-		
-	/* */
+
 	/* MCS selection based on the RSSI information when the Tx samples are fewer than 15. */
-	/* */
 	if (pAGSStatisticsInfo->AccuTxTotalCnt <= 15)
 	{
-		RTMPZeroMemory(pEntry->TxQuality, sizeof(USHORT) * MAX_STEP_OF_TX_RATE_SWITCH);
-		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * MAX_STEP_OF_TX_RATE_SWITCH);
+		RTMPZeroMemory(pEntry->TxQuality, sizeof(USHORT) * (MAX_TX_RATE_INDEX+1));
+		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * (MAX_TX_RATE_INDEX+1));
 
 		if ((pEntry->LastSecTxRateChangeAction == 1) && (CurrRateIdx != DownRateIdx))
 		{
@@ -1180,7 +1171,7 @@ VOID StaQuickResponeForRateUpExecAGS(
 					pEntry->LastTxOkCount, 
 					OneSecTxNoRetryOKRationCount));
 
-				RTMPZeroMemory(pEntry->TxQuality, sizeof(USHORT) * MAX_STEP_OF_TX_RATE_SWITCH);
+				RTMPZeroMemory(pEntry->TxQuality, sizeof(USHORT) * (MAX_TX_RATE_INDEX+1));
 
 				if (pEntry->AGSCtrl.MCSGroup == 0)
 				{
@@ -1345,7 +1336,7 @@ VOID StaQuickResponeForRateUpExecAGS(
 		
 		pEntry->TxRateUpPenalty = 0;
 		pEntry->TxQuality[pEntry->CurrTxRateIndex] = 0; /*restore the TxQuality from max to 0 */
-		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * MAX_STEP_OF_TX_RATE_SWITCH);
+		RTMPZeroMemory(pEntry->PER, sizeof(UCHAR) * (MAX_TX_RATE_INDEX+1));
 	}
 	else if ((pEntry->CurrTxRateIndex != CurrRateIdx) && 
 	            (pEntry->LastSecTxRateChangeAction == 1)) /* Tx rate down */

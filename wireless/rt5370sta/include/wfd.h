@@ -25,11 +25,8 @@
  *************************************************************************/
 
 
-#ifndef __WFA_P2P_H
-#define __WFA_P2P_H
+#ifndef	__WFD_H__
+#define	__WFD_H__
 
-#define GNU_PACKED  __attribute__ ((packed))
-
-
-#endif /* __WFA_P2P_H */
+#endif /* __WFD_H__ */
 
