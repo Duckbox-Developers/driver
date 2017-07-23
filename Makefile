@@ -173,7 +173,7 @@ else
 obj-y += pti_np/
 endif
 
-obj-y += compcache/
+#obj-y += compcache/
 obj-y += bpamem/
 
 ifdef HL101
