@@ -9,6 +9,7 @@
 #include "dvb_filter.h"
 #include "dvb_net.h"
 #include "dvb_ca_en50221.h"
+#include "stv6110x.h"
 
 #include <linux/dvb/frontend.h>
 #include "dvb_frontend.h"

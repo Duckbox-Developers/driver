@@ -111,6 +111,7 @@ static int stv6110x_write_init(struct stv6110x_state *stv6110x)
 	int ret;
 	const struct stv6110x_config *config = stv6110x->config;
 	static u8 init_data[] = {0x00, 0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
+	struct i2c_msg msg = {.addr = config->addr, .flags = 0, .buf = init_data, .len = 9};
 	stv6110x->stv6110x_regs[0] = 0x07;
 	stv6110x->stv6110x_regs[1] = 0x11;
 	stv6110x->stv6110x_regs[2] = 0xdc;
@@ -119,7 +120,6 @@ static int stv6110x_write_init(struct stv6110x_state *stv6110x)
 	stv6110x->stv6110x_regs[5] = 0x01;
 	stv6110x->stv6110x_regs[6] = 0xe6;
 	stv6110x->stv6110x_regs[7] = 0x1e;
-	struct i2c_msg msg = { .addr = config->addr, .flags = 0, . buf = init_data, .len = 9};
 	dprintk(10, "stv6110x_write_regN >\n");
 	if (stv6110x->fe->ops.i2c_gate_ctrl)
 		stv6110x->fe->ops.i2c_gate_ctrl(stv6110x->fe, 1);

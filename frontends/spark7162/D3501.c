@@ -4217,10 +4217,10 @@ static int d3501_read_signal_strength(struct dvb_frontend *fe,
 	UINT16 *Intensity = (UINT16 *)strength;
 	struct dvb_d3501_fe_state *state = fe->demodulator_priv;
 	iRet = nim_s3501_get_AGC(&state->spark_nimdev, (UINT16 *)Intensity); //level
-#if 0
 	//lwj add begin
-	if (*Intensity > 90)
-		*Intensity = 90;
+	if (*Intensity > 100)
+		*Intensity = 100;
+#if 0
 	if (*Intensity < 10)
 		*Intensity = *Intensity * 11 / 2;
 	else
