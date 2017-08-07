@@ -290,29 +290,29 @@ static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 #if defined(UFS912)
 
 #ifdef use_additional_waiting_period
-	/* timeout in progress */
-		if(time_after(jiffies, state->detection_timeout[slot]))
+			/* timeout in progress */
+			if(time_after(jiffies, state->detection_timeout[slot]))
+			{
 #endif
-		{
-			result = ufs9xx_cic_read_attribute_mem(ca, slot, 0); 
+				result = ufs9xx_cic_read_attribute_mem(ca, slot, 0); 
 
-			dprintk(200, "result = 0x%02x\n", result);
+				dprintk(200, "result = 0x%02x\n", result);
 
-			if (result == 0x1d)
-				state->module_status[slot] = SLOTSTATUS_READY;
-		}
-
+				if (result == 0x1d)
+					state->module_status[slot] = SLOTSTATUS_READY;
+#ifdef use_additional_waiting_period
+			}
+#endif
 #else
 
-		result = stpio_get_pin(state->module_ready_pin[slot]);
-         
-		dprintk(200, "readyPin = %d\n", result);
-		if (result)
-			state->module_status[slot] = SLOTSTATUS_READY;
+			result = stpio_get_pin(state->module_ready_pin[slot]);
+
+			dprintk(200, "readyPin = %d\n", result);
+			if (result)
+				state->module_status[slot] = SLOTSTATUS_READY;
 #endif
 		}
-	else
-		if (state->module_status[slot] & SLOTSTATUS_NONE)
+		else if (state->module_status[slot] & SLOTSTATUS_NONE)
 		{
 #if !defined(UFS913)
 
@@ -326,7 +326,8 @@ static int ufs9xx_cic_poll_slot_status(struct dvb_ca_en50221 *ca, int slot, int 
 			dprintk(1, "Modul now present\n");
 			state->module_status[slot] = SLOTSTATUS_PRESENT;
 		}
-	} else
+	}
+	else
 	{
 		if (!(state->module_status[slot] & SLOTSTATUS_NONE))
 		{
@@ -391,6 +392,12 @@ static int ufs9xx_cic_slot_reset(struct dvb_ca_en50221 *ca, int slot)
 	}
 #endif
 
+#if defined(UFS912)
+	stpio_set_pin(state->slot_enable[slot], 1);
+	mdelay(50);
+	stpio_set_pin(state->slot_enable[slot], 0);
+	mdelay(50);
+#endif
 	stpio_set_pin(state->slot_reset[slot], 1);
 	mdelay(waitMS);
 	stpio_set_pin(state->slot_reset[slot], 0);
