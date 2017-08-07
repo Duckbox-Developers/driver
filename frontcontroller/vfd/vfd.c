@@ -413,6 +413,9 @@ int vfd_init_func(void)
 
 	//clear display
 	DisplayVFDString("", 0);
+
+	//VFD_SetRemote();
+
 	dprintk("%s <\n", __func__);
 	return 0;
 }
