@@ -527,6 +527,7 @@ static int AOTOMdev_ioctl(struct inode *Inode, struct file *File, unsigned int c
 							res = YWPANEL_VFD_SetLed(LED_RED, aotom_data.u.icon.on);
 							led_state[LED_RED].state = aotom_data.u.icon.on;
 							break;
+						case 35:
 						case AOTOM_DOT2:
 							res = YWPANEL_VFD_SetLed(LED_GREEN, aotom_data.u.icon.on);
 							led_state[LED_GREEN].state = aotom_data.u.icon.on;

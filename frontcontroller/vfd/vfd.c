@@ -259,6 +259,15 @@ static int VFD_CGRAM_Write(struct vfd_ioctl_data *data)
 	return 0;
 }
 
+static int VFD_SetRemote()
+{
+	unsigned char write_data[2];
+	write_data[0] = 0xe3;
+	write_data[1] = 0x0f;
+	VFD_Write_Chars(write_data, 2);
+	return 0;
+}
+
 static int VFD_ADRAM_Write(struct vfd_ioctl_data *data)
 {
 	unsigned char write_data[16];
