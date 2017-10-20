@@ -416,16 +416,12 @@ HavanaStatus_t HavanaPlayer_c::DeletePlayback(HavanaPlayback_c *HavanaPlayback)
 {
 	int i;
 	if (HavanaPlayback == NULL)
-	{
 		return HavanaPlaybackInvalid;
-	}
 	OS_LockMutex(&Lock);
 	for (i = 0; i < MAX_PLAYBACKS; i++)
 	{
 		if (Playback[i] == HavanaPlayback)
-		{
 			break;
-		}
 	}
 	if (i == MAX_PLAYBACKS)
 	{

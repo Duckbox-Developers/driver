@@ -19,10 +19,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#include <linux/version.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,30)
-#include <sound/driver.h>
-#endif
 #include <sound/core.h>
 #include <sound/pcm.h>
 

@@ -508,13 +508,14 @@ ManifestorStatus_t Manifestor_Video_c::InitialFrame(class Buffer_c *Buffer)
 	return ManifestorError;
 }
 //}}}
-//{{{ _QueueDecodeBuffer
+//{{{ QueueDecodeBuffer
 //{{{ doxynote
 /// \brief Receive a decode buffer for display and send it with appropraite
 /// flags to the driver
 /// \param Buffer containing decoded frame witha attached display meta data
 /// \result Success if frame displayed, fail if not displayed
 //}}}
+//{{{ _QueueDecodeBuffer
 ManifestorStatus_t Manifestor_Video_c::_QueueDecodeBuffer(class Buffer_c *Buffer)
 {
 	struct StreamBuffer_s *StreamBuff;
@@ -986,12 +987,12 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows(struct VideoDisplayPara
 			   VideoParameters->FrameRate.IntegerPart(), VideoParameters->FrameRate.RemainderDecimal(),
 			   VideoParameters->PixelAspectRatio.IntegerPart(), VideoParameters->PixelAspectRatio.RemainderDecimal());
 		/*
-		MANIFESTOR_DEBUG("Incoming Source %dx%d (%dx%d), at %d,%d, Dest %dx%d at %d,%d\n",
+		 MANIFESTOR_DEBUG("Incoming Source %dx%d (%dx%d), at %d,%d, Dest %dx%d at %d,%d\n",
 		 VideoParameters->Width, VideoParameters->Height,
 		 VideoParameters->DisplayWidth, VideoParameters->DisplayHeight,
 		 SourceX, SourceY,
 		 DestWidth, DestHeight, DestX, DestY);
-		MANIFESTOR_DEBUG("Content is %s with FrameRate %d.%06d, PixelAspectRatio %d.%06d, VideoFullRange = %d, MatrixCoefficients = %d\n",
+		 MANIFESTOR_DEBUG("Content is %s with FrameRate %d.%06d, PixelAspectRatio %d.%06d, VideoFullRange = %d, MatrixCoefficients = %d\n",
 		 VideoParameters->Progressive ? "progressive" : "interlaced",
 		 VideoParameters->FrameRate.IntegerPart(), VideoParameters->FrameRate.RemainderDecimal(),
 		 VideoParameters->PixelAspectRatio.IntegerPart(), VideoParameters->PixelAspectRatio.RemainderDecimal(),
@@ -1010,7 +1011,7 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows(struct VideoDisplayPara
 		WindowAspectRatio = (DestWidth * DisplayPixelAspectRatio) / DestHeight;
 	}
 	//if ((EventMask & EventSourceSizeChangeManifest) != 0) // Create an event record indicating that size/shape has changed
-	/* #warning "Not checking EventMask in SetDisplayWindows" */
+/* #warning "Not checking EventMask in SetDisplayWindows" */
 	if ((VideoParameters->Width != StreamDisplayParameters.Width) || (VideoParameters->Height != StreamDisplayParameters.Height) ||
 			(VideoParameters->DisplayWidth != StreamDisplayParameters.DisplayWidth) || (VideoParameters->DisplayHeight != StreamDisplayParameters.DisplayHeight) ||
 			(VideoParameters->PixelAspectRatio != StreamDisplayParameters.PixelAspectRatio))
@@ -1064,7 +1065,8 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows(struct VideoDisplayPara
 					MANIFESTOR_ERROR("check2: DestWidth=%d DestX=%d\n", DestWidth, DestX);
 				}
 			}
-			else
+			else if (DisplayFormatPolicyValue == PolicyValueCentreCutOut ||
+					 DisplayFormatPolicyValue == PolicyValuePanScan)
 			{
 				if (PictureAspectRatio > WindowAspectRatio)
 				{
@@ -1099,6 +1101,20 @@ ManifestorStatus_t Manifestor_Video_c::SetDisplayWindows(struct VideoDisplayPara
 #endif
 					SourceY = SourceY + ((OldHeight - SourceHeight) >> 1);
 					MANIFESTOR_ERROR("check4: SourceHeight=%d SourceY=%d\n", SourceHeight, SourceY);
+				}
+			}
+			else if (DisplayFormatPolicyValue == PolicyValueZoom_4_3)
+			{
+				if (PictureAspectRatio > WindowAspectRatio)
+				{
+					int OldWidth = SourceWidth;
+					int OldHeight = SourceHeight;
+					Rational_t NewWidth = (SourceWidth * WindowAspectRatio) / PictureAspectRatio;
+					Rational_t NewHeight = (SourceHeight * WindowAspectRatio) / PictureAspectRatio;
+					SourceWidth = NewWidth.IntegerPart();
+					SourceHeight = NewHeight.IntegerPart();
+					SourceX += ((OldWidth - SourceWidth) >> 1);
+					SourceY += ((OldHeight - SourceHeight) >> 1);
 				}
 			}
 		}
@@ -1291,7 +1307,7 @@ void Manifestor_Video_c::BufferReleaseThread(void)
 			if (Stepping)
 				RequeueBufferOnDisplayIfNecessary();
 			OS_UnLockMutex(&BufferLock);
-			OS_SleepMilliSeconds(10);
+			OS_SleepMilliSeconds(20);
 		}
 	}
 	OS_LockMutex(&BufferLock);

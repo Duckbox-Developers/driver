@@ -90,9 +90,7 @@ HavanaStatus_t HavanaPlayback_c::Init(class HavanaPlayer_c *HavanaPlayer,
 		LockInitialised = true;
 	}
 	if (OutputCoordinator == NULL)
-	{
 		OutputCoordinator = new OutputCoordinator_Base_c();
-	}
 	if (OutputCoordinator == NULL)
 	{
 		PLAYBACK_ERROR("Unable to create output coordinator\n");
@@ -222,9 +220,7 @@ HavanaStatus_t HavanaPlayback_c::AddStream(char *Media,
 	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
 	{
 		if (Stream[i] == NULL)
-		{
 			break;
-		}
 	}
 	if (i == MAX_STREAMS_PER_PLAYBACK)
 	{
@@ -270,9 +266,7 @@ HavanaStatus_t HavanaPlayback_c::RemoveStream(class HavanaStream_c *HavanaStream
 	for (i = 0; i < MAX_STREAMS_PER_PLAYBACK; i++)
 	{
 		if (Stream[i] == HavanaStream)
-		{
 			break;
-		}
 	}
 	if (i == MAX_STREAMS_PER_PLAYBACK)
 	{
@@ -299,9 +293,7 @@ HavanaStatus_t HavanaPlayback_c::SetSpeed(int PlaySpeed)
 		PlaySpeed = PLAY_SPEED_STOPPED;
 	}
 	else if (PlaySpeed >= 0)
-	{
 		Direction = PlayForward;
-	}
 	else
 	{
 		Direction = PlayBackward;
@@ -333,13 +325,9 @@ HavanaStatus_t HavanaPlayback_c::GetSpeed(int *PlaySpeed)
 	PLAYBACK_DEBUG("Getting speed of %d.%06d\n", Speed.IntegerPart(), Speed.RemainderDecimal());
 	*PlaySpeed = (int)IntegerPart(Speed * PLAY_SPEED_NORMAL_PLAY);
 	if (((*PlaySpeed) == PLAY_SPEED_STOPPED) && (Direction != PlayForward))
-	{
 		*PlaySpeed = PLAY_SPEED_REVERSE_STOPPED;
-	}
 	else if (Direction != PlayForward)
-	{
 		*PlaySpeed = -*PlaySpeed;
-	}
 	return HavanaNoError;
 }
 //}}}

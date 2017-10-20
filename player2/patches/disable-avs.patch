@@ -1,3 +1,13 @@
+From 8dd790643a9b11369f823f65de1dc19cd2237b52 Mon Sep 17 00:00:00 2001
+From: Allan Xavier <allan.xavier@mathembedded.com>
+Date: Tue, 2 Apr 2013 10:19:59 +0100
+Subject: [PATCH 07/36] disable-avs
+
+---
+ linux/drivers/media/dvb/stm/backend/Makefile       |    3 --
+ .../media/dvb/stm/backend/player_factory.cpp       |   44 ++++++++++----------
+ 2 files changed, 22 insertions(+), 25 deletions(-)
+
 diff --git a/linux/drivers/media/dvb/stm/backend/Makefile b/linux/drivers/media/dvb/stm/backend/Makefile
 index 0e6db39..c98a974 100644
 --- a/linux/drivers/media/dvb/stm/backend/Makefile
@@ -123,3 +133,6 @@ index cd3e7c9..5d6d87d 100644
  
      // Mjpeg video
      HavanaPlayer->RegisterFactory (BACKEND_MJPEG_ID,  FACTORY_ANY_ID,    StreamTypeVideo, ComponentCodec,       0, false, CodecMMEVideoMjpegFactory);
+-- 
+1.7.9.5
+

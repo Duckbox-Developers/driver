@@ -32,6 +32,5 @@ Date Modification Name
 #define H_PLAYER_SYSFS
 
 void SysfsInit(void);
-void SysfsDelete(void);
 
 #endif

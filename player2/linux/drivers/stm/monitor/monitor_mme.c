@@ -40,7 +40,7 @@ Date Modification Name
 #include <linux/kthread.h>
 #include <asm/uaccess.h>
 #include <linux/timer.h>
-#include <asm/clock.h>
+#include <linux/clk.h>
 #include <linux/delay.h>
 
 #include "mme.h"

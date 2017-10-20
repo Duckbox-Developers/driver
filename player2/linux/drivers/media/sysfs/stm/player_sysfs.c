@@ -22,7 +22,6 @@ license from ST.
 ************************************************************************/
 
 #include <linux/device.h>
-#include <linux/version.h>
 #include <linux/fb.h>
 #include "sysfs_module.h"
 #include "player_sysfs.h"
@@ -30,6 +29,7 @@ license from ST.
 
 #define PLAYBACK_MAX_NUMBER 8
 #define STREAM_MAX_NUMBER 16
+#define DEFAULT_ERR_THRESHOLD 5
 
 static int PlayerSetEvent(struct player_event_s *Event);
 static struct mutex SysfsWriteLock;
@@ -78,15 +78,32 @@ static int playback_count = 0;
 /*{{{ Player2 class and its intimate attributes*/
 
 static unsigned long notify_count = 0;
+static unsigned int err_threshold = DEFAULT_ERR_THRESHOLD;
 
 static ssize_t show_notify_count(struct class *cls, char *buf)
 {
 	return sprintf(buf, "%lu\n", notify_count);
 }
 
+static ssize_t show_err_threshold(struct class *cls, char *buf)
+{
+	return sprintf(buf, "%u\n", err_threshold);
+}
+
+unsigned int player_sysfs_get_err_threshold(void)
+{
+	return err_threshold;
+}
+
+static ssize_t store_err_threshold(struct class *cls, char *buf)
+{
+	sscanf(buf, "%i\n", &err_threshold);
+	return sizeof(err_threshold);
+}
 static struct class_attribute player2_class_attributes[] =
 {
 	__ATTR(notify, 0400, show_notify_count, NULL),
+	__ATTR(err_threshold, 0644, show_err_threshold, store_err_threshold),
 	__ATTR_NULL,
 };
 
@@ -388,7 +405,7 @@ int event_stream_created_handler(struct player_event_s *Event)
 	int Result = 0;
 	struct playback_data_s *PlaybackData;
 	struct stream_data_s *StreamData;
-	static char init_name[256];
+	static char InitialName[256];
 	if ((!Event->playback) || (!Event->stream))
 	{
 		SYSFS_ERROR("One or more parameters are NULL. Nothing to do. \n");
@@ -418,21 +435,16 @@ int event_stream_created_handler(struct player_event_s *Event)
 	*/
 #if 0
 	StreamData->stream_dev_t = MKDEV(0, 0);
-	StreamData->stream_class_device = class_device_create(player2_class, // pointer to the struct class that this device should be registered to
-														  PlaybackData->playback_class_device, // pointer to the parent struct class_device of this new device, if any
-														  StreamData->stream_dev_t, // the dev_t for the (char) device to be added
-														  NULL, // a pointer to a struct device that is associated with this class device
-														  "stream%d", StreamData->id); // string for the class device's name
 #endif
 	// Populate the class structure in similar way to class_device_create()
 	memset(&StreamData->stream_class_device, 0, sizeof(struct device));
 	StreamData->stream_class_device.devt = StreamData->stream_dev_t = MKDEV(0, 0);
 	StreamData->stream_class_device.class = &player2_class;
 	StreamData->stream_class_device.parent = PlaybackData->playback_class_device;
-	//StreamData->stream_class_device.release = class_device_create_release;
+	//StreamData->stream_class_device.release = dev_release;
 	//StreamData->stream_class_device.uevent = class_device_create_uevent;
-	snprintf(init_name, sizeof(init_name), "stream%d", StreamData->id);
-	StreamData->stream_class_device.init_name = init_name;
+	snprintf(InitialName, sizeof(InitialName), "stream%d", StreamData->id);
+	StreamData->stream_class_device.init_name = InitialName;
 	Result = device_register(&StreamData->stream_class_device);
 	if (Result || IS_ERR(&StreamData->stream_class_device))
 	{
@@ -469,7 +481,11 @@ int event_stream_terminated_handler(struct player_event_s *Event)
 	}
 	/* Delete stream0,1,2.. class device */
 	// SYSFS_DEBUG("Unregistering %p\n", StreamData->stream_class_device);
-	device_unregister(&StreamData->stream_class_device);
+	// NOTE: I suspect a bug in class_device_unregister, infact class_device_del works fine,
+	// but if I add class_device_put I have a segemntation fault. It should be investigated better.
+	// device_unregister (&StreamData->stream_class_device);
+	device_del(&StreamData->stream_class_device);
+	//device_put(&StreamData->stream_class_device);
 	if (StreamData->notify_on_destroy)
 		do_notify();
 	/* Remove stream reference from playback database */
@@ -622,6 +638,7 @@ void SysfsInit(void)
 	int res;
 	int p;
 	int s;
+	SYSFS_DEBUG("\n");
 	res = class_register(&player2_class);
 	if (0 != res)
 	{
@@ -721,8 +738,8 @@ static int PlayerSetEvent(struct player_event_s *Event)
 /*}}} */
 
 EXPORT_SYMBOL(SysfsInit);
-EXPORT_SYMBOL(SysfsDelete);
 EXPORT_SYMBOL(player_sysfs_get_class_device);
 EXPORT_SYMBOL(player_sysfs_get_player_class);
 EXPORT_SYMBOL(player_sysfs_get_stream_id);
 EXPORT_SYMBOL(player_sysfs_new_attribute_notification);
+EXPORT_SYMBOL(player_sysfs_get_err_threshold);

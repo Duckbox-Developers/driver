@@ -39,9 +39,9 @@ Date Modification Name
 #include <pti_public.h>
 #endif
 
-#include <dvbdev.h>
-#include <dmxdev.h>
-#include <dvb_demux.h>
+#include "dvbdev.h"
+#include "dmxdev.h"
+#include "dvb_demux.h"
 
 #ifdef __TDT__
 /* forward declaration (because used in the header files below) */
@@ -156,7 +156,6 @@ struct DeviceContext_s
 	unsigned int EndOffset;
 
 	struct DvbContext_s *DvbContext;
-
 #ifdef __TDT__
 	struct PtiSession *pPtiSession;
 	int dvr_write;

@@ -12,6 +12,7 @@
 #include <linux/kernel.h>
 #include <linux/string.h>
 #include <linux/mempolicy.h>
+#include <asm/cacheflush.h>
 #else
 #include <string.h>
 #endif
@@ -19,8 +20,6 @@
 #include <mme.h>
 #include "pcm_transcoder.h"
 #include "Pcm_TranscoderTypes.h"
-#include "osinline.h"
-#include "osdev_device.h"
 
 #define PCM_INPUT_BUFFER 0
 #define PCM_OUTPUT_BUFFER 1
@@ -246,7 +245,7 @@ static MME_ERROR PcmTranscoder_Transform(void *Context, MME_Command_t *Command)
 #ifdef __KERNEL__
 	// TODO: most of the Linux cache flush functions "don't do what you think they do". We take a
 	// conservative approach here.
-	OSDEV_FlushCacheAll();
+	flush_cache_all();
 #endif
 	CommandStatus->Error = MME_SUCCESS;
 	CommandStatus->State = MME_COMMAND_COMPLETED;

@@ -1,6 +1,13 @@
 #ifndef _PLATFORM_710X_
 #define _PLATFORM_710X_
 
+#include <h264pp.h>
+
+static struct h264pp_platform_data h264pp_data =
+{
+	.ApplyWorkAroundForGnbvd42331 = true,
+};
+
 static struct resource h264pp_resource_7109[] =
 {
 	[0] = {
@@ -20,7 +27,8 @@ struct platform_device h264pp_device_7109 =
 	.name = "h264pp",
 	.id = -1,
 	.num_resources = ARRAY_SIZE(h264pp_resource_7109),
-	.resource = &h264pp_resource_7109
+	.resource = &h264pp_resource_7109,
+	.dev.platform_data = &h264pp_data,
 };
 
 static struct platform_device *platform_7109[] __initdata =

@@ -1,4 +1,19 @@
+From 140d3e5a262ffeefa2c30c91480cd4bbe7f2b826 Mon Sep 17 00:00:00 2001
+From: Allan Xavier <allan.xavier@mathembedded.com>
+Date: Tue, 2 Apr 2013 10:19:59 +0100
+Subject: [PATCH 01/36] genbox
+
 genbox initng and modprobe.d files
+---
+ genbox/asound.conf            |    3 +++
+ genbox/asoundrc               |    4 ++++
+ genbox/initng/engine.i        |   29 +++++++++++++++++++++++++++++
+ genbox/modprobe.d/player2.tpl |   20 ++++++++++++++++++++
+ 4 files changed, 56 insertions(+)
+ create mode 100644 genbox/asound.conf
+ create mode 100644 genbox/asoundrc
+ create mode 100644 genbox/initng/engine.i
+ create mode 100644 genbox/modprobe.d/player2.tpl
 
 diff --git a/genbox/asound.conf b/genbox/asound.conf
 new file mode 100644
@@ -80,3 +95,6 @@ index 0000000..3373aea
 +
 +alias engine player2
 +
+-- 
+1.7.9.5
+

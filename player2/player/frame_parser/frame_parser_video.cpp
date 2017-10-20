@@ -1101,7 +1101,7 @@ FrameParserStatus_t FrameParser_Video_c::InitializePostDecodeParameterSettings(v
 	{
 		CodedFrameDecodeTimeValid = false;
 		ReasonableDecodeTime = (ParsedFrameParameters->NativePlaybackTime == INVALID_TIME) ||
-							   ((CodedFramePlaybackTime - CodedFrameDecodeTime) < MAXIMUM_DECODE_TIME_OFFSET);
+							   (((CodedFramePlaybackTime - CodedFrameDecodeTime) & 0x1ffffffffull) < MAXIMUM_DECODE_TIME_OFFSET);
 		if (ReasonableDecodeTime)
 		{
 			ParsedFrameParameters->NativeDecodeTime = CodedFrameDecodeTime;
@@ -1678,8 +1678,7 @@ void FrameParser_Video_c::CheckAntiEmulationBuffer(unsigned int Size)
 	//
 	if (Size > (ANTI_EMULATION_BUFFER_SIZE - 16))
 	{
-		report(severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %u (avail: %d) - Implementation error.\n",
-			   Size, (ANTI_EMULATION_BUFFER_SIZE - 16));
+		report(severity_info, "FrameParser_Video_c::CheckAntiEmulationBuffer - Buffer overflow, requesting %d - Implementation error.\n");
 		return;
 	}
 	//

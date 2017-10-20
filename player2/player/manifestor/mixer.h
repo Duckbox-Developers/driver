@@ -59,6 +59,30 @@ Date Modification Name
 #define MIXER_ASSERT(x) do if(!(x)) report(severity_error, "%s: Assertion '%s' failed at %s:%d\n", \
 												   MIXER_FUNCTION, #x, __FILE__, __LINE__); while(0)
 
+enum OutputState_t
+{
+	/// There is no manifestor connected to this input.
+	DISCONNECTED,
+
+	/// Neither the input nor the output side are running.
+	STOPPED,
+
+	/// The output side is primed and ready but might not be sending (muted)
+	/// samples to the speakers yet.
+	STARTING,
+
+	/// The output side is running but no connected to a input.
+	/// This state is effictively a soft mute state during which it is safe to (hard)
+	/// unmute anything connected downstream.
+	MUTED,
+
+	/// The output side is running ahead of the input.
+	STARVED,
+
+	/// The output side is running and consuming input.
+	PLAYING,
+};
+
 class Mixer_c: public BaseComponentClass_c
 {
 	public:

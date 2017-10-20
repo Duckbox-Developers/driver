@@ -54,17 +54,9 @@ MODULE_DESCRIPTION("Pseudo soundcard");
 MODULE_LICENSE("GPL");
 MODULE_SUPPORTED_DEVICE("{{ALSA,Pseudo soundcard}}");
 
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 /* #warning Need to remove these typedefs */
 typedef struct snd_pcm_substream snd_pcm_substream_t;
 typedef struct snd_pcm_runtime snd_pcm_runtime_t;
-#else
-#if defined (CONFIG_KERNELVERSION) /* STLinux 2.3 */
-/* #warning Need to remove these typedefs */
-typedef struct snd_pcm_substream snd_pcm_substream_t;
-typedef struct snd_pcm_runtime snd_pcm_runtime_t;
-#endif
-#endif
 
 #define MAX_PCM_DEVICES 4
 #define MAX_PCM_SUBSTREAMS 16
@@ -169,27 +161,9 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
-#if defined(__TDT__) && (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 30))
 			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
 			CARD("Analog", 0, 1, 48000, 2),
 			CARD("HDMI", 0, 0, 48000, 2),
-#else
-#if defined (CONFIG_KERNELVERSION)
-#if defined(__TDT__) && ! defined(UFS922) && !defined(UFC960) && !defined(OCTAGON1008) && !defined(UFS910) && !defined(FORTIS_HDBOX) && !defined(ADB_BOX)
-			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
-			CARD("Analog", 1, 0, 48000, 2),
-			CARD("HDMI", 0, 0, 48000, 2),
-#else
-			CARD_SPDIF("SPDIF", 0, 2, 48000, 2),
-			CARD("Analog", 0, 1, 48000, 2),
-			CARD("HDMI", 0, 0, 48000, 2),
-#endif
-#else /* STLinux 2.2 */
-			CARD_SPDIF("SPDIF", 2, 0, 48000, 2),
-			CARD("Analog", 1, 0, 48000, 2),
-			CARD("HDMI", 3, 0, 48000, 2),
-#endif
-#endif
 		},
 	},
 };
@@ -266,14 +240,13 @@ static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 };
 
 #elif defined CONFIG_CPU_SUBTYPE_STX7108 && !defined CONFIG_DUAL_DISPLAY
-#warning "7108 values haven't been tested"
 static const struct snd_pseudo_mixer_downstream_topology default_topology[] =
 {
 	{
 		{
 			CARD_SPDIF("SPDIF", 0, 3, 48000, 2),
-//			CARD ("Analog", 0, 1, 48000, 2),
-//			CARD ("HDMI", 0, 0, 48000, 2),
+			CARD("Analog", 0, 1, 48000, 2),
+//			CARD("HDMI", 0, 0, 48000, 2),
 		},
 	},
 };
@@ -490,7 +463,7 @@ static snd_pcm_uframes_t snd_card_pseudo_pcm_pointer(struct snd_pcm_substream *s
 static struct snd_pcm_hardware snd_card_pseudo_playback =
 {
 	.info = (SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_INTERLEAVED |
-	SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
+			 SNDRV_PCM_INFO_RESUME | SNDRV_PCM_INFO_MMAP_VALID),
 	.formats = USE_FORMATS,
 	.rates = USE_RATE,
 	.rate_min = USE_RATE_MIN,
@@ -616,15 +589,14 @@ static int snd_card_pseudo_pcm_mmap_data_nopage(struct vm_area_struct *vma, stru
 	runtime = substream->runtime;
 	offset = vma->vm_pgoff << PAGE_SHIFT;
 	offset += (unsigned long) vmf->virtual_address - vma->vm_start;
-	snd_assert((offset % PAGE_SIZE) == 0, return VM_FAULT_SIGBUS);
 	dma_bytes = PAGE_ALIGN(runtime->dma_bytes);
 	if (offset > dma_bytes - PAGE_SIZE)
 		return VM_FAULT_SIGBUS;
 	if (substream->ops->page)
 	{
 		page = substream->ops->page(substream, offset);
-		if (!page)
-			return VM_FAULT_SIGBUS;
+		if (! page)
+			return VM_FAULT_OOM; /* XXX: is this really due to OOM? */
 	}
 	else
 	{
@@ -705,7 +677,7 @@ static struct snd_pseudo_pcm *new_pcm_stream(struct snd_pcm_substream *substream
 	spin_lock_init(&ppcm->lock);
 	ppcm->substream = substream;
 	ppcm->substream_identifier = -1; /* invalid */
-	/*ppcm->backend_is_setup = 0;*/ /* kzalloc... */
+	/* ppcm->backend_is_setup = 0; */ /* kzalloc... */
 	return ppcm;
 }
 
@@ -1796,8 +1768,7 @@ static int snd_card_pseudo_register_backend(struct platform_device *pdev,
 	return 0;
 }
 
-int register_alsa_backend(char *name,
-						  struct alsa_backend_operations *alsa_backend_ops)
+int register_alsa_backend(char *name, struct alsa_backend_operations *alsa_backend_ops)
 {
 	int i;
 	for (i = 0; i < SNDRV_CARDS; i++)

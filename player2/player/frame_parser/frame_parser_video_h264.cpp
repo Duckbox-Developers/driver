@@ -1070,7 +1070,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadVUISequenceParameters(H264VUISe
 
 FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 {
-	Buffer_t SPSBuffer;
+	Buffer_t TmpBuffer;
 	SequenceParameterSetPair_t *HeaderPair;
 	H264SequenceParameterSetHeader_t *Header;
 	FrameParserStatus_t Status;
@@ -1079,13 +1079,13 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	//
 	// Get a sequence parameter set
 	//
-	Status = SequenceParameterSetPool->GetBuffer(&SPSBuffer);
+	Status = SequenceParameterSetPool->GetBuffer(&TmpBuffer);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - Failed to get a sequence parameter set buffer.\n");
 		return Status;
 	}
-	SPSBuffer->ObtainDataReference(NULL, NULL, (void **)(&HeaderPair));
+	TmpBuffer->ObtainDataReference(NULL, NULL, (void **)(&HeaderPair));
 //
 	memset(HeaderPair, 0x00, sizeof(SequenceParameterSetPair_t));
 	Header = &HeaderPair->SequenceParameterSetHeader;
@@ -1096,13 +1096,13 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	Header->constrained_set1_flag = u(1);
 	Header->constrained_set2_flag = u(1);
 	Header->constrained_set3_flag = u(1);
-	MarkerBits(4, 0);
+	MarkerBitsClean(4, 0);
 	Header->level_idc = u(8);
 	Header->seq_parameter_set_id = ue(v);
 	if (Header->seq_parameter_set_id >= H264_MAX_SEQUENCE_PARAMETER_SETS)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - seq_parameter_set_id exceeds our soft restriction (%d,%d).\n", Header->seq_parameter_set_id, H264_MAX_SEQUENCE_PARAMETER_SETS - 1);
-		SPSBuffer->DecrementReferenceCount();
+		TmpBuffer->DecrementReferenceCount();
 		//Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
@@ -1141,7 +1141,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 										 &Header->UseDefaultScalingMatrix4x4Flag[i]);
 				if (Status != FrameParserNoError)
 				{
-					SPSBuffer->DecrementReferenceCount();
+					TmpBuffer->DecrementReferenceCount();
 					return Status;
 				}
 			}
@@ -1156,7 +1156,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 										 &Header->UseDefaultScalingMatrix8x8Flag[i]);
 				if (Status != FrameParserNoError)
 				{
-					SPSBuffer->DecrementReferenceCount();
+					TmpBuffer->DecrementReferenceCount();
 					return Status;
 				}
 			}
@@ -1179,7 +1179,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 		{
 			report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - num_ref_frames_in_pic_order_cnt_cycle exceeds our soft restriction (%d,%d).\n",
 				   Header->num_ref_frames_in_pic_order_cnt_cycle, H264_MAX_REF_FRAMES_IN_PIC_ORDER_CNT_CYCLE);
-			SPSBuffer->DecrementReferenceCount();
+			TmpBuffer->DecrementReferenceCount();
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
 		}
@@ -1191,7 +1191,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalSequenceParameterSet - Too many reference frames!!! %d max id %d\n",
 			   Header->num_ref_frames, H264_MAX_REFERENCE_FRAMES);
-		SPSBuffer->DecrementReferenceCount();
+		TmpBuffer->DecrementReferenceCount();
 		Player->MarkStreamUnPlayable(Stream);
 		return FrameParserError;
 	}
@@ -1216,7 +1216,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 		Status = ReadVUISequenceParameters(&Header->vui_seq_parameters);
 		if (Status != FrameParserNoError)
 		{
-			SPSBuffer->DecrementReferenceCount();
+			TmpBuffer->DecrementReferenceCount();
 			return Status;
 		}
 	}
@@ -1226,12 +1226,12 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalSequenceParameterSet(void)
 	//
 	if (SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer != NULL)
 		SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer->DecrementReferenceCount();
-	SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer = SPSBuffer;
+	SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer = TmpBuffer;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].Header = Header;
 	SequenceParameterSetTable[Header->seq_parameter_set_id].ExtensionHeader = &HeaderPair->SequenceParameterSetExtensionHeader;
-	//
-	// Dump this header
-	//
+//
+// Dump this header
+//
 	if (CpbDpbDelaysPresentFlag != LastCpbDpbDelaysPresentFlag)
 	{
 		if (CpbDpbDelaysPresentFlag)
@@ -1378,20 +1378,20 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 {
 	unsigned int i;
 	FrameParserStatus_t Status;
-	Buffer_t PPSBuffer;
+	Buffer_t TmpBuffer;
 	H264PictureParameterSetHeader_t *Header;
 	unsigned int BitsPerId;
 	unsigned int *FallbackScalingList[8];
 	//
 	// Get a picture parameter set
 	//
-	Status = PictureParameterSetPool->GetBuffer(&PPSBuffer);
+	Status = PictureParameterSetPool->GetBuffer(&TmpBuffer);
 	if (Status != BufferNoError)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - Failed to get a picture parameter set buffer.\n");
 		return Status;
 	}
-	PPSBuffer->ObtainDataReference(NULL, NULL, (void **)(&Header));
+	TmpBuffer->ObtainDataReference(NULL, NULL, (void **)(&Header));
 //
 	memset(Header, 0x00, sizeof(H264PictureParameterSetHeader_t));
 	Header->pic_parameter_set_id = ue(v);
@@ -1405,10 +1405,10 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 	if (SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer == NULL)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - Appropriate sequence parameter set not found (%d).\n", Header->seq_parameter_set_id);
-		PPSBuffer->DecrementReferenceCount();
+		TmpBuffer->DecrementReferenceCount();
 		return FrameParserError;
 	}
-	PPSBuffer->AttachBuffer(SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer);
+	TmpBuffer->AttachBuffer(SequenceParameterSetTable[Header->seq_parameter_set_id].Buffer);
 	Header->SequenceParameterSet = SequenceParameterSetTable[Header->seq_parameter_set_id].Header;
 	Header->SequenceParameterSetExtension = SequenceParameterSetTable[Header->seq_parameter_set_id].ExtensionHeader;
 //
@@ -1416,7 +1416,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 	{
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_slice_groups_minus1 exceeds our soft restriction (%d,%d).\n",
 			   Header->num_slice_groups_minus1, H264_MAX_SLICE_GROUPS - 1);
-		PPSBuffer->DecrementReferenceCount();
+		TmpBuffer->DecrementReferenceCount();
 		return FrameParserError;
 	}
 	if (Header->num_slice_groups_minus1 > 0)
@@ -1449,7 +1449,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 			{
 				report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_slice_group_map_units_minus1 exceeds our soft restriction (%d,%d).\n",
 					   Header->pic_size_in_map_units_minus1, H264_MAX_PIC_SIZE_IN_MAP_UNITS - 1);
-				PPSBuffer->DecrementReferenceCount();
+				TmpBuffer->DecrementReferenceCount();
 				return FrameParserError;
 			}
 			BitsPerId = Log2Ceil(Header->num_slice_groups_minus1 + 1);
@@ -1474,7 +1474,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 		report(severity_error, "FrameParser_VideoH264_c::ReadNalPictureParameterSet - num_ref_idx_l?_active_minus1 out of supported range (%d > %d or %d > %d)\n",
 			   Header->num_ref_idx_l0_active_minus1, H264_MAX_REF_L0_IDX_ACTIVE - 1,
 			   Header->num_ref_idx_l1_active_minus1, H264_MAX_REF_L1_IDX_ACTIVE - 1);
-		PPSBuffer->DecrementReferenceCount();
+		TmpBuffer->DecrementReferenceCount();
 		return FrameParserError;
 	}
 //
@@ -1522,7 +1522,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 										 &Header->UseDefaultScalingMatrix4x4Flag[i]);
 				if (Status != FrameParserNoError)
 				{
-					PPSBuffer->DecrementReferenceCount();
+					TmpBuffer->DecrementReferenceCount();
 					return Status;
 				}
 			}
@@ -1539,7 +1539,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 											 &Header->UseDefaultScalingMatrix8x8Flag[i]);
 					if (Status != FrameParserNoError)
 					{
-						PPSBuffer->DecrementReferenceCount();
+						TmpBuffer->DecrementReferenceCount();
 						return Status;
 					}
 				}
@@ -1554,7 +1554,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadNalPictureParameterSet(void)
 	//
 	if (PictureParameterSetTable[Header->pic_parameter_set_id].Buffer != NULL)
 		PictureParameterSetTable[Header->pic_parameter_set_id].Buffer->DecrementReferenceCount();
-	PictureParameterSetTable[Header->pic_parameter_set_id].Buffer = PPSBuffer;
+	PictureParameterSetTable[Header->pic_parameter_set_id].Buffer = TmpBuffer;
 	PictureParameterSetTable[Header->pic_parameter_set_id].Header = Header;
 //
 // Dump this header
@@ -2325,8 +2325,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadSeiPanScanMessage(void)
 		SEIPanScanRectangle.pan_scan_cnt_minus1 = ue(v);
 		if ((SEIPanScanRectangle.pan_scan_cnt_minus1 + 1) > H264_SEI_MAX_PAN_SCAN_VALUES)
 		{
-			report(severity_error, "FrameParser_VideoH264_c::ReadSeiPanScanMessage - pan_scan_cnt_minus1 (%d) out of range (0..2)\n",
-				   SEIPanScanRectangle.pan_scan_cnt_minus1);
+			report(severity_error, "FrameParser_VideoH264_c::ReadSeiPanScanMessage - pan_scan_cnt_minus1 (%d) out of range (0..2)\n");
 			return FrameParserHeaderSyntaxError;
 		}
 		for (i = 0; i <= SEIPanScanRectangle.pan_scan_cnt_minus1; i++)
@@ -2489,8 +2488,8 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadPlayer2ContainerParameters(void
 	unsigned int FieldsPresentMask;
 	unsigned int PixelAspectRatioNumerator;
 	unsigned int PixelAspectRatioDenominator;
-	unsigned int TimeScale = 0;
-	unsigned int TimeDelta = 0;
+	unsigned int TimeScale;
+	unsigned int TimeDelta;
 //
 	ParametersVersion = Bits.Get(8);
 	MarkerBits(8, 0xff);
@@ -2526,7 +2525,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::ReadPlayer2ContainerParameters(void
 			TimeDelta |= Bits.Get(16);
 			MarkerBits(8, 0xff);
 #ifdef __TDT__
-//I would say that this is wrong implemented in libeplayer, but if so why did it work up until now?
+			//I would say that this is wrong implemented in libeplayer, but if so why did it work up until now?
 			if (TimeDelta > 10000)
 				DefaultFrameRate = Rational_t(TimeDelta, TimeScale);
 			else
@@ -3543,26 +3542,6 @@ FrameParserStatus_t FrameParser_VideoH264_c::PrepareReferenceFrameList(void)
 	ParsedFrameParameters->NumberOfReferenceFrameLists = H264_NUM_REF_FRAME_LISTS;
 	if (!ParsedFrameParameters->IndependentFrame)
 		memcpy(ParsedFrameParameters->ReferenceFrameList, ReferenceFrameList, H264_NUM_REF_FRAME_LISTS * sizeof(ReferenceFrameList_t));
-#if 0
-	if (ParsedVideoParameters->SliceType == SliceTypeB)
-		report(severity_info, "B - %d {%3d %3d %3d %3d}, %d {%3d %3d %3d %3d} - %08x - %d %d\n",
-			   ParsedFrameParameters->ReferenceFrameList[1].EntryCount,
-			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[1],
-			   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[3],
-			   ParsedFrameParameters->ReferenceFrameList[2].EntryCount,
-			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[0], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[1],
-			   ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[2], ParsedFrameParameters->ReferenceFrameList[2].EntryIndicies[3], Status, NumShortTerm, NumLongTerm);
-	report(severity_info, "Q264 (R = %d, K = %d, PS = %d, IF = %d, FSTV= %d, FPFP= %d, FS = %d, ST = %d, EC = %d)\n",
-		   ParsedFrameParameters->ReferenceFrame,
-		   ParsedFrameParameters->KeyFrame,
-		   ParsedVideoParameters->PictureStructure,
-		   ParsedFrameParameters->IndependentFrame,
-		   FrameSliceTypeVaries,
-		   ParsedFrameParameters->FirstParsedParametersForOutputFrame,
-		   ParsedVideoParameters->FirstSlice,
-		   SliceHeader->slice_type,
-		   ParsedFrameParameters->ReferenceFrameList[0].EntryCount);
-#endif
 //
 	return Status;
 }
@@ -3744,10 +3723,18 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 	//
 	if (!SecondFieldEntry)
 		for (i = 0; i < (NumReferenceFrames + 1); i++)
+		{
+			if (ReferenceFrames[i].Usage != NotUsedForReference &&
+					ReferenceFrames[i].FrameNum == FrameNum)
+			{
+				report(severity_info, "deleting obsolete framenum %d\n", FrameNum);
+				ReleaseReference(true, i, AnyUsedForReference);
+			}
 			if (ReferenceFrames[i].Usage == NotUsedForReference)
 			{
 				CurrentEntry = i;
 				ReferenceFrames[i].Field = Field;
+				ReferenceFrames[i].ParsedFrameParameters = ParsedFrameParameters;
 				ReferenceFrames[i].DecodeFrameIndex = ParsedFrameParameters->DecodeFrameIndex;
 				ReferenceFrames[i].PicOrderCnt = SliceHeader->PicOrderCnt;
 				ReferenceFrames[i].PicOrderCntTop = SliceHeader->PicOrderCntTop;
@@ -3771,6 +3758,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 				}
 				break;
 			}
+		}
 	//
 	// Now apply the appropriate list management algorithms
 	//
@@ -4019,11 +4007,18 @@ FrameParserStatus_t FrameParser_VideoH264_c::MarkReferencePictures(bool Actually
 		}
 		if ((NumShortTerm + NumLongTerm) > NumReferenceFrames)
 		{
+#if 1
 			report(severity_error, "FrameParser_VideoH264_c::MarkReferencePictures - After MMCO operations, \n\t\tthere are more than the allowed number of reference frames.\n\t\tThe oldest will be discarded.\n");
 			for (i = 0, j = 1; j < (NumReferenceFrames + 1); j++)
 				if (ReferenceFrames[i].DecodeFrameIndex > ReferenceFrames[j].DecodeFrameIndex)
 					i = j;
-			ReleaseReference(true, i, ReferenceFrames[CurrentEntry].Usage);
+			ReleaseReference(true, i, AnyUsedForReference);
+#else
+			report(severity_error, "FrameParser_VideoH264_c::MarkReferencePictures - After MMCO operations, \n\t\tthere are more than the allowed number of reference frames.\n\t\tAll but the current will be discarded.\n");
+			for (j = 0; j < (NumReferenceFrames + 1); j++)
+				if (j != CurrentEntry)
+					ReleaseReference(ActuallyReleaseReferenceFrames, j, AnyUsedForReference);
+#endif
 		}
 #ifdef DUMP_REFLISTS
 		report(severity_info, "\n List of reference frames After MMCO (%d %d):-\n", NumShortTerm, NumLongTerm);
@@ -4486,10 +4481,9 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	// fix juddering on some HD channels
 	/* if( ForceInterlacedProgressive )
 	{
-	    DeducedInterlacedFlag = ForcedInterlacedFlag;
-	    DeducedTopFieldFirst = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
+		DeducedInterlacedFlag = ForcedInterlacedFlag;
+		DeducedTopFieldFirst = SliceHeader->PicOrderCntTop <= SliceHeader->PicOrderCntBot;
 	}
-
 	else */ if (FixDeducedFlags)
 	{
 		// Leave flags as set
@@ -4573,7 +4567,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	//
 	if ((SPS->frame_cropping_rect_top_offset != 0) || (SPS->frame_cropping_rect_left_offset != 0))
 	{
-		report(severity_error, "FrameParser_VideoH264_c::CommitFrameForDecode - Unexpected frame cropping rectangle (%d, %d, %d, %d).\n",
+		report(severity_error, "FrameParser_VideoH264_c::CommitFrameForDecode - Unexpected frame cropping rectangle (%d, %d, %d, %d) - implementation error.\n",
 			   SPS->frame_cropping_rect_left_offset, SPS->frame_cropping_rect_top_offset,
 			   SPS->frame_cropping_rect_right_offset, SPS->frame_cropping_rect_bottom_offset);
 		return FrameParserError;
@@ -4591,7 +4585,7 @@ FrameParserStatus_t FrameParser_VideoH264_c::CommitFrameForDecode(void)
 	// Extract information about nature of content and frame rate of display
 	//
 	// --------------------------------------------------------------------------------------------------------------------
-	//  Work out frame rate                    - see table E-6 in ISO/IEC 14496-10(E)
+	// Work out frame rate - see table E-6 in ISO/IEC 14496-10(E)
 	// (E-6) Table
 	// pict_struct_present_flag  field_pic_flag pic_struct DeltaTfiDivisor
 	// 0                         1              -          1
@@ -4909,7 +4903,8 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 	unsigned int i;
 	unsigned int Index;
 	unsigned char SpecialCaseDpb;
-#ifndef __TDT__
+	unsigned int HeldReferenceFrames;
+#if 1
 	unsigned int MaxDeferals;
 	unsigned int InvalidPTSSequence;
 #endif
@@ -4951,7 +4946,7 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 		memmove(&OrderedDeferredList[i + 1], &OrderedDeferredList[i], (DeferredListEntries - i) * sizeof(unsigned int));
 	OrderedDeferredList[i] = Index;
 	DeferredListEntries++;
-#ifndef __TDT__
+#if 1
 	//
 	// Perform PTS validation - check for a jump in PTS of the wrong direction
 	// then range check it to less than 1 second to
@@ -4987,18 +4982,40 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 	//
 	// Limit the deferal process with respect to the number of available decode buffers
 	//
+	// Start with the basic buffer count,
+	// Subtract 2 for buffers committed to manifestor (display and de-interlace)
+	// Then for each reference frame already allocated a display index, but held
+	// as a reference subtract one more.
+	//
 	if (PlaybackDirection == PlayForward)
 		Manifestor->GetDecodeBufferCount(&MaxDeferals);
 	else
 		MaxDeferals = H264_CODED_FRAME_COUNT;
-//report( severity_info, "Defer - %4d, Max = %4d\n", DeferredListEntries, MaxDeferals );
-	if (DeferredListEntries >= MaxDeferals)
+#if 0
+//
+// I really think I should deploy this, but I have now reduced
+// the streams that might break without it so I am leaving it out.
+//
+#define FRAMES_HELD_BY_MANIFESTOR 2
+	HeldReferenceFrames = 0;
+	for (i = 0; i < (NumReferenceFrames + 1); i++)
+		if (ReferenceFrames[i].Usage != NotUsedForReference)
+			if ((ReferenceFrames[i].ParsedFrameParameters->DisplayFrameIndex != INVALID_INDEX) &&
+					(ReferenceFrames[i].ParsedFrameParameters->DisplayFrameIndex < (NextDisplayFrameIndex - FRAMES_HELD_BY_MANIFESTOR)))
+				HeldReferenceFrames++;
+#else
+#define FRAMES_HELD_BY_MANIFESTOR 0
+	HeldReferenceFrames = 0;
+#endif
+//	report( severity_info, "Defer - %4d, Ref = %4d, Max = %4d\n", DeferredListEntries, HeldReferenceFrames, MaxDeferals );
+	if ((DeferredListEntries + FRAMES_HELD_BY_MANIFESTOR + HeldReferenceFrames) >= MaxDeferals)
 	{
-		report(severity_error, "FrameParser_VideoH264_c::DeferDFIandPTSGeneration - Unable to defer, too many outstanding (%d, %d).\n", DeferredListEntries, MaxDeferals);
+		report(severity_error, "FrameParser_VideoH264_c::DeferDFIandPTSGeneration - Unable to defer, too many outstanding. \n\t\tThere may be too few decode buffers to handle this stream (%d + %d + %d >= %d).\n",
+			   DeferredListEntries, FRAMES_HELD_BY_MANIFESTOR, HeldReferenceFrames, MaxDeferals);
 		if (PlaybackDirection == PlayForward)
-			ProcessDeferredDFIandPTSUpto(DeferredList[OrderedDeferredList[0]].ExtendedPicOrderCnt + 1);
+			ProcessDeferredDFIandPTSUpto((DeferredList[OrderedDeferredList[0]].ExtendedPicOrderCnt >> 1) + 1);
 		else
-			ProcessDeferredDFIandPTSDownto(DeferredList[OrderedDeferredList[DeferredListEntries - 1]].ExtendedPicOrderCnt + 1);
+			ProcessDeferredDFIandPTSDownto((DeferredList[OrderedDeferredList[DeferredListEntries - 1]].ExtendedPicOrderCnt >> 1) + 1);
 	}
 #endif
 }
@@ -5010,8 +5027,10 @@ void FrameParser_VideoH264_c::DeferDFIandPTSGeneration(
 
 void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long ExtendedPicOrderCnt)
 {
-	unsigned int i;
+	unsigned int i, j;
 	unsigned int Index;
+	unsigned int LeastPlaybackTimeIndex;
+	unsigned long long LeastPlaybackTime;
 	bool UsePTSFrameRate;
 	//
 	// Adjust pic order cnt for fields given same pic order cnt
@@ -5020,6 +5039,61 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long Ex
 	//
 	// Process them
 	//
+#if 1
+//--------------------------------------------------------------
+	for (i = 0;
+			(i < DeferredListEntries) && (DeferredList[OrderedDeferredList[i]].ExtendedPicOrderCnt < ExtendedPicOrderCnt);
+		)
+	{
+		if (OrderedDeferredList[i] == INVALID_INDEX)
+		{
+			i++;
+			continue;
+		}
+		//
+		// Check through the PTS values, is anyone earlier
+		//
+		LeastPlaybackTimeIndex = i;
+		LeastPlaybackTime = DeferredList[OrderedDeferredList[i]].ParsedFrameParameters->NormalizedPlaybackTime;
+		if (LeastPlaybackTime != INVALID_TIME)
+		{
+			for (j = i + 1; j < DeferredListEntries; j++)
+				if ((OrderedDeferredList[j] != INVALID_INDEX) &&
+						ValidTime(DeferredList[OrderedDeferredList[j]].ParsedFrameParameters->NormalizedPlaybackTime) &&
+						(DeferredList[OrderedDeferredList[j]].ParsedFrameParameters->NormalizedPlaybackTime < LeastPlaybackTime))
+				{
+					LeastPlaybackTimeIndex = j;
+					LeastPlaybackTime = DeferredList[OrderedDeferredList[j]].ParsedFrameParameters->NormalizedPlaybackTime;
+				}
+		}
+		//
+		// Process the appropriate one
+		//
+		Index = OrderedDeferredList[LeastPlaybackTimeIndex];
+		CalculateFrameIndexAndPts(DeferredList[Index].ParsedFrameParameters, DeferredList[Index].ParsedVideoParameters);
+		SetupPanScanValues(DeferredList[Index].ParsedFrameParameters, DeferredList[Index].ParsedVideoParameters);
+		DeferredList[Index].Buffer->DecrementReferenceCount();
+		DeferredList[Index].Buffer = NULL;
+		//
+		// Now move on if we did not find an earlier one, otherwise clear that entry in the list
+		//
+		if (LeastPlaybackTimeIndex == i)
+			i++;
+		else
+			OrderedDeferredList[LeastPlaybackTimeIndex] = INVALID_INDEX;
+	}
+	//
+	// Shuffle up the ordered list
+	//
+	if (i != 0)
+	{
+		for (j = 0; i < DeferredListEntries; i++)
+			if (OrderedDeferredList[i] != INVALID_INDEX)
+				OrderedDeferredList[j++] = OrderedDeferredList[i];
+		DeferredListEntries = j;
+	}
+//--------------------------------------------------------------
+#else
 	for (i = 0;
 			(i < DeferredListEntries) && (DeferredList[OrderedDeferredList[i]].ExtendedPicOrderCnt < ExtendedPicOrderCnt);
 			i++)
@@ -5038,6 +5112,7 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long Ex
 		memmove(&OrderedDeferredList[0], &OrderedDeferredList[i], (DeferredListEntries - i) * sizeof(unsigned int));
 		DeferredListEntries -= i;
 	}
+#endif
 	//
 	// Do we need to update the default frame rate based on PTS values
 	//
@@ -5055,7 +5130,10 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSUpto(unsigned long long Ex
 
 void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long ExtendedPicOrderCnt)
 {
+	unsigned int i, j;
 	unsigned int Index;
+	unsigned int GreatestPlaybackTimeIndex;
+	unsigned long long GreatestPlaybackTime;
 	bool UsePTSFrameRate;
 	//
 	// Adjust pic order cnt for fields given same pic order cnt
@@ -5064,6 +5142,61 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long 
 	//
 	// Process them
 	//
+#if 1
+//--------------------------------------------------------------
+	for (;
+			(DeferredListEntries > 0) && (DeferredList[OrderedDeferredList[DeferredListEntries - 1]].ExtendedPicOrderCnt > ExtendedPicOrderCnt);
+		)
+	{
+		if (OrderedDeferredList[DeferredListEntries - 1] == INVALID_INDEX)
+		{
+			DeferredListEntries--;
+			continue;
+		}
+		//
+		// Check through the PTS values, is anyone later
+		//
+		GreatestPlaybackTimeIndex = DeferredListEntries - 1;
+		GreatestPlaybackTime = DeferredList[OrderedDeferredList[DeferredListEntries - 1]].ParsedFrameParameters->NormalizedPlaybackTime;
+		if (GreatestPlaybackTime != INVALID_TIME)
+		{
+			for (i = 0; i < (DeferredListEntries - 1); i++)
+				if ((OrderedDeferredList[i] != INVALID_INDEX) &&
+						ValidTime(DeferredList[OrderedDeferredList[i]].ParsedFrameParameters->NormalizedPlaybackTime) &&
+						(DeferredList[OrderedDeferredList[i]].ParsedFrameParameters->NormalizedPlaybackTime > GreatestPlaybackTime))
+				{
+					GreatestPlaybackTimeIndex = i;
+					GreatestPlaybackTime = DeferredList[OrderedDeferredList[i]].ParsedFrameParameters->NormalizedPlaybackTime;
+				}
+		}
+		//
+		// Process the appropriate one
+		//
+		Index = OrderedDeferredList[GreatestPlaybackTimeIndex];
+		CalculateFrameIndexAndPts(DeferredList[Index].ParsedFrameParameters, DeferredList[Index].ParsedVideoParameters);
+		SetupPanScanValues(DeferredList[Index].ParsedFrameParameters, DeferredList[Index].ParsedVideoParameters);
+		DeferredList[Index].Buffer->DecrementReferenceCount();
+		DeferredList[Index].Buffer = NULL;
+		//
+		// Now move on if we did not find an earlier one, otherwise clear that entry in the list
+		//
+		if (GreatestPlaybackTimeIndex == (DeferredListEntries - 1))
+			DeferredListEntries--;
+		else
+			OrderedDeferredList[GreatestPlaybackTimeIndex] = INVALID_INDEX;
+	}
+	//
+	// Shuffle down the ordered list (just closing any invalid indices up)
+	//
+	if (DeferredListEntries != 0)
+	{
+		for (i = j = 0; i < DeferredListEntries; i++)
+			if (OrderedDeferredList[i] != INVALID_INDEX)
+				OrderedDeferredList[j++] = OrderedDeferredList[i];
+		DeferredListEntries = j;
+	}
+//--------------------------------------------------------------
+#else
 	while ((DeferredListEntries > 0) && (DeferredList[OrderedDeferredList[DeferredListEntries - 1]].ExtendedPicOrderCnt > ExtendedPicOrderCnt))
 	{
 		DeferredListEntries--;
@@ -5073,6 +5206,7 @@ void FrameParser_VideoH264_c::ProcessDeferredDFIandPTSDownto(unsigned long long 
 		DeferredList[Index].Buffer->DecrementReferenceCount();
 		DeferredList[Index].Buffer = NULL;
 	}
+#endif
 	//
 	// Do we need to update the default frame rate based on PTS values
 	//

@@ -1,6 +1,13 @@
 #ifndef _PLATFORM_7200_H_
 #define _PLATFORM_7200_H_
 
+#include <h264pp.h>
+
+static struct h264pp_platform_data h264pp_data =
+{
+	.ApplyWorkAroundForGnbvd42331 = true,
+};
+
 struct platform_device h264pp_device_7200 =
 {
 	.name = "h264pp",
@@ -27,6 +34,7 @@ struct platform_device h264pp_device_7200 =
 							.flags = IORESOURCE_IRQ,
 						  },
 	},
+	.dev.platform_data = &h264pp_data,
 };
 struct platform_device cap_device_7200 =
 {

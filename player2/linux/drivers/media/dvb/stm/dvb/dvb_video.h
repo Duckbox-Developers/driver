@@ -47,8 +47,10 @@ struct VideoEvent_s
 #define DVB_OPTION_VALUE_INVALID 0xffffffff
 
 struct dvb_device *VideoInit(struct DeviceContext_s *Context);
+#ifdef __TDT__
 int VideoIoctlStop(struct DeviceContext_s *Context,
 				   unsigned int Mode);
+#endif
 int VideoIoctlPlay(struct DeviceContext_s *Context);
 int VideoIoctlSetId(struct DeviceContext_s *Context,
 					int Id);

@@ -157,17 +157,11 @@ HavanaStatus_t HavanaStream_c::Init(class HavanaPlayer_c *HavanaPlayer,
 		LockInitialised = true;
 	}
 	if (strcmp(Media, BACKEND_AUDIO_ID) == 0)
-	{
 		PlayerStreamType = StreamTypeAudio;
-	}
 	else if (strcmp(Media, BACKEND_VIDEO_ID) == 0)
-	{
 		PlayerStreamType = StreamTypeVideo;
-	}
 	else
-	{
 		PlayerStreamType = StreamTypeOther;
-	}
 	if (Collator == NULL)
 		Status = HavanaPlayer->CallFactory(Format, Encoding, PlayerStreamType, ComponentCollator, (void **)&Collator);
 	if (Status != HavanaNoError)
@@ -186,11 +180,6 @@ HavanaStatus_t HavanaStream_c::Init(class HavanaPlayer_c *HavanaPlayer,
 		TransformerId = (SurfaceId == DISPLAY_ID_MAIN) ? 0 : 1;
 		CodecParameters.ParameterType = CodecSelectTransformer;
 		CodecParameters.Transformer = TransformerId;
-		//if (PlayerStreamType == StreamTypeVideo)
-		//{
-		// CodecParameters.ParameterType = CodecSpecifyCodedMemoryPartition;
-		// strcpy (CodecParameters.PartitionName, "BPA2_Region1" );
-		//}
 		CodecStatus = Codec->SetModuleParameters(sizeof(CodecParameterBlock_t), &CodecParameters);
 		if (CodecStatus != CodecNoError)
 		{
@@ -218,9 +207,7 @@ HavanaStatus_t HavanaStream_c::Init(class HavanaPlayer_c *HavanaPlayer,
 	{
 		Status = HavanaPlayer->GetManifestor(Media, Encoding, SurfaceId, &Manifestor);
 		if (Status != HavanaNoError)
-		{
 			return Status;
-		}
 	}
 	//
 	// Addition by nick to avoid allocation of 8 or 16mb coded data

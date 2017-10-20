@@ -135,6 +135,7 @@ OSDEV_RegisterPlatformDriverFn("h264pp", H264ppLoadModule, H264ppUnloadModule);
 /* --- Internal entrypoints --- */
 
 static void H264ppInitializeDevice(void);
+static void H264ppReleaseDevice(void);
 static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer);
 static void H264ppWorkAroundGNBvd42331(H264ppState_t *State,
 									   unsigned int N);
@@ -195,6 +196,10 @@ OSDEV_PlatformLoadEntrypoint(H264ppLoadModule)
 OSDEV_PlatformUnloadEntrypoint(H264ppUnloadModule)
 {
 	OSDEV_Status_t Status;
+	//
+	// Release the hardware device
+	//
+	H264ppReleaseDevice();
 	/* --- */
 	OSDEV_UnloadEntry();
 	/* --- */
@@ -349,16 +354,12 @@ static OSDEV_CloseEntrypoint(H264ppClose)
 	// Grab all of my virtual pre-processors, to be sure all decodes have completed
 	//
 	for (i = 0; i < H264_PP_VIRTUAL_PP_PER_OPEN; i++)
-	{
 		OSDEV_ClaimSemaphore(&H264ppOpenContext->VirtualPPClaim);
-	}
 	//
 	// Make sure everyone exits
 	//
 	while (H264ppOpenContext->InQueue || H264ppOpenContext->InDequeue)
-	{
 		OSDEV_SleepMilliSeconds(2);
-	}
 	//
 	// De-initialize the semaphores
 	//
@@ -558,6 +559,19 @@ static void H264ppInitializeDevice(void)
 
 // ////////////////////////////////////////////////////////////////////////////////
 //
+// The function to release the hardware device
+
+static void H264ppReleaseDevice(void)
+{
+	unsigned int N;
+	for (N = 0; N < DeviceContext.NumberOfPreProcessors; N++)
+	{
+		free_irq(DeviceContext.InterruptNumber[N], (void *)N);
+	}
+}
+
+// ////////////////////////////////////////////////////////////////////////////////
+//
 // The function to handle queuing a pre-process to an actual device.
 
 static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer)
@@ -588,7 +602,6 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer)
 	OSDEV_ClaimSemaphore(&DeviceContext.Lock);
 	State = NULL;
 	for (N = 0; N < DeviceContext.NumberOfPreProcessors; N++)
-	{
 		if (!DeviceContext.PPState[N].Busy)
 		{
 			State = &DeviceContext.PPState[N];
@@ -596,7 +609,6 @@ static void H264ppQueueBufferToDevice(H264ppProcessBuffer_t *Buffer)
 			State->BufferState = Buffer;
 			break;
 		}
-	}
 	OSDEV_ReleaseSemaphore(&DeviceContext.Lock);
 	if (N == DeviceContext.NumberOfPreProcessors)
 	{

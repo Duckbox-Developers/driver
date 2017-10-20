@@ -541,7 +541,7 @@ int linuxdvb_ioctl(struct stm_v4l2_handles *handle, struct stm_v4l2_driver *driv
 		case VIDIOC_S_FMT:
 		{
 			struct v4l2_format *fmt = arg;
-			int n, surface = -1;
+			int n, surface = -1;;
 			if (!ldvb)
 				goto err_inval;
 			if (!fmt)

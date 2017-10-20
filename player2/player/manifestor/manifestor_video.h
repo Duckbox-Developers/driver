@@ -41,7 +41,7 @@ Date Modification Name
 #undef MANIFESTOR_TAG
 #define MANIFESTOR_TAG "ManifestorVideo_c::"
 
-#define MAX_DEQUEUE_BUFFERS (MAXIMUM_NUMBER_OF_DECODE_BUFFERS+8)
+#define MAX_DEQUEUE_BUFFERS (MAX_DECODE_BUFFERS+8)
 #define PAIRED_MACROBLOCK(v) (((v) + 0x1f) & 0xffffffe0)
 #define INPUT_WINDOW_SCALE_FACTOR 16
 
@@ -139,7 +139,7 @@ class Manifestor_Video_c : public Manifestor_Base_c
 		struct VideoOutputSurfaceDescriptor_s SurfaceDescriptor;
 
 		/* Buffer information */
-		struct StreamBuffer_s StreamBuffer[MAXIMUM_NUMBER_OF_DECODE_BUFFERS];
+		struct StreamBuffer_s StreamBuffer[MAX_DECODE_BUFFERS];
 		unsigned int BufferOnDisplay;
 		unsigned long long PtsOnDisplay;
 		unsigned int LastQueuedBuffer;

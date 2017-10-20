@@ -159,11 +159,11 @@ Codec_MmeVideoH264_c::Codec_MmeVideoH264_c(void)
 	Terminating = false;
 	ProcessRunningCount = 0;
 	OS_InitializeEvent(&StartStopEvent);
+	Reset();
 	//
 	// Create the lock
 	//
 	OS_InitializeMutex(&H264Lock);
-	Reset();
 	//
 	// Create the ring used to inform the intermediate process of a datum on the way
 	//
@@ -763,7 +763,6 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutSetStreamParametersCommand(void)
 
 CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 {
-	unsigned int i, j;
 	CodecStatus_t Status;
 	H264CodecDecodeContext_t *Context = (H264CodecDecodeContext_t *)DecodeContext;
 	H264_TransformParam_fmw_t *Param;
@@ -785,7 +784,7 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 	// structure buffer and attach it.
 	//
 	if (ParsedFrameParameters->ReferenceFrame &&
-			!BufferState[CurrentDecodeBufferIndex].MacroblockStructurePresent)
+			(BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructurePointer == NULL))
 	{
 		//
 		// Obtain a reference frame slot
@@ -842,17 +841,10 @@ CodecStatus_t Codec_MmeVideoH264_c::FillOutDecodeCommand(void)
 			report(severity_error, "Codec_MmeVideoH264_c::FillOutDecodeCommand - Failed to get macroblock structure buffer.\n");
 			return Status;
 		}
-		BufferState[CurrentDecodeBufferIndex].MacroblockStructurePresent = true;
-		BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructure = MacroBlockStructureBuffer;
 		MacroBlockStructureBuffer->ObtainDataReference(NULL, NULL, (void **)&BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructurePointer, PhysicalAddress);
-		//
-		// Under error circumstances, it is possible for a buffer to reference itself,
-		// when this happens we need to Increment references to the macroblock structure buffer
-		//
-		for (i = 0; i < ParsedFrameParameters->NumberOfReferenceFrameLists; i++)
-			for (j = 0; j < ParsedFrameParameters->ReferenceFrameList[i].EntryCount; j++)
-				if (DecodeContext->ReferenceFrameList[i].EntryIndicies[j] == CurrentDecodeBufferIndex)
-					BufferState[CurrentDecodeBufferIndex].BufferMacroblockStructure->IncrementReferenceCount();
+		// Attach it to the decode buffer, since the decode buffer holds it, we can release our hold.
+		BufferState[CurrentDecodeBufferIndex].Buffer->AttachBuffer(MacroBlockStructureBuffer);
+		MacroBlockStructureBuffer->DecrementReferenceCount();
 	}
 	//
 	// Detach the pre-processor buffer and re-attach it to the decode context
@@ -1425,7 +1417,7 @@ OS_TaskEntry(Codec_MmeVideoH264_IntermediateProcess)
 
 void Codec_MmeVideoH264_c::IntermediateProcess(void)
 {
-	PlayerStatus_t Status;
+	BufferStatus_t Status;
 	h264pp_status_t PPStatus;
 	RingStatus_t RingStatus;
 	unsigned int Entry;

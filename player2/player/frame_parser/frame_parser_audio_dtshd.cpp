@@ -509,7 +509,7 @@ FrameParserStatus_t FrameParser_AudioDtshd_c::ParseCoreHeader(BitStreamClass_c *
 	}
 	if (PrimaryFrameByteSize < 95 || PrimaryFrameByteSize > 16383)
 	{
-		FRAME_ERROR("Invalid Frame Size %u\n", PrimaryFrameByteSize);
+		FRAME_ERROR("Invalid Frame Size\n", PrimaryFrameByteSize);
 		return FrameParserError;
 	}
 	ParsedFrameHeader->CoreSize = PrimaryFrameByteSize + 1;

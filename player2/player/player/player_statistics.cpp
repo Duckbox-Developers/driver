@@ -75,7 +75,6 @@ Date Modification Name
 void Player_Generic_c::ProcessStatistics(PlayerStream_t Stream,
 										 PlayerSequenceNumber_t *Record)
 {
-#if 0
 	unsigned char Policy;
 	unsigned int CodedBufferCount, CodedBuffersUsed, DecodeBufferCount, DecodeBuffersUsed, PosssibleDecodeBuffers;
 //
@@ -138,6 +137,5 @@ void Player_Generic_c::ProcessStatistics(PlayerStream_t Stream,
 		report(severity_info, "\n");
 		Stream->Statistics.Count = 0;
 	}
-#endif
 }
 

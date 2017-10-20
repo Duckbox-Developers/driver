@@ -45,9 +45,9 @@ Date Modification Name
 // defined values
 
 #ifdef CONFIG_32BIT
-#define MAXIMUM_NUMBER_OF_DECODE_BUFFERS 64
+#define MAX_DECODE_BUFFERS 64
 #else
-#define MAXIMUM_NUMBER_OF_DECODE_BUFFERS 32
+#define MAX_DECODE_BUFFERS 32
 #endif
 
 #define MAXIMUM_WAITING_EVENTS 32

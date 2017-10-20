@@ -20,6 +20,7 @@
 #define DVB_FRAME_RATE_MULTIPLIER 1000
 
 #define VIDEO_FULL_SCREEN (VIDEO_CENTER_CUT_OUT+1)
+#define VIDEO_ZOOM_4_3 (VIDEO_CENTER_CUT_OUT+2) /* Zoom 4:3 zone of 16:9 stream, no effect on 4:3 stream */
 
 #define DMX_FILTER_BY_PRIORITY_LOW 0x00010000 /* These flags tell the transport pes filter whether to filter */
 #define DMX_FILTER_BY_PRIORITY_HIGH 0x00020000 /* using the ts priority bit and, if so, whether to filter on */

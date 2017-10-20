@@ -671,11 +671,14 @@ static int AudioIoctlSetEncoding(struct DeviceContext_s *Context, unsigned int E
 #endif
 /*}}}*/
 /*{{{ AudioIoctlFlush*/
+#ifdef __TDT__
 static int AudioIoctlFlush(struct DeviceContext_s *Context, unsigned int NonBlock)
+#else
+static int AudioIoctlFlush(struct DeviceContext_s *Context)
+#endif
 {
 	int Result = 0;
 	struct DvbContext_s *DvbContext = Context->DvbContext;
-	printk("AudioIoctlFlush NonBlock=%d\n", NonBlock);
 	DVB_DEBUG("(audio%d)\n", Context->Id);
 	/* If the stream is frozen it cannot be drained so an error is returned. */
 	if ((Context->PlaySpeed == 0) || (Context->PlaySpeed == DVB_SPEED_REVERSE_STOPPED))
@@ -683,7 +686,11 @@ static int AudioIoctlFlush(struct DeviceContext_s *Context, unsigned int NonBloc
 	if (mutex_lock_interruptible(Context->ActiveAudioWriteLock) != 0)
 		return -ERESTARTSYS;
 	mutex_unlock(&(DvbContext->Lock)); /* release lock so non-writing ioctls still work while draining */
+#ifdef __TDT__
 	Result = DvbStreamDrain2(Context->AudioStream, false, NonBlock);
+#else
+	Result = DvbStreamDrain(Context->AudioStream, false);
+#endif
 	mutex_unlock(Context->ActiveAudioWriteLock); /* release write lock so actions which have context lock can complete */
 	mutex_lock(&(DvbContext->Lock)); /* reclaim lock so can be released by outer function */
 	return Result;
@@ -1106,7 +1113,6 @@ static unsigned int AudioPoll(struct file *File, poll_table *Wait)
 	struct dvb_device *DvbDevice = (struct dvb_device *)File->private_data;
 	struct DeviceContext_s *Context = (struct DeviceContext_s *)DvbDevice->priv;
 	unsigned int Mask = 0;
-	//printk("[Audio] poll ->\n");
 	if (((File->f_flags & O_ACCMODE) == O_RDONLY) || (Context->AudioStream == NULL))
 		return 0;
 #ifdef __TDT__
@@ -1127,7 +1133,6 @@ static unsigned int AudioPoll(struct file *File, poll_table *Wait)
 		if (DvbStreamBufferFree(Context->AudioStream))
 			Mask |= (POLLOUT | POLLWRNORM);
 	}
-	//printk("[Audio] poll <- %d\n", Mask);
 	return Mask;
 }
 /*}}}*/

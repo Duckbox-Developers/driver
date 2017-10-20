@@ -2720,7 +2720,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 		SpdifOut.Config.UpdateSpdifControl = 1;
 		SpdifOut.Config.UpdateMetaData = 1; // this is supposed to be FatPipe only but the examples set it...
 		SpdifOut.Config.SpdifCompressed = 1;
-		SpdifOut.Config.AddIECPreamble = (OutputEncoding == PcmPlayer_c::OUTPUT_AC3) ? 0 : 1;
+		SpdifOut.Config.AddIECPreamble = (OutputEncoding == PcmPlayer_c::OUTPUT_AC3) ? 0 : 1;;
 		SpdifOut.Config.ForcePC = 1; // compressed mode: firmware will get the stream type from the to Preamble_PC below
 		if ((OutputEncoding == PcmPlayer_c::OUTPUT_AC3) || (Clients[dev_num].Parameters.OriginalEncoding == AudioOriginalEncodingDdplus))
 		{
@@ -2766,7 +2766,7 @@ inline void Mixer_Mme_c::FillOutDeviceSpdifParameters(
 		SpdifOut.Config.UpdateSpdifControl = 1;
 		SpdifOut.Config.UpdateMetaData = 1; // this is supposed to be FatPipe only but the examples set it...
 		SpdifOut.Config.SpdifCompressed = 1;
-		SpdifOut.Config.AddIECPreamble = 1;
+		SpdifOut.Config.AddIECPreamble = 1;;
 		SpdifOut.Config.ForcePC = 1; // compressed mode: firmware will get the stream type from the to Preamble_PC below
 		//
 		SpdifOut.Config.Endianness = 1; // big endian input frames: check with the MAT engine
@@ -3154,7 +3154,7 @@ PlayerStatus_t Mixer_Mme_c::FillOutMixCommand()
 PlayerStatus_t Mixer_Mme_c::FillOutOutputBuffer(MME_DataBuffer_t *DataBuffer)
 {
 	PlayerStatus_t Status;
-	unsigned int PeriodSize = PcmPlayerSurfaceParameters.PeriodSize;
+	unsigned int PeriodSize = PcmPlayerSurfaceParameters.PeriodSize;;
 	// this value cannot be pre-configured from Mixer_Mme_c::Reset because its
 	// value can be changed by Mixer_Mme_c::SetModuleParameters.
 	MixerCommand.Command.NumberOutputBuffers = ActualNumDownstreamCards;
@@ -3191,16 +3191,22 @@ void Mixer_Mme_c::FillOutInputBuffer(unsigned int Id)
 		//
 		// both numbers should be divisible by 25
 		Rational_c ResamplingFactor(Clients[Id].Parameters.Source.SampleRateHz, MixerSamplingFrequency, 25, false);
-		if (0 == Id && (OutputConfiguration.spdif_bypass || OutputConfiguration.hdmi_bypass))
+		if (0 == Id)
 		{
-			Status = Clients[Id].Manifestor->FillOutInputBuffer(MixerGranuleSize, ResamplingFactor,
-																Clients[Id].State == STOPPING,
-																MixerCommand.Command.DataBuffers_p[Id],
-																MixerCommand.InputParams.InputParam + Id,
-																MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
-																MixerCommand.InputParams.InputParam + MIXER_CODED_DATA_INPUT,
-																&OutputEncoding,
-																OutputConfiguration.spdif_bypass ? Manifestor_AudioKsound_c::SPDIF : Manifestor_AudioKsound_c::HDMI);
+			if (OutputConfiguration.spdif_bypass || OutputConfiguration.hdmi_bypass)
+				Status = Clients[Id].Manifestor->FillOutInputBuffer(MixerGranuleSize, ResamplingFactor,
+																	Clients[Id].State == STOPPING,
+																	MixerCommand.Command.DataBuffers_p[Id],
+																	MixerCommand.InputParams.InputParam + Id,
+																	MixerCommand.Command.DataBuffers_p[MIXER_CODED_DATA_INPUT],
+																	MixerCommand.InputParams.InputParam + MIXER_CODED_DATA_INPUT,
+																	&OutputEncoding,
+																	OutputConfiguration.spdif_bypass ? Manifestor_AudioKsound_c::SPDIF : Manifestor_AudioKsound_c::HDMI);
+			else
+				Status = Clients[Id].Manifestor->FillOutInputBuffer(MixerGranuleSize, ResamplingFactor,
+																	Clients[Id].State == STOPPING,
+																	MixerCommand.Command.DataBuffers_p[Id],
+																	MixerCommand.InputParams.InputParam + Id);
 			if (PlayerNoError == Status && OutputEncoding != PrimaryCodedDataType)
 			{
 				PrimaryCodedDataType = OutputEncoding;
@@ -3680,7 +3686,11 @@ unsigned int Mixer_Mme_c::LookupIec60958FrameRate(PcmPlayer_c::OutputEncoding En
 	if (OriginalSamplingFreq == 0)
 		OriginalSamplingFreq = MixerSamplingFrequency;
 	unsigned int Iec60958FrameRate;
-	if (Encoding <= PcmPlayer_c::BYPASS_DTSHD_LBR)
+	if (Encoding == PcmPlayer_c::BYPASS_AC3)
+	{
+		Iec60958FrameRate = PrimaryAudioParameters->Source.SampleRateHz;
+	}
+	else if (Encoding <= PcmPlayer_c::BYPASS_DTSHD_LBR)
 	{
 		Iec60958FrameRate = OriginalSamplingFreq;
 	}

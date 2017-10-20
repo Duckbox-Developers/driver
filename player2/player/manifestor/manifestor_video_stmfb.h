@@ -43,6 +43,10 @@ Date Modification Name
 
 #define STMFB_BUFFER_HEADROOM 12 /* Number of buffers to wait after queue is full before we restart queuing buffers */
 
+#ifndef stm_time64_t
+#define stm_time64_t TIME64
+#endif
+
 /// Video manifestor based on the stgfb core driver API.
 class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 {
@@ -57,7 +61,7 @@ class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 
 		unsigned int VideoBufferBase;
 
-		stm_display_buffer_t DisplayBuffer[MAXIMUM_NUMBER_OF_DECODE_BUFFERS];
+		stm_display_buffer_t DisplayBuffer[MAX_DECODE_BUFFERS];
 
 #if defined (QUEUE_BUFFER_CAN_FAIL)
 		OS_Semaphore_t DisplayAvailable;
@@ -118,11 +122,11 @@ class Manifestor_VideoStmfb_c : public Manifestor_Video_c
 
 		/* The following functions are public because they are accessed via C stub functions */
 		void DisplayCallback(struct StreamBuffer_s *Buffer,
-							 TIME64 VsyncTime);
+							 stm_time64_t VsyncTime);
 		void InitialFrameDisplayCallback(struct StreamBuffer_s *Buffer,
-										 TIME64 VsyncTime);
+										 stm_time64_t VsyncTime);
 		void DoneCallback(struct StreamBuffer_s *Buffer,
-						  TIME64 VsyncTime,
+						  stm_time64_t VsyncTime,
 						  unsigned int Status);
 #ifdef __TDT__
 #ifdef UFS922

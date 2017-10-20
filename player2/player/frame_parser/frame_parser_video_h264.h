@@ -101,6 +101,7 @@ typedef struct PictureParameterSetEntry_s
 
 typedef struct H264ReferenceFrameData_s
 {
+	ParsedFrameParameters_t *ParsedFrameParameters; // Player pointer, used in checking resource usage
 	unsigned int DecodeFrameIndex; // Player value
 	bool Field; // Allow us to distinguish between two fields and a frame - useful during a switch between frame/field decodes
 	unsigned int Usage; // Usage codes

@@ -41,6 +41,8 @@ Date Modification Name
 // Locally defined constants
 //
 
+#define MINIMUM_TIME_BETWEEN_GLITCH_PRINTS 2000 // Milli seconds
+
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined structures
@@ -105,6 +107,7 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::AddStream(
 #endif
 	Context->Streams[Context->Base.LastStreamSet].SelectOnPriority = ((StreamIdentifier & DEMULTIPLEXOR_SELECT_ON_PRIORITY) != 0);
 	Context->Streams[Context->Base.LastStreamSet].DesiredPriority = ((StreamIdentifier & DEMULTIPLEXOR_PRIORITY_HIGH) != 0);
+	Context->Streams[Context->Base.LastStreamSet].TimeOfLastDiscontinuityPrint = INVALID_TIME;
 	Context->AddedNewStream = true;
 //
 	return DemultiplexorError;
@@ -272,12 +275,17 @@ DemultiplexorStatus_t Demultiplexor_Ts_c::Demux(
 		if (Stream->ValidExpectedContinuityCount &&
 				(DVB_CONTINUITY_COUNT(Header) != Stream->ExpectedContinuityCount))
 		{
+			unsigned long long Now = OS_GetTimeInMilliSeconds();
 			//
 			// Check for repeat packet - if so skip whole packet
 			//
 			if (((DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f) == Stream->ExpectedContinuityCount)
 				continue;
-			report(severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch.\n");
+			if (!ValidTime(Stream->TimeOfLastDiscontinuityPrint) || ((Now - Stream->TimeOfLastDiscontinuityPrint) > MINIMUM_TIME_BETWEEN_GLITCH_PRINTS))
+			{
+				report(severity_error, "Demultiplexor_Ts_c::Demux - Noted a continuity count error, forcing a glitch (sparse print).\n");
+				Stream->TimeOfLastDiscontinuityPrint = Now;
+			}
 			Player->InputGlitch(PlayerAllPlaybacks, BaseStream->Stream);
 		}
 		Stream->ExpectedContinuityCount = (DVB_CONTINUITY_COUNT(Header) + 1) & 0x0f;

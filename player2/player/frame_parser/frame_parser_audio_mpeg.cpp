@@ -229,14 +229,14 @@ FrameParserStatus_t FrameParser_AudioMpeg_c::ParseFrameHeader(unsigned char *Fra
 			  Mpeg2BitRateLookup[LayerIndex][BitRateIndex];
 	if (BitRate == 0)
 	{
-		FRAME_ERROR("Invalid bit rate, %x, %x, %x, %x\n",
+		FRAME_ERROR("Invalid bit rate, %x, %x, %x\n",
 					FrameHeader, MpegIndex, LayerIndex, BitRateIndex);
 		return FrameParserError;
 	}
 	SamplingFrequency = SamplingFrequencyLookup[MpegIndex][SamplingFrequencyIndex];
 	if (SamplingFrequency == 0)
 	{
-		FRAME_ERROR("Invalid frequency, %x, %x, %x\n",
+		FRAME_ERROR("Invalid frequency, %x, %x\n",
 					FrameHeader, MpegIndex, SamplingFrequencyIndex);
 		return FrameParserError;
 	}

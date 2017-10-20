@@ -2638,7 +2638,7 @@ static int SetGlobalTransformParameters(avr_v4l2_audio_handle_t *AudioContext,
 			IoCfg->Params.SamplingFreq = ACC_FS48k;
 			IoCfg->Connect.Connect = IO_DISCONNECT;
 			IoCfg->Connect.Source = 0;
-			IoCfg->Connect.Sink = out_idx + ActualOutputCards;
+			IoCfg->Connect.Sink = out_idx + ActualOutputCards;;
 			AudioContext->SoundcardHandle[out_idx + ActualOutputCards] = NULL;
 			DVB_DEBUG("Configured output card (idx %d) DevId %d CardId %d, NbChan %d SamplingFreq %d Connected %d\n",
 					  out_idx, IoCfg->ID.DevId, IoCfg->ID.CardId, IoCfg->Params.NbChannels,

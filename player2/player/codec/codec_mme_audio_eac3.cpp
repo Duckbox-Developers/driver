@@ -364,6 +364,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::ValidateDecodeContext(CodecBaseDecodeContext
 	MME_LxAudioDecoderFrameStatus_t &Status = DecodeContext->DecodeStatus.DecStatus;
 	ParsedAudioParameters_t *AudioParameters;
 	int TranscodedBufferSize = 0;
+	bool decode_error = false;
 	CODEC_DEBUG(">><<\n");
 	if (ENABLE_CODEC_DEBUG)
 	{
@@ -374,6 +375,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::ValidateDecodeContext(CodecBaseDecodeContext
 		CODEC_ERROR("Decode error (muted frame): 0x%x\n", Status.DecStatus);
 		//DumpCommand(bufferIndex);
 		// don't report an error to the higher levels (because the frame is muted)
+		decode_error = true;
 	}
 	// if transcoding is required, check the transcoded buffer size...
 	if (TranscodeEnable)
@@ -403,6 +405,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::ValidateDecodeContext(CodecBaseDecodeContext
 	AudioParameters->Source.ChannelCount = AudioOutputSurface->ChannelCount;
 	AudioParameters->Organisation = Status.AudioMode;
 	AudioParameters->SampleCount = Status.NbOutSamples;
+	AudioParameters->decErrorStatus = decode_error;
 	int SamplingFreqCode = Status.SamplingFreq;
 	if (SamplingFreqCode < ACC_FS_reserved)
 	{
@@ -671,7 +674,7 @@ CodecStatus_t Codec_MmeAudioEAc3_c::GetTranscodedFrameBufferPool(BufferPool_t *T
 		AStatus = PartitionAllocatorOpen(&TranscodedFrameMemoryDevice, Configuration.TranscodedMemoryPartitionName, EAC3_FRAME_MAX_SIZE * EAC3_TRANSCODE_BUFFER_COUNT, true);
 		if (AStatus != allocator_ok)
 		{
-			CODEC_ERROR("Failed to allocate memory(%s)\n", Configuration.CodecName);
+			CODEC_ERROR("Failed to allocate memory\n", Configuration.CodecName);
 			return PlayerInsufficientMemory;
 		}
 		TranscodedFrameMemory[CachedAddress] = AllocatorUserAddress(TranscodedFrameMemoryDevice);

@@ -72,29 +72,9 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 
 	private:
 
-		enum OutputState_t
-		{
-			/// There is no manifestor connected to this input.
-			DISCONNECTED,
-
-			/// Neither the input nor the output side are running.
-			STOPPED,
-
-			/// The output side is primed and ready but might not be sending (muted)
-			/// samples to the speakers yet.
-			STARTING,
-
-			/// The output side is running but no connected to a input.
-			/// This state is effectively a soft mute state during which it is safe to (hard)
-			/// unmute anything connected downstream.
-			MUTED,
-
-			/// The output side is running ahead of the input.
-			STARVED,
-
-			/// The output side is running and consuming input.
-			PLAYING
-		};
+		bool digitalFlag;
+		bool errorFrameSeen;
+		unsigned int numGoodFrames;
 
 		Mixer_Mme_c *Mixer;
 		bool RegisteredWithMixer;
@@ -205,6 +185,15 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 
 	public:
 
+		/*
+		 * Accessor methods for Mixer SW to access the
+		 * TranscodedFrameBuffer outside the Manifestor.
+		 * And to update the input after mix completion.
+		 */
+		ManifestorStatus_t getTranscodedMmeDataBuffer(MME_DataBuffer_t *CodedMmeDataBuffer);
+
+		OutputState_t getOutputState();
+
 		/* Constructor / Destructor */
 		Manifestor_AudioKsound_c(void);
 		~Manifestor_AudioKsound_c(void);
@@ -216,7 +205,7 @@ class Manifestor_AudioKsound_c : public Manifestor_Audio_c
 											   void *ParameterBlock);
 		ManifestorStatus_t GetDecodeBufferPool(class BufferPool_c **Pool);
 
-		/* Manifestor audio class functions */
+		/* Manifestor video class functions */
 		ManifestorStatus_t OpenOutputSurface();
 		ManifestorStatus_t CloseOutputSurface(void);
 		ManifestorStatus_t CreateDecodeBuffers(unsigned int Count,

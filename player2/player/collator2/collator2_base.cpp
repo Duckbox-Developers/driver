@@ -269,7 +269,7 @@ CollatorStatus_t Collator2_Base_c::Input(PlayerInputDescriptor_t *Input,
 	PlayDirection_t PreviousDirection;
 	unsigned char Policy;
 //
-	AssertComponentState("Collator2_Base_c::Input", ComponentRunning);
+	AssertComponentState("Collator2_PesVideo_c::Input", ComponentRunning);
 	//
 	// Initialize return value
 	//
@@ -921,7 +921,7 @@ CollatorStatus_t Collator2_Base_c::AccumulateData(
 //
 	if ((NextPartition->PartitionSize + Length) > MaximumCodedFrameSize)
 	{
-		report(severity_error, "Collator2_Base_c::AccumulateData - Buffer overflow. (%d > %d)\n", (NextPartition->PartitionSize + Length), MaximumCodedFrameSize);
+		report(severity_error, "Collator2_Base_c::AccumulateData - Buffer overflow.\n");
 		EmptyCurrentPartition(); // Dump any collected data in the current partition
 		InitializePartition();
 		return CollatorBufferOverflow;

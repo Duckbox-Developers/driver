@@ -1,11 +1,5 @@
 stmalloc-objs := allocator.o
 
-ifeq ($(CONFIG_MULTICOM324),y)
-ccflags-y += -DMULTICOM324
-else ifeq ($(CONFIG_MULTICOM406),y)
-ccflags-y += -DMULTICOM406
-endif
-
 ifeq ($(CONFIG_CPU_SUBTYPE_STX7200),y)
 CCFLAGSY += -DLMI_BASE_ADDRESS=0x19000000 -DLMI_BLOCK_SIZE=0x03000000
 else

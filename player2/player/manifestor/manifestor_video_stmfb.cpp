@@ -78,9 +78,9 @@ struct QueueRecord_s
 // Static constant data
 //
 static void initial_frame_display_callback(void *Buffer,
-										   TIME64 VsyncTime);
+										   stm_time64_t VsyncTime);
 static void display_callback(void *Buffer,
-							 TIME64 VsyncTime);
+							 stm_time64_t VsyncTime);
 static void done_callback(void *Buffer,
 						  const stm_buffer_presentation_stats_t *Data);
 
@@ -286,7 +286,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::Reset(void)
 	//MANIFESTOR_DEBUG ("Stmfb\n");
 	if (TestComponentState(ComponentRunning))
 		Halt();
-	for (i = 0; i < MAXIMUM_NUMBER_OF_DECODE_BUFFERS; i++)
+	for (i = 0; i < MAX_DECODE_BUFFERS; i++)
 	{
 		DisplayBuffer[i].info.pDisplayCallback = NULL;
 		DisplayBuffer[i].info.pCompletedCallback = NULL;
@@ -1302,6 +1302,7 @@ ManifestorStatus_t Manifestor_VideoStmfb_c::QueueInitialFrame(unsigned int Buffe
 	DisplayBuff->info.pDisplayCallback = &initial_frame_display_callback;
 	DisplayBuff->info.pCompletedCallback = NULL;
 	DisplayBuff->info.pUserData = StreamBuff;
+	MANIFESTOR_DEBUG("Queueing initial frame %d\n", BufferIndex);
 	InitialFrameState = InitialFrameQueued;
 	ValidatePhysicalDecodeBufferAddress(DisplayBuff->src.ulVideoBufferAddr);
 	int QueueBufferResult = stm_display_plane_queue_buffer(Plane, DisplayBuff);
@@ -1538,7 +1539,7 @@ bool Manifestor_VideoStmfb_c::BufferAvailable(unsigned char *Address,
 
 //{{{ DisplayCallback
 void Manifestor_VideoStmfb_c::DisplayCallback(struct StreamBuffer_s *Buffer,
-											  TIME64 VsyncTime)
+											  stm_time64_t VsyncTime)
 {
 	Buffer->TimeOnDisplay = VsyncTime;
 	BufferOnDisplay = Buffer->BufferIndex;
@@ -1573,7 +1574,7 @@ void Manifestor_VideoStmfb_c::DisplayCallback(struct StreamBuffer_s *Buffer,
 #endif
 }
 static void display_callback(void *Buffer,
-							 TIME64 VsyncTime)
+							 stm_time64_t VsyncTime)
 {
 	struct StreamBuffer_s *StreamBuffer = (struct StreamBuffer_s *)Buffer;
 	class Manifestor_VideoStmfb_c *Manifestor = (Manifestor_VideoStmfb_c *)StreamBuffer->Manifestor;
@@ -1582,7 +1583,7 @@ static void display_callback(void *Buffer,
 //}}}
 //{{{ InitialFrameDisplayCallback
 void Manifestor_VideoStmfb_c::InitialFrameDisplayCallback(struct StreamBuffer_s *Buffer,
-														  TIME64 VsyncTime)
+														  stm_time64_t VsyncTime)
 {
 	unsigned int Parameters[MONITOR_PARAMETER_COUNT];
 	Buffer->TimeOnDisplay = VsyncTime;
@@ -1590,6 +1591,9 @@ void Manifestor_VideoStmfb_c::InitialFrameDisplayCallback(struct StreamBuffer_s 
 	PtsOnDisplay = INVALID_TIME;
 	InitialFrameState = InitialFrameOnDisplay;
 	OS_SemaphoreSignal(&InitialFrameDisplayed);
+	// Again Julian, sorry for this hack.
+	ManifestorLastDisplayedBuffer = &DisplayBuffer[BufferOnDisplay];
+	wake_up_interruptible(&g_ManifestorLastWaitQueue);
 	DisplayAddress = (unsigned char *)(DisplayBuffer[Buffer->BufferIndex].src.ulVideoBufferAddr);
 	DisplaySize = DisplayBuffer[Buffer->BufferIndex].src.ulVideoBufferSize;
 	memset(Parameters, 0, sizeof(Parameters));
@@ -1597,7 +1601,7 @@ void Manifestor_VideoStmfb_c::InitialFrameDisplayCallback(struct StreamBuffer_s 
 	MonitorSignalEvent(MONITOR_EVENT_INFORMATION, Parameters, "First field on display");
 }
 static void initial_frame_display_callback(void *Buffer,
-										   TIME64 VsyncTime)
+										   stm_time64_t VsyncTime)
 {
 	struct StreamBuffer_s *StreamBuffer = (struct StreamBuffer_s *)Buffer;
 	class Manifestor_VideoStmfb_c *Manifestor = (Manifestor_VideoStmfb_c *)StreamBuffer->Manifestor;
@@ -1606,7 +1610,7 @@ static void initial_frame_display_callback(void *Buffer,
 //}}}
 //{{{ DoneCallback
 void Manifestor_VideoStmfb_c::DoneCallback(struct StreamBuffer_s *Buffer,
-										   TIME64 VsyncTime,
+										   stm_time64_t VsyncTime,
 										   unsigned int Status)
 {
 	//if ((Buffer->BufferState != BufferStateQueued) || (--(Buffer->QueueCount) != 0))

@@ -57,6 +57,22 @@ Date Modification Name
 		return FrameParserHeaderSyntaxError; \
 	}
 
+// Cleanup copies of the marker bit tests, that release a temporarily held buffer
+
+#define MarkerBitClean( v ) if( Bits.Get(1) != (v) ) \
+	{ \
+		report( severity_error, "%s(%d) - Invalid marker bit value.\n", __FUNCTION__, __LINE__ ); \
+		TmpBuffer->DecrementReferenceCount(); \
+		return FrameParserHeaderSyntaxError; \
+	}
+
+#define MarkerBitsClean( n, v ) if( Bits.Get((n)) != (v) ) \
+	{ \
+		report( severity_error, "%s(%d) - Invalid marker bits value.\n", __FUNCTION__, __LINE__ ); \
+		TmpBuffer->DecrementReferenceCount(); \
+		return FrameParserHeaderSyntaxError; \
+	}
+
 //
 
 #ifndef ENABLE_FRAME_DEBUG

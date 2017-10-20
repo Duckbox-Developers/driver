@@ -2,10 +2,14 @@
 #define PLATFORM_7105_H
 
 #include <linux/version.h>
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
-#include <linux/irq.h>
-#endif
+#include <h264pp.h>
 
+static struct h264pp_platform_data h264pp_data =
+{
+	.ApplyWorkAroundForGnbvd42331 = true,
+};
+
+#if (LINUX_VERSION_CODE < KERNEL_VERSION(2, 6, 30) ) // STLinux 2.3
 static struct resource h264pp_resource_7105[] =
 {
 	[0] = {
@@ -25,8 +29,27 @@ struct platform_device h264pp_device_7105 =
 	.name = "h264pp",
 	.id = -1,
 	.num_resources = ARRAY_SIZE(h264pp_resource_7105),
-	.resource = &h264pp_resource_7105
+	.resource = &h264pp_resource_7105,
+	.dev.platform_data = &h264pp_data,
 };
+#else
+
+#include <linux/stm/platform.h>
+#include <asm/irq.h>
+
+struct platform_device h264pp_device_7105 =
+{
+	.name = "h264pp",
+	.id = -1,
+	.num_resources = 2,
+	.resource = (struct resource[])
+	{
+		STM_PLAT_RESOURCE_MEM(0xfe540000, 0xc0000),
+		STM_PLAT_RESOURCE_IRQ(evt2irq(0x14c0), -1),
+	},
+	.dev.platform_data = &h264pp_data,
+};
+#endif
 
 #if 0
 static struct plat_frontend_channel frontend_channels[] =

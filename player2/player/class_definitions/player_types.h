@@ -276,6 +276,7 @@ typedef enum
 #define PolicyValueLetterBox 1
 #define PolicyValuePanScan 2
 #define PolicyValueFullScreen 3
+#define PolicyValueZoom_4_3 4
 
 	PolicyDisplayFormat,
 

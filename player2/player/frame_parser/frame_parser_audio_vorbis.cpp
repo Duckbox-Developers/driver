@@ -236,6 +236,7 @@ FrameParserStatus_t FrameParser_AudioVorbis_c::GeneratePostDecodeParameterSettin
 	//
 	if (CodedFrameParameters->PlaybackTimeValid)
 	{
+		FRAME_TRACE("%s:%d\n", __FUNCTION__, __LINE__);
 		ParsedFrameParameters->NativePlaybackTime = CodedFrameParameters->PlaybackTime;
 		TranslatePlaybackTimeNativeToNormalized(CodedFrameParameters->PlaybackTime, &ParsedFrameParameters->NormalizedPlaybackTime);
 	}
@@ -407,9 +408,7 @@ FrameParserStatus_t FrameParser_AudioVorbis_c::ReadStreamHeaders(void)
 		StreamParameters->SampleRate = BE2LE(Bits.Get(32));
 		if ((StreamParameters->ChannelCount == 0) || (StreamParameters->SampleRate == 0))
 		{
-			FRAME_ERROR("Invalid Vorbis channel count %d or Sample Rate %d\n",
-						StreamParameters->ChannelCount,
-						StreamParameters->SampleRate);
+			FRAME_ERROR("Invalid Vorbis channel count %d or Sample Rate %d \n", StreamParameters->VorbisVersion);
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
 		}

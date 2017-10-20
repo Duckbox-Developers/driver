@@ -1074,7 +1074,7 @@ CollatorStatus_t Collator_PesAudio_c::DiscardAccumulatedData(void)
 	CollatorStatus_t Status;
 	Status = Collator_Pes_c::DiscardAccumulatedData();
 	AccumulatedFrameReady = false;
-	return Status;
+	return Status;;
 }
 
 ////////////////////////////////////////////////////////////////////////////

@@ -37,6 +37,7 @@ Date Modification Name
 //
 // Include any component headers
 
+#include "osdev_device.h"
 #include "codec_mme_base.h"
 
 // /////////////////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ Codec_MmeBase_c::Codec_MmeBase_c(void)
 	//
 	memset(&Configuration, 0x00, sizeof(CodecConfiguration_t));
 	Configuration.CodecName = "Unspecified";
-#if defined(__TDT__) && defined(UFS910)
+#if defined(UFS910)
 	// Dagobert 16.11.2009: This must stay also for 7109er (ufs922). Removing
 	// this hack leads to mysterious dropouts of audio and video.
 	// must compile with debug to see details here.
@@ -836,7 +837,7 @@ CodecStatus_t Codec_MmeBase_c::GetDecodeBuffer(void)
 	//
 	CurrentDecodeBuffer->GetIndex(&CurrentDecodeBufferIndex);
 	if (CurrentDecodeBufferIndex >= MAX_DECODE_BUFFERS)
-		report(severity_fatal, "Codec_MmeBase_c::GetDecodeBuffer(%s) - Decode buffer index %d >= MAX_DECODE_BUFFERS - Implementation error.\n", Configuration.CodecName, CurrentDecodeBufferIndex);
+		report(severity_fatal, "Codec_MmeBase_c::GetDecodeBuffer(%s) - Decode buffer index >= MAX_DECODE_BUFFERS - Implementation error.\n");
 	Status = MapBufferToDecodeIndex(ParsedFrameParameters->DecodeFrameIndex, CurrentDecodeBufferIndex);
 	if (Status != CodecNoError)
 		return Status;
@@ -1062,7 +1063,7 @@ CodecStatus_t Codec_MmeBase_c::TranslateReferenceFrameLists(bool IncrementUseCou
 					   ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[6], ParsedFrameParameters->ReferenceFrameList[1].EntryIndicies[7]);
 				BufferIndex = CurrentDecodeBufferIndex;
 			}
-#if 0 //----patch start
+#if 1 //----patch start
 			if ((BufferIndex == INVALID_INDEX) || (BufferIndex >= MAX_DECODE_BUFFERS))
 			{
 				report(severity_error, "Codec_MmeBase_c::TranslateReferenceFrameLists(%s) - Reference frame buffer index is INVALID (curr=%d/0x%x, max=%d/0x%x) - skipping frame.\n",

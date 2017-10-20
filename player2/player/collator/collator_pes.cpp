@@ -473,13 +473,7 @@ CollatorStatus_t Collator_Pes_c::ReadPesHeader(void)
 			//
 			// Read the DTS
 			//
-#if __TDT__
-			// It seems that for BibleTV these 4 bits are set incorecctly
-			// So lets ignore it like above for PTS
-			Bits.FlushUnseen(4);
-#else
 			MarkerBits(4, 1);
-#endif
 			DecodeTime = (unsigned long long)(Bits.Get(3)) << 30;
 			MarkerBit(1);
 			DecodeTime |= Bits.Get(15) << 15;
@@ -572,22 +566,22 @@ CollatorStatus_t Collator_Pes_c::ReadPesHeader(void)
 		if ((Flags == 0x02) || (Flags == 0x03))
 		{
 			PlaybackTime = (unsigned long long)(Bits.Get(3)) << 30;
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			PlaybackTime |= Bits.Get(15) << 15;
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			PlaybackTime |= Bits.Get(15);
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			PlaybackTimeValid = true;
 		}
 		if (Flags == 0x03)
 		{
-			Bits.FlushUnseen(4);
+			MarkerBits(4, 1);
 			DecodeTime = (unsigned long long)(Bits.Get(3)) << 30;
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			DecodeTime |= Bits.Get(15) << 15;
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			DecodeTime |= Bits.Get(15);
-			Bits.FlushUnseen(1);
+			MarkerBit(1);
 			DecodeTimeValid = true;
 		}
 	}

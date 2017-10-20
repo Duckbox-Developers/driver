@@ -69,7 +69,6 @@ extern "C" {
 #include <linux/interrupt.h>
 #include <linux/kthread.h>
 #include <linux/wait.h>
-#include <linux/types.h>
 
 #include <linux/vmalloc.h>
 #include <linux/ioport.h>
@@ -258,14 +257,14 @@ typedef struct PlatformData_s
 #define OSDEV_RegisterPlatformDriverFn( name2, Loadfn, Unloadfn ) \
 	OSDEV_PlatformLoadEntrypoint(Loadfn); \
 	OSDEV_PlatformUnloadEntrypoint(Unloadfn); \
-	static int plat_probe(struct platform_device *dev) { \
+	static int plat_probe(struct platform_device *pdev) { \
 		PlatformData_t PData; \
 		struct resource *res; \
-		if (!dev || !dev->name) OSDEV_Print("Error No Platform Data\n"); \
-		PData.PrivateData = dev->dev.platform_data; \
+		if (!pdev || !pdev->name) OSDEV_Print("Error No Platform Data\n"); \
+		PData.PrivateData = pdev->dev.platform_data; \
 		PData.NumberBaseAddresses = 0; \
 		do { \
-			res = platform_get_resource(dev,IORESOURCE_MEM,PData.NumberBaseAddresses); \
+			res = platform_get_resource(pdev,IORESOURCE_MEM,PData.NumberBaseAddresses); \
 			if (res) { \
 				PData.BaseAddress[PData.NumberBaseAddresses] = res->start; \
 				PData.NumberBaseAddresses++; \
@@ -273,7 +272,7 @@ typedef struct PlatformData_s
 		} while (res); \
 		PData.NumberInterrupts = 0; \
 		do { \
-			res = platform_get_resource(dev,IORESOURCE_IRQ,PData.NumberInterrupts); \
+			res = platform_get_resource(pdev,IORESOURCE_IRQ,PData.NumberInterrupts); \
 			if (res) { \
 				PData.Interrupt[PData.NumberInterrupts] = res->start; \
 				PData.NumberInterrupts++; \
@@ -281,16 +280,18 @@ typedef struct PlatformData_s
 		} while (res); \
 		return Loadfn(&PData); \
 	} \
-	static int plat_remove(struct platform_device *dev) { \
+	static int plat_remove(struct platform_device *pdev) { \
 		Unloadfn(); \
 		return 0; \
 	} \
 	static struct platform_driver plat_driver = { \
-		.driver = { .owner = THIS_MODULE, \
-					.name = name2 \
+		.driver = { \
+					.name = name2, \
+					.bus = &platform_bus_type, \
+					.owner = THIS_MODULE, \
 				  }, \
 				  .probe = plat_probe, \
-						   .remove = plat_remove \
+						   .remove = plat_remove, \
 	}; \
 	static int plat_init(void) { \
 		return platform_driver_register(&plat_driver); \
@@ -514,13 +515,11 @@ static inline OSDEV_Status_t OSDEV_DeRegisterDevice(OSDEV_Descriptor_t *Descript
 	Descriptor = OSDEV_DeviceDescriptors[Descriptor->MajorNumber];
 	OSDEV_DeviceDescriptors[Descriptor->MajorNumber] = NULL;
 	for (i = 0; i < OSDEV_MAX_OPENS; i++)
-	{
 		if (Descriptor->OpenContexts[i].Open)
 		{
 			OSDEV_Print("OSDEV_DeRegisterDevice - %s - Forcing close\n", Descriptor->Name);
 			Descriptor->CloseFn(&Descriptor->OpenContexts[i]);
 		}
-	}
 	if (Descriptor->Name != NULL)
 		OSDEV_Free(Descriptor->Name);
 	OSDEV_Free(Descriptor);
@@ -537,7 +536,6 @@ static inline OSDEV_Status_t OSDEV_LinkDevice(char *Name,
 //
 	OSDEV_Print("OSDEV_LinkDevice - %s, Major %d, Minor %d\n", Name, MajorNumber, MinorNumber);
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
-	{
 		if (!OSDEV_DeviceList[i].Valid)
 		{
 			OSDEV_DeviceList[i].MajorNumber = MajorNumber;
@@ -552,7 +550,6 @@ static inline OSDEV_Status_t OSDEV_LinkDevice(char *Name,
 			OSDEV_DeviceList[i].Valid = true;
 			return OSDEV_NoError;
 		}
-	}
 	OSDEV_Print("OSDEV_LinkDevice - All device links used.\n");
 	return OSDEV_Error;
 }
@@ -564,14 +561,12 @@ static inline OSDEV_Status_t OSDEV_UnLinkDevice(char *Name)
 	int i;
 //
 	for (i = 0; i < OSDEV_MAXIMUM_DEVICE_LINKS; i++)
-	{
 		if (OSDEV_DeviceList[i].Valid && (strcmp(Name, OSDEV_DeviceList[i].Name) == 0))
 		{
 			OSDEV_Free(OSDEV_DeviceList[i].Name);
 			OSDEV_DeviceList[i].Valid = false;
 			return OSDEV_NoError;
 		}
-	}
 	OSDEV_Print("OSDEV_UnLinkDevice - Device not found.\n");
 	return OSDEV_Error;
 }

@@ -35,6 +35,11 @@ Date Modification Name
 
 #include "codec_mme_video_mjpeg.h"
 #include "mjpeg.h"
+#ifdef __KERNEL__
+extern "C" {
+	void flush_cache_all();
+};
+#endif
 
 // /////////////////////////////////////////////////////////////////////////
 //
@@ -411,7 +416,7 @@ CodecStatus_t Codec_MmeVideoMjpeg_c::SendMMEDecodeCommand(void)
 	// out pointer to the context data.
 	//
 #ifdef __KERNEL__
-	OS_FlushCacheAll();
+	flush_cache_all();
 #endif
 	DecodeContextBuffer = NULL;
 	DecodeContext->DecodeCommenceTime = OS_GetTimeInMicroSeconds();
@@ -494,8 +499,8 @@ CodecStatus_t Codec_MmeVideoMjpeg_c::DumpDecodeParameters(void *Parameters)
 	FrameParams = (JPEGDECHW_VideoDecodeParams_t *)Parameters;
 	MjpegStaticPicture++;
 	CODEC_TRACE("********** Picture %d *********\n", MjpegStaticPicture - 1);
-#endif
 	return CodecNoError;
+#endif
 }
 //}}}
 

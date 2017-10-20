@@ -194,7 +194,9 @@ void Player_Generic_c::ProcessPostManifest(PlayerStream_t Stream)
 			SequenceNumber = SequenceNumberStructure->Value;
 			MaximumActualSequenceNumberSeen = max(SequenceNumber, MaximumActualSequenceNumberSeen);
 			Time = ParsedFrameParameters->NativePlaybackTime;
+#ifndef __TDT__
 			ProcessStatistics(Stream, SequenceNumberStructure);
+#endif
 			if (SequenceNumberStructure->MarkerFrame)
 			{
 				Stream->DiscardingUntilMarkerFramePostM = false;

@@ -404,7 +404,7 @@ FrameParserStatus_t FrameParser_VideoDivx_c::ReadHeaders(void)
 			// Nick changed this to sanitize the frame rate (4..120)
 			if ((CurrentMicroSecondsPerFrame == 0) || !inrange(Rational_t(1000000, CurrentMicroSecondsPerFrame), 4, 120))
 			{
-				report(severity_error, "Current ms per frame not valid (%d) defaulting to 25fps\n", CurrentMicroSecondsPerFrame);
+				report(severity_error, "Current ms per frame not valid (%d) defaulting to 25fps\n");
 				CurrentMicroSecondsPerFrame = 40000;
 			}
 			//report (severity_error,"CurrentMicroSecondsPerFrame %d\n",CurrentMicroSecondsPerFrame);

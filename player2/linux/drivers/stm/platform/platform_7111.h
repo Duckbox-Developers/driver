@@ -1,9 +1,12 @@
 #ifndef PLATFORM_7111_H
 #define PLATFORM_7111_H
 
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,32)
-#include <linux/irq.h>
-#endif
+#include <h264pp.h>
+
+static struct h264pp_platform_data h264pp_data =
+{
+	.ApplyWorkAroundForGnbvd42331 = true,
+};
 
 static struct resource h264pp_resource_7111[] =
 {
@@ -24,7 +27,8 @@ struct platform_device h264pp_device_7111 =
 	.name = "h264pp",
 	.id = -1,
 	.num_resources = ARRAY_SIZE(h264pp_resource_7111),
-	.resource = &h264pp_resource_7111
+	.resource = &h264pp_resource_7111,
+	.dev.platform_data = &h264pp_data,
 };
 
 static struct platform_device *platform_7111[] __initdata =

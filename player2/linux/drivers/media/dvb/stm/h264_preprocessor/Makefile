@@ -1,5 +1,3 @@
-ccflags-y += -I$(TREE_ROOT)/linux/components/inline/
-
 # workaround for stm24
 ifneq (,$(findstring 2.6.3,$(KERNELVERSION)))
 ccflags-y += $(CCFLAGSY)

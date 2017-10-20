@@ -6,7 +6,14 @@
  * Stream properties object decoding utility classes
  */
 
-#include "osinline.h"
+//#include <string.h>
+
+extern "C" {
+	int memcmp(const void *a, const void *b, int n);
+	int memset(void *a, int c, int n);
+}
+
+#define NULL (0)
 
 #include "wma_properties.h"
 #include "report.h"

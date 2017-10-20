@@ -53,6 +53,12 @@ Date Modification Name
 #include "codec_mme_audio_stream.h"
 #include "ksound.h"
 
+#ifdef __KERNEL__
+extern "C" {
+	void flush_cache_all();
+};
+#endif
+
 // /////////////////////////////////////////////////////////////////////////
 //
 // Locally defined constants
@@ -1001,7 +1007,7 @@ CodecStatus_t Codec_MmeAudioStream_c::SendMMETransformCommand(void)
 	// our pointer to the context buffer, after the send we invalidate
 	// out pointer to the context data.
 #ifdef __KERNEL__
-	OS_FlushCacheAll();
+	flush_cache_all();
 #endif
 	TransformContextBuffer = NULL;
 	TransformContext->DecodeCommenceTime = OS_GetTimeInMicroSeconds();
@@ -1124,7 +1130,7 @@ void Codec_MmeAudioStream_c::TransformThread(void)
 		{
 			if (TransformContextBuffer != NULL)
 			{
-				CODEC_ERROR("(%s) Already have a decode context.\n", Configuration.CodecName);
+				CODEC_ERROR("(%) Already have a decode context.\n", Configuration.CodecName);
 				break;
 			}
 			Status = TransformContextPool->GetBuffer(&TransformContextBuffer);

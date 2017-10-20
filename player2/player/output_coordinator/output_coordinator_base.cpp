@@ -169,7 +169,7 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::Reset(void)
 	SystemClockAdjustment = 1;
 	GotAVideoStream = false;
 	AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
-	JumpSeenAtPlaybackTime = 0;
+	JumpSeenAtPlaybackTime = INVALID_TIME;
 	Speed = 1;
 	Direction = PlayForward;
 	MinimumStreamOffset = 0;
@@ -526,7 +526,7 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::ResetTimeMapping(OutputCoord
 	{
 		MasterTimeMappingEstablished = false;
 		AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
-		JumpSeenAtPlaybackTime = 0;
+		JumpSeenAtPlaybackTime = INVALID_TIME;
 	}
 	//
 	// Release anyone waiting to enter a decode window
@@ -581,7 +581,7 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::EstablishTimeMapping(
 	MasterBaseNormalizedPlaybackTime = NormalizedPlaybackTime;
 	MasterBaseSystemTime = ValidTime(SystemTime) ? SystemTime : Now;
 	AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
-	JumpSeenAtPlaybackTime = 0;
+	JumpSeenAtPlaybackTime = INVALID_TIME;
 	MasterTimeMappingEstablished = true;
 	MasterTimeMappingVersion++;
 	VsyncOffsetIntegrationCount = 0; // Need to re-evaluate the vsync offset - if it is being monitored
@@ -942,7 +942,7 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::SynchronizeStreams(
 			MasterBaseNormalizedPlaybackTime = EarliestContext->SynchronizingAtPlaybackTime;
 			MasterBaseSystemTime = EarliestStartTime + StartTimeJitter;
 			AccumulatedPlaybackTimeJumpsSinceSynchronization = 0;
-			JumpSeenAtPlaybackTime = 0;
+			JumpSeenAtPlaybackTime = INVALID_TIME;
 			MasterTimeMappingEstablished = true;
 			MasterTimeMappingVersion++;
 			//
@@ -1135,6 +1135,15 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 				Context->BaseSystemTimeAdjusted = true;
 			}
 		}
+		else if (ValidTime(JumpSeenAtPlaybackTime) &&
+				 inrange(DeltaPlaybackTime, 0, 2000000) &&
+				 inrange(ExpectedPlaybackTime - JumpSeenAtPlaybackTime, 0, 10000000))
+		{
+			report(severity_error, "OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(%s) - Multiple jumps over short period.\n", StreamType());
+			OS_UnLockMutex(&Lock);
+			ResetTimeMapping(PlaybackContext);
+			OS_LockMutex(&Lock);
+		}
 		//
 		// Not part of a cascading change yet, we initiate a cascading change
 		//
@@ -1154,7 +1163,8 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::HandlePlaybackTimeDeltas(
 	// Here we check that if there is an ongoing cascading change that we are not part of,
 	// then we have not reached a point when we really should have been part of it
 	//
-	if (AccumulatedPlaybackTimeJumpsSinceSynchronization != Context->AccumulatedPlaybackTimeJumpsSinceSynchronization)
+	if (ValidTime(JumpSeenAtPlaybackTime) &&
+			(AccumulatedPlaybackTimeJumpsSinceSynchronization != Context->AccumulatedPlaybackTimeJumpsSinceSynchronization))
 	{
 		DeltaPlaybackTime = (long long)(ActualPlaybackTime - JumpSeenAtPlaybackTime);
 		if (!inrange(DeltaPlaybackTime, -PlaybackTimeForwardJumpThreshold, OTHER_STREAMS_MUST_FOLLOW_JUMP_BY))
@@ -1559,7 +1569,7 @@ OutputCoordinatorStatus_t OutputCoordinator_Base_c::MonitorVsyncOffset(
 				//
 				// Vsync locked, so just report, and signal zero
 				//
-				report(severity_info, "Vsync Offset = %lldus, as vsync is locked we will not adjust the mapping.\n");
+				report(severity_info, "Vsync Offset = %lld, as vsync is locked we will not adjust the mapping.\n");
 				CorrectedOffset = 0;
 			}
 			//

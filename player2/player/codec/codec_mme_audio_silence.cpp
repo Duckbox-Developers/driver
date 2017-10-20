@@ -435,7 +435,7 @@ CodecStatus_t Codec_MmeAudioSilence_c::GetTranscodedFrameBufferPool(BufferPool_t
 		AStatus = PartitionAllocatorOpen(&TranscodedFrameMemoryDevice, Configuration.TranscodedMemoryPartitionName, DTSHD_FRAME_MAX_SIZE * DTSHD_TRANSCODE_BUFFER_COUNT, true);
 		if (AStatus != allocator_ok)
 		{
-			CODEC_ERROR("Failed to allocate memory(%s)\n", Configuration.CodecName);
+			CODEC_ERROR("Failed to allocate memory\n", Configuration.CodecName);
 			return PlayerInsufficientMemory;
 		}
 		TranscodedFrameMemory[CachedAddress] = AllocatorUserAddress(TranscodedFrameMemoryDevice);

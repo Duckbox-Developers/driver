@@ -59,6 +59,7 @@ typedef struct DemultiplexorStreamContext_s
 	unsigned char ExpectedContinuityCount;
 	bool SelectOnPriority;
 	bool DesiredPriority;
+	unsigned long long TimeOfLastDiscontinuityPrint;
 } DemultiplexorStreamContext_t;
 
 //

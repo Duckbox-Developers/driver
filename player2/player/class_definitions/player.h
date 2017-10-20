@@ -182,8 +182,10 @@ class Player_c
 										   bool SignalEvent = false,
 										   void *EventUserData = NULL) = 0;
 
+#ifdef __TDT__
 		virtual PlayerStatus_t CheckStreamDrained(PlayerStream_t Stream,
 												  void *EventUserData = NULL) = 0;
+#endif
 
 		//
 		// Mechanisms for managing time

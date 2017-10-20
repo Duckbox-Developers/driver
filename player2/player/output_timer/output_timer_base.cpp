@@ -1210,8 +1210,12 @@ OutputTimerStatus_t OutputTimer_Base_c::PerformAVDSync(
 		//
 		case SyncStateConfirmedSyncError:
 			SynchronizationError = SynchronizationAccumulatedError / SynchronizationErrorIntegrationCount;
-			report(severity_info, "AVDsync %s %s - %6lld us\n", ((ExternalMappingPolicy == PolicyValueApply) ? "Error" : "Correction"),
-				   LookupStreamType(Configuration.StreamType), SynchronizationError);
+			if (SynchronizationError < 10000)
+				report(severity_info, "AVDsync %s %s - < 10000 us\n", ((ExternalMappingPolicy == PolicyValueApply) ? "Error" : "Correction"),
+					   LookupStreamType(Configuration.StreamType));
+			else
+				report(severity_info, "AVDsync %s %s - %6lld us\n", ((ExternalMappingPolicy == PolicyValueApply) ? "Error" : "Correction"),
+					   LookupStreamType(Configuration.StreamType), SynchronizationError);
 #ifdef DUMP_HISTORY
 			if (!SynchronizationAtStartup && (Configuration.StreamType == HISTORY_STREAMTYPE))
 			{
@@ -1243,6 +1247,8 @@ OutputTimerStatus_t OutputTimer_Base_c::PerformAVDSync(
 				OutputCoordinator->RestartOutputRateIntegration(OutputCoordinatorContext);
 			// Fallthrough
 			SynchronizationState = SyncStateStartAwaitingCorrectionWorkthrough;
+			FrameWorkthroughCount = 0;
+			break;
 		//
 		// Here we set up to wait for as correction to work through
 		//
@@ -1638,7 +1644,7 @@ void OutputTimer_Base_c::DecodeInTimeFailure(unsigned long long FailedBy)
 				Rebase = Policy == PolicyValueApply;
 				Policy = Player->PolicyValue(Playback, Stream, PolicyAllowFrameDiscardAtNormalSpeed);
 				if (Rebase && (Policy == PolicyValueApply))
-					report(severity_error, "OutputTimer_Base_c::DecodeInTimeFailure(%s) - Both PolicyRebaseOnFailureToDecodeInTime & \n\t\t\t\t\tPolicyAllowFrameDiscardAtNormalSpeed are enabled at the same time, \n\t\t\t\t\tthe use of one of these should preclude the use of the other.\n", Configuration.OutputTimerName);
+					report(severity_error, "OutputTimer_Base_c::DecodeInTimeFailure(%s) - Both PolicyRebaseOnFailureToDecodeInTime & \n\t\t\t\t\tPolicyAllowFrameDiscardAtNormalSpeed are enabled at the same time, \n\t\t\t\t\tthe use of one of these should preclude the use of the other.\n");
 				EventCode = EventFailedToDecodeInTime;
 			}
 			else

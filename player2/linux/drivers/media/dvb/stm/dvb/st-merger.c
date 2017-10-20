@@ -752,10 +752,10 @@ void stm_tsm_init(int use_cimax)
 		 *->TS interface is as indicated by TSMerger configuration bits
 		 */
 		/* from fw 202 rc ->see also pti */
-if (camRouting == 1) // CamRouting ufs910
-		ctrl_outl(0x6, reg_sys_config + SYS_CFG0);
-else
-		ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
+		if (camRouting == 1) // CamRouting ufs910
+			ctrl_outl(0x6, reg_sys_config + SYS_CFG0);
+		else
+			ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
 #elif defined(FORTIS_HDBOX)
 		/* ->TSIN0 routes to TSIN2 */
 		ctrl_outl(0x2, reg_sys_config + SYS_CFG0);
@@ -1185,10 +1185,10 @@ else
 		else
 			ctrl_outl(0x70014, tsm_io + TS_1394_CFG);
 #elif defined(UFS910)
-if (camRouting == 1) // CamRouting ufs910
-		ctrl_outl(0x70014, tsm_io + TS_1394_CFG);
-else
-		ctrl_outl(0x50014, tsm_io + TS_1394_CFG);
+		if (camRouting == 1) // CamRouting ufs910
+			ctrl_outl(0x70014, tsm_io + TS_1394_CFG);
+		else
+			ctrl_outl(0x50014, tsm_io + TS_1394_CFG);
 #else
 		/* logged from fw 202rc ->see also pti */
 		ctrl_outl(0x50014, tsm_io + TS_1394_CFG);

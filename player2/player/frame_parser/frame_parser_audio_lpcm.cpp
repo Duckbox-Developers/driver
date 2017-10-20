@@ -191,7 +191,7 @@ FrameParserStatus_t FrameParser_AudioLpcm_c::ParseFrameHeader(unsigned char *Fra
 	unsigned int NbSamples = 0;
 	char NumberOfAudioChannels = 1;
 	LpcmWordSize_t WordSize1;
-	LpcmWordSize_t WordSize2 = LpcmWordSizeNone;
+	LpcmWordSize_t WordSize2 = LpcmWordSizeNone;;
 	int DynamicRangeControl = 0;
 	int ChannelAssignment = 0xff; // this is the default assignment for the firmware (not exported by the firmware headers)
 	bool MuteFlag = false;

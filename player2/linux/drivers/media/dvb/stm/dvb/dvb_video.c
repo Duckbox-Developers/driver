@@ -246,13 +246,11 @@ int VideoSetOutputWindow(struct DeviceContext_s *Context,
 	mutex_lock(&(DvbContext->Lock));
 	if (Context->VideoStream != NULL)
 		Result = DvbStreamSetOutputWindow(Context->VideoStream, Left, Top, Width, Height);
-	else
-	{
-		Context->VideoOutputWindow.X = Left;
-		Context->VideoOutputWindow.Y = Top;
-		Context->VideoOutputWindow.Width = Width;
-		Context->VideoOutputWindow.Height = Height;
-	}
+	/* Always update the Context and not only when there is no played media */
+	Context->VideoOutputWindow.X = Left;
+	Context->VideoOutputWindow.Y = Top;
+	Context->VideoOutputWindow.Width = Width;
+	Context->VideoOutputWindow.Height = Height;
 	mutex_unlock(&(DvbContext->Lock));
 	return Result;
 }
@@ -577,7 +575,7 @@ static int VideoIoctlSetDisplayFormat(struct DeviceContext_s *Context, unsigned 
 {
 	int Result = 0;
 	DVB_DEBUG("(video%d) Display format = %d\n", Context->Id, Format);
-	if ((Format < VIDEO_PAN_SCAN) || (Format > VIDEO_FULL_SCREEN))
+	if ((Format < VIDEO_PAN_SCAN) || (Format > VIDEO_ZOOM_4_3))
 		return -EINVAL;
 	if (Context->VideoStream != NULL)
 		Result = DvbStreamSetOption(Context->VideoStream, PLAY_OPTION_VIDEO_DISPLAY_FORMAT, Format);
@@ -996,7 +994,11 @@ static int VideoIoctlSetEncoding(struct DeviceContext_s *Context, unsigned int E
 #endif
 /*}}}*/
 /*{{{ VideoIoctlFlush*/
+#ifdef __TDT__
 static int VideoIoctlFlush(struct DeviceContext_s *Context, unsigned int NonBlock)
+#else
+static int VideoIoctlFlush(struct DeviceContext_s *Context)
+#endif
 {
 	int Result = 0;
 	struct DvbContext_s *DvbContext = Context->DvbContext;
@@ -1008,7 +1010,11 @@ static int VideoIoctlFlush(struct DeviceContext_s *Context, unsigned int NonBloc
 	if (mutex_lock_interruptible(Context->ActiveVideoWriteLock) != 0)
 		return -ERESTARTSYS;
 	mutex_unlock(&(DvbContext->Lock)); /* release lock so non-writing ioctls still work while draining */
+#ifdef __TDT__
 	Result = DvbStreamDrain2(Context->VideoStream, false, NonBlock);
+#else
+	Result = DvbStreamDrain(Context->VideoStream, false);
+#endif
 	mutex_unlock(Context->ActiveVideoWriteLock); /* release write lock so actions which have context lock can complete */
 	mutex_lock(&(DvbContext->Lock)); /* reclaim lock so can be released by outer function */
 	return Result;
@@ -1358,9 +1364,15 @@ static int VideoIoctl(struct inode *Inode,
 		case VIDEO_SET_ENCODING:
 			Result = VideoIoctlSetEncoding(Context, (unsigned int)Parameter);
 			break;
+#ifdef __TDT__
 		case VIDEO_FLUSH:
 			Result = VideoIoctlFlush(Context, (unsigned int)Parameter);
 			break;
+#else
+		case VIDEO_FLUSH:
+			Result = VideoIoctlFlush(Context);
+			break;
+#endif
 		case VIDEO_SET_SPEED:
 			Result = VideoIoctlSetSpeed(Context, (int)Parameter);
 			break;

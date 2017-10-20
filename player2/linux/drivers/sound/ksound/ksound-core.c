@@ -1258,6 +1258,8 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 	snd_pcm_uframes_t xfer = 0;
 	snd_pcm_uframes_t offset = 0;
 	int err = 0;
+	if (size == 0)
+		return 0;
 	snd_pcm_stream_lock_irq(substream);
 	switch (_ksnd_pcm_state(substream))
 	{
@@ -1327,6 +1329,8 @@ static int _ksnd_pcm_writei1(snd_pcm_substream_t *substream,
 			}
 			avail = snd_pcm_playback_avail(runtime);
 		}
+		if (avail > runtime->min_align)
+			avail -= avail % runtime->min_align;
 		frames = size > avail ? avail : size;
 		cont = runtime->buffer_size - runtime->control->appl_ptr % runtime->buffer_size;
 		if (frames > cont)
@@ -1668,10 +1672,10 @@ int ksnd_pcm_set_params(ksnd_pcm_t *pcm,
 	sw_params->start_threshold =
 		(runtime->buffer_size - (runtime->period_size * 2));
 	sw_params->stop_threshold = runtime->buffer_size;
+	sw_params->tstamp_mode = SNDRV_PCM_TSTAMP_ENABLE;
 	sw_params->period_step = 1;
 	sw_params->sleep_min = 0;
 	sw_params->avail_min = runtime->period_size;
-	sw_params->tstamp_mode = SNDRV_PCM_TSTAMP_ENABLE;
 	sw_params->silence_threshold = runtime->period_size;
 	sw_params->silence_size = runtime->period_size;
 	if ((err =

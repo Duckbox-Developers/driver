@@ -78,7 +78,7 @@ static int EAC3Blocks[] =
 
 static char EAC3FsCodeToFrameSize[] =
 {
-	2, 0, 3, 0
+	2, 0, 3
 };
 
 static int EAC3SamplingFreq[] =
@@ -257,7 +257,7 @@ FrameParserStatus_t FrameParser_AudioEAc3_c::ParseSingleFrameHeader(unsigned cha
 																	bool SearchForConvSync)
 {
 	unsigned int SamplingFrequency;
-	unsigned int FrameSize = 0;
+	unsigned int FrameSize;
 	unsigned int NbSamples;
 	unsigned char Bsid;
 	Ac3StreamType_t Type;

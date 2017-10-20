@@ -578,7 +578,10 @@ CodecStatus_t Codec_MmeVideoTheora_c::FillOutDecodeCommand(void)
 	DecodeContext->MMEBuffers[THEORA_MME_CODED_DATA_BUFFER].TotalSize = CodedDataLength;
 #if 0
 	report(severity_info, "Picture (%d)\n", CodedDataLength);
-	OS_FlushCacheAll();
+	extern "C" {
+		void flush_cache_all();
+	};
+	flush_cache_all();
 	for (i = 0; i < 32; i++)
 		report(severity_info, "%02x ", CodedData[i]);
 	report(severity_info, "\n");

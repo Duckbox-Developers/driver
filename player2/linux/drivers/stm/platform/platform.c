@@ -13,7 +13,6 @@
 #include <linux/platform_device.h>
 #include <linux/autoconf.h>
 
-#include <linux/version.h>
 #include <asm/irq-ilc.h>
 #include <asm/irq.h>
 

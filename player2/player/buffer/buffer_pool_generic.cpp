@@ -476,12 +476,14 @@ BufferStatus_t BufferPool_Generic_c::GetBuffer(
 				OS_LockMutex(&Lock);
 				BufferReleaseSignalWaitedOn = false;
 			}
+#if 0
 			if ((OS_GetTimeInMicroSeconds() - EntryTime) > BUFFER_MAX_EXPECTED_WAIT_PERIOD)
 			{
 				report(severity_info, "BufferPool_Generic_c::GetBuffer - Waiting for a buffer of type %04x - '%s'\n", BufferDescriptor->Type,
 					   (BufferDescriptor->TypeName == NULL) ? "Unnamed" : BufferDescriptor->TypeName);
 				EntryTime = OS_GetTimeInMicroSeconds();
 			}
+#endif
 		}
 		while (!NonBlocking && !AbortGetBuffer && (RingStatus != RingNoError));
 		OS_UnLockMutex(&Lock);

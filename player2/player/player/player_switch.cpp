@@ -233,7 +233,7 @@ void Player_Generic_c::SwitchCodec(PlayerStream_t Stream)
 								  Stream->Manifestor);
 	Status = Stream->Codec->RegisterOutputBufferRing(Stream->DecodedFrameRing);
 	if (Status != PlayerNoError)
-		report(severity_error, "Player_Generic_c::SwitchFrameCodec - Failed to register stream parameters with Codec.\n");
+		report(severity_error, "Player_Generic_c::SwitchFrameParser - Failed to register stream parameters with Codec.\n");
 }
 
 // //////////////////////////////////////////////////////////////////////////////////////////////////

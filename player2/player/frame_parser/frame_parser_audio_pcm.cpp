@@ -374,7 +374,7 @@ FrameParserStatus_t FrameParser_AudioPcm_c::ReadStreamHeader(void)
 	{
 		if (strcmp(HeaderId, " tmf") != 0)
 		{
-			FRAME_ERROR("Stream is not a valid Pcm stream (%s)\n", HeaderId);
+			FRAME_ERROR("Stream is not a valid Pcm stream\n");
 			Player->MarkStreamUnPlayable(Stream);
 			return FrameParserError;
 		}

@@ -102,7 +102,7 @@ class Manifestor_Audio_c : public Manifestor_Base_c
 		struct AudioOutputSurfaceDescriptor_s SurfaceDescriptor;
 
 		/* Buffer information */
-		struct AudioStreamBuffer_s StreamBuffer[MAXIMUM_NUMBER_OF_DECODE_BUFFERS];
+		struct AudioStreamBuffer_s StreamBuffer[MAX_DECODE_BUFFERS];
 		unsigned int BufferQueueHead;
 		unsigned int BufferQueueTail;
 		OS_Mutex_t BufferQueueLock;

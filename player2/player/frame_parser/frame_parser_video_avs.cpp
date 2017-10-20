@@ -599,7 +599,10 @@ FrameParserStatus_t FrameParser_VideoAvs_c::ReadPictureHeader(unsigned int Pictu
 		Header->picture_coding_type = AVS_PICTURE_CODING_TYPE_I;
 		if (Bits.Get(1) == 1)
 			Header->time_code = Bits.Get(24);
-		MarkerBit(1);
+		if (Bits.Get(1) != 1)
+		{
+			FRAME_DEBUG("%s - Marker bit not available for Codec_Version_no < 521/rm52h\n", __FUNCTION__);
+		}
 	}
 	else
 		Header->picture_coding_type = Bits.Get(2);

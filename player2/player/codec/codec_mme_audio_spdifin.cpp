@@ -345,6 +345,12 @@ CodecStatus_t Codec_MmeAudioSpdifin_c::FillOutDecodeCommand(void)
 	return CodecNoError;
 }
 
+#ifdef __KERNEL__
+extern "C" {
+	void flush_cache_all();
+};
+#endif
+
 ////////////////////////////////////////////////////////////////////////////
 ///
 /// Populate the AUDIO_DECODER's MME_SEND_BUFFERS parameters for SPDIFIN audio.
@@ -380,7 +386,7 @@ CodecStatus_t Codec_MmeAudioSpdifin_c::FillOutSendBufferCommand(void)
 	Context->BufferCommand.CmdCode = MME_SEND_BUFFERS;
 	Context->BufferCommand.CmdEnd = MME_COMMAND_END_RETURN_NO_INFO;
 #ifdef __KERNEL__
-	OS_FlushCacheAll();
+	flush_cache_all();
 #endif
 	MME_ERROR Status = MME_SendCommand(MMEHandle, &Context->BufferCommand);
 	if (Status != MME_SUCCESS)

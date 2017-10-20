@@ -47,7 +47,7 @@ Date Modification Name
 /* --- */
 
 /*#define REPORT_KPTRACE*/
-#define REPORT_PRINTK
+/*#define REPORT_PRINTK*/
 
 static int severity_restriction_lower = 0;
 static int severity_restriction_upper = 0x7fffffff;

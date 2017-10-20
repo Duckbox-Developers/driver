@@ -335,6 +335,7 @@ typedef struct ParsedAudioParameters_s
 {
 	AudioSurfaceParameters_t Source;
 	unsigned int SampleCount;
+	bool decErrorStatus;
 	int Organisation; ///< Indicates the organisation of the channels (e.g. 5.1, 2.0)
 	AudioOriginalEncoding_t OriginalEncoding;
 	StreamMetadata_t StreamMetadata; ///< Stream metadata mainly used by fatpipe
