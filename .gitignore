@@ -17,10 +17,4 @@
 .dirstamp
 Module.symvers
 frontends/multituner.org/
-include/multicom
-include/player2
-include/stmfb
-multicom
-player2
-stgfb/stmfb
 pti_np
