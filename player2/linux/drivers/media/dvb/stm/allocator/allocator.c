@@ -60,10 +60,6 @@ typedef struct AllocatorContext_s
 	unsigned char *CachedAddress;
 	unsigned char *UnCachedAddress;
 	unsigned char *PhysicalAddress;
-#if !defined(MULTICOM324)
-	ICS_REGION CachedRegion;
-	ICS_REGION UnCachedRegion;
-#endif
 } AllocatorContext_t;
 
 // ////////////////////////////////////////////////////////////////////////////////
@@ -154,19 +150,6 @@ static OSDEV_CloseEntrypoint(AllocatorClose)
 	{
 		// Do what is necessary to free up any mapping here
 		// OSDEV_Print( "Freeing up bpa 2 partition - phys %p - C %p - UC %p\n", AllocatorContext->PhysicalAddress,AllocatorContext->CachedAddress,AllocatorContext->UnCachedAddress);
-#if !defined(MULTICOM324)
-		ICS_ERROR IcsErr;
-		IcsErr = ICS_region_remove(AllocatorContext->CachedRegion, 0);
-		if (IcsErr != ICS_SUCCESS)
-		{
-			OSDEV_Print("Close Entry Point - Unable to remove Cached ICS region.\n");
-		}
-		IcsErr = ICS_region_remove(AllocatorContext->UnCachedRegion, 0);
-		if (IcsErr != ICS_SUCCESS)
-		{
-			OSDEV_Print("Close Entry Point - Unable to remove Uncached ICS region.\n");
-		}
-#endif
 		OSDEV_IOUnMap((unsigned int)AllocatorContext->UnCachedAddress);
 		OSDEV_IOUnMap((unsigned int)AllocatorContext->CachedAddress);
 		OSDEV_FreePartitioned(AllocatorContext->PartitionName, AllocatorContext->PhysicalAddress);
@@ -201,9 +184,6 @@ static OSDEV_Status_t AllocatorIoctlAllocateData(AllocatorContext_t *AllocatorCo
 												 unsigned int ParameterAddress)
 {
 	allocator_ioctl_allocate_t params;
-#if !defined(MULTICOM324)
-	ICS_ERROR IcsErr;
-#endif
 //
 	OSDEV_CopyToDeviceSpace(&params, ParameterAddress, sizeof(allocator_ioctl_allocate_t));
 //
@@ -226,22 +206,6 @@ static OSDEV_Status_t AllocatorIoctlAllocateData(AllocatorContext_t *AllocatorCo
 	AllocatorContext->CachedAddress = ioremap_cache((unsigned int)AllocatorContext->Memory, AllocatorContext->Size);
 	AllocatorContext->PhysicalAddress = AllocatorContext->Memory ;
 	AllocatorContext->UnCachedAddress = (unsigned char *)OSDEV_IOReMap((unsigned int)AllocatorContext->PhysicalAddress, AllocatorContext->Size);
-#if !defined(MULTICOM324)
-	IcsErr = ICS_region_add(AllocatorContext->CachedAddress, AllocatorContext->PhysicalAddress, AllocatorContext->Size,
-							ICS_CACHED, ics_cpu_mask(), &AllocatorContext->CachedRegion);
-	if (IcsErr != ICS_SUCCESS)
-	{
-		OSDEV_Print("AllocatorIoctlAllocateData : - Unable to allocate Cached ICS region.\n");
-		return OSDEV_Error;
-	}
-	IcsErr = ICS_region_add(AllocatorContext->UnCachedAddress, AllocatorContext->PhysicalAddress, AllocatorContext->Size,
-							ICS_UNCACHED, ics_cpu_mask(), &AllocatorContext->UnCachedRegion);
-	if (IcsErr != ICS_SUCCESS)
-	{
-		OSDEV_Print("AllocatorIoctlAllocateData : - Unable to allocate Uncached ICS region.\n");
-		return OSDEV_Error;
-	}
-#endif
 	/*
 	 OSDEV_Print("Alloc - Phys %p - C %p - UC %p -- Size 0x%x\n",AllocatorContext->PhysicalAddress,
 	 AllocatorContext->CachedAddress, AllocatorContext->UnCachedAddress,AllocatorContext->Size);
