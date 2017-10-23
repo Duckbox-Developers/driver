@@ -12,9 +12,6 @@
 #define MINOR_NUMBER 0
 
 #include "osdev_device.h"
-#if !defined(MULTICOM324)
-#include <ics.h>
-#endif
 
 /* --- */
 
