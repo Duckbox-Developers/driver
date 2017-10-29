@@ -53,6 +53,9 @@
 #include "proton.h"
 #include "utf.h"
 
+#include <linux/device.h> /* class_creatre */
+#include <linux/cdev.h> /* cdev_init */
+
 static short paramDebug = 0;
 #define TAGDEBUG "[proton] "
 
@@ -1481,6 +1484,9 @@ void button_dev_exit(void)
 	input_unregister_device(button_dev);
 }
 
+static struct cdev   vfd_cdev;
+static struct class *vfd_class = 0;
+
 static int __init proton_init_module(void)
 {
 	int i;
@@ -1495,6 +1501,11 @@ static int __init proton_init_module(void)
 		printk("unable to init module\n");
 		return -1;
 	}
+
+	vfd_class = class_create(THIS_MODULE, "proton");
+	device_create(vfd_class, NULL, MKDEV(VFD_MAJOR, 0), NULL, "vfd");
+	cdev_init(&vfd_cdev, &vfd_fops);
+	cdev_add(&vfd_cdev, MKDEV(VFD_MAJOR, 0), 1);
 
 	if (button_dev_init() != 0)
 		return -1;
@@ -1529,7 +1540,10 @@ static void __exit proton_cleanup_module(void)
 
 	//kthread_stop(time_thread);
 
+	cdev_del(&vfd_cdev);
 	unregister_chrdev(VFD_MAJOR, "VFD");
+	device_destroy(vfd_class, MKDEV(VFD_MAJOR, 0));
+	class_destroy(vfd_class);
 	printk("HL101 FrontPanel module unloading\n");
 }
 
