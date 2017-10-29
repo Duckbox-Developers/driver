@@ -1125,7 +1125,7 @@ static const struct ix7306_config bs2s7hz7306a_config =
 static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 {
 	struct dvb_frontend *frontend = NULL;
-	struct tuner_devctl *ctl;
+	struct stv6110x_devctl *ctl;
 	printk(KERN_INFO "%s >\n", __FUNCTION__);
 	if (i > 0)
 		return NULL;
@@ -1143,40 +1143,47 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 				switch (tunerType)
 				{
 					case SHARP7306:
-						ctl = dvb_attach(ix7306_attach, frontend, &bs2s7hz7306a_config, cfg->i2c_adap);
-						stv090x_config.agc_rf1_inv = 1;
+						if(dvb_attach(ix7306_attach, frontend, &bs2s7hz7306a_config, cfg->i2c_adap))
+ 						{
+ 							printk("%s: IX7306 attached\n", __FUNCTION__);
+ 							//stv090x_config.xtal = CLK_EXT_IX7306;
+							stv090x_config.agc_rf1_inv = 1;
+ 							stv090x_config.tuner_set_frequency = ix7306_set_frequency;
+ 							stv090x_config.tuner_get_frequency = ix7306_get_frequency;
+ 							stv090x_config.tuner_set_bandwidth = ix7306_set_bandwidth;
+ 							stv090x_config.tuner_get_bandwidth = ix7306_get_bandwidth;
+ 							stv090x_config.tuner_get_status = frontend->ops.tuner_ops.get_status;
+ 						} else {
+ 							printk (KERN_INFO "%s: error attaching IX7306\n", __FUNCTION__);
+ 							goto error_out;
+ 						}					
 						break;
 					case STV6110X:
 					default:
 						ctl = dvb_attach(stv6110x_attach, frontend, &stv6110x_config, cfg->i2c_adap);
-						stv090x_config.agc_rf1_inv = 0;
-				}
-				if (ctl)
-				{
-					printk("%s: %s attached\n", __FUNCTION__, tuner);
-					stv090x_config.tuner_init = ctl->tuner_init;
-					stv090x_config.tuner_set_mode = ctl->tuner_set_mode;
-					stv090x_config.tuner_set_frequency = ctl->tuner_set_frequency;
-					stv090x_config.tuner_get_frequency = ctl->tuner_get_frequency;
-					stv090x_config.tuner_set_bandwidth = ctl->tuner_set_bandwidth;
-					stv090x_config.tuner_get_bandwidth = ctl->tuner_get_bandwidth;
-					stv090x_config.tuner_set_bbgain = ctl->tuner_set_bbgain;
-					stv090x_config.tuner_get_bbgain = ctl->tuner_get_bbgain;
-					stv090x_config.tuner_set_refclk = ctl->tuner_set_refclk;
-					stv090x_config.tuner_get_status = ctl->tuner_get_status;
-				}
-				else
-				{
-					printk(KERN_INFO "%s: error attaching stv6110x\n", __FUNCTION__);
+						if(ctl)	{
+							printk("%s: stv6110x attached\n", __FUNCTION__);
+							stv090x_config.agc_rf1_inv = 0;
+							stv090x_config.tuner_init = ctl->tuner_init;
+							stv090x_config.tuner_set_mode = ctl->tuner_set_mode;
+							stv090x_config.tuner_set_frequency = ctl->tuner_set_frequency;
+							stv090x_config.tuner_get_frequency = ctl->tuner_get_frequency;
+							stv090x_config.tuner_set_bandwidth = ctl->tuner_set_bandwidth;
+							stv090x_config.tuner_get_bandwidth = ctl->tuner_get_bandwidth;
+							stv090x_config.tuner_set_bbgain = ctl->tuner_set_bbgain;
+							stv090x_config.tuner_get_bbgain = ctl->tuner_get_bbgain;
+							stv090x_config.tuner_set_refclk = ctl->tuner_set_refclk;
+							stv090x_config.tuner_get_status = ctl->tuner_get_status;
+						} else {
+							printk (KERN_INFO "%s: error attaching stv6110x\n", __FUNCTION__);
+							goto error_out;
+						}
+					}
+				} else {
+					printk (KERN_INFO "%s: error attaching stv090x\n", __FUNCTION__);
 					goto error_out;
 				}
-			}
-			else
-			{
-				printk(KERN_INFO "%s: error attaching stv090x\n", __FUNCTION__);
-				goto error_out;
-			}
-			break;
+				break;
 		}
 		case STB0899:
 		{
@@ -1201,9 +1208,9 @@ static struct dvb_frontend *frontend_init(struct core_config *cfg, int i)
 			break;
 		}
 	}
-	return frontend;
 	if (frontend->ops.init)
 		frontend->ops.init(frontend);
+	return frontend;
 error_out:
 	printk("fe_core: Frontend registration failed!\n");
 	if (frontend)
