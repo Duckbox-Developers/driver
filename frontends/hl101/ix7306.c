@@ -21,13 +21,12 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
-#include "core.h"
 #include "dvb_frontend.h"
 #include "ix7306.h"
 
 struct ix7306_state
 {
-	struct tuner_devctl *devctl;
+	struct dvb_frontend *fe;
 	struct i2c_adapter *i2c;
 	const struct ix7306_config *config;
 
@@ -481,21 +480,7 @@ int ix7306_get_bandwidth(struct dvb_frontend *fe, u32 *bandwidth)
 	return 0;
 }
 
-static struct tuner_devctl ix7306_ctl =
-{
-	.tuner_init = NULL,
-	.tuner_set_mode = NULL,
-	.tuner_set_frequency = ix7306_set_frequency,
-	.tuner_get_frequency = ix7306_get_frequency,
-	.tuner_set_bandwidth = ix7306_set_bandwidth,
-	.tuner_get_bandwidth = ix7306_get_bandwidth,
-	.tuner_set_bbgain = NULL,
-	.tuner_get_bbgain = NULL,
-	.tuner_set_refclk = NULL,
-	.tuner_get_status = ix7306_get_status,
-};
-
-struct tuner_devctl *ix7306_attach(struct dvb_frontend *fe,
+struct dvb_frontend *ix7306_attach(struct dvb_frontend *fe,
 								   const struct ix7306_config *config,
 								   struct i2c_adapter *i2c)
 {
@@ -504,13 +489,13 @@ struct tuner_devctl *ix7306_attach(struct dvb_frontend *fe,
 		goto exit;
 	state->config = config;
 	state->i2c = i2c;
-	state->devctl = &ix7306_ctl;
+	state->fe = fe;
 	state->bandwidth = 125000;
 	fe->tuner_priv = state;
 	fe->ops.tuner_ops = ix7306_ops;
 	printk("%s: Attaching %s IX7306 8PSK/QPSK tuner\n",
 		   __func__, config->name);
-	return state->devctl;
+	return fe;
 exit:
 	kfree(state);
 	return NULL;

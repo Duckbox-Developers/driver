@@ -106,21 +106,6 @@ struct core
 	void *priv;
 };
 
-struct tuner_devctl
-{
-	int (*tuner_init)(struct dvb_frontend *fe);
-	int (*tuner_sleep)(struct dvb_frontend *fe);
-	int (*tuner_set_mode)(struct dvb_frontend *fe, u32 mode);
-	int (*tuner_set_frequency)(struct dvb_frontend *fe, u32 frequency);
-	int (*tuner_get_frequency)(struct dvb_frontend *fe, u32 *frequency);
-	int (*tuner_set_bandwidth)(struct dvb_frontend *fe, u32 bandwidth);
-	int (*tuner_get_bandwidth)(struct dvb_frontend *fe, u32 *bandwidth);
-	int (*tuner_set_bbgain)(struct dvb_frontend *fe, u32 gain);
-	int (*tuner_get_bbgain)(struct dvb_frontend *fe, u32 *gain);
-	int (*tuner_set_refclk)(struct dvb_frontend *fe, u32 refclk);
-	int (*tuner_get_status)(struct dvb_frontend *fe, u32 *status);
-};
-
 extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
 
 #endif

@@ -66,7 +66,7 @@
 
 struct stv6110x_state
 {
-	struct tuner_devctl *devctl;
+	struct stv6110x_devctl *devctl;
 	struct i2c_adapter *i2c;
 	const struct stv6110x_config *config;
 	u8 regs[8];

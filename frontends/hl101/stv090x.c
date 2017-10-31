@@ -37,7 +37,6 @@
 #include "stv090x_reg.h"
 #include "stv090x.h"
 #include "stv090x_priv.h"
-#include "core.h"
 
 static unsigned int verbose = 0;
 

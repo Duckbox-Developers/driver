@@ -28,7 +28,6 @@
 
 #include "dvb_frontend.h"
 
-#include "core.h"
 #include "stv6110x_reg.h"
 #include "stv6110x.h"
 #include "stv6110x_priv.h"
@@ -376,7 +375,7 @@ static struct dvb_tuner_ops stv6110x_ops =
 	.release = stv6110x_release
 };
 
-static struct tuner_devctl stv6110x_ctl =
+static struct stv6110x_devctl stv6110x_ctl =
 {
 	.tuner_init = stv6110x_init,
 	.tuner_sleep = stv6110x_sleep,
@@ -391,9 +390,9 @@ static struct tuner_devctl stv6110x_ctl =
 	.tuner_get_status = stv6110x_get_status,
 };
 
-struct tuner_devctl *stv6110x_attach(struct dvb_frontend *fe,
-									 const struct stv6110x_config *config,
-									 struct i2c_adapter *i2c)
+struct stv6110x_devctl *stv6110x_attach(struct dvb_frontend *fe,
+					const struct stv6110x_config *config,
+					struct i2c_adapter *i2c)
 {
 	struct stv6110x_state *stv6110x;
 	u8 default_regs[] = {0x07, 0x11, 0xdc, 0x85, 0x17, 0x01, 0xe6, 0x1e};
