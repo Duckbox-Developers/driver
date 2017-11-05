@@ -857,6 +857,11 @@ static int PROTONfp_Get_Key_Value(void)
 
 	switch (byte)
 	{
+		case 0x01:
+		{
+			key_val = EXIT_KEY;
+			break;
+		}
 		case 0x02:
 		{
 			key_val = KEY_LEFT;
@@ -1371,6 +1376,11 @@ void button_bad_polling(void)
 					input_sync(button_dev);
 					break;
 				}
+				case KEY_EXIT: {
+					input_report_key(button_dev, KEY_EXIT, 1);
+					input_sync(button_dev);
+					break;
+				}
 				case KEY_POWER:
 				{
 					input_report_key(button_dev, KEY_POWER, 1);
@@ -1451,6 +1461,7 @@ int button_dev_init(void)
 	set_bit(KEY_POWER	, button_dev->keybit);
 	set_bit(KEY_MENU	, button_dev->keybit);
 	set_bit(KEY_OK		, button_dev->keybit);
+	set_bit(KEY_EXIT	, button_dev->keybit);
 
 	error = input_register_device(button_dev);
 	if (error)
