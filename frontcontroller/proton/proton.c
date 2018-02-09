@@ -859,7 +859,7 @@ static int PROTONfp_Get_Key_Value(void)
 	{
 		case 0x01:
 		{
-			key_val = EXIT_KEY;
+			key_val = KEY_EXIT;
 			break;
 		}
 		case 0x02:
