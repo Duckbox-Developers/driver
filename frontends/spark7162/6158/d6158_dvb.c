@@ -165,6 +165,7 @@ int dvb_d6158_get_property(struct dvb_frontend *fe, struct dtv_property *tvp)
 		{
 			case SYS_DVBT:
 			case SYS_DVBT2:
+			case SYS_DVBC_ANNEX_AC:
 				break;
 			default:
 				return -EINVAL;
@@ -246,7 +247,9 @@ static struct dvb_frontend_ops dvb_d6158_fe_ofdm_ops =
 		FE_CAN_QAM_16 | FE_CAN_QAM_64 | FE_CAN_QAM_AUTO |
 		FE_CAN_TRANSMISSION_MODE_AUTO |
 		FE_CAN_GUARD_INTERVAL_AUTO |
-		FE_CAN_HIERARCHY_AUTO,
+		FE_CAN_HIERARCHY_AUTO |
+		FE_CAN_2G_MODULATION |
+		FE_CAN_MULTISTREAM
 	},
 
 	.init = NULL,

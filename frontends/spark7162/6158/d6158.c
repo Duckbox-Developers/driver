@@ -450,7 +450,7 @@ void nim_config_EARDATEK11658(struct COFDM_TUNER_CONFIG_API *Tuner_API_T, UINT32
 	Tuner_API_T->nim_Tuner_Control = tun_mxl603_control;
 	Tuner_API_T->nim_Tuner_Status = tun_mxl603_status;
 	Tuner_API_T->nim_Tuner_Command = tun_mxl603_command;
-	Tuner_API_T->tune_t2_first = 0;
+	Tuner_API_T->tune_t2_first = 1;
 	//Tuner_API_T->tuner_config.Tuner_Write = i2c_scb_write; //can be setted stb directly.
 	//Tuner_API_T->tuner_config.Tuner_Read = i2c_scb_read; //can be setted stb directly.
 	Tuner_API_T->tuner_config.cTuner_Base_Addr = 0xC0;
@@ -482,7 +482,7 @@ static void nim_config_d61558(struct COFDM_TUNER_CONFIG_API *Tuner_API_T, UINT32
 	Tuner_API_T->nim_Tuner_Init = tun_mxl301_init;
 	Tuner_API_T->nim_Tuner_Status = tun_mxl301_status;
 	Tuner_API_T->nim_Tuner_Control = tun_mxl301_control;
-	Tuner_API_T->tune_t2_first = 0;//when demod_d6158_ScanFreq,param.priv_param >DEMO_DVBT2,tuner tune T2 then t
+	Tuner_API_T->tune_t2_first = 1;//when demod_d6158_ScanFreq,param.priv_param >DEMO_DVBT2,tuner tune T2 then t
 	Tuner_API_T->tuner_config.demo_type = PANASONIC_DEMODULATOR;
 	Tuner_API_T->tuner_config.cTuner_Base_Addr = 0xC2;
 }
