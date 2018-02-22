@@ -153,8 +153,10 @@ obj-y := avs/
 obj-y += multicom/
 obj-y += stgfb/
 obj-y += player2/
+ifndef PACE7241 #boxtype not needed
 ifndef SAGEMCOM88 #Sagemcom88 has own boxtype
 obj-y += boxtype/
+endif
 endif
 obj-y += simu_button/
 obj-y += e2_proc/
@@ -343,6 +345,11 @@ obj-y += smartcard/
 obj-y += cec_adb_box/
 obj-y += dvbt/as102/
 obj-y += dvbt/siano/
+endif
+
+ifdef PACE7241
+obj-y += cec/
+obj-y += fan_pace7241/
 endif
 
 endif

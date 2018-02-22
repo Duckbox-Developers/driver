@@ -67,4 +67,8 @@ ifdef SAGEMCOM88
 EXTRA_CFLAGS += -DSTx7105
 endif
 
+ifdef PACE7241
+EXTRA_CFLAGS += -DSTx7105
+endif
+
 endif
