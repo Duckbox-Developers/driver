@@ -227,7 +227,7 @@ INT32 tun_mxl603_control(UINT32 tuner_id, UINT32 freq, UINT8 bandwidth, UINT8 AG
 		}
 		bMxl_Tuner_Inited[tuner_id] = TRUE;
 	}
-	if ((Status = MxL603_Tuner_RFTune(tuner_id, freq * 1000, BW, mode)) != MxL_OK)
+	if ((Status = MxL603_Tuner_RFTune(tuner_id, freq, BW, mode)) != MxL_OK)
 	{
 		TUNER_MXL603_DEBUG_PRINTF("MxL603_Tuner_RFTune error\n");
 		return ERR_FAILUE;

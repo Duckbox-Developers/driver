@@ -70,7 +70,7 @@ YW_ErrorType_T demod_d6158_GetSignalInfo(U8 Handle,
 										 unsigned int *Intensity,
 										 unsigned int *Ber);
 
-YW_ErrorType_T demod_d6158_ScanFreqDVB(struct dvb_frontend_parameters *p,
+YW_ErrorType_T demod_d6158_ScanFreq(struct dvb_frontend_parameters *p,
 									   struct nim_device *dev, UINT8 System, UINT8 plp_id);
 YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
 										 struct nim_device *dev, UINT8 System, UINT8 plp_id);

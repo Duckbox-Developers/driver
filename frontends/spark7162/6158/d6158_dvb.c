@@ -111,7 +111,7 @@ int d6158_read_signal_strength(struct dvb_frontend *fe, u16 *strength)
 	if (*Intensity > 90)
 		*Intensity = 90;
 	*Intensity = *Intensity * 255 * 255 / 100;
-	printk("*Intensity = %d\n", *Intensity);
+	//printk("*Intensity = %d\n", *Intensity);
 	*strength = (*Intensity);
 	YWOS_TaskSleep(100);
 	return iRet;
@@ -132,7 +132,7 @@ int d6158_read_status(struct dvb_frontend *fe, enum fe_status *status)
 			break;
 		}
 	}
-	printk("bIsLocked = %d\n", bIsLocked);
+	//printk("bIsLocked = %d\n", bIsLocked);
 	if (bIsLocked)
 	{
 		*status = FE_HAS_SIGNAL
@@ -196,17 +196,14 @@ int d6158_set_frontend(struct dvb_frontend *fe,
 {
 	struct dvb_d6158_fe_ofdm_state *state = fe->demodulator_priv;
 	struct dtv_frontend_properties *props = &fe->dtv_property_cache;
-	struct nim_device *dev = &state->spark_nimdev;
-	struct nim_panic6158_private *priv = dev->priv;
-	//UINT8 lock;
-	UINT8 plp_id;
-	plp_id = props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0;
+
 	printk("-----------------------d6158_set_frontend\n");
-	//nim_panic6158_get_lock(dev,&lock);
-	//if(lock != 1)
-	{
-		demod_d6158_ScanFreqDVB(p, &state->spark_nimdev, priv->system, plp_id);
-	}
+	printk("freq %d, bw %d, system %d, stream_id %d\n", props->frequency, props->bandwidth_hz,
+	       props->delivery_system, props->stream_id);
+
+	state->p = p;
+	demod_d6158_ScanFreq(p, &state->spark_nimdev, props->delivery_system,
+				props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0);
 	state->p = NULL;
 	return 0;
 }
@@ -216,18 +213,14 @@ int d6158earda_set_frontend(struct dvb_frontend *fe,
 {
 	struct dvb_d6158_fe_ofdm_state *state = fe->demodulator_priv;
 	struct dtv_frontend_properties *props = &fe->dtv_property_cache;
-	struct nim_device *dev = &state->spark_nimdev;
-	struct nim_panic6158_private *priv = dev->priv;
-	//UINT8 lock;
-	UINT8 plp_id;
-	plp_id = props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0;
+
+	printk("-----------------------d6158earda_set_frontend\n");
+	printk("freq %d, bw %d, system %d, stream_id %d\n", props->frequency, props->bandwidth_hz,
+	       props->delivery_system, props->stream_id);
+
 	state->p = p;
-	printk("-----------------------d6158_set_frontend\n");
-	//nim_panic6158_get_lock(dev,&lock);
-	//if(lock != 1)
-	{
-		demod_d6158earda_ScanFreq(p, &state->spark_nimdev, priv->system, plp_id);
-	}
+	demod_d6158earda_ScanFreq(p, &state->spark_nimdev, props->delivery_system,
+				  props->stream_id != NO_STREAM_ID_FILTER ? props->stream_id : 0);
 	state->p = NULL;
 	return 0;
 }
@@ -358,6 +351,7 @@ struct dvb_frontend *dvb_d6158_attach(struct i2c_adapter *i2c, UINT8 system)
 	priv->flag_id = OSAL_INVALID_ID;
 	priv->i2c_mutex_id = OSAL_INVALID_ID;
 	priv->system = system; //T2 C
+	priv->first_tune_t2 = 1;
 	priv->tuner_id = 2;
 	if (tuner_mxl301_Identify((IOARCH_Handle_t *)i2c) != YW_NO_ERROR)
 	{
@@ -448,6 +442,7 @@ struct dvb_frontend *dvb_d6158earda_attach(struct i2c_adapter *i2c, UINT8 system
 	priv->flag_id = OSAL_INVALID_ID;
 	priv->i2c_mutex_id = OSAL_INVALID_ID;
 	priv->system = system; //T2 C
+	priv->first_tune_t2 = 1;
 	priv->tuner_id = 2;
 	YWOS_TaskSleep(50);
 	nim_config_EARDATEK11658(&Tuner_API, 0, 0);

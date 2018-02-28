@@ -1203,7 +1203,7 @@ typedef struct nim_panic6158_private
 
 } NIM_PANIC6158_PRIVATE, *PNIM_PANIC6158_PRIVATE;
 
-#if 1
+#if 0
 #define NIM_PANIC6158_PRINTF(...) do{}while(0)
 #else
 #if defined(MODULE)

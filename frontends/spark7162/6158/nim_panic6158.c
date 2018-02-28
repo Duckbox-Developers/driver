@@ -1336,62 +1336,46 @@ static INT32 nim_panic6158_tune_action(struct nim_device *dev, UINT8 system, UIN
 
 INT32 nim_panic6158_channel_change(struct nim_device *dev, struct NIM_Channel_Change *param)
 {
-	UINT32 frq;
 	INT32 i;//, j;
 	INT32 tune_num = 1;
 	UINT32 wait_time;
-	UINT8 bw, mode[2], qam;
+	UINT8 mode[2];
 	struct nim_panic6158_private *priv;
 	printk(" nim_panic6158_channel_change\n");
 	priv = (struct nim_panic6158_private *) dev->priv;
-	frq = param->freq;//kHz
-	bw = param->bandwidth;//MHz
-	qam = param->modulation;//for DVBC
-	NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz\n", frq, bw);
-	//param->priv_param;//DEMO_UNKNOWN/DEMO_DVBC/DEMO_DVBT/DEMO_DVBT2
-	if (DEMO_DVBC == param->priv_param)
+	priv->frq = param->freq;
+	priv->bw = param->bandwidth;
+	priv->qam = param->modulation;
+	priv->PLP_id = param->PLP_id;
+	priv->PLP_num = 0;//Init PLP num
+
+	switch (param->priv_param)	  
 	{
+	case DEMO_DVBC:
 		mode[0] = DEMO_BANK_C;
+		break;
+	case DEMO_DVBT:
+		mode[0] = DEMO_BANK_T;
+		break;
+	case DEMO_DVBT2:
+		mode[0] = DEMO_BANK_T2;
+		break;
+	default:
+		tune_num = PANIC6158_TUNE_MAX_NUM;
+		mode[0] = (1 == priv->first_tune_t2) ? DEMO_BANK_T2 : DEMO_BANK_T;
+		mode[1] = (DEMO_BANK_T2 == mode[0]) ? DEMO_BANK_T : DEMO_BANK_T2;
+		break;
 	}
-	else
-	{
-		if (DEMO_DVBT == param->priv_param)
-		{
-			mode[0] = DEMO_BANK_T;
-		}
-		else if (DEMO_DVBT2 == param->priv_param)
-		{
-			mode[0] = DEMO_BANK_T2;
-		}
-		else
-		{
-			tune_num = PANIC6158_TUNE_MAX_NUM;
-			mode[0] = (1 == priv->first_tune_t2) ? DEMO_BANK_T2 : DEMO_BANK_T;
-			mode[1] = (DEMO_BANK_T2 == mode[0]) ? DEMO_BANK_T : DEMO_BANK_T2;
-		}
-	}
-	//mode[0]= priv->system;
-#if 0
-	/*frq = 514000;
-	bw = 8;
-	tune_num = 1;
-	mode[0] = DEMO_BANK_T;*/
-	frq = 642000;
-	bw = 8;
-	tune_num = 1;
-	mode[0] = DEMO_BANK_C;
-	qam = QAM64;
-#endif
-	NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz, plp_id:%d system mode:%d, qam=%d\n", frq, bw, priv->PLP_id, mode[0], qam);
+
+	NIM_PANIC6158_PRINTF("frq: %dKHz, bw: %dMHz, plp_id: %d system mode: %d, qam: %d\n", priv->frq/1000, priv->bw, priv->PLP_id, mode[0], priv->qam);
 	NIM_PANIC6158_PRINTF("tune_num:%d\n", tune_num);
+
 	priv->scan_stop_flag = 0;
 	for (i = 0; i < tune_num; i++)
 	{
-		priv->frq = frq;
-		priv->bw = bw;
 		priv->system = mode[i];
 		//set IF freq
-		if (7 == bw && (DEMO_BANK_T == mode[i] || DEMO_BANK_T2 == mode[i]))
+		if (DMD_E_BW_7MHZ == priv->bw && (DEMO_BANK_T == mode[i] || DEMO_BANK_T2 == mode[i]))
 			priv->if_freq = DMD_E_IF_4500KHZ;
 		else
 			priv->if_freq = DMD_E_IF_5000KHZ;
@@ -1399,14 +1383,14 @@ INT32 nim_panic6158_channel_change(struct nim_device *dev, struct NIM_Channel_Ch
 		//nim_panic6158_open(dev);
 		nim_panic6158_set_reg(dev, MN88472_REG_COMMON);
 		//config demo
-		nim_panic6158_set_system(dev, mode[i], bw, priv->if_freq);
+		nim_panic6158_set_system(dev, priv->system, priv->bw, priv->if_freq);
 		//nim_panic6158_set_error_flag(dev, 1);
 		//nim_panic6158_set_ts_output(dev, DMD_E_TSOUT_SERIAL_VARIABLE_CLOCK);
 		if (1 == priv->scan_stop_flag)
 			break;
 		//tune demo
 		wait_time = (PANIC6158_TUNE_MAX_NUM == tune_num && 0 == i) ? 1000 : 300;//ms
-		if (SUCCESS == nim_panic6158_tune_action(dev, mode[i], frq, bw, qam, wait_time, priv->PLP_id))
+		if (SUCCESS == nim_panic6158_tune_action(dev, mode[i], priv->frq, priv->bw, priv->qam, wait_time, priv->PLP_id))
 			break;
 	}
 	return SUCCESS;
@@ -1917,64 +1901,49 @@ static INT32 nim_panic6158_tune_action_earda(struct nim_device *dev, UINT8 syste
 
 INT32 nim_panic6158_channel_change_earda(struct nim_device *dev, struct NIM_Channel_Change *param)
 {
-	UINT32 frq;
 	INT32 i, j;
 	INT32 tune_num = 1;
 	UINT32 wait_time;
-	UINT8 bw, mode[2], qam;
+	UINT8 mode[2];
 	UINT8 scan_mode;
-	UINT32 sym;
 	struct nim_panic6158_private *priv;
 	UINT8 qam_array[] = {QAM64, QAM256, QAM128, QAM32, QAM16};
 	priv = (struct nim_panic6158_private *) dev->priv;
-	frq = param->freq;//kHz
-	bw = param->bandwidth;//MHz
-	qam = param->fec; //param->modulation;//for DVBC
-	sym = param->sym; ////for DVBC
-	//param->priv_param;//DEMO_UNKNOWN/DEMO_DVBC/DEMO_DVBT/DEMO_DVBT2
-	if (DEMO_DVBC == param->priv_param)
-	{
-		NIM_PANIC6158_PRINTF("frq:%dKHz, QAM:%d\n", frq, qam);
-		mode[0] = DEMO_BANK_C;
-	}
-	else
-	{
-		NIM_PANIC6158_PRINTF("frq:%dKHz, bw:%dMHz, plp_id:%d\n", frq, bw, param->PLP_id);
-		if (DEMO_DVBT == param->priv_param)
-		{
-			mode[0] = DEMO_BANK_T;
-		}
-		else if (DEMO_DVBT2 == param->priv_param)
-		{
-			mode[0] = DEMO_BANK_T2;
-		}
-		else
-		{
-			tune_num = PANIC6158_TUNE_MAX_NUM;
-			mode[0] = (1 == priv->first_tune_t2) ? DEMO_BANK_T2 : DEMO_BANK_T;
-			mode[1] = (DEMO_BANK_T2 == mode[0]) ? DEMO_BANK_T : DEMO_BANK_T2;
-		}
-	}
-#if 0
-	frq = 474000;
-	bw = 8;
-	tune_num = 1;
-	mode[0] = DEMO_BANK_T;
-#endif
-	priv->scan_stop_flag = 0;
-	priv->frq = frq;
-	priv->bw = bw;
-	priv->qam = qam;
-	priv->sym = sym;
-	priv->PLP_num = 0;//Init PLP num
+	priv->frq = param->freq;
+	priv->bw = param->bandwidth;
+	priv->qam = param->modulation;
 	priv->PLP_id = param->PLP_id;
+	priv->PLP_num = 0;//Init PLP num
+
+	switch (param->priv_param)	  
+	{
+	case DEMO_DVBC:
+		mode[0] = DEMO_BANK_C;
+		break;
+	case DEMO_DVBT:
+		mode[0] = DEMO_BANK_T;
+		break;
+	case DEMO_DVBT2:
+		mode[0] = DEMO_BANK_T2;
+		break;
+	default:
+		tune_num = PANIC6158_TUNE_MAX_NUM;
+		mode[0] = (1 == priv->first_tune_t2) ? DEMO_BANK_T2 : DEMO_BANK_T;
+		mode[1] = (DEMO_BANK_T2 == mode[0]) ? DEMO_BANK_T : DEMO_BANK_T2;
+		break;
+	}
+
+	NIM_PANIC6158_PRINTF("frq: %dKHz, bw: %dMHz, plp_id: %d system mode: %d, qam: %d\n", priv->frq/1000, priv->bw, priv->PLP_id, mode[0], priv->qam);
+	NIM_PANIC6158_PRINTF("tune_num:%d\n", tune_num);
+
+	priv->scan_stop_flag = 0;
 	//libc_printf_direct("--PANIC6158 T2 PLP_id=%d -------\n", priv->PLP_id);
 	scan_mode = (0 == priv->PLP_id) ? PANIC6158_SEARCH_MODE : PANIC6158_TUNE_MODE;
 	for (i = 0; i < tune_num; i++)
 	{
 		priv->system = mode[i];
 		//set IF freq
-		if (7 == bw && (DEMO_BANK_T == mode[i] || DEMO_BANK_T2 == mode[i]))
+		if (DMD_E_BW_7MHZ == priv->bw && (DEMO_BANK_T == mode[i] || DEMO_BANK_T2 == mode[i]))
 			priv->if_freq = DMD_E_IF_4500KHZ;
 		else
 			priv->if_freq = DMD_E_IF_5000KHZ;
@@ -1982,7 +1951,7 @@ INT32 nim_panic6158_channel_change_earda(struct nim_device *dev, struct NIM_Chan
 		nim_panic6158_set_reg(dev, MN88472_REG_24MHZ_COMMON);
 		NIM_PANIC6158_PRINTF("mode[%d] = %d\n", i, mode[i]);
 		NIM_PANIC6158_PRINTF("priv->if_freq = %d\n", priv->if_freq);
-		nim_panic6158_set_system_earda(dev, mode[i], bw, priv->if_freq);
+		nim_panic6158_set_system_earda(dev, priv->system, priv->bw, priv->if_freq);
 		//nim_panic6158_set_error_flag(dev, 1);
 		//nim_panic6158_set_ts_output(dev, DMD_E_TSOUT_SERIAL_VARIABLE_CLOCK);
 		if (1 == priv->scan_stop_flag)
@@ -1991,20 +1960,20 @@ INT32 nim_panic6158_channel_change_earda(struct nim_device *dev, struct NIM_Chan
 		wait_time = (PANIC6158_TUNE_MAX_NUM == tune_num && 0 == i) ? 1000 : 300;//ms
 //#ifdef DVBC_BLIND_SCAN
 #if 1
-		if ((mode[0] == DEMO_BANK_C) && (qam == 0)) //for DVB-C blind scan
+		if ((mode[0] == DEMO_BANK_C) && (priv->qam == 0)) //for DVB-C blind scan
 		{
 			for (j = 0; j < (INT32)ARRAY_SIZE(qam_array); j++)
 			{
 				priv->qam = qam_array[j];
-				NIM_PANIC6158_PRINTF("auto scan frq:%dKHz, QAM:%d\n", frq, qam_array[j]);
-				if (SUCCESS == nim_panic6158_tune_action_earda(dev, mode[i], frq, bw, qam_array[j], wait_time, scan_mode, priv->PLP_id))
+				NIM_PANIC6158_PRINTF("auto scan frq:%dKHz, QAM:%d\n", priv->frq/1000, qam_array[j]);
+				if (SUCCESS == nim_panic6158_tune_action_earda(dev, mode[i], priv->frq, priv->bw, qam_array[j], wait_time, scan_mode, priv->PLP_id))
 					break;
 			}
 		}
 		else
 #endif
 		{
-			if (SUCCESS == nim_panic6158_tune_action_earda(dev, mode[i], frq, bw, qam, wait_time, scan_mode, priv->PLP_id))
+			if (SUCCESS == nim_panic6158_tune_action_earda(dev, mode[i], priv->frq, priv->bw, priv->qam, wait_time, scan_mode, priv->PLP_id))
 				break;
 		}
 	}
