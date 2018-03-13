@@ -12,13 +12,9 @@
 
 #include <linux/gpio.h>
 #include <linux/stm/gpio.h>
-#include "../vfd/utf.h"
-
-//#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 #include <linux/stm/pio.h>
-//#else
-//#include <linux/stpio.h>
-//#endif
+
+#include "../vfd/utf.h"
 
 #define LED1 stm_gpio(4, 0)
 #define LED2 stm_gpio(4, 1)
@@ -209,13 +205,82 @@ static void vfdSendCMD(uint8_t vfdcmd, uint8_t vfdarg)
 
 int VFD_WriteFront(unsigned char* data, unsigned char len )
 {
-	unsigned char lcd_buf[16]={0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20};
+	unsigned char lcd_buf[16] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
 	int i = 0;
+	int j = 0;
 
-	if(len>16) len=16;
-	
-	for(i=0;i<len;i++) {
-		lcd_buf[i]=data[i];
+	while ((i < len) && (j < 16))
+	{
+		if (data[i] == '\n' || data[i] == 0)
+		{
+			DBG("[%s] BREAK CHAR detected (0x%X)\n", __func__, data[i]);
+			break;
+		}
+		else if (data[i] < 0x20)
+		{
+			DBG("[%s] NON_PRINTABLE_CHAR '0x%X'\n", __func__, data[i]);
+			i++;
+		}
+		else if (data[i] < 0x80)
+		{
+			lcd_buf[j] = data[i];
+			DBG("[%s] data[%i] = '0x%X'\n", __func__, j, data[i]);
+			j++;
+		}
+		else if (data[i] < 0xE0)
+		{
+			DBG("[%s] UTF_Char_Table= 0x%X", __func__, data[i]);
+			switch (data[i])
+			{
+				case 0xc2:
+					UTF_Char_Table = UTF_C2;
+					break;
+				case 0xc3:
+					UTF_Char_Table = UTF_C3;
+					break;
+				case 0xc4:
+					UTF_Char_Table = UTF_C4;
+					break;
+				case 0xc5:
+					UTF_Char_Table = UTF_C5;
+					break;
+				case 0xd0:
+					UTF_Char_Table = UTF_D0;
+					break;
+				case 0xd1:
+					UTF_Char_Table = UTF_D1;
+					break;
+				default:
+					UTF_Char_Table = NULL;
+			}
+			i++;
+			if (UTF_Char_Table)
+			{
+				DBG("[%s] UTF_Char= 0x%X, index=%i", __func__, UTF_Char_Table[data[i] & 0x3f], i);
+				lcd_buf[j] = UTF_Char_Table[data[i] & 0x3f];
+				j++;
+			}
+		}
+		else
+		{
+			if (data[i] < 0xF0)
+				i += 2;
+			else if (data[i] < 0xF8)
+				i += 3;
+			else if (data[i] < 0xFC)
+				i += 4;
+			else
+				i += 5;
+		}
+		i++;
+	}
+
+	if (j < 16)
+	{
+		for (i = j; i < 16; i++)
+		{
+			lcd_buf[i] = 0x20;
+		}
 	}
 
 	//enable transfer mode
