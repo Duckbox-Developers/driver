@@ -59,7 +59,8 @@ MODULE_PARM_DESC(camRouting, "Enable camRouting 0=disabled 1=enabled");
  || defined(ATEMIO520) \
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 #define TSMergerBaseAddress 0xFE242000
 #define SWTS_BASE_ADDRESS 0xFE900000 //STi7105 STi7111
 #else
@@ -143,7 +144,8 @@ MODULE_PARM_DESC(camRouting, "Enable camRouting 0=disabled 1=enabled");
  || defined(ATEMIO520) \
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 #define SysConfigBaseAddress 0xFE001000
 #else
 #define SysConfigBaseAddress 0x19001000
@@ -634,7 +636,8 @@ void stm_tsm_init(int use_cimax)
  || defined(IPBOX55) \
  || defined(ADB_BOX) \
  || defined(CUBEREVO_2000HD) \
- || defined(SAGEMCOM88) // none ci targets
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241) // none ci targets
 	use_cimax = 0;
 #endif
 	/* first configure sysconfig */

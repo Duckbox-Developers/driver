@@ -323,6 +323,8 @@ static int info_model_read(char *page, char **start, off_t off, int count, int *
 	int len = sprintf(page, "ufs910\n");
 #elif defined(ARIVALINK200)
 	int len = sprintf(page, "arivalink200\n");
+#elif defined(PACE7241)
+	int len = sprintf(page, "pace7241\n");
 #else
 	int len = sprintf(page, "unknown\n");
 #endif
@@ -336,7 +338,8 @@ static int info_chipset_read(char *page, char **start, off_t off, int count, int
 	int len = sprintf(page, "STi7100\n");
 #elif defined(ATEVIO7500) \
  || defined(UFS913) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 	int len = sprintf(page, "STi7105\n");
 #elif defined(FORTIS_HDBOX) \
  || defined(HL101) \
@@ -759,7 +762,8 @@ struct ProcStructure_s e2Proc[] =
  || defined(SPARK) \
  || defined(SPARK7162) \
  || defined(SAGEMCOM88) \
- || defined(VITAMIN_HD5000)
+ || defined(VITAMIN_HD5000) \
+ || defined(PACE7241)
 	{cProcDir  , "stb/cec"                                                          , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_activesource"                                       , NULL, NULL, NULL, NULL, ""},
 	{cProcEntry, "stb/cec/state_standby"                                            , NULL, NULL, NULL, NULL, ""},
@@ -792,6 +796,9 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/video/switch_choices"                                         , NULL, NULL, NULL, NULL, ""},
 #elif defined(ARIVALINK200)
         {cProcEntry, "stb/hdmi/cec"                                                     , NULL, NULL, NULL, NULL, ""},
+#elif defined(PACE7241)
+	{cProcDir  , "stb/fan"                                                          , NULL, NULL, NULL, NULL, ""},
+	{cProcEntry, "stb/fan/fan_ctrl"                                                 , NULL, NULL, NULL, NULL, ""},
 #endif
 
 	{cProcDir  , "stb/player"                                                       , NULL, NULL, NULL, NULL, ""},

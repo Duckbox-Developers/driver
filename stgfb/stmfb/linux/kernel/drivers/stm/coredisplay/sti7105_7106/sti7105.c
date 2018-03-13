@@ -49,7 +49,7 @@ static struct stmcore_display_pipeline_data platform_data[] = {
     .blitter_irq_kernel       = evt2irq(0x1220),
     .hdmi_irq                 = evt2irq(0x15C0),
 #if defined(CONFIG_SH_ST_MB680)
-#if defined(SAGEMCOM88)
+#if defined(SAGEMCOM88) || defined(PACE7241)
     .hdmi_i2c_adapter_id      = 1,
 #else
     .hdmi_i2c_adapter_id      = 2,

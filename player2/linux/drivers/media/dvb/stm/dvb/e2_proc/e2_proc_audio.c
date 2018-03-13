@@ -200,7 +200,8 @@ static void WriteRegister(volatile unsigned long *reg, unsigned long val)
  || defined(ATEMIO530) \
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 #define SPDIF_EN (1L<<3)
 #define PCM_EN (1L<<5)
 #define SPDIF_PCM_DIS 0xFFFFFFD7
@@ -233,7 +234,8 @@ void spdif_out_mute(int mute)
  || defined(ATEMIO530) \
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 	RegMap = (unsigned long *)ioremap(STb7105_AUDIO_BASE, 0x10);
 #else
 	RegMap = (unsigned long *)ioremap(STb7100_REGISTER_BASE, STb7100_REG_ADDR_SIZE);
@@ -254,7 +256,8 @@ void spdif_out_mute(int mute)
  || defined(ATEMIO530) \
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 		val = ReadRegister(RegMap);
 		WriteRegister(RegMap, val & SPDIF_DIS);
 #else
@@ -278,7 +281,8 @@ void spdif_out_mute(int mute)
  || defined(ATEMIO530) \
  || defined(UFS913) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 		val = ReadRegister(RegMap);
 		WriteRegister(RegMap, val | SPDIF_EN);
 #else

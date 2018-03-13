@@ -88,7 +88,8 @@ extern void fe_core_register_frontend(struct dvb_adapter *dvb_adap);
  || defined(ATEMIO520) \
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 extern void stv090x_register_frontend(struct dvb_adapter *dvb_adap);
 #elif defined(HL101) \
  || defined(VIP1_V2) \
@@ -535,7 +536,8 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(HS7819) \
  || defined(ATEMIO520) \
  || defined(ATEMIO530) \
- || defined(VITAMIN_HD5000)
+ || defined(VITAMIN_HD5000) \
+ || defined(PACE7241)
 	unsigned long start = 0xfe230000;
 #else
 	unsigned long start = 0x19230000;
@@ -625,7 +627,8 @@ void ptiInit(struct DeviceContext_s *pContext)
  || defined(ATEMIO520) \
  || defined(ATEMIO530) \
  || defined(VITAMIN_HD5000) \
- || defined(SAGEMCOM88)
+ || defined(SAGEMCOM88) \
+ || defined(PACE7241)
 		stv090x_register_frontend(&pContext->DvbContext->DvbAdapter);
 #elif defined(HL101) \
  || defined(VIP1_V2) \
