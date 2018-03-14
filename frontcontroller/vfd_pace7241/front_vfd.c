@@ -51,7 +51,7 @@ spinlock_t mr_lock = SPIN_LOCK_UNLOCKED;
 static struct vfd_driver vfd;
 static short paramDebug = 0;
 
-#define DBG(fmt, args...) if ( paramDebug > 0 ) printk(KERN_INFO "[vfd] :: " fmt "\n", ## args )
+#define DBG(fmt, args...) if ( paramDebug > 0 ) printk(KERN_INFO "[VFD] :: " fmt "\n", ## args )
 #define ERR(fmt, args...) printk(KERN_ERR "[vfd] :: " fmt "\n", ## args )
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,20)
@@ -60,6 +60,7 @@ void button_bad_polling(void)
 void button_bad_polling(struct work_struct *ignored)
 #endif
 {
+	DBG("[%s] >>>\n", __func__);
 	unsigned int  key_front;
 
 	while (bad_polling == 1)
@@ -99,6 +100,7 @@ static DECLARE_WORK(button_obj, button_bad_polling);
 
 static int button_input_open(struct input_dev *dev)
 {
+	DBG("[%s] >>>\n", __func__);
 	wq = create_workqueue("button");
 	if (queue_work(wq, &button_obj))
 	{
@@ -134,7 +136,9 @@ static void button_input_close(struct input_dev *dev)
 */
 
 #define VFD_RST  	stm_gpio(11,5) //reset by 0
+#if 0
 #define VFD_VDON 	stm_gpio(4, 7) //Vdisp 0=ON, 1=OFF
+#endif
 #define VFD_CLK  	stm_gpio(3, 4) //ShiftClockInput' - the serial data is shifted at the rising edge of CLK
 #define VFD_DAT  	stm_gpio(3, 5) //serial data
 #define VFD_CS   	stm_gpio(5, 3) //enable transfer by 0
@@ -158,13 +162,13 @@ static void vfdSendByte(uint8_t port_digit)
 	unsigned char digit;
 	digit = port_digit;
 	
-	DBG("%d=", digit);
+	//DBG("%d=", digit);
 	for(i=0;i<8;i++) {
-	    if (digit & 1) 
+/*	    if (digit & 1) 
 		DBG("1");
 	    else
 		DBG("0");
-	    gpio_set_value(VFD_DAT, digit & 1);
+*/	    gpio_set_value(VFD_DAT, digit & 1);
 	    udelay(1);
 	    gpio_set_value(VFD_CLK, 1);
 	    udelay(1);
@@ -289,7 +293,7 @@ int VFD_WriteFront(unsigned char* data, unsigned char len )
 	//transfering data
 	vfdSendByte(VFD_DCRAM_WR | 0); //set first char
 	for(i=0;i<16;i++) {
-		DBG("[%s] CHAR=%d >> ",__func__, lcd_buf[i]);
+		//DBG("[%s] CHAR=%d >> ",__func__, lcd_buf[i]);
 		vfdSendByte(lcd_buf[i]);
 	}
 
@@ -297,89 +301,6 @@ int VFD_WriteFront(unsigned char* data, unsigned char len )
 	vfdSelect(0);
 	return 0;
 }
-int OLD_VFD_WriteFront(unsigned char *data, unsigned char len)
-{
-	unsigned char wdata[16] = {0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20};
-	int i = 0;
-	int j = 0;
-
-	while ((i < len) && (j < 16))
-	{
-		if (data[i] == '\n' || data[i] == 0)
-		{
-			DBG("[%s] BREAK CHAR detected (0x%X)\n", __func__, data[i]);
-			break;
-		}
-		else if (data[i] < 0x20)
-		{
-			DBG("[%s] NON_PRINTABLE_CHAR '0x%X'\n", __func__, data[i]);
-			i++;
-		}
-		else if (data[i] < 0x80)
-		{
-			wdata[j] = data[i];
-			DBG("[%s] data[%i] = '0x%X'\n", __func__, j, data[i]);
-			j++;
-		}
-		else if (data[i] < 0xE0)
-		{
-			DBG("[%s] UTF_Char_Table= 0x%X", __func__, data[i]);
-			switch (data[i])
-			{
-				case 0xc2:
-					UTF_Char_Table = UTF_C2;
-					break;
-				case 0xc3:
-					UTF_Char_Table = UTF_C3;
-					break;
-				case 0xc4:
-					UTF_Char_Table = UTF_C4;
-					break;
-				case 0xc5:
-					UTF_Char_Table = UTF_C5;
-					break;
-				case 0xd0:
-					UTF_Char_Table = UTF_D0;
-					break;
-				case 0xd1:
-					UTF_Char_Table = UTF_D1;
-					break;
-				default:
-					UTF_Char_Table = NULL;
-			}
-			i++;
-			if (UTF_Char_Table)
-			{
-				DBG("[%s] UTF_Char= 0x%X, index=%i", __func__, UTF_Char_Table[data[i] & 0x3f], i);
-				wdata[j] = UTF_Char_Table[data[i] & 0x3f];
-				j++;
-			}
-		}
-		else
-		{
-			if (data[i] < 0xF0)
-				i += 2;
-			else if (data[i] < 0xF8)
-				i += 3;
-			else if (data[i] < 0xFC)
-				i += 4;
-			else
-				i += 5;
-		}
-		i++;
-	}
-
-	if (j < 16)
-	{
-		for (i = j; i < 16; i++)
-		{
-			wdata[i] = 0x20;
-		}
-	}
-	udelay(0);
-	return 0;
-}
-
 
 static void VFD_setIcon(unsigned char *kbuf, unsigned char len)
 {
@@ -406,9 +327,12 @@ static void VFD_setIcon(unsigned char *kbuf, unsigned char len)
 
 static void VFD_init(void)
 {
+	DBG("[%s] >>>\n", __func__);
 	//reset VFD
+#if 0
 	gpio_set_value(VFD_VDON, 0);
 	udelay(2000);
+#endif
 	gpio_set_value(VFD_RST, 1);
 	udelay(2000);
 	gpio_set_value(VFD_RST, 0);
@@ -423,6 +347,7 @@ static void VFD_init(void)
 
 static void VFD_setBrightness(int level)
 {
+	DBG("[%s] >>>\n", __func__);
 	if (level < 0)
 		vfdSendCMD(VFD_DUTY, 0);
 	else if (level > 15)
@@ -443,6 +368,7 @@ static void VFD_setBrightness(int level)
 
 static int vfd_ioctl(struct inode *inode, struct file *file, unsigned int cmd, unsigned long arg)
 {
+	DBG("[%s] >>>\n", __func__);
 	struct vfd_ioctl_data vfddata;
 
 	switch (cmd)
@@ -487,7 +413,7 @@ static ssize_t vfd_read(struct file *filp, char *buf, size_t len, loff_t *off)
 static int vfd_open(struct inode *inode, struct file *file)
 {
 
-	DBG("vfd_open");
+	DBG("[%s] >>>\n", __func__);
 
 	if (down_interruptible(&(vfd.sem)))
 	{
@@ -510,7 +436,7 @@ static int vfd_open(struct inode *inode, struct file *file)
 
 static int vfd_close(struct inode *inode, struct file *file)
 {
-	DBG("vfd_close");
+	DBG("[%s] >>>\n", __func__);
 	vfd.opencount = 0;
 	return 0;
 }
@@ -527,6 +453,7 @@ static struct file_operations vfd_fops =
 
 static void __exit led_module_exit(void)
 {
+	DBG("[%s] >>>\n", __func__);
 	unregister_chrdev(VFD_MAJOR, "vfd");
 	input_unregister_device(button_dev);
 }
@@ -535,31 +462,57 @@ static int __init led_module_init(void)
 {
 	int error;
 
-	DBG("LED PACE7241 init.");
+	DBG("VFD PACE7241 init >>>");
 	DBG("register character device %d.", VFD_MAJOR);
 	if (register_chrdev(VFD_MAJOR, "vfd", &vfd_fops))
 	{
 		ERR("register major %d failed", VFD_MAJOR);
 		goto led_init_fail;
+	} else {
+		DBG("character device registered properly");
 	}
 
 	sema_init(&(vfd.sem), 1);
 	vfd.opencount = 0;
 
 	gpio_request(VFD_RST, "VFD_RST");
-	gpio_direction_output(VFD_RST, STM_GPIO_DIRECTION_OUT);
-	
+	if (VFD_RST == NULL)
+	{
+		ERR("gpio_request VFD_RST failed.");
+	} else {
+		DBG("gpio_request VFD_RST successful, setting STM_GPIO_DIRECTION_OUT");
+		gpio_direction_output(VFD_RST, STM_GPIO_DIRECTION_OUT);
+	}
+#if 0	
 	gpio_request(VFD_VDON, "VFD_VDON");
-	gpio_direction_output(VFD_VDON, STM_GPIO_DIRECTION_OUT);
-	gpio_set_value(VFD_VDON, 1);
-	
+	if (VFD_VDON == NULL)
+	{
+		ERR("gpio_request VFD_VDON failed.");
+	} else {
+		DBG("gpio_request VFD_VDON successful, setting STM_GPIO_DIRECTION_OUT");
+		gpio_direction_output(VFD_VDON, STM_GPIO_DIRECTION_OUT);
+		gpio_set_value(VFD_VDON, 1);
+	}
+#endif	
 	gpio_request(VFD_DAT, "VFD_DAT");
-	gpio_direction_output(VFD_DAT, STM_GPIO_DIRECTION_OUT);
-	gpio_set_value(VFD_DAT, 0);
+	if (VFD_DAT == NULL)
+	{
+		ERR("gpio_request VFD_DAT failed.");
+	} else {
+		DBG("gpio_request VFD_DAT successful, setting STM_GPIO_DIRECTION_OUT");
+		gpio_direction_output(VFD_DAT, STM_GPIO_DIRECTION_OUT);
+		gpio_set_value(VFD_DAT, 0);
+	}
 	
 	gpio_request(VFD_CS, "VFD_CS");
-	gpio_direction_output(VFD_CS, STM_GPIO_DIRECTION_OUT);
-	gpio_set_value(VFD_CS, 0);
+	if (VFD_CS == NULL)
+	{
+		ERR("gpio_request VFD_CS failed.");
+	} else {
+		DBG("gpio_request VFD_CS successful, setting STM_GPIO_DIRECTION_OUT");
+		gpio_direction_output(VFD_CS, STM_GPIO_DIRECTION_OUT);
+		gpio_set_value(VFD_CS, 0);
+	}
 	
 	VFD_init();
 
@@ -568,24 +521,31 @@ static int __init led_module_init(void)
 	{
 		ERR("Request LED1 failed. abort.");
 		goto led_init_fail;
+	} else {
+		DBG("LED1 init successful");
+		gpio_direction_output(LED1, STM_GPIO_DIRECTION_OUT);
+		gpio_set_value(LED1, 0);//red
 	}
-	gpio_direction_output(LED1, STM_GPIO_DIRECTION_OUT);
-	gpio_set_value(LED1, 0);//czerwona
 
 	gpio_request(LED2, "LED2");
 	if (LED2 == NULL)
 	{
 		ERR("Request LED2 failed. abort.");
 		goto led_init_fail;
+	} else {
+		DBG("LED2 init successful");
+		gpio_direction_output(LED2, STM_GPIO_DIRECTION_OUT);
+		gpio_set_value(LED2, 1);//blue
 	}
-	gpio_direction_output(LED2, STM_GPIO_DIRECTION_OUT);
-	gpio_set_value(LED2, 1);//niebieska
 
+	DBG("Keys init");
 	gpio_request(KEYPm, "KEY_LEFT_");
 	if (KEYPm == NULL)
 	{
 		ERR("Request KEYPm failed. abort.");
 		goto led_init_fail;
+	} else {
+		DBG("KEYPm init successful");
 	}
 //gpio_direction_output(KEY_LEFT_, STM_GPIO_DIRECTION_IN);
 	gpio_direction_input(KEYPm);
@@ -595,6 +555,8 @@ static int __init led_module_init(void)
 	{
 		ERR("Request KEY_RIGHT_ failed. abort.");
 		goto led_init_fail;
+	} else {
+		DBG("KEYPp init successful");
 	}
 //gpio_direction_output(KEY_RIGHT_, STM_GPIO_DIRECTION_IN);
 	gpio_direction_input(KEYPp);
@@ -604,6 +566,8 @@ static int __init led_module_init(void)
 	{
 		ERR("Error : input_allocate_device");
 		goto led_init_fail;
+	} else {
+		DBG("button_dev allocated properly");
 	}
 	button_dev->name = button_driver_name;
 	button_dev->open = button_input_open;
@@ -620,14 +584,14 @@ static int __init led_module_init(void)
 		input_free_device(button_dev);
 		ERR("Request input_register_device. abort.");
 		goto led_init_fail;
+	} else {
+		DBG("Request input_register_device successful");
 	}
-
-
-
 	return 0;
 
 led_init_fail:
 	led_module_exit();
+	ERR("led_init_fail !!!");
 	return -EIO;
 }
 
