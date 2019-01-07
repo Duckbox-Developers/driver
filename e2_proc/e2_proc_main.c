@@ -522,7 +522,7 @@ out:
 	return ret;
 }
 
-#if !defined(IPBOX9900)
+#if !defined(IPBOX9900) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO) || defined(CUBEREVO_250HD) || defined(CUBEREVO_3000HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500)
 int _12v_isON = 0;
 
 int proc_misc_12V_output_write(struct file *file, const char __user *buf, unsigned long count, void *data)
@@ -680,7 +680,7 @@ struct ProcStructure_s e2Proc[] =
 	{cProcEntry, "stb/tsmux/lnb_b_input"                                            , NULL, NULL, NULL, NULL, ""},
 
 	{cProcDir  , "stb/misc"                                                         , NULL, NULL, NULL, NULL, ""},
-#if !defined(IPBOX9900)
+#if !defined(IPBOX9900) || defined(CUBEREVO_MINI) || defined(CUBEREVO_MINI2) || defined(CUBEREVO_MINI_FTA) || defined(CUBEREVO) || defined(CUBEREVO_250HD) || defined(CUBEREVO_3000HD) || defined(CUBEREVO_2000HD) || defined(CUBEREVO_9500)
 	{cProcEntry, "stb/misc/12V_output"                                              , NULL, proc_misc_12V_output_read, proc_misc_12V_output_write, NULL, ""},
 #else
 	{cProcEntry, "stb/misc/12V_output"                                              , NULL, NULL, NULL, NULL, ""},
