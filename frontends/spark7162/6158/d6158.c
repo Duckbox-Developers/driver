@@ -285,7 +285,7 @@ YW_ErrorType_T demod_d6158earda_ScanFreq(struct dvb_frontend_parameters *p,
 	else if (SYS_DVBT == System)
 	{
 		param.priv_param = DEMO_DVBT;//T2 T
-		param.freq = p->frequency;
+		param.freq = p->frequency / 1000;
 		switch (p->u.ofdm.bandwidth)
 		{
 			case BANDWIDTH_6_MHZ:
